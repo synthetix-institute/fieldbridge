@@ -8,7 +8,7 @@ operational grammar of transport, closure, spectral/operator structure, boundary
 realization, incompatibility, and discrete protocol. In that view, field-specific
 nouns are often the dressing; the portable unit is the mechanism.
 
-**Nouns stay local. Mechanisms travel.**
+**The invariant is the transformation; discovery is a successful translation.**
 
 FieldBridge does not look for papers that talk about similar topics. It converts
 a paper into an operational mechanism language first, and only then asks whether

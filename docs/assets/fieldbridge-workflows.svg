@@ -46,25 +46,26 @@
   <path d="M0 612 C210 560 290 640 480 602 C650 568 720 476 890 512 C1110 558 1198 658 1400 588 L1400 760 L0 760 Z" fill="#f6faf3"/>
 
   <text x="70" y="78" class="kicker">FIELD BRIDGE / HYPERION PUBLIC WORKBENCH</text>
-  <text x="70" y="142" class="title">Nouns stay local. Mechanisms travel.</text>
-  <text x="72" y="185" class="subtitle">Hyperion-style routes are portable; FieldBridge translates them into new fields.</text>
+  <text x="70" y="128" class="title">The invariant is the transformation.</text>
+  <text x="70" y="186" class="title">Discovery is successful translation.</text>
+  <text x="72" y="225" class="subtitle">FieldBridge tests whether an operational route survives in a new field.</text>
 
-  <rect x="74" y="246" width="290" height="164" class="card"/>
-  <text x="108" y="294" class="cardTitle">Source paper</text>
-  <text x="108" y="329" class="cardText">LaTeX, abstract, equation,</text>
-  <text x="108" y="356" class="cardText">paper fragment, or claim.</text>
-  <rect x="108" y="374" width="78" height="27" rx="13.5" fill="#17231f"/>
-  <text x="126" y="393" class="pillText">INPUT</text>
+  <rect x="74" y="270" width="290" height="164" class="card"/>
+  <text x="108" y="318" class="cardTitle">Source paper</text>
+  <text x="108" y="353" class="cardText">LaTeX, abstract, equation,</text>
+  <text x="108" y="380" class="cardText">paper fragment, or claim.</text>
+  <rect x="108" y="398" width="78" height="27" rx="13.5" fill="#17231f"/>
+  <text x="126" y="417" class="pillText">INPUT</text>
 
-  <path d="M365 328 C420 328 446 328 502 328" class="greenLine"/>
+  <path d="M365 352 C420 352 446 352 502 352" class="greenLine"/>
 
-  <rect x="508" y="214" width="360" height="232" class="card"/>
-  <text x="546" y="264" class="cardTitle">Portable route</text>
-  <text x="546" y="300" class="cardText">The field nouns are stripped away.</text>
-  <text x="546" y="328" class="cardText">What remains is an operational form:</text>
-  <rect x="546" y="352" width="276" height="50" rx="10" fill="#f3f8f0" stroke="#dbe9d8"/>
-  <text x="568" y="383" class="formula">q, u, B -> y  + controls</text>
-  <g transform="translate(546 418)">
+  <rect x="508" y="238" width="360" height="232" class="card"/>
+  <text x="546" y="288" class="cardTitle">Portable route</text>
+  <text x="546" y="324" class="cardText">The field nouns are stripped away.</text>
+  <text x="546" y="352" class="cardText">What remains is an operational form:</text>
+  <rect x="546" y="376" width="276" height="50" rx="10" fill="#f3f8f0" stroke="#dbe9d8"/>
+  <text x="568" y="407" class="formula">q, u, B -> y  + controls</text>
+  <g transform="translate(546 442)">
     <rect width="86" height="27" rx="13.5" fill="url(#green)"/>
     <rect x="96" width="92" height="27" rx="13.5" fill="url(#green)"/>
     <rect x="198" width="98" height="27" rx="13.5" fill="url(#green)"/>
@@ -73,8 +74,8 @@
     <text x="217" y="19" class="pillText">BOUNDARY</text>
   </g>
 
-  <path d="M868 292 C940 236 990 208 1072 206" class="blueLine"/>
-  <path d="M868 378 C940 448 992 500 1072 510" class="greenLine"/>
+  <path d="M868 316 C940 236 990 208 1072 206" class="blueLine"/>
+  <path d="M868 402 C940 448 992 500 1072 510" class="greenLine"/>
 
   <rect x="1074" y="140" width="264" height="166" class="card"/>
   <text x="1106" y="188" class="cardTitle">Supporting route</text>
@@ -102,7 +103,7 @@
   <text x="546" y="625" class="cardText">boundary, incompatibility, protocol.</text>
 
   <path d="M214 480 C240 448 272 432 330 426" class="thin"/>
-  <path d="M688 500 C690 480 690 468 690 450" class="thin"/>
+  <path d="M688 500 C690 480 690 468 690 474" class="thin"/>
 
   <text x="70" y="704" class="small">Public starter engine: transparent field packs and deterministic route/fiber fingerprints. Larger Hyperion-style databases can add high-dimensional fingerprints and corpus witnesses.</text>
 </svg>
