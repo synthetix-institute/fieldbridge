@@ -1,22 +1,38 @@
 # FieldBridge
 
-FieldBridge extracts mechanisms from scientific papers and supports two public
-workflows: it finds structurally analogous equations in other fields, and it
-translates the extracted mechanism into a new field formulation.
+FieldBridge is a public companion to the Hyperion project at
+[Synthetix Institute](https://synthetix.institute). It is motivated by the
+Hyperion atlas result: mathematical-scientific texts are extremely diverse in
+their objects and terminology, but their mechanisms collapse to a small
+operational grammar of transport, closure, spectral/operator structure, boundary
+realization, incompatibility, and discrete protocol. In that view, field-specific
+nouns are often the dressing; the portable unit is the mechanism.
 
-It is built for two related tasks:
+**Nouns stay local. Mechanisms travel.**
 
-```text
-paper A -> extracted mechanism -> analog search in field B
-paper A -> extracted mechanism -> translated mechanism in field B
-```
+FieldBridge does not look for papers that talk about similar topics. It converts
+a paper into an operational mechanism language first, and only then asks whether
+another field contains the same route of action.
+
+That changes the comparison. A bioelectric memory, a material hysteresis, and a
+collective trace may use unrelated words. They become comparable only after they
+are written as a mechanism: a state is written, constrained by a boundary or
+context, transported or transformed, and tested by a later output and a residual
+control.
+
+The important question is not *which papers sound similar?* It is:
+
+> Do these systems implement the same operational route, and how would that route
+> be rendered in a new field?
 
 ![FieldBridge workflow](docs/assets/fieldbridge-workflows.svg)
 
-The comparison is not based on topic words alone. FieldBridge uses a small,
-transparent operational fingerprint: transport, closure, spectral/operator
-structure, boundary realization, incompatibility, discrete protocol, and a few
-realization fibers.
+The public version exposes one main route, with one supporting route:
+
+```text
+main route:       paper A -> extracted mechanism -> translated mechanism in field B
+support route:    paper A -> extracted mechanism -> analog search in field B
+```
 
 The first public version is intentionally transparent. It does not require a trained
 model or a private database. It ships with three starter field packs:
@@ -36,6 +52,89 @@ FieldBridge can be used as:
 - a small public workbench that can later connect to a larger private or
   institutional fingerprint database.
 
+## The Hyperion Result Behind It
+
+The website atlas makes the central point visible: scientific knowledge does not
+only organize around nouns such as *cell*, *droplet*, *agent*, *field*, or
+*particle*. Those nouns are local embodiments. The reusable structure is the
+route by which a system transports, closes, constrains, resolves spectra, meets a
+boundary, fails to commute, or updates by protocol.
+
+That is the reason translation is the main product. If the route is universal,
+then a mechanism can be moved into a new substrate. Analogy search is useful, but
+it is secondary: it tells us where the route has already appeared. Translation
+asks where the route could appear next.
+
+## The New Language
+
+FieldBridge uses a small public version of the Hyperion language. The private
+atlas has richer symbols and fingerprints; the public workbench keeps the core
+idea inspectable:
+
+```text
+mechanism := state q + input u + boundary/context B + output y
+route     := transport + closure + spectral/operator + boundary
+test      := measurement + residual + falsifying control
+```
+
+In ordinary language, the nouns dominate: cell, droplet, particle, robot,
+network, patent claim. In the operational language, those nouns become
+realization choices. The central object is the route by which the mechanism acts.
+
+This is why cross-field translation is possible at all. FieldBridge is not
+claiming that two topics are similar. It is asking whether two different
+scientific descriptions can be expressed by the same operational route, and then
+rendering that route in a target field's variables, equations, measurements, and
+controls.
+
+## Why This Is Different
+
+This is not another semantic-search app, RAG demo, or LLM prompt wrapper.
+
+Most tools ask whether two papers use similar words. FieldBridge asks whether two
+systems implement the same mechanism under different names, geometries, and
+experimental cultures.
+
+```text
+ordinary search:       "find papers about regeneration"
+LLM rewriting:         "explain regeneration in material language"
+FieldBridge:           "extract the route, then build its material form"
+```
+
+The output is not a poetic analogy. A useful translation must name:
+
+- the state variable that carries memory or structure;
+- the input that writes or perturbs it;
+- the boundary or context that makes the mechanism admissible;
+- the equation or equation skeleton;
+- the measurement that would reveal it;
+- the control experiment that would make the claim fail.
+
+## Hyperion Philosophy
+
+Hyperion treats scientific knowledge as a system of transformations rather than a
+taxonomy of objects. The same mechanism can appear as a bioelectric state, a
+hydrogel memory, a collective trace, an interface law, or a patentable technical
+state. The surface nouns change; the operational form may persist.
+
+FieldBridge exposes a small public version of that idea. It does not try to
+reproduce the full private Hyperion parser, atlas, or high-dimensional
+fingerprint database. Instead, it provides a minimal open workflow that others can
+inspect, extend, and test.
+
+## How It Works
+
+1. Extract a mechanism sheet from a paper or LaTeX fragment.
+2. Score a transparent route/fiber fingerprint.
+3. Search field packs for already-known analogues.
+4. Translate the mechanism into a selected field language.
+5. Return variables, equations, measurements, and falsifying controls.
+
+The public engine is deterministic and does not require an LLM. A larger
+installation can attach high-dimensional fingerprints, arXiv witnesses, vector
+indexes, patent corpora, or private field packs, while keeping the same public
+commands.
+
 ## Install
 
 ```bash
@@ -53,21 +152,12 @@ fieldbridge search examples/bioelectric_regeneration.txt --target-field material
 fieldbridge translate examples/bioelectric_regeneration.txt --to material_intelligence
 ```
 
-## Two Modes
+## Main Route
 
-### 1. Analog search
+### Mechanism translation
 
-`fieldbridge search` asks: where has a structurally similar mechanism already
-appeared? It returns records from the field packs whose route/fiber profile,
-equations, variables, measurements, and controls match the source mechanism.
-
-This mode is useful for literature navigation, paper-to-paper comparison, and
-finding equations in another field that play the same operational role.
-
-### 2. Mechanism translation
-
-`fieldbridge translate` asks a different question: if the same mechanism were
-constructed in a new field, what would the target-field version look like?
+`fieldbridge translate` asks: if the same mechanism were constructed in a new
+field, what would the target-field version look like?
 
 It does not merely rename keywords. It produces a target formulation containing:
 
@@ -80,6 +170,21 @@ It does not merely rename keywords. It produces a target formulation containing:
 This mode is the more constructive workflow. It is meant for designing new
 experiments, inventions, and theory candidates, while keeping the evidence
 boundary explicit.
+
+The intended outcome is concrete: not "biology is like materials," but a proposed
+state variable, a candidate equation, a measurement, and the control experiment
+that would make the translation fail.
+
+## Supporting Route
+
+### Analog search
+
+`fieldbridge search` asks: where has this mechanism already appeared? It returns
+records from the field packs whose route/fiber profile, equations, variables,
+measurements, and controls match the source mechanism.
+
+This mode is useful for literature navigation, paper-to-paper comparison, and
+finding equations in another field that play the same operational role.
 
 ## What It Does
 

@@ -1,103 +1,108 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="560" viewBox="0 0 1200 560" role="img" aria-labelledby="title desc">
-  <title id="title">FieldBridge workflow</title>
-  <desc id="desc">A source paper is converted into a mechanism sheet, then used either to find existing analogues or translate the mechanism into a new field formulation.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
+  <title id="title">FieldBridge mechanism translation workflow</title>
+  <desc id="desc">A scientific paper is converted into a portable mechanism, then used either to retrieve existing analogues or translate the mechanism into a new scientific field.</desc>
   <defs>
-    <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#07110f"/>
-      <stop offset="0.52" stop-color="#101a16"/>
-      <stop offset="1" stop-color="#17230f"/>
+    <linearGradient id="green" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#65c76f"/>
+      <stop offset="1" stop-color="#0f9b7a"/>
     </linearGradient>
-    <linearGradient id="green" x1="0" x2="1">
-      <stop offset="0" stop-color="#a9e66f"/>
-      <stop offset="1" stop-color="#5fcf9a"/>
+    <linearGradient id="blue" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#3c92ff"/>
+      <stop offset="1" stop-color="#705cff"/>
     </linearGradient>
-    <linearGradient id="blue" x1="0" x2="1">
-      <stop offset="0" stop-color="#69d2ff"/>
-      <stop offset="1" stop-color="#9ddc7a"/>
+    <linearGradient id="ink" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#16231f"/>
+      <stop offset="1" stop-color="#31401e"/>
     </linearGradient>
-    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
-      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000000" flood-opacity="0.32"/>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="124%">
+      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#17321e" flood-opacity="0.16"/>
     </filter>
-    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
-      <path d="M2,2 L10,6 L2,10 Z" fill="#9adf70"/>
+    <marker id="arrowGreen" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#148f70"/>
+    </marker>
+    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto" markerUnits="strokeWidth">
+      <path d="M2,2 L12,7 L2,12 Z" fill="#4f70ff"/>
     </marker>
     <style>
-      .title { font: 700 30px Inter, Arial, sans-serif; fill: #eef7e9; letter-spacing: 0; }
-      .subtitle { font: 400 18px Inter, Arial, sans-serif; fill: #aebbad; letter-spacing: 0; }
-      .label { font: 700 17px Inter, Arial, sans-serif; fill: #ecf8e5; letter-spacing: 0; }
-      .small { font: 400 14px Inter, Arial, sans-serif; fill: #b7c3b2; letter-spacing: 0; }
-      .tiny { font: 600 12px Inter, Arial, sans-serif; fill: #111a12; letter-spacing: .4px; }
-      .pill { font: 700 12px Inter, Arial, sans-serif; fill: #132012; letter-spacing: .3px; }
-      .card { fill: rgba(10, 15, 13, 0.9); stroke: rgba(169, 230, 111, 0.28); stroke-width: 1.5; rx: 8; filter: url(#shadow); }
-      .soft { fill: rgba(28, 42, 33, 0.78); stroke: rgba(169, 230, 111, 0.22); stroke-width: 1; rx: 8; }
-      .line { fill: none; stroke: #9adf70; stroke-width: 3; marker-end: url(#arrow); }
-      .dash { fill: none; stroke: rgba(157, 220, 122, 0.45); stroke-width: 2; stroke-dasharray: 8 8; }
+      .kicker { font: 800 16px Inter, Arial, sans-serif; fill: #148f70; letter-spacing: 1.7px; }
+      .title { font: 800 52px Inter, Arial, sans-serif; fill: #111816; letter-spacing: 0; }
+      .subtitle { font: 400 23px Inter, Arial, sans-serif; fill: #46514b; letter-spacing: 0; }
+      .cardTitle { font: 800 23px Inter, Arial, sans-serif; fill: #15201c; letter-spacing: 0; }
+      .cardText { font: 400 18px Inter, Arial, sans-serif; fill: #4d5852; letter-spacing: 0; }
+      .small { font: 700 14px Inter, Arial, sans-serif; fill: #637067; letter-spacing: .4px; }
+      .pillText { font: 800 13px Inter, Arial, sans-serif; fill: #ffffff; letter-spacing: .8px; }
+      .formula { font: 600 18px "SFMono-Regular", Consolas, monospace; fill: #24342d; letter-spacing: 0; }
+      .card { fill: #ffffff; stroke: #dfe8de; stroke-width: 1.4; rx: 14; filter: url(#shadow); }
+      .softCard { fill: #f7fbf5; stroke: #e2ece0; stroke-width: 1.2; rx: 12; }
+      .greenLine { fill: none; stroke: #148f70; stroke-width: 4; marker-end: url(#arrowGreen); }
+      .blueLine { fill: none; stroke: #4f70ff; stroke-width: 4; marker-end: url(#arrowBlue); }
+      .thin { fill: none; stroke: #d7e7d2; stroke-width: 2; }
     </style>
   </defs>
 
-  <rect width="1200" height="560" fill="url(#bg)"/>
-  <circle cx="1030" cy="90" r="220" fill="#8fd05f" opacity="0.05"/>
-  <circle cx="180" cy="510" r="260" fill="#68d2ff" opacity="0.04"/>
+  <rect width="1400" height="760" fill="#ffffff"/>
+  <circle cx="1210" cy="120" r="260" fill="#e9f8e6"/>
+  <circle cx="110" cy="680" r="300" fill="#eef4ff"/>
+  <path d="M0 612 C210 560 290 640 480 602 C650 568 720 476 890 512 C1110 558 1198 658 1400 588 L1400 760 L0 760 Z" fill="#f6faf3"/>
 
-  <text x="60" y="70" class="title">FieldBridge turns a paper mechanism into two useful actions</text>
-  <text x="60" y="104" class="subtitle">Search for where the same structure already exists, or translate it into a new field formulation.</text>
+  <text x="70" y="78" class="kicker">FIELD BRIDGE / HYPERION PUBLIC WORKBENCH</text>
+  <text x="70" y="142" class="title">Nouns stay local. Mechanisms travel.</text>
+  <text x="72" y="185" class="subtitle">Hyperion-style routes are portable; FieldBridge translates them into new fields.</text>
 
-  <rect x="64" y="166" width="236" height="132" class="card"/>
-  <text x="92" y="205" class="label">1. Source paper</text>
-  <text x="92" y="236" class="small">LaTeX, abstract, paper</text>
-  <text x="92" y="260" class="small">fragment, or claim text</text>
-  <rect x="92" y="276" width="80" height="24" rx="6" fill="url(#green)"/>
-  <text x="112" y="293" class="pill">INPUT</text>
+  <rect x="74" y="246" width="290" height="164" class="card"/>
+  <text x="108" y="294" class="cardTitle">Source paper</text>
+  <text x="108" y="329" class="cardText">LaTeX, abstract, equation,</text>
+  <text x="108" y="356" class="cardText">paper fragment, or claim.</text>
+  <rect x="108" y="374" width="78" height="27" rx="13.5" fill="#17231f"/>
+  <text x="126" y="393" class="pillText">INPUT</text>
 
-  <path d="M300 232 C340 232 352 232 390 232" class="line"/>
+  <path d="M365 328 C420 328 446 328 502 328" class="greenLine"/>
 
-  <rect x="392" y="136" width="302" height="192" class="card"/>
-  <text x="424" y="176" class="label">2. Extracted mechanism</text>
-  <text x="424" y="209" class="small">state q, input u, boundary B, output y</text>
-  <text x="424" y="235" class="small">candidate equations and controls</text>
-  <text x="424" y="261" class="small">route/fiber fingerprint</text>
-  <g transform="translate(424 286)">
-    <rect width="76" height="24" rx="6" fill="#263626"/>
-    <rect x="88" width="72" height="24" rx="6" fill="#263626"/>
-    <rect x="172" width="84" height="24" rx="6" fill="#263626"/>
-    <text x="14" y="17" class="tiny" fill="#a9e66f">FLOW</text>
-    <text x="103" y="17" class="tiny" fill="#a9e66f">CLOSE</text>
-    <text x="188" y="17" class="tiny" fill="#a9e66f">BOUND</text>
+  <rect x="508" y="214" width="360" height="232" class="card"/>
+  <text x="546" y="264" class="cardTitle">Portable route</text>
+  <text x="546" y="300" class="cardText">The field nouns are stripped away.</text>
+  <text x="546" y="328" class="cardText">What remains is an operational form:</text>
+  <rect x="546" y="352" width="276" height="50" rx="10" fill="#f3f8f0" stroke="#dbe9d8"/>
+  <text x="568" y="383" class="formula">q, u, B -> y  + controls</text>
+  <g transform="translate(546 418)">
+    <rect width="86" height="27" rx="13.5" fill="url(#green)"/>
+    <rect x="96" width="92" height="27" rx="13.5" fill="url(#green)"/>
+    <rect x="198" width="98" height="27" rx="13.5" fill="url(#green)"/>
+    <text x="17" y="19" class="pillText">FLOW</text>
+    <text x="111" y="19" class="pillText">CLOSURE</text>
+    <text x="217" y="19" class="pillText">BOUNDARY</text>
   </g>
 
-  <path d="M694 204 C750 168 792 146 846 146" class="line"/>
-  <path d="M694 260 C750 308 792 350 846 370" class="line"/>
+  <path d="M868 292 C940 236 990 208 1072 206" class="blueLine"/>
+  <path d="M868 378 C940 448 992 500 1072 510" class="greenLine"/>
 
-  <rect x="846" y="86" width="292" height="150" class="card"/>
-  <text x="878" y="126" class="label">3A. Analog search</text>
-  <text x="878" y="158" class="small">Find existing equations or mechanisms</text>
-  <text x="878" y="183" class="small">in another field with the same role.</text>
-  <rect x="878" y="204" width="118" height="24" rx="6" fill="url(#blue)"/>
-  <text x="896" y="221" class="pill">RETRIEVAL</text>
+  <rect x="1074" y="140" width="264" height="166" class="card"/>
+  <text x="1106" y="188" class="cardTitle">Supporting route</text>
+  <text x="1106" y="224" class="cardText">Find where the same route</text>
+  <text x="1106" y="251" class="cardText">already appeared.</text>
+  <rect x="1106" y="268" width="100" height="27" rx="13.5" fill="url(#blue)"/>
+  <text x="1124" y="287" class="pillText">SEARCH</text>
 
-  <rect x="846" y="324" width="292" height="166" class="card"/>
-  <text x="878" y="364" class="label">3B. Mechanism translation</text>
-  <text x="878" y="396" class="small">Render the same mechanism with target</text>
-  <text x="878" y="421" class="small">variables, equations, measurements,</text>
-  <text x="878" y="446" class="small">and falsifying controls.</text>
-  <rect x="878" y="462" width="136" height="24" rx="6" fill="url(#green)"/>
-  <text x="894" y="479" class="pill">CONSTRUCTION</text>
+  <rect x="1074" y="454" width="264" height="196" class="card"/>
+  <text x="1106" y="502" class="cardTitle">Main route: translate</text>
+  <text x="1106" y="538" class="cardText">What would this become</text>
+  <text x="1106" y="565" class="cardText">in materials, biology,</text>
+  <text x="1106" y="592" class="cardText">collectives, or patents?</text>
+  <rect x="1106" y="610" width="126" height="27" rx="13.5" fill="url(#green)"/>
+  <text x="1125" y="629" class="pillText">CONSTRUCT</text>
 
-  <path d="M542 328 C542 382 594 422 676 422" class="dash"/>
-  <rect x="596" y="380" width="160" height="82" class="soft"/>
-  <text x="622" y="412" class="small">field packs</text>
-  <text x="622" y="437" class="small">and examples</text>
+  <rect x="74" y="492" width="292" height="120" class="softCard"/>
+  <text x="108" y="536" class="cardTitle">Not keyword similarity</text>
+  <text x="108" y="570" class="cardText">The target is a state variable,</text>
+  <text x="108" y="597" class="cardText">equation, measurement, and control.</text>
 
-  <g transform="translate(66 392)">
-    <rect width="196" height="68" class="soft"/>
-    <text x="24" y="30" class="small">Public version:</text>
-    <text x="24" y="53" class="small">transparent starter engine</text>
-  </g>
-  <g transform="translate(286 392)">
-    <rect width="228" height="68" class="soft"/>
-    <text x="24" y="30" class="small">Optional database:</text>
-    <text x="24" y="53" class="small">fingerprints, witnesses, KNN</text>
-  </g>
+  <rect x="508" y="520" width="360" height="126" class="softCard"/>
+  <text x="546" y="563" class="cardTitle">No LLM required</text>
+  <text x="546" y="598" class="cardText">Transport, closure, spectral/operator,</text>
+  <text x="546" y="625" class="cardText">boundary, incompatibility, protocol.</text>
 
-  <text x="64" y="526" class="small">The public contract stays simple: extract, compare, search, and translate. Stronger private databases improve retrieval without changing the workflow.</text>
+  <path d="M214 480 C240 448 272 432 330 426" class="thin"/>
+  <path d="M688 500 C690 480 690 468 690 450" class="thin"/>
+
+  <text x="70" y="704" class="small">Public starter engine: transparent field packs and deterministic route/fiber fingerprints. Larger Hyperion-style databases can add high-dimensional fingerprints and corpus witnesses.</text>
 </svg>

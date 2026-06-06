@@ -72,8 +72,8 @@ def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="fieldbridge",
         description=(
-            "Extract mechanisms, find analogous equations across fields, "
-            "and translate mechanisms into new field formulations."
+            "No-LLM mechanism translation across fields: extract a portable "
+            "mechanism, find analogues, or render it in a new field formulation."
         ),
     )
     parser.add_argument("--data-dir", default="", help="Optional data directory with field_packs/ and index/.")
