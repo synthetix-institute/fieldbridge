@@ -6,8 +6,8 @@
 - three field packs;
 - mechanism extraction from one paper or fragment;
 - paper-to-paper mechanism comparison;
-- mechanism search;
-- cross-field translation sheet;
+- analog search over existing mechanism records;
+- cross-field mechanism translation sheet;
 - clear evidence boundary.
 
 ## Version 0.2

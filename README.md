@@ -1,13 +1,17 @@
 # FieldBridge
 
-FieldBridge extracts mechanisms from scientific papers and finds structurally
-analogous equations in other fields.
+FieldBridge extracts mechanisms from scientific papers and supports two public
+workflows: it finds structurally analogous equations in other fields, and it
+translates the extracted mechanism into a new field formulation.
 
-It is built for one public task:
+It is built for two related tasks:
 
 ```text
-paper A -> extracted mechanism -> analogous mechanism in field B -> testable translation
+paper A -> extracted mechanism -> analog search in field B
+paper A -> extracted mechanism -> translated mechanism in field B
 ```
+
+![FieldBridge workflow](docs/assets/fieldbridge-workflows.svg)
 
 The comparison is not based on topic words alone. FieldBridge uses a small,
 transparent operational fingerprint: transport, closure, spectral/operator
@@ -25,8 +29,9 @@ FieldBridge can be used as:
 
 - a mechanism extractor for one paper or LaTeX fragment;
 - a paper-to-paper analogy checker;
-- an equation analogy finder across fields;
-- a mechanism translator from one field language into another;
+- an equation analogy finder that retrieves existing cross-field examples;
+- a mechanism translator that renders a source mechanism in a new field's
+  variables, equations, measurements, and falsifying controls;
 - a field-pack format for community contributions;
 - a small public workbench that can later connect to a larger private or
   institutional fingerprint database.
@@ -48,6 +53,34 @@ fieldbridge search examples/bioelectric_regeneration.txt --target-field material
 fieldbridge translate examples/bioelectric_regeneration.txt --to material_intelligence
 ```
 
+## Two Modes
+
+### 1. Analog search
+
+`fieldbridge search` asks: where has a structurally similar mechanism already
+appeared? It returns records from the field packs whose route/fiber profile,
+equations, variables, measurements, and controls match the source mechanism.
+
+This mode is useful for literature navigation, paper-to-paper comparison, and
+finding equations in another field that play the same operational role.
+
+### 2. Mechanism translation
+
+`fieldbridge translate` asks a different question: if the same mechanism were
+constructed in a new field, what would the target-field version look like?
+
+It does not merely rename keywords. It produces a target formulation containing:
+
+- the conserved invariant;
+- target-field state, input, boundary, and output variables;
+- candidate equations or equation skeletons;
+- measurements that would make the mechanism observable;
+- falsifying controls that would kill the translation.
+
+This mode is the more constructive workflow. It is meant for designing new
+experiments, inventions, and theory candidates, while keeping the evidence
+boundary explicit.
+
 ## What It Does
 
 FieldBridge reads a text or LaTeX fragment and returns a mechanism sheet:
@@ -61,8 +94,8 @@ FieldBridge reads a text or LaTeX fragment and returns a mechanism sheet:
 - falsifying controls;
 - active route/fiber structure.
 
-It can then compare that mechanism with another paper or search a field pack for
-analogous mechanisms.
+It can then compare that mechanism with another paper, search a field pack for
+analogous mechanisms, or translate the mechanism into a new target field.
 
 Example:
 

@@ -71,7 +71,10 @@ def cmd_translate(args: argparse.Namespace) -> int:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="fieldbridge",
-        description="Find analogous equations and mechanisms across fields.",
+        description=(
+            "Extract mechanisms, find analogous equations across fields, "
+            "and translate mechanisms into new field formulations."
+        ),
     )
     parser.add_argument("--data-dir", default="", help="Optional data directory with field_packs/ and index/.")
     sub = parser.add_subparsers(required=True)
@@ -83,7 +86,7 @@ def build_parser() -> argparse.ArgumentParser:
     fingerprint.add_argument("input", help="Path or literal text.")
     fingerprint.set_defaults(func=cmd_fingerprint)
 
-    search = sub.add_parser("search", help="Find analogous mechanisms.")
+    search = sub.add_parser("search", help="Find existing analogous mechanisms in field packs.")
     search.add_argument("input", help="Path or literal text.")
     search.add_argument("--target-field", default=None, help="Restrict to a field id.")
     search.add_argument("--top-k", type=int, default=5)
@@ -99,7 +102,10 @@ def build_parser() -> argparse.ArgumentParser:
     compare.add_argument("target", help="Target path or literal text.")
     compare.set_defaults(func=cmd_compare)
 
-    translate = sub.add_parser("translate", help="Translate a mechanism to a target field.")
+    translate = sub.add_parser(
+        "translate",
+        help="Translate an extracted mechanism into a target field formulation.",
+    )
     translate.add_argument("input", help="Path or literal text.")
     translate.add_argument("--to", required=True, help="Target field id.")
     translate.add_argument("--top-k", type=int, default=4)
