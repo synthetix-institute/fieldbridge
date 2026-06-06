@@ -1,0 +1,45 @@
+{
+  "field_id": "material_intelligence",
+  "label": "Material intelligence",
+  "description": "Mechanisms where materials retain state, adapt, compute, actuate, or change response through physical carriers.",
+  "state_words": [
+    "retained material state m(x,t)",
+    "hydration microstructure",
+    "ion distribution",
+    "defect topology",
+    "polarization or percolation state",
+    "surface coverage"
+  ],
+  "input_words": [
+    "thermal writing protocol",
+    "chemical exposure",
+    "voltage or field pulse",
+    "mechanical loading",
+    "light stimulus",
+    "fuel or flow condition"
+  ],
+  "boundary_words": [
+    "sample boundary B",
+    "interface",
+    "membrane",
+    "porous network",
+    "wall or surface condition",
+    "device body"
+  ],
+  "output_words": [
+    "transport",
+    "conductance",
+    "release",
+    "shape",
+    "force",
+    "motion",
+    "actuation"
+  ],
+  "validation_words": [
+    "no-write baseline",
+    "erased or re-equilibrated state",
+    "shuffled history",
+    "boundary swap",
+    "damage or handling control"
+  ]
+}

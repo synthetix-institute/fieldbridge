@@ -1,0 +1,11 @@
+A transient electrical stimulation changes a retained tissue state q(t).
+After the stimulus is removed, later wound repair and morphology remain
+predictable from q. The boundary B is the membrane, wound edge, and tissue
+niche. A closure residual C(q,u,B)=0 tests whether the state is admissible.
+
+partial_t q = W(u,B,t)-q/tau_q
+C(q,u,B)=0
+y(t)=A(q,B)
+
+The mechanism fails if washout, state erasure, or boundary exchange leaves the
+later phenotype unchanged.

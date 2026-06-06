@@ -1,0 +1,358 @@
+[
+  {
+    "record_id": "mat_hydrogel_memory_001",
+    "title": "Hydrogel retained-state transport memory",
+    "field_id": "material_intelligence",
+    "summary": "A thermal, chemical, or swelling protocol writes a retained hydration or microstructural state. After the writing condition is removed, that state changes later transport, release, opacity, modulus, or conductance.",
+    "invariant": "A prior input writes an internal state; after the input is removed, the state changes a later response through a closure law and a boundary condition.",
+    "equations": [
+      "partial_t m = W(T,x,t)-m/tau_m",
+      "partial_t phi_w = nabla cdot(D_w(m,T) nabla phi_w)",
+      "y(t)=A(m,phi_w,B)"
+    ],
+    "variables": [
+      "m(x,t): retained hydration or frustrated microstructure",
+      "T(t): thermal writing protocol",
+      "D_w(m,T): memory-dependent water diffusion coefficient",
+      "B: gel boundary, bath, surface, or device geometry",
+      "y(t): swelling, opacity, release, modulus, conductance, or flux"
+    ],
+    "measurements": [
+      "retention time of m",
+      "swelling or opacity trajectory",
+      "post-write release, conductance, or flux",
+      "residual versus erased-history controls"
+    ],
+    "controls": [
+      "same material without writing protocol",
+      "erased or re-equilibrated sample",
+      "shuffled temperature history",
+      "same final temperature with different write duration"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "hydrogel",
+      "swelling",
+      "hydration",
+      "thermal",
+      "memory",
+      "transport",
+      "release",
+      "diffusion"
+    ],
+    "routes": {
+      "transport_flow_route": 0.93,
+      "constraint_closure_route": 0.78,
+      "spectral_operator_route": 0.28,
+      "boundary_weak_form_route": 0.72,
+      "commutator_incompatibility_route": 0.18,
+      "discrete_protocol_route": 0.33
+    },
+    "fibers": {
+      "structure": 0.78,
+      "spectral": 0.22,
+      "geometry": 0.63,
+      "syntax": 0.52,
+      "entropy": 0.38
+    },
+    "source": "seed"
+  },
+  {
+    "record_id": "mat_droplet_interface_001",
+    "title": "Active droplet interfacial memory",
+    "field_id": "material_intelligence",
+    "summary": "A chemical exposure writes an interfacial or near-field state. After transfer or removal of the writing condition, the retained state changes droplet motion through interfacial stress and force balance.",
+    "invariant": "A prior input writes an internal state; after the input is removed, the state changes a later response through a closure law and a boundary condition.",
+    "equations": [
+      "partial_t Gamma + nabla_S cdot(Gamma u_S)=k_ads c(Gamma_max-Gamma)-k_des Gamma+D_Gamma nabla_S^2 Gamma",
+      "m(t)=int_S Gamma(s,t) cos(theta_s) dS",
+      "0=F_M(m,c)-F_D(U)-F_W(U,B)"
+    ],
+    "variables": [
+      "c(x,t): chemical concentration field",
+      "Gamma(s,t): interfacial coverage state",
+      "m(t): retained interfacial or near-field memory",
+      "B: bath, wall, channel, or surface boundary",
+      "X(t), U(t): droplet position and velocity"
+    ],
+    "measurements": [
+      "surface-tension map",
+      "post-transfer trajectory",
+      "chemotactic index",
+      "force-scale residual"
+    ],
+    "controls": [
+      "written droplet in fresh bath",
+      "fresh droplet in written bath",
+      "chemical swap",
+      "same handling without writing gradient"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "droplet",
+      "marangoni",
+      "interface",
+      "surface",
+      "motion",
+      "memory",
+      "chemical",
+      "force"
+    ],
+    "routes": {
+      "transport_flow_route": 0.96,
+      "constraint_closure_route": 0.82,
+      "spectral_operator_route": 0.16,
+      "boundary_weak_form_route": 0.94,
+      "commutator_incompatibility_route": 0.34,
+      "discrete_protocol_route": 0.2
+    },
+    "fibers": {
+      "structure": 0.84,
+      "spectral": 0.14,
+      "geometry": 0.82,
+      "syntax": 0.6,
+      "entropy": 0.18
+    },
+    "source": "seed"
+  },
+  {
+    "record_id": "bio_bioelectric_regeneration_001",
+    "title": "Bioelectric state controls later tissue repair",
+    "field_id": "biological_intelligence",
+    "summary": "A transient electrical, molecular, or wound signal writes a retained cellular or tissue state. Later repair, morphology, or fate is predicted by that state after the original signal is removed.",
+    "invariant": "A prior input writes an internal state; after the input is removed, the state changes a later response through a closure law and a boundary condition.",
+    "equations": [
+      "partial_t q = W(u,B,t)-q/tau_q",
+      "C(q,u,B)=0",
+      "y(t)=A(q,B)"
+    ],
+    "variables": [
+      "q(t) or q(x,t): retained cellular, bioelectric, immune, or developmental state",
+      "u(t): morphogen, metabolite, electrical, mechanical, immune, or neural signal",
+      "B: membrane, tissue niche, wound boundary, organoid compartment, or assay boundary",
+      "y(t): phenotype, migration, secretion, repair, morphology, or fate response"
+    ],
+    "measurements": [
+      "state retention after washout",
+      "later phenotype or repair response",
+      "boundary or niche sweep",
+      "prediction residual against erased controls"
+    ],
+    "controls": [
+      "washout",
+      "state erasure",
+      "same input with altered tissue boundary",
+      "same final state with different history"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "cell",
+      "tissue",
+      "bioelectric",
+      "regeneration",
+      "repair",
+      "memory",
+      "state",
+      "wound"
+    ],
+    "routes": {
+      "transport_flow_route": 0.72,
+      "constraint_closure_route": 0.86,
+      "spectral_operator_route": 0.26,
+      "boundary_weak_form_route": 0.76,
+      "commutator_incompatibility_route": 0.22,
+      "discrete_protocol_route": 0.48
+    },
+    "fibers": {
+      "structure": 0.82,
+      "spectral": 0.25,
+      "geometry": 0.58,
+      "syntax": 0.7,
+      "entropy": 0.28
+    },
+    "source": "seed"
+  },
+  {
+    "record_id": "bio_grn_feedback_001",
+    "title": "Gene regulatory feedback state",
+    "field_id": "biological_intelligence",
+    "summary": "A regulatory signal changes an internal network state. Feedback and closure determine whether the state remains admissible and produces a later phenotype.",
+    "invariant": "A protocol updates an internal state under closure constraints; later output depends on the updated state rather than only on the current input.",
+    "equations": [
+      "q_{n+1}=P(q_n,u_n,B)",
+      "C(q_n,B)=0",
+      "y_n=A(q_n,B)"
+    ],
+    "variables": [
+      "q_n: regulatory network state",
+      "u_n: perturbation, signal, or treatment",
+      "B: cell type, niche, compartment, or assay boundary",
+      "y_n: fate, expression pattern, phenotype, or secretion"
+    ],
+    "measurements": [
+      "state transition trajectory",
+      "delayed phenotype",
+      "feedback perturbation response",
+      "prediction error under shuffled protocol"
+    ],
+    "controls": [
+      "wrong signal order",
+      "network-state reset",
+      "same final input with different history",
+      "boundary or cell-type swap"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "gene",
+      "regulatory",
+      "feedback",
+      "network",
+      "protocol",
+      "state",
+      "phenotype"
+    ],
+    "routes": {
+      "transport_flow_route": 0.42,
+      "constraint_closure_route": 0.84,
+      "spectral_operator_route": 0.48,
+      "boundary_weak_form_route": 0.5,
+      "commutator_incompatibility_route": 0.28,
+      "discrete_protocol_route": 0.92
+    },
+    "fibers": {
+      "structure": 0.9,
+      "spectral": 0.52,
+      "geometry": 0.28,
+      "syntax": 0.63,
+      "entropy": 0.36
+    },
+    "source": "seed"
+  },
+  {
+    "record_id": "coll_swarm_pheromone_001",
+    "title": "Collective trace-mediated route choice",
+    "field_id": "collective_intelligence",
+    "summary": "Local agents write an environmental trace. Later agents read the trace through boundary and update rules, producing route choice, allocation, or collective action.",
+    "invariant": "A prior input writes an internal or environmental state; after the input is removed, the state changes a later response through a closure law and a boundary condition.",
+    "equations": [
+      "m_{t+1}=rho m_t + W(a_t,B)",
+      "pi_{t+1}=P(pi_t,m_t,u_t)",
+      "action_t=A(pi_t,m_t,B)"
+    ],
+    "variables": [
+      "m_t: retained trace, memory, record, or environmental mark",
+      "pi_t: agent or group policy state",
+      "u_t: signal, task cue, reward, or local interaction",
+      "B: network, platform, arena, institution, or task boundary",
+      "action_t: route choice, consensus, allocation, cascade, or group response"
+    ],
+    "measurements": [
+      "trace retention",
+      "route choice distribution",
+      "consensus or allocation response",
+      "performance under erased trace"
+    ],
+    "controls": [
+      "trace erasure",
+      "randomized communication",
+      "network rewiring",
+      "same final trace with shuffled history"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "collective",
+      "swarm",
+      "trace",
+      "memory",
+      "route",
+      "agent",
+      "consensus",
+      "allocation"
+    ],
+    "routes": {
+      "transport_flow_route": 0.58,
+      "constraint_closure_route": 0.62,
+      "spectral_operator_route": 0.24,
+      "boundary_weak_form_route": 0.58,
+      "commutator_incompatibility_route": 0.18,
+      "discrete_protocol_route": 0.88
+    },
+    "fibers": {
+      "structure": 0.78,
+      "spectral": 0.24,
+      "geometry": 0.36,
+      "syntax": 0.62,
+      "entropy": 0.54
+    },
+    "source": "seed"
+  },
+  {
+    "record_id": "coll_institutional_memory_001",
+    "title": "Institutional rule memory and delayed action",
+    "field_id": "collective_intelligence",
+    "summary": "A rule, record, or precedent stores a collective state. Later decisions are constrained by that retained state and by the boundary of the institution or platform.",
+    "invariant": "A protocol updates an internal state under closure constraints; later output depends on the updated state rather than only on the current input.",
+    "equations": [
+      "m_{t+1}=P(m_t,u_t,B)",
+      "C(m_t,B)=0",
+      "a_t=A(m_t,u_t,B)"
+    ],
+    "variables": [
+      "m_t: rule, memory, record, precedent, or shared belief",
+      "u_t: event, signal, proposal, or incentive",
+      "B: institution, platform, network, or governance boundary",
+      "a_t: decision, allocation, consensus, sanction, or collective action"
+    ],
+    "measurements": [
+      "decision shift after rule update",
+      "delayed action",
+      "network or platform boundary response",
+      "prediction residual under erased rule history"
+    ],
+    "controls": [
+      "erase or hide record",
+      "randomize rule order",
+      "network boundary swap",
+      "same current input with different institutional history"
+    ],
+    "references": [
+      "community: add field-specific DOI/arXiv references here"
+    ],
+    "keywords": [
+      "institution",
+      "rule",
+      "record",
+      "precedent",
+      "memory",
+      "decision",
+      "collective",
+      "protocol"
+    ],
+    "routes": {
+      "transport_flow_route": 0.34,
+      "constraint_closure_route": 0.92,
+      "spectral_operator_route": 0.18,
+      "boundary_weak_form_route": 0.66,
+      "commutator_incompatibility_route": 0.26,
+      "discrete_protocol_route": 0.86
+    },
+    "fibers": {
+      "structure": 0.84,
+      "spectral": 0.16,
+      "geometry": 0.24,
+      "syntax": 0.72,
+      "entropy": 0.44
+    },
+    "source": "seed"
+  }
+]

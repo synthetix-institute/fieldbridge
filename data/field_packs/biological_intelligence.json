@@ -1,0 +1,44 @@
+{
+  "field_id": "biological_intelligence",
+  "label": "Biological intelligence",
+  "description": "Mechanisms where cells, tissues, organs, or organisms retain state and convert signals into later phenotype or repair.",
+  "state_words": [
+    "cellular state q(t)",
+    "tissue memory field q(x,t)",
+    "bioelectric state",
+    "immune state",
+    "developmental state",
+    "gene regulatory state"
+  ],
+  "input_words": [
+    "morphogen signal",
+    "metabolite",
+    "mechanical stimulus",
+    "electrical cue",
+    "immune cue",
+    "neural input"
+  ],
+  "boundary_words": [
+    "membrane",
+    "tissue niche",
+    "wound boundary",
+    "organoid compartment",
+    "assay boundary",
+    "organ boundary"
+  ],
+  "output_words": [
+    "phenotype",
+    "migration",
+    "secretion",
+    "repair",
+    "morphology",
+    "cell fate"
+  ],
+  "validation_words": [
+    "washout",
+    "erasure",
+    "state perturbation",
+    "boundary change",
+    "same input with altered tissue context"
+  ]
+}

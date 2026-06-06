@@ -1,0 +1,9 @@
+Agents write a shared environmental trace m_t. Later agents read this trace
+through a network boundary B and update their policy pi_t.
+
+m_{t+1}=rho m_t+W(a_t,B)
+pi_{t+1}=P(pi_t,m_t,u_t)
+action_t=A(pi_t,m_t,B)
+
+The claim fails if trace erasure or network rewiring does not change the later
+collective route choice.

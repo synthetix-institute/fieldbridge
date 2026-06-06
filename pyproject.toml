@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fieldbridge"
+version = "0.1.0"
+description = "Find structurally analogous equations and mechanisms across scientific fields."
+readme = "README.md"
+requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+  { name = "FieldBridge contributors" }
+]
+keywords = ["equations", "mechanisms", "analogy", "scientific-discovery", "knowledge-graph"]
+dependencies = []
+
+[project.scripts]
+fieldbridge = "fieldbridge.cli:main"
+
+[tool.setuptools]
+packages = ["fieldbridge"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
