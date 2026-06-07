@@ -8,7 +8,10 @@
     "shared trace",
     "environmental mark",
     "coordination state",
-    "policy state"
+    "policy state",
+    "retained trace, memory, record, or environmental mark",
+    "agent or group policy state",
+    "rule, memory, record, precedent, or shared belief"
   ],
   "input_words": [
     "signal",
@@ -16,7 +19,9 @@
     "resource gradient",
     "message",
     "reward",
-    "local interaction"
+    "local interaction",
+    "signal, task cue, reward, or local interaction",
+    "event, signal, proposal, or incentive"
   ],
   "boundary_words": [
     "network boundary",
@@ -24,7 +29,9 @@
     "institution",
     "task environment",
     "communication topology",
-    "arena"
+    "arena",
+    "network, platform, arena, institution, or task boundary",
+    "institution, platform, network, or governance boundary"
   ],
   "output_words": [
     "route choice",
@@ -32,13 +39,20 @@
     "allocation",
     "cascade",
     "collective action",
-    "group response"
+    "group response",
+    "route choice, consensus, allocation, cascade, or group response",
+    "decision, allocation, consensus, sanction, or collective action"
   ],
   "validation_words": [
     "randomized communication",
     "memory erasure",
     "network rewiring",
     "delayed readout",
-    "same final state with different history"
+    "same final state with different history",
+    "trace erasure",
+    "same final trace with shuffled history",
+    "erase or hide record",
+    "randomize rule order",
+    "network boundary swap"
   ]
 }

@@ -55,18 +55,29 @@ def score_record(query: str, query_fp: Fingerprint, record: MechanismRecord) -> 
     )
 
 
+def is_hyperion_record(record: MechanismRecord) -> bool:
+    return record.field_id == "hyperion_equation" or record.source == "hyperion_equation_witnesses"
+
+
+def record_matches_field(record: MechanismRecord, target_field: Optional[str]) -> bool:
+    if target_field is None:
+        return True
+    return record.field_id == target_field or target_field in (record.target_fields or [])
+
+
 def find_analogs(
     text: str,
     target_field: Optional[str] = None,
     data_dir: Path | None = None,
     top_k: int = 5,
+    include_hyperion: bool = False,
 ) -> List[AnalogyMatch]:
-    _, records = load_all(data_dir)
+    _, records = load_all(data_dir, include_static_index=include_hyperion)
     query_fp = fingerprint_text(text)
     scored = [
         score_record(text, query_fp, record)
         for record in records
-        if target_field is None or record.field_id == target_field
+        if record_matches_field(record, target_field)
     ]
     return sorted(scored, key=lambda item: item.score, reverse=True)[:top_k]
 
@@ -86,13 +97,36 @@ def translate_mechanism(
     target_field: str,
     data_dir: Path | None = None,
     top_k: int = 4,
+    include_hyperion: bool = True,
 ) -> Translation:
     field_packs, _ = load_all(data_dir)
     target = field_by_id(field_packs, target_field)
-    matches = find_analogs(text, target_field=target_field, data_dir=data_dir, top_k=top_k)
+    native_matches = find_analogs(
+        text,
+        target_field=target_field,
+        data_dir=data_dir,
+        top_k=max(1, top_k),
+        include_hyperion=False,
+    )
+    evidence_matches = (
+        [
+            match
+            for match in find_analogs(
+                text,
+                target_field=target_field,
+                data_dir=data_dir,
+                top_k=max(top_k * 2, top_k),
+                include_hyperion=True,
+            )
+            if is_hyperion_record(match.record)
+        ]
+        if include_hyperion
+        else []
+    )
+    matches = (native_matches[: max(1, top_k - 2)] + evidence_matches[:top_k])[:top_k]
     source_fp = fingerprint_text(text)
-    if matches:
-        best = matches[0].record
+    if native_matches:
+        best = native_matches[0].record
         formulation = best.summary
         variables = best.variables
         equations = best.equations
@@ -126,7 +160,8 @@ def translate_mechanism(
         controls=controls,
         evidence_boundary=(
             "FieldBridge proposes a structural analogue. It is evidence-backed only by "
-            "the shipped examples and deterministic route/fiber fingerprint unless a full "
-            "external fingerprint database is supplied."
+            "the shipped examples, deterministic route/fiber fingerprint, and optional "
+            "Hyperion static witness index. Raw arXiv witnesses are audit evidence, not "
+            "the translated mechanism."
         ),
     )

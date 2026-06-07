@@ -37,6 +37,7 @@ def cmd_search(args: argparse.Namespace) -> int:
         target_field=args.target_field,
         data_dir=Path(args.data_dir) if args.data_dir else None,
         top_k=args.top_k,
+        include_hyperion=args.include_hyperion,
     )
     print(render_search(matches))
     return 0
@@ -63,6 +64,7 @@ def cmd_translate(args: argparse.Namespace) -> int:
         target_field=args.to,
         data_dir=Path(args.data_dir) if args.data_dir else None,
         top_k=args.top_k,
+        include_hyperion=not args.no_hyperion,
     )
     print(render_translation(translation))
     return 0
@@ -90,6 +92,7 @@ def build_parser() -> argparse.ArgumentParser:
     search.add_argument("input", help="Path or literal text.")
     search.add_argument("--target-field", default=None, help="Restrict to a field id.")
     search.add_argument("--top-k", type=int, default=5)
+    search.add_argument("--include-hyperion", action="store_true", help="Include Hyperion static witness records as audit evidence.")
     search.set_defaults(func=cmd_search)
 
     extract = sub.add_parser("extract", help="Extract a mechanism sheet from one paper or fragment.")
@@ -109,6 +112,7 @@ def build_parser() -> argparse.ArgumentParser:
     translate.add_argument("input", help="Path or literal text.")
     translate.add_argument("--to", required=True, help="Target field id.")
     translate.add_argument("--top-k", type=int, default=4)
+    translate.add_argument("--no-hyperion", action="store_true", help="Use only field-pack anchors, without Hyperion witness evidence.")
     translate.set_defaults(func=cmd_translate)
     return parser
 

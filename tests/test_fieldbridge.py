@@ -1,4 +1,5 @@
 from fieldbridge.routes import fingerprint_text
+from fieldbridge.database import load_field_evidence, load_static_index_records
 from fieldbridge.extract import compare_mechanisms, extract_mechanism
 from fieldbridge.search import find_analogs, translate_mechanism
 
@@ -23,6 +24,24 @@ def test_translate_has_controls():
     assert translation.controls
     assert translation.equations
     assert translation.target_field.field_id == "collective_intelligence"
+
+
+def test_hyperion_static_index_can_support_search():
+    records = load_static_index_records(max_records=3)
+    assert records
+    assert records[0].field_id == "hyperion_equation"
+    matches = find_analogs(
+        "boundary closure transport equation",
+        target_field="material_intelligence",
+        include_hyperion=True,
+    )
+    assert matches
+
+
+def test_field_evidence_sidecars_load():
+    evidence = load_field_evidence()
+    assert "material_intelligence" in evidence
+    assert evidence["material_intelligence"]["telemetry"]["atlas_candidate_witnesses"] > 0
 
 
 def test_extract_returns_mechanism_sheet():

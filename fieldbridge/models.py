@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 
 @dataclass(frozen=True)
@@ -53,6 +53,8 @@ class MechanismRecord:
     routes: Dict[str, float]
     fibers: Dict[str, float]
     source: Optional[str] = None
+    target_fields: List[str] = field(default_factory=list)
+    hyperion: Optional[Dict[str, Any]] = None
 
     def fingerprint(self) -> Fingerprint:
         return Fingerprint(routes=self.routes, fibers=self.fibers, hits={})

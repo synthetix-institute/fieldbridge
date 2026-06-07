@@ -8,7 +8,11 @@
     "ion distribution",
     "defect topology",
     "polarization or percolation state",
-    "surface coverage"
+    "surface coverage",
+    "retained hydration or frustrated microstructure",
+    "memory-dependent water diffusion coefficient",
+    "interfacial coverage state",
+    "retained interfacial or near-field memory"
   ],
   "input_words": [
     "thermal writing protocol",
@@ -24,7 +28,9 @@
     "membrane",
     "porous network",
     "wall or surface condition",
-    "device body"
+    "device body",
+    "gel boundary, bath, surface, or device geometry",
+    "bath, wall, channel, or surface boundary"
   ],
   "output_words": [
     "transport",
@@ -33,13 +39,19 @@
     "shape",
     "force",
     "motion",
-    "actuation"
+    "actuation",
+    "swelling, opacity, release, modulus, conductance, or flux"
   ],
   "validation_words": [
     "no-write baseline",
     "erased or re-equilibrated state",
     "shuffled history",
     "boundary swap",
-    "damage or handling control"
+    "damage or handling control",
+    "same material without writing protocol",
+    "erased or re-equilibrated sample",
+    "shuffled temperature history",
+    "same final temperature with different write duration",
+    "written droplet in fresh bath"
   ]
 }

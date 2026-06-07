@@ -1,0 +1,35 @@
+{
+  "schema_version": 1,
+  "generated_at": "2026-06-07T09:35:57.840098+00:00",
+  "source": "Hyperion/FieldBridge functional data export",
+  "fields": [
+    {
+      "field_id": "material_intelligence",
+      "field_pack": "field_packs/material_intelligence.json",
+      "evidence": "field_pack_evidence/material_intelligence.json",
+      "native_mechanism_anchors": 2,
+      "atlas_candidate_witnesses": 40,
+      "atlas_total_pool_witnesses": 2633
+    },
+    {
+      "field_id": "biological_intelligence",
+      "field_pack": "field_packs/biological_intelligence.json",
+      "evidence": "field_pack_evidence/biological_intelligence.json",
+      "native_mechanism_anchors": 2,
+      "atlas_candidate_witnesses": 76,
+      "atlas_total_pool_witnesses": 2633
+    },
+    {
+      "field_id": "collective_intelligence",
+      "field_pack": "field_packs/collective_intelligence.json",
+      "evidence": "field_pack_evidence/collective_intelligence.json",
+      "native_mechanism_anchors": 2,
+      "atlas_candidate_witnesses": 67,
+      "atlas_total_pool_witnesses": 2633
+    }
+  ],
+  "index": {
+    "core_examples": "index/core_examples.json",
+    "hyperion_static_index": "index/hyperion_static_index.json"
+  }
+}

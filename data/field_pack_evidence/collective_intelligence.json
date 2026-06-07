@@ -1,0 +1,804 @@
+{
+  "schema_version": 1,
+  "field_id": "collective_intelligence",
+  "label": "Collective intelligence",
+  "generated_at": "2026-06-07T09:35:57.840098+00:00",
+  "source_artifacts": {
+    "hyperion_index": "discoveries/fieldbridge_static_index/hyperion_static_index.json",
+    "core_records": "scripts/fieldbridge_seed/core_examples.json",
+    "field_pack": "scripts/fieldbridge_seed/field_packs/collective_intelligence.json"
+  },
+  "claim_boundary": "This evidence sidecar links a field vocabulary pack to Hyperion route/fiber fingerprints and arXiv witnesses. It supports analogy search; it does not prove physical equivalence.",
+  "route_priors": {
+    "transport_flow_route": 0.1309,
+    "constraint_closure_route": 0.1375,
+    "spectral_operator_route": 0.0863,
+    "boundary_weak_form_route": 0.0937,
+    "commutator_incompatibility_route": 0.0356,
+    "discrete_protocol_route": 0.2824
+  },
+  "fiber_priors": {
+    "structure": 0.3544,
+    "spectral": 0.3367,
+    "geometry": 0.3221,
+    "syntax": 0.5882,
+    "entropy": 0.4164
+  },
+  "mechanism_anchors": [
+    {
+      "record_id": "coll_swarm_pheromone_001",
+      "title": "Collective trace-mediated route choice",
+      "summary": "Local agents write an environmental trace. Later agents read the trace through boundary and update rules, producing route choice, allocation, or collective action.",
+      "references": [
+        "dorigo_ant_colony_2006",
+        "woolley_collective_2010"
+      ],
+      "routes": {
+        "transport_flow_route": 0.58,
+        "constraint_closure_route": 0.62,
+        "spectral_operator_route": 0.24,
+        "boundary_weak_form_route": 0.58,
+        "commutator_incompatibility_route": 0.18,
+        "discrete_protocol_route": 0.88
+      },
+      "fibers": {
+        "structure": 0.78,
+        "spectral": 0.24,
+        "geometry": 0.36,
+        "syntax": 0.62,
+        "entropy": 0.54
+      },
+      "variables": [
+        "m_t: retained trace, memory, record, or environmental mark",
+        "pi_t: agent or group policy state",
+        "u_t: signal, task cue, reward, or local interaction",
+        "B: network, platform, arena, institution, or task boundary",
+        "action_t: route choice, consensus, allocation, cascade, or group response"
+      ],
+      "equations": [
+        "m_{t+1}=rho m_t + W(a_t,B)",
+        "pi_{t+1}=P(pi_t,m_t,u_t)",
+        "action_t=A(pi_t,m_t,B)"
+      ]
+    },
+    {
+      "record_id": "coll_institutional_memory_001",
+      "title": "Institutional rule memory and delayed action",
+      "summary": "A rule, record, or precedent stores a collective state. Later decisions are constrained by that retained state and by the boundary of the institution or platform.",
+      "references": [
+        "woolley_collective_2010",
+        "woolley_group_performance_2015"
+      ],
+      "routes": {
+        "transport_flow_route": 0.34,
+        "constraint_closure_route": 0.92,
+        "spectral_operator_route": 0.18,
+        "boundary_weak_form_route": 0.66,
+        "commutator_incompatibility_route": 0.26,
+        "discrete_protocol_route": 0.86
+      },
+      "fibers": {
+        "structure": 0.84,
+        "spectral": 0.16,
+        "geometry": 0.24,
+        "syntax": 0.72,
+        "entropy": 0.44
+      },
+      "variables": [
+        "m_t: rule, memory, record, precedent, or shared belief",
+        "u_t: event, signal, proposal, or incentive",
+        "B: institution, platform, network, or governance boundary",
+        "a_t: decision, allocation, consensus, sanction, or collective action"
+      ],
+      "equations": [
+        "m_{t+1}=P(m_t,u_t,B)",
+        "C(m_t,B)=0",
+        "a_t=A(m_t,u_t,B)"
+      ]
+    }
+  ],
+  "atlas_evidence": [
+    {
+      "record_id": "hyperion:EW000003166",
+      "title": "Α09 witness EW000003166 / arXiv:1510.02612",
+      "score_to_field_centroid": 0.8223,
+      "score_to_field_lexicon": 0.014,
+      "fieldbridge_rank": 0.6453,
+      "paper_id": "1510.02612",
+      "arxiv_url": "https://arxiv.org/abs/1510.02612",
+      "apparatus_regime": "Α09",
+      "omega_tokens": "Ω26 ⊕ Ω05 ⊕ Ω03",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.4457,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.4457
+      },
+      "fibers": {
+        "structure": 0.5,
+        "spectral": 0.5,
+        "geometry": 0.0,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1510.02612"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003376",
+      "title": "Α10 witness EW000003376 / arXiv:2006.13679",
+      "score_to_field_centroid": 0.8119,
+      "score_to_field_lexicon": 0.0225,
+      "fieldbridge_rank": 0.6397,
+      "paper_id": "2006.13679",
+      "arxiv_url": "https://arxiv.org/abs/2006.13679",
+      "apparatus_regime": "Α10",
+      "omega_tokens": "Ω04 ⊕ Ω09 ⊕ Ω07",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2882,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5857,
+        "entropy": 0.4143
+      },
+      "references": [
+        "arxiv:2006.13679"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003154",
+      "title": "Α09 witness EW000003154 / arXiv:gr-qc0303063",
+      "score_to_field_centroid": 0.8076,
+      "score_to_field_lexicon": 0.0253,
+      "fieldbridge_rank": 0.6373,
+      "paper_id": "gr-qc0303063",
+      "arxiv_url": "https://arxiv.org/abs/gr-qc/0303063",
+      "apparatus_regime": "Α09",
+      "omega_tokens": "Ω26 ⊕ Ω05 ⊕ Ω03",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.4457,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.4457
+      },
+      "fibers": {
+        "structure": 0.5,
+        "spectral": 0.5,
+        "geometry": 0.2882,
+        "syntax": 0.5859,
+        "entropy": 0.4141
+      },
+      "references": [
+        "arxiv:gr-qc0303063"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003297",
+      "title": "Α08 witness EW000003297 / arXiv:2112.01538",
+      "score_to_field_centroid": 0.7972,
+      "score_to_field_lexicon": 0.0169,
+      "fieldbridge_rank": 0.6278,
+      "paper_id": "2112.01538",
+      "arxiv_url": "https://arxiv.org/abs/2112.01538",
+      "apparatus_regime": "Α08",
+      "omega_tokens": "Ω22 ⊕ Ω21 ⊕ Ω19",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3334,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2112.01538"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003281",
+      "title": "Α08 witness EW000003281 / arXiv:2310.15115",
+      "score_to_field_centroid": 0.7972,
+      "score_to_field_lexicon": 0.014,
+      "fieldbridge_rank": 0.6272,
+      "paper_id": "2310.15115",
+      "arxiv_url": "https://arxiv.org/abs/2310.15115",
+      "apparatus_regime": "Α08",
+      "omega_tokens": "Ω22 ⊕ Ω21 ⊕ Ω19",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5857,
+        "entropy": 0.4143
+      },
+      "references": [
+        "arxiv:2310.15115"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000362",
+      "title": "Α05 witness EW000000362 / arXiv:2212.06409",
+      "score_to_field_centroid": 0.7857,
+      "score_to_field_lexicon": 0.0112,
+      "fieldbridge_rank": 0.6183,
+      "paper_id": "2212.06409",
+      "arxiv_url": "https://arxiv.org/abs/2212.06409",
+      "apparatus_regime": "Α05",
+      "omega_tokens": "Ω01 ⊕ Ω05 ⊕ Ω02",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.2212,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.4457
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2212.06409"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003763",
+      "title": "Α10 witness EW000003763 / arXiv:hep-lat9608080",
+      "score_to_field_centroid": 0.7821,
+      "score_to_field_lexicon": 0.0393,
+      "fieldbridge_rank": 0.6221,
+      "paper_id": "hep-lat9608080",
+      "arxiv_url": "https://arxiv.org/abs/hep-lat/9608080",
+      "apparatus_regime": "Α10",
+      "omega_tokens": "Ω09 ⊕ Ω07 ⊕ Ω06",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.1813,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.4457,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3334,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:hep-lat9608080"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000062",
+      "title": "Α00 witness EW000000062 / arXiv:0710.3703",
+      "score_to_field_centroid": 0.7792,
+      "score_to_field_lexicon": 0.0225,
+      "fieldbridge_rank": 0.6162,
+      "paper_id": "0710.3703",
+      "arxiv_url": "https://arxiv.org/abs/0710.3703",
+      "apparatus_regime": "Α00",
+      "omega_tokens": "Ω04 ⊕ Ω14 ⊕ Ω00",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.4457
+      },
+      "fibers": {
+        "structure": 0.3334,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:0710.3703"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000449",
+      "title": "Α05 witness EW000000449 / arXiv:2101.07524",
+      "score_to_field_centroid": 0.7792,
+      "score_to_field_lexicon": 0.0281,
+      "fieldbridge_rank": 0.6175,
+      "paper_id": "2101.07524",
+      "arxiv_url": "https://arxiv.org/abs/2101.07524",
+      "apparatus_regime": "Α05",
+      "omega_tokens": "Ω01 ⊕ Ω11 ⊕ Ω05",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.4457
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2101.07524"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000001094",
+      "title": "Α01 witness EW000001094 / arXiv:2212.00688",
+      "score_to_field_centroid": 0.7767,
+      "score_to_field_lexicon": 0.0281,
+      "fieldbridge_rank": 0.6157,
+      "paper_id": "2212.00688",
+      "arxiv_url": "https://arxiv.org/abs/2212.00688",
+      "apparatus_regime": "Α01",
+      "omega_tokens": "Ω13 ⊕ Ω19 ⊕ Ω20",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2882,
+        "commutator_incompatibility_route": 0.2882,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2212.00688"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003388",
+      "title": "Α10 witness EW000003388 / arXiv:1311.3490",
+      "score_to_field_centroid": 0.7681,
+      "score_to_field_lexicon": 0.0112,
+      "fieldbridge_rank": 0.6056,
+      "paper_id": "1311.3490",
+      "arxiv_url": "https://arxiv.org/abs/1311.3490",
+      "apparatus_regime": "Α10",
+      "omega_tokens": "Ω04 ⊕ Ω09 ⊕ Ω07",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.4457,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1311.3490"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003578",
+      "title": "Α03 witness EW000003578 / arXiv:1703.07297",
+      "score_to_field_centroid": 0.7681,
+      "score_to_field_lexicon": 0.0112,
+      "fieldbridge_rank": 0.6056,
+      "paper_id": "1703.07297",
+      "arxiv_url": "https://arxiv.org/abs/1703.07297",
+      "apparatus_regime": "Α03",
+      "omega_tokens": "Ω16 ⊕ Ω13 ⊕ Ω10",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.4457,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1703.07297"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000479",
+      "title": "Α11 witness EW000000479 / arXiv:hep-th0112203",
+      "score_to_field_centroid": 0.7681,
+      "score_to_field_lexicon": 0.0337,
+      "fieldbridge_rank": 0.6108,
+      "paper_id": "hep-th0112203",
+      "arxiv_url": "https://arxiv.org/abs/hep-th/0112203",
+      "apparatus_regime": "Α11",
+      "omega_tokens": "Ω00 ⊕ Ω12 ⊕ Ω14",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.4457,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:hep-th0112203"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000120",
+      "title": "Α00 witness EW000000120 / arXiv:1903.11687",
+      "score_to_field_centroid": 0.7604,
+      "score_to_field_lexicon": 0.0169,
+      "fieldbridge_rank": 0.6013,
+      "paper_id": "1903.11687",
+      "arxiv_url": "https://arxiv.org/abs/1903.11687",
+      "apparatus_regime": "Α00",
+      "omega_tokens": "Ω14 ⊕ Ω01 ⊕ Ω08",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.4934,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3334,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1903.11687"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003819",
+      "title": "Α10 witness EW000003819 / arXiv:1203.3998",
+      "score_to_field_centroid": 0.759,
+      "score_to_field_lexicon": 0.0225,
+      "fieldbridge_rank": 0.6016,
+      "paper_id": "1203.3998",
+      "arxiv_url": "https://arxiv.org/abs/1203.3998",
+      "apparatus_regime": "Α10",
+      "omega_tokens": "Ω09 ⊕ Ω06 ⊕ Ω10",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2882,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1203.3998"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000188",
+      "title": "Α07 witness EW000000188 / arXiv:0903.5323",
+      "score_to_field_centroid": 0.759,
+      "score_to_field_lexicon": 0.0169,
+      "fieldbridge_rank": 0.6003,
+      "paper_id": "0903.5323",
+      "arxiv_url": "https://arxiv.org/abs/0903.5323",
+      "apparatus_regime": "Α07",
+      "omega_tokens": "Ω15 ⊕ Ω14 ⊕ Ω02",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2882,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:0903.5323"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000452",
+      "title": "Α05 witness EW000000452 / arXiv:1709.03841",
+      "score_to_field_centroid": 0.759,
+      "score_to_field_lexicon": 0.0253,
+      "fieldbridge_rank": 0.6023,
+      "paper_id": "1709.03841",
+      "arxiv_url": "https://arxiv.org/abs/1709.03841",
+      "apparatus_regime": "Α05",
+      "omega_tokens": "Ω01 ⊕ Ω11 ⊕ Ω05",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2882,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5859,
+        "entropy": 0.4141
+      },
+      "references": [
+        "arxiv:1709.03841"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000225",
+      "title": "Α07 witness EW000000225 / arXiv:2501.04379",
+      "score_to_field_centroid": 0.7541,
+      "score_to_field_lexicon": 0.0197,
+      "fieldbridge_rank": 0.5975,
+      "paper_id": "2501.04379",
+      "arxiv_url": "https://arxiv.org/abs/2501.04379",
+      "apparatus_regime": "Α07",
+      "omega_tokens": "Ω02 ⊕ Ω07 ⊕ Ω03",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.4173,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3334,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2501.04379"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000355",
+      "title": "Α05 witness EW000000355 / arXiv:1312.3575",
+      "score_to_field_centroid": 0.7541,
+      "score_to_field_lexicon": 0.0169,
+      "fieldbridge_rank": 0.5968,
+      "paper_id": "1312.3575",
+      "arxiv_url": "https://arxiv.org/abs/1312.3575",
+      "apparatus_regime": "Α05",
+      "omega_tokens": "Ω01 ⊕ Ω05 ⊕ Ω02",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.4173,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:1312.3575"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000001082",
+      "title": "Α03 witness EW000001082 / arXiv:2306.17265",
+      "score_to_field_centroid": 0.7535,
+      "score_to_field_lexicon": 0.0225,
+      "fieldbridge_rank": 0.5977,
+      "paper_id": "2306.17265",
+      "arxiv_url": "https://arxiv.org/abs/2306.17265",
+      "apparatus_regime": "Α03",
+      "omega_tokens": "Ω06 ⊕ Ω16 ⊕ Ω05",
+      "routes": {
+        "transport_flow_route": 0.4984,
+        "constraint_closure_route": 0.4173,
+        "spectral_operator_route": 0.2882,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2306.17265"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000002011",
+      "title": "Α02 witness EW000002011 / arXiv:2409.13367",
+      "score_to_field_centroid": 0.7517,
+      "score_to_field_lexicon": 0.0112,
+      "fieldbridge_rank": 0.5938,
+      "paper_id": "2409.13367",
+      "arxiv_url": "https://arxiv.org/abs/2409.13367",
+      "apparatus_regime": "Α02",
+      "omega_tokens": "Ω16 ⊕ Ω18 ⊕ Ω13",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.2882,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2409.13367"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000003247",
+      "title": "Α08 witness EW000003247 / arXiv:2108.06720",
+      "score_to_field_centroid": 0.7498,
+      "score_to_field_lexicon": 0.0225,
+      "fieldbridge_rank": 0.595,
+      "paper_id": "2108.06720",
+      "arxiv_url": "https://arxiv.org/abs/2108.06720",
+      "apparatus_regime": "Α08",
+      "omega_tokens": "Ω22 ⊕ Ω21 ⊕ Ω19",
+      "routes": {
+        "transport_flow_route": 0.2882,
+        "constraint_closure_route": 0.0,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.2882
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3334,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2108.06720"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000244",
+      "title": "Α07 witness EW000000244 / arXiv:1605.07654",
+      "score_to_field_centroid": 0.7497,
+      "score_to_field_lexicon": 0.0112,
+      "fieldbridge_rank": 0.5924,
+      "paper_id": "1605.07654",
+      "arxiv_url": "https://arxiv.org/abs/1605.07654",
+      "apparatus_regime": "Α07",
+      "omega_tokens": "Ω14 ⊕ Ω02 ⊕ Ω07",
+      "routes": {
+        "transport_flow_route": 0.0,
+        "constraint_closure_route": 0.2882,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.2212,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3334,
+        "syntax": 0.5857,
+        "entropy": 0.4143
+      },
+      "references": [
+        "arxiv:1605.07654"
+      ]
+    },
+    {
+      "record_id": "hyperion:EW000000077",
+      "title": "Α00 witness EW000000077 / arXiv:2109.11618",
+      "score_to_field_centroid": 0.7495,
+      "score_to_field_lexicon": 0.0169,
+      "fieldbridge_rank": 0.5935,
+      "paper_id": "2109.11618",
+      "arxiv_url": "https://arxiv.org/abs/2109.11618",
+      "apparatus_regime": "Α00",
+      "omega_tokens": "Ω08 ⊕ Ω04 ⊕ Ω14",
+      "routes": {
+        "transport_flow_route": 0.4934,
+        "constraint_closure_route": 0.4173,
+        "spectral_operator_route": 0.0,
+        "boundary_weak_form_route": 0.0,
+        "commutator_incompatibility_route": 0.0,
+        "discrete_protocol_route": 0.0
+      },
+      "fibers": {
+        "structure": 0.3333,
+        "spectral": 0.3333,
+        "geometry": 0.3333,
+        "syntax": 0.5858,
+        "entropy": 0.4142
+      },
+      "references": [
+        "arxiv:2109.11618"
+      ]
+    }
+  ],
+  "telemetry": {
+    "native_mechanism_anchors": 2,
+    "atlas_candidate_witnesses": 67,
+    "atlas_total_pool_witnesses": 2633,
+    "route_prior_source_count": 69
+  }
+}

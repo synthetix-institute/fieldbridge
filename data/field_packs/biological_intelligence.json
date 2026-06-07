@@ -8,7 +8,9 @@
     "bioelectric state",
     "immune state",
     "developmental state",
-    "gene regulatory state"
+    "gene regulatory state",
+    "retained cellular, bioelectric, immune, or developmental state",
+    "regulatory network state"
   ],
   "input_words": [
     "morphogen signal",
@@ -16,7 +18,9 @@
     "mechanical stimulus",
     "electrical cue",
     "immune cue",
-    "neural input"
+    "neural input",
+    "morphogen, metabolite, electrical, mechanical, immune, or neural signal",
+    "perturbation, signal, or treatment"
   ],
   "boundary_words": [
     "membrane",
@@ -24,7 +28,10 @@
     "wound boundary",
     "organoid compartment",
     "assay boundary",
-    "organ boundary"
+    "organ boundary",
+    "membrane, tissue niche, wound boundary, organoid compartment, or assay boundary",
+    "regulatory network state",
+    "cell type, niche, compartment, or assay boundary"
   ],
   "output_words": [
     "phenotype",
@@ -32,13 +39,20 @@
     "secretion",
     "repair",
     "morphology",
-    "cell fate"
+    "cell fate",
+    "phenotype, migration, secretion, repair, morphology, or fate response",
+    "fate, expression pattern, phenotype, or secretion"
   ],
   "validation_words": [
     "washout",
     "erasure",
     "state perturbation",
     "boundary change",
-    "same input with altered tissue context"
+    "same input with altered tissue context",
+    "state erasure",
+    "same input with altered tissue boundary",
+    "same final state with different history",
+    "wrong signal order",
+    "network-state reset"
   ]
 }
