@@ -4,6 +4,8 @@
 
 - deterministic route/fiber fingerprint;
 - three field packs;
+- PDF-folder field adapter builder;
+- field-native constructor role and substrate profiles;
 - mechanism extraction from one paper or fragment;
 - paper-to-paper mechanism comparison;
 - analog search over existing mechanism records;
@@ -17,6 +19,7 @@
 - attach arXiv and DOI references;
 - support patent/invention claim language as a fourth field pack;
 - export Markdown and JSON reports.
+- corpus-level adapter quality checks.
 
 ## Version 0.3
 

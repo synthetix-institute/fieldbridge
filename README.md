@@ -152,6 +152,59 @@ fieldbridge search examples/bioelectric_regeneration.txt --target-field material
 fieldbridge translate examples/bioelectric_regeneration.txt --to material_intelligence
 ```
 
+## Build A Field Pack From PDFs
+
+FieldBridge can also build a small public field pack from a folder of papers. The
+builder follows the older KG-generation pattern used in the concept-economics
+prototype: parse PDFs, split them into mechanism-bearing chunks, run sparse
+attention heads over route/fiber/role language, and export both a field pack and
+a typed mechanism knowledge graph.
+
+Full documentation: [`docs/FIELD_ADAPTERS.md`](docs/FIELD_ADAPTERS.md).
+
+```bash
+python -m pip install -e ".[pdf]"  # optional; otherwise pypdf/PyPDF2/pdftotext can be used
+
+fieldbridge build-field-adapter /path/to/papers \
+  --field-id material_intelligence \
+  --label "Material Intelligence" \
+  --out-dir build/material_intelligence_export \
+  --max-docs 200 \
+  --max-anchors 80
+```
+
+The export contains:
+
+- `field_packs/<field_id>.json`: target-field vocabulary for translation;
+- `field_adapters/<field_id>.json`: route-to-field adapter with constructor
+  roles, universal substrate evidence, and review gates;
+- `reports/<field_id>_adapter.md`: a human-readable adapter report;
+- `field_pack_evidence/<field_id>.json`: sparse-attention heads, anchors, priors,
+  and evidence boundaries;
+- `kg/<field_id>_knowledge_graph.json`: typed nodes and edges such as
+  `input -> state` (`writes_state`), `boundary -> state`
+  (`constrains_state`), and `state -> output` (`drives_readout`);
+- `index/core_examples.json`: native mechanism anchors that can be searched or
+  used as target-field examples.
+
+The KG is not a validation claim. It is a receptor map: it says which variables,
+boundaries, outputs, controls, and missing links the field literature appears to
+make available for mechanism transfer.
+
+The adapter is the stronger object for a large field corpus. It converts a folder
+of papers into field-native receivers for the six public Hyperion routes:
+state/carrier, operator apparatus, update or transport, admissibility logic,
+readout rule, and falsifier. It also keeps substrate evidence separate from
+field nouns by scoring universal substrate classes such as coordinate domains,
+inner-product spaces, probability spaces, graph topology, metric manifolds,
+lattices, bundles, quotient spaces, and stoichiometric spaces.
+
+For example, a neuroscience folder should not become a list of local names such
+as cortex, connectome, synapse, or Markov blanket. The adapter should ask which
+substrate those names instantiate: coordinate domain, graph topology,
+probability space, inner-product space, phase space, or another universal
+substrate class. Field-specific terms remain evidence; they are not the ontology.
+
 ## Main Route
 
 ### Mechanism translation

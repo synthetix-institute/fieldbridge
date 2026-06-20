@@ -5,6 +5,7 @@ from pathlib import Path
 
 from .database import load_field_packs
 from .extract import compare_mechanisms, extract_mechanism
+from .pdf_sparse_builder import build_pdf_field_pack, slugify
 from .render import render_comparison, render_fingerprint, render_mechanism_sheet, render_search, render_translation
 from .routes import fingerprint_text
 from .search import find_analogs, translate_mechanism
@@ -70,6 +71,28 @@ def cmd_translate(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_build_field_pack(args: argparse.Namespace) -> int:
+    field_id = slugify(args.field_id)
+    label = args.label or field_id.replace("_", " ").title()
+    extensions = [item.strip().lower() for item in args.extensions.split(",") if item.strip()]
+    summary = build_pdf_field_pack(
+        pdf_dir=Path(args.pdf_dir),
+        field_id=field_id,
+        label=label,
+        description=args.description,
+        out_dir=Path(args.out_dir),
+        max_docs=args.max_docs,
+        max_chunks_per_doc=args.max_chunks_per_doc,
+        max_chars=args.max_chars,
+        max_anchors=args.max_anchors,
+        extensions=extensions,
+    )
+    import json
+
+    print(json.dumps(summary, indent=2, ensure_ascii=False))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="fieldbridge",
@@ -114,6 +137,29 @@ def build_parser() -> argparse.ArgumentParser:
     translate.add_argument("--top-k", type=int, default=4)
     translate.add_argument("--no-hyperion", action="store_true", help="Use only field-pack anchors, without Hyperion witness evidence.")
     translate.set_defaults(func=cmd_translate)
+
+    def add_build_pack_parser(name: str, help_text: str) -> None:
+        build_pack = sub.add_parser(name, help=help_text)
+        build_pack.add_argument("pdf_dir", help="Folder containing PDFs, .txt, .tex, or .md files.")
+        build_pack.add_argument("--field-id", required=True, help="Stable field id, e.g. material_intelligence.")
+        build_pack.add_argument("--label", default="", help="Human label. Defaults to title-cased field id.")
+        build_pack.add_argument("--description", default="", help="Human description for the generated field pack.")
+        build_pack.add_argument("--out-dir", default="build/fieldbridge_pdf_export", help="Output data tree.")
+        build_pack.add_argument("--max-docs", type=int, default=200)
+        build_pack.add_argument("--max-chunks-per-doc", type=int, default=40)
+        build_pack.add_argument("--max-chars", type=int, default=2600)
+        build_pack.add_argument("--max-anchors", type=int, default=80)
+        build_pack.add_argument("--extensions", default=".pdf,.txt,.tex,.md")
+        build_pack.set_defaults(func=cmd_build_field_pack)
+
+    add_build_pack_parser(
+        "build-field-pack",
+        "Build a FieldBridge field pack, evidence sidecar, adapter, and mechanism KG from a folder of PDFs/texts.",
+    )
+    add_build_pack_parser(
+        "build-field-adapter",
+        "Build a field-native mechanism adapter from a folder of PDFs/texts.",
+    )
     return parser
 
 

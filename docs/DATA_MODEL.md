@@ -1,7 +1,7 @@
 # FieldBridge Data Model
 
-FieldBridge has three public data objects: mechanism sheets, field packs, and
-mechanism records.
+FieldBridge has four public data objects: mechanism sheets, field packs, field
+adapters, and mechanism records.
 
 ## Mechanism Sheet
 
@@ -43,6 +43,51 @@ Use field packs to add a new scientific community without changing the engine.
 For example, a neuroscience pack might call the state a membrane potential,
 synaptic trace, latent policy, or cortical state; a patent pack might call it
 an internal technical state.
+
+## Field Adapter
+
+A field adapter is generated from a folder of PDFs or text files. It is the
+reviewable layer between the public Hyperion route grammar and a field's own
+experimental language.
+
+See [`FIELD_ADAPTERS.md`](FIELD_ADAPTERS.md) for the full corpus workflow,
+review criteria, and interpretation guide.
+
+```json
+{
+  "artifact_type": "fieldbridge_field_adapter",
+  "field_id": "neuroscience",
+  "route_profile": {"spectral_operator_route": 0.31},
+  "constructor_role_profile": {
+    "state_or_carrier": 0.44,
+    "operator_apparatus": 0.28,
+    "admissibility_logic": 0.24
+  },
+  "substrate_profile": {
+    "coordinate_domain": 0.22,
+    "probability_space": 0.19,
+    "graph_topology": 0.15
+  },
+  "field_native_receivers": {
+    "state_or_carrier": ["...evidence phrase..."],
+    "operator_apparatus": ["...evidence phrase..."],
+    "readout_rule": ["...evidence phrase..."]
+  }
+}
+```
+
+The adapter keeps two layers separate:
+
+- constructor roles: carrier, operator, update, admissibility, readout, falsifier;
+- substrate evidence: coordinate domain, metric manifold, inner-product space,
+  phase space, probability space, graph topology, lattice, bundle/gauge space,
+  configuration quotient, or stoichiometric space.
+
+Field-specific nouns are retained as evidence phrases, not as final substrate
+classes. This prevents a neuroscience, biology, or chemistry corpus from
+fragmenting into many local labels when the relevant transferable substrate may
+be graph topology, probability space, coordinate domain, or stoichiometric
+space.
 
 ## Mechanism Record
 

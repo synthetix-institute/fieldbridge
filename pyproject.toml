@@ -15,6 +15,9 @@ authors = [
 keywords = ["equations", "mechanisms", "analogy", "scientific-discovery", "knowledge-graph"]
 dependencies = []
 
+[project.optional-dependencies]
+pdf = ["pdfplumber>=0.11"]
+
 [project.scripts]
 fieldbridge = "fieldbridge.cli:main"
 

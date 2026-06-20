@@ -34,8 +34,63 @@ def load_records(data_dir: Path | None = None) -> List[MechanismRecord]:
     return [mechanism_record_from_row(row) for row in rows]
 
 
+BAD_EQUATION_MARKERS = (
+    "rotatebox",
+    "begintabular",
+    "__HYPERION",
+    "bfseries",
+    "multicolumn",
+    "includegraphics",
+)
+
+
+def _is_hyperion_row(row: Dict[str, Any]) -> bool:
+    return row.get("field_id") == "hyperion_equation" or row.get("source") == "hyperion_equation_witnesses"
+
+
+def _clean_equation(value: Any) -> str:
+    text = str(value or "").replace("\\n", " ").replace("\n", " ")
+    text = " ".join(text.split())
+    return text[:420].strip()
+
+
+def _safe_public_equation(value: Any) -> bool:
+    text = _clean_equation(value)
+    lower = text.lower()
+    if len(text) < 8 or len(text) > 420:
+        return False
+    if any(marker.lower() in lower for marker in BAD_EQUATION_MARKERS):
+        return False
+    if lower.count("begin") > 1 or lower.count("end") > 1:
+        return False
+    if text.count("{") + text.count("}") > 80:
+        return False
+    if not any(marker in text for marker in ("=", "partial", "\\partial", "nabla", "\\nabla", "lambda", "\\lambda", "int", "\\int")):
+        return False
+    return True
+
+
+def _sanitize_equations(row: Dict[str, Any]) -> List[str]:
+    equations = row.get("equations") or []
+    if not isinstance(equations, list):
+        return []
+    if _is_hyperion_row(row):
+        return []
+    cleaned = [_clean_equation(item) for item in equations if _safe_public_equation(item)]
+    return cleaned or [_clean_equation(item) for item in equations if _clean_equation(item)]
+
+
+def _sanitize_summary(row: Dict[str, Any]) -> str:
+    summary = str(row.get("summary") or "")
+    if _is_hyperion_row(row) and "Clean source witness:" in summary:
+        return summary.split("Clean source witness:", 1)[0].strip()
+    return summary
+
+
 def mechanism_record_from_row(row: Dict[str, Any]) -> MechanismRecord:
     payload = {key: value for key, value in row.items() if key in RECORD_FIELDS}
+    payload["equations"] = _sanitize_equations(row)
+    payload["summary"] = _sanitize_summary(row)
     return MechanismRecord(**payload)
 
 
