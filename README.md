@@ -152,6 +152,39 @@ fieldbridge search examples/bioelectric_regeneration.txt --target-field material
 fieldbridge translate examples/bioelectric_regeneration.txt --to material_intelligence
 ```
 
+## Full-Paper Zero-Shot Validation
+
+FieldBridge includes a leave-one-paper-out benchmark for cross-field mechanism
+retrieval. The query is an entire PDF, TeX, Markdown or text paper. Every chunk
+from that paper is excluded from the retrieval gallery. A match counts as
+relevant only when an independently labelled paper implements the same
+mechanism in a different field.
+
+The benchmark compares the public operational route/fiber representation with
+a full-paper TF--IDF baseline fitted on the gallery after removing the query
+paper. It reports top-1 accuracy, mean reciprocal rank, precision and recall at
+`k`, and a paired bootstrap interval for the precision gain. A manifest row
+has four required fields:
+
+```json
+{"paper_id":"paper-001","path":"papers/a.pdf","mechanism_id":"conservative_diffusion","field_id":"continuum_physics"}
+```
+
+Run the benchmark with:
+
+```bash
+fieldbridge validate-zero-shot benchmark/papers.jsonl \
+  --top-k 10 \
+  --min-eligible-queries 100 \
+  --out-json build/full_paper_zero_shot.json \
+  --out-md build/full_paper_zero_shot.md
+```
+
+This command establishes a full-paper zero-shot evaluation protocol. It does
+not establish successful transfer until an independently labelled benchmark
+contains enough eligible cross-field queries and the paired confidence interval
+supports a gain over the lexical baseline.
+
 ## Build A Field Pack From PDFs
 
 FieldBridge can also build a small public field pack from a folder of papers. The

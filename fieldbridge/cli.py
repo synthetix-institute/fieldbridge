@@ -9,6 +9,8 @@ from .pdf_sparse_builder import build_pdf_field_pack, slugify
 from .render import render_comparison, render_fingerprint, render_mechanism_sheet, render_search, render_translation
 from .routes import fingerprint_text
 from .search import find_analogs, translate_mechanism
+from .zero_shot import render_markdown as render_zero_shot_markdown
+from .zero_shot import validate_full_paper_zero_shot
 
 
 def read_input(path_or_text: str) -> str:
@@ -93,6 +95,32 @@ def cmd_build_field_pack(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_validate_zero_shot(args: argparse.Namespace) -> int:
+    import json
+
+    report = validate_full_paper_zero_shot(
+        Path(args.manifest),
+        top_k=args.top_k,
+        max_chars=args.max_chars,
+        bootstrap_samples=args.bootstrap_samples,
+        seed=args.seed,
+        min_eligible_queries=args.min_eligible_queries,
+    )
+    out_json = Path(args.out_json)
+    out_md = Path(args.out_md)
+    out_json.parent.mkdir(parents=True, exist_ok=True)
+    out_md.parent.mkdir(parents=True, exist_ok=True)
+    out_json.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    out_md.write_text(render_zero_shot_markdown(report), encoding="utf-8")
+    print(json.dumps({
+        "json": str(out_json),
+        "markdown": str(out_md),
+        "readiness": report["readiness"],
+        "eligible_queries": report["eligible_queries"],
+    }, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="fieldbridge",
@@ -160,6 +188,19 @@ def build_parser() -> argparse.ArgumentParser:
         "build-field-adapter",
         "Build a field-native mechanism adapter from a folder of PDFs/texts.",
     )
+    validate = sub.add_parser(
+        "validate-zero-shot",
+        help="Evaluate cross-field mechanism retrieval while holding out each complete paper.",
+    )
+    validate.add_argument("manifest", help="JSON/JSONL rows with paper_id, path, mechanism_id, and field_id.")
+    validate.add_argument("--top-k", type=int, default=10)
+    validate.add_argument("--max-chars", type=int, default=2600)
+    validate.add_argument("--bootstrap-samples", type=int, default=2000)
+    validate.add_argument("--seed", type=int, default=17)
+    validate.add_argument("--min-eligible-queries", type=int, default=100)
+    validate.add_argument("--out-json", default="build/full_paper_zero_shot.json")
+    validate.add_argument("--out-md", default="build/full_paper_zero_shot.md")
+    validate.set_defaults(func=cmd_validate_zero_shot)
     return parser
 
 

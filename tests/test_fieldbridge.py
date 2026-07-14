@@ -2,6 +2,7 @@ from fieldbridge.routes import fingerprint_text
 from fieldbridge.database import load_field_evidence, load_static_index_records
 from fieldbridge.extract import compare_mechanisms, extract_mechanism
 from fieldbridge.search import find_analogs, translate_mechanism
+from fieldbridge.zero_shot import validate_full_paper_zero_shot
 
 
 def test_fingerprint_detects_transport_and_boundary():
@@ -58,3 +59,34 @@ def test_compare_preserves_routes():
     comparison = compare_mechanisms(source, target)
     assert comparison.score > 0.4
     assert comparison.preserved_routes
+
+
+def test_full_paper_zero_shot_excludes_query_paper(tmp_path):
+    papers = [
+        ("continuum-a", "continuum", "diffusion", "partial_t u = kappa nabla^2 u. No flux boundary conserves mass."),
+        ("graph-a", "graphs", "diffusion", "dot u = -kappa L_G u. Graph Laplacian closure conserves total state."),
+        ("continuum-b", "continuum", "oscillation", "partial_t^2 q + omega^2 q = 0. Periodic oscillation."),
+        ("network-b", "networks", "oscillation", "dot z = A z. Complex eigenmodes produce network oscillation."),
+    ]
+    manifest = []
+    for paper_id, field_id, mechanism_id, text in papers:
+        path = tmp_path / f"{paper_id}.txt"
+        path.write_text((text + "\n\n") * 30, encoding="utf-8")
+        manifest.append({
+            "paper_id": paper_id,
+            "path": path.name,
+            "field_id": field_id,
+            "mechanism_id": mechanism_id,
+        })
+    manifest_path = tmp_path / "manifest.json"
+    import json
+    manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+    report = validate_full_paper_zero_shot(manifest_path, top_k=2, bootstrap_samples=50)
+    assert report["readiness"] == "usable"
+    assert report["eligible_queries"] == 4
+    assert report["protocol"]["lexical_fit"].startswith("gallery_only")
+    assert report["performance_claim_gate"]["passed"] is False
+    for query in report["queries"]:
+        assert all(item["paper_id"] != query["paper_id"] for item in query["operational_ranking"])
+        assert any(item["relevant"] for item in query["operational_ranking"])
