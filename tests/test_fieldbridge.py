@@ -1,4 +1,5 @@
 from fieldbridge.constructor import construct_transfer
+from fieldbridge.continuation import validate_future_state
 from fieldbridge.routes import fingerprint_text
 from fieldbridge.database import load_field_evidence, load_static_index_records
 from fieldbridge.extract import compare_mechanisms, extract_mechanism
@@ -110,3 +111,33 @@ def test_full_paper_zero_shot_excludes_query_paper(tmp_path):
     for query in report["queries"]:
         assert all(item["paper_id"] != query["paper_id"] for item in query["operational_ranking"])
         assert any(item["relevant"] for item in query["operational_ranking"])
+
+
+def test_future_state_validation_predicts_withheld_equations_not_current_labels(tmp_path):
+    rows = []
+    for paper_index in range(80):
+        first_move = f"T{paper_index % 2}"
+        for step in range(5):
+            rows.append({
+                "paper_id": f"paper-{paper_index:03d}",
+                "current_omega": f"Omega{paper_index % 3}",
+                "current_xi": f"Xi{step % 2}",
+                "current_completion": "C+R" if step % 2 else "C",
+                "first_move": first_move,
+                "next_move": f"T{(paper_index + step) % 3}",
+                "destination_omega": f"Omega{paper_index % 3}",
+                "destination_xi": f"Xi{(step + 1) % 2}",
+                "destination_completion": "C+R+P" if step % 2 else "C+R",
+            })
+    manifest = tmp_path / "transitions.jsonl"
+    import json
+    manifest.write_text(
+        "".join(json.dumps(row) + "\n" for row in rows), encoding="utf-8"
+    )
+
+    report = validate_future_state(manifest, min_evaluation_transitions=5)
+    assert report["readiness"] == "usable"
+    assert report["protocol"]["unit_of_holdout"] == "complete_paper"
+    assert report["protocol"]["current_state_classification"] is False
+    assert report["evaluation_papers"] > 0
+    assert report["targets"]["destination_omega"]["accuracy"] > 0.9

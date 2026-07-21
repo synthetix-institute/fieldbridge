@@ -14,6 +14,15 @@ FieldBridge does not look for papers that talk about similar topics. It converts
 a paper into an operational mechanism language first, and only then asks whether
 another field contains the same route of action.
 
+## Guided Tutorial
+
+The [FieldBridge tutorial](docs/tutorial/index.md) follows the codebase-
+knowledge format developed by PocketFlow: it identifies the core abstractions,
+maps their relationships, and introduces them in dependency order through
+runnable examples. The six chapters cover fingerprints, mechanism sheets,
+cross-field retrieval, constructor transfers, complete-paper validation and
+future-state prediction.
+
 That changes the comparison. A bioelectric memory, a material hysteresis, and a
 collective trace may use unrelated words. They become comparable only after they
 are written as a mechanism: a state is written, constrained by a boundary or
@@ -231,6 +240,33 @@ This command establishes a full-paper zero-shot evaluation protocol. It does
 not establish successful transfer until an independently labelled benchmark
 contains enough eligible cross-field queries and the paired confidence interval
 supports a gain over the lexical baseline.
+
+## Predict The Next Mechanism State
+
+Cross-field retrieval asks whether another paper contains the same mechanism.
+Continuation prediction asks a stronger and different question: given the
+current operational state and the first observed move, what move and mechanism
+state will the next equation occupy?
+
+Here `destination` means the state assigned to an unseen future equation. It is
+not classification of the current equation. In the corpus-scale Hyperion
+evaluation, complete papers were excluded from fitting. The model identified
+the next move with 57.4% accuracy and predicted the future operator, substrate
+and completion states with 74.4%, 71.7% and 73.4% accuracy, respectively.
+FieldBridge records these results as companion evidence and provides a public
+reproduction command for labelled transition manifests:
+
+```bash
+fieldbridge validate-continuation benchmark/transitions.jsonl \
+  --min-evaluation-transitions 100 \
+  --out-json build/future_state_validation.json \
+  --out-md build/future_state_validation.md
+```
+
+The command reports next-move and destination-state performance separately,
+together with gains over first-move-only baselines. See
+[`docs/FUTURE_STATE_VALIDATION.md`](docs/FUTURE_STATE_VALIDATION.md) for the
+schema, exact interpretation and corpus-scale reference record.
 
 ## Build A Field Pack From PDFs
 

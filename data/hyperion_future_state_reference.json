@@ -1,0 +1,30 @@
+{
+  "report_type": "hyperion_future_mechanism_state_reference",
+  "readiness": "usable",
+  "evaluation_contract": "complete papers excluded from fitting; frozen operational language",
+  "input": "current operational state I1 and observed first move T1",
+  "targets": {
+    "next_move_T2": {
+      "accuracy": 0.574,
+      "information_gain_bits_per_transition": 0.210,
+      "paper_cluster_95_ci": [0.197, 0.223]
+    },
+    "destination_omega": {
+      "accuracy": 0.744
+    },
+    "destination_xi": {
+      "accuracy": 0.717
+    },
+    "destination_completion": {
+      "accuracy": 0.734
+    },
+    "joint_destination": {
+      "information_gain_bits": 3.743,
+      "paper_cluster_95_ci": [3.629, 3.857]
+    }
+  },
+  "destination_definition": "operational state assigned by the frozen representation to the unseen next equation",
+  "not_current_equation_classification": true,
+  "source": "Hyperion operator-substrate predictive-language evaluation reported in the companion manuscript",
+  "claim_scope": "Reference result from the corpus-scale Hyperion model. FieldBridge validate-continuation reproduces the evaluation contract on public labelled transition manifests; it does not reproduce these values without the corresponding corpus export."
+}

@@ -5,6 +5,8 @@ from pathlib import Path
 
 from .database import load_field_packs
 from .constructor import construct_transfer
+from .continuation import render_markdown as render_continuation_markdown
+from .continuation import validate_future_state
 from .extract import compare_mechanisms, extract_mechanism
 from .pdf_sparse_builder import build_pdf_field_pack, slugify
 from .render import render_comparison, render_constructor, render_fingerprint, render_mechanism_sheet, render_search, render_translation
@@ -135,6 +137,32 @@ def cmd_validate_zero_shot(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_validate_continuation(args: argparse.Namespace) -> int:
+    import json
+
+    report = validate_future_state(
+        Path(args.manifest),
+        seed=args.seed,
+        evaluation_fold=args.evaluation_fold,
+        alpha=args.alpha,
+        min_evaluation_transitions=args.min_evaluation_transitions,
+    )
+    out_json = Path(args.out_json)
+    out_md = Path(args.out_md)
+    out_json.parent.mkdir(parents=True, exist_ok=True)
+    out_md.parent.mkdir(parents=True, exist_ok=True)
+    out_json.write_text(json.dumps(report, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
+    out_md.write_text(render_continuation_markdown(report), encoding="utf-8")
+    print(json.dumps({
+        "json": str(out_json),
+        "markdown": str(out_md),
+        "readiness": report["readiness"],
+        "predictive_gate": report["predictive_gate"],
+        "next_move_accuracy": report["targets"]["next_move"]["accuracy"],
+    }, indent=2))
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="fieldbridge",
@@ -225,6 +253,25 @@ def build_parser() -> argparse.ArgumentParser:
     validate.add_argument("--out-json", default="build/full_paper_zero_shot.json")
     validate.add_argument("--out-md", default="build/full_paper_zero_shot.md")
     validate.set_defaults(func=cmd_validate_zero_shot)
+
+    continuation = sub.add_parser(
+        "validate-continuation",
+        help="Predict the next move and future mechanism state in complete held-out papers.",
+    )
+    continuation.add_argument(
+        "manifest",
+        help=(
+            "JSON/JSONL transition records with paper_id, current state, first_move, "
+            "next_move, and destination state."
+        ),
+    )
+    continuation.add_argument("--seed", type=int, default=20260710)
+    continuation.add_argument("--evaluation-fold", type=int, default=9, choices=range(10))
+    continuation.add_argument("--alpha", type=float, default=0.5)
+    continuation.add_argument("--min-evaluation-transitions", type=int, default=100)
+    continuation.add_argument("--out-json", default="build/future_state_validation.json")
+    continuation.add_argument("--out-md", default="build/future_state_validation.md")
+    continuation.set_defaults(func=cmd_validate_continuation)
     return parser
 
 
