@@ -111,3 +111,19 @@ class Translation:
     measurements: List[str]
     controls: List[str]
     evidence_boundary: str
+
+
+@dataclass(frozen=True)
+class ConstructorTransfer:
+    source: MechanismSheet
+    translation: Translation
+    source_identity: Dict[str, Any]
+    target_identity: Dict[str, Any]
+    preserved_contract: List[str]
+    changed_clauses: List[str]
+    constructor_moves: List[Dict[str, str]]
+    required_attachments: Dict[str, List[str]]
+    predictions: List[str]
+    validation_gates: Dict[str, bool]
+    readiness: str
+    evidence_boundary: str

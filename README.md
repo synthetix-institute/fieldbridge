@@ -27,19 +27,21 @@ The important question is not *which papers sound similar?* It is:
 
 ![FieldBridge workflow](docs/assets/fieldbridge-workflows.svg)
 
-The public version exposes one main route, with one supporting route:
+The public version exposes one main route, with two supporting routes:
 
 ```text
-main route:       paper A -> extracted mechanism -> translated mechanism in field B
-support route:    paper A -> extracted mechanism -> analog search in field B
+main route:       paper A -> extracted identity -> constructor transfer -> target tests
+support route 1:  paper A -> extracted mechanism -> translated mechanism in field B
+support route 2:  paper A -> extracted mechanism -> analog search in field B
 ```
 
 The first public version is intentionally transparent. It does not require a trained
-model or a private database. It ships with three starter field packs:
+model or a private database. It ships with four starter field packs:
 
 - material intelligence
 - biological intelligence
 - collective intelligence
+- stochastic optimization
 
 FieldBridge can be used as:
 
@@ -48,6 +50,8 @@ FieldBridge can be used as:
 - an equation analogy finder that retrieves existing cross-field examples;
 - a mechanism translator that renders a source mechanism in a new field's
   variables, equations, measurements, and falsifying controls;
+- a constructor that states what is preserved, which substrate changes, which
+  closure/readout/protocol clauses must be attached, and how the transfer fails;
 - a field-pack format for community contributions;
 - a small public workbench that can later connect to a larger private or
   institutional fingerprint database.
@@ -150,7 +154,50 @@ fieldbridge compare examples/bioelectric_regeneration.txt examples/material_memo
 fieldbridge fingerprint examples/bioelectric_regeneration.txt
 fieldbridge search examples/bioelectric_regeneration.txt --target-field material_intelligence
 fieldbridge translate examples/bioelectric_regeneration.txt --to material_intelligence
+fieldbridge construct examples/brownian_probability_flow.tex --to stochastic_optimization
 ```
+
+## Constructor: From A Match To A Test
+
+The Hyperion language is hierarchical:
+
+```text
+mechanism core       M = (Omega, Xi)
+completion fiber     F = (C, R, P)
+operational identity I_op = (M; F)
+realized model       I = (I_op; A)
+```
+
+`Omega` is the transformation apparatus, `Xi` its carrier, `C` closes the
+construction, `R` makes it observable, `P` makes it executable, and `A` binds
+it to field-specific objects, parameters, units and provenance.
+
+`fieldbridge construct` turns this hierarchy into a practical transfer record.
+It reports six operations separately:
+
+1. preserve a qualified operator contract;
+2. replace or attach a substrate;
+3. supply closure or admissibility conditions;
+4. define a measurable readout;
+5. define an intervention or computational protocol;
+6. break a retained clause with a falsifying control.
+
+A transfer is mechanism-preserving only when the retained contract survives
+the new closure and its consequences pass the controls. Occupancy of a coarse
+operator--substrate pair is not enough.
+
+The Brownian example demonstrates the public workflow:
+
+```bash
+fieldbridge construct examples/brownian_probability_flow.tex \
+  --to stochastic_optimization --no-hyperion
+```
+
+It preserves gradient drift plus diffusion, replaces particle position by a
+parameter-space carrier, and attaches normalization, stationary-current,
+readout and negative-control obligations. This is a controlled reconstruction
+of a known Langevin/Fokker--Planck transfer, not a claim that FieldBridge
+discovered stochastic optimization.
 
 ## Full-Paper Zero-Shot Validation
 

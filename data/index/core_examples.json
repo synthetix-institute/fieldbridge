@@ -362,5 +362,67 @@
       "entropy": 0.44
     },
     "source": "seed"
+  },
+  {
+    "record_id": "opt_langevin_probability_flow_001",
+    "title": "Langevin probability flow on a loss landscape",
+    "field_id": "stochastic_optimization",
+    "summary": "Noisy gradient dynamics transports a distribution of model parameters on a loss landscape. Under an isotropic constant-noise approximation, the associated Fokker--Planck equation predicts probability conservation, relaxation and a Gibbs-type stationary state.",
+    "invariant": "Gradient drift plus diffusion transports a normalized probability density and relaxes toward the stationary law fixed by the potential or loss and effective noise temperature.",
+    "equations": [
+      "d theta = -nabla L(theta) dt + sqrt(2T) dW",
+      "partial_t p = div(p nabla L) + T Laplacian p",
+      "p_inf(theta) proportional_to exp(-L(theta)/T)"
+    ],
+    "variables": [
+      "theta: model-parameter carrier",
+      "p(theta,t): probability density across noisy training runs",
+      "L(theta): loss landscape and drift potential",
+      "T: effective isotropic noise temperature",
+      "u: minibatch stochastic-gradient update with a declared learning-rate and noise schedule",
+      "B: normalized parameter domain with zero probability-current boundary"
+    ],
+    "measurements": [
+      "probability-mass residual",
+      "parameter occupancy across repeated runs",
+      "distance to predicted stationary density",
+      "free-energy trajectory"
+    ],
+    "controls": [
+      "reverse the gradient drift",
+      "remove the diffusion term",
+      "shuffle gradient directions",
+      "test anisotropic or state-dependent noise against the scalar-temperature approximation"
+    ],
+    "references": [
+      "welling_teh_sgld_2011",
+      "mandt_hoffman_blei_sgd_2017"
+    ],
+    "keywords": [
+      "stochastic gradient",
+      "Langevin",
+      "Fokker-Planck",
+      "loss landscape",
+      "parameter distribution",
+      "diffusion",
+      "free energy"
+    ],
+    "routes": {
+      "transport_flow_route": 0.98,
+      "constraint_closure_route": 0.82,
+      "spectral_operator_route": 0.55,
+      "boundary_weak_form_route": 0.61,
+      "commutator_incompatibility_route": 0.08,
+      "discrete_protocol_route": 0.72
+    },
+    "fibers": {
+      "structure": 0.88,
+      "spectral": 0.44,
+      "geometry": 0.31,
+      "syntax": 0.66,
+      "entropy": 0.96
+    },
+    "source": "analytic_benchmark",
+    "target_fields": ["stochastic_optimization"]
   }
 ]

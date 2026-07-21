@@ -4,9 +4,10 @@ import argparse
 from pathlib import Path
 
 from .database import load_field_packs
+from .constructor import construct_transfer
 from .extract import compare_mechanisms, extract_mechanism
 from .pdf_sparse_builder import build_pdf_field_pack, slugify
-from .render import render_comparison, render_fingerprint, render_mechanism_sheet, render_search, render_translation
+from .render import render_comparison, render_constructor, render_fingerprint, render_mechanism_sheet, render_search, render_translation
 from .routes import fingerprint_text
 from .search import find_analogs, translate_mechanism
 from .zero_shot import render_markdown as render_zero_shot_markdown
@@ -70,6 +71,19 @@ def cmd_translate(args: argparse.Namespace) -> int:
         include_hyperion=not args.no_hyperion,
     )
     print(render_translation(translation))
+    return 0
+
+
+def cmd_construct(args: argparse.Namespace) -> int:
+    text = read_input(args.input)
+    transfer = construct_transfer(
+        text,
+        target_field=args.to,
+        data_dir=Path(args.data_dir) if args.data_dir else None,
+        top_k=args.top_k,
+        include_hyperion=not args.no_hyperion,
+    )
+    print(render_constructor(transfer))
     return 0
 
 
@@ -165,6 +179,16 @@ def build_parser() -> argparse.ArgumentParser:
     translate.add_argument("--top-k", type=int, default=4)
     translate.add_argument("--no-hyperion", action="store_true", help="Use only field-pack anchors, without Hyperion witness evidence.")
     translate.set_defaults(func=cmd_translate)
+
+    construct = sub.add_parser(
+        "construct",
+        help="Build a mechanism-preserving transfer with explicit completion and falsification clauses.",
+    )
+    construct.add_argument("input", help="Source paper, equation fragment, or literal text.")
+    construct.add_argument("--to", required=True, help="Target field id.")
+    construct.add_argument("--top-k", type=int, default=4)
+    construct.add_argument("--no-hyperion", action="store_true", help="Use only public field-pack receptors.")
+    construct.set_defaults(func=cmd_construct)
 
     def add_build_pack_parser(name: str, help_text: str) -> None:
         build_pack = sub.add_parser(name, help=help_text)

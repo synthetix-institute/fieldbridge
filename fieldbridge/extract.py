@@ -64,7 +64,12 @@ def active_routes(fp: Fingerprint, threshold: float = 0.22) -> List[str]:
 
 def guess_roles(text: str, fp: Fingerprint) -> Tuple[str, str, str, str]:
     lower = text.lower()
-    if re.search(r"cell|tissue|wound|morphology|regeneration|immune|neural|bioelectric|organoid", lower):
+    if re.search(r"brownian|langevin|fokker|probability flow|thermally buffeted", lower):
+        state = "x or p(x,t): particle state or probability density on the source carrier"
+        input_signal = "U(x), T: potential landscape and stochastic forcing"
+        boundary = "B: normalized domain with a zero probability-current boundary"
+        output = "p(x,t), relaxation time, stationary occupancy, or free energy"
+    elif re.search(r"cell|tissue|wound|morphology|regeneration|immune|neural|bioelectric|organoid", lower):
         state = "q(x,t): retained cellular, tissue, bioelectric, immune, or developmental state"
         input_signal = "u(t): morphogen, metabolite, electrical, mechanical, immune, or neural cue"
         boundary = "B: membrane, wound edge, niche, organoid, tissue compartment, or assay boundary"

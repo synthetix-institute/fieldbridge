@@ -1,0 +1,34 @@
+{
+  "field_id": "stochastic_optimization",
+  "label": "Stochastic optimization",
+  "description": "Parameter dynamics, noisy gradient methods, sampling and probability flow on loss landscapes.",
+  "state_words": [
+    "model parameters theta",
+    "parameter distribution p(theta,t)",
+    "optimizer state"
+  ],
+  "input_words": [
+    "stochastic gradient or minibatch update",
+    "learning-rate and noise schedule",
+    "parameter perturbation"
+  ],
+  "boundary_words": [
+    "parameter domain and optimizer constraints",
+    "normalization of p(theta,t)",
+    "stationary probability-current boundary"
+  ],
+  "output_words": [
+    "loss trajectory",
+    "parameter occupancy",
+    "escape time",
+    "stationary distribution",
+    "generalization or calibration response"
+  ],
+  "validation_words": [
+    "uphill-drift control",
+    "zero-noise control",
+    "shuffled-gradient control",
+    "probability-conservation residual",
+    "free-energy monotonicity check"
+  ]
+}

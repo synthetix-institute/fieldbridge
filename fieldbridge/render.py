@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from .models import AnalogyMatch, Comparison, Fingerprint, MechanismRecord, MechanismSheet, Translation
+from .models import AnalogyMatch, Comparison, ConstructorTransfer, Fingerprint, MechanismRecord, MechanismSheet, Translation
 from .routes import FIBERS, ROUTES
 
 
@@ -193,4 +193,65 @@ def render_translation(translation: Translation) -> str:
     else:
         rows.append("- No field-specific analogue found; rendered from field pack defaults.")
     rows.extend(["", "## Evidence Boundary", "", translation.evidence_boundary])
+    return "\n".join(rows)
+
+
+def render_constructor(transfer: ConstructorTransfer) -> str:
+    def bullets(values: list[str]) -> list[str]:
+        return [f"- {value}" for value in values] or ["- unresolved"]
+
+    source_m = transfer.source_identity["M"]
+    target_m = transfer.target_identity["M"]
+    rows = [
+        "# FieldBridge Constructor Transfer",
+        "",
+        f"Readiness: `{transfer.readiness}`",
+        "",
+        "## Identity Transformation",
+        "",
+        f"- source core: `M=(Omega_proxy, Xi_proxy)` with carrier `{source_m['Xi_proxy']}`",
+        f"- target core: `M'=(Omega_proxy, Xi'_proxy)` with carrier `{target_m['Xi_proxy']}`",
+        f"- target realization: **{transfer.target_identity['A']}**",
+        "",
+        "`I_op=(Omega, Xi; C, R, P) -> I'_op=(Omega, Xi'; C', R', P')`",
+        "",
+        "The public command reports interpretable proxies; it does not assign the private learned token ids.",
+        "",
+        "## Preserved Contract",
+        "",
+        *bullets(transfer.preserved_contract),
+        "",
+        "## Changed Clauses",
+        "",
+        *bullets(transfer.changed_clauses),
+        "",
+        "## Constructor Roads",
+        "",
+        *(f"- `{move['road']}` acts on `{move['acts_on']}`: {move['operation']}" for move in transfer.constructor_moves),
+        "",
+        "## Required Attachments",
+        "",
+    ]
+    for clause, values in transfer.required_attachments.items():
+        rows.append(f"### {clause}")
+        rows.append("")
+        rows.extend(bullets(values))
+        rows.append("")
+    rows.extend([
+        "## Candidate Equations",
+        "",
+        *(f"- `{equation}`" for equation in transfer.translation.equations),
+        "",
+        "## Predictions",
+        "",
+        *bullets(transfer.predictions),
+        "",
+        "## Validation Gates",
+        "",
+        *(f"- `{name}`: {'pass' if passed else 'missing'}" for name, passed in transfer.validation_gates.items()),
+        "",
+        "## Evidence Boundary",
+        "",
+        transfer.evidence_boundary,
+    ])
     return "\n".join(rows)

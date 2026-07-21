@@ -26,6 +26,8 @@ ROUTES: Dict[str, Tuple[str, List[str]]] = {
             r"\bmotion\b",
             r"\bevolution\b",
             r"\bpropagation\b",
+            r"\bgradient\b",
+            r"\bdrift\b",
         ],
     ),
     "constraint_closure_route": (
@@ -61,6 +63,8 @@ ROUTES: Dict[str, Tuple[str, List[str]]] = {
             r"\btransfer function\b",
             r"\bHamiltonian\b",
             r"\bLaplacian\b",
+            r"\bloss landscape\b",
+            r"\bobjective\b",
         ],
     ),
     "boundary_weak_form_route": (
@@ -83,7 +87,7 @@ ROUTES: Dict[str, Tuple[str, List[str]]] = {
     "commutator_incompatibility_route": (
         "non-commuting order, hysteresis, curvature, bracket, or compatibility failure",
         [
-            r"\[[^\]]+,[^\]]+\]",
+            r"(?<!\\)\[[^][,]{1,120},[^][]]{1,120}\]",
             r"\bcommutator\b",
             r"\bnoncommut",
             r"\bhysteresis\b",

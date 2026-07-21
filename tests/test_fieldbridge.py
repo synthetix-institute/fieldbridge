@@ -1,3 +1,4 @@
+from fieldbridge.constructor import construct_transfer
 from fieldbridge.routes import fingerprint_text
 from fieldbridge.database import load_field_evidence, load_static_index_records
 from fieldbridge.extract import compare_mechanisms, extract_mechanism
@@ -25,6 +26,25 @@ def test_translate_has_controls():
     assert translation.controls
     assert translation.equations
     assert translation.target_field.field_id == "collective_intelligence"
+
+
+def test_constructor_exposes_identity_completion_and_falsifier():
+    text = "partial_t p = div(p grad U) + T Laplacian p; integral p = 1; p_inf = exp(-U/T)."
+    transfer = construct_transfer(text, target_field="stochastic_optimization", include_hyperion=False)
+    assert transfer.readiness == "structurally_complete_constructor_proposal"
+    assert transfer.source_identity["M"]["Omega_proxy"]
+    assert transfer.target_identity["M"]["Xi_proxy"]
+    assert transfer.required_attachments["C_closure"]
+    assert transfer.required_attachments["R_readout"]
+    assert transfer.required_attachments["P_protocol"]
+    assert transfer.required_attachments["falsifiers"]
+    assert {move["acts_on"] for move in transfer.constructor_moves} >= {"Omega", "Xi", "C", "R", "P"}
+    assert transfer.validation_gates["independent_target_validation"] is False
+
+
+def test_tex_display_math_is_not_a_commutator():
+    fp = fingerprint_text(r"\[p_\infty \propto \exp[-U/T]\] with probability conservation")
+    assert fp.routes["commutator_incompatibility_route"] == 0.0
 
 
 def test_hyperion_static_index_can_support_search():

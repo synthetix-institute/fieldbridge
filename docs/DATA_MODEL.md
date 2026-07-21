@@ -1,7 +1,25 @@
 # FieldBridge Data Model
 
-FieldBridge has four public data objects: mechanism sheets, field packs, field
-adapters, and mechanism records.
+FieldBridge has five public data objects: mechanism sheets, constructor
+transfers, field packs, field adapters, and mechanism records.
+
+## Constructor Transfer
+
+A constructor transfer records the proposed identity change rather than only a
+similarity score:
+
+```text
+I_op=(Omega, Xi; C, R, P) -> I'_op=(Omega, Xi'; C', R', P')
+preserved contract
+changed carrier and realization
+required C/R/P attachments
+candidate equations and predictions
+falsifying controls and validation gates
+```
+
+The public tool reports interpretable route/fiber proxies for `Omega` and `Xi`.
+It does not claim access to private learned token assignments. A structurally
+complete constructor record is a testable proposal, not a validated transfer.
 
 ## Mechanism Sheet
 
