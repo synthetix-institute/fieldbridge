@@ -54,7 +54,11 @@ def construct_transfer(
     operator = _operator_proxy(routes)
     target_state = _first(translation.variables, "target carrier unresolved")
     target_boundary = next(
-        (value for value in translation.variables if value.startswith("B:")),
+        (
+            value
+            for value in translation.variables
+            if value.startswith(("B:", "admissibility_logic:"))
+        ),
         "target closure or boundary unresolved",
     )
     target_input = next(
@@ -64,6 +68,7 @@ def construct_transfer(
             "target protocol or input unresolved",
         ),
     )
+    target_protocol = translation.protocols or [target_input]
 
     source_identity: Dict[str, Any] = {
         "M": {
@@ -85,7 +90,7 @@ def construct_transfer(
         "F": {
             "C": target_boundary,
             "R": translation.measurements,
-            "P": [target_input, *translation.controls],
+            "P": target_protocol,
         },
         "A": translation.target_field.label,
     }
@@ -102,7 +107,7 @@ def construct_transfer(
     attachments = {
         "C_closure": [target_boundary],
         "R_readout": translation.measurements,
-        "P_protocol": [target_input],
+        "P_protocol": target_protocol,
         "A_realization": translation.variables,
         "falsifiers": translation.controls,
     }

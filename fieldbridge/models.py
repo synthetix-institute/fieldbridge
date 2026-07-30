@@ -35,6 +35,7 @@ class FieldPack:
     boundary_words: List[str]
     output_words: List[str]
     validation_words: List[str]
+    protocol_words: List[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -111,6 +112,7 @@ class Translation:
     measurements: List[str]
     controls: List[str]
     evidence_boundary: str
+    protocols: List[str] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

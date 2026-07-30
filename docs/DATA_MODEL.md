@@ -53,7 +53,8 @@ A field pack names how a field talks about the same operational roles.
   "input_words": ["thermal writing protocol", "..."],
   "boundary_words": ["sample boundary B", "..."],
   "output_words": ["transport", "..."],
-  "validation_words": ["no-write baseline", "..."]
+  "validation_words": ["no-write baseline", "..."],
+  "protocol_words": ["preparation protocol", "ordered pulse sequence", "..."]
 }
 ```
 
@@ -96,7 +97,8 @@ review criteria, and interpretation guide.
 
 The adapter keeps two layers separate:
 
-- constructor roles: carrier, operator, update, admissibility, readout, falsifier;
+- constructor roles: carrier, operator, update, admissibility, readout, protocol,
+  falsifier;
 - substrate evidence: coordinate domain, metric manifold, inner-product space,
   phase space, probability space, graph topology, lattice, bundle/gauge space,
   configuration quotient, or stoichiometric space.

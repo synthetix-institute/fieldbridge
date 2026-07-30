@@ -207,6 +207,24 @@ CONSTRUCTOR_ROLE_PATTERNS: Dict[str, Tuple[str, List[str]]] = {
             r"\berror\b",
         ],
     ),
+    "protocol_execution": (
+        "the preparation, intervention, ordered procedure, or computational schedule used to execute the mechanism",
+        [
+            r"\bprotocol\b",
+            r"\bprocedure\b",
+            r"\bpreparation\b",
+            r"\bintervention\b",
+            r"\bsequence\b",
+            r"\bworkflow\b",
+            r"\btime step\b",
+            r"\bupdate order\b",
+            r"\btraining schedule\b",
+            r"\bdosage\b",
+            r"\bpulse\b",
+            r"\biteration\b",
+            r"\balgorithm\b",
+        ],
+    ),
     "falsifier": (
         "the control, perturbation, ablation, reset, swap, or validation test that could break the proposed mechanism",
         [
@@ -611,10 +629,24 @@ def chunk_text(text: str, max_chars: int = 2600, overlap_sentences: int = 1) -> 
     return chunks
 
 
-def make_chunks(paths: Sequence[Path], max_chars: int, max_chunks_per_doc: int) -> List[Chunk]:
+def make_chunks(
+    paths: Sequence[Path],
+    max_chars: int,
+    max_chunks_per_doc: int,
+    failures: Optional[List[Dict[str, str]]] = None,
+) -> List[Chunk]:
     chunks: List[Chunk] = []
     for doc_index, path in enumerate(paths):
-        text = read_document(path)
+        try:
+            text = read_document(path)
+        except Exception as exc:
+            if failures is not None:
+                failures.append({"path": str(path), "error": clean_text(exc, 500)})
+            continue
+        if not text.strip():
+            if failures is not None:
+                failures.append({"path": str(path), "error": "No extractable text."})
+            continue
         doc_id = f"D{doc_index:04d}"
         for chunk_index, piece in enumerate(chunk_text(text, max_chars=max_chars)):
             if chunk_index >= max_chunks_per_doc:
@@ -816,6 +848,12 @@ def field_pack_from_attention(field_id: str, label: str, description: str, chunk
         "boundary_words": constructor_phrase_candidates(chunks, "admissibility_logic", ["admissibility condition", "boundary condition B"], 10),
         "output_words": constructor_phrase_candidates(chunks, "readout_rule", ["output y", "later response", "readout"], 10),
         "validation_words": constructor_phrase_candidates(chunks, "falsifier", ["erased-state control", "shuffled-history control", "boundary swap"], 10),
+        "protocol_words": constructor_phrase_candidates(
+            chunks,
+            "protocol_execution",
+            ["preparation or execution protocol"],
+            10,
+        ),
     }
 
 
@@ -873,7 +911,12 @@ ROUTE_TO_CONSTRUCTOR_ROLES: Dict[str, List[str]] = {
     "spectral_operator_route": ["operator_apparatus", "readout_rule", "state_or_carrier"],
     "boundary_weak_form_route": ["admissibility_logic", "state_or_carrier", "readout_rule"],
     "commutator_incompatibility_route": ["operator_apparatus", "admissibility_logic", "falsifier"],
-    "discrete_protocol_route": ["update_or_transport", "admissibility_logic", "readout_rule"],
+    "discrete_protocol_route": [
+        "update_or_transport",
+        "protocol_execution",
+        "admissibility_logic",
+        "readout_rule",
+    ],
 }
 
 
@@ -955,10 +998,14 @@ def build_field_adapter(
                 "constructor roles while keeping the substrate evidence explicit."
             ),
             "input": "mechanism sheet or route/fiber fingerprint",
-            "output": "field-native state/carrier, operator, update, admissibility, readout, and falsifier candidates",
+            "output": (
+                "field-native state/carrier, operator, update, admissibility, "
+                "readout, protocol, and falsifier candidates"
+            ),
             "review_rule": (
                 "Promote a translation only when evidence exists for carrier, operator/update, "
-                "admissibility, readout, and a falsifying control in the field corpus."
+                "admissibility, readout, execution protocol, and a falsifying control "
+                "in the field corpus."
             ),
         },
         "route_profile": route_priors,
@@ -976,6 +1023,7 @@ def build_field_adapter(
             "update_or_transport": constructor_phrase_candidates(selected, "update_or_transport", [], 12),
             "admissibility_logic": constructor_phrase_candidates(selected, "admissibility_logic", [], 12),
             "readout_rule": constructor_phrase_candidates(selected, "readout_rule", [], 12),
+            "protocol_execution": constructor_phrase_candidates(selected, "protocol_execution", [], 12),
             "falsifier": constructor_phrase_candidates(selected, "falsifier", [], 12),
         },
         "gap_report": {
@@ -1024,7 +1072,9 @@ def render_adapter_markdown(adapter: Mapping[str, Any]) -> str:
         "## Adapter Contract",
         str(adapter["adapter_contract"]["purpose"]),
         "",
-        "A translation should name a field-native carrier, operator or update rule, admissibility condition, readout, and falsifying control before it is promoted.",
+        "A translation should name a field-native carrier, operator or update rule, "
+        "admissibility condition, readout, execution protocol, and falsifying control "
+        "before it is promoted.",
         "",
         "## Route To Field Adapter",
     ]
@@ -1062,10 +1112,26 @@ def mechanism_record_from_chunk(field_id: str, chunk: Chunk, rank: int) -> Dict[
     routes = active_keys(chunk.routes)
     fibers = active_keys(chunk.fibers)
     invariant = (
-        f"{field_id} sparse-attention anchor preserves "
-        f"{', '.join(routes) or 'no strong route'} over {', '.join(fibers) or 'no strong fiber'}."
+        f"{field_id} sparse-attention anchor is indexed by "
+        f"{', '.join(routes) or 'no strong route'} over "
+        f"{', '.join(fibers) or 'no strong fiber'}."
     )
     equations = chunk.equations or sheet.equations
+
+    def grounded_role(role: str, limit: int = 3) -> List[str]:
+        return constructor_phrase_candidates([chunk], role, [], limit)
+
+    variables: List[str] = []
+    for role in (
+        "state_or_carrier",
+        "operator_apparatus",
+        "update_or_transport",
+        "admissibility_logic",
+        "protocol_execution",
+    ):
+        variables.extend(f"{role}: {value}" for value in grounded_role(role, 2))
+    measurements = grounded_role("readout_rule", 4)
+    controls = grounded_role("falsifier", 4)
     return {
         "record_id": f"{field_id}:pdf_anchor:{rank:04d}",
         "title": f"{chunk.title} mechanism anchor {rank:03d}",
@@ -1073,14 +1139,17 @@ def mechanism_record_from_chunk(field_id: str, chunk: Chunk, rank: int) -> Dict[
         "summary": clean_text(chunk.text, 420),
         "invariant": invariant,
         "equations": equations[:6],
-        "variables": sheet.variables,
-        "measurements": sheet.measurements,
-        "controls": sheet.controls,
-        "references": [f"pdf:{Path(chunk.path).name}"],
+        "variables": variables,
+        "measurements": measurements,
+        "controls": controls,
+        "references": [
+            f"{Path(chunk.path).suffix.lower().lstrip('.') or 'document'}:"
+            f"{Path(chunk.path).name}"
+        ],
         "keywords": top_terms([chunk.text], 24),
         "routes": chunk.routes,
         "fibers": chunk.fibers,
-        "source": "pdf_sparse_attention",
+        "source": "document_sparse_attention",
     }
 
 
@@ -1393,9 +1462,18 @@ def build_pdf_field_pack(
     paths = iter_documents(pdf_dir, extensions)[:max_docs]
     if not paths:
         raise FileNotFoundError(f"No input documents found in {pdf_dir}")
-    chunks = make_chunks(paths, max_chars=max_chars, max_chunks_per_doc=max_chunks_per_doc)
+    extraction_failures: List[Dict[str, str]] = []
+    chunks = make_chunks(
+        paths,
+        max_chars=max_chars,
+        max_chunks_per_doc=max_chunks_per_doc,
+        failures=extraction_failures,
+    )
     if not chunks:
-        raise RuntimeError(f"No readable chunks extracted from {pdf_dir}")
+        detail = extraction_failures[0]["error"] if extraction_failures else "No text found."
+        raise RuntimeError(f"No readable chunks extracted from {pdf_dir}: {detail}")
+    successful_path_names = {chunk.path for chunk in chunks}
+    successful_paths = [path for path in paths if str(path) in successful_path_names]
 
     selected = top_chunks(chunks, score_chunk, max_anchors)
     pack = field_pack_from_attention(field_id, label, description, selected)
@@ -1413,7 +1491,7 @@ def build_pdf_field_pack(
         description=description,
         chunks=chunks,
         selected=selected,
-        paths=paths,
+        paths=successful_paths,
         generated_at=generated_at,
     )
     adapter_report = render_adapter_markdown(adapter)
@@ -1425,10 +1503,12 @@ def build_pdf_field_pack(
         "generated_at": generated_at,
         "source_artifacts": {
             "pdf_dir": str(pdf_dir),
-            "documents": [str(path) for path in paths],
+            "documents": [str(path) for path in successful_paths],
+            "extraction_failures": extraction_failures,
         },
         "claim_boundary": (
-            "This sidecar is built by deterministic sparse attention over field PDFs. "
+            "This sidecar is built by deterministic sparse attention over a field "
+            "document folder. "
             "It identifies receptor vocabulary and mechanism anchors; it does not validate "
             "that the proposed mechanisms are experimentally true."
         ),
@@ -1444,7 +1524,10 @@ def build_pdf_field_pack(
         "receptor_graph_path": f"kg/{field_id}_knowledge_graph.json",
         "gap_report": graph.get("gap_report", {}),
         "telemetry": {
-            "document_count": len(paths),
+            "document_count": len(successful_paths),
+            "documents_discovered": len(paths),
+            "documents_processed": len(successful_paths),
+            "documents_failed": len(extraction_failures),
             "chunk_count": len(chunks),
             "anchor_count": len(records),
             "max_docs": max_docs,
@@ -1472,7 +1555,9 @@ def build_pdf_field_pack(
                 "field_adapter_report": f"reports/{field_id}_adapter.md",
                 "knowledge_graph": f"kg/{field_id}_knowledge_graph.json",
                 "native_mechanism_anchors": len(records),
-                "document_count": len(paths),
+                "document_count": len(successful_paths),
+                "documents_discovered": len(paths),
+                "documents_failed": len(extraction_failures),
                 "chunk_count": len(chunks),
             }
         ],
@@ -1484,7 +1569,9 @@ def build_pdf_field_pack(
     return {
         "out_dir": str(out_dir),
         "field_id": field_id,
-        "documents": len(paths),
+        "documents": len(successful_paths),
+        "documents_discovered": len(paths),
+        "documents_failed": len(extraction_failures),
         "chunks": len(chunks),
         "anchors": len(records),
         "route_priors": route_priors,

@@ -1,3 +1,4 @@
+from fieldbridge import cli
 from fieldbridge.constructor import construct_transfer
 from fieldbridge.continuation import validate_future_state
 from fieldbridge.routes import fingerprint_text
@@ -25,8 +26,17 @@ def test_translate_has_controls():
     text = "A prior signal writes q; after erasure, y changes through C(q,u,B)=0."
     translation = translate_mechanism(text, target_field="collective_intelligence")
     assert translation.controls
+    assert translation.protocols
     assert translation.equations
     assert translation.target_field.field_id == "collective_intelligence"
+
+
+def test_cli_pdf_input_uses_shared_document_parser(tmp_path, monkeypatch):
+    path = tmp_path / "paper.pdf"
+    path.write_bytes(b"%PDF-placeholder")
+    monkeypatch.setattr(cli, "read_document", lambda value: f"parsed:{value.name}")
+
+    assert cli.read_input(str(path)) == "parsed:paper.pdf"
 
 
 def test_constructor_exposes_identity_completion_and_falsifier():
@@ -39,6 +49,10 @@ def test_constructor_exposes_identity_completion_and_falsifier():
     assert transfer.required_attachments["R_readout"]
     assert transfer.required_attachments["P_protocol"]
     assert transfer.required_attachments["falsifiers"]
+    assert transfer.target_identity["F"]["P"] == transfer.required_attachments["P_protocol"]
+    assert set(transfer.required_attachments["P_protocol"]).isdisjoint(
+        transfer.required_attachments["falsifiers"]
+    )
     assert {move["acts_on"] for move in transfer.constructor_moves} >= {"Omega", "Xi", "C", "R", "P"}
     assert transfer.validation_gates["independent_target_validation"] is False
 

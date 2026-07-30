@@ -8,7 +8,7 @@ from .constructor import construct_transfer
 from .continuation import render_markdown as render_continuation_markdown
 from .continuation import validate_future_state
 from .extract import compare_mechanisms, extract_mechanism
-from .pdf_sparse_builder import build_pdf_field_pack, slugify
+from .pdf_sparse_builder import build_pdf_field_pack, read_document, slugify
 from .render import render_comparison, render_constructor, render_fingerprint, render_mechanism_sheet, render_search, render_translation
 from .routes import fingerprint_text
 from .search import find_analogs, translate_mechanism
@@ -18,8 +18,10 @@ from .zero_shot import validate_full_paper_zero_shot
 
 def read_input(path_or_text: str) -> str:
     path = Path(path_or_text)
+    if path.is_file():
+        return read_document(path)
     if path.exists():
-        return path.read_text(errors="replace")
+        raise IsADirectoryError(f"Expected a document, received directory: {path}")
     return path_or_text
 
 

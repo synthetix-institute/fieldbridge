@@ -29,6 +29,7 @@ flowchart LR
 4. [Construct a controlled transfer](04_constructor_transfers.md)
 5. [Validate retrieval with complete-paper holdout](05_complete_paper_validation.md)
 6. [Predict the next move and future mechanism state](06_future_state_prediction.md)
+7. [Build a field adapter from a PDF folder](07_pdf_field_adapter.md)
 
 ## Install
 

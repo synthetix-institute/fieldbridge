@@ -308,12 +308,20 @@ boundaries, outputs, controls, and missing links the field literature appears to
 make available for mechanism transfer.
 
 The adapter is the stronger object for a large field corpus. It converts a folder
-of papers into field-native receivers for the six public Hyperion routes:
-state/carrier, operator apparatus, update or transport, admissibility logic,
-readout rule, and falsifier. It also keeps substrate evidence separate from
-field nouns by scoring universal substrate classes such as coordinate domains,
-inner-product spaces, probability spaces, graph topology, metric manifolds,
-lattices, bundles, quotient spaces, and stoichiometric spaces.
+of papers into field-native receivers. Six public route families are mapped to
+seven constructor roles: state/carrier, operator apparatus, update or transport,
+admissibility logic, readout rule, execution protocol, and falsifier. These
+roles resolve the public identity \(I_{\mathrm{op}}=((\Omega,\Xi);C,R,P)\)
+without treating a negative control as the protocol itself. Substrate evidence
+is kept separate from field nouns by scoring universal substrate classes such
+as coordinate domains, inner-product spaces, probability spaces, graph
+topology, metric manifolds, lattices, bundles, quotient spaces, and
+stoichiometric spaces.
+
+Folder traversal is recursive. Text-layer PDFs, `.txt`, `.tex`, and `.md` files
+are accepted. An unreadable document is recorded in the evidence sidecar and
+does not stop the remaining corpus. Image-only or scanned PDFs must be OCRed
+before ingestion.
 
 For example, a neuroscience folder should not become a list of local names such
 as cortex, connectome, synapse, or Markov blanket. The adapter should ask which

@@ -202,6 +202,7 @@ def translate_mechanism(
         equations = ["partial_t q = W(u,t)-q/tau", "C(q,u,B)=0", "y=A(q,B)"]
         measurements = target.output_words[:4]
         controls = target.validation_words[:4]
+    protocols = target.protocol_words[:4] or target.input_words[:4]
     formulation = _target_formulation(text, source_fp, target, best)
 
     return Translation(
@@ -220,4 +221,5 @@ def translate_mechanism(
             "Hyperion static witness index. Raw arXiv witnesses are audit evidence, not "
             "the translated mechanism."
         ),
+        protocols=protocols,
     )

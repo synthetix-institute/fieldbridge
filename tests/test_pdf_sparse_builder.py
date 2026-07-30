@@ -12,6 +12,7 @@ def test_pdf_sparse_builder_exports_typed_mechanism_kg(tmp_path):
         After washout, the boundary condition B changes the transport response y.
         The mechanism is tested by reset controls, shuffled history controls,
         and a residual C(q,u,B)=0 with partial_t q = W(u,t)-q/tau.
+        The preparation protocol applies two pulses before the readout.
 
         A second optical input writes a polarization memory. The surface boundary
         gates conductance and motion; erasure should remove the later readout.
@@ -56,5 +57,49 @@ def test_pdf_sparse_builder_exports_typed_mechanism_kg(tmp_path):
     assert adapter["artifact_type"] == "fieldbridge_field_adapter"
     assert adapter["constructor_roles"]
     assert "state_or_carrier" in adapter["field_native_receivers"]
+    assert "protocol_execution" in adapter["field_native_receivers"]
+    assert adapter["field_native_receivers"]["protocol_execution"]
     assert "coordinate_domain" in adapter["substrate_profile"]
     assert "route_to_field_adapter" in adapter
+    records = json.loads(
+        (tmp_path / "out" / "index" / "core_examples.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    assert records[0]["references"][0].startswith("txt:")
+    assert all(
+        "cellular, tissue" not in value
+        for record in records
+        for value in record["variables"]
+    )
+
+
+def test_pdf_sparse_builder_skips_unreadable_document(tmp_path):
+    papers = tmp_path / "papers"
+    papers.mkdir()
+    (papers / "usable.txt").write_text(
+        "A preparation protocol updates state q and measures response y.",
+        encoding="utf-8",
+    )
+    (papers / "broken.pdf").write_bytes(b"not a pdf")
+
+    summary = build_pdf_field_pack(
+        pdf_dir=papers,
+        field_id="mixed_input",
+        label="Mixed Input",
+        out_dir=tmp_path / "out",
+        max_docs=5,
+        max_anchors=2,
+        extensions=(".pdf", ".txt"),
+    )
+
+    assert summary["documents_discovered"] == 2
+    assert summary["documents"] == 1
+    assert summary["documents_failed"] == 1
+    evidence = json.loads(
+        (tmp_path / "out" / "field_pack_evidence" / "mixed_input.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    failures = evidence["source_artifacts"]["extraction_failures"]
+    assert failures and failures[0]["path"].endswith("broken.pdf")

@@ -13,8 +13,8 @@ The adapter answers one practical question:
 
 ```text
 If a portable mechanism arrives from another field, which state carriers,
-operators, update laws, admissibility tests, readouts, substrates, and falsifiers
-are available in this field corpus?
+operators, update laws, admissibility tests, readouts, execution protocols,
+substrates, and falsifiers are available in this field corpus?
 ```
 
 It is not a static glossary. It is a receptor map for mechanism transfer.
@@ -29,7 +29,7 @@ FieldBridge separates three layers that are usually mixed in prose:
 
 2. **Constructor roles.**  
    The field-native parts required to make a mechanism testable: carrier,
-   operator, update, admissibility, readout, and falsifier.
+   operator, update, admissibility, readout, protocol, and falsifier.
 
 3. **Universal substrate evidence.**  
    The type of space on which the construction acts: coordinate domain,
@@ -53,6 +53,31 @@ python -m pip install -e ".[pdf]"
 The optional `pdf` extra installs `pdfplumber`. If it is absent, the builder
 tries `pypdf`, `PyPDF2`, and the command-line `pdftotext` fallback when
 available.
+
+## Input Contract
+
+The input path is traversed recursively. The builder reads text-layer PDFs and
+plain `.txt`, `.tex`, and `.md` documents. A corrupt or unreadable document is
+recorded under `source_artifacts.extraction_failures` and the rest of the folder
+continues. The command fails only when no readable document produces a text
+chunk.
+
+The builder does not perform optical character recognition. Run OCR before
+ingestion when a PDF contains page images without an embedded text layer. A
+quick preflight is:
+
+```bash
+pdftotext first_paper.pdf - | head
+```
+
+The same parser is used by `extract`, `compare`, `translate`, `construct`,
+complete-paper validation, and the folder builder, so a PDF has one extraction
+contract across the CLI.
+
+`fieldbridge extract paper.pdf` produces one coarse mechanism sheet for the
+whole document. Use `build-field-adapter` for collections and for papers that
+contain several mechanisms: the adapter splits each document into source-linked
+chunks before scoring roles, routes, and substrates.
 
 ## Basic Command
 
@@ -141,7 +166,7 @@ The adapter JSON has this top-level structure:
   },
   "adapter_contract": {
     "input": "mechanism sheet or route/fiber fingerprint",
-    "output": "field-native state/carrier, operator, update, admissibility, readout, and falsifier candidates"
+    "output": "field-native state/carrier, operator, update, admissibility, readout, protocol, and falsifier candidates"
   },
   "route_profile": {},
   "fiber_profile": {},
@@ -167,9 +192,10 @@ chunks. They are comparative signals, not calibrated probabilities.
 | `update_or_transport` | How does it change? | flow, diffusion, propagation, inference, recurrence, learning, trajectory |
 | `admissibility_logic` | What makes a state or step legal? | constraint, closure, normalization, threshold, gate, compatibility, residual |
 | `readout_rule` | What is measured or predicted? | observable, measurement, response, spectrum, eigenvalue, phenotype, behaviour |
+| `protocol_execution` | How is the mechanism prepared or executed? | preparation, intervention, sequence, workflow, update order, training schedule |
 | `falsifier` | What can break the claim? | control, validation, ablation, reset, washout, baseline, null, perturbation |
 
-A strong transfer candidate should have evidence for all six roles. A field can
+A strong transfer candidate should have evidence for all seven roles. A field can
 still be useful with weaker evidence, but the missing roles should become the
 next curation targets.
 
@@ -227,7 +253,7 @@ Review these sections in order:
 
 3. **Constructor Role Evidence.**  
    This tells whether the corpus has carriers, operators, updates,
-   admissibility tests, readouts, and falsifiers.
+   admissibility tests, readouts, protocols, and falsifiers.
 
 4. **Route To Field Adapter.**  
    This is the operational mapping from Hyperion route to field-native evidence.
@@ -244,6 +270,7 @@ A transferred mechanism is ready for serious discussion when the adapter supplie
 - an operator, generator, update rule, or objective acting on that carrier;
 - an admissibility condition, boundary, normalization, threshold, or closure law;
 - a readout that can be measured or computed;
+- an intervention, preparation, or computational protocol that executes it;
 - a falsifier or control that can remove, alter, or reduce the claimed effect;
 - at least one substrate class that explains where the operator acts.
 
@@ -315,7 +342,7 @@ collective system into a material experiment.
 4. Run `fieldbridge translate --to <field_id>` using the generated data directory.
 5. Compare the translation against the adapter report.
 6. Promote the translation only when carrier, operator/update, admissibility,
-   readout, falsifier, and substrate evidence are all present.
+   readout, protocol, falsifier, and substrate evidence are all present.
 
 Example:
 
@@ -335,7 +362,7 @@ Recommended corpus types:
 - papers with equations, experimental protocols, or explicit models;
 - review papers plus primary mechanism papers;
 - negative controls and validation papers when available;
-- enough breadth to cover carriers, operators, readouts, and falsifiers.
+- enough breadth to cover carriers, operators, readouts, protocols, and falsifiers.
 
 Avoid mixing unrelated domains in the same adapter. If the folder contains
 neuroscience, immunology, materials, and economics together, the substrate
@@ -389,7 +416,7 @@ The adapter contract should remain stable:
 
 ```text
 portable route/fingerprint
-  -> field-native carrier/operator/update/admissibility/readout/falsifier
+  -> field-native carrier/operator/update/admissibility/readout/protocol/falsifier
   -> substrate evidence
   -> evidence snippets
   -> transfer review
@@ -409,6 +436,7 @@ operator:      what acts on it
 update:        how it changes
 admissibility: what makes the state legal
 readout:       what is measured
+protocol:      how the mechanism is prepared or executed
 falsifier:     what breaks the proposed mechanism
 substrate:     where the operator acts
 ```
