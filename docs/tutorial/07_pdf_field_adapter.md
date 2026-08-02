@@ -57,6 +57,18 @@ I_op = (M; C, R, P)
 `admissibility_logic`, `readout_rule`, and `protocol_execution` provide
 `C`, `R`, and `P`. Falsifiers remain a separate validation layer.
 
+## In the Code
+
+- `fieldbridge.pdf_sparse_builder.iter_documents` discovers supported files
+  recursively, and `read_document` normalizes their text.
+- `make_chunks` creates bounded source-bearing passages.
+- `sparse_attention` scores route, fiber, constructor-role, and substrate
+  evidence over those passages.
+- `build_field_adapter` assembles the field-native receptor map.
+- `receptor_graph` and `detect_receptor_gaps` expose supported and missing links.
+- `build_pdf_field_pack` writes the coordinated adapter, evidence, graph,
+  examples, and report artifacts.
+
 ## Use the New Field
 
 ```bash
@@ -71,3 +83,5 @@ fieldbridge construct examples/bioelectric_regeneration.txt \
 
 The generated adapter is an evidence index, not an accepted field model.
 Inspect source passages and equations before promoting a transfer.
+
+Next: [Follow one transfer end to end](08_end_to_end_walkthrough.md).

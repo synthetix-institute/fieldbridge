@@ -31,6 +31,14 @@ mechanism label and belongs to another field. The report compares operational
 retrieval with a gallery-fitted lexical baseline and gives a paired bootstrap
 interval for the precision gain.
 
+## In the Code
+
+- `fieldbridge.zero_shot._load_manifest` validates the paper-level data contract.
+- `fieldbridge.zero_shot._paper_fingerprint` builds the operational query vector.
+- `fieldbridge.zero_shot.validate_full_paper_zero_shot` removes each query paper,
+  fits the gallery baselines, ranks candidates, and computes paired metrics.
+- `fieldbridge.zero_shot.render_markdown` writes the human-readable report.
+
 ```mermaid
 flowchart TD
     Q["Withhold one complete paper"] --> G["Fit gallery representation"]

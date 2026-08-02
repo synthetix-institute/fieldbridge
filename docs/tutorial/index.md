@@ -8,7 +8,7 @@ out, and which procedure makes the mechanism usable.
 This tutorial follows the codebase-knowledge structure developed by
 [PocketFlow Tutorial Codebase Knowledge](https://github.com/The-Pocket/PocketFlow-Tutorial-Codebase-Knowledge):
 identify the central abstractions, show how they interact, and introduce them
-in dependency order through runnable examples.
+in dependency order through runnable examples and concrete source references.
 
 ```mermaid
 flowchart LR
@@ -23,6 +23,7 @@ flowchart LR
 
 ## What You Will Learn
 
+0. [Map the codebase and its core abstractions](00_system_map.md)
 1. [Read an operational fingerprint](01_operational_fingerprints.md)
 2. [Extract a modular mechanism identity](02_mechanism_sheets.md)
 3. [Find a mechanism in another field](03_cross_field_retrieval.md)
@@ -30,6 +31,7 @@ flowchart LR
 5. [Validate retrieval with complete-paper holdout](05_complete_paper_validation.md)
 6. [Predict the next move and future mechanism state](06_future_state_prediction.md)
 7. [Build a field adapter from a PDF folder](07_pdf_field_adapter.md)
+8. [Follow one transfer end to end](08_end_to_end_walkthrough.md)
 
 ## Install
 
@@ -54,5 +56,6 @@ fieldbridge fields
 fieldbridge fingerprint examples/brownian_probability_flow.tex
 ```
 
-FieldBridge does not require an LLM for these public workflows. Its outputs
-are proposals and validation reports, not accepted scientific claims.
+FieldBridge does not require an LLM for these public workflows. Continue with
+the [system map](00_system_map.md) to see how the commands resolve into modules,
+data contracts, and functions.

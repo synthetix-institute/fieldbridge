@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="410" viewBox="0 0 1200 410" role="img" aria-labelledby="title desc">
+  <title id="title">FieldBridge</title>
+  <desc id="desc">A mechanism translation workbench that preserves an operation, replaces its carrier, and attaches closure, readout, and protocol requirements.</desc>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+    .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .ink { fill: #171918; }
+    .muted { fill: #5f655f; }
+    .blue { fill: #2457d6; }
+    .green { fill: #177f63; }
+    .rule { stroke: #cfd3cc; stroke-width: 1.5; }
+    .bridge { fill: none; stroke: #2457d6; stroke-width: 4; }
+  </style>
+  <rect x="1" y="1" width="1198" height="408" rx="8" fill="#f6f6f2" stroke="#d5d8d1" stroke-width="2"/>
+  <line x1="548" y1="42" x2="548" y2="368" class="rule"/>
+  <g transform="translate(54 48)">
+    <text class="mono green" font-size="17" font-weight="700">SCIENTIFIC MECHANISM TRANSLATION</text>
+    <text y="82" class="sans ink" font-size="70" font-weight="760">FieldBridge</text>
+    <text y="132" class="sans ink" font-size="25">Move a mechanism between fields.</text>
+    <text y="168" class="sans muted" font-size="21">Preserve the operation. Replace the carrier.</text>
+    <text y="198" class="sans muted" font-size="21">Attach what makes the result executable and testable.</text>
+    <line x1="0" y1="238" x2="432" y2="238" class="rule"/>
+    <text y="274" class="mono ink" font-size="18">I_op = ((Omega, Xi); C, R, P)</text>
+    <text y="316" class="mono muted" font-size="15">PYTHON CLI  /  PDF FIELD ADAPTERS  /  NO LLM REQUIRED</text>
+  </g>
+  <g transform="translate(594 48)">
+    <text class="mono muted" font-size="16">REAL CONSTRUCTOR EXAMPLE</text>
+    <text y="42" class="sans ink" font-size="23" font-weight="700">Brownian motion to noisy optimization</text>
+    <g transform="translate(0 82)">
+      <text x="0" y="20" class="mono blue" font-size="16" font-weight="700">SOURCE</text>
+      <text x="0" y="53" class="sans ink" font-size="22">x, p(x,t)</text>
+      <path d="M150 42 H338" class="bridge"/>
+      <path d="M328 33 L340 42 L328 51" fill="none" stroke="#2457d6" stroke-width="4"/>
+      <text x="164" y="21" class="mono green" font-size="15">PRESERVE OMEGA</text>
+      <text x="164" y="72" class="sans ink" font-size="18">gradient drift + diffusion</text>
+      <text x="370" y="20" class="mono blue" font-size="16" font-weight="700">TARGET</text>
+      <text x="370" y="53" class="sans ink" font-size="22">theta, p(theta,t)</text>
+    </g>
+    <line x1="0" y1="190" x2="548" y2="190" class="rule"/>
+    <g transform="translate(0 220)">
+      <text class="mono green" font-size="16" font-weight="700">ATTACH</text>
+      <text x="0" y="38" class="mono ink" font-size="18">C</text>
+      <text x="34" y="38" class="sans muted" font-size="18">normalization + closure</text>
+      <text x="0" y="75" class="mono ink" font-size="18">R</text>
+      <text x="34" y="75" class="sans muted" font-size="18">stationary density + free energy</text>
+      <text x="0" y="112" class="mono ink" font-size="18">P</text>
+      <text x="34" y="112" class="sans muted" font-size="18">stochastic update + noise schedule</text>
+    </g>
+  </g>
+</svg>

@@ -1,109 +1,69 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="760" viewBox="0 0 1400 760" role="img" aria-labelledby="title desc">
-  <title id="title">FieldBridge mechanism translation workflow</title>
-  <desc id="desc">A scientific paper is converted into a portable mechanism, then used either to retrieve existing analogues or translate the mechanism into a new scientific field.</desc>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="500" viewBox="0 0 1200 500" role="img" aria-labelledby="title desc">
+  <title id="title">FieldBridge implementation flow</title>
+  <desc id="desc">Documents are ingested, converted into operational representations, retrieved or constructed across fields, and evaluated with complete-paper and future-state tests.</desc>
   <defs>
-    <linearGradient id="green" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#65c76f"/>
-      <stop offset="1" stop-color="#0f9b7a"/>
-    </linearGradient>
-    <linearGradient id="blue" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#3c92ff"/>
-      <stop offset="1" stop-color="#705cff"/>
-    </linearGradient>
-    <linearGradient id="ink" x1="0" x2="1" y1="0" y2="1">
-      <stop offset="0" stop-color="#16231f"/>
-      <stop offset="1" stop-color="#31401e"/>
-    </linearGradient>
-    <filter id="shadow" x="-12%" y="-12%" width="124%" height="124%">
-      <feDropShadow dx="0" dy="16" stdDeviation="20" flood-color="#17321e" flood-opacity="0.16"/>
-    </filter>
-    <marker id="arrowGreen" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto" markerUnits="strokeWidth">
-      <path d="M2,2 L12,7 L2,12 Z" fill="#148f70"/>
+    <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto">
+      <path d="M1 1 L9 5 L1 9" fill="none" stroke="#2457d6" stroke-width="1.8"/>
     </marker>
-    <marker id="arrowBlue" markerWidth="14" markerHeight="14" refX="11" refY="7" orient="auto" markerUnits="strokeWidth">
-      <path d="M2,2 L12,7 L2,12 Z" fill="#4f70ff"/>
-    </marker>
-    <style>
-      .kicker { font: 800 16px Inter, Arial, sans-serif; fill: #148f70; letter-spacing: 1.7px; }
-      .title { font: 800 52px Inter, Arial, sans-serif; fill: #111816; letter-spacing: 0; }
-      .subtitle { font: 400 23px Inter, Arial, sans-serif; fill: #46514b; letter-spacing: 0; }
-      .cardTitle { font: 800 23px Inter, Arial, sans-serif; fill: #15201c; letter-spacing: 0; }
-      .cardText { font: 400 18px Inter, Arial, sans-serif; fill: #4d5852; letter-spacing: 0; }
-      .small { font: 700 14px Inter, Arial, sans-serif; fill: #637067; letter-spacing: .4px; }
-      .pillText { font: 800 13px Inter, Arial, sans-serif; fill: #ffffff; letter-spacing: .8px; }
-      .formula { font: 600 18px "SFMono-Regular", Consolas, monospace; fill: #24342d; letter-spacing: 0; }
-      .card { fill: #ffffff; stroke: #dfe8de; stroke-width: 1.4; rx: 14; filter: url(#shadow); }
-      .softCard { fill: #f7fbf5; stroke: #e2ece0; stroke-width: 1.2; rx: 12; }
-      .greenLine { fill: none; stroke: #148f70; stroke-width: 4; marker-end: url(#arrowGreen); }
-      .blueLine { fill: none; stroke: #4f70ff; stroke-width: 4; marker-end: url(#arrowBlue); }
-      .thin { fill: none; stroke: #d7e7d2; stroke-width: 2; }
-    </style>
   </defs>
-
-  <rect width="1400" height="760" fill="#ffffff"/>
-  <circle cx="1210" cy="120" r="260" fill="#e9f8e6"/>
-  <circle cx="110" cy="680" r="300" fill="#eef4ff"/>
-  <path d="M0 612 C210 560 290 640 480 602 C650 568 720 476 890 512 C1110 558 1198 658 1400 588 L1400 760 L0 760 Z" fill="#f6faf3"/>
-
-  <text x="70" y="78" class="kicker">FIELD BRIDGE / HYPERION PUBLIC WORKBENCH</text>
-  <text x="70" y="128" class="title">The invariant is the transformation.</text>
-  <text x="70" y="186" class="title">Discovery is successful translation.</text>
-  <text x="72" y="225" class="subtitle">FieldBridge tests whether an operational route survives in a new field.</text>
-
-  <rect x="74" y="270" width="290" height="164" class="card"/>
-  <text x="108" y="318" class="cardTitle">Source paper</text>
-  <text x="108" y="353" class="cardText">LaTeX, abstract, equation,</text>
-  <text x="108" y="380" class="cardText">paper fragment, or claim.</text>
-  <rect x="108" y="398" width="78" height="27" rx="13.5" fill="#17231f"/>
-  <text x="126" y="417" class="pillText">INPUT</text>
-
-  <path d="M365 352 C420 352 446 352 502 352" class="greenLine"/>
-
-  <rect x="508" y="238" width="360" height="232" class="card"/>
-  <text x="546" y="288" class="cardTitle">Portable route</text>
-  <text x="546" y="324" class="cardText">The field nouns are stripped away.</text>
-  <text x="546" y="352" class="cardText">What remains is an operational form:</text>
-  <rect x="546" y="376" width="276" height="50" rx="10" fill="#f3f8f0" stroke="#dbe9d8"/>
-  <text x="568" y="407" class="formula">q, u, B -> y  + controls</text>
-  <g transform="translate(546 442)">
-    <rect width="86" height="27" rx="13.5" fill="url(#green)"/>
-    <rect x="96" width="92" height="27" rx="13.5" fill="url(#green)"/>
-    <rect x="198" width="98" height="27" rx="13.5" fill="url(#green)"/>
-    <text x="17" y="19" class="pillText">FLOW</text>
-    <text x="111" y="19" class="pillText">CLOSURE</text>
-    <text x="217" y="19" class="pillText">BOUNDARY</text>
+  <style>
+    .sans { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif; }
+    .mono { font-family: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace; }
+    .ink { fill: #171918; }
+    .muted { fill: #626861; }
+    .blue { fill: #2457d6; }
+    .green { fill: #177f63; }
+    .box { fill: #ffffff; stroke: #cfd3cc; stroke-width: 1.5; }
+    .soft { fill: #eef3ff; stroke: #b9c8ef; stroke-width: 1.5; }
+    .greenbox { fill: #edf7f2; stroke: #b6d9cc; stroke-width: 1.5; }
+    .line { fill: none; stroke: #2457d6; stroke-width: 2.4; marker-end: url(#arrow); }
+    .rule { stroke: #d7dad4; stroke-width: 1.3; }
+  </style>
+  <rect width="1200" height="500" rx="8" fill="#f7f7f4"/>
+  <text x="48" y="52" class="mono green" font-size="16" font-weight="700">IMPLEMENTATION MAP</text>
+  <text x="48" y="91" class="sans ink" font-size="34" font-weight="730">From document to testable transfer</text>
+  <line x1="48" y1="116" x2="1152" y2="116" class="rule"/>
+  <g transform="translate(48 150)">
+    <rect width="242" height="150" rx="6" class="box"/>
+    <text x="22" y="34" class="mono blue" font-size="15" font-weight="700">01  INGEST</text>
+    <text x="22" y="70" class="sans ink" font-size="22" font-weight="680">Document input</text>
+    <text x="22" y="102" class="sans muted" font-size="18">PDF / TeX / Markdown / text</text>
+    <text x="22" y="132" class="mono muted" font-size="16">read_document</text>
   </g>
-
-  <path d="M868 316 C940 236 990 208 1072 206" class="blueLine"/>
-  <path d="M868 402 C940 448 992 500 1072 510" class="greenLine"/>
-
-  <rect x="1074" y="140" width="264" height="166" class="card"/>
-  <text x="1106" y="188" class="cardTitle">Supporting route</text>
-  <text x="1106" y="224" class="cardText">Find where the same route</text>
-  <text x="1106" y="251" class="cardText">already appeared.</text>
-  <rect x="1106" y="268" width="100" height="27" rx="13.5" fill="url(#blue)"/>
-  <text x="1124" y="287" class="pillText">SEARCH</text>
-
-  <rect x="1074" y="454" width="264" height="196" class="card"/>
-  <text x="1106" y="502" class="cardTitle">Main route: translate</text>
-  <text x="1106" y="538" class="cardText">What would this become</text>
-  <text x="1106" y="565" class="cardText">in materials, biology,</text>
-  <text x="1106" y="592" class="cardText">collectives, or patents?</text>
-  <rect x="1106" y="610" width="126" height="27" rx="13.5" fill="url(#green)"/>
-  <text x="1125" y="629" class="pillText">CONSTRUCT</text>
-
-  <rect x="74" y="492" width="292" height="120" class="softCard"/>
-  <text x="108" y="536" class="cardTitle">Not keyword similarity</text>
-  <text x="108" y="570" class="cardText">The target is a state variable,</text>
-  <text x="108" y="597" class="cardText">equation, measurement, and control.</text>
-
-  <rect x="508" y="520" width="360" height="126" class="softCard"/>
-  <text x="546" y="563" class="cardTitle">No LLM required</text>
-  <text x="546" y="598" class="cardText">Transport, closure, spectral/operator,</text>
-  <text x="546" y="625" class="cardText">boundary, incompatibility, protocol.</text>
-
-  <path d="M214 480 C240 448 272 432 330 426" class="thin"/>
-  <path d="M688 500 C690 480 690 468 690 474" class="thin"/>
-
-  <text x="70" y="704" class="small">Public starter engine: transparent field packs and deterministic route/fiber fingerprints. Larger Hyperion-style databases can add high-dimensional fingerprints and corpus witnesses.</text>
+  <path d="M300 225 H338" class="line"/>
+  <g transform="translate(348 150)">
+    <rect width="242" height="150" rx="6" class="soft"/>
+    <text x="22" y="34" class="mono blue" font-size="15" font-weight="700">02  REPRESENT</text>
+    <text x="22" y="70" class="sans ink" font-size="22" font-weight="680">Operational identity</text>
+    <text x="22" y="102" class="sans muted" font-size="18">routes + fibers + roles</text>
+    <text x="22" y="132" class="mono muted" font-size="16">fingerprint_text</text>
+  </g>
+  <path d="M600 225 H638" class="line"/>
+  <g transform="translate(648 150)">
+    <rect width="242" height="150" rx="6" class="greenbox"/>
+    <text x="22" y="34" class="mono green" font-size="15" font-weight="700">03  BRIDGE</text>
+    <text x="22" y="70" class="sans ink" font-size="22" font-weight="680">Retrieve or construct</text>
+    <text x="22" y="102" class="sans muted" font-size="18">preserve / replace / attach</text>
+    <text x="22" y="132" class="mono muted" font-size="16">construct_transfer</text>
+  </g>
+  <path d="M900 225 H938" class="line"/>
+  <g transform="translate(948 150)">
+    <rect width="204" height="150" rx="6" class="box"/>
+    <text x="22" y="34" class="mono blue" font-size="15" font-weight="700">04  TEST</text>
+    <text x="22" y="70" class="sans ink" font-size="22" font-weight="680">Evaluate</text>
+    <text x="22" y="102" class="sans muted" font-size="18">paper holdout + future state</text>
+    <text x="22" y="132" class="mono muted" font-size="16">validate_*</text>
+  </g>
+  <g transform="translate(48 342)">
+    <rect width="518" height="110" rx="6" class="box"/>
+    <text x="22" y="35" class="mono green" font-size="15" font-weight="700">CORPUS SIDE</text>
+    <text x="22" y="70" class="sans ink" font-size="20" font-weight="680">PDF folder -&gt; field adapter + evidence graph</text>
+    <text x="22" y="96" class="mono muted" font-size="16">build_pdf_field_pack</text>
+  </g>
+  <g transform="translate(594 342)">
+    <rect width="558" height="110" rx="6" class="box"/>
+    <text x="22" y="35" class="mono blue" font-size="15" font-weight="700">PUBLIC CONTRACT</text>
+    <text x="22" y="70" class="sans ink" font-size="20" font-weight="680">M=(Omega,Xi) -&gt; I_op=(M;C,R,P) -&gt; I_real</text>
+    <text x="22" y="96" class="mono muted" font-size="16">models.py / field packs / source evidence</text>
+  </g>
 </svg>

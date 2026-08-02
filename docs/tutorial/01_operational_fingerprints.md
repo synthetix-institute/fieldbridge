@@ -42,6 +42,15 @@ The fingerprint is not a semantic embedding and does not certify physical
 equivalence. It is an interpretable public proxy for the operational evidence
 used by the larger Hyperion representation.
 
+## In the Code
+
+- `fieldbridge.routes.fingerprint_text` matches route and fiber evidence and
+  returns a `Fingerprint`.
+- `fieldbridge.models.Fingerprint.vector` fixes the numerical order used by
+  retrieval and evaluation.
+- `fieldbridge.render.render_fingerprint` exposes every score and matched phrase
+  rather than hiding them behind one similarity value.
+
 ## Try Your Own Equation
 
 ```bash

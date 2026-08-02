@@ -38,6 +38,17 @@ This decomposition matters because a constructor can edit one clause while
 retaining the others. It does not imply that the clauses are independent: a
 new carrier may require a different domain, closure, observable or protocol.
 
+## In the Code
+
+- `fieldbridge.extract.extract_equations` preserves equation-bearing source
+  fragments.
+- `fieldbridge.extract.guess_roles` resolves the state, input, boundary, and
+  output proxies.
+- `fieldbridge.extract.extract_mechanism` combines those roles with the
+  fingerprint in a `MechanismSheet`.
+- `fieldbridge.extract.compare_mechanisms` separates preserved and changed
+  routes and fibers for two sheets.
+
 ## Compare Two Mechanisms
 
 ```bash

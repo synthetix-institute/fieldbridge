@@ -28,6 +28,16 @@ The important output is not merely a similarity score. Inspect which routes
 are preserved, which carrier changes, which obligations are missing, and which
 source equation supports the match.
 
+## In the Code
+
+- `fieldbridge.database.load_all` combines starter field packs, public records,
+  and optional Hyperion witnesses.
+- `fieldbridge.search.score_record` reports route overlap, fiber overlap, and
+  keyword evidence separately.
+- `fieldbridge.search.find_analogs` filters and ranks target-field records.
+- `fieldbridge.search.translate_mechanism` converts the best receptors into
+  target variables, equations, measurements, protocols, and controls.
+
 ## Translate Into a Target Vocabulary
 
 ```bash

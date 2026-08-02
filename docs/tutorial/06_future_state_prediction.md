@@ -63,6 +63,16 @@ Complete papers are assigned to fitting or evaluation as indivisible groups.
 For each target, the report provides top-1, top-three and code-length gain over
 a first-move-only baseline.
 
+## In the Code
+
+- `fieldbridge.continuation._paper_fold` assigns complete papers to stable folds.
+- `fieldbridge.continuation._context` defines the current-state and first-move
+  conditioning variables.
+- `fieldbridge.continuation.validate_future_state` fits counts on training
+  papers and scores each unseen target independently.
+- `fieldbridge.continuation.render_markdown` separates next-move and destination
+  results in the report.
+
 ```mermaid
 flowchart LR
     I1["Current state I1"] --> P["Continuation model"]
@@ -83,4 +93,4 @@ generation and physical validity remain separate tests.
 The generated data are synthetic and test the command, split and report. They
 do not reproduce the corpus-scale percentages in the table.
 
-Return to the [tutorial index](index.md).
+Next: [Build a field adapter from PDFs](07_pdf_field_adapter.md).

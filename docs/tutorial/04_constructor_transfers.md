@@ -32,6 +32,16 @@ Read the result in this order:
 5. **Evidence status:** whether the target realization has been independently
    tested.
 
+## In the Code
+
+- `fieldbridge.constructor.construct_transfer` calls extraction and translation,
+  then creates source and target identities.
+- Its `constructor_moves` field records which clause each edit acts on.
+- Its `required_attachments` field keeps closure, readout, protocol,
+  realization, and falsifier evidence separate.
+- `fieldbridge.render.render_constructor` presents the complete transfer without
+  discarding unresolved validation gates.
+
 The output is a constructor proposal. It becomes scientific evidence only
 after its source equations, dimensions, closure, residuals and observations
 have been checked.
