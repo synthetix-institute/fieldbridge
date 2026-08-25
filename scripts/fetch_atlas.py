@@ -56,7 +56,7 @@ def verify(path: Path) -> int:
     the failure mode this whole file exists to prevent.
     """
     try:
-        index = json.loads(path.read_text())
+        index = json.loads(path.read_text(encoding="utf-8"))
     except json.JSONDecodeError as error:
         raise SystemExit(f"{path} is not valid JSON: {error}")
     records = index.get("records") or []

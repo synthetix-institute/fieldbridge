@@ -22,7 +22,7 @@ def load_field_packs(data_dir: Path | None = None) -> List[FieldPack]:
     root = data_dir or default_data_dir()
     packs: List[FieldPack] = []
     for path in sorted((root / "field_packs").glob("*.json")):
-        data = json.loads(path.read_text())
+        data = json.loads(path.read_text(encoding="utf-8"))
         packs.append(FieldPack(**data))
     return packs
 
@@ -30,7 +30,7 @@ def load_field_packs(data_dir: Path | None = None) -> List[FieldPack]:
 def load_records(data_dir: Path | None = None) -> List[MechanismRecord]:
     root = data_dir or default_data_dir()
     path = root / "index" / "core_examples.json"
-    rows = json.loads(path.read_text())
+    rows = json.loads(path.read_text(encoding="utf-8"))
     return [mechanism_record_from_row(row) for row in rows]
 
 
@@ -99,7 +99,7 @@ def load_static_index_records(data_dir: Path | None = None, max_records: int | N
     path = root / "index" / "hyperion_static_index.json"
     if not path.exists():
         return []
-    rows = (json.loads(path.read_text()).get("records") or [])
+    rows = (json.loads(path.read_text(encoding="utf-8")).get("records") or [])
     if max_records is not None:
         rows = rows[:max_records]
     return [mechanism_record_from_row(row) for row in rows]
@@ -112,7 +112,7 @@ def load_field_evidence(data_dir: Path | None = None) -> Dict[str, Dict[str, Any
         return {}
     evidence: Dict[str, Dict[str, Any]] = {}
     for path in sorted(evidence_dir.glob("*.json")):
-        row = json.loads(path.read_text())
+        row = json.loads(path.read_text(encoding="utf-8"))
         field_id = row.get("field_id") or path.stem
         evidence[field_id] = row
     return evidence

@@ -250,3 +250,23 @@ def test_every_field_pack_has_a_seed_record():
     seeded = {r.field_id for r in records}
     missing = [p.field_id for p in packs if p.field_id not in seeded]
     assert not missing, f"field packs without a seed record: {missing}"
+
+
+def test_no_locale_dependent_file_reads():
+    """Every read must name its encoding.
+
+    Path.read_text() uses the locale default. On a non-UTF-8 cluster that
+    decodes the atlas as Latin-1, turning the operator token into mojibake --
+    retrieval keeps working and every assignment is silently wrong.
+    """
+    import re
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    offenders = []
+    for source in list((root / "fieldbridge").rglob("*.py")) + list((root / "scripts").rglob("*.py")):
+        for number, line in enumerate(source.read_text(encoding="utf-8").splitlines(), 1):
+            if re.search(r"\.read_text\(\s*\)", line) or re.search(r"\.write_text\([^)]*\)", line) and "encoding=" not in line:
+                if "encoding=" not in line:
+                    offenders.append(f"{source.relative_to(root)}:{number}")
+    assert not offenders, "reads without an explicit encoding: " + ", ".join(offenders)
