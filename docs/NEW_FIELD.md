@@ -143,8 +143,23 @@ python3 scripts/export_fieldbridge_static_index.py \
   --witnesses discoveries/equation_witnesses.jsonl \
   --out discoveries/fieldbridge_static_index/hyperion_static_index.json \
   --shard-dir discoveries/fieldbridge_static_index/shards \
-  --max-records 3000 --max-per-paper 2
+  --max-records 3000 --max-per-paper 2 \
+  --max-per-leaf 20 --max-pairs 900
 ```
+
+**`--max-per-leaf` is the cap that actually binds.** Its default of 5 drops
+about 1,850 of the 3,824 witnesses and yields 946 records instead of 2,633 --
+a third of the atlas, with no error. The export prints its own skip counts;
+check them:
+
+```json
+"records": 2633, "analog_pairs": 897,
+"skipped": {"unclean_or_incomplete": 986, "per_paper_cap": 205}
+```
+
+If `per_leaf_cap` appears with a large count, raise `--max-per-leaf`. Only
+`unclean_or_incomplete` is irreducible: those witnesses fail the cleanliness
+gate and no cap setting recovers them.
 
 Then copy `hyperion_static_index.json` into `data/index/` and the shards into
 `data/shards/`, and attach the index to a new release so other clones can fetch

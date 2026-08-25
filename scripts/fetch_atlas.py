@@ -65,7 +65,9 @@ def verify(path: Path) -> int:
     if len(records) < MIN_RECORDS:
         print(
             f"WARNING: {len(records)} records is below the {MIN_RECORDS} previously "
-            "shipped. If you generated this yourself, raise --max-records.",
+            "shipped. If you generated this yourself, check the export's skip "
+            "counts: --max-per-leaf defaults to 5 and is usually the cap that "
+            "binds. See docs/NEW_FIELD.md.",
             file=sys.stderr,
         )
     return len(records)
