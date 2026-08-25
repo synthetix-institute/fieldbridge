@@ -423,6 +423,72 @@
       "entropy": 0.96
     },
     "source": "analytic_benchmark",
-    "target_fields": ["stochastic_optimization"]
+    "target_fields": [
+      "stochastic_optimization"
+    ]
+  },
+  {
+    "record_id": "epi_sir_network_incidence_001",
+    "title": "SIR compartmental flow with conserved population",
+    "field_id": "epidemic_dynamics",
+    "summary": "Mass-action incidence moves population between compartments on a contact network. The total population is conserved, so prevalence is a redistribution of a fixed mass rather than a source term, and the threshold condition follows from the ratio of transmission to recovery.",
+    "invariant": "A nonlinear incidence term transports conserved population mass between compartments, and the sign of the growth rate at the disease-free state fixes whether prevalence expands or decays.",
+    "equations": [
+      "partial_t S = -beta S I / N",
+      "partial_t I = beta S I / N - gamma I",
+      "partial_t R = gamma I",
+      "R0 = beta / gamma"
+    ],
+    "variables": [
+      "q: compartment fractions S, I, R on a contact network",
+      "u: transmission rate beta and intervention schedule",
+      "B: conserved total population S+I+R=N with non-negative compartments",
+      "y: prevalence trajectory, peak height and final attack rate",
+      "gamma: recovery rate setting the infectious period"
+    ],
+    "measurements": [
+      "epidemic peak height and timing",
+      "final attack rate",
+      "population-conservation residual",
+      "estimated basic reproduction number R0"
+    ],
+    "controls": [
+      "set beta to zero and confirm no outbreak",
+      "shuffle contact-network degrees at fixed mean degree",
+      "compare well-mixed against networked incidence",
+      "check that S+I+R stays constant to integration tolerance"
+    ],
+    "references": [
+      "kermack_mckendrick_1927",
+      "pastor_satorras_vespignani_2001"
+    ],
+    "keywords": [
+      "SIR",
+      "compartmental model",
+      "incidence",
+      "contact network",
+      "reproduction number",
+      "threshold",
+      "conserved population"
+    ],
+    "routes": {
+      "transport_flow_route": 0.94,
+      "constraint_closure_route": 0.88,
+      "spectral_operator_route": 0.34,
+      "boundary_weak_form_route": 0.41,
+      "commutator_incompatibility_route": 0.05,
+      "discrete_protocol_route": 0.58
+    },
+    "fibers": {
+      "structure": 0.85,
+      "spectral": 0.29,
+      "geometry": 0.47,
+      "syntax": 0.62,
+      "entropy": 0.71
+    },
+    "source": "analytic_benchmark",
+    "target_fields": [
+      "epidemic_dynamics"
+    ]
   }
 ]

@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="./docs/tutorial/index.md"><strong>Guided tutorial</strong></a> &nbsp;|&nbsp;
+  <a href="./docs/NEW_FIELD.md">Adding a field</a> &nbsp;|&nbsp;
   <a href="./docs/FIELD_ADAPTERS.md">PDF field adapters</a> &nbsp;|&nbsp;
   <a href="./docs/DATA_MODEL.md">Data model</a> &nbsp;|&nbsp;
   <a href="https://synthetix.institute">Synthetix Institute</a>
@@ -13,6 +14,13 @@ FieldBridge is a deterministic Python workbench for translating a scientific
 mechanism into another field. It extracts an operational identity from a paper
 or equation, retrieves field-native evidence, and states what a proposed
 transfer must preserve, replace, attach, and test.
+
+FieldBridge is a demonstrator. It makes the mechanism-transfer argument
+runnable: you give it an equation, it names the operator the atlas assigns,
+and it states what a transfer into another field must preserve, replace,
+attach and test. It retrieves from the same index its companion analysis
+studies, so agreement between the two is not independent evidence -- the point
+is to let a reader watch the correspondence happen on their own input.
 
 It compares mechanisms rather than topics. A particle diffusing in an energy
 landscape and noisy model parameters descending a loss landscape use different
@@ -214,11 +222,30 @@ indexes, not accepted models of a field.
 A construction becomes a scientific result only after its equations, dimensions,
 closure, residuals, controls, and target-system behavior have been checked.
 
+### What the two data layers are
+
+The two sides of a transfer are not the same size, and the difference decides
+what a result means.
+
+| Layer | Contents | Where it comes from |
+|---|---|---|
+| Atlas witnesses | 2,633 records, 897 analog equations | Generated 2026-06-07 from `equation_witnesses.jsonl` (3,824 witnesses, 2026-05-15). arXiv-wide, written for no field here. |
+| Field seeds | 8 records across 5 fields | Hand-authored in `data/index/core_examples.json`. |
+
+Retrieval is arXiv-wide. The *target formulation* a transfer is written into
+comes from one or two seed records per field. So a transfer proposes a
+structured correspondence against a target vocabulary an author supplied; it
+does not supply target-field knowledge nobody entered.
+
+The shipped index is a snapshot, not a full-corpus run. See
+[Adding a field](./docs/NEW_FIELD.md) for how to extend either layer.
+
 ## Contributing
 
 The most useful contributions are field packs with traceable equations,
 variables, observables, protocols, controls, and references. Start with the
-[data model](./docs/DATA_MODEL.md) and verify changes with:
+[data model](./docs/DATA_MODEL.md), the [field walkthrough](./docs/NEW_FIELD.md),
+and verify changes with:
 
 ```bash
 python3 -m pytest -q
