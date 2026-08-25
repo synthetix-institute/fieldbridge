@@ -129,3 +129,4 @@ class ConstructorTransfer:
     validation_gates: Dict[str, bool]
     readiness: str
     evidence_boundary: str
+    atlas: Optional[Dict[str, Any]] = None

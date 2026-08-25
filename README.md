@@ -4,6 +4,7 @@
 
 <p align="center">
   <a href="./docs/tutorial/index.md"><strong>Guided tutorial</strong></a> &nbsp;|&nbsp;
+  <a href="./docs/NEW_FIELD.md">Adding a field</a> &nbsp;|&nbsp;
   <a href="./docs/FIELD_ADAPTERS.md">PDF field adapters</a> &nbsp;|&nbsp;
   <a href="./docs/DATA_MODEL.md">Data model</a> &nbsp;|&nbsp;
   <a href="https://synthetix.institute">Synthetix Institute</a>
@@ -13,6 +14,13 @@ FieldBridge is a deterministic Python workbench for translating a scientific
 mechanism into another field. It extracts an operational identity from a paper
 or equation, retrieves field-native evidence, and states what a proposed
 transfer must preserve, replace, attach, and test.
+
+FieldBridge is a demonstrator. It makes the mechanism-transfer argument
+runnable: you give it an equation, it names the operator the atlas assigns,
+and it states what a transfer into another field must preserve, replace,
+attach and test. It retrieves from the same index its companion analysis
+studies, so agreement between the two is not independent evidence -- the point
+is to let a reader watch the correspondence happen on their own input.
 
 It compares mechanisms rather than topics. A particle diffusing in an energy
 landscape and noisy model parameters descending a loss landscape use different
@@ -25,20 +33,31 @@ that shared operation explicit before changing the carrier.
 python3 -m pip install -e .
 
 fieldbridge construct examples/brownian_probability_flow.tex \
-  --to stochastic_optimization \
-  --no-hyperion
+  --to stochastic_optimization
 ```
 
-The command produces a reviewable construction:
+The command produces a reviewable construction. The operator is the atlas
+assignment of the retrieved witness; the target carrier is proposed by the
+reattachment, so it carries no assigned token:
 
 ```text
-preserve Omega    gradient drift + diffusion
+source core   M  = (Omega08 + Omega04 + Omega14, Xi01)
+target core   M' = (Omega08 + Omega04 + Omega14, Xi_unassigned)
+
+preserve Omega    Omega08 + Omega04 + Omega14
 replace Xi        particle position -> model-parameter space
 attach C          normalization and zero-current closure
 attach R          occupancy, stationary density, free-energy trajectory
 attach P          stochastic-gradient and noise schedule
 falsify           reverse drift, remove diffusion, shuffle gradients
+
+Retrieved Witnesses
+  0.782  EW000003427: A00 Omega08 + Omega04 + Omega14; arXiv 1905.02221
+  0.780  EW000000030: A00 Omega13 + Omega06 + Omega04; arXiv astro-ph/0301202
 ```
+
+Pass `--no-hyperion` to run without the atlas; the core is then reported as a
+route-derived proxy and no witnesses are retrieved.
 
 The resulting equations are not obtained by renaming variables. They are tied
 to a target carrier, closure, measurable consequences, execution protocol, and
@@ -203,11 +222,30 @@ indexes, not accepted models of a field.
 A construction becomes a scientific result only after its equations, dimensions,
 closure, residuals, controls, and target-system behavior have been checked.
 
+### What the two data layers are
+
+The two sides of a transfer are not the same size, and the difference decides
+what a result means.
+
+| Layer | Contents | Where it comes from |
+|---|---|---|
+| Atlas witnesses | 2,633 records, 897 analog equations | Generated 2026-06-07 from `equation_witnesses.jsonl` (3,824 witnesses, 2026-05-15). arXiv-wide, written for no field here. |
+| Field seeds | 8 records across 5 fields | Hand-authored in `data/index/core_examples.json`. |
+
+Retrieval is arXiv-wide. The *target formulation* a transfer is written into
+comes from one or two seed records per field. So a transfer proposes a
+structured correspondence against a target vocabulary an author supplied; it
+does not supply target-field knowledge nobody entered.
+
+The shipped index is a snapshot, not a full-corpus run. See
+[Adding a field](./docs/NEW_FIELD.md) for how to extend either layer.
+
 ## Contributing
 
 The most useful contributions are field packs with traceable equations,
 variables, observables, protocols, controls, and references. Start with the
-[data model](./docs/DATA_MODEL.md) and verify changes with:
+[data model](./docs/DATA_MODEL.md), the [field walkthrough](./docs/NEW_FIELD.md),
+and verify changes with:
 
 ```bash
 python3 -m pytest -q

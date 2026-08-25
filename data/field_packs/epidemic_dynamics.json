@@ -1,0 +1,35 @@
+{
+  "field_id": "epidemic_dynamics",
+  "label": "Epidemic dynamics",
+  "description": "Compartmental population flow on contact networks: incidence, recovery, conserved population and threshold behaviour.",
+  "state_words": [
+    "compartment fractions S, I, R",
+    "prevalence I(t)",
+    "susceptible depletion",
+    "population state on a contact network"
+  ],
+  "input_words": [
+    "transmission rate beta",
+    "contact-network rewiring or intervention",
+    "vaccination or isolation schedule",
+    "seeding of initial infection"
+  ],
+  "boundary_words": [
+    "conserved total population S+I+R=N",
+    "non-negativity of compartments",
+    "closed population or declared import flux",
+    "contact-network boundary and degree distribution"
+  ],
+  "output_words": [
+    "epidemic peak height and timing",
+    "final attack rate",
+    "basic reproduction number R0",
+    "extinction or endemic steady state"
+  ],
+  "validation_words": [
+    "zero-transmission control",
+    "population-conservation residual",
+    "degree-shuffled network control",
+    "well-mixed versus networked comparison"
+  ]
+}
