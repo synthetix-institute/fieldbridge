@@ -31,10 +31,15 @@ that shared operation explicit before changing the carrier.
 
 ```bash
 python3 -m pip install -e .
+python3 scripts/fetch_atlas.py
 
 fieldbridge construct examples/brownian_probability_flow.tex \
   --to stochastic_optimization
 ```
+
+The atlas index is a generated ~31 MB artifact attached to a release, not
+tracked in git. Without it the commands still run and report a route-derived
+proxy instead of an atlas assignment.
 
 The command produces a reviewable construction. The operator is the atlas
 assignment of the retrieved witness; the target carrier is proposed by the
@@ -229,8 +234,8 @@ what a result means.
 
 | Layer | Contents | Where it comes from |
 |---|---|---|
-| Atlas witnesses | 2,633 records, 897 analog equations | Generated 2026-06-07 from `equation_witnesses.jsonl` (3,824 witnesses, 2026-05-15). arXiv-wide, written for no field here. |
-| Field seeds | 8 records across 5 fields | Hand-authored in `data/index/core_examples.json`. |
+| Atlas witnesses | 2,633 records, 897 analog equations | Generated 2026-06-07 from `equation_witnesses.jsonl` (3,824 witnesses, 2026-05-15). arXiv-wide, written for no field here. Fetched from a release, not tracked in git. |
+| Field seeds | 8 records across 5 fields | Hand-authored in `data/index/core_examples.json`, tracked. |
 
 Retrieval is arXiv-wide. The *target formulation* a transfer is written into
 comes from one or two seed records per field. So a transfer proposes a

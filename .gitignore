@@ -10,3 +10,9 @@ build/
 *.egg-info/
 .DS_Store
 outputs/
+
+# Generated atlas artifacts (~31 MB). Attached to a release instead of tracked;
+# fetch with scripts/fetch_atlas.py. Seed records in data/index/core_examples.json
+# stay tracked -- they are hand-authored, not generated.
+data/index/hyperion_static_index.json
+data/shards/*.json

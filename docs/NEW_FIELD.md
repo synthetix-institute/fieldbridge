@@ -114,9 +114,24 @@ against a target vocabulary you authored. The tool proposes a structured
 correspondence and names what would falsify it; it does not supply target-field
 knowledge you did not put in.
 
+## Getting the atlas
+
+The atlas index is **not tracked in git**. It is a ~31 MB generated artifact
+(index plus shards) attached to a release, because tracking it would add that
+much immutable history on every refresh.
+
+```bash
+python3 scripts/fetch_atlas.py
+```
+
+Without it everything still runs: the constructor reports a route-derived proxy
+instead of an assignment, says so in its output, and atlas-dependent tests skip
+rather than fail. A red suite therefore always means broken code, never a
+missing download.
+
 ## Refreshing the atlas
 
-The shipped index was generated on 2026-06-07 from
+The current index was generated on 2026-06-07 from
 `discoveries/equation_witnesses.jsonl` (3,824 witnesses, dated 2026-05-15) and
 holds 2,633 records with 897 analog equations. It is a snapshot, not the
 full-corpus run.
@@ -132,8 +147,10 @@ python3 scripts/export_fieldbridge_static_index.py \
 ```
 
 Then copy `hyperion_static_index.json` into `data/index/` and the shards into
-`data/shards/`. Pass `--max-records` explicitly: the script default is 1200,
-below the 2,633 currently shipped.
+`data/shards/`, and attach the index to a new release so other clones can fetch
+it. Pass `--max-records` explicitly: the script default is 1200, below the
+2,633 currently shipped, so omitting it silently shrinks the atlas.
+`fetch_atlas.py` warns when an index falls below that count.
 
 Regenerating from the current witness file reproduces the same index. A real
 refresh needs the upstream witness extraction re-run first.

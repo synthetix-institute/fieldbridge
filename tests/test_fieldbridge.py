@@ -7,6 +7,8 @@ from fieldbridge.extract import compare_mechanisms, extract_mechanism
 from fieldbridge.search import find_analogs, translate_mechanism
 from fieldbridge.zero_shot import validate_full_paper_zero_shot
 
+from .conftest import requires_atlas
+
 
 def test_fingerprint_detects_transport_and_boundary():
     fp = fingerprint_text("partial_t q + nabla dot J = S with boundary B and closure C(q)=0")
@@ -62,6 +64,7 @@ def test_tex_display_math_is_not_a_commutator():
     assert fp.routes["commutator_incompatibility_route"] == 0.0
 
 
+@requires_atlas
 def test_hyperion_static_index_can_support_search():
     records = load_static_index_records(max_records=3)
     assert records
@@ -163,6 +166,7 @@ def _example_text():
     return Path("examples/brownian_probability_flow.tex").read_text()
 
 
+@requires_atlas
 def test_atlas_witnesses_reachable_from_every_field_pack():
     """Atlas witnesses are cross-field evidence and must not be hidden by target_fields.
 
@@ -181,6 +185,7 @@ def test_atlas_witnesses_reachable_from_every_field_pack():
         assert any(is_hyperion_record(m.record) for m in matches), pack.field_id
 
 
+@requires_atlas
 def test_include_hyperion_changes_the_constructor_result():
     """The flag must alter the transfer; it silently did nothing before."""
     with_atlas = construct_transfer(_example_text(), "stochastic_optimization")
@@ -192,12 +197,14 @@ def test_include_hyperion_changes_the_constructor_result():
     assert with_atlas.source_identity["M"]["Omega"] != without.source_identity["M"]["Omega"]
 
 
+@requires_atlas
 def test_constructor_reports_atlas_tokens_not_only_proxies():
     transfer = construct_transfer(_example_text(), "stochastic_optimization")
     assert "Ω" in transfer.source_identity["M"]["Omega"]
     assert transfer.atlas["witness_id"].startswith("EW")
 
 
+@requires_atlas
 def test_target_carrier_token_is_not_inherited_from_the_source_witness():
     """Reattachment proposes a target carrier; the atlas never assigned one."""
     transfer = construct_transfer(_example_text(), "stochastic_optimization")
@@ -205,6 +212,7 @@ def test_target_carrier_token_is_not_inherited_from_the_source_witness():
     assert transfer.target_identity["M"]["Xi_token"] is None
 
 
+@requires_atlas
 def test_constructor_renders_retrieved_witnesses():
     from fieldbridge.render import render_constructor
 
@@ -213,6 +221,7 @@ def test_constructor_renders_retrieved_witnesses():
     assert "arXiv" in out
 
 
+@requires_atlas
 def test_documented_new_field_walkthrough_runs():
     """docs/NEW_FIELD.md walks through epidemic_dynamics; keep it executable.
 
