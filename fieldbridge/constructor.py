@@ -6,7 +6,7 @@ from typing import Any, Dict, List
 from .extract import active_routes, extract_mechanism
 from .models import ConstructorTransfer
 from .routes import ROUTES
-from .search import translate_mechanism
+from .search import is_hyperion_record, translate_mechanism
 
 
 def _operator_proxy(routes: List[str]) -> str:
@@ -24,6 +24,29 @@ def _operator_proxy(routes: List[str]) -> str:
         return "operator apparatus unresolved from the public fingerprint"
     labels = [ROUTES[route][0] for route in operator_routes[:3]]
     return "; ".join(labels)
+
+
+def _atlas_assignment(translation) -> Dict[str, Any] | None:
+    """Return the atlas assignment of the best-scoring witness, if one was retrieved.
+
+    The static index carries the fitted operator and carrier tokens for every
+    witness. Reporting them is what separates a named assignment from a
+    keyword-derived guess; without a witness there is no assignment to report.
+    """
+    for match in translation.matches:
+        if is_hyperion_record(match.record) and match.record.hyperion:
+            block = match.record.hyperion
+            return {
+                "omega_tokens": block.get("omega_tokens"),
+                "xi_token": (block.get("display_name") or "").split(" :: ")[0] or None,
+                "apparatus_regime": block.get("apparatus_regime"),
+                "lambda_token": block.get("lambda_token"),
+                "fiber_profile": block.get("fiber_profile"),
+                "witness_id": block.get("witness_id"),
+                "arxiv_url": block.get("arxiv_url"),
+                "score": match.score,
+            }
+    return None
 
 
 def _first(values: List[str], fallback: str) -> str:
@@ -52,6 +75,9 @@ def construct_transfer(
     )
     routes = active_routes(source.fingerprint)
     operator = _operator_proxy(routes)
+    atlas = _atlas_assignment(translation)
+    omega = (atlas or {}).get("omega_tokens") or operator
+    xi_token = (atlas or {}).get("xi_token")
     target_state = _first(translation.variables, "target carrier unresolved")
     target_boundary = next(
         (
@@ -72,7 +98,9 @@ def construct_transfer(
 
     source_identity: Dict[str, Any] = {
         "M": {
+            "Omega": omega,
             "Omega_proxy": operator,
+            "Xi_token": xi_token,
             "Xi_proxy": source.state,
         },
         "F": {
@@ -84,7 +112,12 @@ def construct_transfer(
     }
     target_identity: Dict[str, Any] = {
         "M": {
+            "Omega": omega,
             "Omega_proxy": operator,
+            # The target carrier is proposed by the reattachment, not retrieved.
+            # Copying the source token here would assert an assignment the
+            # atlas never made for the target field.
+            "Xi_token": None,
             "Xi_proxy": target_state,
         },
         "F": {
@@ -96,7 +129,7 @@ def construct_transfer(
     }
 
     preserved = [
-        f"operator contract: {operator}",
+        f"operator: {omega}" if atlas else f"operator contract: {operator}",
         f"invariant: {translation.invariant}",
     ]
     changed = [
@@ -163,4 +196,5 @@ def construct_transfer(
         validation_gates=gates,
         readiness=readiness,
         evidence_boundary=boundary,
+        atlas=atlas,
     )

@@ -25,20 +25,31 @@ that shared operation explicit before changing the carrier.
 python3 -m pip install -e .
 
 fieldbridge construct examples/brownian_probability_flow.tex \
-  --to stochastic_optimization \
-  --no-hyperion
+  --to stochastic_optimization
 ```
 
-The command produces a reviewable construction:
+The command produces a reviewable construction. The operator is the atlas
+assignment of the retrieved witness; the target carrier is proposed by the
+reattachment, so it carries no assigned token:
 
 ```text
-preserve Omega    gradient drift + diffusion
+source core   M  = (Omega08 + Omega04 + Omega14, Xi01)
+target core   M' = (Omega08 + Omega04 + Omega14, Xi_unassigned)
+
+preserve Omega    Omega08 + Omega04 + Omega14
 replace Xi        particle position -> model-parameter space
 attach C          normalization and zero-current closure
 attach R          occupancy, stationary density, free-energy trajectory
 attach P          stochastic-gradient and noise schedule
 falsify           reverse drift, remove diffusion, shuffle gradients
+
+Retrieved Witnesses
+  0.782  EW000003427: A00 Omega08 + Omega04 + Omega14; arXiv 1905.02221
+  0.780  EW000000030: A00 Omega13 + Omega06 + Omega04; arXiv astro-ph/0301202
 ```
+
+Pass `--no-hyperion` to run without the atlas; the core is then reported as a
+route-derived proxy and no witnesses are retrieved.
 
 The resulting equations are not obtained by renaming variables. They are tied
 to a target carrier, closure, measurable consequences, execution protocol, and

@@ -62,6 +62,11 @@ def is_hyperion_record(record: MechanismRecord) -> bool:
 def record_matches_field(record: MechanismRecord, target_field: Optional[str]) -> bool:
     if target_field is None:
         return True
+    if is_hyperion_record(record):
+        # Atlas witnesses are cross-field audit evidence, not field-native records.
+        # Gating them on target_fields hides the whole index from any field the
+        # export did not happen to enumerate.
+        return True
     return record.field_id == target_field or target_field in (record.target_fields or [])
 
 

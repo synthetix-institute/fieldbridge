@@ -206,6 +206,8 @@ def render_constructor(transfer: ConstructorTransfer) -> str:
 
     source_m = transfer.source_identity["M"]
     target_m = transfer.target_identity["M"]
+    source_core = f"{source_m.get('Omega')}, {source_m.get('Xi_token') or 'Xi_proxy'}"
+    target_core = f"{target_m.get('Omega')}, {target_m.get('Xi_token') or 'Xi_unassigned'}"
     rows = [
         "# FieldBridge Constructor Transfer",
         "",
@@ -213,13 +215,20 @@ def render_constructor(transfer: ConstructorTransfer) -> str:
         "",
         "## Identity Transformation",
         "",
-        f"- source core: `M=(Omega_proxy, Xi_proxy)` with carrier `{source_m['Xi_proxy']}`",
-        f"- target core: `M'=(Omega_proxy, Xi'_proxy)` with carrier `{target_m['Xi_proxy']}`",
+        f"- source core: `M=({source_core})` with carrier `{source_m['Xi_proxy']}`",
+        f"- target core: `M'=({target_core})` with carrier `{target_m['Xi_proxy']}`",
         f"- target realization: **{transfer.target_identity['A']}**",
         "",
         "`I_op=(Omega, Xi; C, R, P) -> I'_op=(Omega, Xi'; C', R', P')`",
         "",
-        "The public command reports interpretable proxies; it does not assign the private learned token ids.",
+        (
+            f"Operator and carrier tokens are the atlas assignment of witness "
+            f"`{transfer.atlas['witness_id']}` (apparatus `{transfer.atlas['apparatus_regime']}`, "
+            f"fiber `{transfer.atlas['fiber_profile']}`, match `{transfer.atlas['score']:.3f}`). "
+            f"The assignment is retrieval evidence, not a proof of physical equivalence."
+            if transfer.atlas
+            else "No atlas witness was retrieved; the core is reported as a route-derived proxy."
+        ),
         "",
         "## Preserved Contract",
         "",
@@ -253,6 +262,18 @@ def render_constructor(transfer: ConstructorTransfer) -> str:
         "## Validation Gates",
         "",
         *(f"- `{name}`: {'pass' if passed else 'missing'}" for name, passed in transfer.validation_gates.items()),
+        "",
+        "## Retrieved Witnesses",
+        "",
+    ])
+    witnesses = [
+        f"- `{match.score:.3f}` {hyperion_reference(match.record)}"
+        if is_hyperion_record(match.record)
+        else f"- `{match.score:.3f}` {match.record.field_id}: {match.record.title}"
+        for match in transfer.translation.matches
+    ]
+    rows.extend(witnesses or ["- no witness retrieved for this target field"])
+    rows.extend([
         "",
         "## Evidence Boundary",
         "",

@@ -155,3 +155,59 @@ def test_future_state_validation_predicts_withheld_equations_not_current_labels(
     assert report["protocol"]["current_state_classification"] is False
     assert report["evaluation_papers"] > 0
     assert report["targets"]["destination_omega"]["accuracy"] > 0.9
+
+
+def _example_text():
+    from pathlib import Path
+
+    return Path("examples/brownian_probability_flow.tex").read_text()
+
+
+def test_atlas_witnesses_reachable_from_every_field_pack():
+    """Atlas witnesses are cross-field evidence and must not be hidden by target_fields.
+
+    The shipped index enumerates only the three intelligence fields, so gating
+    witnesses on target_fields made the whole 2,633-record index invisible to
+    stochastic_optimization -- the field the README's own example targets.
+    """
+    from fieldbridge.database import load_all
+    from fieldbridge.search import is_hyperion_record
+
+    packs, _ = load_all(None)
+    for pack in packs:
+        matches = find_analogs(
+            _example_text(), target_field=pack.field_id, top_k=8, include_hyperion=True
+        )
+        assert any(is_hyperion_record(m.record) for m in matches), pack.field_id
+
+
+def test_include_hyperion_changes_the_constructor_result():
+    """The flag must alter the transfer; it silently did nothing before."""
+    with_atlas = construct_transfer(_example_text(), "stochastic_optimization")
+    without = construct_transfer(
+        _example_text(), "stochastic_optimization", include_hyperion=False
+    )
+    assert with_atlas.atlas is not None
+    assert without.atlas is None
+    assert with_atlas.source_identity["M"]["Omega"] != without.source_identity["M"]["Omega"]
+
+
+def test_constructor_reports_atlas_tokens_not_only_proxies():
+    transfer = construct_transfer(_example_text(), "stochastic_optimization")
+    assert "Ω" in transfer.source_identity["M"]["Omega"]
+    assert transfer.atlas["witness_id"].startswith("EW")
+
+
+def test_target_carrier_token_is_not_inherited_from_the_source_witness():
+    """Reattachment proposes a target carrier; the atlas never assigned one."""
+    transfer = construct_transfer(_example_text(), "stochastic_optimization")
+    assert transfer.source_identity["M"]["Xi_token"]
+    assert transfer.target_identity["M"]["Xi_token"] is None
+
+
+def test_constructor_renders_retrieved_witnesses():
+    from fieldbridge.render import render_constructor
+
+    out = render_constructor(construct_transfer(_example_text(), "stochastic_optimization"))
+    assert "## Retrieved Witnesses" in out
+    assert "arXiv" in out
