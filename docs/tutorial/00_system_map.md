@@ -1,59 +1,61 @@
-# Chapter 0: System Map
+# How a question reaches a calculation
 
-FieldBridge has one central data flow: read a scientific document, describe its
-operational mechanism, place that mechanism against field-native evidence, and
-produce either a retrieval result or a typed construction.
+The same command-line program handles two kinds of input. A paper or a sentence
+is enough to search for related records. A symbolic calculation needs more:
+an explicit equation, its assumptions, and the transformation or measurement
+whose consequence is sought. Understanding where that extra information enters
+makes the repository much easier to navigate.
+
+## Follow the squared-coordinate example
+
+In the [first run](08_end_to_end_walkthrough.md), the mathematical input goes
+straight to the verifier. In the [retrieved-source version](13_retrieval_to_calculation.md),
+a query first selects a record containing the source drift and noise. A
+separate file supplies the map $Y=X^2$. Both paths reach the same calculation.
 
 ```mermaid
-flowchart LR
-    A["Document"] --> B["Fingerprint"]
-    B --> C["Mechanism sheet"]
-    C --> D["Field records"]
-    D --> E["Analogy matches"]
-    C --> F["Constructor transfer"]
-    E --> F
-    G["PDF folder"] --> H["Field adapter"]
-    H --> D
-    E --> I["Complete-paper evaluation"]
-    F --> J["Formal and empirical tests"]
+flowchart TD
+    Q["Text, TeX or paper"] --> F["fingerprint_text"]
+    F --> R["find_analogs"]
+    R --> T["translate_mechanism: existing target examples"]
+    T --> P["construct_transfer: proposed attachments"]
+    T --> A["attach_calculation: selected source record"]
+    M["Explicit correspondence"] --> A
+    A --> S["emit_spec"]
+    S --> V["verify_construction"]
+    I["Standalone construction JSON"] --> V
+    V --> O["Coefficients or observable basis, residuals, consequence"]
 ```
 
-## Core Abstractions
+The proposal branch can operate on incomplete prose. The calculation branch
+requires a supported source model; it refuses a record that lacks one. The
+ordinary target example is not secretly used as the derived answer.
 
-| Abstraction | Data contract | Main implementation |
+## Read the source in dependency order
+
+| Object | What it contains | Implementation |
 | --- | --- | --- |
-| Document input | text | `fieldbridge.cli.read_input`, `fieldbridge.pdf_sparse_builder.read_document` |
-| Operational fingerprint | `Fingerprint` | `fieldbridge.routes.fingerprint_text` |
-| Mechanism identity | `MechanismSheet` | `fieldbridge.extract.extract_mechanism` |
-| Field evidence | `FieldPack`, `MechanismRecord` | `fieldbridge.database.load_all` |
-| Cross-field retrieval | `AnalogyMatch` | `fieldbridge.search.find_analogs` |
-| Target rendering | `Translation` | `fieldbridge.search.translate_mechanism` |
-| Typed construction | `ConstructorTransfer` | `fieldbridge.constructor.construct_transfer` |
-| Corpus adapter | JSON field pack and graph | `fieldbridge.pdf_sparse_builder.build_pdf_field_pack` |
-| Evaluation | JSON and Markdown reports | `fieldbridge.zero_shot`, `fieldbridge.continuation` |
+| `Fingerprint` | Six route scores and five evidence-fiber scores | [routes.py](../../fieldbridge/routes.py), [models.py](../../fieldbridge/models.py) |
+| `MechanismSheet` | Heuristic state, equation, boundary and measurement description | [extract.py](../../fieldbridge/extract.py) |
+| `MechanismRecord` | Stored example, field, references and optional mathematical annotation | [models.py](../../fieldbridge/models.py), [database.py](../../fieldbridge/database.py) |
+| `AnalogyMatch` | Record plus score and matched evidence | [search.py](../../fieldbridge/search.py) |
+| `ConstructorTransfer` | Proposed attachments, or an attached exact calculation | [constructor.py](../../fieldbridge/constructor.py) |
+| Construction specification | Declared symbols, source law and map or observable | [calculation_adapter.py](../../fieldbridge/calculation_adapter.py) |
+| Calculation report | Derived relations, controls, assumptions and input identity | [verification.py](../../fieldbridge/verification.py) |
 
-The public representation is deliberately small. It uses six route scores and
-five evidence fibers to make every match inspectable. FieldBridge therefore
-separates three questions that are easy to conflate:
+The representation used for retrieval is a small rule-based vector. It does
+not load the large V2.1 learned language. A corpus-derived atlas snapshot is an
+optional source of witnesses, not a prerequisite for running these examples.
 
-1. **Representation:** which operation and completion clauses are present?
-2. **Retrieval:** where has a compatible mechanism already appeared?
-3. **Construction:** what must change or be attached in the target field?
+## Where to extend the program
 
-## Runtime Sequence
+A new paper collection normally needs a new field pack, not a new numerical
+solver. A new mathematical problem may need a verifier. For example, adding
+words about an absorbing boundary to a pack does not make the scalar Itô
+handler solve a boundary-value problem.
 
-The `construct` command is the most complete path through the repository:
+Keep that distinction in the tests: retrieval tests ask which record was
+returned; calculation tests ask whether the derived relation holds. The
+[extension chapter](12_reproduction_and_discovery.md) shows how to connect them.
 
-```text
-cli.read_input
-  -> extract.extract_mechanism
-     -> routes.fingerprint_text
-  -> search.translate_mechanism
-     -> database.load_all
-     -> search.find_analogs
-  -> constructor.construct_transfer
-  -> render.render_constructor
-```
-
-The following chapters unpack this sequence in dependency order. Start with
-[operational fingerprints](01_operational_fingerprints.md).
+[Next: recognize operational cues](01_operational_fingerprints.md) · [Tutorial](index.md)

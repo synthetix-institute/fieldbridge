@@ -1,0 +1,16 @@
+{
+  "schema": "fieldbridge-construction/1",
+  "kind": "ito_transfer",
+  "question": "Does rescaling an Ornstein-Uhlenbeck coordinate require an additional Ito drift?",
+  "parameters": {"alpha": "positive", "sigma": "positive", "scale": "positive"},
+  "domain": "real",
+  "target_domain": "real",
+  "convention": "ito",
+  "drift": "-alpha*x",
+  "noise": "sigma",
+  "state_map": "scale*x",
+  "inverse_map": "y/scale",
+  "candidate": {"drift": "-alpha*y", "variance": "scale**2*sigma**2"},
+  "assumptions": ["Dimensionless variables on the real line.", "Standard scalar Ito Brownian motion; positive alpha, sigma and scale."],
+  "provenance": {"origin": "authored mathematical benchmark", "source_alignment": "not_claimed", "equation_ids": ["affine_transfer:source_sde", "affine_transfer:state_map"], "novelty": "known exact rescaling"}
+}

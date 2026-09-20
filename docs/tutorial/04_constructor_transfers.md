@@ -1,49 +1,56 @@
-# Chapter 4: Constructor Transfers
+# Turn a match into a physical question
 
-The constructor performs a typed edit of a mechanism identity. For the
-Brownian-motion example, it retains gradient drift plus diffusion, replaces
-particle position by a parameter-space carrier, and asks which closure,
-readout and protocol the new realization requires.
+The Brownian-motion query and a noisy optimization rule share a possible
+gradient-diffusion description. To investigate it, specify the correspondence:
+particle position becomes a parameter coordinate, the potential becomes a
+loss, and the noise law and time convention must be matched. Boundary behavior
+and the observable remain part of the question.
 
 ```bash
-fieldbridge construct examples/brownian_probability_flow.tex \
-  --to stochastic_optimization \
-  --no-hyperion
+python3 -B -m fieldbridge construct examples/brownian_probability_flow.tex \
+  --to stochastic_optimization --no-hyperion
 ```
 
-```mermaid
-flowchart LR
-    S["Source: particle state"] -->|"retain Omega"| K["Gradient drift + diffusion"]
-    K -->|"replace Xi"| T["Target: parameter state"]
-    T --> C["attach normalization / closure"]
-    T --> R["attach loss and stationary readout"]
-    T --> P["attach noisy-update protocol"]
-    C --> V["formal and empirical tests"]
-    R --> V
-    P --> V
+The ordinary constructor assembles the extracted description with the
+retrieved target example. Read “Preserved Contract” in this output as a
+**proposed** preserved relation. The code's content-presence checks do not
+establish conservation or equality of predictions.
+
+## Decide what has to be calculated
+
+For a stochastic coordinate map $y=h(x)$, a precise question is whether the
+two generators agree on every smooth target observable:
+
+```math
+L_X(\phi\circ h)=(L_Y\phi)\circ h .
 ```
 
-Read the result in this order:
+Here $L_X$ and $L_Y$ generate expectations in the two descriptions.
+The map and its domain are specified before calculating the difference.
+A mismatch then refers to a definite relation, rather than to a general
+difference between responses.
 
-1. **Preserved contract:** the operation claimed to survive the transfer.
-2. **Changed carrier:** the source and target substrates.
-3. **Required attachments:** closure, readout and protocol obligations.
-4. **Falsifiers:** consequences that would reject the transfer.
-5. **Evidence status:** whether the target realization has been independently
-   tested.
+In the [squared-coordinate example](10_stochastic_construction.md), direct
+differentiation determines the target coefficients. The omitted Itô drift
+leaves residual 1 on $\phi(y)=y$, so the error has an immediate consequence
+for the measured mean. In contrast, ordinary translation only supplies a
+possible target equation.
 
-## In the Code
+## Two constructor outputs
 
-- `fieldbridge.constructor.construct_transfer` calls extraction and translation,
-  then creates source and target identities.
-- Its `constructor_moves` field records which clause each edit acts on.
-- Its `required_attachments` field keeps closure, readout, protocol,
-  realization, and falsifier evidence separate.
-- `fieldbridge.render.render_constructor` presents the complete transfer without
-  discarding unresolved validation gates.
+| Mode | Input beyond the query | Result |
+| --- | --- | --- |
+| `construct` | Target field and stored field records | A proposal, attachments and suggested tests |
+| `construct --calculate` | Retrieved mathematical annotation and explicit correspondence | Derived equation or quantum closure, with calculated residuals |
 
-The output is a constructor proposal. It becomes scientific evidence only
-after its source equations, dimensions, closure, residuals and observations
-have been checked.
+The calculation adapter reads the selected source from the actual retrieval
+results. It checks the annotation against the stored canonical equation and
+then invokes [verification.py](../../fieldbridge/verification.py).
+See [the complete command](13_retrieval_to_calculation.md).
 
-Next: [Complete-paper validation](05_complete_paper_validation.md).
+For a new problem, write the intended relation before deciding whether the
+calculation passed. A changing response may be the correct prediction of a
+changed parameter. An obstruction is a failure of the relation that was
+claimed to survive that change.
+
+[Run a calculated construction](08_end_to_end_walkthrough.md) · [Tutorial](index.md)

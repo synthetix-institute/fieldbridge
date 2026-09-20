@@ -201,6 +201,8 @@ def render_translation(translation: Translation) -> str:
 
 
 def render_constructor(transfer: ConstructorTransfer) -> str:
+    if transfer.calculation is not None:
+        return render_calculated_constructor(transfer)
     def bullets(values: list[str]) -> list[str]:
         return [f"- {value}" for value in values] or ["- unresolved"]
 
@@ -279,4 +281,23 @@ def render_constructor(transfer: ConstructorTransfer) -> str:
         "",
         transfer.evidence_boundary,
     ])
+    return "\n".join(rows)
+
+
+def render_calculated_constructor(transfer: ConstructorTransfer) -> str:
+    import json
+    calculation = transfer.calculation
+    rows = ["# FieldBridge Calculated Construction", "", f"Status: `{transfer.readiness}`", ""]
+    if calculation["status"] == "refused":
+        rows += ["Calculation not performed: " + calculation["reason"], ""]
+    else:
+        binding = calculation["binding"]
+        rows += [calculation["specification"]["question"], "", "## Retrieved Source", "",
+                 f"Record: `{binding['record_id']}`; retrieval score: `{binding['retrieval_score']}`.", "",
+                 "```text", binding["source_equation"], "```", "", binding["binding_scope"], "",
+                 "## Derived Consequences", "", *["- " + p for p in transfer.predictions], "",
+                 "## Calculation And Omission Control", "", "```json",
+                 json.dumps(calculation["report"], indent=2), "```", ""]
+    rows += ["## Checks", "", *[f"- `{key}`: `{value}`" for key, value in transfer.validation_gates.items()],
+             "", "## Scope", "", transfer.evidence_boundary]
     return "\n".join(rows)

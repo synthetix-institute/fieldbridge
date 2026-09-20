@@ -1,0 +1,15 @@
+{
+  "schema": "fieldbridge-construction/1",
+  "kind": "ito_transfer",
+  "question": "What mean growth and variance does the logarithm of the positive stochastic coordinate have?",
+  "parameters": {"mu": "real", "sigma": "positive"},
+  "domain": "positive",
+  "target_domain": "real",
+  "convention": "ito",
+  "drift": "mu*x",
+  "noise": "sigma*x",
+  "state_map": "log(x)",
+  "inverse_map": "exp(y)",
+  "assumptions": ["X(0)>0 and standard scalar Brownian noise.", "The supplied coefficients are interpreted in the Ito convention.", "Y=log(X) is real; mu and sigma are constant in time."],
+  "provenance": {"origin": "authored convention-sensitive benchmark", "source_alignment": "not_claimed", "novelty": "known stochastic change of variables"}
+}

@@ -1,0 +1,10 @@
+{
+  "schema": "fieldbridge-construction/1",
+  "kind": "quantum_closure",
+  "question": "Which correlation is needed to predict the transverse magnetization of one spin coupled to another?",
+  "parameters": {"g": "positive"},
+  "hamiltonian": [["g",0,0,0],[0,"-g",0,0],[0,0,"-g",0],[0,0,0,"g"]],
+  "observable": [[0,0,1,0],[0,0,0,1],[1,0,0,0],[0,1,0,0]],
+  "assumptions": ["Two spin-1/2 degrees of freedom with H=g sigma_z tensor sigma_z.", "Closed unitary dynamics; hbar=1.", "The observable is sigma_x tensor identity.", "g is positive and any initial density matrix is admissible."],
+  "provenance": {"origin": "authored quantum benchmark", "source_alignment": "not_claimed", "equation_ids": ["two_spin:H", "two_spin:magnetization"], "novelty": "known spin dynamics used to demonstrate automatic observable closure"}
+}

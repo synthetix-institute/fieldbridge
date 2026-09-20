@@ -59,6 +59,7 @@ def construct_transfer(
     data_dir: Path | None = None,
     top_k: int = 4,
     include_hyperion: bool = True,
+    calculation_request: Dict[str, Any] | None = None,
 ) -> ConstructorTransfer:
     """Build a reviewable mechanism-preserving transfer contract.
 
@@ -183,7 +184,7 @@ def construct_transfer(
         "scientific result only after derivation, dimensional and closure checks, residual tests, and "
         "independent empirical or computational validation."
     )
-    return ConstructorTransfer(
+    transfer = ConstructorTransfer(
         source=source,
         translation=translation,
         source_identity=source_identity,
@@ -198,3 +199,7 @@ def construct_transfer(
         evidence_boundary=boundary,
         atlas=atlas,
     )
+    if calculation_request is not None:
+        from .calculation_adapter import attach_calculation
+        return attach_calculation(transfer, calculation_request)
+    return transfer

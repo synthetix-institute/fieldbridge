@@ -1,261 +1,198 @@
-<p align="center">
-  <img src="./docs/assets/fieldbridge-hero.svg" width="100%" alt="FieldBridge translates scientific mechanisms across fields by preserving an operation, changing its carrier, and attaching closure, readout, and protocol requirements.">
-</p>
+# FieldBridge
 
-<p align="center">
-  <a href="./docs/tutorial/index.md"><strong>Guided tutorial</strong></a> &nbsp;|&nbsp;
-  <a href="./docs/NEW_FIELD.md">Adding a field</a> &nbsp;|&nbsp;
-  <a href="./docs/FIELD_ADAPTERS.md">PDF field adapters</a> &nbsp;|&nbsp;
-  <a href="./docs/DATA_MODEL.md">Data model</a> &nbsp;|&nbsp;
-  <a href="https://synthetix.institute">Synthetix Institute</a>
-</p>
+**Find related equations, specify a physical correspondence, and calculate its consequences.**
 
-FieldBridge is a deterministic Python workbench for translating a scientific
-mechanism into another field. It extracts an operational identity from a paper
-or equation, retrieves field-native evidence, and states what a proposed
-transfer must preserve, replace, attach, and test.
+[Start the tutorial](docs/tutorial/index.md) · [Run a calculation](docs/tutorial/08_end_to_end_walkthrough.md) · [Add your papers](docs/tutorial/07_pdf_field_adapter.md) · [Data model](docs/DATA_MODEL.md)
 
-FieldBridge is a demonstrator. It makes the mechanism-transfer argument
-runnable: you give it an equation, it names the operator the atlas assigns,
-and it states what a transfer into another field must preserve, replace,
-attach and test. It retrieves from the same index its companion analysis
-studies, so agreement between the two is not independent evidence -- the point
-is to let a reader watch the correspondence happen on their own input.
+A detector measuring the square of a fluctuating coordinate does not obey the
+equation for the coordinate itself. A spin interacting with another spin may
+require a correlation, as well as its own magnetization, to predict its motion.
+FieldBridge makes these construction problems executable: supply the governing
+equation and the proposed observable or change of variables, then derive the
+additional term or variable required for the prediction.
 
-It compares mechanisms rather than topics. A particle diffusing in an energy
-landscape and noisy model parameters descending a loss landscape use different
-nouns, but both can realize gradient drift plus diffusion. FieldBridge makes
-that shared operation explicit before changing the carrier.
+The repository combines **mechanism retrieval** with **symbolic calculation**.
+Retrieval finds records with related operations and physical conditions.
+Calculation acts on explicitly specified equations. The two can be used
+separately or joined through an annotated source record.
 
-## See One Transfer
+## First calculation
+
+Use Python 3.10 or newer for this walkthrough. From a clone of the repository:
 
 ```bash
-python3 -m pip install -e .
-python3 scripts/fetch_atlas.py
-
-fieldbridge construct examples/brownian_probability_flow.tex \
-  --to stochastic_optimization
+python3 -m venv .venv
+source .venv/bin/activate
+python3 -m pip install -e '.[construction]'
+python3 -B -m fieldbridge verify-construction \
+  examples/construction/ito_square.json --out-dir build/ito_square
 ```
 
-The atlas index is a generated ~31 MB artifact attached to a release, not
-tracked in git. Without it the commands still run and report a route-derived
-proxy instead of an atlas assignment.
+Open `build/ito_square/calculation.md`. The input supplies a stochastic
+equation for a positive coordinate and the map $Y=X^2$. The program derives:
 
-The command produces a reviewable construction. The operator is the atlas
-assignment of the retrieved witness; the target carrier is proposed by the
-reattachment, so it carries no assigned token:
-
-```text
-source core   M  = (Omega08 + Omega04 + Omega14, Xi01)
-target core   M' = (Omega08 + Omega04 + Omega14, Xi_unassigned)
-
-preserve Omega    Omega08 + Omega04 + Omega14
-replace Xi        particle position -> model-parameter space
-attach C          normalization and zero-current closure
-attach R          occupancy, stationary density, free-energy trajectory
-attach P          stochastic-gradient and noise schedule
-falsify           reverse drift, remove diffusion, shuffle gradients
-
-Retrieved Witnesses
-  0.782  EW000003427: A00 Omega08 + Omega04 + Omega14; arXiv 1905.02221
-  0.780  EW000000030: A00 Omega13 + Omega06 + Omega04; arXiv astro-ph/0301202
+```math
+dX_t=\left[\frac{\theta+1/2}{X_t}-\alpha X_t\right]dt+dW_t
+\quad\longrightarrow\quad
+dY_t=(2\theta+2-2\alpha Y_t)dt+2\sqrt{Y_t}\,dW_t .
 ```
 
-Pass `--no-hyperion` to run without the atlas; the core is then reported as a
-route-derived proxy and no witnesses are retrieved.
+Brownian quadratic variation contributes one unit of drift. The program checks
+both coefficients of the transformed generator and tests an intentionally
+incomplete candidate that omits that unit:
 
-The resulting equations are not obtained by renaming variables. They are tied
-to a target carrier, closure, measurable consequences, execution protocol, and
-controls:
+| Saved result | Expected value | Physical meaning |
+| --- | --- | --- |
+| `residual_coefficients` | `["0", "0"]` | Corrected drift and variance satisfy the local generator identity |
+| `candidate.passes_local_identity` | `false` | The supplied incomplete equation fails |
+| `omission_control.residual_d_phi` | `"1"` | The missing drift changes the predicted mean |
 
-```text
-d theta = -grad L(theta) dt + sqrt(2T) dW
-partial_t p = div(p grad L) + T Laplacian p
+No LLM, GPU, archive download or API key is needed after installation.
+[Derive the result step by step](docs/tutorial/10_stochastic_construction.md).
+
+## What can I do?
+
+| Task | Command | What is obtained |
+| --- | --- | --- |
+| Inspect equation and context cues | `fingerprint`, `extract` | A rule-based mechanism description |
+| Find a related record | `search`, `compare` | Ranked candidates and shared evidence |
+| Explore another field | `translate`, `construct` | Target examples and proposed conditions to test |
+| Derive from supplied equations | `verify-construction` | An exact local stochastic transformation or finite quantum closure |
+| Solve for allowed interactions | `design-spin-cancellation` | Exact coupling constraints, polarization prediction and restricted-interaction comparison |
+| Calculate from a retrieved record | `construct --calculate` | A source-bound specification and calculated consequence |
+| Index a paper folder | `build-field-adapter` | Source passages, field records and a relation graph |
+| Evaluate retrieval or continuation | `validate-zero-shot`, `validate-continuation` | Held-out-paper comparisons with baselines |
+
+Ordinary `construct` proposes a correspondence using stored target examples.
+The `--calculate` path instead requires a supported mathematical source
+annotation and an explicit map or observable. This distinction is visible in
+the saved result, not inferred from a similarity score.
+
+## From retrieval to a derived equation
+
+The bundled demonstration index contains an authored radial-diffusion record.
+This command retrieves it, binds the supplied map to that record, and calculates
+the squared-coordinate dynamics:
+
+```bash
+python3 -B -m fieldbridge --data-dir examples/calculated_transfer/data \
+  construct 'radial Brownian Ito diffusion' --to stochastic_dynamics \
+  --no-hyperion --calculate \
+  --correspondence examples/calculated_transfer/squared_signal.json \
+  --out-dir build/calculated_transfer
 ```
 
-## The Operational Identity
+`transfer.md` explains the result. `construction_spec.json` contains the source
+equation and correspondence actually used; `calculation.json` contains the
+derived coefficients and tests. [Follow the source binding](docs/tutorial/13_retrieval_to_calculation.md).
 
-FieldBridge organizes a mechanism in four nested levels:
-
-```text
-factors              (Omega, Xi)
-mechanism core       M = (Omega, Xi)
-operational identity I_op = (M; C, R, P)
-realized model       I_real = (I_op; A)
+```mermaid
+flowchart LR
+    Q["Equation or physical question"] --> R["Retrieve related records"]
+    R --> S["Select an annotated source equation"]
+    M["Supplied map or observable"] --> C["Calculate"]
+    S --> C
+    C --> E["Target equation or closed observable dynamics"]
+    E --> T["Residual, omission control, predicted response"]
 ```
 
-- `Omega` is the transformation apparatus.
-- `Xi` is the carrier or substrate on which it acts.
-- `C` specifies closure and admissibility.
-- `R` specifies the observable readout.
-- `P` specifies the intervention or computational protocol.
-- `A` binds the mechanism to objects, parameters, units, and field vocabulary.
+The calculation supports scalar Itô transformations and finite closed-system
+Hamiltonian dynamics. The first checks interior generator expressions;
+boundary behavior is an additional physical question. The second derives an
+invariant linear span of observables. The examples reproduce known mathematics
+and provide tests for extending the constructor.
 
-This modular form supports six constructor operations: preserve, replace or
-attach a carrier, close, observe, execute, and falsify. A proposed transfer is
-useful only when the retained operation survives the new attachments.
+## Learn through physical problems
 
-## How The Code Moves
+### Construct an interaction instead of scanning parameters
 
-<p align="center">
-  <img src="./docs/assets/fieldbridge-workflows.svg" width="100%" alt="FieldBridge code flow from document ingestion through operational representation, cross-field construction, PDF field adapters, and evaluation.">
-</p>
+Which Ising couplings preserve collective phase evolution when exchange bonds
+vary independently? This runnable example solves for the couplings, predicts
+an end-spin cancellation time, and compares the result with direct Hamiltonian
+evolution and a nearest-neighbour restriction:
 
-1. `read_document` accepts PDF, TeX, Markdown, or plain text.
-2. `fingerprint_text` scores six operational routes and five evidence fibers.
-3. `extract_mechanism` resolves state, input, boundary, output, equations,
-   measurements, and controls.
-4. `find_analogs` retrieves mechanisms by route and fiber, while
-   `translate_mechanism` renders them in a target field.
-5. `construct_transfer` separates the preserved contract from the required
-   `Xi`, `C`, `R`, `P`, and realization attachments.
-6. Complete-paper and future-state evaluators test retrieval and continuation
-   without fitting on the query papers.
+```bash
+python3 -B -m fieldbridge design-spin-cancellation \
+  examples/construction/spin_cancellation_design.json \
+  --out-dir build/spin_cancellation
+```
 
-The [guided codebase tutorial](./docs/tutorial/index.md) follows these
-abstractions in dependency order and points to the implementing files and
-symbols.
+For three spins it derives `q_01 = q_02 = q_12`. With collective coupling
+5/4, the first collective zero occurs at `pi/5` in units with hbar=1, even
+when the exchange bonds change. Restricting the Ising interaction to neighbours
+leaves no nonzero solution within this commuting construction.
+[How to use this example for discovery](docs/tutorial/14_inverse_construction.md)
+explains the equations, controls, expected output and remaining research
+questions. It uses known physics to demonstrate inverse construction, not
+to assert a new law.
 
-## Commands
+The [tutorial](docs/tutorial/index.md) gives a short runnable route followed by
+the derivations and implementation:
 
-| Command | Scientific object produced |
-| --- | --- |
-| `fieldbridge fingerprint INPUT` | Route-and-fiber fingerprint |
-| `fieldbridge extract INPUT` | Mechanism sheet |
-| `fieldbridge compare A B` | Preserved and changed operational clauses |
-| `fieldbridge search INPUT --target-field FIELD` | Existing cross-field receptors |
-| `fieldbridge translate INPUT --to FIELD` | Target-field formulation |
-| `fieldbridge construct INPUT --to FIELD` | Typed constructor transfer and controls |
-| `fieldbridge build-field-adapter FOLDER ...` | Field pack, evidence index, adapter, and mechanism graph |
-| `fieldbridge validate-zero-shot MANIFEST` | Complete-paper retrieval evaluation |
-| `fieldbridge validate-continuation MANIFEST` | Next-move and future-state evaluation |
+- **A squared stochastic signal:** why nonlinear coordinates require an Itô
+  drift, how its omission biases the mean, and why an affine map needs no
+  correction.
+- **An interacting spin:** how a Hamiltonian identifies the correlation needed
+  to predict a measured magnetization, even for unentangled preparations.
+- **A new paper collection:** how to recover candidate passages, annotate an
+  equation, and distinguish a proposed relation from a calculated one.
+- **An interaction-design problem:** how commutation equations determine
+  coupling coefficients and expose a restriction on a proposed realization.
 
-Four inspectable starter packs are included:
+Worked calculations include an input, expected output, a change to try, and
+links to the functions and tests responsible for the result.
 
-- material intelligence;
-- biological intelligence;
-- collective intelligence;
-- stochastic optimization.
-
-## Build A Field Adapter From Papers
-
-Install optional PDF support and point FieldBridge at a folder:
+## Use your own papers
 
 ```bash
 python3 -m pip install -e '.[pdf]'
-
-fieldbridge build-field-adapter /path/to/papers \
-  --field-id active_matter \
-  --label "Active Matter" \
+python3 -B -m fieldbridge build-field-adapter /path/to/papers \
+  --field-id active_matter --label "Active Matter" \
   --out-dir build/active_matter
+
+python3 -B -m fieldbridge --data-dir build/active_matter \
+  construct examples/brownian_probability_flow.tex \
+  --to active_matter --no-hyperion
 ```
 
-Traversal is recursive. Text-layer PDFs, `.tex`, `.md`, and `.txt` files are
-accepted; scanned PDFs require OCR. The export contains:
+The folder may contain text-layer PDFs, TeX, Markdown or plain text. Scanned
+PDFs need OCR. The generated passages supply evidence for retrieval; source
+annotations for exact calculation must be checked and added separately.
+[Folder walkthrough](docs/tutorial/07_pdf_field_adapter.md) · [Add a field](docs/NEW_FIELD.md)
 
-```text
-field_packs/active_matter.json
-field_adapters/active_matter.json
-field_pack_evidence/active_matter.json
-kg/active_matter_knowledge_graph.json
-index/core_examples.json
-reports/active_matter_adapter.md
-```
+An optional public atlas snapshot can be downloaded with
+`python3 scripts/fetch_atlas.py`. It is unnecessary for all tutorial
+calculations. The small route-and-fiber fingerprint used here is not the
+192-feature V2.1 representation or its learned codebooks.
 
-The adapter records which carriers, operations, closures, readouts, protocols,
-and falsifiers are supported by the folder. It can then serve as the target side
-of `translate` and `construct`. See [Field adapters](./docs/FIELD_ADAPTERS.md)
-for the complete schema and workflow.
+## Repositories and implementation
 
-## Evaluate The Representation
+FieldBridge contains the retrieval and calculation code.
+[MorphWiki](https://github.com/synthetix-institute/morphwiki) organizes a field's
+explanations, equations and source evidence, and can package these calculations
+as a companion to its quantum book. Both repositories are standalone; neither
+requires a running Hyperion cluster for these examples.
 
-FieldBridge keeps retrieval and mechanism continuation as separate questions.
+| Code | Responsibility |
+| --- | --- |
+| [routes.py](fieldbridge/routes.py), [extract.py](fieldbridge/extract.py) | Recognize textual cues and construct a heuristic description |
+| [search.py](fieldbridge/search.py), [database.py](fieldbridge/database.py) | Load and rank records; select target examples |
+| [constructor.py](fieldbridge/constructor.py) | Assemble a proposal or invoke the calculation adapter |
+| [calculation_adapter.py](fieldbridge/calculation_adapter.py) | Bind a retrieved source to a correspondence |
+| [verification.py](fieldbridge/verification.py) | Derive coefficients, residuals and quantum closure |
+| [pdf_sparse_builder.py](fieldbridge/pdf_sparse_builder.py) | Build source-indexed field packs |
+| [zero_shot.py](fieldbridge/zero_shot.py), [continuation.py](fieldbridge/continuation.py) | Evaluate retrieval and written-sequence prediction |
 
-### Complete-paper retrieval
+## Contribute
+
+Start with a source equation, a clearly posed transformation, and a measurable
+consequence. Keep the assumptions and the comparison that exposes a missing
+term with the example. The [extension guide](docs/tutorial/12_reproduction_and_discovery.md)
+explains how a calculation becomes a discovery candidate.
 
 ```bash
-fieldbridge validate-zero-shot benchmark/papers.jsonl \
-  --top-k 10 \
-  --out-json build/full_paper_zero_shot.json \
-  --out-md build/full_paper_zero_shot.md
+python3 -m pip install pytest
+python3 -B -m pytest -q -p no:cacheprovider
 ```
 
-Each query paper is removed from the gallery. The report compares operational
-retrieval with a TF-IDF baseline and reports top-1 accuracy, mean reciprocal
-rank, precision, recall, and a paired bootstrap interval.
-
-### Future mechanism state
-
-```bash
-fieldbridge validate-continuation benchmark/transitions.jsonl \
-  --out-json build/future_state_validation.json \
-  --out-md build/future_state_validation.md
-```
-
-This asks which move and mechanism state an unseen later equation occupies; it
-does not reclassify the current equation. See
-[Future-state validation](./docs/FUTURE_STATE_VALIDATION.md) for the transition
-schema and interpretation.
-
-## Repository Map
-
-```text
-fieldbridge/
-  routes.py              route and fiber evidence
-  extract.py             mechanism-sheet extraction
-  search.py              retrieval and target-field translation
-  constructor.py         typed mechanism construction
-  pdf_sparse_builder.py  corpus adapter and mechanism graph
-  zero_shot.py           complete-paper retrieval evaluation
-  continuation.py        future-state evaluation
-  models.py              public data contracts
-data/
-  field_packs/           field vocabularies and receptors
-  field_pack_evidence/   source evidence for each pack
-  index/                 public mechanism anchors
-docs/tutorial/           implementation-guided walkthrough
-```
-
-## Scientific Scope
-
-FieldBridge proposes mechanisms and the tests they require. It does not establish
-physical equivalence from a fingerprint, prove a generated equation, or replace
-derivation and experiment. The public route-and-fiber representation is an
-inspectable proxy for the richer Hyperion language; field packs are evidence
-indexes, not accepted models of a field.
-
-A construction becomes a scientific result only after its equations, dimensions,
-closure, residuals, controls, and target-system behavior have been checked.
-
-### What the two data layers are
-
-The two sides of a transfer are not the same size, and the difference decides
-what a result means.
-
-| Layer | Contents | Where it comes from |
-|---|---|---|
-| Atlas witnesses | 2,633 records, 897 analog equations | Generated 2026-06-07 from `equation_witnesses.jsonl` (3,824 witnesses, 2026-05-15). arXiv-wide, written for no field here. Fetched from a release, not tracked in git. |
-| Field seeds | 8 records across 5 fields | Hand-authored in `data/index/core_examples.json`, tracked. |
-
-Retrieval is arXiv-wide. The *target formulation* a transfer is written into
-comes from one or two seed records per field. So a transfer proposes a
-structured correspondence against a target vocabulary an author supplied; it
-does not supply target-field knowledge nobody entered.
-
-The shipped index is a snapshot, not a full-corpus run. See
-[Adding a field](./docs/NEW_FIELD.md) for how to extend either layer.
-
-## Contributing
-
-The most useful contributions are field packs with traceable equations,
-variables, observables, protocols, controls, and references. Start with the
-[data model](./docs/DATA_MODEL.md), the [field walkthrough](./docs/NEW_FIELD.md),
-and verify changes with:
-
-```bash
-python3 -m pytest -q
-```
-
-## License
-
-MIT.
+MIT license. Developed within the [Synthetix Institute](https://synthetix.institute).

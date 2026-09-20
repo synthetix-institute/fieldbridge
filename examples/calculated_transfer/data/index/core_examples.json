@@ -1,0 +1,53 @@
+[
+  {
+    "record_id": "radial_ito_source",
+    "title": "Radial stochastic coordinate with restoring drift",
+    "field_id": "stochastic_dynamics",
+    "summary": "A positive radial coordinate undergoes Ito diffusion with a restoring drift and unit Brownian noise.",
+    "invariant": "The source stochastic generator is specified by drift and quadratic variation.",
+    "equations": ["dX = ((theta + 1/2)/x - alpha*x) dt + (1) dW"],
+    "variables": ["x: positive radial coordinate", "theta: positive radial drift parameter", "alpha: positive restoring coefficient"],
+    "measurements": ["coordinate distribution and moments"],
+    "controls": ["omit quadratic variation when changing coordinates"],
+    "references": [],
+    "keywords": ["radial", "diffusion", "Ito", "stochastic", "Brownian"],
+    "routes": {"transport_flow_route": 1.0, "spectral_operator_route": 0.5},
+    "fibers": {"entropy": 1.0, "structure": 0.5},
+    "source": "authored_calculation_benchmark",
+    "calculation_source": {
+      "schema": "fieldbridge-source-model/1",
+      "family": "scalar_ito",
+      "convention": "ito",
+      "parameters": {"theta": "positive", "alpha": "positive"},
+      "domain": "positive",
+      "drift": "(theta + 1/2)/x - alpha*x",
+      "noise": "1",
+      "equation_index": 0,
+      "assumptions": ["Dimensionless variables and standard scalar Ito Brownian motion.", "Positive coordinate, theta and alpha; local C2 observables."]
+    }
+  },
+  {
+    "record_id": "two_spin_source",
+    "title": "Two-spin longitudinal interaction",
+    "field_id": "quantum_dynamics",
+    "summary": "A two-spin Hamiltonian couples longitudinal Pauli components; transverse magnetization evolves through a correlation.",
+    "invariant": "Finite-dimensional unitary evolution preserves density-matrix trace and positivity.",
+    "equations": ["H = [[\"g\", 0, 0, 0], [0, \"-g\", 0, 0], [0, 0, \"-g\", 0], [0, 0, 0, \"g\"]]"],
+    "variables": ["rho: density matrix on two spin-1/2 factors", "g: positive coupling"],
+    "measurements": ["spin expectations and correlations"],
+    "controls": ["remove the correlation from a reduced description"],
+    "references": [],
+    "keywords": ["quantum", "spin", "commutator", "Hamiltonian", "correlation"],
+    "routes": {"spectral_operator_route": 1.0, "commutator_incompatibility_route": 1.0},
+    "fibers": {"spectral": 1.0, "structure": 0.8},
+    "source": "authored_calculation_benchmark",
+    "calculation_source": {
+      "schema": "fieldbridge-source-model/1",
+      "family": "finite_hamiltonian",
+      "parameters": {"g": "positive"},
+      "hamiltonian": [["g",0,0,0],[0,"-g",0,0],[0,0,"-g",0],[0,0,0,"g"]],
+      "equation_index": 0,
+      "assumptions": ["Closed two-spin dynamics; hbar=1 and positive g.", "Every initial density matrix is admissible."]
+    }
+  }
+]

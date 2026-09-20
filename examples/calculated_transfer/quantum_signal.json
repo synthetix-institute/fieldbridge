@@ -1,0 +1,9 @@
+{
+  "schema": "fieldbridge-correspondence/1",
+  "source_record_id": "two_spin_source",
+  "target_field": "quantum_dynamics",
+  "kind": "quantum_closure",
+  "question": "Which expectations are needed to predict transverse magnetization under the retrieved interaction?",
+  "observable": [[0,0,1,0],[0,0,0,1],[1,0,0,0],[0,1,0,0]],
+  "assumptions": ["The measured operator is sigma_x tensor identity.", "The target is its expectation for all allowed initial states."]
+}

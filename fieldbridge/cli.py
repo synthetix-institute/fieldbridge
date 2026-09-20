@@ -79,15 +79,84 @@ def cmd_translate(args: argparse.Namespace) -> int:
 
 
 def cmd_construct(args: argparse.Namespace) -> int:
-    text = read_input(args.input)
-    transfer = construct_transfer(
-        text,
-        target_field=args.to,
-        data_dir=Path(args.data_dir) if args.data_dir else None,
-        top_k=args.top_k,
-        include_hyperion=not args.no_hyperion,
-    )
-    print(render_constructor(transfer))
+    import json
+    from dataclasses import asdict
+
+    calculate = args.calculate
+    if calculate and (not args.correspondence or not args.out_dir):
+        raise SystemExit("--calculate requires --correspondence and --out-dir")
+    if not calculate and (args.correspondence or args.out_dir):
+        raise SystemExit("--correspondence and --out-dir require --calculate")
+    request = None
+    destination = Path(args.out_dir) if calculate else None
+    if calculate:
+        destination.mkdir(parents=True, exist_ok=True)
+        (destination / "run_status.json").write_text(json.dumps({"status": "running"}) + "\n", encoding="utf-8")
+        try:
+            request = json.loads(Path(args.correspondence).read_text(encoding="utf-8"))
+            if not isinstance(request, dict):
+                raise ValueError("Correspondence must be a JSON object")
+        except (OSError, ValueError) as error:
+            (destination / "run_status.json").write_text(json.dumps({"status": "failed", "reason": str(error)}) + "\n", encoding="utf-8")
+            raise SystemExit(f"Invalid correspondence: {error}") from error
+    try:
+        text = read_input(args.input)
+        transfer = construct_transfer(
+            text,
+            target_field=args.to,
+            data_dir=Path(args.data_dir) if args.data_dir else None,
+            top_k=args.top_k,
+            include_hyperion=not args.no_hyperion,
+            calculation_request=request,
+        )
+    except Exception as error:
+        if calculate:
+            (destination / "run_status.json").write_text(json.dumps({"status": "failed", "reason": str(error)}) + "\n", encoding="utf-8")
+        raise
+    rendered = render_constructor(transfer)
+    if calculate:
+        (destination / "transfer.json").write_text(json.dumps(asdict(transfer), indent=2) + "\n", encoding="utf-8")
+        (destination / "transfer.md").write_text(rendered + "\n", encoding="utf-8")
+        outcome = transfer.calculation
+        # Replace stale success artifacts with null/refusal on unsuccessful reruns.
+        (destination / "construction_spec.json").write_text(json.dumps(outcome.get("specification"), indent=2) + "\n", encoding="utf-8")
+        (destination / "calculation.json").write_text(json.dumps(outcome.get("report", outcome), indent=2) + "\n", encoding="utf-8")
+        (destination / "run_status.json").write_text(json.dumps({"status": outcome["status"]}) + "\n", encoding="utf-8")
+    print(rendered)
+    return 2 if calculate and transfer.calculation["status"] != "calculated" else 0
+
+
+def cmd_verify_construction(args: argparse.Namespace) -> int:
+    import json
+    try:
+        from .verification import ConstructionError, run_file
+    except ModuleNotFoundError as error:
+        if error.name != "sympy":
+            raise
+        raise SystemExit("Install the calculation extra: pip install -e '.[construction]'") from error
+    try:
+        report = run_file(args.input, args.out_dir)
+    except (ConstructionError, KeyError, TypeError, json.JSONDecodeError) as error:
+        raise SystemExit(f"Construction input rejected: {error}") from error
+    print(json.dumps(report, indent=2))
+    return 0
+
+
+def cmd_design_spin_cancellation(args: argparse.Namespace) -> int:
+    import json
+    try:
+        from .inverse_spin import run_file
+    except ModuleNotFoundError as error:
+        if error.name not in {"sympy", "numpy"}:
+            raise
+        raise SystemExit("Install the calculation extra: pip install -e '.[construction]'") from error
+    try:
+        report = run_file(args.input, args.out_dir)
+    except (ValueError, KeyError, TypeError, OSError) as error:
+        raise SystemExit(f"Spin design rejected: {error}") from error
+    print(json.dumps({"status": report["status"], "design": report["construction"],
+                      "nearest_neighbor": report["nearest_neighbor_comparison"],
+                      "prediction": report["prediction"], "checks": report["checks"]}, indent=2))
     return 0
 
 
@@ -212,13 +281,26 @@ def build_parser() -> argparse.ArgumentParser:
 
     construct = sub.add_parser(
         "construct",
-        help="Build a mechanism-preserving transfer with explicit completion and falsification clauses.",
+        help="Propose a mechanism transfer or calculate a supported annotated source.",
     )
     construct.add_argument("input", help="Source paper, equation fragment, or literal text.")
     construct.add_argument("--to", required=True, help="Target field id.")
     construct.add_argument("--top-k", type=int, default=4)
     construct.add_argument("--no-hyperion", action="store_true", help="Use only public field-pack receptors.")
+    construct.add_argument("--calculate", action="store_true", help="Calculate a supported retrieved model using an explicit correspondence.")
+    construct.add_argument("--correspondence", help="fieldbridge-correspondence/1 JSON selecting a retrieved source and a map or observable.")
+    construct.add_argument("--out-dir", help="Calculation output directory; required with --calculate.")
     construct.set_defaults(func=cmd_construct)
+
+    verify = sub.add_parser("verify-construction", help="Derive and verify a supplied physical model; does not retrieve or infer source equations.")
+    verify.add_argument("input", help="Construction JSON with equations, map and assumptions.")
+    verify.add_argument("--out-dir", required=True, help="Directory for the calculation and its provenance.")
+    verify.set_defaults(func=cmd_verify_construction)
+
+    design = sub.add_parser("design-spin-cancellation", help="Solve pairwise spin-interaction constraints and test the polarization.")
+    design.add_argument("input", help="fieldbridge-spin-design/1 JSON with exchange bonds and collective coupling.")
+    design.add_argument("--out-dir", required=True, help="Directory for design, input and direct-dynamics comparison.")
+    design.set_defaults(func=cmd_design_spin_cancellation)
 
     def add_build_pack_parser(name: str, help_text: str) -> None:
         build_pack = sub.add_parser(name, help=help_text)

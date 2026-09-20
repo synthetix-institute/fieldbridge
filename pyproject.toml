@@ -17,6 +17,7 @@ dependencies = []
 
 [project.optional-dependencies]
 pdf = ["pdfplumber>=0.11"]
+construction = ["sympy>=1.12,<2", "numpy>=1.24,<3"]
 
 [project.scripts]
 fieldbridge = "fieldbridge.cli:main"

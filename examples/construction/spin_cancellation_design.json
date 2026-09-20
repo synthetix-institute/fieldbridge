@@ -1,0 +1,13 @@
+{
+  "schema": "fieldbridge-spin-design/1",
+  "question": "Which pairwise Ising couplings preserve collective phase evolution when every exchange bond can vary independently?",
+  "bonds": [3, 4],
+  "collective_coupling": "5/4",
+  "coupling_error": "1/10",
+  "provenance": {
+    "origin": "authored inverse-construction example",
+    "model": "Open XY chain plus an unknown pairwise ZZ interaction; hbar=1.",
+    "preparation": "rho(0)=(I+X_0)/2**N",
+    "novelty": "not established; collective phase evolution is known physics"
+  }
+}

@@ -56,6 +56,7 @@ class MechanismRecord:
     source: Optional[str] = None
     target_fields: List[str] = field(default_factory=list)
     hyperion: Optional[Dict[str, Any]] = None
+    calculation_source: Optional[Dict[str, Any]] = None
 
     def fingerprint(self) -> Fingerprint:
         return Fingerprint(routes=self.routes, fibers=self.fibers, hits={})
@@ -130,3 +131,4 @@ class ConstructorTransfer:
     readiness: str
     evidence_boundary: str
     atlas: Optional[Dict[str, Any]] = None
+    calculation: Optional[Dict[str, Any]] = None

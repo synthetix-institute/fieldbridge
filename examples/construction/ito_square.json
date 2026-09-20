@@ -1,0 +1,16 @@
+{
+  "schema": "fieldbridge-construction/1",
+  "kind": "ito_transfer",
+  "question": "Which drift is required for Y=X^2 when X has radial restoring drift and unit Brownian noise?",
+  "parameters": {"theta": "positive", "alpha": "positive"},
+  "domain": "positive",
+  "target_domain": "positive",
+  "convention": "ito",
+  "drift": "(theta + 1/2)/x - alpha*x",
+  "noise": "1",
+  "state_map": "x**2",
+  "inverse_map": "sqrt(y)",
+  "candidate": {"drift": "2*theta + 1 - 2*alpha*y", "variance": "4*y"},
+  "assumptions": ["Dimensionless variables; standard scalar Ito Brownian motion.", "X and Y are positive; theta and alpha are positive.", "The local calculation acts on C2 observables in the interior.", "The mean formula additionally assumes finite moments and no boundary moment contribution."],
+  "provenance": {"origin": "authored mathematical benchmark", "source_alignment": "not_claimed", "equation_ids": ["ito_square:source_sde", "ito_square:state_map"], "novelty": "known Ito transformation, not a new physical law"}
+}

@@ -1,0 +1,12 @@
+{
+  "schema": "fieldbridge-correspondence/1",
+  "source_record_id": "radial_ito_source",
+  "target_field": "stochastic_dynamics",
+  "kind": "ito_transfer",
+  "question": "What equation governs a squared-coordinate signal from the retrieved radial diffusion model?",
+  "state_map": "x**2",
+  "inverse_map": "sqrt(y)",
+  "target_domain": "positive",
+  "candidate": {"drift": "2*theta+1-2*alpha*y", "variance": "4*y"},
+  "assumptions": ["Y=X squared is the target signal, on the positive domain.", "The mean prediction requires finite moments and no extra boundary contribution."]
+}

@@ -1,87 +1,70 @@
-# Chapter 7: Build a Field Adapter from PDFs
+# Build a searchable field from a paper collection
 
-A field adapter turns a local paper collection into the target side of a
-mechanism transfer. It identifies which carriers, operators, update laws,
-closures, readouts, protocols, and falsifiers are supported by that collection.
+A field pack supplies the records that retrieval can return. Building one from
+papers makes the source passages inspectable and allows a new field to enter
+the workbench without changing the search algorithm.
 
-## Install PDF Support
+For a small offline rehearsal, use the bundled text and TeX examples:
+
+```bash
+python3 -B -m fieldbridge build-field-adapter examples \
+  --field-id tutorial_field --label "Tutorial field" \
+  --extensions .txt,.tex --max-docs 4 --max-anchors 12 \
+  --out-dir build/tutorial_field
+
+python3 -B -m fieldbridge --data-dir build/tutorial_field \
+  fields
+python3 -B -m fieldbridge --data-dir build/tutorial_field \
+  search examples/brownian_probability_flow.tex \
+  --target-field tutorial_field --top-k 3
+```
+
+The global `--data-dir` option belongs **before** the subcommand. Keeping it
+there avoids accidentally searching the default dataset.
+
+## Inspect what was extracted
+
+Start with `build/tutorial_field/reports/tutorial_field_adapter.md`.
+The same output tree contains:
+
+| Path under the output directory | Purpose |
+| --- | --- |
+| `field_packs/tutorial_field.json` | Target field description |
+| `field_adapters/tutorial_field.json` | Recognized carrier and operation cues |
+| `field_pack_evidence/tutorial_field.json` | Source artifacts and extraction failures |
+| `index/core_examples.json` | Records used by retrieval |
+| `kg/tutorial_field_knowledge_graph.json` | Relations between recognized roles |
+
+[build_pdf_field_pack](../../fieldbridge/pdf_sparse_builder.py) discovers files,
+extracts text, makes bounded passages, scores evidence and writes these
+coordinated outputs. Its `sparse_attention` function is rule-based passage
+scoring, not a trained attention model that proves relations between equations.
+
+## Move to PDFs
 
 ```bash
 python3 -m pip install -e '.[pdf]'
+python3 -B -m fieldbridge build-field-adapter /path/to/papers \
+  --field-id active_matter --label "Active Matter" \
+  --max-docs 300 --max-chunks-per-doc 40 --max-anchors 120 \
+  --out-dir build/active_matter
 ```
 
-## Build the Adapter
+Scanned pages need OCR. An extracted PDF equation may lose indices, fractions
+or signs. Compare a candidate passage with its original display and nearby
+definitions before using it as a mathematical input. The evidence file lists
+unreadable files under `source_artifacts.extraction_failures`.
 
-```bash
-fieldbridge build-field-adapter /path/to/papers \
-  --field-id active_matter \
-  --label "Active Matter" \
-  --out-dir build/active_matter \
-  --max-docs 300 \
-  --max-chunks-per-doc 40 \
-  --max-anchors 120
-```
+## Connect a source to a calculation
 
-The folder is searched recursively for `.pdf`, `.txt`, `.tex`, and `.md`
-documents. Text-layer PDFs are parsed directly. Scanned PDFs require OCR first.
-Unreadable files are listed in
-`field_pack_evidence/active_matter.json` under
-`source_artifacts.extraction_failures`.
+The field builder generates retrieval records; it does not automatically
+supply the typed `calculation_source` annotation used by the exact verifier.
+Add that annotation only after checking the equation, symbols and domain.
+Then supply a proposed map or observable using the
+[retrieved-source walkthrough](13_retrieval_to_calculation.md).
 
-## Read the Outputs
+**Exercise.** Select one output record and trace its equation back to the input
+document. Identify one physical assumption that would be lost if only the
+displayed formula, rather than its surrounding text, were retained.
 
-Start with:
-
-```text
-build/active_matter/reports/active_matter_adapter.md
-```
-
-Then inspect:
-
-```text
-field_adapters/active_matter.json
-field_pack_evidence/active_matter.json
-kg/active_matter_knowledge_graph.json
-index/core_examples.json
-```
-
-The adapter implements the public identity:
-
-```text
-M = (Omega, Xi)
-I_op = (M; C, R, P)
-```
-
-`operator_apparatus` and `update_or_transport` provide evidence for `Omega`;
-`state_or_carrier` and the substrate profile provide evidence for `Xi`;
-`admissibility_logic`, `readout_rule`, and `protocol_execution` provide
-`C`, `R`, and `P`. Falsifiers remain a separate validation layer.
-
-## In the Code
-
-- `fieldbridge.pdf_sparse_builder.iter_documents` discovers supported files
-  recursively, and `read_document` normalizes their text.
-- `make_chunks` creates bounded source-bearing passages.
-- `sparse_attention` scores route, fiber, constructor-role, and substrate
-  evidence over those passages.
-- `build_field_adapter` assembles the field-native receptor map.
-- `receptor_graph` and `detect_receptor_gaps` expose supported and missing links.
-- `build_pdf_field_pack` writes the coordinated adapter, evidence, graph,
-  examples, and report artifacts.
-
-## Use the New Field
-
-```bash
-fieldbridge translate examples/bioelectric_regeneration.txt \
-  --to active_matter \
-  --data-dir build/active_matter
-
-fieldbridge construct examples/bioelectric_regeneration.txt \
-  --to active_matter \
-  --data-dir build/active_matter
-```
-
-The generated adapter is an evidence index, not an accepted field model.
-Inspect source passages and equations before promoting a transfer.
-
-Next: [Follow one transfer end to end](08_end_to_end_walkthrough.md).
+[Next: first calculated construction](08_end_to_end_walkthrough.md) · [Tutorial](index.md)

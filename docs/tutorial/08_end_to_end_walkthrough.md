@@ -1,82 +1,107 @@
-# Chapter 8: End-to-End Walkthrough
+# Your first calculated construction
 
-This walkthrough follows one mechanism from source equation to target-field
-construction.
+We will predict a signal proportional to the square of a positive noisy
+coordinate. The supplied model gives the coordinate's drift and Brownian
+noise. The question is what equation governs the squared signal.
 
-## 1. Inspect the source operation
+This walkthrough assumes you installed the `construction` extra as described
+in the [tutorial index](index.md). All commands run from the repository root.
+
+## 1. Read the input before running it
+
+Open [ito_square.json](../../examples/construction/ito_square.json). Its
+mathematical fields are:
+
+```json
+{
+  "convention": "ito",
+  "domain": "positive",
+  "target_domain": "positive",
+  "drift": "(theta + 1/2)/x - alpha*x",
+  "noise": "1",
+  "state_map": "x**2",
+  "inverse_map": "sqrt(y)",
+  "candidate": {
+    "drift": "2*theta + 1 - 2*alpha*y",
+    "variance": "4*y"
+  }
+}
+```
+
+The full file also declares positive coordinates and parameters, dimensionless
+units, assumptions and provenance. The candidate is intentionally incomplete.
+It is an equation to test, not an answer used to derive the target.
+
+## 2. Derive and inspect
 
 ```bash
-fieldbridge fingerprint examples/brownian_probability_flow.tex
-fieldbridge extract examples/brownian_probability_flow.tex
+python3 -B -m fieldbridge verify-construction \
+  examples/construction/ito_square.json --out-dir build/ito_square
+python3 -m json.tool build/ito_square/calculation.json
 ```
 
-The fingerprint identifies transport and diffusion evidence. The mechanism
-sheet adds the carrier, input, boundary, output, equations, measurements, and
-controls needed to interpret those scores.
+The status should be `verified_local_generator_identity`. In `target`,
+the drift is equivalent to `2*theta + 2 - 2*alpha*y` and the quadratic
+variation rate (the output key `variance`) is `4*y`. This is a local noise
+coefficient, not the variance of Y at a finite time. The two corrected residual coefficients are zero. The candidate
+fails, leaving `residual_d_phi: "1"`.
 
-## 2. Find existing target receptors
+Both statements belong together: the derived equation verifies, while the
+deliberately incomplete equation is rejected. Brownian quadratic variation
+supplies the missing unit of drift. [The next derivation](10_stochastic_construction.md)
+shows why its coefficient is fixed.
+
+## 3. Read the observable consequence
+
+Under the stated moment and boundary assumptions, the mean approaches
+$(\theta+1)/\alpha$. The incomplete candidate instead approaches
+$(\theta+1/2)/\alpha$. Its error persists at long times; it is not a
+transient discrepancy caused by the initial condition.
+
+The report's `mean_prediction` gives the time-dependent expression. This
+turns the algebraic remainder into a specific difference between predicted
+signals.
+
+## 4. Compare a map that requires no extra drift
 
 ```bash
-fieldbridge search examples/brownian_probability_flow.tex \
-  --target-field stochastic_optimization
+python3 -B -m fieldbridge verify-construction \
+  examples/construction/affine_transfer.json --out-dir build/affine_transfer
 ```
 
-`find_analogs` compares route and fiber vectors with records loaded by
-`database.load_all`. Keyword overlap is reported as supporting evidence; it is
-not the primary representation.
+The affine map has zero second derivative. Its omission control should report
+`detects_omission: false`: removing a term that is already zero changes nothing.
+That is the correct control outcome, not a failed test.
 
-## 3. Build the target mechanism
+## 5. Connect the calculation to retrieval
 
 ```bash
-fieldbridge construct examples/brownian_probability_flow.tex \
-  --to stochastic_optimization \
-  --no-hyperion
+python3 -B -m fieldbridge --data-dir examples/calculated_transfer/data \
+  construct 'radial Brownian Ito diffusion' --to stochastic_dynamics \
+  --no-hyperion --calculate \
+  --correspondence examples/calculated_transfer/squared_signal.json \
+  --out-dir build/calculated_transfer
 ```
 
-Read the result as a sequence of typed edits:
+Open `build/calculated_transfer/transfer.md`. The source drift now comes from
+the selected retrieved record; the correspondence file supplies the map.
+The same verifier derives the same target. The
+[adapter chapter](13_retrieval_to_calculation.md) explains the saved source
+binding and how to alter the map without altering the source law.
 
-```text
-retain Omega      gradient drift plus diffusion
-replace Xi        particle position -> parameter space
-attach C          normalized domain and zero-current closure
-attach R          stationary density and free-energy readout
-attach P          stochastic-gradient and noise protocol
-test I_op         reverse drift, remove noise, shuffle gradients
-```
+## Troubleshooting
 
-The target equations are only one part of the result. Closure tells us when
-they define an admissible model, readout connects them to observations, and the
-protocol states how the mechanism is executed.
+| Symptom | Check |
+| --- | --- |
+| `No module named fieldbridge` | Activate the environment and run `python3 -m pip install -e '.[construction]'` from this repository |
+| SymPy import fails | Install the `construction` extra in the same Python environment |
+| Input file not found | Run from the repository root, or use absolute paths |
+| `unrecognized arguments: --data-dir` | Put the global option before the subcommand |
+| Calculated source is refused | Read `run_status.json` and `calculation.json`; check the selected identifier, canonical annotation and map |
+| Convention or domain declaration is missing | Specify `convention`, source `domain` and `target_domain`; the calculation does not assume them |
+| No atlas snapshot | The examples use `--no-hyperion`; no atlas is needed |
 
-## 4. Add a new target field
+A repeated run uses the same output directory. Choose a new directory when
+comparing variants so the two inputs and results remain available.
 
-```bash
-fieldbridge build-field-adapter /path/to/papers \
-  --field-id active_matter \
-  --label "Active Matter" \
-  --out-dir build/active_matter
-```
-
-Then point the constructor at the generated data tree:
-
-```bash
-fieldbridge construct examples/brownian_probability_flow.tex \
-  --to active_matter \
-  --data-dir build/active_matter
-```
-
-The adapter does not decide that the transfer is valid. It supplies target-side
-carriers, operations, closures, readouts, protocols, falsifiers, and source
-passages from which a candidate can be derived.
-
-## 5. Evaluate before promotion
-
-Use `validate-zero-shot` to test whether the representation retrieves matching
-mechanisms from complete unseen papers. Use `validate-continuation` when the
-claim concerns the next mathematical move or destination state. A proposed
-construction still requires dimensional analysis, closure and residual checks,
-negative controls, and independent target-system evidence.
-
-You have now traversed the complete public code path. Return to the
-[tutorial index](index.md) or inspect `fieldbridge/constructor.py` to extend the
-constructor operations.
+[Next: equations and assumptions](09_equations_and_assumptions.md) · [Tutorial](index.md)
