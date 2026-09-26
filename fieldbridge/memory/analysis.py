@@ -340,15 +340,19 @@ def locate_writes(real: Realization, rng, param: Optional[str] = None, values: O
         values = np.linspace(*real.control_range, 7)
     values = np.asarray(values, float)
     width = float(abs(values[-1] - values[0]))
+    lo, hi = float(np.min(values)), float(np.max(values))
     events: List[Dict[str, object]] = []
     for a, b in zip(values[:-1], values[1:]):
         for v0, v1 in ((a, b), (b, a)):
+            # each interval is tracked slightly past its end, so that an event exactly at a scan value (where the
+            # state found there is already marginal) is still located
+            v_end = float(np.clip(v1 + np.sign(v1 - v0) * 1e-2 * abs(b - a), lo, hi))
             for q, k in fixed_points(real, rng, n_starts, {param: v0}):
                 # a state on the boundary of an orthant (a species or a tube absent) sits where the drift
                 # need not be smooth; its continuation is not attempted
                 on_edge = real.carrier.kind == "orthant" and float(np.min(np.abs(q))) < 1e-6 * real.carrier.scale
                 if n_unstable(k) == 0 and not on_edge:
-                    _, ev = track(real, param, q, v0, v1)
+                    _, ev = track(real, param, q, v0, v_end)
                     if ev is not None:
                         events.append(ev)
     out: List[Dict[str, object]] = []

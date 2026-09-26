@@ -499,7 +499,7 @@ def _law_panel_pitchfork(c, reached, class_color, s):
     with_law = [r for r in reached if r.get("law_constant")]
     if not with_law:
         c.axis("off")
-        _note(c, "the law was not simulated (--no-law)")
+        _note(c, "the law was not simulated in this run")
         return
     for j, r in enumerate(with_law):
         k = r["law_constant"]
@@ -524,7 +524,7 @@ def _law_panel_fold(c, reached, class_color, marker, s):
     with_law = [r for r in reached if r.get("law_constant")]
     if not with_law:
         c.axis("off")
-        _note(c, "the law was not simulated (--no-law)")
+        _note(c, "the law was not simulated in this run")
         return
     emax = 0.0
     for r in with_law:
@@ -663,7 +663,7 @@ def _phase_locking_figure(report: Dict, path: Path):
     with_law = [r for r in reached if r.get("law_constant")]
     if not with_law:
         d.axis("off")
-        _note(d, "the law was not simulated (--no-law)")
+        _note(d, "the locking law was not simulated in this run")
     else:
         u = np.linspace(-1, 1, 200)
         d.plot(u, np.sqrt(1 - u ** 2), color=INK, lw=1.0, ls="--")

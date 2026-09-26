@@ -28,6 +28,7 @@ import numpy as np
 from . import analysis as an
 from .construct import construct
 from .identity import Realization
+from .identity import Realization
 from .transfer import Transfer
 
 
@@ -69,6 +70,8 @@ def evaluate(real: Realization, rng: np.random.Generator, transfers: Optional[Li
                       "basin_entropy_bits": float(-(p * np.log2(p)).sum()) if len(p) else 0.0,
                       "sampled_from": n_starts, "q": [s.tolist() for s in states]}
     card["loss_law"] = an.loss_law(len(states), spectra, n_unconv, n_starts, continuum, n_null)
+    if not states and n_unconv > 0 and real.carrier.dim >= 2:
+        _cycle_isolation(real, rng, card)
     if real.carrier.dim == 1 or real.carrier.dim == 2:
         card["landscape"] = _landscape(real)
     stored = states if (len(states) >= 2 and not continuum) else None
@@ -149,10 +152,31 @@ def sweep_label(card: Dict, w: Dict) -> str:
     return "control swept through the write point"
 
 
+def _cycle_isolation(real: Realization, rng, card: Dict) -> None:
+    """Without a stable state the trajectories oscillate. The transverse Floquet multiplier of the cycle tells an
+    isolated limit cycle (phase memory) from a family of neutral cycles, as in the Lotka-Volterra model, where the
+    neighbouring orbits are cycles as well and neither the amplitude nor the phase has a restoring force."""
+    from . import phase_locking as pl
+    try:
+        cyc = pl.find_cycle(real, {}, rng)
+        if cyc is None:
+            return
+        fl = pl.floquet(real, {}, pl.refine_cycle(real, {}, cyc))
+    except Exception:  # an irregular oscillation: the classification by trajectories stands
+        return
+    card["states"]["transverse_floquet_multiplier"] = float(fl["largest_other"])
+    if fl["largest_other"] > pl.NEUTRAL:
+        card["states"]["neutral_cycles"] = True
+        card["loss_law"] = ("no stable state: a family of neutral cycles, with no restoring force on the amplitude or "
+                            "the phase (Law 2)")
+
+
 def mechanism_class(card: Dict) -> str:
     """A descriptive class of how a state is written, from the calculated write points; no class is an error."""
     st = card["states"]
     if st["count"] == 0:
+        if st.get("neutral_cycles"):
+            return "neutral cycles: no isolated phase"
         return "limit cycle: phase memory" if "limit cycle" in card["loss_law"] else "no stable state"
     if st.get("continuum"):
         return "zero mode: diffusive retention"
@@ -184,7 +208,10 @@ def verdict(card: Dict) -> Dict[str, str]:
     ev = card["construct"]["events"]
     ctrl = [e for e in ev if e["source"] == "control"]
     field = [e for e in ev if e["source"] == "write field"]
-    writes = "; ".join(sorted({f"{e['kind'].split(':')[0]} at {e['param']} = {e['value']:.3g}" for e in ctrl})) or (
+    span = abs(float(np.subtract(*card["control_range"][::-1]))) if card.get("control_range") else 1.0
+    shown = lambda v: 0.0 if abs(v) < 1e-5 * span else v  # a write point at zero, located to numerical accuracy
+    writes = "; ".join(sorted({f"{e['kind'].split(':')[0]} at {e['param']} = {shown(e['value']):.3g}"
+                               for e in ctrl})) or (
         "no control parameter" if not card.get("control") else
         "no bifurcation along the control, which only rescales the energy landscape" if card["construct"].get("control_role")
         else "no bifurcation along the control")

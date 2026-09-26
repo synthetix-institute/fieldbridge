@@ -202,6 +202,28 @@ def test_command_line_writes_reports_with_provenance(tmp_path):
 
 
 # ------------------------------------------------------------------------------------------------ phase memory
+def test_a_fold_at_a_scan_value_is_located():
+    """The overdamped Josephson junction loses its stable phase at the critical current 1, which is one of the
+    values of the scan along the control; the fold must be found there, not missed."""
+    from fieldbridge.memory import construct
+    real = spec.load(EX / "oscillators" / "josephson.json")
+    events = construct.construct(real, np.random.default_rng(1), check_write=False)["events"]
+    folds = [e for e in events if e["source"] == "control" and e["kind"].startswith("saddle-node")]
+    assert folds and abs(folds[0]["value"] - 1.0) < 1e-3
+
+
+def test_a_card_separates_a_limit_cycle_from_a_family_of_neutral_cycles():
+    """Lotka-Volterra orbits are neutral (a conserved quantity); the van der Pol cycle is isolated."""
+    from fieldbridge.memory import discovery
+    osc = EX / "oscillators"
+    lv = discovery.evaluate(spec.load(osc / "lotka_volterra.json"), np.random.default_rng(1), quick=True)
+    vdp = discovery.evaluate(spec.load(osc / "van_der_pol.json"), np.random.default_rng(1), quick=True)
+    assert lv["states"]["neutral_cycles"] and lv["states"]["transverse_floquet_multiplier"] > 0.99
+    assert discovery.mechanism_class(lv) == "neutral cycles: no isolated phase"
+    assert "limit cycle" in vdp["loss_law"] and vdp["states"]["transverse_floquet_multiplier"] < 0.1
+    assert discovery.mechanism_class(vdp) == "limit cycle: phase memory"
+
+
 def test_an_oscillator_remembers_a_pulse_in_its_phase():
     """No stable state, yet memory: the phase is a flat direction (time-translation symmetry)."""
     from fieldbridge.memory import phase
