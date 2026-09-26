@@ -1,0 +1,43 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "nitrogen-vacancy centre ground-state spin",
+  "field": "solid-state defects",
+  "question": "Does a driven spin-1 with a zero-field splitting behave as a rotating spin?",
+  "carrier": {
+    "kind": "spin",
+    "j": "1"
+  },
+  "parameters": {
+    "D": 3.0,
+    "rabi": 0.2,
+    "detuning": 0.1
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "D",
+      "operator": "Jz Jz"
+    },
+    {
+      "coefficient": "rabi",
+      "operator": "Jx"
+    },
+    {
+      "coefficient": "detuning",
+      "operator": "Jz"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "Jz"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Ground-state spin triplet with zero-field splitting D; strain and hyperfine terms neglected."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "novelty": "known physics"
+  }
+}

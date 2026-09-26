@@ -1,0 +1,43 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "two nuclear spins of different species",
+  "field": "nuclear magnetic resonance",
+  "question": "Does the total magnetization of two uncoupled spins with different Larmor frequencies rotate as one spin?",
+  "carrier": {
+    "kind": "qubits",
+    "n": 2
+  },
+  "parameters": {
+    "w1": 1.0,
+    "w2": 0.4,
+    "rf": 0.3
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "w1/2",
+      "operator": "Z0"
+    },
+    {
+      "coefficient": "w2/2",
+      "operator": "Z1"
+    },
+    {
+      "coefficient": "rf/2",
+      "operator": "X0 + X1"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "Z0 + Z1"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Two spins with different gyromagnetic ratios in one field, driven by one radio-frequency field; no coupling."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "novelty": "known physics"
+  }
+}

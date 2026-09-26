@@ -1,0 +1,62 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "Bose-Josephson junction without interaction",
+  "field": "cold atoms",
+  "question": "How does the population imbalance of four atoms in two wells evolve under tunnelling and an energy offset?",
+  "carrier": {
+    "kind": "bosons",
+    "modes": [
+      "a",
+      "b"
+    ],
+    "max_quanta": 4
+  },
+  "parameters": {
+    "K": 1.0,
+    "delta": 0.4,
+    "N": 4
+  },
+  "sector": {
+    "operator": [
+      {
+        "coefficient": 1,
+        "operator": "na + nb"
+      }
+    ],
+    "value": "N"
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "-K",
+      "operator": "ad b",
+      "hc": true
+    },
+    {
+      "coefficient": "delta/2",
+      "operator": "na"
+    },
+    {
+      "coefficient": "-delta/2",
+      "operator": "nb"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": "1/2",
+      "operator": "na"
+    },
+    {
+      "coefficient": "-1/2",
+      "operator": "nb"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Two-mode approximation; no interaction between the atoms; the atom number is conserved."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "reference": "G. J. Milburn et al., Phys. Rev. A 55, 4318 (1997); J. Schwinger, boson representation of angular momentum (1952)",
+    "novelty": "known physics"
+  }
+}

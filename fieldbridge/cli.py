@@ -303,6 +303,12 @@ def build_parser() -> argparse.ArgumentParser:
     except ImportError:
         pass
 
+    try:  # the quantum language needs numpy and sympy (the construction extra)
+        from .quantum.cli import add_parser as add_quantum_parser
+        add_quantum_parser(sub)
+    except ImportError:
+        pass
+
     design = sub.add_parser("design-spin-cancellation", help="Solve pairwise spin-interaction constraints and test the polarization.")
     design.add_argument("input", help="fieldbridge-spin-design/1 JSON with exchange bonds and collective coupling.")
     design.add_argument("--out-dir", required=True, help="Directory for design, input and direct-dynamics comparison.")

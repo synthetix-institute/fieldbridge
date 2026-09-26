@@ -1,0 +1,64 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "exchange chain for state transfer",
+  "field": "quantum information",
+  "question": "Does a flipped spin travel from one end of a four-spin exchange chain to the other?",
+  "carrier": {
+    "kind": "qubits",
+    "n": 4
+  },
+  "parameters": {
+    "lam": 1.0
+  },
+  "sector": {
+    "operator": [
+      {
+        "coefficient": 1,
+        "operator": "Z0 + Z1 + Z2 + Z3"
+      }
+    ],
+    "value": 2
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "lam*sqrt(3)/2",
+      "operator": "X0 X1 + Y0 Y1"
+    },
+    {
+      "coefficient": "lam",
+      "operator": "X1 X2 + Y1 Y2"
+    },
+    {
+      "coefficient": "lam*sqrt(3)/2",
+      "operator": "X2 X3 + Y2 Y3"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": "3/4",
+      "operator": "Z0"
+    },
+    {
+      "coefficient": "1/4",
+      "operator": "Z1"
+    },
+    {
+      "coefficient": "-1/4",
+      "operator": "Z2"
+    },
+    {
+      "coefficient": "-3/4",
+      "operator": "Z3"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "One spin flipped against a polarized chain (the sector sum_j Z_j = 2).",
+    "The observable is the position of the flipped spin, sum_j (j - 3/2)(1 - Z_j)/2."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "reference": "M. Christandl, N. Datta, A. Ekert and A. J. Landahl, Phys. Rev. Lett. 92, 187902 (2004)",
+    "novelty": "known physics"
+  }
+}

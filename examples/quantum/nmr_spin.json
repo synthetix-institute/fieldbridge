@@ -1,0 +1,39 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "nuclear spin-1/2 in a rotating field",
+  "field": "nuclear magnetic resonance",
+  "question": "How does the longitudinal magnetization of a spin-1/2 respond to a radio-frequency field slightly off resonance?",
+  "carrier": {
+    "kind": "qubits",
+    "n": 1
+  },
+  "parameters": {
+    "rabi": 2.0,
+    "detuning": 0.5
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "rabi/2",
+      "operator": "X0"
+    },
+    {
+      "coefficient": "detuning/2",
+      "operator": "Z0"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "Z0"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Frame rotating with the radio-frequency field; relaxation neglected."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "reference": "F. Bloch, Phys. Rev. 70, 460 (1946)",
+    "novelty": "known physics"
+  }
+}

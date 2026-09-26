@@ -1,0 +1,48 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "exchange chain of Module 14 (bonds 3 and 4)",
+  "field": "quantum information",
+  "question": "Does a flipped spin in the three-spin chain of Module 14 travel as a rotating spin?",
+  "carrier": {
+    "kind": "qubits",
+    "n": 3
+  },
+  "sector": {
+    "operator": [
+      {
+        "coefficient": 1,
+        "operator": "Z0 + Z1 + Z2"
+      }
+    ],
+    "value": 1
+  },
+  "hamiltonian": [
+    {
+      "coefficient": 3,
+      "operator": "X0 X1 + Y0 Y1"
+    },
+    {
+      "coefficient": 4,
+      "operator": "X1 X2 + Y1 Y2"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": "1/2",
+      "operator": "Z0"
+    },
+    {
+      "coefficient": "-1/2",
+      "operator": "Z2"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "The exchange Hamiltonian of Module 14 (examples/construction/spin_cancellation_design.json) without the Ising term.",
+    "One flipped spin; the observable is its position, sum_j (j - 1)(1 - Z_j)/2."
+  ],
+  "provenance": {
+    "origin": "tutorial Module 14",
+    "novelty": "known physics"
+  }
+}

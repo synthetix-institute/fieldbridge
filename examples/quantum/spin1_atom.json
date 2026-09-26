@@ -1,0 +1,38 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "spin-1 hyperfine level in a weak field",
+  "field": "atomic physics",
+  "question": "How does the orientation of an F = 1 atomic level respond to a radio-frequency field in the linear Zeeman regime?",
+  "carrier": {
+    "kind": "spin",
+    "j": "1"
+  },
+  "parameters": {
+    "rabi": 1.5,
+    "detuning": 0.3
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "rabi",
+      "operator": "Jx"
+    },
+    {
+      "coefficient": "detuning",
+      "operator": "Jz"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "Jz"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Linear Zeeman regime: the quadratic Zeeman shift is neglected."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "novelty": "known physics"
+  }
+}

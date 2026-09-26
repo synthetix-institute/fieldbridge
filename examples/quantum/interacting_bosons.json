@@ -1,0 +1,67 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "Bose-Josephson junction with interaction",
+  "field": "cold atoms",
+  "question": "Does the population imbalance still rotate when the atoms interact?",
+  "carrier": {
+    "kind": "bosons",
+    "modes": [
+      "a",
+      "b"
+    ],
+    "max_quanta": 4
+  },
+  "parameters": {
+    "K": 1.0,
+    "delta": 0.4,
+    "U": 0.5,
+    "N": 4
+  },
+  "sector": {
+    "operator": [
+      {
+        "coefficient": 1,
+        "operator": "na + nb"
+      }
+    ],
+    "value": "N"
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "-K",
+      "operator": "ad b",
+      "hc": true
+    },
+    {
+      "coefficient": "delta/2",
+      "operator": "na"
+    },
+    {
+      "coefficient": "-delta/2",
+      "operator": "nb"
+    },
+    {
+      "coefficient": "U/2",
+      "operator": "na na + nb nb"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": "1/2",
+      "operator": "na"
+    },
+    {
+      "coefficient": "-1/2",
+      "operator": "nb"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "Two-mode approximation with on-site interaction U."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "reference": "M. Kitagawa and M. Ueda, Phys. Rev. A 47, 5138 (1993)",
+    "novelty": "known physics"
+  }
+}

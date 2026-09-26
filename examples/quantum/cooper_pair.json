@@ -1,0 +1,48 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "Cooper-pair level (Anderson pseudospin)",
+  "field": "superconductivity",
+  "question": "How does the occupation of a pair level (k up, -k down) respond to a pairing field?",
+  "carrier": {
+    "kind": "fermions",
+    "modes": 2
+  },
+  "parameters": {
+    "eps": 0.3,
+    "Delta": 1.0
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "eps",
+      "operator": "n0"
+    },
+    {
+      "coefficient": "eps",
+      "operator": "n1"
+    },
+    {
+      "coefficient": "-Delta",
+      "operator": "cd0 cd1",
+      "hc": true
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "n0"
+    },
+    {
+      "coefficient": 1,
+      "operator": "n1"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "One pair level of a reduced BCS Hamiltonian with a fixed pairing field."
+  ],
+  "provenance": {
+    "origin": "authored benchmark",
+    "reference": "P. W. Anderson, Phys. Rev. 112, 1900 (1958)",
+    "novelty": "known physics"
+  }
+}

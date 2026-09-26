@@ -1,0 +1,38 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "name": "two coupled spins (Module 11)",
+  "field": "quantum information",
+  "question": "Which correlations carry the transverse magnetization of one spin coupled to another, with a transverse field?",
+  "carrier": {
+    "kind": "qubits",
+    "n": 2
+  },
+  "parameters": {
+    "g": 1.0,
+    "h": 0.5
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "g",
+      "operator": "Z0 Z1"
+    },
+    {
+      "coefficient": "h",
+      "operator": "X0"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "X0"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "The model of the Module 11 exercise: H = g Z0 Z1 + h X0, observable X0."
+  ],
+  "provenance": {
+    "origin": "tutorial Module 11 (examples/construction/quantum_correlations.json and its exercise)",
+    "novelty": "known physics"
+  }
+}
