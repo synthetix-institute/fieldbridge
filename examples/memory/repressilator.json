@@ -1,0 +1,46 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can a ring of 3 repressing genes store a state?",
+  "provenance": {
+    "source": "Elowitz and Leibler, Nature 403, 335 (2000)",
+    "kind": "authored example"
+  },
+  "field": "synthetic biology",
+  "kind": "equations",
+  "name": "ring of 3 repressors",
+  "carrier": {
+    "kind": "orthant",
+    "name": "protein concentrations",
+    "variables": [
+      "u0",
+      "u1",
+      "u2"
+    ],
+    "scale": 10
+  },
+  "parameters": {
+    "alpha": 10.0,
+    "n": 4.0
+  },
+  "drift": {
+    "u0": "alpha/(1 + u2**n) - u0",
+    "u1": "alpha/(1 + u0**n) - u1",
+    "u2": "alpha/(1 + u1**n) - u2"
+  },
+  "control": {
+    "name": "alpha",
+    "range": [
+      0.5,
+      12.0
+    ]
+  },
+  "noise": 0.05,
+  "dt": 0.01,
+  "closure": "dilution; each gene repressed by its predecessor",
+  "observable": "which genes are on",
+  "assumptions": [
+    "identical genes",
+    "Hill repression",
+    "additive noise"
+  ]
+}

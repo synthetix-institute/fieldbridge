@@ -1,0 +1,45 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can a neuron driven by a periodic current take the phase of the current and keep it?",
+  "provenance": {
+    "source": "FitzHugh, Biophys. J. 1, 445 (1961); Nagumo, Arimoto and Yoshizawa, Proc. IRE 50, 2061 (1962)",
+    "kind": "authored example"
+  },
+  "field": "neuroscience",
+  "kind": "equations",
+  "name": "FitzHugh-Nagumo neuron",
+  "carrier": {
+    "kind": "euclid",
+    "name": "membrane potential and recovery variable",
+    "variables": [
+      "v",
+      "w"
+    ],
+    "scale": 2.0
+  },
+  "parameters": {
+    "a": 0.7,
+    "b": 0.8,
+    "eps": 0.08,
+    "cur": 0.0
+  },
+  "drift": {
+    "v": "v - v**3/3 - w + cur",
+    "w": "eps*(v + a - b*w)"
+  },
+  "control": {
+    "name": "cur",
+    "range": [
+      0.0,
+      1.0
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "space-clamped membrane; cur is the injected current",
+  "observable": "phase of the spike train",
+  "assumptions": [
+    "two-variable reduction of the Hodgkin-Huxley equations",
+    "additive noise"
+  ]
+}

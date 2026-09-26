@@ -1,0 +1,24 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "field",
+  "provenance": {
+    "source": "Gaussian and phi^4 lattice fields, conserved (Model B) and non-conserved (Model A) dynamics",
+    "kind": "authored example"
+  },
+  "question": "How long does a conserved surface density remember material moved between two neighbouring sites?",
+  "name": "conserved field, d = 2, write that moves material",
+  "field": {
+    "d": 2,
+    "L": 32,
+    "conserved": true,
+    "write": "dipole",
+    "amplitude": 3.0,
+    "M": 1.0,
+    "T": 0.5,
+    "g": 0.3
+  },
+  "assumptions": [
+    "square lattice",
+    "the write moves material between neighbouring sites and leaves the total unchanged"
+  ]
+}

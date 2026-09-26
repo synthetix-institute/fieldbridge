@@ -1,0 +1,44 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can an oscillator pumped at twice its frequency store a binary digit in its phase?",
+  "provenance": {
+    "source": "principle: von Neumann, US patent 2,815,488 (1957); Goto, Proc. IRE 47, 1304 (1959); here with a self-sustained van der Pol tank",
+    "kind": "authored example"
+  },
+  "field": "computing hardware",
+  "kind": "equations",
+  "name": "pumped oscillator (parametron principle)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "tank voltage and its rate of change",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 2.0
+  },
+  "parameters": {
+    "mu": 0.5,
+    "k": 1.0
+  },
+  "drift": {
+    "x": "y",
+    "y": "mu*(1 - x**2)*y - k*x"
+  },
+  "control": {
+    "name": "k",
+    "range": [
+      0.5,
+      1.5
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "the pump modulates the stiffness of the tank (its inductance or capacitance)",
+  "observable": "phase of the tank oscillation relative to the pump",
+  "assumptions": [
+    "one tank circuit",
+    "cubic nonlinearity",
+    "additive noise"
+  ]
+}

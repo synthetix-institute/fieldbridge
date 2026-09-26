@@ -1,0 +1,24 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "field",
+  "provenance": {
+    "source": "Gaussian and phi^4 lattice fields, conserved (Model B) and non-conserved (Model A) dynamics",
+    "kind": "authored example"
+  },
+  "question": "How long does a conserved surface density remember a pulse that added material?",
+  "name": "conserved field, d = 2, write that adds material",
+  "field": {
+    "d": 2,
+    "L": 32,
+    "conserved": true,
+    "write": "charge",
+    "amplitude": 3.0,
+    "M": 1.0,
+    "T": 0.5,
+    "g": 0.3
+  },
+  "assumptions": [
+    "square lattice",
+    "the write adds material at one site"
+  ]
+}

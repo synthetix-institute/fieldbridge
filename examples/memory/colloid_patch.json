@@ -1,0 +1,274 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Where does a patch of caged anisotropic colloids keep a written angular pattern?",
+  "provenance": {
+    "source": "capillary quadrupoles at a fluid interface (Stamou et al. 2000; companion Letter)",
+    "kind": "authored example"
+  },
+  "field": "soft matter",
+  "kind": "network",
+  "name": "caged capillary rotors",
+  "network": {
+    "unit": "rotor",
+    "m": 2,
+    "lam": 0.6,
+    "positions": [
+      [
+        0.176202,
+        0.054149
+      ],
+      [
+        0.913605,
+        -0.201639
+      ],
+      [
+        1.696861,
+        0.002982
+      ],
+      [
+        2.870309,
+        -0.139545
+      ],
+      [
+        0.464485,
+        0.85773
+      ],
+      [
+        1.135715,
+        1.014049
+      ],
+      [
+        2.175705,
+        1.163565
+      ],
+      [
+        3.594491,
+        0.79053
+      ],
+      [
+        0.214879,
+        1.735377
+      ],
+      [
+        1.110547,
+        1.749207
+      ],
+      [
+        2.175445,
+        1.901878
+      ],
+      [
+        2.854827,
+        1.634052
+      ]
+    ],
+    "edges": [
+      [
+        0,
+        1,
+        {
+          "align": 4.0,
+          "reflect": 18.905197
+        }
+      ],
+      [
+        0,
+        4,
+        {
+          "align": 4.0,
+          "reflect": 13.207203
+        }
+      ],
+      [
+        0,
+        5,
+        {
+          "align": 4.0,
+          "reflect": 2.067632
+        }
+      ],
+      [
+        1,
+        2,
+        {
+          "align": 4.0,
+          "reflect": 16.3353
+        }
+      ],
+      [
+        1,
+        4,
+        {
+          "align": 4.0,
+          "reflect": 4.002487
+        }
+      ],
+      [
+        1,
+        5,
+        {
+          "align": 4.0,
+          "reflect": 3.008002
+        }
+      ],
+      [
+        2,
+        3,
+        {
+          "align": 4.0,
+          "reflect": 3.593436
+        }
+      ],
+      [
+        2,
+        5,
+        {
+          "align": 4.0,
+          "reflect": 3.924031
+        }
+      ],
+      [
+        2,
+        6,
+        {
+          "align": 4.0,
+          "reflect": 2.823834
+        }
+      ],
+      [
+        3,
+        7,
+        {
+          "align": 4.0,
+          "reflect": 3.633981
+        }
+      ],
+      [
+        4,
+        5,
+        {
+          "align": 4.0,
+          "reflect": 30.0
+        }
+      ],
+      [
+        4,
+        8,
+        {
+          "align": 4.0,
+          "reflect": 10.121591
+        }
+      ],
+      [
+        4,
+        9,
+        {
+          "align": 4.0,
+          "reflect": 4.775177
+        }
+      ],
+      [
+        5,
+        6,
+        {
+          "align": 4.0,
+          "reflect": 5.757052
+        }
+      ],
+      [
+        5,
+        8,
+        {
+          "align": 4.0,
+          "reflect": 3.747613
+        }
+      ],
+      [
+        5,
+        9,
+        {
+          "align": 4.0,
+          "reflect": 23.963254
+        }
+      ],
+      [
+        5,
+        10,
+        {
+          "align": 4.0,
+          "reflect": 2.00788
+        }
+      ],
+      [
+        6,
+        9,
+        {
+          "align": 4.0,
+          "reflect": 3.213735
+        }
+      ],
+      [
+        6,
+        10,
+        {
+          "align": 4.0,
+          "reflect": 23.611527
+        }
+      ],
+      [
+        6,
+        11,
+        {
+          "align": 4.0,
+          "reflect": 15.059112
+        }
+      ],
+      [
+        7,
+        11,
+        {
+          "align": 4.0,
+          "reflect": 4.428827
+        }
+      ],
+      [
+        8,
+        9,
+        {
+          "align": 4.0,
+          "reflect": 10.896611
+        }
+      ],
+      [
+        9,
+        10,
+        {
+          "align": 4.0,
+          "reflect": 5.238211
+        }
+      ],
+      [
+        10,
+        11,
+        {
+          "align": 4.0,
+          "reflect": 24.669448
+        }
+      ]
+    ]
+  },
+  "control": {
+    "name": "lam",
+    "range": [
+      0.05,
+      1.5
+    ]
+  },
+  "noise": 1.0,
+  "closure": "positions caged; rotational Brownian motion",
+  "observable": "overlap with a written angular pattern",
+  "assumptions": [
+    "alignment 4 and capillary 5 (r0/r)^4 in units of lam k_BT",
+    "nematic rods (m = 2)"
+  ]
+}

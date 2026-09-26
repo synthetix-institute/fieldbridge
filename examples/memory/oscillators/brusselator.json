@@ -1,0 +1,44 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can an oscillating reaction take the phase of a periodically modulated feed?",
+  "provenance": {
+    "source": "Prigogine and Lefever, J. Chem. Phys. 48, 1695 (1968)",
+    "kind": "authored example"
+  },
+  "field": "chemical kinetics",
+  "kind": "equations",
+  "name": "Brusselator",
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentrations of the two intermediates",
+    "variables": [
+      "u",
+      "v"
+    ],
+    "scale": 4.0
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 3.0
+  },
+  "drift": {
+    "u": "a - (b + 1)*u + u**2*v",
+    "v": "b*u - u**2*v"
+  },
+  "control": {
+    "name": "b",
+    "range": [
+      1.0,
+      4.0
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "well-stirred open reactor; the feeds a and b are held by the reservoirs",
+  "observable": "phase of the concentration oscillation",
+  "assumptions": [
+    "mass action",
+    "autocatalytic step 2u + v -> 3u",
+    "additive noise"
+  ]
+}

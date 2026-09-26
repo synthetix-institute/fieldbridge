@@ -1,0 +1,274 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Do point dipoles at the same positions retain the same kind of memory as the colloids?",
+  "provenance": {
+    "source": "in-plane point dipoles with fixed centres",
+    "kind": "authored example"
+  },
+  "field": "magnetism",
+  "kind": "network",
+  "name": "caged in-plane dipoles",
+  "network": {
+    "unit": "rotor",
+    "m": 1,
+    "lam": 0.6,
+    "positions": [
+      [
+        0.176202,
+        0.054149
+      ],
+      [
+        0.913605,
+        -0.201639
+      ],
+      [
+        1.696861,
+        0.002982
+      ],
+      [
+        2.870309,
+        -0.139545
+      ],
+      [
+        0.464485,
+        0.85773
+      ],
+      [
+        1.135715,
+        1.014049
+      ],
+      [
+        2.175705,
+        1.163565
+      ],
+      [
+        3.594491,
+        0.79053
+      ],
+      [
+        0.214879,
+        1.735377
+      ],
+      [
+        1.110547,
+        1.749207
+      ],
+      [
+        2.175445,
+        1.901878
+      ],
+      [
+        2.854827,
+        1.634052
+      ]
+    ],
+    "edges": [
+      [
+        0,
+        1,
+        {
+          "align": 1.355746,
+          "reflect": 4.067239
+        }
+      ],
+      [
+        0,
+        4,
+        {
+          "align": 1.035978,
+          "reflect": 3.107935
+        }
+      ],
+      [
+        0,
+        5,
+        {
+          "align": 0.257838,
+          "reflect": 0.773515
+        }
+      ],
+      [
+        1,
+        2,
+        {
+          "align": 1.215032,
+          "reflect": 3.645097
+        }
+      ],
+      [
+        1,
+        4,
+        {
+          "align": 0.423146,
+          "reflect": 1.269437
+        }
+      ],
+      [
+        1,
+        5,
+        {
+          "align": 0.341548,
+          "reflect": 1.024643
+        }
+      ],
+      [
+        2,
+        3,
+        {
+          "align": 0.390279,
+          "reflect": 1.170836
+        }
+      ],
+      [
+        2,
+        5,
+        {
+          "align": 0.41691,
+          "reflect": 1.250729
+        }
+      ],
+      [
+        2,
+        6,
+        {
+          "align": 0.325741,
+          "reflect": 0.977222
+        }
+      ],
+      [
+        3,
+        7,
+        {
+          "align": 0.393577,
+          "reflect": 1.18073
+        }
+      ],
+      [
+        4,
+        5,
+        {
+          "align": 1.969189,
+          "reflect": 5.907567
+        }
+      ],
+      [
+        4,
+        8,
+        {
+          "align": 0.848553,
+          "reflect": 2.54566
+        }
+      ],
+      [
+        4,
+        9,
+        {
+          "align": 0.483042,
+          "reflect": 1.449125
+        }
+      ],
+      [
+        5,
+        6,
+        {
+          "align": 0.555767,
+          "reflect": 1.6673
+        }
+      ],
+      [
+        5,
+        8,
+        {
+          "align": 0.402771,
+          "reflect": 1.208314
+        }
+      ],
+      [
+        5,
+        9,
+        {
+          "align": 1.619578,
+          "reflect": 4.858734
+        }
+      ],
+      [
+        5,
+        10,
+        {
+          "align": 0.252229,
+          "reflect": 0.756688
+        }
+      ],
+      [
+        6,
+        9,
+        {
+          "align": 0.358922,
+          "reflect": 1.076766
+        }
+      ],
+      [
+        6,
+        10,
+        {
+          "align": 1.601716,
+          "reflect": 4.805148
+        }
+      ],
+      [
+        6,
+        11,
+        {
+          "align": 1.143121,
+          "reflect": 3.429362
+        }
+      ],
+      [
+        7,
+        11,
+        {
+          "align": 0.456519,
+          "reflect": 1.369558
+        }
+      ],
+      [
+        8,
+        9,
+        {
+          "align": 0.896832,
+          "reflect": 2.690496
+        }
+      ],
+      [
+        9,
+        10,
+        {
+          "align": 0.517761,
+          "reflect": 1.553284
+        }
+      ],
+      [
+        10,
+        11,
+        {
+          "align": 1.655244,
+          "reflect": 4.965733
+        }
+      ]
+    ]
+  },
+  "control": {
+    "name": "lam",
+    "range": [
+      0.05,
+      1.5
+    ]
+  },
+  "noise": 1.0,
+  "closure": "positions caged; rotational Brownian motion",
+  "observable": "overlap with a written angular pattern",
+  "assumptions": [
+    "dipolar energy (mu^2/r^3)[cos(psi_i - psi_j) - 3 cos(psi_i - phi) cos(psi_j - phi)]",
+    "coupling in units of lam k_BT"
+  ]
+}

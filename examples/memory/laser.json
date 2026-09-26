@@ -1,0 +1,46 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Is the threshold of a single-mode laser a symmetric write, the same mechanism as the genetic toggle switch?",
+  "provenance": {
+    "source": "Haken, Rev. Mod. Phys. 47, 67 (1975); semiclassical single-mode laser with a real field amplitude",
+    "kind": "authored example"
+  },
+  "field": "laser physics",
+  "kind": "equations",
+  "name": "single-mode laser",
+  "carrier": {
+    "kind": "euclid",
+    "name": "field amplitude amp and population inversion inv",
+    "variables": [
+      "amp",
+      "inv"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "P": 1.5,
+    "g": 1.0,
+    "kappa": 1.0,
+    "gamma": 1.0
+  },
+  "drift": {
+    "amp": "0.5*(g*inv - kappa)*amp",
+    "inv": "P - gamma*inv - g*inv*amp**2"
+  },
+  "control": {
+    "name": "P",
+    "range": [
+      0.3,
+      2.0
+    ]
+  },
+  "noise": 0.005,
+  "dt": 0.01,
+  "closure": "one cavity mode; the inversion is pumped at rate P and relaxes at gamma; spontaneous emission enters as additive noise on amp",
+  "observable": "sign of the field amplitude (optical phase 0 or pi)",
+  "assumptions": [
+    "real field amplitude: the phase is fixed up to its sign",
+    "rate equations for the inversion (a class-B laser)",
+    "additive Gaussian noise"
+  ]
+}

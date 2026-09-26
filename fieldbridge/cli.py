@@ -297,6 +297,12 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("--out-dir", required=True, help="Directory for the calculation and its provenance.")
     verify.set_defaults(func=cmd_verify_construction)
 
+    try:  # the memory constructor needs the memory extra; the rest of the program does not
+        from .memory.cli import add_parser as add_memory_parser
+        add_memory_parser(sub)
+    except ImportError:
+        pass
+
     design = sub.add_parser("design-spin-cancellation", help="Solve pairwise spin-interaction constraints and test the polarization.")
     design.add_argument("input", help="fieldbridge-spin-design/1 JSON with exchange bonds and collective coupling.")
     design.add_argument("--out-dir", required=True, help="Directory for design, input and direct-dynamics comparison.")

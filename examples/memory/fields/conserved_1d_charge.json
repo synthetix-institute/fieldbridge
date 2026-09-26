@@ -1,0 +1,25 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "field",
+  "provenance": {
+    "source": "Gaussian and phi^4 lattice fields, conserved (Model B) and non-conserved (Model A) dynamics",
+    "kind": "authored example"
+  },
+  "question": "How long does a line of conserved density remember a pulse that added material?",
+  "name": "conserved field, d = 1, write that adds material",
+  "field": {
+    "d": 1,
+    "L": 128,
+    "conserved": true,
+    "write": "charge",
+    "amplitude": 3.0,
+    "M": 1.0,
+    "T": 0.5,
+    "g": 0.3
+  },
+  "assumptions": [
+    "lattice spacing and mobility set units",
+    "the write adds material at one site",
+    "free energy phi^2/2 + g phi^4/4 per site"
+  ]
+}

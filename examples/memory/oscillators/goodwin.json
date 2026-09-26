@@ -1,0 +1,46 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can a circadian clock take the phase of a daily light cycle?",
+  "provenance": {
+    "source": "Goodwin, Adv. Enzyme Regul. 3, 425 (1965); Griffith, J. Theor. Biol. 20, 202 (1968); Gonze, Bernard, Waltermann, Kramer and Herzel, Biophys. J. 89, 120 (2005)",
+    "kind": "authored example"
+  },
+  "field": "chronobiology",
+  "kind": "equations",
+  "name": "Goodwin clock",
+  "carrier": {
+    "kind": "orthant",
+    "name": "mRNA, protein and repressor",
+    "variables": [
+      "m",
+      "p",
+      "r"
+    ],
+    "scale": 3.0
+  },
+  "parameters": {
+    "tr": 10.0,
+    "hill": 10.0
+  },
+  "drift": {
+    "m": "tr/(1 + r**hill) - m",
+    "p": "m - p",
+    "r": "p - r"
+  },
+  "control": {
+    "name": "tr",
+    "range": [
+      2.0,
+      20.0
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "degradation at equal rates (time in units of the lifetime); light acts on transcription tr",
+  "observable": "phase of the clock (time of the mRNA peak)",
+  "assumptions": [
+    "one negative feedback loop",
+    "Hill repression",
+    "additive noise"
+  ]
+}

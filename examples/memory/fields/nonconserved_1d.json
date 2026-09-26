@@ -1,0 +1,25 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "field",
+  "provenance": {
+    "source": "Gaussian and phi^4 lattice fields, conserved (Model B) and non-conserved (Model A) dynamics",
+    "kind": "authored example"
+  },
+  "question": "How long does a non-conserved field remember a local pulse?",
+  "name": "non-conserved field, d = 1, local pulse",
+  "field": {
+    "d": 1,
+    "L": 128,
+    "conserved": false,
+    "write": "charge",
+    "amplitude": 3.0,
+    "M": 1.0,
+    "T": 0.5,
+    "g": 0.3,
+    "kappa0": 0.2,
+    "Dgrad": 1.0
+  },
+  "assumptions": [
+    "relaxational dynamics with mass kappa0 = 0.2"
+  ]
+}

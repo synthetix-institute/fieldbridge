@@ -1,0 +1,47 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can an autocatalytic reactor store two concentrations, and can it be written symmetrically?",
+  "provenance": {
+    "source": "Schlogl, Z. Phys. 253, 147 (1972)",
+    "kind": "authored example"
+  },
+  "field": "chemical kinetics",
+  "kind": "equations",
+  "name": "Schlögl reactor",
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentration",
+    "variables": [
+      "x"
+    ],
+    "scale": 3
+  },
+  "parameters": {
+    "b": 1.875,
+    "a": 4.5,
+    "k3": 5.75
+  },
+  "drift": {
+    "x": "-x**3 + a*x**2 - k3*x + b"
+  },
+  "potential": "x**4/4 - a*x**3/3 + k3*x**2/2 - b*x",
+  "control": {
+    "name": "b",
+    "range": [
+      1.075,
+      2.675
+    ]
+  },
+  "material": [
+    "a"
+  ],
+  "noise": 0.04,
+  "dt": 0.005,
+  "closure": "well-mixed reactor fed by baths of A and B",
+  "observable": "concentration of X",
+  "assumptions": [
+    "unit rate constant for the cubic step",
+    "bath concentrations set a and b",
+    "additive noise"
+  ]
+}

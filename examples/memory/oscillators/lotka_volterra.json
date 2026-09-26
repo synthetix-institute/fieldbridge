@@ -1,0 +1,43 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can the classical predator-prey cycle take the phase of a seasonal growth rate?",
+  "provenance": {
+    "source": "Lotka, Elements of Physical Biology (1925); Volterra, Nature 118, 558 (1926)",
+    "kind": "authored example"
+  },
+  "field": "ecology",
+  "kind": "equations",
+  "name": "Lotka-Volterra predator and prey",
+  "carrier": {
+    "kind": "orthant",
+    "name": "prey and predator densities",
+    "variables": [
+      "prey",
+      "pred"
+    ],
+    "scale": 3.0
+  },
+  "parameters": {
+    "grow": 1.0
+  },
+  "drift": {
+    "prey": "prey*(grow - pred)",
+    "pred": "pred*(prey - 1)"
+  },
+  "control": {
+    "name": "grow",
+    "range": [
+      0.5,
+      2.0
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "unlimited prey growth; predation proportional to encounters",
+  "observable": "phase of the population cycle",
+  "assumptions": [
+    "well-mixed populations",
+    "linear functional response",
+    "additive noise"
+  ]
+}

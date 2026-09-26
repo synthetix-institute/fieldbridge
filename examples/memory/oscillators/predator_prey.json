@@ -1,0 +1,45 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can a predator-prey cycle take the phase of a seasonal carrying capacity?",
+  "provenance": {
+    "source": "Rosenzweig and MacArthur, Am. Nat. 97, 209 (1963); enrichment: Rosenzweig, Science 171, 385 (1971)",
+    "kind": "authored example"
+  },
+  "field": "ecology",
+  "kind": "equations",
+  "name": "Rosenzweig-MacArthur predator and prey",
+  "carrier": {
+    "kind": "orthant",
+    "name": "prey and predator densities",
+    "variables": [
+      "prey",
+      "pred"
+    ],
+    "scale": 3.0
+  },
+  "parameters": {
+    "cap": 2.0,
+    "conv": 0.5,
+    "mort": 0.2
+  },
+  "drift": {
+    "prey": "prey*(1 - prey/cap) - prey*pred/(1 + prey)",
+    "pred": "pred*(conv*prey/(1 + prey) - mort)"
+  },
+  "control": {
+    "name": "cap",
+    "range": [
+      1.5,
+      4.0
+    ]
+  },
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "logistic prey with carrying capacity cap; saturating (type II) predation",
+  "observable": "phase of the population cycle",
+  "assumptions": [
+    "well-mixed populations",
+    "Holling type II functional response",
+    "additive noise"
+  ]
+}
