@@ -13,9 +13,9 @@
 Memory is a property of a complete model of a material, not of a substance. FieldBridge writes such a model as a
 realization,
 
-```math
+$$
 I_{\mathrm{real}} = \bigl((\Omega,\Xi);\,C,\,R,\,P;\,A\bigr),
-```
+$$
 
 and a memory specification is this description in one JSON file. The same fields describe a colloidal monolayer,
 a gene circuit, a chemical reactor or a flow network.

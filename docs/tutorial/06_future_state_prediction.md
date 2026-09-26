@@ -39,10 +39,10 @@ information beyond the usual successor of a move.
 
 The code-length gain for a true future label $z$ compares its probabilities:
 
-```math
+$$
 \log_2 p_{\mathrm{full}}(z\mid\text{current state, first move})
 -\log_2 p_{\mathrm{base}}(z\mid\text{first move}).
-```
+$$
 
 Averaging this quantity measures how much better the full distribution predicts
 the withheld labels. It can improve while top-1 accuracy declines: the model

@@ -32,9 +32,9 @@ evidence, especially when it was built from sparse prose or a difficult PDF.
 
 The tutorials use the notation
 
-```math
+$$
 M=(\Omega,\Xi),\qquad I_{\mathrm{op}}=(M;C,R,P).
-```
+$$
 
 For diffusion, $\Omega$ describes a diffusion operation and $\Xi$ the
 space of admissible fields. Conditions $C$ specify the constitutive law and

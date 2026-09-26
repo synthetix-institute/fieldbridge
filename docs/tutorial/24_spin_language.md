@@ -40,17 +40,17 @@ Four operations act on realizations.
 
 The mechanism of this chapter is the Bloch rotation. Three Hermitian operators $J_1, J_2, J_3$ with
 
-```math
+$$
 [J_a, J_b] = i\,\varepsilon_{abc}\,J_c \tag{1}
-```
+$$
 
 form the Lie algebra su(2). If the Hamiltonian is $H = \boldsymbol\Omega\cdot\mathbf J$ and the observable is
 $O = \mathbf n\cdot\mathbf J$, the expectation values $\mathbf m = \langle\mathbf J\rangle$ obey
 $\dot{\mathbf m} = \boldsymbol\Omega\times\mathbf m$. From the top eigenstate of $O$ the observable follows
 
-```math
+$$
 f(t) = \frac{\langle O\rangle(t)}{\langle O\rangle(0)} = \cos^2\theta + \sin^2\theta\,\cos(|\boldsymbol\Omega|\,t), \tag{2}
-```
+$$
 
 where $\theta$ is the angle between $\boldsymbol\Omega$ and $\mathbf n$ (the Rabi law). Equation (2) contains no
 property of the carrier. The dimension of the Hilbert space and the spin $j$ of the representation drop out.
@@ -92,9 +92,9 @@ python3 -B -m fieldbridge quantum detach examples/quantum/two_spins.json --out-d
 The derivation is AKL. **A** (algebra) forms commutators of the Hamiltonian and the observable until their span
 closes. The operators that close are $X_0$, $Y_0Z_1$ and $Z_0Z_1$:
 
-```math
+$$
 [X_0, Y_0Z_1] = 2i\,Z_0Z_1,\qquad [Y_0Z_1, Z_0Z_1] = 2i\,X_0,\qquad [Z_0Z_1, X_0] = 2i\,Y_0Z_1 .
-```
+$$
 
 Divided by 2 they satisfy Eq. (1). They form a spin-1/2 made of one magnetization and two correlations. This is why
 Chapter 11 needed the correlation $Y_0Z_1$ to predict $X_0$. **K** (canonical form) writes the model in this basis:
@@ -131,9 +131,9 @@ exchange bonds, as in Chapter 14): $J_z$ is the position of the flipped spin,
 $\sum_j (j - \tfrac{N-1}{2})(1 - Z_j)/2$, and $J_x$ is the hopping produced by the bonds $J_j(X_jX_{j+1} + Y_jY_{j+1})$.
 Equation (1) holds only if the bonds match the matrix elements of $J_x$ for spin $(N-1)/2$:
 
-```math
+$$
 J_j \propto \sqrt{(j+1)(N-1-j)}, \qquad j = 0, \ldots, N-2 . \tag{3}
-```
+$$
 
 The attachment therefore returns a design: bonds 0.866, 1.000 and 0.866 (ratio $\sqrt3 : 2 : \sqrt3$) and site fields
 0.375, 0.125, −0.125 and −0.375, which carry the detuning. The derivation on the chain is SAKL. **S** restricts the

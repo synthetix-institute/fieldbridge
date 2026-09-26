@@ -1,0 +1,325 @@
+{
+ "materials": [
+  {
+   "file": "examples/memory/tubes.json",
+   "name": "adaptive transport network, two tubes",
+   "field": "transport networks",
+   "question": "Can a flow network remember which of two tubes carried the flow?",
+   "source": "Tero, Kobayashi and Nakagaki, J. Theor. Biol. 244, 553 (2007)",
+   "contributor": "",
+   "mechanism": "symmetric write to a distant state (subcritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "subcritical pitchfork at mu = 1.38; a uniform field removes the stable state at h = 0.064",
+    "constructs": "subcritical pitchfork: symmetric write, but the state jumps to a distant branch; a saturating term is needed for a local write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.62, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.90, retention/rewriting time ratio 0.936; field 0.4 x threshold, control swept through the write point: accuracy 0.73, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/tubes_unequal.json",
+   "name": "adaptive transport network, unequal tubes",
+   "field": "transport networks",
+   "question": "What does a flow network store when its tubes have unequal lengths?",
+   "source": "Tero, Kobayashi and Nakagaki, J. Theor. Biol. 244, 553 (2007)",
+   "contributor": "",
+   "mechanism": "one-sided write (fold); symmetric at a cusp",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "saddle-node (fold) at mu = 1.21; a uniform field removes the stable state at h = 0.0785",
+    "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp L2 = 1, mu = 1.383 (subcritical pitchfork along the sweep)",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.35, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.67, retention/rewriting time ratio 2.03; field 0.4 x threshold, control swept through the write point: accuracy 0.55, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/brusselator.json",
+   "name": "Brusselator",
+   "field": "chemical kinetics",
+   "question": "Can an oscillating reaction take the phase of a periodically modulated feed?",
+   "source": "Prigogine and Lefever, J. Chem. Phys. 48, 1695 (1968)",
+   "contributor": "",
+   "mechanism": "limit cycle: phase memory",
+   "verdict": {
+    "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "writes": "Hopf at b = 2",
+    "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+    "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/colloid_patch.json",
+   "name": "caged capillary rotors",
+   "field": "soft matter",
+   "question": "Where does a patch of caged anisotropic colloids keep a written angular pattern?",
+   "source": "capillary quadrupoles at a fluid interface (Stamou et al. 2000; companion Letter)",
+   "contributor": "",
+   "mechanism": "write by a uniform field",
+   "verdict": {
+    "stores": "4 stable state(s)",
+    "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 6.28",
+    "constructs": "no bifurcation along the control; writing requires a field",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.05, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 1.2e+03; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 1.00, retention/rewriting time ratio > 602"
+   }
+  },
+  {
+   "file": "examples/memory/dipole_patch.json",
+   "name": "caged in-plane dipoles",
+   "field": "magnetism",
+   "question": "Do point dipoles at the same positions retain the same kind of memory as the colloids?",
+   "source": "in-plane point dipoles with fixed centres",
+   "contributor": "",
+   "mechanism": "write by a uniform field",
+   "verdict": {
+    "stores": "11 stable state(s) (sampled)",
+    "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 0.0967",
+    "constructs": "no bifurcation along the control; writing requires a field",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.12, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.20, not rewritten; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.15, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/fitzhugh_nagumo.json",
+   "name": "FitzHugh-Nagumo neuron",
+   "field": "neuroscience",
+   "question": "Can a neuron driven by a periodic current take the phase of the current and keep it?",
+   "source": "FitzHugh, Biophys. J. 1, 445 (1961); Nagumo, Arimoto and Yoshizawa, Proc. IRE 50, 2061 (1962)",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "Hopf at cur = 0.331",
+    "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/toggle.json",
+   "name": "genetic toggle switch",
+   "field": "synthetic biology",
+   "question": "Does a pair of mutually repressing genes store a bit, and how is it written?",
+   "source": "Gardner, Cantor and Collins, Nature 403, 339 (2000)",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at alpha = 2; a uniform field removes the stable state at h = 0.213",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.08, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 14.3; field 0.4 x threshold, control swept through the write point: accuracy 0.95, retention/rewriting time ratio > 8.33"
+   }
+  },
+  {
+   "file": "examples/memory/toggle_unequal.json",
+   "name": "genetic toggle, unequal promoters",
+   "field": "synthetic biology",
+   "question": "What changes when one promoter of the toggle is stronger than the other?",
+   "source": "Gardner, Cantor and Collins, Nature 403, 339 (2000)",
+   "contributor": "",
+   "mechanism": "one-sided write (fold); symmetric at a cusp",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "saddle-node (fold) at alpha = 3.27; a uniform field removes the stable state at h = 0.446",
+    "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp gamma = 1, alpha = 2 (supercritical pitchfork along the sweep)",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.73, retention/rewriting time ratio > 25.8; field 0.4 x threshold, control swept through the write point: accuracy 0.25, retention/rewriting time ratio > 129"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/goodwin.json",
+   "name": "Goodwin clock",
+   "field": "chronobiology",
+   "question": "Can a circadian clock take the phase of a daily light cycle?",
+   "source": "Goodwin, Adv. Enzyme Regul. 3, 425 (1965); Griffith, J. Theor. Biol. 20, 202 (1968); Gonze, Bernard, Waltermann, Kramer and Herzel, Biophys. J. 89, 120 (2005)",
+   "contributor": "",
+   "mechanism": "limit cycle: phase memory",
+   "verdict": {
+    "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "writes": "Hopf at tr = 5.74",
+    "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+    "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/lotka_volterra.json",
+   "name": "Lotka-Volterra predator and prey",
+   "field": "ecology",
+   "question": "Can the classical predator-prey cycle take the phase of a seasonal growth rate?",
+   "source": "Lotka, Elements of Physical Biology (1925); Volterra, Nature 118, 558 (1926)",
+   "contributor": "",
+   "mechanism": "neutral cycles: no isolated phase",
+   "verdict": {
+    "stores": "no stable state: a family of neutral cycles, with no restoring force on the amplitude or the phase (Law 2)",
+    "writes": "no bifurcation along the control",
+    "constructs": "a single stable state: no write point",
+    "holds": "no stable state: a family of neutral cycles, with no restoring force on the amplitude or the phase (Law 2)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/josephson.json",
+   "name": "overdamped Josephson junction",
+   "field": "superconductivity",
+   "question": "Can a current-biased Josephson junction take the phase of a microwave current?",
+   "source": "Stewart, Appl. Phys. Lett. 12, 277 (1968); McCumber, J. Appl. Phys. 39, 3113 (1968); steps: Shapiro, Phys. Rev. Lett. 11, 80 (1963)",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "saddle-node (fold) at cur = 1",
+    "constructs": "differs from the pitchfork normal form by: bias per unit control; quadratic a2",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/pitchfork.json",
+   "name": "pitchfork normal form",
+   "field": "statistical physics",
+   "question": "How is a bit written and retained at a supercritical pitchfork?",
+   "source": "Landau normal form of a symmetry-breaking transition",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at eps = 0; a uniform field removes the stable state at h = 0.385",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.43, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.97, retention/rewriting time ratio 3.43; field 0.4 x threshold, control swept through the write point: accuracy 0.87, retention/rewriting time ratio 1.49"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/parametron.json",
+   "name": "pumped oscillator (parametron principle)",
+   "field": "computing hardware",
+   "question": "Can an oscillator pumped at twice its frequency store a binary digit in its phase?",
+   "source": "principle: von Neumann, US patent 2,815,488 (1957); Goto, Proc. IRE 47, 1304 (1959); here with a self-sustained van der Pol tank",
+   "contributor": "",
+   "mechanism": "limit cycle: phase memory",
+   "verdict": {
+    "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "writes": "no bifurcation along the control",
+    "constructs": "a single stable state: no write point",
+    "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/repressilator.json",
+   "name": "ring of 3 repressors",
+   "field": "synthetic biology",
+   "question": "Can a ring of 3 repressing genes store a state?",
+   "source": "Elowitz and Leibler, Nature 403, 335 (2000)",
+   "contributor": "",
+   "mechanism": "limit cycle: phase memory",
+   "verdict": {
+    "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "writes": "Hopf at alpha = 2",
+    "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+    "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/repressor_ring4.json",
+   "name": "ring of 4 repressors",
+   "field": "synthetic biology",
+   "question": "Can a ring of 4 repressing genes store a state?",
+   "source": "authored example",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at alpha = 1.01; a uniform field removes the stable state at h = 1.6",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.75, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/predator_prey.json",
+   "name": "Rosenzweig-MacArthur predator and prey",
+   "field": "ecology",
+   "question": "Can a predator-prey cycle take the phase of a seasonal carrying capacity?",
+   "source": "Rosenzweig and MacArthur, Am. Nat. 97, 209 (1963); enrichment: Rosenzweig, Science 171, 385 (1971)",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "Hopf at cap = 2.33",
+    "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/schlogl.json",
+   "name": "Schl\u00f6gl reactor",
+   "field": "chemical kinetics",
+   "question": "Can an autocatalytic reactor store two concentrations, and can it be written symmetrically?",
+   "source": "Schlogl, Z. Phys. 253, 147 (1972)",
+   "contributor": "",
+   "mechanism": "one-sided write (fold); symmetric at a cusp",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "saddle-node (fold) at b = 1.49; saddle-node (fold) at b = 2.26; a uniform field removes the stable state at h = 0.385",
+    "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp a = 4.153, b = 2.654 (supercritical pitchfork along the sweep)",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.18, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 26.7"
+   }
+  },
+  {
+   "file": "examples/memory/laser.json",
+   "name": "single-mode laser",
+   "field": "laser physics",
+   "question": "Is the threshold of a single-mode laser a symmetric write, the same mechanism as the genetic toggle switch?",
+   "source": "Haken, Rev. Mod. Phys. 47, 67 (1975); semiclassical single-mode laser with a real field amplitude",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at P = 1",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.05, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.05, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.58, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/compartments.json",
+   "name": "three compartments with an unobserved imbalance",
+   "field": "compartment models",
+   "question": "How long does a three-compartment exchange retain an imbalance that the observed compartment does not show?",
+   "source": "Hyperion three-compartment model (companion manuscript)",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "no control parameter",
+    "constructs": "a single stable state: no write point",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
+   }
+  },
+  {
+   "file": "examples/memory/oscillators/van_der_pol.json",
+   "name": "van der Pol oscillator",
+   "field": "electronics",
+   "question": "Can a triode oscillator take the phase of an injected signal and keep it?",
+   "source": "van der Pol, Phil. Mag. 2, 978 (1926); injection of a signal: Adler, Proc. IRE 34, 351 (1946)",
+   "contributor": "",
+   "mechanism": "limit cycle: phase memory",
+   "verdict": {
+    "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "writes": "no bifurcation along the control",
+    "constructs": "a single stable state: no write point",
+    "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+    "lock": "-"
+   }
+  }
+ ],
+ "skipped": []
+}

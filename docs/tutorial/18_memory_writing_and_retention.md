@@ -18,9 +18,9 @@ A stored state is written where the landscape offers no resistance. The program 
 the control parameter until one local relaxation rate $\kappa$ reaches zero. At that write point it reduces the
 drift to the unstable direction $s$, after the other directions have relaxed:
 
-```math
+$$
 \dot s = a_0 + a_1 s + a_2 s^2 + a_3 s^3 .
-```
+$$
 
 The supercritical pitchfork, $a_0 = a_2 = 0$ and $a_3 < 0$, is the reference write: one state splits into two
 symmetric states, and a bias comparable to the noise selects one of them. The obstruction of a write point is the
@@ -39,9 +39,9 @@ Let the control cross a supercritical pitchfork at rate $r$, so that $a_1 = r t$
 the unstable direction and the noise along it has intensity $D_s$. The probability that the state favoured by the
 bias is selected is
 
-```math
+$$
 P = \Phi\!\left(\frac{\pi^{1/4}\, h_s}{D_s^{1/2}\, r^{1/4}}\right),
-```
+$$
 
 where $\Phi$ is the standard normal distribution function. The choice is made within a time of order $r^{-1/2}$
 around the write point, where the dynamics is linear. The law requires that the barrier behind the choice grows

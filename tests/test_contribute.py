@@ -89,3 +89,32 @@ def test_demo_writes_one_page_with_three_calculated_results(tmp_path):
     assert results["quantum"]["summary"]["reached"] == 6
     assert page.count("data:image/png;base64,") == 3 and "Adding a material specification" in page
     assert (tmp_path / "demo.md").exists()
+
+
+def test_same_mechanism_lists_the_materials_written_the_same_way(tmp_path):
+    catalog = tmp_path / "materials.json"
+    catalog.write_text(json.dumps({"materials": [
+        {"name": "genetic toggle switch", "field": "synthetic biology", "mechanism": "symmetric write"},
+        {"name": "single-mode laser", "field": "laser physics", "mechanism": "symmetric write"},
+        {"name": "Schlogl reactor", "field": "chemical kinetics", "mechanism": "one-sided write (fold)"}]}),
+        encoding="utf-8")
+    others = contribute.same_mechanism("symmetric write", exclude="genetic toggle switch", catalog_json=catalog)
+    assert [o["name"] for o in others] == ["single-mode laser"]
+    assert contribute.same_mechanism("symmetric write", catalog_json=tmp_path / "missing.json") == []
+
+
+def test_check_names_the_catalog_materials_with_the_same_mechanism():
+    result = contribute.check(EX / "toggle.json")
+    assert result["summary"]["mechanism"].startswith("symmetric write")
+    names = {o["name"] for o in result["summary"]["same_mechanism"]}
+    assert "single-mode laser" in names and "genetic toggle switch" not in names
+    assert "The same writing mechanism in the catalog" in contribute.markdown(result)
+
+
+def test_command_line_catalog_writes_markdown_and_json(tmp_path):
+    out = tmp_path / "materials.md"
+    done = subprocess.run([sys.executable, "-B", "-m", "fieldbridge", "memory", "catalog", str(EX / "toggle.json"),
+                           "--out", str(out)], cwd=ROOT, capture_output=True, text=True)
+    assert done.returncode == 0, done.stderr
+    rows = json.loads(out.with_suffix(".json").read_text(encoding="utf-8"))["materials"]
+    assert [r["name"] for r in rows] == ["genetic toggle switch"] and rows[0]["mechanism"].startswith("symmetric")

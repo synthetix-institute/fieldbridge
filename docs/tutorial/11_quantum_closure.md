@@ -9,27 +9,27 @@ chosen from a catalogue of additional variables.
 Take two spin-1/2 degrees of freedom. Let X, Y and Z denote Pauli matrices and
 let I denote the identity. In units with hbar=1, choose
 
-```math
+$$
 H=g\,Z\otimes Z,\qquad O_0=X\otimes I,\qquad g>0.
-```
+$$
 
 The Heisenberg equation gives the observable derivative i[H,O]. Repeatedly
 applying this operation to O0 produces
 
-```math
+$$
 O_1=i[H,O_0]=-2g\,Y\otimes Z,
 \qquad i[H,O_1]=-4g^2 O_0.
-```
+$$
 
 The second derivative introduces no new independent observable. Thus two
 expectation values, m_i=Tr(rho O_i), obey a closed equation for every initial
 density matrix rho:
 
-```math
+$$
 \frac{d}{dt}\begin{pmatrix}m_0\\m_1\end{pmatrix}
 =\begin{pmatrix}0&1\\-4g^2&0\end{pmatrix}
 \begin{pmatrix}m_0\\m_1\end{pmatrix}.
-```
+$$
 
 Writing x(t)=E[X tensor I] and c(t)=E[Y tensor Z] gives
 x(t)=x(0) cos(2gt)-c(0) sin(2gt). The correlation supplies an independent

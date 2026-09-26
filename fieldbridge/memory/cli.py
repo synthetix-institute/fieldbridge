@@ -470,6 +470,9 @@ def cmd_catalog(args) -> int:
     out = Path(args.out)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(md, encoding="utf-8")
+    rows = sorted(result["materials"], key=lambda r: r["name"].lower())
+    catalog_json = json.dumps({"materials": rows, "skipped": result["skipped"]}, indent=1) + "\n"
+    out.with_suffix(".json").write_text(catalog_json, encoding="utf-8")
     print(json.dumps({"out": str(out), "materials": len(result["materials"]), "skipped": len(result["skipped"])},
                      indent=2))
     return 0
@@ -562,7 +565,8 @@ def add_parser(sub) -> None:
     p.add_argument("--out-dir", help="Also write check_<name>.json and .md here.")
     p.add_argument("--seed", type=int, default=20260923)
     p.set_defaults(func=cmd_check)
-    p = msub.add_parser("catalog", help="Write the table of materials (docs/materials.md) from the specifications.")
+    p = msub.add_parser("catalog", help="Write the table of materials (docs/materials.md and .json) from the "
+                                        "specifications.")
     p.add_argument("paths", nargs="*", default=["examples/memory"], help="Specification files or directories.")
     p.add_argument("--out", default="docs/materials.md")
     p.add_argument("--seed", type=int, default=20260923)

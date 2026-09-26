@@ -6,14 +6,14 @@
 
 ![FieldBridge: Scientific Mechanism Translation](docs/assets/fieldbridge-hero.svg)
 
-Independent scientific disciplines often study the exact same physical mechanism dressed in different mathematical languages. A laser threshold in quantum optics, a genetic toggle switch in synthetic biology, and capillary colloids in soft matter all reduce to identical normal forms (such as pitchfork bifurcations and fold delay laws).
+Different fields often study the same physical mechanism in different notation. A single-mode laser at threshold in quantum optics, a genetic toggle switch and a ring of four repressing genes in synthetic biology all reduce to the same pitchfork normal form; oscillators from electronics, neuroscience and superconductivity reduce to the same equation of phase locking.
 
 FieldBridge automates this cross-field translation:
-1. **Derivation Chains:** Takes mathematical models from disparate fields and constructs verified transformation sequences to prove whether they share a common physical mechanism.
+1. **Derivation Chains:** Derives one target mechanism in models from different fields as a sequence of verified transformations, and tests with field-independent invariants whether the end points agree.
 2. **Obstruction Identification:** When two models fail to reach the same behavior, FieldBridge identifies the exact mathematical obstruction (such as a broken symmetry, a Hopf bifurcation, or missing feedback).
-3. **Material Memory Cards:** For any system of governing equations, it computes its operational "memory card"---identifying stable states, write thresholds, writing protocols, and retention/decay laws.
+3. **Material Memory Cards:** For a system of governing equations, it computes a memory card: the stable states, write thresholds, writing protocols, and the law by which a stored state is lost.
 
-The calculations require no API key, GPU, cluster, or archive download; all derivations are verified through exact mathematical and dynamical systems calculations.
+The calculations require no API key, GPU, cluster, or archive download; every derivation step is checked by symbolic or numerical calculation.
 
 ## Installation
 
@@ -58,9 +58,14 @@ python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir
 ```
 
 `memory new` writes a template that loads and runs; `memory check` reports
-which required fields are still placeholders and whether the structural
-predictions agree with a quick calculation; `memory card` writes the card and
-its figure. [CONTRIBUTING.md](CONTRIBUTING.md) describes each field and the
+which required fields are still placeholders, whether the structural
+predictions agree with a quick calculation, and which materials of the catalog
+are written by the same mechanism; `memory card` writes the card and its
+figure. In a pull request the same check and card appear in the summary of the
+"material card" check, so a contributor sees what the material stores and which
+materials from other fields it connects to. The
+[list of wanted materials](docs/wanted_materials.md) names classic models from
+fields the catalog does not cover yet. [CONTRIBUTING.md](CONTRIBUTING.md) describes each field and the
 pull request. A material can also be proposed through the
 [material proposal form](https://github.com/synthetix-institute/fieldbridge/issues/new?template=material.yml)
 with the source of its equations.
@@ -98,11 +103,11 @@ python3 -B -m fieldbridge verify-construction \
 stochastic equation for a positive coordinate and the map $Y=X^2$. The
 program derives
 
-```math
+$$
 dX_t=\left[\frac{\theta+1/2}{X_t}-\alpha X_t\right]dt+dW_t
 \quad\longrightarrow\quad
 dY_t=(2\theta+2-2\alpha Y_t)dt+2\sqrt{Y_t}\,dW_t .
-```
+$$
 
 Brownian quadratic variation contributes one unit of drift. The program checks
 both coefficients of the transformed generator and tests an incomplete

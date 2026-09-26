@@ -19,9 +19,9 @@ The equations of an autonomous oscillator do not depend on time explicitly. Ever
 solution is therefore also a solution, and the phase $\phi$ along the cycle is a zero mode. A pulse shifts the
 phase, and no restoring force returns it. Noise moves the phase by diffusion,
 
-```math
+$$
 \langle \delta\phi^2 \rangle = 2 D_\phi\, t ,
-```
+$$
 
 so a written phase shift is lost by Law 2, as $1/t$, and not exponentially.
 

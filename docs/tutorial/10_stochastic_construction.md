@@ -3,10 +3,10 @@
 Consider a positive fluctuating coordinate X with restoring drift. In
 dimensionless variables its Ito equation is
 
-```math
+$$
 dX_t=\left(\frac{\theta+1/2}{X_t}-\alpha X_t\right)dt+dW_t,
 \qquad \theta>0,\quad\alpha>0.
-```
+$$
 
 Here W is standard Brownian motion. Suppose a detector responds to the squared
 coordinate Y=X squared. To predict that signal, the governing equation must be
@@ -20,11 +20,11 @@ For a source equation dX=a(X)dt+b(X)dW and a twice differentiable map h, the
 generator acting on a smooth function f is L_X f=a f'+b squared f''/2. For a
 target test function phi, direct differentiation gives
 
-```math
+$$
 L_X(\phi\circ h)
 =\left(ah'+\frac{b^2}{2}h''\right)\phi'(h)
  +\frac{b^2(h')^2}{2}\phi''(h).
-```
+$$
 
 The coefficients of the first and second derivatives determine the target
 generator. The implementation obtains both from the source expressions,
@@ -33,9 +33,9 @@ coefficients. Checking only phi(y)=y would miss an incorrect diffusion term.
 
 For h(x)=x squared, h'=2x and h''=2. Consequently,
 
-```math
+$$
 dY_t=(2\theta+2-2\alpha Y_t)dt+2\sqrt{Y_t}\,dW_t.
-```
+$$
 
 Omitting quadratic variation would give 2 theta + 1 rather than 2 theta + 2.
 On phi(y)=y, the difference between the source generator and the pulled-back
@@ -62,10 +62,10 @@ It also records a hash of the exact input and the original assumptions.
 For finite moments and a boundary realization with no additional contribution
 to the mean equation, writing m(t)=E[Y_t] and m(0)=m0 gives
 
-```math
+$$
 m(t)=\frac{\theta+1}{\alpha}
  +\left(m_0-\frac{\theta+1}{\alpha}\right)e^{-2\alpha t}.
-```
+$$
 
 With the same initial mean, the corrected and naive predictions differ by
 (1-exp(-2 alpha t))/(2 alpha). This is an observable bias in the supplied

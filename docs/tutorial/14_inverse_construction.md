@@ -41,11 +41,11 @@ that solve the commutation equations. Those are calculated.
 Let $X_j,Y_j,Z_j$ be Pauli operators on spin $j$. On an open chain of $N$
 spins, the exchange Hamiltonian and the unknown Ising interaction are
 
-```math
+$$
 H_0=\sum_{j=0}^{N-2}J_j A_j,\qquad
 A_j=X_jX_{j+1}+Y_jY_{j+1},\qquad
 Q=\sum_{i<j}q_{ij}Z_iZ_j.
-```
+$$
 
 The search chooses interactions for which exchange and Ising evolution can
 be applied separately, exactly: $[H_0,Q]=0$. Since the exchange energies $J_j$
@@ -57,9 +57,9 @@ For three spins there are three unknown coefficients. The first exchange
 bond requires $q_{02}=q_{12}$; the second requires $q_{01}=q_{02}$. Their
 intersection is
 
-```math
+$$
 q_{01}=q_{02}=q_{12}=\lambda.
-```
+$$
 
 The program obtains this result from exact Pauli matrices. Each matrix entry
 of each commutator gives a homogeneous linear equation in the unknown
@@ -78,9 +78,9 @@ enumeration.
 Exchange conserves the total magnetization $M=\sum_j Z_j$. The uniform
 interaction found by the solver can be written
 
-```math
+$$
 Q=\frac{\lambda}{2}(M^2-NI).
-```
+$$
 
 It therefore commutes with exchange for any values of $J_j$. This identity
 explains the numerical nullspace and proves that the uniform family works
@@ -90,9 +90,9 @@ $e^{-i(H_0+Q)t/\hbar}=e^{-iH_0t/\hbar}e^{-iQt/\hbar}$.
 To obtain a measured response, prepare the end spin along $+x$ and the
 remaining spins maximally mixed:
 
-```math
+$$
 \rho(0)=\frac{I+X_0}{2^N}.
-```
+$$
 
 For the end spin, the Jordan-Wigner representation has no preceding string
 of spin operators. Exchange becomes single-particle hopping with matrix
@@ -102,11 +102,11 @@ mixed spin contributes the average of two opposite phases,
 $\cos(2\lambda t/\hbar)$. Taking the trace leaves the hopping return
 amplitude multiplied by these $N-1$ phase averages:
 
-```math
+$$
 \langle X_0(t)\rangle
 =\operatorname{Re}[e^{-iht/\hbar}]_{00}
   \cos^{N-1}(2\lambda t/\hbar).
-```
+$$
 
 This response formula is an explicit analytic construction encoded in the
 example, not a formula invented by the nullspace solver. The separate
@@ -115,9 +115,9 @@ evaluates the trace directly; it does not use the factorized expression.
 
 Collective phase cancellation occurs at
 
-```math
+$$
 t_m=\frac{(2m+1)\pi\hbar}{4|\lambda|},\qquad m=0,1,\ldots.
-```
+$$
 
 Exchange changes the response between these times, but not these zeros.
 Exchange may introduce additional, earlier zeros, so the output calls $t_0$
@@ -129,10 +129,10 @@ or protected storage of quantum information.
 
 For the supplied three-spin input, the three-spin expression is
 
-```math
+$$
 \langle X_0(t)\rangle
 =\frac{16+9\cos(10t)}{25}\cos^2(5t/2),\qquad \hbar=1.
-```
+$$
 
 | Output | Expected result | What it establishes |
 | --- | --- | --- |

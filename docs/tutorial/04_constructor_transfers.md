@@ -21,9 +21,9 @@ establish conservation or equality of predictions.
 For a stochastic coordinate map $y=h(x)$, a precise question is whether the
 two generators agree on every smooth target observable:
 
-```math
+$$
 L_X(\phi\circ h)=(L_Y\phi)\circ h .
-```
+$$
 
 Here $L_X$ and $L_Y$ generate expectations in the two descriptions.
 The map and its domain are specified before calculating the difference.

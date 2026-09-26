@@ -39,9 +39,9 @@ A sustained oscillation requires a drive.
 Near a state, the linear stage of the dynamics along one direction is $ds = -\kappa s\, dt + (2D)^{1/2} dW$. A
 Gaussian write of variance $s_0^2$ leaves, at time $t$, the information
 
-```math
+$$
 I(t) = \tfrac12 \ln\!\left[1 + \frac{\kappa s_0^2/D}{e^{2\kappa t} - 1}\right]. \tag{1}
-```
+$$
 
 | Regime | Late-time form of Eq. (1) | Law |
 | --- | --- | --- |

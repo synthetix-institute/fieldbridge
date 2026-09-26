@@ -1,0 +1,51 @@
+name: material card
+
+# For every material specification a pull request adds or changes: the contribution check, the memory card and the
+# materials of the catalog that are written the same way, shown in the summary of this run; the card figures are
+# kept as an artifact. The job needs no secrets and only reads the repository, so it also runs for pull requests
+# from forks.
+
+on:
+  pull_request:
+    paths:
+      - "examples/memory/**"
+
+permissions:
+  contents: read
+
+jobs:
+  card:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: python -m pip install -e '.[memory]'
+      - name: Check and card of each new or changed material
+        run: |
+          files=$(git diff --name-only --diff-filter=AM "origin/${{ github.base_ref }}...HEAD" -- 'examples/memory' \
+                  | grep '\.json$' | grep -v '^examples/memory/fields/' || true)
+          status=0
+          for f in $files; do
+            name=$(basename "$f" .json)
+            {
+              echo "# $f"
+              echo
+              python -B -m fieldbridge memory check "$f" || status=1
+              if python -B -m fieldbridge memory card "$f" --quick --out-dir "cards/$name" > /dev/null; then
+                cat "cards/$name/card.md"
+              fi
+              echo
+            } >> "$GITHUB_STEP_SUMMARY" 2>&1
+          done
+          exit $status
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: memory-cards
+          path: cards/
+          if-no-files-found: ignore

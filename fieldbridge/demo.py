@@ -24,6 +24,7 @@ from typing import Dict, List
 import numpy as np
 
 ROOT = Path(__file__).resolve().parents[1]
+REPO = "https://github.com/synthetix-institute/fieldbridge"
 EXAMPLES = ROOT / "examples"
 BOUNDARY = ("Every statement on this page is calculated from a supplied model. It does not establish that the model "
             "describes a physical system, and it does not establish novelty; both need comparison with experiment "
@@ -140,8 +141,13 @@ def _page(results: Dict, out: Path) -> None:
              "border-radius:8px;padding:12px'>python3 -B -m fieldbridge memory new my_material --carrier orthant\n"
              "python3 -B -m fieldbridge memory check examples/memory/my_material.json\n"
              "python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</pre>"
-             "<p>CONTRIBUTING.md describes each field and how to open a pull request; docs/materials.md lists the "
-             "materials already described.</p></section>",
+             f"<p>The <a href='{REPO}/blob/main/CONTRIBUTING.md'>contribution guide</a> describes each field and "
+             "the pull request; the checks of a pull request compute the card of the new material and list the "
+             "materials from other fields written by the same mechanism. The "
+             f"<a href='{REPO}/blob/main/docs/materials.md'>catalog</a> lists the materials already described, the "
+             f"<a href='{REPO}/blob/main/docs/wanted_materials.md'>list of wanted materials</a> names classic models "
+             "from fields not yet covered, and a material can also be "
+             f"<a href='{REPO}/issues/new?template=material.yml'>proposed with its source</a>.</p></section>",
              f"<p class='lead'>{esc(BOUNDARY)}</p>", "</main>"]
     head = f"<!doctype html><html lang='en'><head><meta charset='utf-8'><meta name='viewport' content='width=device-width, initial-scale=1'><title>FieldBridge demonstration</title>{FONTS}<style>{CSS}</style></head><body>"
     (out / "index.html").write_text(head + "".join(parts) + "</body></html>", encoding="utf-8")

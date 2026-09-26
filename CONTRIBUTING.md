@@ -6,7 +6,27 @@ their source and assumptions. From it the programs calculate the stable
 states, the write points, the writing protocols and the law of loss, and
 compare them with materials from other fields. The
 [catalog of materials](docs/materials.md) lists the specifications in the
-repository.
+repository, and the [list of wanted materials](docs/wanted_materials.md) names classic models from fields
+that are not covered yet.
+
+## What a contribution returns
+
+- **The memory card of the material.** For every specification a pull request adds, the checks of the pull
+  request compute its card: the stable states, the write points and their normal forms, the writing protocols and
+  the law of loss. The card is shown in the summary of the "material card" check; nothing has to be installed
+  to read it.
+- **Its connections to other fields.** The same summary lists the materials of the catalog that are written by
+  the same mechanism, for example a threshold write at a fold or a symmetric write at a pitchfork, with their
+  fields. A model from ecology can turn out to be written like a laser or a genetic switch; the derivations of
+  [Module 9](docs/tutorial/23_memory_codiscovery.md) then compare the two routes step by step.
+- **Credit.** The catalog names the source of every material and its contributor (`provenance.contributor`).
+
+## How contributions add up
+
+Every material added to the catalog is compared with every material already in it. The more fields the catalog
+covers, the more a new material connects to, and the more each mechanism is tested: a threshold write found in
+ten fields, each with the same law constant, is a stronger result than one found in two. Mechanisms, carriers and
+analyses added to the code apply at once to every material in the catalog.
 
 ## Adding a material
 
@@ -65,8 +85,9 @@ python3 -B -m fieldbridge memory card examples/memory/liquid_crystal_cell.json \
 `memory check` lists required checks (the file loads; the question,
 source, field and assumptions are stated) and recommended ones (a citable
 reference, a control parameter, the closure and the observable, and
-agreement between the structural predictions and a quick calculation). It
-exits with status 1 until the required checks pass. `memory card` writes
+agreement between the structural predictions and a quick calculation), and
+the materials of the catalog written by the same mechanism. It exits with
+status 1 until the required checks pass. `memory card` writes
 `card.md` and `card.png`: the stable states, the write point and its normal
 form, the writing protocols and the law of loss.
 [Module 1](docs/tutorial/15_memory_first_card.md) shows how to read a card.
@@ -74,10 +95,10 @@ form, the writing protocols and the law of loss.
 ### 5. Pull request
 
 ```bash
-python3 -B -m fieldbridge memory catalog --out docs/materials.md
+python3 -B -m fieldbridge memory catalog --out docs/materials.md   # also writes docs/materials.json
 python3 -B -m pytest -q -p no:cacheprovider
 git checkout -b material/liquid-crystal-cell
-git add examples/memory/liquid_crystal_cell.json docs/materials.md
+git add examples/memory/liquid_crystal_cell.json docs/materials.md docs/materials.json
 git commit -m "Add a nematic cell with two anchored orientations"
 ```
 

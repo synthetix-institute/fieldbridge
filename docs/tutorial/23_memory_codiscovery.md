@@ -101,17 +101,17 @@ band is the weighted mean ± one standard error.*
 **By a reflection: the laser and Landau theory.** The laser model has a field amplitude $E$ (`amp`) and an
 inversion $N$ (`inv`):
 
-```math
+$$
 \dot E = \tfrac12 (gN - \kappa)\,E, \qquad \dot N = P - \gamma N - g N E^2 . \tag{1}
-```
+$$
 
 The reflection $E \to -E$ leaves Eq. (1) unchanged; it exchanges the two optical phases $0$ and $\pi$. The field
 becomes unstable at the pump $P = \gamma\kappa/g$, which is 1 in the example. The inversion relaxes and is
 eliminated, $N = P/(\gamma + gE^2)$, so that
 
-```math
+$$
 \dot E = \tfrac12\Bigl(\frac{gP}{\gamma} - \kappa\Bigr) E - \frac{g^2 P}{2\gamma^2}\, E^3 + O(E^5). \tag{2}
-```
+$$
 
 At threshold the cubic coefficient is $a_3 = -g\kappa/(2\gamma) = -0.5$; the constructor finds $-0.499$. The
 pitchfork normal form has the same class: the class is fixed by the kind of symmetry, not by the field.
@@ -160,9 +160,9 @@ not enter the write law, because the choice is made in the linear stage.
 is set by $\Gamma = D_s\lvert a_3\rvert/r = 0.05$, and a bias $h_s$ is chosen for which the law predicts an
 accuracy of 0.8. The measured accuracy $P$ gives the constant
 
-```math
+$$
 \pi^{1/4} \approx \frac{\Phi^{-1}(P)\, D_s^{1/2}\, r^{1/4}}{h_s} . \tag{3}
-```
+$$
 
 With 2000 trajectories per model, the six estimates have a weighted mean of $1.346 \pm 0.021$, against
 $\pi^{1/4} = 1.331$, with $\chi^2 = 4.7$ for 6 values. The constant depends only on the canonical form. A
@@ -172,9 +172,9 @@ derivation that ended on another mechanism, such as a fold, would give an accura
 
 The second target is the fold,
 
-```math
+$$
 \dot s = \mu + s^2 , \tag{4}
-```
+$$
 
 at which the occupied state meets an unstable state and disappears, and the material switches to another stored
 state. A threshold write needs no symmetry, and a symmetry is its obstruction: a symmetry that reverses the critical
@@ -231,9 +231,9 @@ a fold. The constructor tries pairs of states in the order of the force that the
 **The delay law.** Under a sweep $\mu = rt$, Eq. (4) in the canonical coordinate is the Riccati equation
 $\dot x = rt + x^2$. The occupied state does not leave at $\mu = 0$ but later:
 
-```math
+$$
 x = r^{1/3}\,\frac{\mathrm{Ai}'(-\tau)}{\mathrm{Ai}(-\tau)}, \qquad \tau = r^{1/3} t , \tag{5}
-```
+$$
 
 so the state crosses the position of the static fold, $x = 0$, at $\mu = \lvert a_1'\rvert\, r^{2/3}$, where
 $a_1' = -1.01879$ is the first zero of $\mathrm{Ai}'$. The switch lags behind the static threshold by an amount
@@ -295,10 +295,10 @@ $\dot Z = -J^{\mathsf T} Z$, normalized by $Z\cdot F = \omega_0$. Averaged over 
 that matches the ratio $\omega_f \approx n\,\omega_0$ survives, and the phase difference $\psi = \theta - \omega_f t/n$
 obeys the Adler equation (Adler, 1946)
 
-```math
+$$
 \dot\psi = \Delta\omega - K \sin\phi, \qquad \phi = n\psi - \phi_n - \tfrac{\pi}{2}, \qquad
 K = \tfrac12\,\varepsilon\,\lvert Z_n\rvert, \qquad \Delta\omega = \omega_0 - \omega_f/n , \tag{6}
-```
+$$
 
 where $Z_n = a_n - i b_n$ is the $n$-th Fourier coefficient of $Z_p$ and $\phi_n = \operatorname{atan2}(b_n, a_n)$. In
 the units $\tau = nKt$ and $\nu = \Delta\omega/K$ it reads $d\phi/d\tau = \nu - \sin\phi$. For $\lvert\nu\rvert < 1$

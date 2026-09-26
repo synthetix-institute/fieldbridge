@@ -9,7 +9,7 @@
 ## Checklist
 
 - [ ] `python3 -B -m fieldbridge memory check <file>` passes its required checks (for a material)
-- [ ] `docs/materials.md` is regenerated with `python3 -B -m fieldbridge memory catalog` (for a material)
+- [ ] `docs/materials.md` and `docs/materials.json` are regenerated with `python3 -B -m fieldbridge memory catalog` (for a material)
 - [ ] `python3 -B -m pytest -q -p no:cacheprovider` passes
 - [ ] Parameter values chosen for the example, rather than taken from the source, are listed under `assumptions`
 - [ ] New behaviour comes with a test

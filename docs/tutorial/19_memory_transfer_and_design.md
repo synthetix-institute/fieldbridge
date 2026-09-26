@@ -14,9 +14,9 @@
 
 A memory mechanism can be separated from the carrier on which it was found and attached to another carrier:
 
-```math
+$$
 I^{s}_{\mathrm{real}} \;\to\; I^{s}_{\mathrm{op}} \;\to\; (\Omega_s, 0) \;\to\; (\Omega_s, \Xi_t) \;\to\; I^{t}_{\mathrm{real}} .
-```
+$$
 
 From the source realization $s$ the program keeps its memory signature: the properties that follow from the
 structure of the operation $\Omega_s$ (Module 3). It then attaches the operation to the target carrier $\Xi_t$ and
@@ -41,9 +41,9 @@ does not change.
 
 Point dipoles in a plane, at the positions of the colloids of Module 4, interact through
 
-```math
+$$
 E_{ij} = -\frac{\mu^2}{r_{ij}^3}\Bigl[\tfrac12\cos(\psi_i-\psi_j) + \tfrac32\cos(\psi_i+\psi_j-2\varphi_{ij})\Bigr],
-```
+$$
 
 where $\psi_i$ is the direction of dipole $i$ and $\varphi_{ij}$ the direction of the bond. The first term aligns
 the two dipoles; the second reflects the direction of one dipole across the bond axis. The capillary rods have

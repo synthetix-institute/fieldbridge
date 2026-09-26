@@ -7,7 +7,9 @@
                             a control parameter, closure and observable); then the structural predictions and,
                             unless structure_only, a quick memory card compared with them
   catalog(paths)            one row per material: field, question, source and the calculated memory, for
-                            docs/materials.md
+                            docs/materials.md and docs/materials.json
+  same_mechanism(...)       the materials of the catalog whose writing mechanism is the one calculated for a new
+                            material: what a contribution connects to in other fields
 """
 from __future__ import annotations
 
@@ -19,6 +21,8 @@ from typing import Dict, Iterable, List, Union
 import numpy as np
 
 from . import spec as fspec
+
+CATALOG_JSON = Path(__file__).resolve().parents[2] / "docs" / "materials.json"
 
 PLACEHOLDERS = ("your name", "author, journal", "what the variables are", "for example soft matter",
                 "state each modelling choice", "what an experiment measures", "what is specified or discarded",
@@ -131,6 +135,8 @@ def check(source: Union[str, Path, Dict], structure_only: bool = False, seed: in
         comparison = predict.compare(pred, card)
         summary["card"] = card["verdict"]
         summary["agreement"] = comparison.get("all_consistent")
+        summary["mechanism"] = discovery.mechanism_class(card)
+        summary["same_mechanism"] = same_mechanism(summary["mechanism"], exclude=real.name)
         rows.append(_row("agreement", bool(comparison.get("all_consistent")),
                          "the calculated card agrees with every structural prediction"
                          if comparison.get("all_consistent") else
@@ -144,6 +150,16 @@ PREDICTION_NAMES = {"oscillation": "Oscillation", "multistability": "Multistabil
                     "holding": "Retention", "lock": "Retention and rewriting times", "network": "Loops"}
 VERDICT_NAMES = {"stores": "Stable states", "writes": "Write point", "constructs": "Writing mechanism",
                  "holds": "Retention law", "lock": "Writing protocols"}
+
+
+def same_mechanism(mechanism: str, exclude: str = "", catalog_json: Union[str, Path] = CATALOG_JSON) -> List[Dict]:
+    """Materials of the catalog with the same writing mechanism, from docs/materials.json."""
+    path = Path(catalog_json)
+    if not path.exists():
+        return []
+    rows = json.loads(path.read_text(encoding="utf-8")).get("materials", [])
+    return [{"name": r["name"], "field": r.get("field", ""), "file": r.get("file", "")}
+            for r in rows if r.get("mechanism") == mechanism and r.get("name") != exclude]
 
 
 def markdown(result: Dict, path: str = "") -> str:
@@ -161,6 +177,14 @@ def markdown(result: Dict, path: str = "") -> str:
     if s.get("card"):
         lines += ["", "## Calculated (quick card)", ""] + [f"- **{VERDICT_NAMES.get(k, k)}**: {v}"
                                                           for k, v in s["card"].items()]
+    if "same_mechanism" in s:
+        others = s["same_mechanism"]
+        fields = sorted({o["field"] for o in others if o["field"]})
+        lines += ["", "## The same writing mechanism in the catalog", "",
+                  f"Mechanism: **{s.get('mechanism')}**. "
+                  + (f"{len(others)} material(s) of the catalog, from {len(fields)} field(s), are written the same way:"
+                     if others else "No material of the catalog is written this way yet.")]
+        lines += [f"- {o['name']} ({o['field']})" for o in others]
     return "\n".join(lines) + "\n"
 
 
