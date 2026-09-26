@@ -202,6 +202,20 @@ def test_command_line_writes_reports_with_provenance(tmp_path):
 
 
 # ------------------------------------------------------------------------------------------------ phase memory
+def test_a_parameter_may_be_named_like_the_state_argument():
+    """A copying fidelity or a charge is often called q, the name of the state argument of Realization.F."""
+    s = {"schema": "fieldbridge-memory/1", "kind": "equations", "name": "master sequence",
+         "question": "At which copying fidelity is the master sequence lost?", "assumptions": ["single peak"],
+         "provenance": {"source": "Eigen, Naturwissenschaften 58, 465 (1971)"},
+         "carrier": {"kind": "euclid", "variables": ["x"], "scale": 1.0},
+         "parameters": {"f0": 2.0, "q": 0.8}, "drift": {"x": "x*(f0*q - 1 - (f0 - 1)*x)"},
+         "control": {"name": "q", "range": [0.2, 1.0]}, "noise": 0.002}
+    real = spec.load(s)
+    assert real.F(np.array([0.5]), q=0.5)[0] == pytest.approx(-0.25)
+    pred = predict.predict(real, np.random.default_rng(0))  # failed with "multiple values for argument 'q'"
+    assert pred["control_role"] in ("shape", "bias")
+
+
 def test_a_fold_at_a_scan_value_is_located():
     """The overdamped Josephson junction loses its stable phase at the critical current 1, which is one of the
     values of the scan along the control; the fold must be found there, not missed."""

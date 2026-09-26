@@ -47,13 +47,14 @@ class Realization:
     geometry: Optional[Dict] = None                             # positions and bonds, for drawings
 
     # -- dynamics ------------------------------------------------------------------------------
-    def F(self, q: np.ndarray, **over: float) -> np.ndarray:
+    def F(self, q: np.ndarray, /, **over: float) -> np.ndarray:
+        # q is positional-only, so that a parameter of the specification may also be named q
         p = {**self.params, **over}
         q2 = np.atleast_2d(np.asarray(q, float))
         out = self.drift(q2, p)
         return out if np.ndim(q) > 1 else out[0]
 
-    def V(self, q: np.ndarray, **over: float) -> np.ndarray:
+    def V(self, q: np.ndarray, /, **over: float) -> np.ndarray:
         if self.potential is None:
             raise ValueError(f"{self.name} has no potential (non-gradient dynamics)")
         p = {**self.params, **over}

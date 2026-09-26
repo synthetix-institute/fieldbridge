@@ -24,8 +24,10 @@ Such convergence is not directed: neither derivation was aimed at the other.
 
 > **Note.** How often such convergence occurs was measured outside FieldBridge. An analysis of derivation chains
 > extracted from arXiv papers with the V2.1 language compared pairs of chains from different fields that end on the
-> same class of mechanism. In 98.6% of these pairs the derivations differ, but pairs with different derivations are
-> not more frequent than when the field labels are permuted among papers of the same year.
+> same class of mechanism. In 98.6% of these pairs the derivations differ, and their number equals the number
+> obtained when the field labels are permuted among papers of the same year: which derivation reaches a class does
+> not depend on the field label. The permutation does not test whether the end points are one mechanism; that is
+> established by the normal form and its field-independent invariants, as in this module.
 
 The constructor makes the convergence deliberate; the command is `memory codiscover` (co-discovery by
 construction). It fixes a target mechanism and derives it in every model with transformations that it can verify.

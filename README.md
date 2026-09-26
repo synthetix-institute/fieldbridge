@@ -1,28 +1,19 @@
 # FieldBridge
 
-**Explanations, figures and calculations of physical mechanisms across fields.**
+**A computational workbench for discovering and deriving physical mechanisms across scientific fields.**
 
 [Demonstration](#demonstration) · [Tutorial](docs/tutorial/index.md) · [Catalog of materials](docs/materials.md) · [Contributing](CONTRIBUTING.md) · [Data model](docs/DATA_MODEL.md)
 
-FieldBridge calculates the consequences of explicitly stated equations and
-compares mechanisms across fields. A material described by its equations
-receives a memory card: its stable states, the point at which a new state can
-be written, the writing protocols and the law by which a state is lost. One
-mechanism, such as phase locking to a periodic drive, is derived in models
-from different fields as a chain of verified transformations, with the step
-at which a derivation stops. A quantum mechanism is separated from its
-carrier and derived again on other carriers. The repository also retrieves
-related equations from paper collections and verifies stated
-correspondences between them.
+![FieldBridge: Scientific Mechanism Translation](docs/assets/fieldbridge-hero.svg)
 
-![Phase locking derived in models from different fields](docs/tutorial/figures/memory/m9_phase.png)
+Independent scientific disciplines often study the exact same physical mechanism dressed in different mathematical languages. A laser threshold in quantum optics, a genetic toggle switch in synthetic biology, and capillary colloids in soft matter all reduce to identical normal forms (such as pitchfork bifurcations and fold delay laws).
 
-*Phase locking derived in the example models of the tutorial
-([Module 9](docs/tutorial/23_memory_codiscovery.md)). (a) The derivation in
-each model as a sequence of verified transformations, or the step at which
-it stops. (b) Phase response along the drive. (c) Averaged drift of the
-phase difference, compared with the Adler form. (d) Relaxation rate and slip
-frequency against the detuning.*
+FieldBridge automates this cross-field translation:
+1. **Derivation Chains:** Takes mathematical models from disparate fields and constructs verified transformation sequences to prove whether they share a common physical mechanism.
+2. **Obstruction Identification:** When two models fail to reach the same behavior, FieldBridge identifies the exact mathematical obstruction (such as a broken symmetry, a Hopf bifurcation, or missing feedback).
+3. **Material Memory Cards:** For any system of governing equations, it computes its operational "memory card"---identifying stable states, write thresholds, writing protocols, and retention/decay laws.
+
+The calculations require no API key, GPU, cluster, or archive download; all derivations are verified through exact mathematical and dynamical systems calculations.
 
 ## Installation
 
