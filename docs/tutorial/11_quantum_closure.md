@@ -119,4 +119,9 @@ observable is then constant and the span has dimension one. Changing the
 generator, rather than manually changing the expected answer, is what makes
 these useful tests.
 
+The three operators $X\otimes I$, $Y\otimes Z$ and $Z\otimes Z$ close under
+commutation like the components of a spin-1/2. [Chapter 24](24_spin_language.md)
+detaches this rotation from the two spins, attaches it to other carriers and
+derives it in models from five fields.
+
 [Tutorial](index.md)

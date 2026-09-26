@@ -209,4 +209,10 @@ those results and the relevant target-system literature is a separate part
 of a discovery study. A successful experiment would test the physical
 realization; it would not substitute for that comparison.
 
+The collective interaction $Q$ is quadratic in the total magnetization and is
+constant within a sector of fixed magnetization. [Chapter 24](24_spin_language.md)
+uses it as an example of a term that enlarges the algebra of a spin rotation,
+and derives the exchange couplings, proportional to $\sqrt{(j+1)(N-1-j)}$, with
+which a chain carries such a rotation.
+
 [Tutorial](index.md) | [Retrieved source calculations](13_retrieval_to_calculation.md)

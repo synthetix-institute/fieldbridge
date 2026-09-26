@@ -62,6 +62,9 @@ No LLM, GPU, archive download or API key is needed after installation.
 | Calculate from a retrieved record | `construct --calculate` | A source-bound specification and calculated consequence |
 | Index a paper folder | `build-field-adapter` | Source passages, field records and a relation graph |
 | Evaluate retrieval or continuation | `validate-zero-shot`, `validate-continuation` | Held-out-paper comparisons with baselines |
+| Build memory in a material | `memory predict`, `memory card`, `memory attach`, `memory design`, `memory phase` | What the structure implies before simulation; stored states, write points, loss law and the cost of a rewrite; what a known memory keeps on a new carrier ([tutorial](docs/tutorial/15_memory_first_card.md)) |
+| Derive one mechanism in models from different fields | `memory codiscover` | For a symmetric write, a threshold write or phase locking to a periodic drive: the derivation in each model as a word of verified transformations, the step at which a derivation stops, and field-independent invariants of the end point ([tutorial](docs/tutorial/23_memory_codiscovery.md)) |
+| Detach a quantum mechanism, attach it to another carrier, co-discover it | `quantum detach`, `quantum attach`, `quantum codiscover` | The Bloch rotation on spins, atoms in two wells, exchange chains and Cooper pairs: what the mechanism keeps, what its carrier changes, and the term that obstructs it ([tutorial](docs/tutorial/24_spin_language.md)) |
 
 Ordinary `construct` proposes a correspondence using stored target examples.
 The `--calculate` path instead requires a supported mathematical source
