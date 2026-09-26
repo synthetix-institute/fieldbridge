@@ -14,6 +14,11 @@
                                realizations from different fields: derivations, obstructions, invariants (default:
                                every example)
 
+Contributing a material (CONTRIBUTING.md):
+  new NAME                     a template specification that loads and runs, with placeholders to replace
+  check SPEC [SPEC ...]        required and recommended checks, the structural predictions and a quick card
+  catalog                      the table of materials in docs/materials.md, calculated from the specifications
+
 Every command writes <name>.json and <name>.md to --out-dir with the question, the input hash, the hashes of the
 implementation, library versions, and the evidence boundary (novelty is never established by the program).
 """
@@ -431,6 +436,45 @@ def cmd_codiscover(args) -> int:
     return 0
 
 
+def cmd_new(args) -> int:
+    from . import contribute
+    out = Path(args.out or f"examples/memory/{args.name}.json")
+    if out.exists() and not args.force:
+        raise SystemExit(f"{out} exists; choose another name or pass --force")
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(json.dumps(contribute.template(args.name, args.carrier), indent=2) + "\n", encoding="utf-8")
+    print(f"Wrote {out}. Replace the placeholders and the placeholder dynamics with your material's equations, then "
+          f"run: python3 -B -m fieldbridge memory check {out}")
+    return 0
+
+
+def cmd_check(args) -> int:
+    from . import contribute
+    ok = True
+    for path in args.specs:
+        result = contribute.check(path, structure_only=args.structure_only, seed=args.seed)
+        ok = ok and result["passed"]
+        md = contribute.markdown(result, path)
+        print(md)
+        if args.out_dir:
+            name = Path(path).stem
+            report = {"command": "check", **_provenance(), "input": path, **result}
+            _write(Path(args.out_dir), f"check_{name}", report, md)
+    return 0 if ok else 1
+
+
+def cmd_catalog(args) -> int:
+    from . import contribute
+    result = contribute.catalog(args.paths, seed=args.seed)
+    md = contribute.catalog_markdown(result)
+    out = Path(args.out)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    out.write_text(md, encoding="utf-8")
+    print(json.dumps({"out": str(out), "materials": len(result["materials"]), "skipped": len(result["skipped"])},
+                     indent=2))
+    return 0
+
+
 def add_parser(sub) -> None:
     memory = sub.add_parser("memory", help="Build, predict and transfer memory on any carrier (needs the memory extra).")
     msub = memory.add_subparsers(required=True)
@@ -505,3 +549,21 @@ def add_parser(sub) -> None:
     p.add_argument("--no-law", action="store_true", help="Derivations and canonical forms only; no simulation.")
     p.add_argument("--no-figure", action="store_true")
     p.set_defaults(func=cmd_codiscover)
+    p = msub.add_parser("new", help="Write a template specification for a new material.")
+    p.add_argument("name", help="Short name of the material; also the file name (examples/memory/NAME.json).")
+    p.add_argument("--carrier", default="euclid", choices=["euclid", "orthant", "torus"],
+                   help="Kind of state variables: real numbers, non-negative amounts, or angles.")
+    p.add_argument("--out", help="Output file (default examples/memory/NAME.json).")
+    p.add_argument("--force", action="store_true", help="Overwrite an existing file.")
+    p.set_defaults(func=cmd_new)
+    p = msub.add_parser("check", help="Check that a specification is ready to contribute; exit status 1 if not.")
+    p.add_argument("specs", nargs="+", help="Specification files.")
+    p.add_argument("--structure-only", action="store_true", help="Skip the quick memory card.")
+    p.add_argument("--out-dir", help="Also write check_<name>.json and .md here.")
+    p.add_argument("--seed", type=int, default=20260923)
+    p.set_defaults(func=cmd_check)
+    p = msub.add_parser("catalog", help="Write the table of materials (docs/materials.md) from the specifications.")
+    p.add_argument("paths", nargs="*", default=["examples/memory"], help="Specification files or directories.")
+    p.add_argument("--out", default="docs/materials.md")
+    p.add_argument("--seed", type=int, default=20260923)
+    p.set_defaults(func=cmd_catalog)

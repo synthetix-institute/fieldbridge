@@ -1,0 +1,49 @@
+name: Material proposal
+description: A material or model whose memory is to be calculated, with the source of its equations.
+title: "Material: "
+labels: ["material"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        The material and the source of its equations. A contributor who writes the specification directly follows
+        CONTRIBUTING.md (`fieldbridge memory new`, then `memory check`) and opens a pull request instead.
+  - type: input
+    id: material
+    attributes:
+      label: Material or model
+      placeholder: "nematic liquid crystal cell with bistable anchoring"
+    validations:
+      required: true
+  - type: input
+    id: field
+    attributes:
+      label: Field
+      placeholder: "soft matter"
+    validations:
+      required: true
+  - type: textarea
+    id: source
+    attributes:
+      label: Source of the equations
+      description: Authors, journal, volume, page and year, a DOI or an arXiv identifier.
+    validations:
+      required: true
+  - type: textarea
+    id: equations
+    attributes:
+      label: Equations and parameter values
+      description: The dynamics of the state variables (LaTeX or plain text) and the values the source states.
+      render: latex
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: What should the calculation answer? For example, which states are stored, how one is written, or how long it is retained.
+    validations:
+      required: true
+  - type: textarea
+    id: observable
+    attributes:
+      label: Observable
+      description: What an experiment measures, and how the prediction could be tested.

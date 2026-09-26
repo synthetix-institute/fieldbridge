@@ -27,7 +27,10 @@ python3 -B -m fieldbridge --help
 
 [Run the worked example](08_end_to_end_walkthrough.md) first. It creates a
 report, shows the expected fields, and explains why a rejected candidate can
-be the intended outcome of a successful calculation.
+be the intended outcome of a successful calculation. With the memory extra
+(`pip install -e '.[memory]'`), `python3 -B -m fieldbridge demo --out-dir
+build/demo` writes a page with three calculations and their figures in about
+a minute.
 
 ## Choose a reading path
 
@@ -104,7 +107,10 @@ states, write points, retention laws and writing protocols. Finally, the
 program transfers a known memory mechanism to another carrier, or derives one
 mechanism in models from different fields. The modules need
 `pip install -e '.[memory]'`, run on a laptop, and define their terms in the
-[glossary](memory_glossary.md).
+[glossary](memory_glossary.md). The [catalog of materials](../materials.md)
+lists the material specifications in the repository, and
+[CONTRIBUTING.md](../../CONTRIBUTING.md) describes how a material from another
+field is added (`memory new`, `memory check`).
 
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |

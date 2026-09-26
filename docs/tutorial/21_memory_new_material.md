@@ -22,7 +22,9 @@
 
 ## 2. The sequence of analyses
 
-1. Write the specification (Module 2). List every uncertain modelling choice in `assumptions`.
+1. Write the specification (Module 2), starting from `memory new NAME --carrier euclid|orthant|torus`, which
+   writes a template that loads and runs. List every uncertain modelling choice in `assumptions`, and check the
+   file with `memory check`, which reports the fields still left as placeholders.
 2. Run `memory predict` and record the structural predictions before any calculation (Module 3).
 3. Run `memory card`: stable states, write points, retention law and writing protocols, and the agreement with the
    predictions (Module 4).
@@ -34,6 +36,8 @@
    (Module 8).
 7. Perform a control calculation: change one structural feature that must change the answer, such as a symmetry,
    the sign of a loop or only the mobility, and confirm that the answer changes as predicted.
+8. To add the material to the repository, regenerate the [catalog of materials](../materials.md) with
+   `memory catalog` and open a pull request ([CONTRIBUTING.md](../../CONTRIBUTING.md)).
 
 ## 3. The gallery of realizations
 
