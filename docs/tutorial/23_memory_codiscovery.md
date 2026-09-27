@@ -300,7 +300,7 @@ $$
 K = \tfrac12\,\varepsilon\,\lvert Z_n\rvert, \qquad \Delta\omega = \omega_0 - \omega_f/n  \qquad (6)
 $$
 
-where $Z_n = a_n - i b_n$ is the $n$-th Fourier coefficient of $Z_p$ and $\phi_n = \operatorname{atan2}(b_n, a_n)$. In
+where $Z_n = a_n - i b_n$ is the $n$-th Fourier coefficient of $Z_p$ and $\phi_n = \mathrm{atan2}(b_n, a_n)$. In
 the units $\tau = nKt$ and $\nu = \Delta\omega/K$ it reads $d\phi/d\tau = \nu - \sin\phi$. For $\lvert\nu\rvert < 1$
 the phase difference relaxes to one of $n$ values, $2\pi/n$ apart, at the rate $\lambda = nK(1-\nu^2)^{1/2}$: the
 drive writes the phase and restores it after a perturbation. For $\lvert\nu\rvert > 1$ the phase slips at the

@@ -104,7 +104,7 @@ amplitude multiplied by these $N-1$ phase averages:
 
 $$
 \langle X_0(t)\rangle
-=\operatorname{Re}[e^{-iht/\hbar}]_{00}
+=\mathrm{Re}\,[e^{-iht/\hbar}]_{00}
   \cos^{N-1}(2\lambda t/\hbar).
 $$
 
