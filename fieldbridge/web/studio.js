@@ -164,5 +164,5 @@
   window.addEventListener('hashchange',()=>{const key=location.hash.slice(1);if(key==='applications'){switchLab('memory');history.replaceState(null,'','#memory');return;}if(['memory','stochastic','gallery','spins'].includes(key))switchLab(key);});
   new ResizeObserver(()=>draw()).observe($('plot'));
   setPlotMode('trajectory');renderControls();calculate();refreshIcons();
-  const initial=location.hash.slice(1);if(initial==='applications')history.replaceState(null,'','#memory');else if(['stochastic','gallery','spins'].includes(initial))switchLab(initial);
+  const initial=location.hash.slice(1);if(initial==='applications')history.replaceState(null,'','#memory');else if(['stochastic','gallery','spins'].includes(initial))switchLab(initial);else if(!initial&&config.models)switchLab('gallery');
 })();

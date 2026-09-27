@@ -90,7 +90,7 @@ def build_studio(out_dir: str | Path) -> Path:
     out.mkdir(parents=True, exist_ok=True)
     destination = out / "studio"
     destination.mkdir(exist_ok=True)
-    for name in ("studio.css", "collections.css", "workspace.css", "physics.js", "studio.js", "collections.js", "lucide.min.js", "LUCIDE_LICENSE"):
+    for name in ("studio.css", "collections.css", "workspace.css", "model-studio.css", "physics.js", "model-physics.js", "model-worker.js", "studio.js", "collections.js", "model-studio.js", "lucide.min.js", "LUCIDE_LICENSE"):
         shutil.copy2(ASSETS / name, destination / name)
     config = {"repo": REPO, "sources": SOURCES, "schema": "fieldbridge-browser-construction/1"}
     from .verification import verify_construction
@@ -107,6 +107,12 @@ def build_studio(out_dir: str | Path) -> Path:
     (out / "verified_examples.json").write_text(json.dumps(verified, indent=2) + "\n", encoding="utf-8")
     config["verified_examples"] = {name: item["calculation"] for name, item in verified.items()}
     config["gallery"] = build_gallery(out)
+    from .web_models import export_models
+    config["models"] = export_models(ROOT, config["gallery"])
+    worker_hash = hashlib.sha256((ASSETS / "model-worker.js").read_bytes()).hexdigest()[:12]
+    physics_hash = hashlib.sha256((ASSETS / "model-physics.js").read_bytes()).hexdigest()[:12]
+    config["model_worker"] = f"studio/model-worker.js?v={worker_hash}&physics={physics_hash}"
+    (out / "tutorial_models.json").write_text(json.dumps(config["models"], indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
     config["quantum"] = build_quantum(out)
     template = (ASSETS / "index.html").read_text(encoding="utf-8")
     for asset in ASSETS.iterdir():

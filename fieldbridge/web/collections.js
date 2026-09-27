@@ -6,6 +6,7 @@
   const $=id=>document.getElementById(id),fmt=(x,n=3)=>Number(x.toFixed(n)).toString();
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const link=(path,label)=>`<a href="${config.repo}/blob/main/${path}" target="_blank" rel="noopener">${label} ↗</a>`;
+  if(!config.models&&$('material-select')){
   let selected=config.gallery[0].id;
   $('material-select').innerHTML=config.gallery.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
   $('material-select').addEventListener('change',e=>{selected=e.target.value;materialList();materialDetail();});
@@ -26,6 +27,7 @@
   }
   $('material-search').addEventListener('input',materialList);
   materialList();materialDetail();
+  }
 
   const labels={chain:'Four-spin exchange chain',qubit:'One spin-½',spin:'One spin-3/2',bosons:'Four bosons in two wells','fermion-pair':'Cooper-pair level',collective:'Three collective spins','correlated-pair':'Two correlated spins'};
   const dimensions={chain:'4 states in the one-flip sector',qubit:'2 states',spin:'4 states',bosons:'5 states at fixed particle number','fermion-pair':'Pair sector and two unchanged single-particle states',collective:'8 states', 'correlated-pair':'4 states; two spin-½ representations'};

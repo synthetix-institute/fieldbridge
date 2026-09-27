@@ -42,17 +42,21 @@ the [tutorial](docs/tutorial/index.md). `--law` also measures the locking law of
 The [live constructor](https://synthetix-institute.github.io/fieldbridge/)
 shows how a mechanism is assembled and what changes when a part is removed:
 
-- **Memory:** attach feedback, saturation and a writing field. Every edit
+- **[Normal form](https://synthetix-institute.github.io/fieldbridge/#memory):** attach feedback, saturation and a writing field. Every edit
   immediately updates the equation, stable states and writing response.
   Vary pulse strength and duration to compare switching with retention.
   Removing the writing
   field prevents switching; removing feedback removes bistability.
   [Equations and predictions](docs/tutorial/18_memory_writing_and_retention.md#scalar-constructor-demonstration).
-- **[Material gallery](https://synthetix-institute.github.io/fieldbridge/#gallery):**
-  browse all twelve saved model calculations: capillary rotors, dipoles,
-  compartments, laser dynamics, gene circuits, a chemical reactor and flow
-  networks. Each realization includes its calculated figure, physical
-  components, source model and downloadable calculation record.
+- **[Material constructor](https://synthetix-institute.github.io/fieldbridge/#gallery):**
+  select any of twenty tutorial models: capillary rotors, dipoles,
+  compartments, lasers, gene circuits, reactors, flow networks and eight
+  oscillators. Change native model parameters, detach a drift contribution
+  or network bond, and compare the calculated dynamics with the original.
+  Two preparations expose whether their trajectories remain distinguishable.
+  Play or scrub the evolution, select the observable, change the preparation
+  and apply a finite force. The symmetry-restoring designs calculate the
+  Schlögl cusp, equal promoter strengths or equal tube lengths.
   [Gallery recipe](docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations).
 - **[Spins and carriers](https://synthetix-institute.github.io/fieldbridge/#spins):**
   change the interaction and transverse field of two spins, calculate the
@@ -83,10 +87,18 @@ Open `build/demo/index.html`, not the source template in `fieldbridge/web/`.
 The build verifies the three stochastic examples symbolically and saves
 `verified_examples.json`; it also computes seven quantum attachments and
 saves their matrix-evolution checks in `quantum_examples.json`. The material
-gallery reuses the saved calculations in `examples/gallery/`. Browser controls
+constructor exports the source equations as restricted arithmetic trees in
+`tutorial_models.json`, and integrates their deterministic drift in the browser.
+The twelve saved Python cards remain available as reference calculations;
+their state searches and stochastic retention calculations are separate from
+the live drift trajectories. Browser controls
 use closed-form relations and a small drift integrator; there is no model API
 or GPU computation. Original
 papers, exact tutorial chapters and executable tests are linked in each module.
+The [model tests](tests/test_web_models.py) compare every exported drift with
+its original Python realization, check six trajectories with SciPy, and
+exercise model selection, term removal, parameter changes and cusp design
+through the actual browser event handlers.
 
 | Section | Calculated result |
 | --- | --- |

@@ -7,15 +7,18 @@
   <link rel="stylesheet" href="studio/studio.css">
   <link rel="stylesheet" href="studio/collections.css">
   <link rel="stylesheet" href="studio/workspace.css">
+  <link rel="stylesheet" href="studio/model-studio.css">
   <script id="studio-config" type="application/json">__CONFIG__</script>
   <script defer src="studio/lucide.min.js"></script>
   <script defer src="studio/physics.js"></script>
+  <script defer src="studio/model-physics.js"></script>
   <script defer src="studio/studio.js"></script>
   <script defer src="studio/collections.js"></script>
+  <script defer src="studio/model-studio.js"></script>
 </head>
 <body>
   <header class="app-header">
-    <a class="brand" href="#memory"><i data-lucide="network" aria-hidden="true"></i>FieldBridge<span>Mechanism constructor</span></a>
+    <a class="brand" href="#gallery"><i data-lucide="network" aria-hidden="true"></i>FieldBridge<span>Mechanism constructor</span></a>
     <nav aria-label="Resources">
       <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener"><i data-lucide="book-open" aria-hidden="true"></i>Tutorial</a>
       <button class="plain" id="sources-open"><i data-lucide="library" aria-hidden="true"></i>Sources</button>
@@ -24,17 +27,35 @@
   </header>
   <div class="module-bar">
     <div role="tablist" aria-label="Construction examples">
-      <button role="tab" id="tab-memory" aria-controls="workbench" data-lab="memory" aria-selected="true"><i data-lucide="git-branch" aria-hidden="true"></i>Memory</button>
+      <button role="tab" id="tab-gallery" aria-controls="gallery" data-lab="gallery" aria-selected="false" tabindex="-1"><i data-lucide="git-branch" aria-hidden="true"></i>Constructor</button>
+      <button role="tab" id="tab-memory" aria-controls="workbench" data-lab="memory" aria-selected="true"><i data-lucide="chart-spline" aria-hidden="true"></i>Normal form</button>
       <button role="tab" id="tab-spins" aria-controls="spins" data-lab="spins" aria-selected="false" tabindex="-1"><i data-lucide="atom" aria-hidden="true"></i>Spins</button>
       <button role="tab" id="tab-stochastic" aria-controls="workbench" data-lab="stochastic" aria-selected="false" tabindex="-1"><i data-lucide="shuffle" aria-hidden="true"></i>Stochastic</button>
-      <button role="tab" id="tab-gallery" aria-controls="gallery" data-lab="gallery" aria-selected="false" tabindex="-1"><i data-lucide="layers" aria-hidden="true"></i>Materials</button>
     </div>
     <span class="execution"><span></span>Local calculation</span>
   </div>
   <main>
     <section id="gallery" role="tabpanel" aria-labelledby="tab-gallery" hidden>
-      <div class="work-heading"><div><h1>Memory in model materials</h1></div><a class="resource-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations" target="_blank" rel="noopener">Gallery tutorial<i data-lucide="arrow-up-right"></i></a></div>
-      <div class="collection-grid"><aside class="collection-list"><label for="material-select" class="compact-material-label">Material model</label><select id="material-select" aria-label="Material model"></select><label for="material-search">Find a realization</label><input type="search" id="material-search" placeholder="Rotors, genes, tubes…"><div id="material-list" role="group" aria-label="Material realizations"></div></aside><section class="material-detail" id="material-detail" aria-live="polite"></section></div>
+      <div class="work-heading"><div><h1>Memory in model materials</h1><p id="model-question"></p></div><div class="heading-actions"><button id="model-reset" class="icon-button" aria-label="Reset material construction" title="Reset material construction"><i data-lucide="rotate-ccw"></i></button><button id="model-export" class="icon-button" aria-label="Download material construction" title="Download material construction"><i data-lucide="download"></i></button></div></div>
+      <div class="model-picker"><label for="model-select">Physical model</label><select id="model-select" aria-label="Physical model"></select><span>Deterministic dynamics</span></div>
+      <div class="model-workspace">
+        <aside class="model-controls">
+          <h2>Mechanism</h2><div id="model-terms"></div>
+          <h2>Parameters</h2><div id="model-parameters"></div>
+          <div id="model-design" hidden></div><p id="model-design-result" role="status"></p>
+          <details><summary>Preparation</summary><div id="model-preparation"></div></details>
+          <details><summary>Applied force and observation time</summary><div id="model-pulse-controls"></div></details>
+        </aside>
+        <section class="model-result" id="model-result">
+          <div class="surface-heading"><h2 id="model-name"></h2><label class="comparison-toggle"><input id="model-compare" type="checkbox" checked>Compare original</label></div>
+          <div id="model-equations" class="model-equations"></div><p id="model-drive" class="model-drive"></p>
+          <div class="model-visuals"><div><div id="model-scene" class="model-scene"></div><div class="model-player"><button id="model-play" class="icon-button" aria-label="Play evolution" title="Play evolution"><i data-lucide="play"></i></button><input id="model-time" type="range" min="0" max="15" step=".01" value="0" aria-label="Evolution time"><output id="model-clock">t = 0</output></div></div><div><div class="model-observable"><label for="model-observable">Observable</label><select id="model-observable"></select></div><canvas id="model-plot" role="img" aria-label="Calculated trajectories for two preparations and the original model"></canvas><div class="model-legend"><span>Blue: preparation 1</span><span>Red: preparation 2</span><span>Dashed: original</span></div></div></div>
+          <p id="model-final" class="model-final" aria-live="polite"></p><dl id="model-metrics" class="metrics"></dl><p id="model-status" role="status"></p>
+          <details><summary>Physical assumptions</summary><div id="model-assumptions"></div></details>
+          <details><summary>Full reference calculation</summary><div id="model-saved"></div></details>
+          <footer class="evidence-strip" id="model-sources"></footer>
+        </section>
+      </div>
     </section>
     <section id="spins" role="tabpanel" aria-labelledby="tab-spins" hidden>
       <div class="work-heading"><div><h1>Spin mechanism transfer</h1></div><button class="icon-button" id="spin-export" title="Download spin construction" aria-label="Download spin construction"><i data-lucide="download"></i></button></div>

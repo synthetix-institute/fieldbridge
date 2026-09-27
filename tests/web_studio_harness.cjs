@@ -17,7 +17,8 @@ class Element {
     this.dataset = Object.fromEntries(Object.entries(attributes).filter(([k]) => k.startsWith('data-')).map(([k,v]) => [k.slice(5).replace(/-([a-z])/g, (_,c) => c.toUpperCase()),v]));
     this.classes = new Set((attributes.class || '').split(' ')); this.listeners = {};
     this.value = attributes.value || ''; this.checked = 'checked' in attributes; this.children = [];
-    this.classList = {toggle: (name,on) => on ? this.classes.add(name) : this.classes.delete(name)};
+    this.classList = {toggle: (name,on) => on ? this.classes.add(name) : this.classes.delete(name),add:name=>this.classes.add(name),remove:name=>this.classes.delete(name)};
+    this.parentElement = {hidden:false};
     elements.set(this.id || 'node-' + serial++, this);
   }
   set innerHTML(html) {
@@ -41,6 +42,7 @@ function parse(html) {
 parse(fs.readFileSync(path.join(root,'fieldbridge/web/index.html'),'utf8'));
 elements.get('consequence').children.push(new Element('p'));
 const config = {repo:'https://github.com/synthetix-institute/fieldbridge',schema:'test',sources:{kramers:{authors:'Kramers',url:'https://example.org',year:1940},ito:{authors:'Ito',url:'https://example.org',year:1944}},gallery:[{id:'card04',name:'pitchfork',tags:[],verdict:{stores:'two states',writes:'pulse',holds:'retention',constructs:'normal form',lock:'test'},slots:{},params:{eps:1},image:'test.png',specification:'test.json'}],quantum:{tutorial:'https://example.org',examples:{rows:[]}}};
+if(process.argv[4])config.models=JSON.parse(fs.readFileSync(process.argv[4],'utf8'));
 elements.get('studio-config').textContent = JSON.stringify(config);
 const document = {
   getElementById: id => elements.get(id),
@@ -56,13 +58,22 @@ vm.runInNewContext(fs.readFileSync(path.join(root,'fieldbridge/web/studio.js'),'
 vm.runInNewContext(fs.readFileSync(path.join(root,'fieldbridge/web/collections.js'),'utf8'),{
   document,window,ResizeObserver:class {observe(){}},setTimeout,
 });
+if(config.models){
+  window.FieldBridgeModels=require(path.join(root,'fieldbridge/web/model-physics.js'));
+  vm.runInNewContext(fs.readFileSync(path.join(root,'fieldbridge/web/model-studio.js'),'utf8'),{
+    document,window,ResizeObserver:class {observe(){}},setTimeout,cancelAnimationFrame(){},requestAnimationFrame(){},
+  });
+}
 const snapshots = [];
 function snapshot() {
   return {equation:elements.get('equation').innerHTML,drive:elements.get('drive-equation').textContent,
     metrics:elements.get('metrics').innerHTML,status:elements.get('build-state').textContent,
     graph:elements.get('graph').innerHTML,consequence:elements.get('consequence').querySelector('p').textContent,
     spinEquation:elements.get('spin-equation').innerHTML,spinMetrics:elements.get('spin-metrics').innerHTML,
-    spinConsequence:elements.get('spin-consequence').textContent,hash:location.hash};
+    spinConsequence:elements.get('spin-consequence').textContent,hash:location.hash,
+    modelName:elements.get('model-name').textContent,modelEquations:elements.get('model-equations').innerHTML,
+    modelFinal:elements.get('model-final').textContent,modelMetrics:elements.get('model-metrics').innerHTML,
+    modelDesign:elements.get('model-design-result').textContent};
 }
 snapshots.push(snapshot());
 for (const action of JSON.parse(process.argv[2] || '[]')) {
