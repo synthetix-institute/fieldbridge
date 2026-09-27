@@ -84,5 +84,31 @@
       provenance:{origin:'interactive worked example',novelty:'known stochastic transformation'},
       numeric_parameters:{mu:s.mu,sigma:s.sigma}};
   }
-  return {roots,memory,trajectory,stochastic,constructionSpec};
+  function spin(s) {
+    const g=s.coupling?s.g:0,h=s.field?s.h:0;
+    const rate=2*Math.hypot(g,h),offset=rate?4*h*h/(rate*rate):1;
+    return {g,h,rate,offset,amplitude:1-offset,
+      theta:rate?Math.atan2(Math.abs(g),Math.abs(h))*180/Math.PI:0,
+      signal:t=>offset+(1-offset)*Math.cos(rate*t)};
+  }
+  function spinSpec(s,carrier='correlated-pair') {
+    const r=spin(s),drive=2*Math.abs(r.g),detuning=2*Math.abs(r.h),size=4;
+    const base={schema:'fieldbridge-quantum/1',name:'Browser rotation on '+carrier,
+      question:'Which Hamiltonian on this carrier preserves the detached rotation?',
+      field:'worked quantum construction',assumptions:['Closed unitary evolution; hbar=1.','Prepare a top eigenstate of the observable.'],
+      provenance:{origin:'interactive mechanism attachment',novelty:'known representation of su(2)'}};
+    const term=(coefficient,operator)=>({coefficient,operator});
+    if(carrier==='correlated-pair')return {...base,carrier:{kind:'qubits',n:2},hamiltonian:[term(r.g,'Z0 Z1'),term(r.h,'X0')],observable:[term(1,'X0')]};
+    if(carrier==='qubit')return {...base,carrier:{kind:'qubits',n:1},hamiltonian:[term(drive/2,'X0'),term(detuning/2,'Z0')],observable:[term(1,'Z0')]};
+    if(carrier==='spin')return {...base,carrier:{kind:'spin',j:'3/2'},hamiltonian:[term(drive,'Jx'),term(detuning,'Jz')],observable:[term(2,'Jz')]};
+    if(carrier==='bosons')return {...base,carrier:{kind:'bosons',modes:['a','b'],max_quanta:4},sector:{operator:[term(1,'na + nb')],value:4},hamiltonian:[{...term(drive/2,'ad b'),hc:true},term(detuning/2,'na'),term(-detuning/2,'nb')],observable:[term(1,'na'),term(-1,'nb')]};
+    if(carrier==='fermion-pair')return {...base,carrier:{kind:'fermions',modes:2},hamiltonian:[term(detuning/2,'n0'),term(detuning/2,'n1'),{...term(drive/2,'cd0 cd1'),hc:true}],observable:[term(1,'n0'),term(1,'n1')]};
+    if(carrier==='collective')return {...base,carrier:{kind:'qubits',n:3},hamiltonian:[term(drive/2,'X0 + X1 + X2'),term(detuning/2,'Z0 + Z1 + Z2')],observable:[term(1,'Z0 + Z1 + Z2')]};
+    if(carrier!=='chain')throw new Error('Unknown spin carrier');
+    const ham=[],obs=[];
+    for(let j=0;j<size-1;j++)ham.push(term(drive*Math.sqrt((j+1)*(size-1-j))/4,`X${j} X${j+1} + Y${j} Y${j+1}`));
+    for(let j=0;j<size;j++){ham.push(term(-detuning*(j-1.5)/2,`Z${j}`));obs.push(term(-(j-1.5),`Z${j}`));}
+    return {...base,carrier:{kind:'qubits',n:4},sector:{operator:Array.from({length:4},(_,j)=>term(1,`Z${j}`)),value:2},hamiltonian:ham,observable:obs};
+  }
+  return {roots,memory,trajectory,stochastic,constructionSpec,spin,spinSpec};
 });

@@ -46,6 +46,19 @@ shows how a mechanism is assembled and what changes when a part is removed:
   stable states, fold threshold and response to a pulse. Removing the writing
   field prevents switching; removing feedback removes bistability.
   [Equations and predictions](docs/tutorial/18_memory_writing_and_retention.md#scalar-constructor-demonstration).
+- **[Material gallery](https://synthetix-institute.github.io/fieldbridge/#gallery):**
+  browse all twelve saved model calculations: capillary rotors, dipoles,
+  compartments, laser dynamics, gene circuits, a chemical reactor and flow
+  networks. Each realization includes its calculated figure, physical
+  components, source model and downloadable calculation record.
+  [Gallery recipe](docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations).
+- **[Spins and carriers](https://synthetix-institute.github.io/fieldbridge/#spins):**
+  change the interaction and transverse field of two spins, calculate the
+  magnetization, detach the rotation and attach it to one of seven carriers.
+  The constructor supplies the target Hamiltonian, including the exchange
+  couplings of a four-spin chain. Removing the source interaction makes its
+  transverse magnetization constant.
+  [Derivation](docs/tutorial/24_spin_language.md) · [Browser/matrix tests](tests/test_web_demo.py).
 - **Stochastic transport:** construct the generator after `Y = X²` or
   `Y = log X`. Detaching the required drift separates the predicted mean
   from the source mean. Both generator coefficients are verified in Python;
@@ -63,9 +76,13 @@ For the website alone, no material sweep or oscillator calculation is needed:
 python3 -B -m fieldbridge demo --studio-only --out-dir build/demo
 ```
 
+Open `build/demo/index.html`, not the source template in `fieldbridge/web/`.
 The build verifies the three stochastic examples symbolically and saves
-`verified_examples.json`. Browser controls use closed-form relations and a
-small drift integrator; there is no model API or GPU computation. Original
+`verified_examples.json`; it also computes seven quantum attachments and
+saves their matrix-evolution checks in `quantum_examples.json`. The material
+gallery reuses the saved calculations in `examples/gallery/`. Browser controls
+use closed-form relations and a small drift integrator; there is no model API
+or GPU computation. Original
 papers, exact tutorial chapters and executable tests are linked in each module.
 
 | Section | Calculated result |

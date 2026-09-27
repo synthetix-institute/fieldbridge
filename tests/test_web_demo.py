@@ -35,6 +35,15 @@ def test_offline_build_embeds_verified_reports(tmp_path):
     assert (tmp_path / "studio/physics.js").exists()
     assert (tmp_path / "studio/lucide.min.js").exists()
     assert "Equations Derived & Verified!" not in page
+    assert len(list((tmp_path / "gallery").glob("card*.json"))) == 12
+    assert len(list((tmp_path / "gallery").glob("card*.png"))) == 12
+    assert "Memory in model materials: a gallery of realizations" in page
+    assert "two coupled spins" in page
+    quantum = json.loads((tmp_path / "quantum_examples.json").read_text())
+    assert len(quantum["attachments"]) == 7
+    assert all(r["attached"] and r["law"]["target_residual"] < 1e-8
+               for r in quantum["attachments"].values())
+    assert "index.html#gallery" in (tmp_path / "gallery.html").read_text()
 
 def test_memory_states_barrier_and_fold():
     s=memory()
@@ -94,3 +103,27 @@ def test_convention_changes_mean_but_not_variance():
     strat=browser(f"P.stochastic({json.dumps(s)})")
     assert strat["exact"]-ito["exact"] == pytest.approx(.32)
     assert strat["variance"] == ito["variance"] == pytest.approx(.64)
+
+@pytest.mark.parametrize("carrier", ["correlated-pair", "qubit", "spin", "bosons", "chain", "fermion-pair", "collective"])
+@pytest.mark.parametrize("g,h", [(1,.5),(.7,.2),(1.5,0),(0,.5),(0,0)])
+def test_browser_spin_construction_against_exact_hamiltonian(carrier,g,h):
+    np=pytest.importorskip("numpy")
+    from fieldbridge.quantum.language import load, restrict
+    s=dict(coupling=True,field=True,g=g,h=h)
+    data=browser(f"({{spec:P.spinSpec({json.dumps(s)},{json.dumps(carrier)}),values:[0,.2,.7,1.3,2].map(t=>P.spin({json.dumps(s)}).signal(t))}})")
+    real=load(data["spec"])
+    V,_=restrict(real)
+    H=V.conj().T@real.H@V;O=V.conj().T@real.O@V
+    baseline=np.trace(O).real/O.shape[0]
+    _,states=np.linalg.eigh(O);psi0=states[:,-1]
+    normalizer=(psi0.conj()@O@psi0).real-baseline
+    E,U=np.linalg.eigh(H);coefficients=U.conj().T@psi0
+    exact=[]
+    for t in [0,.2,.7,1.3,2]:
+        psi=U@(np.exp(-1j*E*t)*coefficients)
+        exact.append(float(((psi.conj()@O@psi).real-baseline)/normalizer))
+    assert data["values"] == pytest.approx(exact, abs=1e-10)
+
+def test_removing_spin_coupling_conserves_observable():
+    s=dict(coupling=False,field=True,g=1,h=.5)
+    assert browser(f"[0,1,2,3].map(t=>P.spin({json.dumps(s)}).signal(t))") == [1,1,1,1]
