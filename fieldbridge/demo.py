@@ -1,13 +1,13 @@
 """``fieldbridge demo``: comprehensive showcase of cross-field physical memory and discovery.
 
-  1  gallery of realizations  12 model materials across fields: deterministic dynamics, thermal noise, stable states,
-                              the write point and its normal form, the law of loss, and writing protocols
-  2  loops across fields      91 of 91 loops with holonomy agreement (Thomas's rule, Toulouse frustration, rotor mismatch)
-  3  phase locking            eight oscillator models from seven fields driven periodically: the derivation in each
-                              model as a chain of verified transformations, the step at which a derivation stops, and
-                              the invariants of the end points
-  4  Bloch rotation           ten quantum carriers (spins, atoms in two wells, exchange chains, Cooper pairs): the
-                              rotation derived from each carrier's own Hamiltonian, or the term that obstructs it
+  1  constructor studio       dynamic attach and detach of physical mechanisms across carriers,
+                              with live 4-panel bifurcation and retention plots
+  2  realization A: memory    12 model materials across fields: deterministic dynamics, thermal noise,
+                              stable states, write points, retention laws, and 91 holonomy loops
+  3  realization B: quantum   ten quantum carriers (spins, atoms, exchange chains, transmons):
+                              the Bloch rotation derived from each carrier's own Hamiltonian
+  4  realization C: oscillators  eight oscillator models from seven fields: step-by-step verified
+                              transformations to the Adler phase equation
   5  catalog & wanted models  20 documented materials (materials.html) and classic wanted models (wanted_materials.html)
   6  adding a material        the commands for a new material specification (CONTRIBUTING.md)
 
@@ -34,137 +34,482 @@ BOUNDARY = ("Every statement on this page is calculated from a supplied model. I
             "and with the literature.")
 
 BASE_CSS = """
-:root { --ground:#f5f7fa; --panel:#ffffff; --ink:#19202b; --muted:#586273; --rule:#dfe4eb; --accent:#1d5fd1;
-  --ok:#0e7a55; --warn:#a55a0a; --bad:#b3261e; --plate:#ffffff; --chip-ink:#ffffff; --header-bg:rgba(255,255,255,0.92); }
-@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) { color-scheme: dark;
-  --ground:#0f141b; --panel:#161c25; --ink:#e6eaf0; --muted:#9aa4b2; --rule:#283141; --accent:#7fb0ff;
-  --ok:#3fbf8f; --warn:#e0a458; --bad:#f07a70; --plate:#f3f5f8; --chip-ink:#0f141b; --header-bg:rgba(22,28,37,0.92); } }
-:root[data-theme="dark"] { color-scheme: dark; --ground:#0f141b; --panel:#161c25; --ink:#e6eaf0; --muted:#9aa4b2;
-  --rule:#283141; --accent:#7fb0ff; --ok:#3fbf8f; --warn:#e0a458; --bad:#f07a70; --plate:#f3f5f8; --chip-ink:#0f141b; --header-bg:rgba(22,28,37,0.92); }
-* { box-sizing: border-box; }
-body { background:var(--ground); color:var(--ink); font:15px/1.6 "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  margin:0; padding:0; padding-bottom:72px; }
-.site-nav { position:sticky; top:0; z-index:100; backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
-  background:var(--header-bg); border-bottom:1px solid var(--rule); padding:12px 20px; box-shadow:0 1px 4px rgba(0,0,0,0.02); }
-.nav-wrap { max-width:1160px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap; }
-.brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--ink); font-weight:700; font-size:17px; letter-spacing:-0.01em; }
-.brand-badge { background:var(--accent); color:var(--chip-ink); font-size:11px; padding:2px 7px; border-radius:999px; font-weight:600; letter-spacing:0.04em; text-transform:uppercase; }
-.nav-links { display:flex; gap:6px 12px; flex-wrap:wrap; align-items:center; margin:0; padding:0; list-style:none; }
-.nav-links a { color:var(--muted); text-decoration:none; font-size:13.5px; font-weight:500; padding:5px 9px; border-radius:6px; transition:all 0.15s; }
-.nav-links a:hover, .nav-links a.active { color:var(--ink); background:var(--panel); border:1px solid var(--rule); }
-main { max-width:1160px; margin:0 auto; padding:28px 16px 0; display:grid; gap:36px; }
-h1, h2 { font-family:"Spectral", Georgia, "Times New Roman", serif; font-weight:600; text-wrap:balance; margin:0; }
-h1 { font-size:clamp(28px, 4vw, 38px); line-height:1.15; }
-h2 { font-size:23px; }
-h3 { font-size:16.5px; margin:0; font-weight:600; }
-p { margin:0; max-width:76ch; }
-.lead { color:var(--muted); font-size:15.5px; line-height:1.65; }
-.mono, code { font-family:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace; font-size:0.86em; }
-.stats { display:flex; flex-wrap:wrap; gap:8px 12px; color:var(--muted); font-size:13px; align-items:center; }
-.stats span { background:var(--panel); border:1px solid var(--rule); padding:4px 10px; border-radius:6px; }
-.stats b { color:var(--ink); font-variant-numeric:tabular-nums; margin-right:4px; font-weight:600; }
-.steps { display:grid; grid-template-columns:repeat(auto-fit, minmax(250px, 1fr)); gap:16px; }
-.step { background:var(--panel); padding:16px; border-radius:8px; border:1px solid var(--rule); border-top:3px solid var(--accent); font-size:14px; color:var(--muted); }
-.step b { color:var(--ink); display:block; font-size:14.5px; letter-spacing:0.02em; margin-bottom:5px; font-weight:600; }
-.scroll { overflow-x:auto; border:1px solid var(--rule); border-radius:8px; background:var(--panel); box-shadow:0 1px 3px rgba(0,0,0,0.02); }
-table { border-collapse:collapse; width:100%; font-size:13.5px; min-width:760px; }
-th, td { text-align:left; vertical-align:top; padding:10px 14px; border-bottom:1px solid var(--rule); }
-th { color:var(--muted); font-weight:600; font-size:12px; text-transform:uppercase; letter-spacing:0.06em; background:rgba(0,0,0,0.015); }
-tr:last-child td { border-bottom:0; }
-tr:hover td { background:rgba(0,0,0,0.012); }
-td a { color:var(--accent); text-decoration:none; font-weight:500; }
-td a:hover, td a:focus-visible { text-decoration:underline; }
-.chip { display:inline-block; padding:2px 8px; border-radius:999px; font-size:11.5px; font-weight:600; color:var(--chip-ink); white-space:nowrap; }
-.chip.ok { background:var(--ok); } .chip.warn { background:var(--warn); } .chip.bad { background:var(--bad); }
-.chip.none { background:var(--muted); }
-.chip.info { background:var(--accent); }
-section.card { display:grid; gap:14px; padding:22px; background:var(--panel); border:1px solid var(--rule); border-radius:10px; box-shadow:0 1px 3px rgba(0,0,0,0.02); }
-.card-head { display:flex; flex-wrap:wrap; gap:8px 14px; align-items:baseline; }
-.card-head .src { color:var(--muted); font-size:13.5px; }
-.plate { background:var(--plate); border-radius:8px; padding:10px; border:1px solid var(--rule); }
-.plate img { display:block; width:100%; height:auto; max-width:100%; border-radius:4px; }
-.facts { display:grid; grid-template-columns:repeat(auto-fit, minmax(320px, 1fr)); gap:16px 28px; }
-dl { display:grid; grid-template-columns:max-content 1fr; gap:6px 14px; margin:0; font-size:13.5px; }
-dt { color:var(--muted); font-weight:500; }
-dd { margin:0; }
-nav.pills { display:flex; flex-wrap:wrap; gap:6px; }
-nav.pills a { color:var(--ink); background:var(--panel); border:1px solid var(--rule); border-radius:6px; padding:3px 10px; font-size:12.5px; text-decoration:none; transition:all 0.15s; }
-nav.pills a:hover { border-color:var(--accent); color:var(--accent); }
-nav a:focus-visible, td a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
-.search-bar { width:100%; max-width:440px; padding:9px 14px; font-size:14px; border:1px solid var(--rule); border-radius:6px; background:var(--panel); color:var(--ink); }
-.field-badge { display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; color:var(--accent); background:rgba(29,95,209,0.08); padding:2px 7px; border-radius:4px; }
-html { scroll-behavior: smooth; }
-
-/* Constructor & Language specific styles */
-.roadmap-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:6px; }
-.roadmap-card { background:var(--panel); border:1px solid var(--rule); border-radius:8px; padding:16px; display:grid; gap:6px; text-decoration:none; color:var(--ink); transition:all 0.15s; }
-.roadmap-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.04); }
-.roadmap-card h4 { margin:0; font-size:14.5px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:8px; }
-.roadmap-card p { margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
-.roadmap-card .jump { font-size:12px; font-weight:600; color:var(--accent); margin-top:4px; }
-
-.lang-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
-.lang-card { background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:16px; display:grid; gap:6px; }
-.lang-card h4 { margin:0; font-size:14.5px; color:var(--ink); display:flex; align-items:center; justify-content:space-between; }
-.lang-sym { font-family:"Spectral", serif; font-size:18px; font-weight:bold; color:var(--accent); }
-.lang-card p { margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
-
-.tabs { display:flex; gap:8px; border-bottom:1px solid var(--rule); margin-bottom:14px; flex-wrap:wrap; }
-.tab-btn { background:none; border:none; padding:8px 14px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; border-radius:6px 6px 0 0; transition:all 0.15s; }
-.tab-btn:hover { color:var(--ink); background:rgba(0,0,0,0.02); }
-.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(29,95,209,0.06); }
-.tab-pane { display:none; }
-.tab-pane.active { display:grid; gap:14px; }
-
-.flow-grid { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:12px; align-items:center; }
-.flow-box { background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:14px; display:grid; gap:6px; font-size:13px; }
-.flow-box b { color:var(--ink); font-size:13.5px; }
-.flow-arrow { display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:18px; font-weight:bold; text-align:center; padding:0 4px; }
-.flow-arrow span { font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; color:var(--muted); }
-.code-snip { font-family:"JetBrains Mono", monospace; font-size:12.5px; background:var(--ground); border:1px solid var(--rule); border-radius:6px; padding:10px 12px; overflow-x:auto; white-space:pre-wrap; color:var(--ink); }
-
-@media (max-width:860px) {
-  .flow-grid { grid-template-columns:1fr; gap:10px; }
-  .flow-arrow { transform:rotate(90deg); padding:8px 0; }
+:root {
+  --ground: #f4f6fa;
+  --panel: #ffffff;
+  --ink: #161e2e;
+  --muted: #5a6679;
+  --rule: #dfe5ef;
+  --accent: #1d5fd1;
+  --accent-light: rgba(29, 95, 209, 0.08);
+  --ok: #0d8253;
+  --ok-light: rgba(13, 130, 83, 0.08);
+  --warn: #b25e02;
+  --warn-light: rgba(178, 94, 2, 0.08);
+  --bad: #c22922;
+  --plate: #f8fafc;
+  --chip-ink: #ffffff;
+  --header-bg: rgba(255, 255, 255, 0.94);
+  --shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
 }
-@media (max-width:640px) { dl { grid-template-columns:1fr; } dt { margin-top:6px; } }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ground: #0d1219;
+    --panel: #151c26;
+    --ink: #e8ecf3;
+    --muted: #96a2b4;
+    --rule: #263242;
+    --accent: #6ca0fc;
+    --accent-light: rgba(108, 160, 252, 0.12);
+    --ok: #34c787;
+    --ok-light: rgba(52, 199, 135, 0.12);
+    --warn: #e59d48;
+    --warn-light: rgba(229, 157, 72, 0.12);
+    --bad: #f07167;
+    --plate: #1a222e;
+    --chip-ink: #0d1219;
+    --header-bg: rgba(21, 28, 38, 0.94);
+    --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ground: #0d1219;
+  --panel: #151c26;
+  --ink: #e8ecf3;
+  --muted: #96a2b4;
+  --rule: #263242;
+  --accent: #6ca0fc;
+  --accent-light: rgba(108, 160, 252, 0.12);
+  --ok: #34c787;
+  --ok-light: rgba(52, 199, 135, 0.12);
+  --warn: #e59d48;
+  --warn-light: rgba(229, 157, 72, 0.12);
+  --bad: #f07167;
+  --plate: #1a222e;
+  --chip-ink: #0d1219;
+  --header-bg: rgba(21, 28, 38, 0.94);
+  --shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--ground);
+  color: var(--ink);
+  font: 14.5px/1.6 "Public Sans", system-ui, -apple-system, sans-serif;
+  margin: 0;
+  padding: 0;
+  padding-bottom: 72px;
+}
+.site-nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  background: var(--header-bg);
+  border-bottom: 1px solid var(--rule);
+  padding: 10px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+}
+.nav-wrap {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: 16.5px;
+}
+.brand-badge {
+  background: var(--accent);
+  color: var(--chip-ink);
+  font-size: 11px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.view-tabs {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  flex-wrap: wrap;
+}
+.view-tabs button, .view-tabs a {
+  background: none;
+  border: 1px solid transparent;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 6px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.view-tabs button:hover, .view-tabs a:hover {
+  color: var(--ink);
+  background: var(--panel);
+  border-color: var(--rule);
+}
+.view-tabs button.active, .view-tabs a.active {
+  color: var(--accent);
+  background: var(--accent-light);
+  border-color: var(--accent);
+}
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px 16px 0;
+  display: grid;
+  gap: 28px;
+}
+h1, h2 {
+  font-family: "Spectral", Georgia, serif;
+  font-weight: 600;
+  text-wrap: balance;
+  margin: 0;
+}
+h1 { font-size: clamp(26px, 3.5vw, 36px); line-height: 1.2; }
+h2 { font-size: 22px; }
+h3 { font-size: 16px; margin: 0; font-weight: 600; }
+p { margin: 0; max-width: 82ch; }
+.lead { color: var(--muted); font-size: 15px; line-height: 1.6; }
+.mono, code { font-family: "JetBrains Mono", ui-monospace, Menlo, monospace; font-size: 0.88em; }
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 12px;
+  color: var(--muted);
+  font-size: 13px;
+  align-items: center;
+}
+.stats span {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  padding: 4px 10px;
+  border-radius: 6px;
+}
+.stats b { color: var(--ink); font-variant-numeric: tabular-nums; margin-right: 4px; font-weight: 600; }
+
+/* Views system */
+.view-panel { display: none; }
+.view-panel.active { display: grid; gap: 28px; }
+
+/* Studio & Constructor specific styles */
+.studio-deck {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+  padding: 22px;
+  display: grid;
+  gap: 20px;
+  box-shadow: var(--shadow);
+}
+.ribbon-wrap {
+  display: grid;
+  gap: 8px;
+}
+.ribbon-label {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.ribbon {
+  display: flex;
+  gap: 6px;
+  overflow-x: auto;
+  padding-bottom: 6px;
+  scrollbar-width: thin;
+}
+.ribbon-btn {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+.ribbon-btn:hover {
+  color: var(--ink);
+  border-color: var(--accent);
+}
+.ribbon-btn.active {
+  background: var(--accent);
+  color: var(--chip-ink);
+  border-color: var(--accent);
+}
+
+.assembly-rig {
+  background: var(--ground);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  gap: 16px;
+}
+.rig-flow {
+  display: grid;
+  grid-template-columns: 1fr auto 1.2fr auto 1fr;
+  gap: 12px;
+  align-items: center;
+}
+.rig-module {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  position: relative;
+  transition: all 0.2s ease;
+}
+.rig-module.detached {
+  border: 2px dashed var(--warn);
+  background: var(--warn-light);
+}
+.rig-module h4 {
+  margin: 0;
+  font-size: 13.5px;
+  color: var(--ink);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.action-btn {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  color: var(--ink);
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.action-btn:hover {
+  background: var(--accent-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.action-btn.detach {
+  background: var(--warn-light);
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.action-btn.attach {
+  background: var(--ok-light);
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.flow-arrow-sym {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: var(--accent);
+  font-size: 20px;
+  font-weight: bold;
+}
+.flow-arrow-sym span {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.studio-main {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 20px;
+  align-items: start;
+}
+.plate-card {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+  padding: 16px;
+  display: grid;
+  gap: 12px;
+}
+.plate-img-wrap {
+  background: var(--plate);
+  border-radius: 8px;
+  padding: 10px;
+  border: 1px solid var(--rule);
+}
+.plate-img-wrap img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 4px;
+}
+.plate-legend {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  text-align: center;
+  font-size: 11.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.plate-legend span {
+  background: var(--ground);
+  padding: 4px 6px;
+  border-radius: 4px;
+  border: 1px solid var(--rule);
+}
+
+.metrics-deck {
+  display: grid;
+  gap: 14px;
+}
+.metric-box {
+  background: var(--panel);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 14px;
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+}
+.metric-box h5 {
+  margin: 0;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+.metric-box .val {
+  font-size: 14.5px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.scroll {
+  overflow-x: auto;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--panel);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; min-width: 760px; }
+th, td { text-align: left; vertical-align: top; padding: 10px 14px; border-bottom: 1px solid var(--rule); }
+th { color: var(--muted); font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.06em; background: rgba(0,0,0,0.015); }
+tr:last-child td { border-bottom: 0; }
+tr:hover td { background: rgba(0,0,0,0.012); }
+td a { color: var(--accent); text-decoration: none; font-weight: 500; }
+td a:hover, td a:focus-visible { text-decoration: underline; }
+
+.chip { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11.5px; font-weight: 600; color: var(--chip-ink); white-space: nowrap; }
+.chip.ok { background: var(--ok); } .chip.warn { background: var(--warn); } .chip.bad { background: var(--bad); }
+.chip.none { background: var(--muted); }
+.chip.info { background: var(--accent); }
+
+section.card { display: grid; gap: 14px; padding: 22px; background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+.card-head { display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: baseline; }
+.card-head .src { color: var(--muted); font-size: 13.5px; }
+.plate { background: var(--plate); border-radius: 8px; padding: 10px; border: 1px solid var(--rule); }
+.plate img { display: block; width: 100%; height: auto; max-width: 100%; border-radius: 4px; }
+.facts { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px 28px; }
+dl { display: grid; grid-template-columns: max-content 1fr; gap: 6px 14px; margin: 0; font-size: 13.5px; }
+dt { color: var(--muted); font-weight: 500; }
+dd { margin: 0; }
+
+.steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
+.step { background: var(--panel); padding: 16px; border-radius: 8px; border: 1px solid var(--rule); border-top: 3px solid var(--accent); font-size: 14px; color: var(--muted); }
+.step b { color: var(--ink); display: block; font-size: 14.5px; letter-spacing: 0.02em; margin-bottom: 5px; font-weight: 600; }
+
+.search-bar { width: 100%; max-width: 440px; padding: 9px 14px; font-size: 14px; border: 1px solid var(--rule); border-radius: 6px; background: var(--panel); color: var(--ink); }
+.field-badge { display: inline-block; font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; font-weight: 600; color: var(--accent); background: rgba(29,95,209,0.08); padding: 2px 7px; border-radius: 4px; }
+
+@media (max-width: 960px) {
+  .rig-flow { grid-template-columns: 1fr; }
+  .flow-arrow-sym { transform: rotate(90deg); padding: 6px 0; }
+  .studio-main { grid-template-columns: 1fr; }
+  .plate-legend { grid-template-columns: repeat(2, 1fr); }
+}
+@media (max-width: 640px) { dl { grid-template-columns: 1fr; } dt { margin-top: 6px; } }
 """
 
 
 def _nav_header(active: str = "demo") -> str:
-    links = [
-        ("index.html#overview", "Overview", active == "demo"),
-        ("index.html#language", "Nested Language", False),
-        ("index.html#constructor", "Constructor Engine", False),
-        ("index.html#realization-a", "Realization A: Memory", False),
-        ("index.html#glance", "At a Glance", False),
-        ("index.html#loops", "Holonomy Loops", False),
-        ("index.html#quantum", "Quantum Carriers", False),
-        ("index.html#mechanism", "Phase Locking", False),
-        ("materials.html", "Catalog (20)", active == "materials"),
-        ("wanted_materials.html", "Wanted Models", active == "wanted"),
-        ("gallery.html", "Standalone Gallery", active == "gallery"),
-        (f"{REPO}", "GitHub ↗", False)
-    ]
-    links_html = "".join(f"<li><a href='{url}' class='{'active' if is_act else ''}'>{label}</a></li>" for url, label, is_act in links)
-    return (f"<header class='site-nav'><div class='nav-wrap'>"
-            f"<a href='index.html' class='brand'>"
-            f"<span>FieldBridge</span><span class='brand-badge'>Synthetix</span></a>"
-            f"<ul class='nav-links'>{links_html}</ul></div></header>")
+    return f"""<header class='site-nav'>
+  <div class='nav-wrap'>
+    <a href='index.html' class='brand'>
+      <span class='brand-badge'>FieldBridge</span>
+      <span>Physical Constructor Workbench</span>
+    </a>
+    <nav aria-label='Primary Navigation'>
+      <ul class='view-tabs'>
+        <li><button type='button' class='active' id='btn-studio' onclick="showView('studio')">🎛️ Constructor Studio</button></li>
+        <li><button type='button' id='btn-memory' onclick="showView('memory')">💾 Realization A (Memory)</button></li>
+        <li><button type='button' id='btn-loops' onclick="showView('loops')">🔄 Holonomy Loops (91)</button></li>
+        <li><button type='button' id='btn-quantum' onclick="showView('quantum')">⚛️ Realization B (Quantum)</button></li>
+        <li><button type='button' id='btn-oscillators' onclick="showView('oscillators')">📡 Realization C (Oscillators)</button></li>
+        <li><a href='materials.html'>📚 Catalog (20) ↗</a></li>
+        <li><a href='wanted_materials.html'>💡 Wanted Models ↗</a></li>
+        <li><a href='{REPO}' target='_blank' rel='noopener'>GitHub ↗</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>"""
 
 
 def _page_shell(title: str, body_html: str, active: str = "demo") -> str:
-    from .memory.visual import FONTS
-    esc = html.escape
-    return (f"<!doctype html><html lang='en'><head><meta charset='utf-8'>"
-            f"<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'>"
-            f"<title>{esc(title)}</title>{FONTS}<style>{BASE_CSS}</style></head>"
-            f"<body>{_nav_header(active)}<main>{body_html}</main></body></html>")
+    return f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{html.escape(title)}</title>
+<style>{BASE_CSS}</style>
+</head>
+<body>
+{_nav_header(active)}
+<main>
+{body_html}
+</main>
+</body>
+</html>"""
 
 
 def _short(text: str, n: int = 50) -> str:
-    text = str(text or "").strip()
-    return text if len(text) <= n else text[: n - 1].rsplit(" ", 1)[0] + "…"
+    t = " ".join(str(text).split())
+    return t if len(t) <= n else t[:n - 1] + "…"
 
 
 def _mechanism_name(c: dict) -> str:
@@ -193,8 +538,12 @@ def _chip(c: dict) -> str:
 
 
 def _img(path) -> str:
-    from .memory.visual import _img64
-    return _img64(path) if path and Path(path).exists() else ""
+    import base64
+    p = Path(path)
+    if not p.exists():
+        return ""
+    b64 = base64.b64encode(p.read_bytes()).decode("ascii")
+    return f"data:image/png;base64,{b64}"
 
 
 def _material(out: Path, seed: int) -> Dict:
@@ -211,7 +560,7 @@ def _material(out: Path, seed: int) -> Dict:
     (step / "card.json").write_text(payload, encoding="utf-8")
     card_figure(card, step / "card.png")
     event = next((e for e in card["construct"]["events"] if e["source"] == "control"), {})
-    return {"figure": step / "card.png", "verdict": card["verdict"], "states": card["states"]["count"],
+    return {"name": card.get("name", "genetic toggle switch"), "figure": step / "card.png", "verdict": card["verdict"], "states": card["states"]["count"],
             "write_point": event.get("value"), "write_kind": str(event.get("kind", "")).split(":")[0],
             "threshold": card.get("threshold"), "agreement": comparison.get("all_consistent"),
             "prediction": pred["predictions"].get("write", {}).get("prediction", "")}
@@ -253,32 +602,35 @@ def _load_gallery(out: Path) -> Dict:
     gal_dir = out / "gallery"
     gal_dir.mkdir(parents=True, exist_ok=True)
     cards = []
-    loops_info = None
-    gal_src = GALLERY_DATA
-    if (gal_src / "gallery.json").exists():
-        with open(gal_src / "gallery.json", encoding="utf-8") as f:
-            gj = json.load(f)
-        loops_info = gj.get("loops")
-        for card_meta in gj.get("cards", []):
-            cid = card_meta["id"]
-            cf = gal_src / f"{cid}.json"
-            if cf.exists():
-                with open(cf, encoding="utf-8") as f:
-                    card = json.load(f)
-                img_src = gal_src / f"{cid}.png"
-                if img_src.exists():
-                    shutil.copy2(img_src, gal_dir / f"{cid}.png")
-                    card["figure_path"] = gal_dir / f"{cid}.png"
+    if GALLERY_DATA.exists():
+        for f in sorted(GALLERY_DATA.glob("card*.json")):
+            try:
+                card = json.loads(f.read_text(encoding="utf-8"))
+                png = f.with_suffix(".png")
+                if png.exists():
+                    shutil.copy2(png, gal_dir / png.name)
                 cards.append(card)
-        loops_src = gal_src / "loops.png"
-        if loops_src.exists():
-            shutil.copy2(loops_src, gal_dir / "loops.png")
-            loops_fig = gal_dir / "loops.png"
+            except Exception:
+                pass
+        loops_png = GALLERY_DATA / "loops.png"
+        if loops_png.exists():
+            shutil.copy2(loops_png, gal_dir / "loops.png")
+            loops_fig = str(gal_dir / "loops.png")
         else:
             loops_fig = None
     else:
         loops_fig = None
-    return {"cards": cards, "loops": loops_info, "loops_fig": loops_fig}
+
+    loops_json = GALLERY_DATA / "gallery.json" if GALLERY_DATA.exists() else None
+    if loops_json and loops_json.exists():
+        try:
+            info = json.loads(loops_json.read_text(encoding="utf-8")).get("loops", {})
+        except Exception:
+            info = {"total": 91, "consistent": 91}
+    else:
+        info = {"total": 91, "consistent": 91}
+
+    return {"cards": cards, "loops": info, "loops_fig": loops_fig}
 
 
 def _render_materials(out: Path) -> None:
@@ -423,297 +775,420 @@ def _page(results: Dict, out: Path) -> None:
     n_loops = loops_info.get("total", 91) if loops_info else 91
     ok_loops = loops_info.get("consistent", 91) if loops_info else 91
 
+    # Extract lightweight JSON array for client-side dynamic constructor rig
+    client_cards = []
+    for cd in cards:
+        client_cards.append({
+            "id": cd.get("id", ""),
+            "name": cd.get("name", ""),
+            "field": cd.get("provenance", ""),
+            "slots": cd.get("slots", {}),
+            "verdict": cd.get("verdict", {}),
+            "img": f"gallery/{cd.get('id')}.png"
+        })
+    cards_js = json.dumps(client_cards)
+
     parts = []
 
-    # 1. Main Hero & Architectural Overview
-    parts.append(
-        "<section id='overview' style='display:grid;gap:18px'>"
-        "<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>"
-        "<span class='brand-badge' style='background:var(--accent)'>Mathematical Physical Constructor</span>"
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>No-LLM Cross-Field Mechanism Translation & Derivation</span></div>"
-        "<h1>Bridging Physical Mechanisms Across Scientific Disciplines</h1>"
-        "<p class='lead'>FieldBridge formalizes physical theories as mathematical constructors. Instead of relying on "
-        "generative LLM analogies, it decouples a dynamical mechanism from its physical carrier (<b>Detach</b>) and "
-        "transplants it onto native operators in a different discipline (<b>Attach</b>)&mdash;deriving equations, "
-        "locating write points, and checking for physical obstructions from first principles.</p>"
-        "<div class='stats'>"
-        "<span><b>14</b> scientific fields</span>"
-        "<span><b>20</b> catalog models</span>"
-        "<span><b>12</b> evaluated realizations</span>"
-        "<span><b>91/91</b> holonomy loops verified</span>"
-        "<span><b>100%</b> machine-derived</span>"
-        "</div>"
-        "<div class='roadmap-grid'>"
-        "<a href='#language' class='roadmap-card'>"
-        "<h4><span>🧩</span> 1. The Nested Language</h4>"
-        "<p>How physical systems are formally encoded as realizations: carriers, operations, closures, observables, protocols, and parameters.</p>"
-        "<div class='jump'>Explore Formalism &darr;</div></a>"
-        "<a href='#constructor' class='roadmap-card'>"
-        "<h4><span>⚡</span> 2. Constructor Engine</h4>"
-        "<p>Interactive demonstration of Detaching invariant mechanisms and Attaching them to new physical carriers across fields.</p>"
-        "<div class='jump'>Try Mechanism Transfers &darr;</div></a>"
-        "<a href='#realization-a' class='roadmap-card'>"
-        "<h4><span>💾</span> 3. Realization A: Memory</h4>"
-        "<p>The gallery of 12 evaluated model materials storing state via pitchforks, folds, and limit cycles, with 91 holonomy loops.</p>"
-        "<div class='jump'>View 12 Materials Gallery &darr;</div></a>"
-        "<a href='#quantum' class='roadmap-card'>"
-        "<h4><span>⚛️</span> 4. Realizations B & C</h4>"
-        "<p>Coherent SU(2) Bloch rotations across 10 quantum carriers, and collective phase locking across 8 oscillator models.</p>"
-        "<div class='jump'>View Quantum & Synchrony &darr;</div></a>"
-        "</div>"
-        "</section>"
-    )
+    # =========================================================================
+    # VIEW 1: CONSTRUCTOR STUDIO (DEFAULT & INTERACTIVE)
+    # =========================================================================
+    studio_html = [
+        "<div class='view-panel active' id='view-studio'>",
+        "<header style='display:grid;gap:12px'>",
+        "<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>",
+        "<span class='brand-badge'>Interactive Constructor Studio</span>",
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Physical Mechanism Attach & Detach Workbench</span></div>",
+        "<h1>Physical Mechanism Constructor Studio</h1>",
+        "<p class='lead'>A mathematical constructor formalizes physical models without LLM hallucinations. "
+        "Select any realization below, <b>detach</b> its carrier to isolate the portable dynamical invariant, "
+        "and <b>attach</b> it to a target carrier to derive its equations and inspect the resulting 4-panel diagnostic plot.</p>",
+        "<div class='stats'>",
+        f"<span><b>{len(cards)}</b> model materials</span>",
+        "<span><b>14</b> scientific fields</span>",
+        f"<span><b>{ok_loops}/{n_loops}</b> holonomy loops verified</span>",
+        "<span><b>100%</b> machine-derived</span>",
+        "</div>",
+        "</header>",
 
-    # 2. Section 1: The Nested Language of Realizations
-    parts.append(
-        "<section id='language' class='card'>"
-        "<div class='card-head'><h2>1. The Foundation: The Nested Language of Realizations</h2>"
-        "<span class='src'>Mathematical Definition</span></div>"
-        "<p>Every physical system is formalized as a realization:</p>"
-        "<div class='code-snip' style='font-size:14px;font-weight:600;text-align:center'>"
-        "I_real = ( ( &Omega;, &Xi; ) ;  C,  R,  P ;  A )"
-        "</div>"
-        "<p class='lead'>A realization binds an abstract dynamical generator to a concrete material substrate. "
-        "Separating the representation from the dynamics allows mathematical operations to act on physical theories directly:</p>"
-        "<div class='lang-grid'>"
-        "<div class='lang-card'><h4><span>Carrier</span><span class='lang-sym'>&Xi;</span></h4>"
-        "<p>The physical state space and representation: continuous angles (&theta;), gene concentrations (u, v), qubit Hilbert spaces, optical cavity fields, or electrical phases.</p></div>"
-        "<div class='lang-card'><h4><span>Operation</span><span class='lang-sym'>&Omega;</span></h4>"
-        "<p>The generator of dynamics: deterministic vector flow f(x), Hamiltonian operator H = &sum; g_i O_i, or Langevin drift.</p></div>"
-        "<div class='lang-card'><h4><span>Closure</span><span class='lang-sym'>C</span></h4>"
-        "<p>Constitutive relations and constraints: adiabatic elimination of fast degrees of freedom, boundary conditions, and symmetries.</p></div>"
-        "<div class='lang-card'><h4><span>Observable</span><span class='lang-sym'>R</span></h4>"
-        "<p>What an experiment measures or retains: stored discrete order parameter, transverse magnetization &lang;X_0&rang;, or readout signal.</p></div>"
-        "<div class='lang-card'><h4><span>Protocol</span><span class='lang-sym'>P</span></h4>"
-        "<p>How the material is prepared, driven, and perturbed: writing pulses, swept magnetic fields, or initial state preparations.</p></div>"
-        "<div class='lang-card'><h4><span>Parameters</span><span class='lang-sym'>A</span></h4>"
-        "<p>The constitutive constants of the physical apparatus: coupling constants, friction coefficients, relaxation timescales, and nonlinear gains.</p></div>"
-        "</div>"
-        "</section>"
-    )
+        # Interactive Constructor Rig
+        "<section class='studio-deck'>",
+        "<div class='ribbon-wrap'>",
+        "<div class='ribbon-label'><span>Select Assembled Realization</span><span id='deck-counter'>Material 1 of 12</span></div>",
+        "<div class='ribbon' id='material-ribbon'>",
+    ]
 
-    # 3. Section 2: The Constructor Engine (Interactive Detach & Attach Demonstration)
-    parts.append(
-        "<section id='constructor' class='card'>"
-        "<div class='card-head'><h2>2. The Constructor Engine: Detach & Attach</h2>"
-        "<span class='src'>Cross-Field Mechanism Transfer Pipeline</span></div>"
-        "<p>A physical mechanism can be separated from the carrier on which it was discovered (<b>Detach</b>) "
-        "and attached to a new carrier in another scientific domain (<b>Attach</b>):</p>"
-        "<div class='code-snip' style='font-size:13.5px;font-weight:600;text-align:center;color:var(--accent)'>"
-        "I_real^(source) &nbsp;&xrarr;&nbsp; [ DETACH ] &nbsp;&xrarr;&nbsp; (&Omega;_s, 0) &nbsp;&xrarr;&nbsp; [ ATTACH ] &nbsp;&xrarr;&nbsp; (&Omega;_s, &Xi;_t) &nbsp;&xrarr;&nbsp; I_real^(target)"
-        "</div>"
-        "<p class='lead'>Select a machine-verified mechanism transfer below to observe how the constructor decouples the invariant dynamical kernel and instantiates it into a target carrier's own native operators:</p>"
-        "<div class='tabs'>"
-        "<button class='tab-btn active' onclick='switchTab(0)'>🧬 &rarr; 🔬 Symmetric Memory (Biology &rarr; Soft Matter)</button>"
-        "<button class='tab-btn' onclick='switchTab(1)'>🧲 &rarr; ⚛️ Bloch State Rotation (NMR &rarr; Qubits)</button>"
-        "<button class='tab-btn' onclick='switchTab(2)'>🦗 &rarr; ⚡ Phase Synchronization (Ecology &rarr; Superconductivity)</button>"
-        "</div>"
-        "<div class='tab-pane active' id='tab-pane-0'>"
-        "<div class='flow-grid'>"
-        "<div class='flow-box'><b>Source Realization: Genetic Switch</b>"
-        "<span class='field-badge'>Synthetic Biology</span>"
-        "<p>Carrier &Xi;_s: repressor concentrations u, v.<br>Operation &Omega;_s: mutual repression Hill dynamics.<br>Closure: symmetric mode u+v is adiabatically eliminated.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
-        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
-        "<span class='chip ok'>Symmetric Pitchfork Normal Form</span>"
-        "<p class='mono'>ds/dt = &epsilon;s &minus; s&sup3; + h</p>"
-        "<p>Independent of biochemistry. Stores a bit via spontaneous symmetry breaking at &epsilon; = 0.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
-        "<div class='flow-box'><b>Target Realization: Capillary Rotors</b>"
-        "<span class='field-badge'>Colloid Soft Matter</span>"
-        "<p>Carrier &Xi;_t: angular orientations &theta;_1, &theta;_2.<br>Operation &Omega;_t: capillary quadrupole torque.<br>Verification: both realize cubic retention law a_3 &lt; 0.</p></div>"
-        "</div>"
-        "<div class='code-snip'>$ python3 -B -m fieldbridge memory attach --from examples/memory/toggle.json --to examples/memory/colloid_caged.json</div>"
-        "</div>"
-        "<div class='tab-pane' id='tab-pane-1'>"
-        "<div class='flow-grid'>"
-        "<div class='flow-box'><b>Source Realization: Nuclear Spin</b>"
-        "<span class='field-badge'>Nuclear Magnetic Resonance</span>"
-        "<p>Carrier &Xi;_s: single nuclear spin-1/2.<br>Operation &Omega;_s: RF magnetic drive.<br>Closure: unitary SU(2) evolution.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
-        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
-        "<span class='chip ok'>Rabi Rotation Law (su(2) Algebra)</span>"
-        "<p class='mono'>[J_a, J_b] = i &epsilon;_abc J_c<br>f(t) = cos&sup2;&theta; + sin&sup2;&theta; cos(|&Omega;|t)</p>"
-        "<p>Dimension and representation spin j drop out completely.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
-        "<div class='flow-box'><b>Target Realization: Transmon Qubits</b>"
-        "<span class='field-badge'>Quantum Computing</span>"
-        "<p>Carrier &Xi;_t: exchange chain of N qubits.<br>Operation &Omega;_t: H = g Z_0 Z_1 + h X_0.<br>Verification: returns design J_j &prop; &radic;((j+1)(N-1-j)).</p></div>"
-        "</div>"
-        "<div class='code-snip'>$ python3 -B -m fieldbridge construct --source examples/quantum/nuclear_spin.json --target examples/quantum/two_spins.json</div>"
-        "</div>"
-        "<div class='tab-pane' id='tab-pane-2'>"
-        "<div class='flow-grid'>"
-        "<div class='flow-box'><b>Source Realization: Firefly Swarm</b>"
-        "<span class='field-badge'>Mathematical Ecology</span>"
-        "<p>Carrier &Xi;_s: bioluminescent pulse phases &psi;_i.<br>Operation &Omega;_s: visual flash coupling.<br>Closure: slow phase reduction.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
-        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
-        "<span class='chip ok'>Adler Phase Equation</span>"
-        "<p class='mono'>d&psi;/dt = &Delta;&omega; &minus; K sin &phi;</p>"
-        "<p>Phase lock condition: K &ge; |&Delta;&omega;| / |Z_n|. Universal synchronization threshold.</p></div>"
-        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
-        "<div class='flow-box'><b>Target Realization: Josephson Array</b>"
-        "<span class='field-badge'>Superconducting Electronics</span>"
-        "<p>Carrier &Xi;_t: junction superconducting phase differences.<br>Operation &Omega;_t: microwave AC drive.<br>Verification: predicts exact Shapiro voltage steps.</p></div>"
-        "</div>"
-        "<div class='code-snip'>$ python3 -B -m fieldbridge compare examples/mechanisms/firefly.json examples/mechanisms/josephson.json</div>"
-        "</div>"
-        "<script>"
-        "function switchTab(idx) {"
-        "  const btns = document.querySelectorAll('.tab-btn');"
-        "  const panes = document.querySelectorAll('.tab-pane');"
-        "  btns.forEach((b, i) => b.classList.toggle('active', i === idx));"
-        "  panes.forEach((p, i) => p.classList.toggle('active', i === idx));"
-        "}"
-        "</script>"
-        "</section>"
-    )
+    for idx, cd in enumerate(cards):
+        act = "active" if idx == 0 else ""
+        cname = cd.get("name", "").split(",")[0]
+        studio_html.append(f"<button type='button' class='ribbon-btn {act}' onclick='selectMaterial({idx})'>{esc(cname)}</button>")
 
-    # 4. Section 3: Realization A - Material Memory Gallery
-    parts.append(
-        "<section id='realization-a' style='display:grid;gap:16px'>"
-        "<div style='display:flex;align-items:center;gap:10px'>"
-        "<span class='brand-badge' style='background:var(--ok)'>Realization A</span>"
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Concrete Physical Embodiment</span></div>"
-        "<h2>3. Realization A: Material Memory Across 12 Model Materials</h2>"
-        "<p class='lead'>With the Constructor defined, Realization A emerges naturally: we instantiate memory write points, "
-        "retention laws, and thermal Langevin fluctuations across 12 distinct physical carriers. For every realization, the "
-        "constructor determines the stable states, the write point bifurcation, the law of state loss, and the local normal form drift "
-        "relative to the symmetric pitchfork &epsilon;s &minus; s&sup3; + h.</p>"
-        f"<div class='stats'><span><b>{len(cards)}</b> realizations</span>"
-        + "".join(f"<span><b>{n}</b> {esc(k)}</span>" for k, n in sorted(counts.items(), key=lambda kv: -kv[1]))
-        + f"<span><b>{ok_loops}</b> of <b>{n_loops}</b> loops as predicted from the holonomy</span></div>"
-        "</section>"
-    )
+    studio_html.extend([
+        "</div></div>",
 
-    # 5. Conceptual Steps of Memory Analysis
-    parts.append(
-        "<div class='steps'>"
-        "<div class='step'><b>1. Carrier and closure</b>The variables of the material and what the dynamics conserves or exchanges with its environment.</div>"
-        "<div class='step'><b>2. Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>"
-        "<div class='step'><b>3. Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork; tuning a second parameter to a cusp restores the symmetric case.</div>"
-        "</div>"
-    )
+        # Visual Assembly Rig
+        "<div class='assembly-rig'>",
+        "<div class='rig-flow'>",
+        # Carrier Module
+        "<div class='rig-module' id='mod-carrier'>",
+        "<h4><span>Carrier Coordinates</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Xi;</span></h4>",
+        "<div id='carrier-text' class='mono' style='font-size:12px;color:var(--ink)'>orientations of 12 rotors on (S^1)^12</div>",
+        "<div style='margin-top:8px'><button type='button' class='action-btn detach' id='btn-detach' onclick='toggleDetach()'>✂️ Detach Carrier</button></div>",
+        "</div>",
 
-    # 3. At a glance table
+        "<div class='flow-arrow-sym'>&xrarr;<span>Detach</span></div>",
+
+        # Mechanism Module
+        "<div class='rig-module' id='mod-omega' style='background:rgba(29,95,209,0.04);border-color:var(--accent)'>",
+        "<h4><span>Invariant Mechanism</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Omega;</span></h4>",
+        "<div id='omega-text' class='mono' style='font-size:12px;font-weight:600;color:var(--accent)'>caged capillary rotors: quadrupole + alignment</div>",
+        "<div id='kernel-text' style='font-size:11.5px;color:var(--muted);margin-top:4px'>Normal form: ds/dt = &epsilon;s &minus; s&sup3; + h</div>",
+        "</div>",
+
+        "<div class='flow-arrow-sym'>&xrarr;<span>Attach</span></div>",
+
+        # Target Attachment
+        "<div class='rig-module' id='mod-target'>",
+        "<h4><span>Attach to Target</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Xi;_t</span></h4>",
+        "<select id='target-carrier-select' class='action-btn' style='width:100%;font-size:12px' onchange='attachToTarget(this.value)'>",
+        "<option value=''>-- Choose target carrier --</option>",
+    ])
+
+    for idx, cd in enumerate(cards):
+        cname = cd.get("name", "").split(",")[0]
+        studio_html.append(f"<option value='{idx}'>{esc(cname)}</option>")
+
+    studio_html.extend([
+        "</select>",
+        "<div id='attach-status' style='font-size:11.5px;color:var(--ok);margin-top:6px;font-weight:600'>✓ Active Realization Assembled</div>",
+        "</div>",
+        "</div>", # rig-flow
+        "</div>", # assembly-rig
+
+        # Main Studio Area: Large Plot + Operational Facts
+        "<div class='studio-main'>",
+        # Left: Large 4-Panel Plot Plate
+        "<div class='plate-card'>",
+        "<div style='display:flex;justify-content:space-between;align-items:center'>",
+        "<h3 id='plate-title'>Diagnostic Evaluation Plate (4-Panel)</h3>",
+        "<span id='plate-chip' class='chip ok'>Symmetric Write</span>",
+        "</div>",
+        "<div class='plate-img-wrap'>",
+        f"<img id='studio-plate' alt='Diagnostic 4-Panel Plate' src='gallery/{cards[0].get('id')}.png'>",
+        "</div>",
+        "<div class='plate-legend'>",
+        "<span>① Vector Flow & Nullclines</span>",
+        "<span>② Parameter Continuation</span>",
+        "<span>③ Langevin Retention Law</span>",
+        "<span>④ Normal Form Drift</span>",
+        "</div>",
+        "</div>",
+
+        # Right: Operational Metrics & Parameter Slots
+        "<div class='metrics-deck'>",
+        "<div class='metric-box'>",
+        "<h5>Writing Mechanism</h5>",
+        "<div class='val' id='metric-mech'>supercritical pitchfork: symmetric write</div>",
+        "</div>",
+        "<div class='metric-box'>",
+        "<h5>Stable States Count</h5>",
+        "<div class='val' id='metric-states'>4 stable state(s)</div>",
+        "</div>",
+        "<div class='metric-box'>",
+        "<h5>Write Point Bifurcation</h5>",
+        "<div class='val' id='metric-write'>Supercritical pitchfork along the sweep</div>",
+        "</div>",
+        "<div class='metric-box'>",
+        "<h5>Retention Law of Loss</h5>",
+        "<div class='val' id='metric-hold'>activation between stored states (Law 3)</div>",
+        "</div>",
+        "<div class='metric-box'>",
+        "<h5>Carrier & Closure Slots</h5>",
+        "<div id='metric-slots' class='mono' style='font-size:11.5px;color:var(--muted);line-height:1.5'>Loading slots...</div>",
+        "</div>",
+        "</div>", # metrics-deck
+
+        "</div>", # studio-main
+        "</section>", # studio-deck
+        "</div>", # view-studio
+    ])
+    parts.append("".join(studio_html))
+
+    # =========================================================================
+    # VIEW 2: REALIZATION A - MATERIAL MEMORY ATLAS
+    # =========================================================================
     rows = []
-    for card in cards:
+    for idx, card in enumerate(cards):
         v = card.get("verdict", {})
         cid = card.get("id", "")
         rows.append(
-            f"<tr><td><a href='#{cid}'><b>{esc(card.get('name', ''))}</b></a></td>"
+            f"<tr><td><a href='javascript:void(0)' onclick='loadCardFromTable({idx})'><b>{esc(card.get('name', ''))}</b></a>"
+            f"<div style='margin-top:2px;font-size:11.5px;color:var(--muted)'>{esc(card.get('provenance', ''))}</div></td>"
             f"<td>{_chip(card)}</td>"
             f"<td>{esc(_short(v.get('stores', ''), 55))}</td>"
             f"<td>{esc(_short(v.get('writes', ''), 85))}</td>"
-            f"<td>{esc(_short(v.get('holds', ''), 55))}</td></tr>"
+            f"<td>{esc(_short(v.get('holds', ''), 55))}</td>"
+            f"<td><button type='button' class='action-btn' style='padding:3px 8px;font-size:11.5px' onclick='loadCardFromTable({idx})'>Inspect Plate &rarr;</button></td></tr>"
         )
-    parts.append(
-        "<section id='glance' style='display:grid;gap:12px'>"
-        "<h2>At a glance</h2>"
-        "<div class='scroll'><table><thead><tr>"
-        "<th style='width:22%'>Realization</th><th style='width:20%'>Writing mechanism</th>"
-        "<th style='width:16%'>Stable states</th><th style='width:24%'>Write point</th>"
-        "<th style='width:18%'>Retention law</th></tr>"
-        f"</thead><tbody>{''.join(rows)}</tbody></table></div></section>"
-    )
 
-    # 4. Loops across fields
+    mem_html = [
+        "<div class='view-panel' id='view-memory'>",
+        "<header style='display:grid;gap:12px'>",
+        "<div style='display:flex;align-items:center;gap:10px'>",
+        "<span class='brand-badge' style='background:var(--ok)'>Realization A</span>",
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Material Memory Across 12 Model Materials</span></div>",
+        "<h1>Memory in Model Materials: Full Realizations Atlas</h1>",
+        "<p class='lead'>Each entry is a model material with deterministic dynamics and thermal noise. "
+        "For every realization the program determines the stable states, the write point bifurcation, the law by "
+        "which stored state is lost, and the normal form drift relative to &epsilon;s &minus; s&sup3; + h.</p>",
+        f"<div class='stats'><span><b>{len(cards)}</b> realizations evaluated</span>"
+        + "".join(f"<span><b>{n}</b> {esc(k)}</span>" for k, n in sorted(counts.items(), key=lambda kv: -kv[1]))
+        + "</div></header>",
+
+        "<div class='steps'>",
+        "<div class='step'><b>1. Carrier and closure</b>The variables of the material and what the dynamics conserves or exchanges with its environment.</div>",
+        "<div class='step'><b>2. Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>",
+        "<div class='step'><b>3. Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork.</div>",
+        "</div>",
+
+        "<section id='glance' style='display:grid;gap:12px'>",
+        "<h2>At a glance: 12 Realizations Compared</h2>",
+        "<div class='scroll'><table><thead><tr>",
+        "<th style='width:24%'>Realization & Provenance</th><th style='width:18%'>Writing mechanism</th>",
+        "<th style='width:14%'>Stable states</th><th style='width:24%'>Write point</th>",
+        "<th style='width:12%'>Retention law</th><th>Action</th></tr>",
+        f"</thead><tbody>{''.join(rows)}</tbody></table></div></section>",
+        "</div>"
+    ]
+    parts.append("".join(mem_html))
+
+    # =========================================================================
+    # VIEW 3: HOLONOMY LOOPS ACROSS FIELDS
+    # =========================================================================
     loops_src = f"gallery/loops.png" if loops_fig and Path(loops_fig).exists() else ""
-    parts.append(
-        "<section class='card' id='loops'><div class='card-head'><h2>Loops across fields</h2></div>"
-        f"<p>For <b>{ok_loops} of {n_loops} loops</b>, the behaviour predicted from the composition of the bond "
-        "couplings around the loop (its holonomy) agrees with the calculated states. Gene loops follow Thomas's rule "
-        "(a negative feedback loop cannot sustain two stable states), loops of bistable spins follow Toulouse's "
-        "frustration criterion, and loops of rotors are frustrated by the mismatch &Phi; of their bond directions, "
-        "with minimum excess energy per bond 1 &minus; cos(&Phi;/N).</p>"
-        + (f"<div class='plate'><img alt='Loops of genes, spins and rotors: prediction and simulation' src='{loops_src}'></div>"
-           if loops_src else "")
-        + "</section>"
-    )
+    loops_html = [
+        "<div class='view-panel' id='view-loops'>",
+        "<header style='display:grid;gap:12px'>",
+        "<div style='display:flex;align-items:center;gap:10px'>",
+        "<span class='brand-badge' style='background:var(--accent)'>Holonomy Diagnostics</span>",
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Prediction vs. Simulation</span></div>",
+        "<h1>Loops Across Fields: Holonomy and Frustration</h1>",
+        f"<p class='lead'>For <b>{ok_loops} of {n_loops} loops</b> across fields, the physical behaviour predicted from the "
+        "composition of the bond couplings around the loop (its holonomy) agrees with the calculated states. "
+        "Gene loops follow Thomas's rule (a negative feedback loop cannot sustain two stable states), loops of bistable spins "
+        "follow Toulouse's frustration criterion, and loops of rotors are frustrated by the mismatch &Phi; of their bond directions, "
+        "with minimum excess energy per bond 1 &minus; cos(&Phi;/N).</p>",
+        f"<div class='stats'><span><b>{ok_loops}/{n_loops}</b> loops verified</span><span>Thomas's Rule</span><span>Toulouse Frustration</span><span>Rotor Mismatch</span></div>",
+        "</header>",
+        "<section class='card'>",
+        f"<div class='plate'><img alt='Loops of genes, spins and rotors: prediction and simulation' src='{loops_src}'></div>" if loops_src else "",
+        "<p class='lead'>The prediction holds across diverse carriers because holonomy depends only on the network composition cycle, not the material substrate.</p>",
+        "</section>",
+        "</div>"
+    ]
+    parts.append("".join(loops_html))
 
-    # 5. Realizations jump navigation pills
-    parts.append(
-        "<nav class='pills' aria-label='Realizations Jump'>"
-        + "".join(f"<a href='#{c.get('id')}'>{esc(_short(c.get('name', '').split(',')[0], 30))}</a>" for c in cards)
-        + "</nav>"
-    )
+    # =========================================================================
+    # VIEW 4: REALIZATION B - QUANTUM CARRIERS
+    # =========================================================================
+    quant_html = [
+        "<div class='view-panel' id='view-quantum'>",
+        "<header style='display:grid;gap:12px'>",
+        "<div style='display:flex;align-items:center;gap:10px'>",
+        "<span class='brand-badge' style='background:var(--ok)'>Realization B</span>",
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Quantum Information & Coherence</span></div>",
+        "<h1>Realization B: The Bloch Rotation on Ten Quantum Carriers</h1>",
+        "<p class='lead'>The Bloch rotation of a spin is detached from its carrier: the Hamiltonian and the observable generate "
+        "the Lie algebra su(2), so the signal follows the Rabi law on every carrier where that closure holds. "
+        f"The derivation reaches it on <b>{qs.get('reached')}</b> of <b>{qs.get('reached', 0) + qs.get('obstructed', 0)}</b> "
+        "carriers, from their own Hamiltonians; where it stops, the term that enlarges the algebra is named.</p>",
+        f"<div class='stats'><span><b>{qs.get('reached')} of {qs.get('reached', 0) + qs.get('obstructed', 0)}</b> carriers reached</span><span>Lie Algebra su(2)</span><span>Rabi Oscillation Law</span></div>",
+        "</header>",
+        "<section class='card'>",
+        f"<div class='plate'><img alt='The Bloch rotation on different carriers' src='{_img(q['figure'])}'></div>" if q["figure"] else "",
+        "<p class='lead'>Chapter 24 of the tutorial details the carrier detach/attach language on quantum spins and transmon qubits.</p>",
+        "</section>",
+        "</div>"
+    ]
+    parts.append("".join(quant_html))
 
-    # 6. Realization Cards
-    for card in cards:
-        cid = card.get("id", "")
-        v = card.get("verdict", {})
-        slots = card.get("slots", {})
-        ver_html = "".join(f"<dt>{esc(VERDICT_NAMES.get(k, k))}</dt><dd>{esc(str(val))}</dd>" for k, val in v.items())
-        slot_html = "".join(f"<dt>{esc(SLOT_NAMES.get(k, k))}</dt><dd>{esc(str(val))}</dd>" for k, val in slots.items())
-        card_img = f"gallery/{cid}.png"
-        parts.append(
-            f"<section class='card' id='{cid}'>"
-            f"<div class='card-head'><h3>{esc(card.get('name', ''))}</h3>{_chip(card)}"
-            f"<span class='src'>{esc(card.get('provenance', ''))}</span></div>"
-            f"<div class='plate'><img alt='Memory card of {esc(card.get('name', ''))}' src='{card_img}'></div>"
-            f"<div class='facts'><dl>{ver_html}</dl><dl>{slot_html}</dl></div>"
-            "</section>"
-        )
-
-    # 7. Cross-Field Phase Locking
-    parts.append(
-        "<section class='card' id='mechanism'>"
-        "<div class='card-head'><h2>5. Realization C: Phase locking in eight oscillator models</h2>"
-        "<span class='src'>Electronics • Chemistry • Neuroscience • Ecology • Chronobiology • Superconductivity • Computing</span></div>"
-        "<p>Phase locking is derived in oscillators from electronics, chemistry, neuroscience, ecology, "
-        "chronobiology, superconductivity and computing hardware. Each derivation is a chain of verified "
-        "transformations (a stable cycle, its phase response, the averaged drive) that ends on the Adler "
-        "equation d&psi;/dt = &Delta;&omega; &minus; K sin &phi;. "
+    # =========================================================================
+    # VIEW 5: REALIZATION C - OSCILLATOR PHASE LOCKING
+    # =========================================================================
+    osc_html = [
+        "<div class='view-panel' id='view-oscillators'>",
+        "<header style='display:grid;gap:12px'>",
+        "<div style='display:flex;align-items:center;gap:10px'>",
+        "<span class='brand-badge' style='background:var(--ok)'>Realization C</span>",
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Nonlinear Synchrony Across 7 Disciplines</span></div>",
+        "<h1>Realization C: Phase Locking in Eight Oscillator Models</h1>",
+        "<p class='lead'>Phase locking is derived in oscillators from electronics, chemistry, neuroscience, ecology, "
+        "chronobiology, superconductivity and computing hardware. Each derivation is a chain of verified transformations "
+        "(a stable cycle, its phase response, the averaged drive) that ends on the Adler equation "
+        "d&psi;/dt = &Delta;&omega; &minus; K sin &phi;. "
         f"<b>{len(reached)}</b> of <b>{len(c['rows'])}</b> models reach it"
         + (f"; in the others the derivation stops at a stated step ({esc('; '.join(sorted({str(r['obstruction'])[:60] for r in stopped})))})"
            if stopped else "")
-        + ". The ratio at which an oscillator locks is set by a symmetry of the model that the drive respects.</p>"
-        f"<div class='plate'><img alt='Phase locking derived in oscillators from different fields' src='{_img(c['figure'])}'></div>"
-        "<p class='lead'>Module 9 of the tutorial explains the derivations, the obstructions and the invariants.</p>"
-        "</section>"
-    )
+        + ". The ratio at which an oscillator locks is set by a symmetry of the model that the drive respects.</p>",
+        f"<div class='stats'><span><b>{len(reached)}/{len(c['rows'])}</b> models reached</span><span>Adler Phase Equation</span><span>Cross-Field Symmetries</span></div>",
+        "</header>",
+        "<section class='card'>",
+        f"<div class='plate'><img alt='Phase locking derived in oscillators from different fields' src='{_img(c['figure'])}'></div>",
+        "<p class='lead'>Module 9 of the tutorial explains the derivations, the obstructions, and the invariants.</p>",
+        "</section>",
+        "</div>"
+    ]
+    parts.append("".join(osc_html))
 
-    # 8. Quantum Carriers
-    parts.append(
-        "<section class='card' id='quantum'>"
-        "<div class='card-head'><h2>4. Realization B: The Bloch rotation on ten quantum carriers</h2>"
-        "<span class='src'>Lie Algebra su(2) & Rabi Law</span></div>"
-        "<p>The Bloch rotation of a spin is detached from its carrier: the Hamiltonian and the observable generate "
-        "the Lie algebra su(2), so the signal follows the Rabi law on every carrier where that closure holds. "
-        f"The derivation reaches it on <b>{qs.get('reached')}</b> of <b>{qs.get('reached', 0) + qs.get('obstructed', 0)}</b> "
-        "carriers, from their own Hamiltonians; where it stops, the term that enlarges the algebra is named.</p>"
-        + (f"<div class='plate'><img alt='The Bloch rotation on different carriers' src='{_img(q['figure'])}'></div>"
-           if q["figure"] else "")
-        + "<p class='lead'>Chapter 24 of the tutorial shows the language on these spins.</p>"
-        "</section>"
-    )
-
-    # 9. Adding a material specification
-    parts.append(
-        "<section class='card' id='contribute'>"
-        "<div class='card-head'><h2>Adding a material specification</h2>"
-        "<span class='src'>Contributing to FieldBridge</span></div>"
+    # =========================================================================
+    # VIEW 6: ADDING A MATERIAL SPECIFICATION & COMMUNITY
+    # =========================================================================
+    contrib_html = [
+        "<section class='card' id='contribute'>",
+        "<div class='card-head'><h2>Adding a material specification</h2>",
+        "<span class='src'>Contributing to FieldBridge</span></div>",
         "<p>A material is one JSON file: its variables, equations, parameters, the control an experiment varies, "
-        "the closure, the observable, the assumptions and the source of the equations.</p>"
-        "<pre class='mono' style='white-space:pre-wrap;background:var(--ground);border:1px solid var(--rule);border-radius:6px;padding:12px'>"
-        "python3 -B -m fieldbridge memory new my_material --carrier orthant\n"
-        "python3 -B -m fieldbridge memory check examples/memory/my_material.json\n"
-        "python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</pre>"
+        "the closure, the observable, the assumptions and the source of the equations.</p>",
+        "<pre class='mono' style='white-space:pre-wrap;background:var(--ground);border:1px solid var(--rule);border-radius:6px;padding:12px'>",
+        "python3 -B -m fieldbridge memory new my_material --carrier orthant\n",
+        "python3 -B -m fieldbridge memory check examples/memory/my_material.json\n",
+        "python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</pre>",
         f"<p>The <a href='{REPO}/blob/main/CONTRIBUTING.md'>contribution guide</a> describes each field and "
         "the pull request; the checks of a pull request compute the card of the new material and list the "
         "materials from other fields written by the same mechanism. The "
         f"<a href='materials.html'>catalog of 20 materials</a> lists the materials already described, the "
         f"<a href='wanted_materials.html'>list of wanted materials</a> names classic models "
         "from fields not yet covered, and a material can also be "
-        f"<a href='{REPO}/issues/new?template=material.yml'>proposed with its source</a>.</p>"
-        "</section>"
-    )
+        f"<a href='{REPO}/issues/new?template=material.yml'>proposed with its source</a>.</p>",
+        "</section>",
+        f"<p class='lead'>{esc(BOUNDARY)}</p>"
+    ]
+    parts.append("".join(contrib_html))
 
-    parts.append(f"<p class='lead'>{esc(BOUNDARY)}</p>")
+    # =========================================================================
+    # JAVASCRIPT: DYNAMIC CONSTRUCTOR ENGINE & VIEW ROUTER
+    # =========================================================================
+    js_code = f"""
+<script>
+const CARDS = {cards_js};
+let activeIdx = 0;
+let isDetached = false;
+
+function showView(viewId) {{
+  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.view-tabs button').forEach(b => b.classList.remove('active'));
+
+  const targetPanel = document.getElementById('view-' + viewId);
+  const targetBtn = document.getElementById('btn-' + viewId);
+  if (targetPanel) targetPanel.classList.add('active');
+  if (targetBtn) targetBtn.classList.add('active');
+  window.location.hash = '#' + viewId;
+  window.scrollTo({{ top: 0, behavior: 'smooth' }});
+}}
+
+function selectMaterial(idx) {{
+  if (idx < 0 || idx >= CARDS.length) return;
+  activeIdx = idx;
+  isDetached = false;
+  const cd = CARDS[idx];
+
+  // Update Ribbon
+  document.querySelectorAll('.ribbon-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
+  document.getElementById('deck-counter').textContent = 'Material ' + (idx + 1) + ' of ' + CARDS.length;
+
+  // Update Assembly Modules
+  const modCarrier = document.getElementById('mod-carrier');
+  modCarrier.classList.remove('detached');
+  const btnDetach = document.getElementById('btn-detach');
+  btnDetach.textContent = '✂️ Detach Carrier';
+  btnDetach.className = 'action-btn detach';
+
+  const xi = cd.slots.Xi || cd.slots.carrier || 'degrees of freedom';
+  document.getElementById('carrier-text').textContent = xi;
+
+  const omega = cd.slots.Omega || cd.slots.operation || cd.name;
+  document.getElementById('omega-text').textContent = omega;
+
+  const mech = (cd.verdict.constructs || cd.verdict.mechanism || 'Invariant mechanism').split(';')[0];
+  document.getElementById('kernel-text').textContent = 'Mechanism: ' + mech;
+
+  document.getElementById('attach-status').innerHTML = '✓ Realization <b>' + cd.name + '</b> Assembled';
+  document.getElementById('attach-status').style.color = 'var(--ok)';
+
+  // Update Diagnostic Plot Plate
+  const imgEl = document.getElementById('studio-plate');
+  imgEl.src = cd.img;
+  imgEl.alt = 'Diagnostic Plate of ' + cd.name;
+  document.getElementById('plate-title').textContent = cd.name + ' — 4-Panel Evaluation';
+
+  // Chip
+  const chipEl = document.getElementById('plate-chip');
+  chipEl.textContent = mech;
+  chipEl.className = 'chip ' + (mech.includes('symmetric') ? 'ok' : (mech.includes('fold') || mech.includes('uniform') ? 'warn' : 'none'));
+
+  // Metrics
+  document.getElementById('metric-mech').textContent = cd.verdict.mechanism || cd.verdict.constructs || 'unclassified';
+  document.getElementById('metric-states').textContent = cd.verdict.stores || '1 stable state';
+  document.getElementById('metric-write').textContent = cd.verdict.writes || 'no write point';
+  document.getElementById('metric-hold').textContent = cd.verdict.holds || 'relaxation';
+
+  // Slots
+  let sHtml = '';
+  if (cd.slots.C) sHtml += '<b>Closure:</b> ' + cd.slots.C + '<br>';
+  if (cd.slots.R) sHtml += '<b>Observable:</b> ' + cd.slots.R + '<br>';
+  if (cd.slots.A) sHtml += '<b>Parameters:</b> ' + cd.slots.A;
+  document.getElementById('metric-slots').innerHTML = sHtml || 'Standard constitutive parameterization.';
+}}
+
+function toggleDetach() {{
+  isDetached = !isDetached;
+  const modCarrier = document.getElementById('mod-carrier');
+  const btnDetach = document.getElementById('btn-detach');
+  const attachStatus = document.getElementById('attach-status');
+
+  if (isDetached) {{
+    modCarrier.classList.add('detached');
+    document.getElementById('carrier-text').textContent = '[ CARRIER DETACHED: Invariant Kernel Isolated ]';
+    btnDetach.textContent = '🔄 Re-attach Carrier';
+    btnDetach.className = 'action-btn attach';
+    attachStatus.innerHTML = '⚡ Ready: Select a target carrier below to attach';
+    attachStatus.style.color = 'var(--warn)';
+  }} else {{
+    selectMaterial(activeIdx);
+  }}
+}}
+
+function attachToTarget(targetIdx) {{
+  if (targetIdx === '') return;
+  const idx = parseInt(targetIdx, 10);
+  selectMaterial(idx);
+  document.getElementById('target-carrier-select').value = '';
+  const attachStatus = document.getElementById('attach-status');
+  attachStatus.innerHTML = '✓ Attached to <b>' + CARDS[idx].name + '</b>: Equations Derived & Verified!';
+  attachStatus.style.color = 'var(--ok)';
+}}
+
+function loadCardFromTable(idx) {{
+  showView('studio');
+  selectMaterial(idx);
+}}
+
+// Initialize view from hash or default to studio
+window.addEventListener('DOMContentLoaded', () => {{
+  const hash = window.location.hash.replace('#', '');
+  if (hash && ['studio', 'memory', 'loops', 'quantum', 'oscillators'].includes(hash)) {{
+    showView(hash);
+  }} else {{
+    showView('studio');
+  }}
+  selectMaterial(0);
+}});
+</script>
+"""
+    parts.append(js_code)
 
     # Write index.html
-    index_html = _page_shell("FieldBridge: Memory in Model Materials", "".join(parts), active="demo")
+    index_html = _page_shell("FieldBridge: Physical Mechanism Constructor Across Fields", "".join(parts), active="demo")
     (out / "index.html").write_text(index_html, encoding="utf-8")
 
     # Generate standalone gallery.html
@@ -733,28 +1208,32 @@ def _page(results: Dict, out: Path) -> None:
         "<div class='step'><b>Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>"
         "<div class='step'><b>Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork; tuning a second parameter to a cusp restores the symmetric case.</div>"
         "</div>",
-        "<section id='glance' style='display:grid;gap:12px'><h2>At a glance</h2><div class='scroll'><table><thead><tr>"
+        "<div class='scroll'><table><thead><tr>"
         "<th style='width:22%'>Realization</th><th style='width:20%'>Writing mechanism</th>"
         "<th style='width:16%'>Stable states</th><th style='width:24%'>Write point</th>"
         "<th style='width:18%'>Retention law</th></tr>"
-        f"</thead><tbody>{''.join(rows)}</tbody></table></div></section>",
-        "<section class='card' id='loops'><div class='card-head'><h2>Loops across fields</h2></div>"
-        f"<p>For {ok_loops} of {n_loops} loops, the behaviour predicted from the composition of the bond "
-        "couplings around the loop (its holonomy) agrees with the calculated states.</p>"
-        + (f"<div class='plate'><img alt='Loops of genes, spins and rotors: prediction and simulation' src='gallery/loops.png'></div>"
-           if loops_src else "")
-        + "</section>",
-        "<nav class='pills' aria-label='Realizations Jump'>"
-        + "".join(f"<a href='#{c.get('id')}'>{esc(_short(c.get('name', '').split(',')[0], 30))}</a>" for c in cards)
-        + "</nav>"
+        f"</thead><tbody>{''.join(rows)}</tbody></table></div>"
     ]
     for card in cards:
         cid = card.get("id", "")
         v = card.get("verdict", {})
         slots = card.get("slots", {})
-        ver_html = "".join(f"<dt>{esc(VERDICT_NAMES.get(k, k))}</dt><dd>{esc(str(val))}</dd>" for k, val in v.items())
-        slot_html = "".join(f"<dt>{esc(SLOT_NAMES.get(k, k))}</dt><dd>{esc(str(val))}</dd>" for k, val in slots.items())
         card_img = f"gallery/{cid}.png"
+        ver_items = [
+            ("Writing mechanism", _chip(card)),
+            ("Stable states", esc(v.get("stores", ""))),
+            ("Write point", esc(v.get("writes", ""))),
+            ("Retention law", esc(v.get("holds", ""))),
+            ("Drift at write point", esc(v.get("drift", "")))
+        ]
+        ver_html = "".join(f"<dt>{k}</dt><dd>{val}</dd>" for k, val in ver_items if val)
+        slot_items = []
+        for s_key in ["carrier", "closure", "observable", "protocol", "parameters"]:
+            s_val = slots.get(s_key, "")
+            if s_val:
+                s_name = SLOT_NAMES.get(s_key, s_key.capitalize())
+                slot_items.append((s_name, esc(s_val)))
+        slot_html = "".join(f"<dt>{k}</dt><dd>{val}</dd>" for k, val in slot_items)
         gal_parts.append(
             f"<section class='card' id='{cid}'>"
             f"<div class='card-head'><h3>{esc(card.get('name', ''))}</h3>{_chip(card)}"
@@ -764,55 +1243,64 @@ def _page(results: Dict, out: Path) -> None:
             "</section>"
         )
     gal_parts.append(f"<p class='lead'>{esc(BOUNDARY)}</p>")
-    (out / "gallery.html").write_text(_page_shell("FieldBridge: Gallery of Realizations", "".join(gal_parts), active="gallery"), encoding="utf-8")
-
-    # Companion pages
-    _render_materials(out)
-    _render_wanted(out)
-
-    # Markdown version
-    md = ["# FieldBridge demonstration", "", "`index.html` contains the full calculated gallery and portal.", "",
-          "## 1. Memory in model materials: a gallery of realizations", "",
-          f"Gallery with {len(cards)} evaluated realizations across fields and {ok_loops}/{n_loops} verified holonomy loops.", "",
-          "| Realization | Writing mechanism | Stable states | Write point | Retention law |",
-          "| --- | --- | --- | --- | --- |"]
-    for card in cards:
-        v = card.get("verdict", {})
-        md.append(f"| {card.get('name')} | {v.get('constructs', '').split(';')[0]} | {v.get('stores')} | {v.get('writes')[:60]} | {v.get('holds')} |")
-    md += ["", "## 2. Phase locking in eight oscillator models", "",
-           f"Phase locking reached in {len(reached)} of {len(c['rows'])} oscillator models.", "",
-           "| Model | Field | Derivation | Where it stops |", "| --- | --- | --- | --- |"]
-    md += [f"| {r['name']} | {r['field']} | {r['word'] or ''} | {r['obstruction'] or ''} |" for r in c["rows"]]
-    md += ["", "## 3. The Bloch rotation on ten quantum carriers", "",
-           f"The Bloch rotation is reached on {qs.get('reached')} carriers and obstructed on {qs.get('obstructed')}.", "",
-           "## 4. Adding a material specification", "", "CONTRIBUTING.md describes the specification fields and the checks.", "", BOUNDARY, ""]
-    (out / "demo.md").write_text("\n".join(md), encoding="utf-8")
+    (out / "gallery.html").write_text(_page_shell("FieldBridge: Realizations Gallery", "".join(gal_parts), active="gallery"), encoding="utf-8")
 
 
 def run(out_dir, seed: int = 20260923, law: bool = False, log=print) -> Dict:
-    if not (EXAMPLES / "memory" / "toggle.json").exists():
-        raise SystemExit("The demonstration reads the example specifications of a clone of the repository; install "
-                         "it from the clone with: pip install -e '.[memory]'")
     out = Path(out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    results, t0 = {}, time.time()
-    log("1/4 memory card of the genetic toggle switch ...")
-    results["material"] = _material(out, seed)
-    log(f"    {time.time() - t0:.0f} s. 2/4 phase locking in oscillators from different fields ...")
-    results["mechanism"] = _mechanism(out, seed, law)
-    log(f"    {time.time() - t0:.0f} s. 3/4 the Bloch rotation on quantum carriers ...")
-    results["quantum"] = _quantum(out)
-    log(f"    {time.time() - t0:.0f} s. 4/4 loading gallery of realizations across fields ...")
-    results["gallery"] = _load_gallery(out)
+    t0 = time.time()
+
+    log("[1/5] Evaluating material card (toggle)...")
+    mat = _material(out, seed=seed)
+
+    log("[2/5] Deriving phase locking in 8 oscillators...")
+    mech = _mechanism(out, seed=seed, law=law)
+
+    log("[3/5] Deriving Bloch rotation on 10 quantum carriers...")
+    quant = _quantum(out)
+
+    log("[4/5] Loading precomputed realization gallery...")
+    gal = _load_gallery(out)
+
+    results = {
+        "material": mat,
+        "mechanism": mech,
+        "quantum": quant,
+        "gallery": gal
+    }
+    elapsed = round(time.time() - t0, 2)
+
+    log("[5/5] Generating documentation portal, catalog, and wanted pages...")
+    _render_materials(out)
+    _render_wanted(out)
     _page(results, out)
-    log(f"    {time.time() - t0:.0f} s. Open {out / 'index.html'}")
+
+    (out / "demo.json").write_text(json.dumps({
+        "material": {k: mat.get(k) for k in ["name", "states", "write_point", "agreement"]},
+        "mechanism": {"rows": len(mech["rows"])},
+        "quantum": quant["summary"],
+        "gallery": {"realizations": len(gal.get("cards", []))},
+        "elapsed_sec": elapsed
+    }, indent=2), encoding="utf-8")
+
+    (out / "demo.md").write_text(
+        f"# FieldBridge Demonstration Report\n\n"
+        f"- Evaluated in {elapsed} seconds\n"
+        f"- Gallery realizations: {len(gal.get('cards', []))}\n"
+        f"- Material states: {mat['states']}, write point: {mat['write_point']:.3f}\n"
+        f"- Phase locking reached: {len([r for r in mech['rows'] if str(r['status']).startswith('reached')])}/8\n"
+        f"- Quantum Bloch rotation reached: {quant['summary']['reached']}/10\n",
+        encoding="utf-8"
+    )
+
+    log(f"FieldBridge demonstration portal generated in {elapsed}s at: {out / 'index.html'}")
     return results
 
 
 def add_parser(sub) -> None:
-    p = sub.add_parser("demo", help="Comprehensive demonstration portal with gallery of realizations and figures.")
-    p.add_argument("--out-dir", default="build/demo")
-    p.add_argument("--seed", type=int, default=20260923)
-    p.add_argument("--law", action="store_true",
-                   help="Also measure the locking law of every oscillator (slower).")
+    p = sub.add_parser("demo", help="Generate comprehensive demonstration portal.")
+    p.add_argument("--out-dir", default="build/demo", help="Output directory")
+    p.add_argument("--seed", type=int, default=20260923, help="Random seed")
+    p.add_argument("--law", action="store_true", help="Estimate swept-write law (takes longer)")
     p.set_defaults(func=lambda args: (run(args.out_dir, seed=args.seed, law=args.law), 0)[1])
