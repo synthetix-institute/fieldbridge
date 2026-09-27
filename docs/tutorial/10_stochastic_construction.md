@@ -1,5 +1,9 @@
 # Why a change of stochastic coordinate adds a drift
 
+[Visual constructor](https://synthetix-institute.github.io/fieldbridge/#stochastic):
+detach the derived drift, build the target equation, and compare its mean with
+the source mean. The equations and Python checks below supply that demonstration.
+
 Consider a positive fluctuating coordinate X with restoring drift. In
 dimensionless variables its Ito equation is
 

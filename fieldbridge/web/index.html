@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Construct a physical model, detach its terms, and calculate the resulting memory or stochastic dynamics. An offline FieldBridge demonstration with original-paper sources.">
+  <title>FieldBridge | Mechanism constructor</title>
+  <link rel="stylesheet" href="studio/studio.css">
+  <script id="studio-config" type="application/json">__CONFIG__</script>
+  <script defer src="studio/lucide.min.js"></script>
+  <script defer src="studio/physics.js"></script>
+  <script defer src="studio/studio.js"></script>
+</head>
+<body>
+  <header class="app-header">
+    <a class="brand" href="#memory"><i data-lucide="network" aria-hidden="true"></i>FieldBridge<span>Mechanism constructor</span></a>
+    <nav aria-label="Resources">
+      <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener"><i data-lucide="book-open" aria-hidden="true"></i>Tutorial</a>
+      <button class="plain" id="sources-open"><i data-lucide="library" aria-hidden="true"></i>Sources</button>
+      <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener" aria-label="GitHub repository"><i data-lucide="code-xml" aria-hidden="true"></i><span class="wide-label">GitHub</span></a>
+    </nav>
+  </header>
+  <div class="module-bar">
+    <div role="tablist" aria-label="Construction examples">
+      <button role="tab" id="tab-memory" aria-controls="workbench" data-lab="memory" aria-selected="true"><i data-lucide="git-branch" aria-hidden="true"></i>Memory</button>
+      <button role="tab" id="tab-stochastic" aria-controls="workbench" data-lab="stochastic" aria-selected="false" tabindex="-1"><i data-lucide="shuffle" aria-hidden="true"></i>Stochastic transport</button>
+      <button role="tab" id="tab-applications" aria-controls="applications" data-lab="applications" aria-selected="false" tabindex="-1"><i data-lucide="flask-conical" aria-hidden="true"></i>Applications</button>
+    </div>
+    <span class="execution"><span></span>Local calculation</span>
+  </div>
+  <main>
+    <section id="workbench" role="tabpanel" aria-labelledby="tab-memory">
+      <div class="work-heading"><div><p class="eyebrow" id="lab-category">Nonlinear dynamics</p><h1 id="lab-title">Construct a memory</h1></div><div class="heading-actions"><button class="icon-button" id="reset" title="Reset construction" aria-label="Reset construction"><i data-lucide="rotate-ccw"></i></button><button class="icon-button" id="export" title="Download construction" aria-label="Download construction"><i data-lucide="download"></i></button></div></div>
+      <nav class="mobile-views" aria-label="Workbench view"><button data-mobile="ingredients" aria-pressed="false"><i data-lucide="sliders-horizontal"></i>Parts</button><button data-mobile="assembly" aria-pressed="true"><i data-lucide="network"></i>Assembly</button><button data-mobile="outcome" aria-pressed="false"><i data-lucide="chart-no-axes-combined"></i>Result</button></nav>
+      <div class="work-grid" data-mobile-view="assembly">
+        <aside class="ingredients" aria-label="Mechanism parts">
+          <div class="surface-heading"><h2>Attached parts</h2><span id="part-count">3 / 3</span></div>
+          <div id="parts"></div>
+          <div class="parameters" id="parameters"></div>
+          <div class="realization-control" id="realization-control"></div>
+          <button class="primary" id="build"><i data-lucide="play" aria-hidden="true"></i>Build &amp; calculate</button>
+          <p class="build-state" id="build-state" role="status">Construction calculated</p>
+        </aside>
+        <section class="assembly" aria-label="Nested mechanism graph">
+          <div class="surface-heading"><h2>Mechanism graph</h2><span id="graph-type">Nested dependencies</span></div>
+          <div class="graph" id="graph"></div>
+          <div class="equation-area"><span class="eyebrow">Constructed equation</span><div class="equation" id="equation"></div><p id="equation-note"></p></div>
+          <div class="consequence" id="consequence"><i data-lucide="arrow-right" aria-hidden="true"></i><p></p></div>
+        </section>
+        <section class="outcome" aria-label="Calculated consequence">
+          <div class="surface-heading"><h2 id="plot-heading">Energy landscape</h2><div class="segmented" id="plot-modes" aria-label="Plot view"><button class="selected" data-plot="potential" aria-pressed="true">Potential</button><button data-plot="trajectory" aria-pressed="false">Writing</button></div></div>
+          <div class="plot-frame"><canvas id="plot" aria-label="Calculated energy landscape" role="img"></canvas><div class="plot-legend" id="plot-legend"></div></div>
+          <dl class="metrics" id="metrics"></dl>
+          <div class="result-detail"><h3 id="detail-title">Writing and retention</h3><p id="detail-text"></p></div>
+        </section>
+      </div>
+      <footer class="evidence-strip"><div><i data-lucide="file-text" aria-hidden="true"></i><span id="source-links"></span></div><a id="lesson-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/15_memory_first_card.md" target="_blank" rel="noopener">Derivation in the tutorial<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
+    </section>
+    <section id="applications" role="tabpanel" aria-labelledby="tab-applications" hidden>
+      <div class="work-heading"><div><p class="eyebrow">From a mechanism to a physical question</p><h1>Find an application worth testing</h1></div><button class="icon-button" id="application-export" aria-label="Download application brief" title="Download application brief"><i data-lucide="download"></i></button></div>
+      <div class="application-grid">
+        <aside class="application-choice"><h2>Target application</h2><label for="application-target">Physical system</label><select id="application-target"><option value="mechanical">Mechanical event latch</option><option value="biological">Cellular exposure memory</option><option value="stochastic">Stochastic growth measurement</option></select><h2>Required behavior</h2><div id="requirements"></div><div class="mini-model" id="application-model"></div></aside>
+        <section class="application-main"><div class="surface-heading"><h2>Construction &amp; prior work</h2><span>Source comparison</span></div><div id="application-result"></div></section>
+        <aside class="application-test"><h2>Decisive experiment</h2><div id="application-experiment"></div><a id="application-tutorial" target="_blank" rel="noopener" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/12_reproduction_and_discovery.md">From construction to discovery<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></aside>
+      </div>
+    </section>
+  </main>
+  <footer class="app-footer"><span>Equations → construction → calculated consequence</span><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Model catalog<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
+  <dialog id="sources-dialog" aria-labelledby="sources-title"><header><div><p class="eyebrow">Original research</p><h2 id="sources-title">Sources &amp; model assumptions</h2></div><button class="icon-button" id="sources-close" aria-label="Close sources"><i data-lucide="x"></i></button></header><div id="sources-content"></div></dialog>
+  <noscript><p class="noscript">Enable JavaScript for local calculations. The <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md">tutorial</a> includes the equations and executable Python examples.</p></noscript>
+</body>
+</html>

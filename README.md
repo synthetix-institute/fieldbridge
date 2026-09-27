@@ -34,9 +34,39 @@ python3 -B -m fieldbridge demo --out-dir build/demo
 ```
 
 The command runs in about a minute on a laptop and writes
-`build/demo/index.html`, a self-contained page with three calculations and
-their figures. `--law` also measures the locking law of each oscillator
+`build/demo/index.html`, an offline, modular constructor studio. The full
+Python calculations and their figures remain in the generated folders and
+the [tutorial](docs/tutorial/index.md). `--law` also measures the locking law of each oscillator
 (about ten minutes).
+
+The [live constructor](https://synthetix-institute.github.io/fieldbridge/)
+shows how a mechanism is assembled and what changes when a part is removed:
+
+- **Memory:** attach feedback, saturation and a writing field; calculate the
+  stable states, fold threshold and response to a pulse. Removing the writing
+  field prevents switching; removing feedback removes bistability.
+  [Equations and predictions](docs/tutorial/18_memory_writing_and_retention.md#scalar-constructor-demonstration).
+- **Stochastic transport:** construct the generator after `Y = X²` or
+  `Y = log X`. Detaching the required drift separates the predicted mean
+  from the source mean. Both generator coefficients are verified in Python;
+  the logarithmic prediction is also tested against independent source
+  integrators. [Derivation](docs/tutorial/10_stochastic_construction.md) ·
+  [Tests](tests/test_stochastic_conventions.py).
+- **Applications:** select required behavior, compare it with linked original
+  research and export a specific question and its discriminating experiment.
+  This separates a tested mathematical consequence from a new application
+  whose realization and originality still need evidence.
+
+For the website alone, no material sweep or oscillator calculation is needed:
+
+```bash
+python3 -B -m fieldbridge demo --studio-only --out-dir build/demo
+```
+
+The build verifies the three stochastic examples symbolically and saves
+`verified_examples.json`. Browser controls use closed-form relations and a
+small drift integrator; there is no model API or GPU computation. Original
+papers, exact tutorial chapters and executable tests are linked in each module.
 
 | Section | Calculated result |
 | --- | --- |

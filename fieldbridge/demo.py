@@ -1,17 +1,10 @@
-"""``fieldbridge demo``: comprehensive showcase of cross-field physical memory and discovery.
+"""Offline constructor studio and optional full reference calculations.
 
-  1  constructor studio       dynamic attach and detach of physical mechanisms across carriers,
-                              with live 4-panel bifurcation and retention plots
-  2  realization A: memory    12 model materials across fields: deterministic dynamics, thermal noise,
-                              stable states, write points, retention laws, and 91 holonomy loops
-  3  realization B: quantum   ten quantum carriers (spins, atoms, exchange chains, transmons):
-                              the Bloch rotation derived from each carrier's own Hamiltonian
-  4  realization C: oscillators  eight oscillator models from seven fields: step-by-step verified
-                              transformations to the Adler phase equation
-  5  catalog & wanted models  20 documented materials (materials.html) and classic wanted models (wanted_materials.html)
-  6  adding a material        the commands for a new material specification (CONTRIBUTING.md)
-
-Everything is calculated or verified from example specifications. The pages and figures are written to --out-dir.
+``--studio-only`` writes the modular website and verified stochastic examples.
+The default command also calculates a memory card, oscillator reductions and
+quantum observable dynamics, and exports the existing model gallery. The studio
+calculates consequences of its displayed models; arbitrary carrier transfers
+are not inferred by switching examples.
 """
 from __future__ import annotations
 
@@ -756,440 +749,29 @@ def _render_wanted(out: Path) -> None:
 
 
 def _page(results: Dict, out: Path) -> None:
-    from .memory.visual import VERDICT_NAMES, SLOT_NAMES
+    from .memory.visual import SLOT_NAMES
+    from .web_demo import build_studio
     esc = html.escape
-    m, c, q = results["material"], results["mechanism"], results["quantum"]
     gal = results.get("gallery", {})
     cards = gal.get("cards", [])
-    loops_info = gal.get("loops")
-    loops_fig = gal.get("loops_fig")
-
-    reached = [r for r in c["rows"] if str(r["status"]).startswith("reached")]
-    stopped = [r for r in c["rows"] if not str(r["status"]).startswith("reached")]
-    qs = q["summary"]
-
+    loops_info = gal.get("loops") or {}
     counts = {}
     for card in cards:
         counts[_mechanism_name(card)] = counts.get(_mechanism_name(card), 0) + 1
-
-    n_loops = loops_info.get("total", 91) if loops_info else 91
-    ok_loops = loops_info.get("consistent", 91) if loops_info else 91
-
-    # Extract lightweight JSON array for client-side dynamic constructor rig
-    client_cards = []
-    for cd in cards:
-        client_cards.append({
-            "id": cd.get("id", ""),
-            "name": cd.get("name", ""),
-            "field": cd.get("provenance", ""),
-            "slots": cd.get("slots", {}),
-            "verdict": cd.get("verdict", {}),
-            "img": f"gallery/{cd.get('id')}.png"
-        })
-    cards_js = json.dumps(client_cards)
-
-    parts = []
-
-    # =========================================================================
-    # VIEW 1: CONSTRUCTOR STUDIO (DEFAULT & INTERACTIVE)
-    # =========================================================================
-    studio_html = [
-        "<div class='view-panel active' id='view-studio'>",
-        "<header style='display:grid;gap:12px'>",
-        "<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>",
-        "<span class='brand-badge'>Interactive Constructor Studio</span>",
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Physical Mechanism Attach & Detach Workbench</span></div>",
-        "<h1>Physical Mechanism Constructor Studio</h1>",
-        "<p class='lead'>A mathematical constructor formalizes physical models without LLM hallucinations. "
-        "Select any realization below, <b>detach</b> its carrier to isolate the portable dynamical invariant, "
-        "and <b>attach</b> it to a target carrier to derive its equations and inspect the resulting 4-panel diagnostic plot.</p>",
-        "<div class='stats'>",
-        f"<span><b>{len(cards)}</b> model materials</span>",
-        "<span><b>14</b> scientific fields</span>",
-        f"<span><b>{ok_loops}/{n_loops}</b> holonomy loops verified</span>",
-        "<span><b>100%</b> machine-derived</span>",
-        "</div>",
-        "</header>",
-
-        # Interactive Constructor Rig
-        "<section class='studio-deck'>",
-        "<div class='ribbon-wrap'>",
-        "<div class='ribbon-label'><span>Select Assembled Realization</span><span id='deck-counter'>Material 1 of 12</span></div>",
-        "<div class='ribbon' id='material-ribbon'>",
-    ]
-
-    for idx, cd in enumerate(cards):
-        act = "active" if idx == 0 else ""
-        cname = cd.get("name", "").split(",")[0]
-        studio_html.append(f"<button type='button' class='ribbon-btn {act}' onclick='selectMaterial({idx})'>{esc(cname)}</button>")
-
-    studio_html.extend([
-        "</div></div>",
-
-        # Visual Assembly Rig
-        "<div class='assembly-rig'>",
-        "<div class='rig-flow'>",
-        # Carrier Module
-        "<div class='rig-module' id='mod-carrier'>",
-        "<h4><span>Carrier Coordinates</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Xi;</span></h4>",
-        "<div id='carrier-text' class='mono' style='font-size:12px;color:var(--ink)'>orientations of 12 rotors on (S^1)^12</div>",
-        "<div style='margin-top:8px'><button type='button' class='action-btn detach' id='btn-detach' onclick='toggleDetach()'>✂️ Detach Carrier</button></div>",
-        "</div>",
-
-        "<div class='flow-arrow-sym'>&xrarr;<span>Detach</span></div>",
-
-        # Mechanism Module
-        "<div class='rig-module' id='mod-omega' style='background:rgba(29,95,209,0.04);border-color:var(--accent)'>",
-        "<h4><span>Invariant Mechanism</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Omega;</span></h4>",
-        "<div id='omega-text' class='mono' style='font-size:12px;font-weight:600;color:var(--accent)'>caged capillary rotors: quadrupole + alignment</div>",
-        "<div id='kernel-text' style='font-size:11.5px;color:var(--muted);margin-top:4px'>Normal form: ds/dt = &epsilon;s &minus; s&sup3; + h</div>",
-        "</div>",
-
-        "<div class='flow-arrow-sym'>&xrarr;<span>Attach</span></div>",
-
-        # Target Attachment
-        "<div class='rig-module' id='mod-target'>",
-        "<h4><span>Attach to Target</span><span class='mono' style='color:var(--accent);font-weight:bold'>&Xi;_t</span></h4>",
-        "<select id='target-carrier-select' class='action-btn' style='width:100%;font-size:12px' onchange='attachToTarget(this.value)'>",
-        "<option value=''>-- Choose target carrier --</option>",
-    ])
-
-    for idx, cd in enumerate(cards):
-        cname = cd.get("name", "").split(",")[0]
-        studio_html.append(f"<option value='{idx}'>{esc(cname)}</option>")
-
-    studio_html.extend([
-        "</select>",
-        "<div id='attach-status' style='font-size:11.5px;color:var(--ok);margin-top:6px;font-weight:600'>✓ Active Realization Assembled</div>",
-        "</div>",
-        "</div>", # rig-flow
-        "</div>", # assembly-rig
-
-        # Main Studio Area: Large Plot + Operational Facts
-        "<div class='studio-main'>",
-        # Left: Large 4-Panel Plot Plate
-        "<div class='plate-card'>",
-        "<div style='display:flex;justify-content:space-between;align-items:center'>",
-        "<h3 id='plate-title'>Diagnostic Evaluation Plate (4-Panel)</h3>",
-        "<span id='plate-chip' class='chip ok'>Symmetric Write</span>",
-        "</div>",
-        "<div class='plate-img-wrap'>",
-        f"<img id='studio-plate' alt='Diagnostic 4-Panel Plate' src='gallery/{cards[0].get('id')}.png'>",
-        "</div>",
-        "<div class='plate-legend'>",
-        "<span>① Vector Flow & Nullclines</span>",
-        "<span>② Parameter Continuation</span>",
-        "<span>③ Langevin Retention Law</span>",
-        "<span>④ Normal Form Drift</span>",
-        "</div>",
-        "</div>",
-
-        # Right: Operational Metrics & Parameter Slots
-        "<div class='metrics-deck'>",
-        "<div class='metric-box'>",
-        "<h5>Writing Mechanism</h5>",
-        "<div class='val' id='metric-mech'>supercritical pitchfork: symmetric write</div>",
-        "</div>",
-        "<div class='metric-box'>",
-        "<h5>Stable States Count</h5>",
-        "<div class='val' id='metric-states'>4 stable state(s)</div>",
-        "</div>",
-        "<div class='metric-box'>",
-        "<h5>Write Point Bifurcation</h5>",
-        "<div class='val' id='metric-write'>Supercritical pitchfork along the sweep</div>",
-        "</div>",
-        "<div class='metric-box'>",
-        "<h5>Retention Law of Loss</h5>",
-        "<div class='val' id='metric-hold'>activation between stored states (Law 3)</div>",
-        "</div>",
-        "<div class='metric-box'>",
-        "<h5>Carrier & Closure Slots</h5>",
-        "<div id='metric-slots' class='mono' style='font-size:11.5px;color:var(--muted);line-height:1.5'>Loading slots...</div>",
-        "</div>",
-        "</div>", # metrics-deck
-
-        "</div>", # studio-main
-        "</section>", # studio-deck
-        "</div>", # view-studio
-    ])
-    parts.append("".join(studio_html))
-
-    # =========================================================================
-    # VIEW 2: REALIZATION A - MATERIAL MEMORY ATLAS
-    # =========================================================================
+    n_loops = loops_info.get("total", 0)
+    ok_loops = loops_info.get("consistent", 0)
     rows = []
-    for idx, card in enumerate(cards):
+    for card in cards:
         v = card.get("verdict", {})
-        cid = card.get("id", "")
+        cid = esc(str(card.get("id", "")))
         rows.append(
-            f"<tr><td><a href='javascript:void(0)' onclick='loadCardFromTable({idx})'><b>{esc(card.get('name', ''))}</b></a>"
-            f"<div style='margin-top:2px;font-size:11.5px;color:var(--muted)'>{esc(card.get('provenance', ''))}</div></td>"
+            f"<tr><td><a href='#{cid}'><b>{esc(card.get('name', ''))}</b></a></td>"
             f"<td>{_chip(card)}</td>"
             f"<td>{esc(_short(v.get('stores', ''), 55))}</td>"
             f"<td>{esc(_short(v.get('writes', ''), 85))}</td>"
-            f"<td>{esc(_short(v.get('holds', ''), 55))}</td>"
-            f"<td><button type='button' class='action-btn' style='padding:3px 8px;font-size:11.5px' onclick='loadCardFromTable({idx})'>Inspect Plate &rarr;</button></td></tr>"
+            f"<td>{esc(_short(v.get('holds', ''), 55))}</td></tr>"
         )
-
-    mem_html = [
-        "<div class='view-panel' id='view-memory'>",
-        "<header style='display:grid;gap:12px'>",
-        "<div style='display:flex;align-items:center;gap:10px'>",
-        "<span class='brand-badge' style='background:var(--ok)'>Realization A</span>",
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Material Memory Across 12 Model Materials</span></div>",
-        "<h1>Memory in Model Materials: Full Realizations Atlas</h1>",
-        "<p class='lead'>Each entry is a model material with deterministic dynamics and thermal noise. "
-        "For every realization the program determines the stable states, the write point bifurcation, the law by "
-        "which stored state is lost, and the normal form drift relative to &epsilon;s &minus; s&sup3; + h.</p>",
-        f"<div class='stats'><span><b>{len(cards)}</b> realizations evaluated</span>"
-        + "".join(f"<span><b>{n}</b> {esc(k)}</span>" for k, n in sorted(counts.items(), key=lambda kv: -kv[1]))
-        + "</div></header>",
-
-        "<div class='steps'>",
-        "<div class='step'><b>1. Carrier and closure</b>The variables of the material and what the dynamics conserves or exchanges with its environment.</div>",
-        "<div class='step'><b>2. Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>",
-        "<div class='step'><b>3. Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork.</div>",
-        "</div>",
-
-        "<section id='glance' style='display:grid;gap:12px'>",
-        "<h2>At a glance: 12 Realizations Compared</h2>",
-        "<div class='scroll'><table><thead><tr>",
-        "<th style='width:24%'>Realization & Provenance</th><th style='width:18%'>Writing mechanism</th>",
-        "<th style='width:14%'>Stable states</th><th style='width:24%'>Write point</th>",
-        "<th style='width:12%'>Retention law</th><th>Action</th></tr>",
-        f"</thead><tbody>{''.join(rows)}</tbody></table></div></section>",
-        "</div>"
-    ]
-    parts.append("".join(mem_html))
-
-    # =========================================================================
-    # VIEW 3: HOLONOMY LOOPS ACROSS FIELDS
-    # =========================================================================
-    loops_src = f"gallery/loops.png" if loops_fig and Path(loops_fig).exists() else ""
-    loops_html = [
-        "<div class='view-panel' id='view-loops'>",
-        "<header style='display:grid;gap:12px'>",
-        "<div style='display:flex;align-items:center;gap:10px'>",
-        "<span class='brand-badge' style='background:var(--accent)'>Holonomy Diagnostics</span>",
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Prediction vs. Simulation</span></div>",
-        "<h1>Loops Across Fields: Holonomy and Frustration</h1>",
-        f"<p class='lead'>For <b>{ok_loops} of {n_loops} loops</b> across fields, the physical behaviour predicted from the "
-        "composition of the bond couplings around the loop (its holonomy) agrees with the calculated states. "
-        "Gene loops follow Thomas's rule (a negative feedback loop cannot sustain two stable states), loops of bistable spins "
-        "follow Toulouse's frustration criterion, and loops of rotors are frustrated by the mismatch &Phi; of their bond directions, "
-        "with minimum excess energy per bond 1 &minus; cos(&Phi;/N).</p>",
-        f"<div class='stats'><span><b>{ok_loops}/{n_loops}</b> loops verified</span><span>Thomas's Rule</span><span>Toulouse Frustration</span><span>Rotor Mismatch</span></div>",
-        "</header>",
-        "<section class='card'>",
-        f"<div class='plate'><img alt='Loops of genes, spins and rotors: prediction and simulation' src='{loops_src}'></div>" if loops_src else "",
-        "<p class='lead'>The prediction holds across diverse carriers because holonomy depends only on the network composition cycle, not the material substrate.</p>",
-        "</section>",
-        "</div>"
-    ]
-    parts.append("".join(loops_html))
-
-    # =========================================================================
-    # VIEW 4: REALIZATION B - QUANTUM CARRIERS
-    # =========================================================================
-    quant_html = [
-        "<div class='view-panel' id='view-quantum'>",
-        "<header style='display:grid;gap:12px'>",
-        "<div style='display:flex;align-items:center;gap:10px'>",
-        "<span class='brand-badge' style='background:var(--ok)'>Realization B</span>",
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Quantum Information & Coherence</span></div>",
-        "<h1>Realization B: The Bloch Rotation on Ten Quantum Carriers</h1>",
-        "<p class='lead'>The Bloch rotation of a spin is detached from its carrier: the Hamiltonian and the observable generate "
-        "the Lie algebra su(2), so the signal follows the Rabi law on every carrier where that closure holds. "
-        f"The derivation reaches it on <b>{qs.get('reached')}</b> of <b>{qs.get('reached', 0) + qs.get('obstructed', 0)}</b> "
-        "carriers, from their own Hamiltonians; where it stops, the term that enlarges the algebra is named.</p>",
-        f"<div class='stats'><span><b>{qs.get('reached')} of {qs.get('reached', 0) + qs.get('obstructed', 0)}</b> carriers reached</span><span>Lie Algebra su(2)</span><span>Rabi Oscillation Law</span></div>",
-        "</header>",
-        "<section class='card'>",
-        f"<div class='plate'><img alt='The Bloch rotation on different carriers' src='{_img(q['figure'])}'></div>" if q["figure"] else "",
-        "<p class='lead'>Chapter 24 of the tutorial details the carrier detach/attach language on quantum spins and transmon qubits.</p>",
-        "</section>",
-        "</div>"
-    ]
-    parts.append("".join(quant_html))
-
-    # =========================================================================
-    # VIEW 5: REALIZATION C - OSCILLATOR PHASE LOCKING
-    # =========================================================================
-    osc_html = [
-        "<div class='view-panel' id='view-oscillators'>",
-        "<header style='display:grid;gap:12px'>",
-        "<div style='display:flex;align-items:center;gap:10px'>",
-        "<span class='brand-badge' style='background:var(--ok)'>Realization C</span>",
-        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Nonlinear Synchrony Across 7 Disciplines</span></div>",
-        "<h1>Realization C: Phase Locking in Eight Oscillator Models</h1>",
-        "<p class='lead'>Phase locking is derived in oscillators from electronics, chemistry, neuroscience, ecology, "
-        "chronobiology, superconductivity and computing hardware. Each derivation is a chain of verified transformations "
-        "(a stable cycle, its phase response, the averaged drive) that ends on the Adler equation "
-        "d&psi;/dt = &Delta;&omega; &minus; K sin &phi;. "
-        f"<b>{len(reached)}</b> of <b>{len(c['rows'])}</b> models reach it"
-        + (f"; in the others the derivation stops at a stated step ({esc('; '.join(sorted({str(r['obstruction'])[:60] for r in stopped})))})"
-           if stopped else "")
-        + ". The ratio at which an oscillator locks is set by a symmetry of the model that the drive respects.</p>",
-        f"<div class='stats'><span><b>{len(reached)}/{len(c['rows'])}</b> models reached</span><span>Adler Phase Equation</span><span>Cross-Field Symmetries</span></div>",
-        "</header>",
-        "<section class='card'>",
-        f"<div class='plate'><img alt='Phase locking derived in oscillators from different fields' src='{_img(c['figure'])}'></div>",
-        "<p class='lead'>Module 9 of the tutorial explains the derivations, the obstructions, and the invariants.</p>",
-        "</section>",
-        "</div>"
-    ]
-    parts.append("".join(osc_html))
-
-    # =========================================================================
-    # VIEW 6: ADDING A MATERIAL SPECIFICATION & COMMUNITY
-    # =========================================================================
-    contrib_html = [
-        "<section class='card' id='contribute'>",
-        "<div class='card-head'><h2>Adding a material specification</h2>",
-        "<span class='src'>Contributing to FieldBridge</span></div>",
-        "<p>A material is one JSON file: its variables, equations, parameters, the control an experiment varies, "
-        "the closure, the observable, the assumptions and the source of the equations.</p>",
-        "<pre class='mono' style='white-space:pre-wrap;background:var(--ground);border:1px solid var(--rule);border-radius:6px;padding:12px'>",
-        "python3 -B -m fieldbridge memory new my_material --carrier orthant\n",
-        "python3 -B -m fieldbridge memory check examples/memory/my_material.json\n",
-        "python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</pre>",
-        f"<p>The <a href='{REPO}/blob/main/CONTRIBUTING.md'>contribution guide</a> describes each field and "
-        "the pull request; the checks of a pull request compute the card of the new material and list the "
-        "materials from other fields written by the same mechanism. The "
-        f"<a href='materials.html'>catalog of 20 materials</a> lists the materials already described, the "
-        f"<a href='wanted_materials.html'>list of wanted materials</a> names classic models "
-        "from fields not yet covered, and a material can also be "
-        f"<a href='{REPO}/issues/new?template=material.yml'>proposed with its source</a>.</p>",
-        "</section>",
-        f"<p class='lead'>{esc(BOUNDARY)}</p>"
-    ]
-    parts.append("".join(contrib_html))
-
-    # =========================================================================
-    # JAVASCRIPT: DYNAMIC CONSTRUCTOR ENGINE & VIEW ROUTER
-    # =========================================================================
-    js_code = f"""
-<script>
-const CARDS = {cards_js};
-let activeIdx = 0;
-let isDetached = false;
-
-function showView(viewId) {{
-  document.querySelectorAll('.view-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.view-tabs button').forEach(b => b.classList.remove('active'));
-
-  const targetPanel = document.getElementById('view-' + viewId);
-  const targetBtn = document.getElementById('btn-' + viewId);
-  if (targetPanel) targetPanel.classList.add('active');
-  if (targetBtn) targetBtn.classList.add('active');
-  window.location.hash = '#' + viewId;
-  window.scrollTo({{ top: 0, behavior: 'smooth' }});
-}}
-
-function selectMaterial(idx) {{
-  if (idx < 0 || idx >= CARDS.length) return;
-  activeIdx = idx;
-  isDetached = false;
-  const cd = CARDS[idx];
-
-  // Update Ribbon
-  document.querySelectorAll('.ribbon-btn').forEach((b, i) => b.classList.toggle('active', i === idx));
-  document.getElementById('deck-counter').textContent = 'Material ' + (idx + 1) + ' of ' + CARDS.length;
-
-  // Update Assembly Modules
-  const modCarrier = document.getElementById('mod-carrier');
-  modCarrier.classList.remove('detached');
-  const btnDetach = document.getElementById('btn-detach');
-  btnDetach.textContent = '✂️ Detach Carrier';
-  btnDetach.className = 'action-btn detach';
-
-  const xi = cd.slots.Xi || cd.slots.carrier || 'degrees of freedom';
-  document.getElementById('carrier-text').textContent = xi;
-
-  const omega = cd.slots.Omega || cd.slots.operation || cd.name;
-  document.getElementById('omega-text').textContent = omega;
-
-  const mech = (cd.verdict.constructs || cd.verdict.mechanism || 'Invariant mechanism').split(';')[0];
-  document.getElementById('kernel-text').textContent = 'Mechanism: ' + mech;
-
-  document.getElementById('attach-status').innerHTML = '✓ Realization <b>' + cd.name + '</b> Assembled';
-  document.getElementById('attach-status').style.color = 'var(--ok)';
-
-  // Update Diagnostic Plot Plate
-  const imgEl = document.getElementById('studio-plate');
-  imgEl.src = cd.img;
-  imgEl.alt = 'Diagnostic Plate of ' + cd.name;
-  document.getElementById('plate-title').textContent = cd.name + ' — 4-Panel Evaluation';
-
-  // Chip
-  const chipEl = document.getElementById('plate-chip');
-  chipEl.textContent = mech;
-  chipEl.className = 'chip ' + (mech.includes('symmetric') ? 'ok' : (mech.includes('fold') || mech.includes('uniform') ? 'warn' : 'none'));
-
-  // Metrics
-  document.getElementById('metric-mech').textContent = cd.verdict.mechanism || cd.verdict.constructs || 'unclassified';
-  document.getElementById('metric-states').textContent = cd.verdict.stores || '1 stable state';
-  document.getElementById('metric-write').textContent = cd.verdict.writes || 'no write point';
-  document.getElementById('metric-hold').textContent = cd.verdict.holds || 'relaxation';
-
-  // Slots
-  let sHtml = '';
-  if (cd.slots.C) sHtml += '<b>Closure:</b> ' + cd.slots.C + '<br>';
-  if (cd.slots.R) sHtml += '<b>Observable:</b> ' + cd.slots.R + '<br>';
-  if (cd.slots.A) sHtml += '<b>Parameters:</b> ' + cd.slots.A;
-  document.getElementById('metric-slots').innerHTML = sHtml || 'Standard constitutive parameterization.';
-}}
-
-function toggleDetach() {{
-  isDetached = !isDetached;
-  const modCarrier = document.getElementById('mod-carrier');
-  const btnDetach = document.getElementById('btn-detach');
-  const attachStatus = document.getElementById('attach-status');
-
-  if (isDetached) {{
-    modCarrier.classList.add('detached');
-    document.getElementById('carrier-text').textContent = '[ CARRIER DETACHED: Invariant Kernel Isolated ]';
-    btnDetach.textContent = '🔄 Re-attach Carrier';
-    btnDetach.className = 'action-btn attach';
-    attachStatus.innerHTML = '⚡ Ready: Select a target carrier below to attach';
-    attachStatus.style.color = 'var(--warn)';
-  }} else {{
-    selectMaterial(activeIdx);
-  }}
-}}
-
-function attachToTarget(targetIdx) {{
-  if (targetIdx === '') return;
-  const idx = parseInt(targetIdx, 10);
-  selectMaterial(idx);
-  document.getElementById('target-carrier-select').value = '';
-  const attachStatus = document.getElementById('attach-status');
-  attachStatus.innerHTML = '✓ Attached to <b>' + CARDS[idx].name + '</b>: Equations Derived & Verified!';
-  attachStatus.style.color = 'var(--ok)';
-}}
-
-function loadCardFromTable(idx) {{
-  showView('studio');
-  selectMaterial(idx);
-}}
-
-// Initialize view from hash or default to studio
-window.addEventListener('DOMContentLoaded', () => {{
-  const hash = window.location.hash.replace('#', '');
-  if (hash && ['studio', 'memory', 'loops', 'quantum', 'oscillators'].includes(hash)) {{
-    showView(hash);
-  }} else {{
-    showView('studio');
-  }}
-  selectMaterial(0);
-}});
-</script>
-"""
-    parts.append(js_code)
-
-    # Write index.html
-    index_html = _page_shell("FieldBridge: Physical Mechanism Constructor Across Fields", "".join(parts), active="demo")
-    (out / "index.html").write_text(index_html, encoding="utf-8")
+    build_studio(out)
 
     # Generate standalone gallery.html
     gal_parts = [
@@ -1303,4 +885,12 @@ def add_parser(sub) -> None:
     p.add_argument("--out-dir", default="build/demo", help="Output directory")
     p.add_argument("--seed", type=int, default=20260923, help="Random seed")
     p.add_argument("--law", action="store_true", help="Estimate swept-write law (takes longer)")
-    p.set_defaults(func=lambda args: (run(args.out_dir, seed=args.seed, law=args.law), 0)[1])
+    p.add_argument("--studio-only", action="store_true", help="Build the offline interactive constructor; leave full calculations in the tutorial.")
+    def execute(args):
+        if args.studio_only:
+            from .web_demo import build_studio
+            print(build_studio(args.out_dir))
+        else:
+            run(args.out_dir, seed=args.seed, law=args.law)
+        return 0
+    p.set_defaults(func=execute)
