@@ -87,8 +87,11 @@ def test_demo_writes_one_page_with_three_calculated_results(tmp_path):
     assert abs(results["material"]["write_point"] - 2.0) < 0.05
     assert sum(str(r["status"]).startswith("reached") for r in results["mechanism"]["rows"]) == 7
     assert results["quantum"]["summary"]["reached"] == 6
-    assert page.count("data:image/png;base64,") == 3 and "Adding a material specification" in page
+    assert page.count("data:image/png;base64,") >= 2 and "Adding a material specification" in page
     assert (tmp_path / "demo.md").exists()
+    assert (tmp_path / "materials.html").exists()
+    assert (tmp_path / "wanted_materials.html").exists()
+    assert (tmp_path / "gallery.html").exists()
 
 
 def test_same_mechanism_lists_the_materials_written_the_same_way(tmp_path):

@@ -1,0 +1,157 @@
+{
+  "command": "gallery",
+  "implementation_sha256": "756c712d2829ddcfb3b1644f9827ec85ddaf62028103a4611b4a5f4e8510b6e3",
+  "versions": {
+    "python": "3.11.0",
+    "numpy": "1.26.4",
+    "scipy": "1.17.0",
+    "sympy": "1.14.0",
+    "matplotlib": "3.10.8"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "input": {
+    "examples": "examples/memory",
+    "quick": true
+  },
+  "cards": [
+    {
+      "id": "card00",
+      "name": "caged capillary rotors",
+      "verdict": {
+        "stores": "4 stable state(s)",
+        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 6.28",
+        "constructs": "no bifurcation along the control; writing requires a field",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.05, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 1.2e+03; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 1.00, retention/rewriting time ratio > 602"
+      }
+    },
+    {
+      "id": "card01",
+      "name": "three compartments with an unobserved imbalance",
+      "verdict": {
+        "stores": "1 stable state(s)",
+        "writes": "no control parameter",
+        "constructs": "a single stable state: no write point",
+        "holds": "relaxation to a single state (Law 1)",
+        "lock": "-"
+      }
+    },
+    {
+      "id": "card02",
+      "name": "caged in-plane dipoles",
+      "verdict": {
+        "stores": "10 stable state(s) (sampled)",
+        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 1.36",
+        "constructs": "no bifurcation along the control; writing requires a field",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.25, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.28, retention/rewriting time ratio 0.2; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.30, not rewritten"
+      }
+    },
+    {
+      "id": "card03",
+      "name": "single-mode laser",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at P = 1",
+        "constructs": "supercritical pitchfork: symmetric write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.03, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.05, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.40, not rewritten"
+      }
+    },
+    {
+      "id": "card04",
+      "name": "pitchfork normal form",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at eps = 0; a uniform field removes the stable state at h = 0.385",
+        "constructs": "supercritical pitchfork: symmetric write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.48, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.98, retention/rewriting time ratio 1.77; field 0.4 x threshold, control swept through the write point: accuracy 0.82, not rewritten"
+      }
+    },
+    {
+      "id": "card05",
+      "name": "ring of 3 repressors",
+      "verdict": {
+        "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+        "writes": "Hopf at alpha = 2",
+        "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+        "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+        "lock": "-"
+      }
+    },
+    {
+      "id": "card06",
+      "name": "ring of 4 repressors",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at alpha = 1.01; a uniform field removes the stable state at h = 1.6",
+        "constructs": "supercritical pitchfork: symmetric write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.80, not rewritten"
+      }
+    },
+    {
+      "id": "card07",
+      "name": "Schl\u00f6gl reactor",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "saddle-node (fold) at b = 1.49; saddle-node (fold) at b = 2.26; a uniform field removes the stable state at h = 0.385",
+        "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp a = 4.153, b = 2.654 (supercritical pitchfork along the sweep)",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.08, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 26.7"
+      }
+    },
+    {
+      "id": "card08",
+      "name": "genetic toggle switch",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at alpha = 2; a uniform field removes the stable state at h = 0.213",
+        "constructs": "supercritical pitchfork: symmetric write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.12, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio 12.1; field 0.4 x threshold, control swept through the write point: accuracy 0.92, retention/rewriting time ratio 9.24"
+      }
+    },
+    {
+      "id": "card09",
+      "name": "genetic toggle, unequal promoters",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "saddle-node (fold) at alpha = 3.27; a uniform field removes the stable state at h = 0.446",
+        "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp gamma = 1, alpha = 2 (supercritical pitchfork along the sweep)",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.73, retention/rewriting time ratio > 21.5; field 0.4 x threshold, control swept through the write point: accuracy 0.30, retention/rewriting time ratio > 129"
+      }
+    },
+    {
+      "id": "card10",
+      "name": "adaptive transport network, two tubes",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "subcritical pitchfork at mu = 1.38; a uniform field removes the stable state at h = 0.064",
+        "constructs": "subcritical pitchfork: symmetric write, but the state jumps to a distant branch; a saturating term is needed for a local write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.63, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.88, retention/rewriting time ratio 0.724; field 0.4 x threshold, control swept through the write point: accuracy 0.65, not rewritten"
+      }
+    },
+    {
+      "id": "card11",
+      "name": "adaptive transport network, unequal tubes",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "saddle-node (fold) at mu = 1.21; a uniform field removes the stable state at h = 0.0785",
+        "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp L2 = 1, mu = 1.383 (subcritical pitchfork along the sweep)",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.28, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio 2.7; field 0.4 x threshold, control swept through the write point: accuracy 0.38, not rewritten"
+      }
+    }
+  ],
+  "skipped": [],
+  "loops": {
+    "consistent": 91,
+    "total": 91
+  }
+}
