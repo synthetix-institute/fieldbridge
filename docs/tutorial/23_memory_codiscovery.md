@@ -102,7 +102,7 @@ band is the weighted mean ± one standard error.*
 inversion $N$ (`inv`):
 
 $$
-\dot E = \tfrac12 (gN - \kappa)\,E, \qquad \dot N = P - \gamma N - g N E^2 . \tag{1}
+\dot E = \tfrac12 (gN - \kappa)\,E, \qquad \dot N = P - \gamma N - g N E^2  \qquad (1)
 $$
 
 The reflection $E \to -E$ leaves Eq. (1) unchanged; it exchanges the two optical phases $0$ and $\pi$. The field
@@ -110,7 +110,7 @@ becomes unstable at the pump $P = \gamma\kappa/g$, which is 1 in the example. Th
 eliminated, $N = P/(\gamma + gE^2)$, so that
 
 $$
-\dot E = \tfrac12\Bigl(\frac{gP}{\gamma} - \kappa\Bigr) E - \frac{g^2 P}{2\gamma^2}\, E^3 + O(E^5). \tag{2}
+\dot E = \tfrac12\Bigl(\frac{gP}{\gamma} - \kappa\Bigr) E - \frac{g^2 P}{2\gamma^2}\, E^3 + O(E^5) \qquad (2)
 $$
 
 At threshold the cubic coefficient is $a_3 = -g\kappa/(2\gamma) = -0.5$; the constructor finds $-0.499$. The
@@ -161,7 +161,7 @@ is set by $\Gamma = D_s\lvert a_3\rvert/r = 0.05$, and a bias $h_s$ is chosen fo
 accuracy of 0.8. The measured accuracy $P$ gives the constant
 
 $$
-\pi^{1/4} \approx \frac{\Phi^{-1}(P)\, D_s^{1/2}\, r^{1/4}}{h_s} . \tag{3}
+\pi^{1/4} \approx \frac{\Phi^{-1}(P)\, D_s^{1/2}\, r^{1/4}}{h_s}  \qquad (3)
 $$
 
 With 2000 trajectories per model, the six estimates have a weighted mean of $1.346 \pm 0.021$, against
@@ -173,7 +173,7 @@ derivation that ended on another mechanism, such as a fold, would give an accura
 The second target is the fold,
 
 $$
-\dot s = \mu + s^2 , \tag{4}
+\dot s = \mu + s^2  \qquad (4)
 $$
 
 at which the occupied state meets an unstable state and disappears, and the material switches to another stored
@@ -232,7 +232,7 @@ a fold. The constructor tries pairs of states in the order of the force that the
 $\dot x = rt + x^2$. The occupied state does not leave at $\mu = 0$ but later:
 
 $$
-x = r^{1/3}\,\frac{\mathrm{Ai}'(-\tau)}{\mathrm{Ai}(-\tau)}, \qquad \tau = r^{1/3} t , \tag{5}
+x = r^{1/3}\,\frac{\mathrm{Ai}'(-\tau)}{\mathrm{Ai}(-\tau)}, \qquad \tau = r^{1/3} t  \qquad (5)
 $$
 
 so the state crosses the position of the static fold, $x = 0$, at $\mu = \lvert a_1'\rvert\, r^{2/3}$, where
@@ -297,7 +297,7 @@ obeys the Adler equation (Adler, 1946)
 
 $$
 \dot\psi = \Delta\omega - K \sin\phi, \qquad \phi = n\psi - \phi_n - \tfrac{\pi}{2}, \qquad
-K = \tfrac12\,\varepsilon\,\lvert Z_n\rvert, \qquad \Delta\omega = \omega_0 - \omega_f/n , \tag{6}
+K = \tfrac12\,\varepsilon\,\lvert Z_n\rvert, \qquad \Delta\omega = \omega_0 - \omega_f/n  \qquad (6)
 $$
 
 where $Z_n = a_n - i b_n$ is the $n$-th Fourier coefficient of $Z_p$ and $\phi_n = \operatorname{atan2}(b_n, a_n)$. In

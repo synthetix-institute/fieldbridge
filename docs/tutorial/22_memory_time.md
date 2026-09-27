@@ -40,7 +40,7 @@ Near a state, the linear stage of the dynamics along one direction is $ds = -\ka
 Gaussian write of variance $s_0^2$ leaves, at time $t$, the information
 
 $$
-I(t) = \tfrac12 \ln\!\left[1 + \frac{\kappa s_0^2/D}{e^{2\kappa t} - 1}\right]. \tag{1}
+I(t) = \tfrac12 \ln\!\left[1 + \frac{\kappa s_0^2/D}{e^{2\kappa t} - 1}\right] \qquad (1)
 $$
 
 | Regime | Late-time form of Eq. (1) | Law |

@@ -41,7 +41,7 @@ Four operations act on realizations.
 The mechanism of this chapter is the Bloch rotation. Three Hermitian operators $J_1, J_2, J_3$ with
 
 $$
-[J_a, J_b] = i\,\varepsilon_{abc}\,J_c \tag{1}
+[J_a, J_b] = i\,\varepsilon_{abc}\,J_c \qquad (1)
 $$
 
 form the Lie algebra su(2). If the Hamiltonian is $H = \boldsymbol\Omega\cdot\mathbf J$ and the observable is
@@ -49,7 +49,7 @@ $O = \mathbf n\cdot\mathbf J$, the expectation values $\mathbf m = \langle\mathb
 $\dot{\mathbf m} = \boldsymbol\Omega\times\mathbf m$. From the top eigenstate of $O$ the observable follows
 
 $$
-f(t) = \frac{\langle O\rangle(t)}{\langle O\rangle(0)} = \cos^2\theta + \sin^2\theta\,\cos(|\boldsymbol\Omega|\,t), \tag{2}
+f(t) = \frac{\langle O\rangle(t)}{\langle O\rangle(0)} = \cos^2\theta + \sin^2\theta\,\cos(|\boldsymbol\Omega|\,t) \qquad (2)
 $$
 
 where $\theta$ is the angle between $\boldsymbol\Omega$ and $\mathbf n$ (the Rabi law). Equation (2) contains no
@@ -132,7 +132,7 @@ $\sum_j (j - \tfrac{N-1}{2})(1 - Z_j)/2$, and $J_x$ is the hopping produced by t
 Equation (1) holds only if the bonds match the matrix elements of $J_x$ for spin $(N-1)/2$:
 
 $$
-J_j \propto \sqrt{(j+1)(N-1-j)}, \qquad j = 0, \ldots, N-2 . \tag{3}
+J_j \propto \sqrt{(j+1)(N-1-j)}, \qquad j = 0, \ldots, N-2  \qquad (3)
 $$
 
 The attachment therefore returns a design: bonds 0.866, 1.000 and 0.866 (ratio $\sqrt3 : 2 : \sqrt3$) and site fields

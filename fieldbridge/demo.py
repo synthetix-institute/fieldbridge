@@ -93,17 +93,54 @@ nav.pills a:hover { border-color:var(--accent); color:var(--accent); }
 nav a:focus-visible, td a:focus-visible { outline:2px solid var(--accent); outline-offset:2px; }
 .search-bar { width:100%; max-width:440px; padding:9px 14px; font-size:14px; border:1px solid var(--rule); border-radius:6px; background:var(--panel); color:var(--ink); }
 .field-badge { display:inline-block; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; font-weight:600; color:var(--accent); background:rgba(29,95,209,0.08); padding:2px 7px; border-radius:4px; }
+html { scroll-behavior: smooth; }
+
+/* Constructor & Language specific styles */
+.roadmap-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(240px, 1fr)); gap:14px; margin-top:6px; }
+.roadmap-card { background:var(--panel); border:1px solid var(--rule); border-radius:8px; padding:16px; display:grid; gap:6px; text-decoration:none; color:var(--ink); transition:all 0.15s; }
+.roadmap-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 4px 12px rgba(0,0,0,0.04); }
+.roadmap-card h4 { margin:0; font-size:14.5px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:8px; }
+.roadmap-card p { margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
+.roadmap-card .jump { font-size:12px; font-weight:600; color:var(--accent); margin-top:4px; }
+
+.lang-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(260px, 1fr)); gap:14px; }
+.lang-card { background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:16px; display:grid; gap:6px; }
+.lang-card h4 { margin:0; font-size:14.5px; color:var(--ink); display:flex; align-items:center; justify-content:space-between; }
+.lang-sym { font-family:"Spectral", serif; font-size:18px; font-weight:bold; color:var(--accent); }
+.lang-card p { margin:0; font-size:13px; color:var(--muted); line-height:1.5; }
+
+.tabs { display:flex; gap:8px; border-bottom:1px solid var(--rule); margin-bottom:14px; flex-wrap:wrap; }
+.tab-btn { background:none; border:none; padding:8px 14px; font-size:13.5px; font-weight:600; color:var(--muted); cursor:pointer; border-bottom:2px solid transparent; border-radius:6px 6px 0 0; transition:all 0.15s; }
+.tab-btn:hover { color:var(--ink); background:rgba(0,0,0,0.02); }
+.tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(29,95,209,0.06); }
+.tab-pane { display:none; }
+.tab-pane.active { display:grid; gap:14px; }
+
+.flow-grid { display:grid; grid-template-columns:1fr auto 1fr auto 1fr; gap:12px; align-items:center; }
+.flow-box { background:var(--ground); border:1px solid var(--rule); border-radius:8px; padding:14px; display:grid; gap:6px; font-size:13px; }
+.flow-box b { color:var(--ink); font-size:13.5px; }
+.flow-arrow { display:flex; align-items:center; justify-content:center; color:var(--accent); font-size:18px; font-weight:bold; text-align:center; padding:0 4px; }
+.flow-arrow span { font-size:11px; text-transform:uppercase; letter-spacing:0.05em; display:block; color:var(--muted); }
+.code-snip { font-family:"JetBrains Mono", monospace; font-size:12.5px; background:var(--ground); border:1px solid var(--rule); border-radius:6px; padding:10px 12px; overflow-x:auto; white-space:pre-wrap; color:var(--ink); }
+
+@media (max-width:860px) {
+  .flow-grid { grid-template-columns:1fr; gap:10px; }
+  .flow-arrow { transform:rotate(90deg); padding:8px 0; }
+}
 @media (max-width:640px) { dl { grid-template-columns:1fr; } dt { margin-top:6px; } }
 """
 
 
 def _nav_header(active: str = "demo") -> str:
     links = [
-        ("index.html", "Realizations Gallery", active == "demo"),
+        ("index.html#overview", "Overview", active == "demo"),
+        ("index.html#language", "Nested Language", False),
+        ("index.html#constructor", "Constructor Engine", False),
+        ("index.html#realization-a", "Realization A: Memory", False),
         ("index.html#glance", "At a Glance", False),
         ("index.html#loops", "Holonomy Loops", False),
-        ("index.html#mechanism", "Phase Locking", False),
         ("index.html#quantum", "Quantum Carriers", False),
+        ("index.html#mechanism", "Phase Locking", False),
         ("materials.html", "Catalog (20)", active == "materials"),
         ("wanted_materials.html", "Wanted Models", active == "wanted"),
         ("gallery.html", "Standalone Gallery", active == "gallery"),
@@ -388,30 +425,174 @@ def _page(results: Dict, out: Path) -> None:
 
     parts = []
 
-    # 1. Hero Header
+    # 1. Main Hero & Architectural Overview
     parts.append(
-        "<header style='display:grid;gap:14px'>"
-        "<div style='display:flex;align-items:center;gap:8px'>"
-        "<span class='brand-badge' style='background:var(--ok)'>Evaluated Gallery</span>"
-        "<span style='color:var(--muted);font-size:13px'>Deterministic Dynamics & Thermal Langevin Noise</span></div>"
-        "<h1>Memory in model materials: a gallery of realizations</h1>"
-        "<p class='lead'>Each entry is a model material, called a realization: a set of state variables (the carrier) "
-        "with deterministic dynamics and thermal noise. For every realization the program determines the stable states, "
-        "the parameter value at which a new state can be written (the write point), the law by which a stored state is "
-        "lost, and how the local dynamics at the write point differs from the symmetric pitchfork normal form "
-        "&epsilon;s &minus; s&sup3; + h. The classifications are descriptive: a fold, an oscillation or the absence "
-        "of a bifurcation is a property of the material, not a failed calculation.</p>"
-        f"<div class='stats'><span><b>{len(cards)}</b> realizations</span>"
-        + "".join(f"<span><b>{n}</b> {esc(k)}</span>" for k, n in sorted(counts.items(), key=lambda kv: -kv[1]))
-        + f"<span><b>{ok_loops}</b> of <b>{n_loops}</b> loops as predicted from the holonomy</span></div></header>"
+        "<section id='overview' style='display:grid;gap:18px'>"
+        "<div style='display:flex;align-items:center;gap:10px;flex-wrap:wrap'>"
+        "<span class='brand-badge' style='background:var(--accent)'>Mathematical Physical Constructor</span>"
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>No-LLM Cross-Field Mechanism Translation & Derivation</span></div>"
+        "<h1>Bridging Physical Mechanisms Across Scientific Disciplines</h1>"
+        "<p class='lead'>FieldBridge formalizes physical theories as mathematical constructors. Instead of relying on "
+        "generative LLM analogies, it decouples a dynamical mechanism from its physical carrier (<b>Detach</b>) and "
+        "transplants it onto native operators in a different discipline (<b>Attach</b>)&mdash;deriving equations, "
+        "locating write points, and checking for physical obstructions from first principles.</p>"
+        "<div class='stats'>"
+        "<span><b>14</b> scientific fields</span>"
+        "<span><b>20</b> catalog models</span>"
+        "<span><b>12</b> evaluated realizations</span>"
+        "<span><b>91/91</b> holonomy loops verified</span>"
+        "<span><b>100%</b> machine-derived</span>"
+        "</div>"
+        "<div class='roadmap-grid'>"
+        "<a href='#language' class='roadmap-card'>"
+        "<h4><span>🧩</span> 1. The Nested Language</h4>"
+        "<p>How physical systems are formally encoded as realizations: carriers, operations, closures, observables, protocols, and parameters.</p>"
+        "<div class='jump'>Explore Formalism &darr;</div></a>"
+        "<a href='#constructor' class='roadmap-card'>"
+        "<h4><span>⚡</span> 2. Constructor Engine</h4>"
+        "<p>Interactive demonstration of Detaching invariant mechanisms and Attaching them to new physical carriers across fields.</p>"
+        "<div class='jump'>Try Mechanism Transfers &darr;</div></a>"
+        "<a href='#realization-a' class='roadmap-card'>"
+        "<h4><span>💾</span> 3. Realization A: Memory</h4>"
+        "<p>The gallery of 12 evaluated model materials storing state via pitchforks, folds, and limit cycles, with 91 holonomy loops.</p>"
+        "<div class='jump'>View 12 Materials Gallery &darr;</div></a>"
+        "<a href='#quantum' class='roadmap-card'>"
+        "<h4><span>⚛️</span> 4. Realizations B & C</h4>"
+        "<p>Coherent SU(2) Bloch rotations across 10 quantum carriers, and collective phase locking across 8 oscillator models.</p>"
+        "<div class='jump'>View Quantum & Synchrony &darr;</div></a>"
+        "</div>"
+        "</section>"
     )
 
-    # 2. Conceptual Steps
+    # 2. Section 1: The Nested Language of Realizations
+    parts.append(
+        "<section id='language' class='card'>"
+        "<div class='card-head'><h2>1. The Foundation: The Nested Language of Realizations</h2>"
+        "<span class='src'>Mathematical Definition</span></div>"
+        "<p>Every physical system is formalized as a realization:</p>"
+        "<div class='code-snip' style='font-size:14px;font-weight:600;text-align:center'>"
+        "I_real = ( ( &Omega;, &Xi; ) ;  C,  R,  P ;  A )"
+        "</div>"
+        "<p class='lead'>A realization binds an abstract dynamical generator to a concrete material substrate. "
+        "Separating the representation from the dynamics allows mathematical operations to act on physical theories directly:</p>"
+        "<div class='lang-grid'>"
+        "<div class='lang-card'><h4><span>Carrier</span><span class='lang-sym'>&Xi;</span></h4>"
+        "<p>The physical state space and representation: continuous angles (&theta;), gene concentrations (u, v), qubit Hilbert spaces, optical cavity fields, or electrical phases.</p></div>"
+        "<div class='lang-card'><h4><span>Operation</span><span class='lang-sym'>&Omega;</span></h4>"
+        "<p>The generator of dynamics: deterministic vector flow f(x), Hamiltonian operator H = &sum; g_i O_i, or Langevin drift.</p></div>"
+        "<div class='lang-card'><h4><span>Closure</span><span class='lang-sym'>C</span></h4>"
+        "<p>Constitutive relations and constraints: adiabatic elimination of fast degrees of freedom, boundary conditions, and symmetries.</p></div>"
+        "<div class='lang-card'><h4><span>Observable</span><span class='lang-sym'>R</span></h4>"
+        "<p>What an experiment measures or retains: stored discrete order parameter, transverse magnetization &lang;X_0&rang;, or readout signal.</p></div>"
+        "<div class='lang-card'><h4><span>Protocol</span><span class='lang-sym'>P</span></h4>"
+        "<p>How the material is prepared, driven, and perturbed: writing pulses, swept magnetic fields, or initial state preparations.</p></div>"
+        "<div class='lang-card'><h4><span>Parameters</span><span class='lang-sym'>A</span></h4>"
+        "<p>The constitutive constants of the physical apparatus: coupling constants, friction coefficients, relaxation timescales, and nonlinear gains.</p></div>"
+        "</div>"
+        "</section>"
+    )
+
+    # 3. Section 2: The Constructor Engine (Interactive Detach & Attach Demonstration)
+    parts.append(
+        "<section id='constructor' class='card'>"
+        "<div class='card-head'><h2>2. The Constructor Engine: Detach & Attach</h2>"
+        "<span class='src'>Cross-Field Mechanism Transfer Pipeline</span></div>"
+        "<p>A physical mechanism can be separated from the carrier on which it was discovered (<b>Detach</b>) "
+        "and attached to a new carrier in another scientific domain (<b>Attach</b>):</p>"
+        "<div class='code-snip' style='font-size:13.5px;font-weight:600;text-align:center;color:var(--accent)'>"
+        "I_real^(source) &nbsp;&xrarr;&nbsp; [ DETACH ] &nbsp;&xrarr;&nbsp; (&Omega;_s, 0) &nbsp;&xrarr;&nbsp; [ ATTACH ] &nbsp;&xrarr;&nbsp; (&Omega;_s, &Xi;_t) &nbsp;&xrarr;&nbsp; I_real^(target)"
+        "</div>"
+        "<p class='lead'>Select a machine-verified mechanism transfer below to observe how the constructor decouples the invariant dynamical kernel and instantiates it into a target carrier's own native operators:</p>"
+        "<div class='tabs'>"
+        "<button class='tab-btn active' onclick='switchTab(0)'>🧬 &rarr; 🔬 Symmetric Memory (Biology &rarr; Soft Matter)</button>"
+        "<button class='tab-btn' onclick='switchTab(1)'>🧲 &rarr; ⚛️ Bloch State Rotation (NMR &rarr; Qubits)</button>"
+        "<button class='tab-btn' onclick='switchTab(2)'>🦗 &rarr; ⚡ Phase Synchronization (Ecology &rarr; Superconductivity)</button>"
+        "</div>"
+        "<div class='tab-pane active' id='tab-pane-0'>"
+        "<div class='flow-grid'>"
+        "<div class='flow-box'><b>Source Realization: Genetic Switch</b>"
+        "<span class='field-badge'>Synthetic Biology</span>"
+        "<p>Carrier &Xi;_s: repressor concentrations u, v.<br>Operation &Omega;_s: mutual repression Hill dynamics.<br>Closure: symmetric mode u+v is adiabatically eliminated.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
+        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
+        "<span class='chip ok'>Symmetric Pitchfork Normal Form</span>"
+        "<p class='mono'>ds/dt = &epsilon;s &minus; s&sup3; + h</p>"
+        "<p>Independent of biochemistry. Stores a bit via spontaneous symmetry breaking at &epsilon; = 0.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
+        "<div class='flow-box'><b>Target Realization: Capillary Rotors</b>"
+        "<span class='field-badge'>Colloid Soft Matter</span>"
+        "<p>Carrier &Xi;_t: angular orientations &theta;_1, &theta;_2.<br>Operation &Omega;_t: capillary quadrupole torque.<br>Verification: both realize cubic retention law a_3 &lt; 0.</p></div>"
+        "</div>"
+        "<div class='code-snip'>$ python3 -B -m fieldbridge memory attach --from examples/memory/toggle.json --to examples/memory/colloid_caged.json</div>"
+        "</div>"
+        "<div class='tab-pane' id='tab-pane-1'>"
+        "<div class='flow-grid'>"
+        "<div class='flow-box'><b>Source Realization: Nuclear Spin</b>"
+        "<span class='field-badge'>Nuclear Magnetic Resonance</span>"
+        "<p>Carrier &Xi;_s: single nuclear spin-1/2.<br>Operation &Omega;_s: RF magnetic drive.<br>Closure: unitary SU(2) evolution.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
+        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
+        "<span class='chip ok'>Rabi Rotation Law (su(2) Algebra)</span>"
+        "<p class='mono'>[J_a, J_b] = i &epsilon;_abc J_c<br>f(t) = cos&sup2;&theta; + sin&sup2;&theta; cos(|&Omega;|t)</p>"
+        "<p>Dimension and representation spin j drop out completely.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
+        "<div class='flow-box'><b>Target Realization: Transmon Qubits</b>"
+        "<span class='field-badge'>Quantum Computing</span>"
+        "<p>Carrier &Xi;_t: exchange chain of N qubits.<br>Operation &Omega;_t: H = g Z_0 Z_1 + h X_0.<br>Verification: returns design J_j &prop; &radic;((j+1)(N-1-j)).</p></div>"
+        "</div>"
+        "<div class='code-snip'>$ python3 -B -m fieldbridge construct --source examples/quantum/nuclear_spin.json --target examples/quantum/two_spins.json</div>"
+        "</div>"
+        "<div class='tab-pane' id='tab-pane-2'>"
+        "<div class='flow-grid'>"
+        "<div class='flow-box'><b>Source Realization: Firefly Swarm</b>"
+        "<span class='field-badge'>Mathematical Ecology</span>"
+        "<p>Carrier &Xi;_s: bioluminescent pulse phases &psi;_i.<br>Operation &Omega;_s: visual flash coupling.<br>Closure: slow phase reduction.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Detach</span></div>"
+        "<div class='flow-box' style='background:rgba(29,95,209,0.05);border-color:var(--accent)'><b>Invariant Portable Kernel</b>"
+        "<span class='chip ok'>Adler Phase Equation</span>"
+        "<p class='mono'>d&psi;/dt = &Delta;&omega; &minus; K sin &phi;</p>"
+        "<p>Phase lock condition: K &ge; |&Delta;&omega;| / |Z_n|. Universal synchronization threshold.</p></div>"
+        "<div class='flow-arrow'>&rarr;<span>Attach</span></div>"
+        "<div class='flow-box'><b>Target Realization: Josephson Array</b>"
+        "<span class='field-badge'>Superconducting Electronics</span>"
+        "<p>Carrier &Xi;_t: junction superconducting phase differences.<br>Operation &Omega;_t: microwave AC drive.<br>Verification: predicts exact Shapiro voltage steps.</p></div>"
+        "</div>"
+        "<div class='code-snip'>$ python3 -B -m fieldbridge compare examples/mechanisms/firefly.json examples/mechanisms/josephson.json</div>"
+        "</div>"
+        "<script>"
+        "function switchTab(idx) {"
+        "  const btns = document.querySelectorAll('.tab-btn');"
+        "  const panes = document.querySelectorAll('.tab-pane');"
+        "  btns.forEach((b, i) => b.classList.toggle('active', i === idx));"
+        "  panes.forEach((p, i) => p.classList.toggle('active', i === idx));"
+        "}"
+        "</script>"
+        "</section>"
+    )
+
+    # 4. Section 3: Realization A - Material Memory Gallery
+    parts.append(
+        "<section id='realization-a' style='display:grid;gap:16px'>"
+        "<div style='display:flex;align-items:center;gap:10px'>"
+        "<span class='brand-badge' style='background:var(--ok)'>Realization A</span>"
+        "<span style='color:var(--muted);font-size:13px;font-weight:500'>Concrete Physical Embodiment</span></div>"
+        "<h2>3. Realization A: Material Memory Across 12 Model Materials</h2>"
+        "<p class='lead'>With the Constructor defined, Realization A emerges naturally: we instantiate memory write points, "
+        "retention laws, and thermal Langevin fluctuations across 12 distinct physical carriers. For every realization, the "
+        "constructor determines the stable states, the write point bifurcation, the law of state loss, and the local normal form drift "
+        "relative to the symmetric pitchfork &epsilon;s &minus; s&sup3; + h.</p>"
+        f"<div class='stats'><span><b>{len(cards)}</b> realizations</span>"
+        + "".join(f"<span><b>{n}</b> {esc(k)}</span>" for k, n in sorted(counts.items(), key=lambda kv: -kv[1]))
+        + f"<span><b>{ok_loops}</b> of <b>{n_loops}</b> loops as predicted from the holonomy</span></div>"
+        "</section>"
+    )
+
+    # 5. Conceptual Steps of Memory Analysis
     parts.append(
         "<div class='steps'>"
-        "<div class='step'><b>Carrier and closure</b>The variables of the material and what the dynamics conserves or exchanges with its environment.</div>"
-        "<div class='step'><b>Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>"
-        "<div class='step'><b>Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork; tuning a second parameter to a cusp restores the symmetric case.</div>"
+        "<div class='step'><b>1. Carrier and closure</b>The variables of the material and what the dynamics conserves or exchanges with its environment.</div>"
+        "<div class='step'><b>2. Write point</b>The parameter value at which a stable state loses stability, located by continuation along the control parameter or along a uniform field.</div>"
+        "<div class='step'><b>3. Normal form</b>The drift along the unstable direction at the write point. A quadratic term, a bias or a positive cubic coefficient distinguishes it from the symmetric pitchfork; tuning a second parameter to a cusp restores the symmetric case.</div>"
         "</div>"
     )
 
@@ -478,7 +659,7 @@ def _page(results: Dict, out: Path) -> None:
     # 7. Cross-Field Phase Locking
     parts.append(
         "<section class='card' id='mechanism'>"
-        "<div class='card-head'><h2>Phase locking in eight oscillator models</h2>"
+        "<div class='card-head'><h2>5. Realization C: Phase locking in eight oscillator models</h2>"
         "<span class='src'>Electronics • Chemistry • Neuroscience • Ecology • Chronobiology • Superconductivity • Computing</span></div>"
         "<p>Phase locking is derived in oscillators from electronics, chemistry, neuroscience, ecology, "
         "chronobiology, superconductivity and computing hardware. Each derivation is a chain of verified "
@@ -496,7 +677,7 @@ def _page(results: Dict, out: Path) -> None:
     # 8. Quantum Carriers
     parts.append(
         "<section class='card' id='quantum'>"
-        "<div class='card-head'><h2>The Bloch rotation on ten quantum carriers</h2>"
+        "<div class='card-head'><h2>4. Realization B: The Bloch rotation on ten quantum carriers</h2>"
         "<span class='src'>Lie Algebra su(2) & Rabi Law</span></div>"
         "<p>The Bloch rotation of a spin is detached from its carrier: the Hamiltonian and the observable generate "
         "the Lie algebra su(2), so the signal follows the Rabi law on every carrier where that closure holds. "
