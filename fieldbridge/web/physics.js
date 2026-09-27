@@ -33,13 +33,20 @@
     return {a,b,h,equilibria,stable,bistable,barrier,threshold,tau,
       bounded: b > 0 || a < 0, neutral: a === 0 && b === 0 && h === 0};
   }
-  function trajectory(m, x0, pulse, duration=8, steps=800) {
+  function trajectory(m, x0, pulse, duration=8, steps=800, window={start:1,end:3}) {
     const dt=duration/steps, data=[[0,x0]];
     let x=x0;
-    const f=(t,q) => m.a*q-m.b*q*q*q + (t >= 1 && t < 3 ? pulse : m.h);
     for(let i=0;i<steps;i++) {
-      const t=i*dt, k1=f(t,x), k2=f(t+dt/2,x+dt*k1/2), k3=f(t+dt/2,x+dt*k2/2), k4=f(t+dt,x+dt*k3);
-      x += dt*(k1+2*k2+2*k3+k4)/6;
+      const start=i*dt,end=(i+1)*dt;
+      // Split exactly at pulse boundaries; RK4 must not average across a field jump.
+      const cuts=[start,...[window.start,window.end].filter(t=>t>start&&t<end),end];
+      for(let j=0;j<cuts.length-1;j++){
+        const left=cuts[j],right=cuts[j+1],step=right-left,mid=(left+right)/2;
+        const field=mid>=window.start&&mid<window.end?pulse:m.h;
+        const f=q=>m.a*q-m.b*q*q*q+field;
+        const k1=f(x),k2=f(x+step*k1/2),k3=f(x+step*k2/2),k4=f(x+step*k3);
+        x+=step*(k1+2*k2+2*k3+k4)/6;
+      }
       if(!Number.isFinite(x) || Math.abs(x)>20) return {data,diverged:true};
       data.push([(i+1)*dt,x]);
     }

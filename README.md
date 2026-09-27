@@ -42,8 +42,10 @@ the [tutorial](docs/tutorial/index.md). `--law` also measures the locking law of
 The [live constructor](https://synthetix-institute.github.io/fieldbridge/)
 shows how a mechanism is assembled and what changes when a part is removed:
 
-- **Memory:** attach feedback, saturation and a writing field; calculate the
-  stable states, fold threshold and response to a pulse. Removing the writing
+- **Memory:** attach feedback, saturation and a writing field. Every edit
+  immediately updates the equation, stable states and writing response.
+  Vary pulse strength and duration to compare switching with retention.
+  Removing the writing
   field prevents switching; removing feedback removes bistability.
   [Equations and predictions](docs/tutorial/18_memory_writing_and_retention.md#scalar-constructor-demonstration).
 - **[Material gallery](https://synthetix-institute.github.io/fieldbridge/#gallery):**
@@ -65,10 +67,11 @@ shows how a mechanism is assembled and what changes when a part is removed:
   the logarithmic prediction is also tested against independent source
   integrators. [Derivation](docs/tutorial/10_stochastic_construction.md) ·
   [Tests](tests/test_stochastic_conventions.py).
-- **Applications:** select required behavior, compare it with linked original
-  research and export a specific question and its discriminating experiment.
-  This separates a tested mathematical consequence from a new application
-  whose realization and originality still need evidence.
+
+The equation, controls and predicted response occupy the same workspace.
+The nested graph can be expanded to detach or reattach its terms directly.
+The [application and discovery recipes](docs/tutorial/12_reproduction_and_discovery.md)
+describe how to take these calculations into a physical test.
 
 For the website alone, no material sweep or oscillator calculation is needed:
 

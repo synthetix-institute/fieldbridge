@@ -7,6 +7,8 @@
   const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const link=(path,label)=>`<a href="${config.repo}/blob/main/${path}" target="_blank" rel="noopener">${label} ↗</a>`;
   let selected=config.gallery[0].id;
+  $('material-select').innerHTML=config.gallery.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join('');
+  $('material-select').addEventListener('change',e=>{selected=e.target.value;materialList();materialDetail();});
   function materialList(){
     const query=$('material-search').value.toLowerCase();
     const matches=config.gallery.filter(c=>(c.name+' '+c.tags.join(' ')).toLowerCase().includes(query));
@@ -15,10 +17,11 @@
   }
   function materialDetail(){
     const c=config.gallery.find(c=>c.id===selected);
+    $('material-select').value=selected;
     const names={Omega:'Ω · operation',Xi:'Ξ · carrier',C:'C · closure',R:'R · observable',P:'P · preparation',A:'A · realization'};
     const labels={stores:'Stored states',writes:'Writing',constructs:'Construction',holds:'Retention',lock:'Writing trials'};
-    $('material-detail').innerHTML=`<div class="surface-heading"><h2>${esc(c.name)}</h2><span>Saved model calculation</span></div><div class="material-layout"><figure><img src="${c.image}" alt="Calculated states, writing and retention for ${esc(c.name)}"><figcaption>Model parameters: ${Object.entries(c.params).map(([k,v])=>esc(k)+' = '+esc(v)).join(' · ')}</figcaption></figure><div class="material-findings">${Object.entries(c.verdict).map(([k,v])=>`<div><h3>${labels[k]||esc(k)}</h3><p>${esc(v)}</p></div>`).join('')}</div></div><details class="material-roles" open><summary>Mechanism and its physical realization</summary><dl>${Object.entries(c.slots).map(([k,v])=>`<dt>${names[k]||esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl></details><footer class="evidence-strip"><div><span>${c.source_url?`<a href="${c.source_url}" target="_blank" rel="noopener">${esc(c.provenance)}</a>`:esc(c.provenance)}<br>${link(c.specification,'Source model')} · <a href="${c.record}" download>Calculation record ↓</a></span></div>${link('docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations','Gallery recipe')}</footer><div class="material-actions">${selected==='card04'?'<button id="open-scalar"><i data-lucide="sliders-horizontal"></i>Change the normal-form terms</button>':''}${link('docs/tutorial/23_memory_codiscovery.md','Derive shared mechanisms across these models')}</div>`;
-    if($('open-scalar'))$('open-scalar').addEventListener('click',()=>$('tab-memory').click());
+    $('material-detail').innerHTML=`<div class="surface-heading"><h2>${esc(c.name)}</h2><span>Saved calculation</span></div><div class="material-actions">${selected==='card04'?'<button class="primary" id="open-scalar"><i data-lucide="sliders-horizontal"></i>Open memory constructor</button>':''}${link('docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations','Run this model in Python')}</div><div class="material-layout"><figure><img src="${c.image}" alt="Calculated states, writing and retention for ${esc(c.name)}"><figcaption>${Object.entries(c.params).map(([k,v])=>esc(k)+' = '+esc(v)).join(' · ')}</figcaption></figure><div class="material-findings">${['stores','writes','holds'].map(k=>`<div><h3>${labels[k]}</h3><p>${esc(c.verdict[k])}</p></div>`).join('')}</div></div><details class="material-roles"><summary>Mechanism, preparation and physical realization</summary><dl>${Object.entries(c.slots).map(([k,v])=>`<dt>${names[k]||esc(k)}</dt><dd>${esc(v)}</dd>`).join('')}</dl>${['constructs','lock'].map(k=>`<h3>${labels[k]}</h3><p>${esc(c.verdict[k])}</p>`).join('')}</details><footer class="evidence-strip"><div><span>${c.source_url?`<a href="${c.source_url}" target="_blank" rel="noopener">${esc(c.provenance)}</a>`:esc(c.provenance)}<br>${link(c.specification,'Source model')} · <a href="${c.record}" download>Calculation record ↓</a></span></div>${link('docs/tutorial/23_memory_codiscovery.md','Shared mechanism derivation')}</footer>`;
+    if($('open-scalar'))$('open-scalar').addEventListener('click',()=>{$('tab-memory').click();$('reset').click();});
     window.lucide.createIcons();
   }
   $('material-search').addEventListener('input',materialList);
@@ -30,10 +33,10 @@
   function spinControls(){
     $('spin-parts').innerHTML=[['coupling','Ising coupling','g Z₀Z₁'],['field','Transverse field','h X₀']].map(([k,n,e])=>`<div class="part-row"><label for="spin-${k}">${n}<small>${e}</small></label><label class="switch"><input type="checkbox" id="spin-${k}" ${state[k]?'checked':''} aria-label="Attach ${n.toLowerCase()}"><span></span></label></div>`).join('');
     $('spin-parameters').innerHTML=[['g','Coupling g',.1,2,.1],['h','Field h',0,1.5,.05]].map(([k,n,min,max,step])=>`<div class="parameter"><div class="parameter-top"><label for="spin-${k}">${n}</label><output id="spin-value-${k}">${fmt(state[k])}</output></div><input id="spin-${k}" type="range" min="${min}" max="${max}" step="${step}" value="${state[k]}"></div>`).join('');
-    ['coupling','field'].forEach(k=>$('spin-'+k).addEventListener('change',e=>{state[k]=e.target.checked;pending();}));
-    ['g','h'].forEach(k=>$('spin-'+k).addEventListener('input',e=>{state[k]=Number(e.target.value);$('spin-value-'+k).textContent=fmt(state[k]);pending();}));
+    ['coupling','field'].forEach(k=>$('spin-'+k).addEventListener('change',e=>{state[k]=e.target.checked;updateSpin();}));
+    ['g','h'].forEach(k=>$('spin-'+k).addEventListener('input',e=>{state[k]=Number(e.target.value);$('spin-value-'+k).textContent=fmt(state[k]);updateSpin();}));
   }
-  function pending(){phase='pending';$('spin-status').textContent='Changed Hamiltonian · calculate source';$('spin-status').className='build-state dirty';$('spin-attach').disabled=true;$('spin-detach').disabled=true;}
+  function updateSpin(){computed={...state};rotation=P.spin(computed);spinRender();}
   function carrierDiagram(carrier){
     let count=carrier==='chain'?4:carrier==='collective'?3:carrier==='correlated-pair'||carrier==='bosons'||carrier==='fermion-pair'?2:1;
     const xs=Array.from({length:count},(_,i)=>count===1?160:50+220*i/(count-1));
@@ -70,7 +73,7 @@
     ['#336eb5','#b5483b'].forEach((color,index)=>{ctx.strokeStyle=color;ctx.lineWidth=2;ctx.setLineDash(index?[6,4]:[]);ctx.beginPath();for(let i=0;i<=240;i++){const x=period*1.5*i/240,y=index&&phase!=='attached'?1:rotation.signal(x);if(i===0)ctx.moveTo(X(x),Y(y));else ctx.lineTo(X(x),Y(y));}ctx.stroke();});
     ctx.setLineDash([]);ctx.fillStyle='#4a5b50';ctx.font='italic 12px Georgia';ctx.fillText('f(t)',8,16);ctx.fillText('t',W/2,H-2);
   }
-  $('spin-build').addEventListener('click',()=>{computed={...state};rotation=P.spin(computed);phase='source';target='correlated-pair';spinRender();});
+  $('spin-build').addEventListener('click',()=>{state={coupling:true,field:true,g:1,h:.5};computed={...state};rotation=P.spin(computed);phase='source';target='correlated-pair';spinControls();spinRender();});
   $('spin-detach').addEventListener('click',()=>{phase='detached';spinRender();});
   $('spin-attach').addEventListener('click',()=>{target=$('spin-carrier').value;phase='attached';spinRender();});
   $('spin-carrier').addEventListener('change',()=>{if(phase==='attached'){phase='detached';spinRender();}});

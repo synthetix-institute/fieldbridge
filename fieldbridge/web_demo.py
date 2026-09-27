@@ -90,7 +90,7 @@ def build_studio(out_dir: str | Path) -> Path:
     out.mkdir(parents=True, exist_ok=True)
     destination = out / "studio"
     destination.mkdir(exist_ok=True)
-    for name in ("studio.css", "collections.css", "physics.js", "studio.js", "collections.js", "lucide.min.js", "LUCIDE_LICENSE"):
+    for name in ("studio.css", "collections.css", "workspace.css", "physics.js", "studio.js", "collections.js", "lucide.min.js", "LUCIDE_LICENSE"):
         shutil.copy2(ASSETS / name, destination / name)
     config = {"repo": REPO, "sources": SOURCES, "schema": "fieldbridge-browser-construction/1"}
     from .verification import verify_construction

@@ -6,6 +6,7 @@
   <title>FieldBridge | Mechanism constructor</title>
   <link rel="stylesheet" href="studio/studio.css">
   <link rel="stylesheet" href="studio/collections.css">
+  <link rel="stylesheet" href="studio/workspace.css">
   <script id="studio-config" type="application/json">__CONFIG__</script>
   <script defer src="studio/lucide.min.js"></script>
   <script defer src="studio/physics.js"></script>
@@ -24,53 +25,46 @@
   <div class="module-bar">
     <div role="tablist" aria-label="Construction examples">
       <button role="tab" id="tab-memory" aria-controls="workbench" data-lab="memory" aria-selected="true"><i data-lucide="git-branch" aria-hidden="true"></i>Memory</button>
-      <button role="tab" id="tab-gallery" aria-controls="gallery" data-lab="gallery" aria-selected="false" tabindex="-1"><i data-lucide="layers" aria-hidden="true"></i>Material gallery</button>
-      <button role="tab" id="tab-spins" aria-controls="spins" data-lab="spins" aria-selected="false" tabindex="-1"><i data-lucide="atom" aria-hidden="true"></i>Spins &amp; carriers</button>
-      <button role="tab" id="tab-stochastic" aria-controls="workbench" data-lab="stochastic" aria-selected="false" tabindex="-1"><i data-lucide="shuffle" aria-hidden="true"></i>Stochastic transport</button>
-      <button role="tab" id="tab-applications" aria-controls="applications" data-lab="applications" aria-selected="false" tabindex="-1"><i data-lucide="flask-conical" aria-hidden="true"></i>Applications</button>
+      <button role="tab" id="tab-spins" aria-controls="spins" data-lab="spins" aria-selected="false" tabindex="-1"><i data-lucide="atom" aria-hidden="true"></i>Spins</button>
+      <button role="tab" id="tab-stochastic" aria-controls="workbench" data-lab="stochastic" aria-selected="false" tabindex="-1"><i data-lucide="shuffle" aria-hidden="true"></i>Stochastic</button>
+      <button role="tab" id="tab-gallery" aria-controls="gallery" data-lab="gallery" aria-selected="false" tabindex="-1"><i data-lucide="layers" aria-hidden="true"></i>Materials</button>
     </div>
     <span class="execution"><span></span>Local calculation</span>
   </div>
   <main>
     <section id="gallery" role="tabpanel" aria-labelledby="tab-gallery" hidden>
-      <div class="work-heading"><div><p class="eyebrow">Tutorial · Module 7</p><h1>Memory in model materials: a gallery of realizations</h1></div><a class="resource-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations" target="_blank" rel="noopener">Tutorial<i data-lucide="arrow-up-right"></i></a></div>
-      <div class="collection-grid"><aside class="collection-list"><label for="material-search">Find a realization</label><input type="search" id="material-search" placeholder="Rotors, genes, tubes…"><div id="material-list" role="group" aria-label="Material realizations"></div></aside><section class="material-detail" id="material-detail" aria-live="polite"></section></div>
+      <div class="work-heading"><div><h1>Memory in model materials</h1></div><a class="resource-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations" target="_blank" rel="noopener">Gallery tutorial<i data-lucide="arrow-up-right"></i></a></div>
+      <div class="collection-grid"><aside class="collection-list"><label for="material-select" class="compact-material-label">Material model</label><select id="material-select" aria-label="Material model"></select><label for="material-search">Find a realization</label><input type="search" id="material-search" placeholder="Rotors, genes, tubes…"><div id="material-list" role="group" aria-label="Material realizations"></div></aside><section class="material-detail" id="material-detail" aria-live="polite"></section></div>
     </section>
     <section id="spins" role="tabpanel" aria-labelledby="tab-spins" hidden>
-      <div class="work-heading"><div><p class="eyebrow">Tutorial · Quantum closure and mechanism transfer</p><h1>Detach a spin rotation. Attach another carrier.</h1></div><button class="icon-button" id="spin-export" title="Download spin construction" aria-label="Download spin construction"><i data-lucide="download"></i></button></div>
-      <nav class="mobile-views" aria-label="Spin constructor view"><button data-spin-view="parts" aria-pressed="false"><i data-lucide="sliders-horizontal"></i>Parts</button><button data-spin-view="assembly" aria-pressed="true"><i data-lucide="network"></i>Assembly</button><button data-spin-view="result" aria-pressed="false"><i data-lucide="chart-no-axes-combined"></i>Result</button></nav>
-      <div class="spin-grid" data-view="assembly">
-        <aside class="spin-controls"><h2>Source: two coupled spins</h2><div id="spin-parts"></div><div id="spin-parameters"></div><button class="primary" id="spin-build"><i data-lucide="play"></i>Calculate source</button><p id="spin-status" class="build-state" role="status"></p><div class="realization-control"><label for="spin-carrier">Target carrier</label><select id="spin-carrier"><option value="chain">Exchange chain · 4 spins</option><option value="qubit">One spin-½</option><option value="spin">One spin-3/2</option><option value="bosons">Two wells · 4 bosons</option><option value="fermion-pair">Cooper-pair level</option><option value="collective">Three collective spins</option><option value="correlated-pair">Two correlated spins</option></select><div class="transfer-actions"><button id="spin-detach"><i data-lucide="unlink"></i>Detach</button><button id="spin-attach" disabled><i data-lucide="link"></i>Attach</button></div></div></aside>
-        <section class="spin-assembly"><div class="surface-heading"><h2>Physical construction</h2><span>ħ = 1</span></div><div id="spin-graph"></div><div class="equation-area"><span class="eyebrow">Constructed Hamiltonian</span><div class="equation" id="spin-equation"></div><p id="spin-native"></p></div><div class="consequence"><i data-lucide="arrow-right"></i><p id="spin-consequence"></p></div></section>
-        <section class="spin-outcome"><div class="surface-heading"><h2>Predicted observable</h2></div><div class="plot-frame"><canvas id="spin-plot" role="img" aria-label="Spin evolution and transferred rotation"></canvas><div class="plot-legend" id="spin-legend"></div></div><dl class="metrics" id="spin-metrics"></dl><div class="result-detail"><h3>Preparation and prediction</h3><p>Prepare a top eigenstate of the measured operator. With o₀ = tr(O)/dim, normalize the signal as f(t) = (⟨O(t)⟩ − o₀)/(⟨O(0)⟩ − o₀). Then f(t) = cos²θ + sin²θ cos(ωt). The target Hamiltonian closes on the same three rotation generators.</p></div></section>
+      <div class="work-heading"><div><h1>Spin mechanism transfer</h1></div><button class="icon-button" id="spin-export" title="Download spin construction" aria-label="Download spin construction"><i data-lucide="download"></i></button></div>
+      <div class="spin-grid">
+        <aside class="spin-controls"><h2>Source: two coupled spins</h2><div id="spin-parts"></div><div id="spin-parameters"></div><button class="plain spin-reset" id="spin-build"><i data-lucide="rotate-ccw"></i>Reset source</button><p id="spin-status" class="build-state" role="status"></p><div class="realization-control"><label for="spin-carrier">Target carrier</label><select id="spin-carrier"><option value="chain">Exchange chain · 4 spins</option><option value="qubit">One spin-½</option><option value="spin">One spin-3/2</option><option value="bosons">Two wells · 4 bosons</option><option value="fermion-pair">Cooper-pair level</option><option value="collective">Three collective spins</option><option value="correlated-pair">Two correlated spins</option></select><div class="transfer-actions"><button id="spin-detach"><i data-lucide="unlink"></i>Detach rotation</button><button id="spin-attach" disabled><i data-lucide="link"></i>Attach carrier</button></div></div></aside>
+        <section class="spin-assembly"><div class="surface-heading"><h2>Physical construction</h2><span>ħ = 1</span></div><div id="spin-graph"></div></section>
+        <section class="spin-outcome"><div class="equation-area"><div class="equation" id="spin-equation"></div><p id="spin-native"></p></div><div class="surface-heading"><h2>Predicted observable</h2></div><div class="plot-frame"><canvas id="spin-plot" role="img" aria-label="Spin evolution and transferred rotation"></canvas><div class="plot-legend" id="spin-legend"></div></div><dl class="metrics" id="spin-metrics"></dl><div class="consequence"><i data-lucide="arrow-right"></i><p id="spin-consequence"></p></div><details class="result-detail"><summary>Preparation and normalization</summary><p>Prepare a top eigenstate of the measured operator. With o₀ = tr(O)/dim, normalize the signal as f(t) = (⟨O(t)⟩ − o₀)/(⟨O(0)⟩ − o₀). Then f(t) = cos²θ + sin²θ cos(ωt). The target Hamiltonian closes on the same three rotation generators.</p></details></section>
       </div>
       <footer class="evidence-strip"><div><i data-lucide="file-text"></i><span><a href="https://journals.aps.org/pr/abstract/10.1103/PhysRev.70.460" target="_blank" rel="noopener">Bloch (1946)</a> · <a href="https://arxiv.org/abs/quant-ph/0309131" target="_blank" rel="noopener">Christandl et al. (2004)</a> · <a href="quantum_examples.json" target="_blank" rel="noopener">Matrix calculation records</a></span></div><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/24_spin_language.md" target="_blank" rel="noopener">Derivation &amp; Python examples<i data-lucide="arrow-up-right"></i></a></footer>
       <details class="quantum-catalog"><summary>More quantum realizations: where the rotation closes</summary><div id="quantum-list"></div></details>
     </section>
     <section id="workbench" role="tabpanel" aria-labelledby="tab-memory">
-      <div class="work-heading"><div><p class="eyebrow" id="lab-category">Nonlinear dynamics</p><h1 id="lab-title">Construct a memory</h1></div><div class="heading-actions"><button class="icon-button" id="reset" title="Reset construction" aria-label="Reset construction"><i data-lucide="rotate-ccw"></i></button><button class="icon-button" id="export" title="Download construction" aria-label="Download construction"><i data-lucide="download"></i></button></div></div>
-      <nav class="mobile-views" aria-label="Workbench view"><button data-mobile="ingredients" aria-pressed="false"><i data-lucide="sliders-horizontal"></i>Parts</button><button data-mobile="assembly" aria-pressed="true"><i data-lucide="network"></i>Assembly</button><button data-mobile="outcome" aria-pressed="false"><i data-lucide="chart-no-axes-combined"></i>Result</button></nav>
-      <div class="work-grid" data-mobile-view="assembly">
+      <div class="work-heading"><div><h1 id="lab-title">Memory constructor</h1><p id="lab-category">Scalar normal form</p></div><div class="heading-actions"><button class="icon-button" id="reset" title="Reset construction" aria-label="Reset construction"><i data-lucide="rotate-ccw"></i></button><button class="icon-button" id="export" title="Download construction" aria-label="Download construction"><i data-lucide="download"></i></button></div></div>
+      <div class="work-grid">
         <aside class="ingredients" aria-label="Mechanism parts">
           <div class="surface-heading"><h2>Attached parts</h2><span id="part-count">3 / 3</span></div>
           <div id="parts"></div>
           <div class="parameters" id="parameters"></div>
           <div class="realization-control" id="realization-control"></div>
-          <button class="primary" id="build"><i data-lucide="play" aria-hidden="true"></i>Build &amp; calculate</button>
           <p class="build-state" id="build-state" role="status">Construction calculated</p>
         </aside>
-        <section class="assembly" aria-label="Nested mechanism graph">
-          <div class="surface-heading"><h2>Mechanism graph</h2><span id="graph-type">Nested dependencies</span></div>
-          <div class="graph" id="graph"></div>
-          <div class="equation-area"><span class="eyebrow">Constructed equation</span><div class="equation" id="equation"></div><p id="equation-note"></p></div>
-          <div class="consequence" id="consequence"><i data-lucide="arrow-right" aria-hidden="true"></i><p></p></div>
-        </section>
         <section class="outcome" aria-label="Calculated consequence">
-          <div class="surface-heading"><h2 id="plot-heading">Energy landscape</h2><div class="segmented" id="plot-modes" aria-label="Plot view"><button class="selected" data-plot="potential" aria-pressed="true">Potential</button><button data-plot="trajectory" aria-pressed="false">Writing</button></div></div>
+          <div class="equation-area"><div class="equation" id="equation"></div><div id="drive-equation" class="drive-equation"></div><details class="equation-assumptions"><summary>Model and assumptions</summary><p id="equation-note"></p></details></div>
+          <div class="surface-heading"><h2 id="plot-heading">Writing response</h2><div class="segmented" id="plot-modes" aria-label="Plot view"><button class="selected" data-plot="trajectory" aria-pressed="true">Writing</button><button data-plot="potential" aria-pressed="false">Potential</button></div></div>
           <div class="plot-frame"><canvas id="plot" aria-label="Calculated energy landscape" role="img"></canvas><div class="plot-legend" id="plot-legend"></div></div>
           <dl class="metrics" id="metrics"></dl>
-          <div class="result-detail"><h3 id="detail-title">Writing and retention</h3><p id="detail-text"></p></div>
+          <div class="consequence" id="consequence"><i data-lucide="arrow-right" aria-hidden="true"></i><p></p></div>
+          <details class="result-detail"><summary id="detail-title">Writing and retention</summary><p id="detail-text"></p></details>
         </section>
+        <details class="assembly" aria-label="Nested mechanism graph"><summary>Nested mechanism graph</summary><div class="graph" id="graph"></div></details>
       </div>
       <footer class="evidence-strip"><div><i data-lucide="file-text" aria-hidden="true"></i><span id="source-links"></span></div><a id="lesson-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/15_memory_first_card.md" target="_blank" rel="noopener">Derivation in the tutorial<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
     </section>
@@ -83,7 +77,7 @@
       </div>
     </section>
   </main>
-  <footer class="app-footer"><span>Equations → construction → calculated consequence</span><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Model catalog<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
+  <footer class="app-footer"><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/12_reproduction_and_discovery.md" target="_blank" rel="noopener">Application and discovery recipes<i data-lucide="arrow-up-right" aria-hidden="true"></i></a><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Model catalog<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
   <dialog id="sources-dialog" aria-labelledby="sources-title"><header><div><p class="eyebrow">Original research</p><h2 id="sources-title">Sources &amp; model assumptions</h2></div><button class="icon-button" id="sources-close" aria-label="Close sources"><i data-lucide="x"></i></button></header><div id="sources-content"></div></dialog>
   <noscript><p class="noscript">Enable JavaScript for local calculations. The <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md">tutorial</a> includes the equations and executable Python examples.</p></noscript>
   <script>if(document.getElementById('studio-config').textContent.trim().startsWith('__')){document.querySelector('main').innerHTML='<section class="noscript"><h1>Open the built constructor</h1><p><a href="https://synthetix-institute.github.io/fieldbridge/">FieldBridge live demo</a></p><p>This file is the source template. Build the local demo with <code>python3 -B -m fieldbridge demo --studio-only --out-dir build/demo</code>, then open <code>build/demo/index.html</code>.</p></section>';}</script>

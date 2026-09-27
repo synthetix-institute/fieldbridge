@@ -39,7 +39,7 @@ def test_offline_build_embeds_verified_reports(tmp_path):
     assert 'studio/collections.js?v=' in page
     assert len(list((tmp_path / "gallery").glob("card*.json"))) == 12
     assert len(list((tmp_path / "gallery").glob("card*.png"))) == 12
-    assert "Memory in model materials: a gallery of realizations" in page
+    assert "Memory in model materials" in page
     assert "two coupled spins" in page
     quantum = json.loads((tmp_path / "quantum_examples.json").read_text())
     assert len(quantum["attachments"]) == 7
@@ -129,3 +129,73 @@ def test_browser_spin_construction_against_exact_hamiltonian(carrier,g,h):
 def test_removing_spin_coupling_conserves_observable():
     s=dict(coupling=False,field=True,g=1,h=.5)
     assert browser(f"[0,1,2,3].map(t=>P.spin({json.dumps(s)}).signal(t))") == [1,1,1,1]
+
+def studio(actions):
+    if not NODE:
+        pytest.skip("Node is needed for studio event-handler tests")
+    return json.loads(subprocess.check_output([
+        NODE, str(ROOT / "tests/web_studio_harness.cjs"), json.dumps(actions)
+    ], text=True))
+
+def test_memory_slider_recalculates_equation_without_build_action():
+    initial, changed = studio([{"id":"param-eps", "value":"-0.8", "type":"input"}])
+    assert "-0.8x" in changed["equation"]
+    assert changed["metrics"] != initial["metrics"]
+    assert "pending" not in changed["status"]
+
+def test_memory_detach_recalculates_equation_and_prediction():
+    initial, changed = studio([{"id":"part-feedback", "checked":False, "type":"change"}])
+    assert "1x " not in changed["equation"]
+    assert changed["metrics"] != initial["metrics"]
+    assert "One attracting state" in changed["consequence"]
+
+def test_graph_part_buttons_change_the_actual_model():
+    initial, changed = studio([{"selector":"[data-graph-part=feedback]", "type":"click"}])
+    assert changed["equation"] != initial["equation"]
+    assert "One attracting state" in changed["consequence"]
+
+def test_pulse_parameter_controls_switching():
+    strong, weak = studio([{"id":"param-pulse", "value":"0.1", "type":"input"}])
+    assert "switches the negative" in strong["consequence"]
+    assert "remain in opposite" in weak["consequence"]
+    assert "0.1" in weak["drive"]
+    assert weak["metrics"] != strong["metrics"]
+
+def test_coordinate_change_updates_equation_and_final_states():
+    initial, changed = studio([{"id":"realization", "value":"displacement", "type":"change"}])
+    assert "dq/dt" in changed["equation"]
+    assert "0.25q" in changed["equation"]
+    assert "Final state from −2" in changed["metrics"]
+
+def test_plot_modes_do_not_require_a_build_after_parameter_change():
+    initial, changed, potential = studio([
+        {"id":"param-eps", "value":"-0.8", "type":"input"},
+        {"selector":"[data-plot=potential]", "type":"click"},
+    ])
+    assert "Barrier at h = 0" in potential["metrics"]
+    assert potential["equation"] == changed["equation"]
+
+def test_spin_slider_updates_hamiltonian_without_calculate_action():
+    initial, changed = studio([{"id":"spin-g", "value":"1.5", "type":"input"}])
+    assert "1.5 Z0 Z1" in changed["spinEquation"]
+    assert changed["spinMetrics"] != initial["spinMetrics"]
+
+def test_attached_spin_carrier_keeps_live_parameter_updates():
+    snapshots=studio([
+        {"id":"spin-detach", "type":"click"},
+        {"id":"spin-carrier", "value":"qubit", "type":"change"},
+        {"id":"spin-attach", "type":"click"},
+        {"id":"spin-g", "value":"1.5", "type":"input"},
+    ])
+    assert "1.5 X0" in snapshots[-1]["spinEquation"]
+    assert "One spin-½" in snapshots[-1]["spinMetrics"]
+
+@pytest.mark.parametrize("pulse_duration", [.2,.73,2,4.1])
+def test_editable_pulse_matches_independent_piecewise_integration(pulse_duration):
+    scipy=pytest.importorskip("scipy.integrate")
+    x=-1.0
+    for start,end,field in [(0,1,0),(1,1+pulse_duration,.8),(1+pulse_duration,8,0)]:
+        solution=scipy.solve_ivp(lambda t,y:y-y**3+field,(start,end),[x],rtol=1e-10,atol=1e-12)
+        x=float(solution.y[0,-1])
+    js=browser(f"P.trajectory(P.memory({json.dumps(memory())}),-1,.8,8,800,{{start:1,end:{1+pulse_duration}}})")
+    assert js["data"][-1][1] == pytest.approx(x, abs=2e-7)
