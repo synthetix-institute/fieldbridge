@@ -48,8 +48,9 @@ const document = {
   querySelector: selector => [...elements.values()].find(e => matches(e,selector)),
 };
 const window = {FieldBridgePhysics:require(path.join(root,'fieldbridge/web/physics.js')),lucide:{createIcons(){}},addEventListener(){},dispatchEvent(){}};
+const location = {hash:process.argv[3] || ''};
 vm.runInNewContext(fs.readFileSync(path.join(root,'fieldbridge/web/studio.js'),'utf8'),{
-  document,window,history:{replaceState(){}},location:{hash:''},structuredClone,
+  document,window,history:{replaceState(_,__,hash){location.hash=hash;}},location,structuredClone,
   ResizeObserver:class {observe(){}},CustomEvent:class {},setTimeout,
 });
 vm.runInNewContext(fs.readFileSync(path.join(root,'fieldbridge/web/collections.js'),'utf8'),{
@@ -61,7 +62,7 @@ function snapshot() {
     metrics:elements.get('metrics').innerHTML,status:elements.get('build-state').textContent,
     graph:elements.get('graph').innerHTML,consequence:elements.get('consequence').querySelector('p').textContent,
     spinEquation:elements.get('spin-equation').innerHTML,spinMetrics:elements.get('spin-metrics').innerHTML,
-    spinConsequence:elements.get('spin-consequence').textContent};
+    spinConsequence:elements.get('spin-consequence').textContent,hash:location.hash};
 }
 snapshots.push(snapshot());
 for (const action of JSON.parse(process.argv[2] || '[]')) {

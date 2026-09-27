@@ -130,11 +130,11 @@ def test_removing_spin_coupling_conserves_observable():
     s=dict(coupling=False,field=True,g=1,h=.5)
     assert browser(f"[0,1,2,3].map(t=>P.spin({json.dumps(s)}).signal(t))") == [1,1,1,1]
 
-def studio(actions):
+def studio(actions, initial_hash=""):
     if not NODE:
         pytest.skip("Node is needed for studio event-handler tests")
     return json.loads(subprocess.check_output([
-        NODE, str(ROOT / "tests/web_studio_harness.cjs"), json.dumps(actions)
+        NODE, str(ROOT / "tests/web_studio_harness.cjs"), json.dumps(actions), initial_hash
     ], text=True))
 
 def test_memory_slider_recalculates_equation_without_build_action():
@@ -179,6 +179,11 @@ def test_spin_slider_updates_hamiltonian_without_calculate_action():
     initial, changed = studio([{"id":"spin-g", "value":"1.5", "type":"input"}])
     assert "1.5 Z0 Z1" in changed["spinEquation"]
     assert changed["spinMetrics"] != initial["spinMetrics"]
+
+def test_legacy_application_route_opens_the_constructor():
+    result=studio([], "#applications")[0]
+    assert result["hash"] == "#memory"
+    assert "dx/dt" in result["equation"]
 
 def test_attached_spin_carrier_keeps_live_parameter_updates():
     snapshots=studio([
