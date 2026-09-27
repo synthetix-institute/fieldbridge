@@ -1,6 +1,7 @@
 """Build the offline constructor studio without running discovery sweeps."""
 from __future__ import annotations
 
+import hashlib
 import json
 import shutil
 from pathlib import Path
@@ -108,6 +109,10 @@ def build_studio(out_dir: str | Path) -> Path:
     config["gallery"] = build_gallery(out)
     config["quantum"] = build_quantum(out)
     template = (ASSETS / "index.html").read_text(encoding="utf-8")
+    for asset in ASSETS.iterdir():
+        if asset.suffix in (".js", ".css"):
+            version = hashlib.sha256(asset.read_bytes()).hexdigest()[:12]
+            template = template.replace(f'studio/{asset.name}"', f'studio/{asset.name}?v={version}"')
     template = template.replace("__CONFIG__", json.dumps(config, ensure_ascii=False).replace("<", "\\u003c"))
     page = out / "index.html"
     page.write_text(template, encoding="utf-8")

@@ -35,6 +35,8 @@ def test_offline_build_embeds_verified_reports(tmp_path):
     assert (tmp_path / "studio/physics.js").exists()
     assert (tmp_path / "studio/lucide.min.js").exists()
     assert "Equations Derived & Verified!" not in page
+    assert 'studio/collections.css?v=' in page
+    assert 'studio/collections.js?v=' in page
     assert len(list((tmp_path / "gallery").glob("card*.json"))) == 12
     assert len(list((tmp_path / "gallery").glob("card*.png"))) == 12
     assert "Memory in model materials: a gallery of realizations" in page
