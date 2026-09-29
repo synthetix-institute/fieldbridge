@@ -64,7 +64,7 @@ def _num(v, spec: str = "") -> str:
         if spec:
             return format(v, spec)
         a = abs(v)
-        if a == 0:
+        if a < 5e-7:  # a write point located at zero to the tolerance of the search
             return "0"
         text = f"{v:.0f}" if a >= 100 else f"{v:.1f}" if a >= 10 else f"{v:#.3g}".rstrip(".")
         return text.replace("-", "−")
@@ -919,14 +919,22 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
         rec["derived"] = node["derived"]
         rec["short"] = reg.SHORT.get(nid) or _short_name(rec["name"])
         rec["auto"] = bool(node["def"].get("auto"))
+        rec["universal"] = bool(node["def"].get("universal"))
         if rec["family"] == "dissipative" and not law:
             rec["law_status"] = _merge_laws(rec, record_file)
     records = {k: v for k, v in records.items() if k in nodes}
     edges, checks = [], {}
+
+    def check(e: Dict) -> str:
+        # a co-discovery of a memory target is checked on the derivations, which a fast build (derive=False) skips
+        if not derive and e["kind"] == "codiscovery" and e.get("target") in PREFIX:
+            return "not checked: this build does not derive the targets"
+        return check_edit(e, nodes, records)
+
     for e in reg.EDGES:
         if e["from"] not in nodes or e["to"] not in nodes:
             continue
-        checks[e["id"]] = check_edit(e, nodes, records)
+        checks[e["id"]] = check(e)
         edges.append({"id": e["id"], "from": e["from"], "to": e["to"], "slot": e["slot"], "kind": e["kind"],
                       "target": e.get("target"), "change": e["change"], "reduces": e.get("reduces"),
                       "text": fill(e["text"], records[e["to"]]["facts"], records[e["from"]]["facts"], strict),
@@ -964,6 +972,14 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
     for rec in records.values():
         rec.pop("_frame", None)
     present = [c for c in reg.CLASSES if any(r["class"] == c for r in records.values())]
+    # the mechanism of each class present, opened on its canonical realization or, without one, on its first node
+    mechanisms = {}
+    for c in present:
+        m = dict(reg.MECHANISMS.get(c, {}))
+        if m.get("node") not in records or records[m["node"]]["class"] != c:
+            m["node"] = sorted(r["id"] for r in records.values() if r["class"] == c)[0]
+        mechanisms[c] = m
+    start = reg.START if reg.START in records else sorted(records)[0]
     atlas = {"columns": [{"class": c, "label": reg.CLASSES[c],
                           "nodes": sorted((r["id"] for r in records.values() if r["class"] == c),
                                           key=lambda i: (records[i]["family"], records[i]["field"], i))}
@@ -974,7 +990,7 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
         law_info.update(record_implementation_sha256=record_file.get("implementation_sha256"),
                         current_implementation_sha256=_memory_hash(), record_versions=record_file.get("versions"))
     return {"schema": SCHEMA, "slots": reg.SLOTS, "classes": reg.CLASSES, "classes_short": reg.CLASS_SHORT,
-            "start": "two_spins",
+            "start": start, "mechanisms": mechanisms,
             "nodes": records, "edges": edges, "sequences": sequences, "atlas": atlas,
             "codiscovery": codiscovery_summary(records), "boundary": BOUNDARY, "law": law_info,
             "provenance": {"memory_implementation_sha256": _memory_hash(), "versions": _versions()}}

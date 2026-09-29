@@ -126,6 +126,35 @@ def test_recorded_law_constants_belong_to_the_current_specifications(nodes):
                 assert law["stderr"] >= 0 and abs(law["constant"] - law["expected"]) < 5 * max(law["stderr"], 0.01)
 
 
+def test_the_canonical_forms_are_the_mechanisms_the_page_names():
+    only = ["pitchfork", "pitchfork_below", "pitchfork_bias", "pitchfork_subcritical", "two_spins",
+            "rotation_canonical", "rotation_axis"]
+    data = sd.build(only=only, derive=False, strict=False, log=lambda *a: None)
+    nodes = data["nodes"]
+    assert data["start"] == "pitchfork"
+    assert {n: nodes[n]["class"] for n in only} == {
+        "pitchfork": "symmetric-write", "pitchfork_below": "single-state", "pitchfork_bias": "threshold-write",
+        "pitchfork_subcritical": "subcritical-write", "two_spins": "rotation", "rotation_canonical": "rotation",
+        "rotation_axis": "conserved"}
+    assert all(nodes[n]["universal"] for n in only if n != "two_spins") and not nodes["two_spins"]["universal"]
+    # the constant bias h unfolds the pitchfork into a fold at eps = 3 (h/2)^(2/3); the subcritical form jumps at 0
+    assert nodes["pitchfork_bias"]["facts"]["write_point"] == pytest.approx(3 * 0.1 ** (2 / 3), abs=1e-3)
+    assert nodes["pitchfork_subcritical"]["facts"]["write_kind"] == "subcritical pitchfork"
+    assert abs(nodes["pitchfork_subcritical"]["facts"]["write_point"]) < 1e-3
+    # the canonical rotation keeps the rate and the angle of the two spins it was detached from
+    for k in ("rate", "theta"):
+        assert nodes["rotation_canonical"]["facts"][k] == pytest.approx(nodes["two_spins"]["facts"][k], rel=1e-9)
+    assert {k: m["node"] for k, m in data["mechanisms"].items()} == {
+        "rotation": "rotation_canonical", "conserved": "rotation_axis", "single-state": "pitchfork_below",
+        "symmetric-write": "pitchfork", "threshold-write": "pitchfork_bias", "subcritical-write": "pitchfork_subcritical"}
+
+
+def test_every_mechanism_opens_on_a_realization_of_its_class():
+    assert set(reg.MECHANISMS) == set(reg.CLASSES)
+    ids = {n["id"] for n in reg.NODES}
+    assert all(m["node"] in ids for m in reg.MECHANISMS.values()) and reg.START in ids
+
+
 def test_a_small_site_builds_and_its_sequences_are_complete(tmp_path):
     only = ["two_spins", "two_spins_x1", "two_spins_h0", "two_spins_z0", "field_nonconserved", "field_charge_1d",
             "field_dipole_1d", "log_ito", "log_stratonovich"]

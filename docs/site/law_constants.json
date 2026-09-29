@@ -105,6 +105,36 @@
     "word": "SCRWRKL"
    }
   },
+  "pitchfork_below": {
+   "spec_sha256": "e9930ab7419b6e1b8ab036e5cbd7c2928f25f1d57c91c29b522f3a22e3902bfe",
+   "symmetric-write": {
+    "class": "S(reflection) C R(pitchfork) K L",
+    "constant": 1.3887177945704534,
+    "expected": 1.3313353638003897,
+    "stderr": 0.11434201067904977,
+    "word": "SCRKL"
+   }
+  },
+  "pitchfork_bias": {
+   "spec_sha256": "2f1eefbca08273ae1b38c2cbb4f1517867142adff8e01c57e70cc0b7520f37ae",
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.018793127310488,
+    "expected": 1.018792971647471,
+    "stderr": 2.6241705819440853e-06,
+    "word": "CRKL"
+   }
+  },
+  "pitchfork_subcritical": {
+   "spec_sha256": "e7bfb022e2fbdce71da9dc24ec7e62e3690d642128455ade8e4952d0a65f1eee",
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187938410316681,
+    "expected": 1.018792971647471,
+    "stderr": 3.066089009351458e-07,
+    "word": "SCRWRKL"
+   }
+  },
   "predator_prey": {
    "phase-locking": {
     "class": "C R(phase) K(1:1) L",

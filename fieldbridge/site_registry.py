@@ -45,6 +45,52 @@ CLASSES = {
     "convention": "stochastic calculus convention",
 }
 
+# the mechanism of each class written without a field: its canonical form, what it does, and the realization that the
+# map of mechanisms opens for it (a canonical form where the page has one)
+MECHANISMS = {
+    "rotation": {"canonical": "[J<sub>a</sub>, J<sub>b</sub>] = iε<sub>abc</sub>J<sub>c</sub>",
+                 "text": "A three-vector of expectations rotates about a fixed axis, and the measured signal follows "
+                         "the Rabi law.", "node": "rotation_canonical"},
+    "conserved": {"canonical": "[H, R] = 0",
+                  "text": "The observable commutes with the generator: its measured value does not change.",
+                  "node": "rotation_axis"},
+    "obstructed": {"canonical": "dim 𝔤 &gt; 3",
+                   "text": "The commutators of the generator and the observable span an algebra larger than su(2): "
+                           "no single rotation describes the signal.", "node": "spin1_easy_axis"},
+    "single-state": {"canonical": "ẋ = −κx, κ &gt; 0",
+                     "text": "Every preparation relaxes to one state, and nothing of the preparation is kept.",
+                     "node": "pitchfork_below"},
+    "symmetric-write": {"canonical": "ẋ = εx − x<sup>3</sup> + h",
+                        "text": "Two stable states appear together at a supercritical pitchfork; a weak bias during "
+                                "the crossing selects the state that is written.", "node": "pitchfork"},
+    "threshold-write": {"canonical": "ẋ = μ + x<sup>2</sup>",
+                        "text": "A stored state disappears at a fold; a field past the threshold switches the state "
+                                "after a delay set by the Airy law.", "node": "pitchfork_bias"},
+    "subcritical-write": {"canonical": "ẋ = εx + ax<sup>3</sup> − x<sup>5</sup>, a &gt; 0",
+                          "text": "The state loses stability at a subcritical pitchfork and jumps to a distant state.",
+                          "node": "pitchfork_subcritical"},
+    "field-write": {"canonical": "g U(q) − h·m(q)",
+                    "text": "The control only rescales the energy; a uniform field writes a state, and the barriers "
+                            "between states keep it.", "node": "colloid_patch"},
+    "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
+                    "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
+                            "the phase inside the Adler range.", "node": "van_der_pol"},
+    "neutral-cycles": {"canonical": "dI/dt = 0",
+                       "text": "A conserved quantity fills the plane with closed orbits, none of which attracts its "
+                               "neighbours.", "node": "lotka_volterra"},
+    "exponential-loss": {"canonical": "SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup>",
+                         "text": "Every mode relaxes at a finite rate: the trace of a write is lost exponentially.",
+                         "node": "field_nonconserved"},
+    "power-loss": {"canonical": "SNR ∝ t<sup>−d/2−n</sup>",
+                   "text": "A conserved density relaxes slowly at long wavelengths: the trace of a write decays as a "
+                           "power of time.", "node": "field_charge_1d"},
+    "convention": {"canonical": "Itô μ − σ<sup>2</sup>/2, Stratonovich μ",
+                   "text": "The reading of the noise term is part of the closure: it changes the measured growth rate "
+                           "of log X by σ<sup>2</sup>/2.", "node": "log_ito"},
+}
+# the realization the page opens on: a mechanism written without a field
+START = "pitchfork"
+
 # specifications in these folders that no node names are added to the page automatically (site_data.auto_nodes):
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
@@ -132,9 +178,29 @@ NODES = [
      "parent": "homonuclear_spins", "tutorial": Q_CH24 + "#6-obstructions"},
     {"id": "homonuclear_spins", "base": "heteronuclear_spins", "params": {"w2": 1.0},
      "name": "two nuclear spins of one species", "tutorial": Q_CH24 + "#6-obstructions"},
+    # -- canonical forms: mechanisms written without a field ("universal"); the page starts from the pitchfork
+    {"id": "pitchfork", "family": "dissipative", "spec": "examples/memory/pitchfork.json", "universal": True,
+     "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#the-normal-form-on-the-web-page"},
+    {"id": "pitchfork_below", "base": "pitchfork", "params": {"eps": -0.5}, "universal": True,
+     "name": "pitchfork normal form below the transition",
+     "question": "What does the normal form keep when ε is below the transition?",
+     "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#13-retention"},
+    {"id": "pitchfork_bias", "base": "pitchfork", "drift": {"x": "eps*x - x**3 + h"},
+     "potential": "-eps*x**2/2 + x**4/4 - h*x", "params": {"h": 0.2}, "universal": True,
+     "name": "pitchfork normal form with a constant bias",
+     "question": "How does a constant bias change the write at the pitchfork?",
+     "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#the-normal-form-on-the-web-page"},
+    {"id": "pitchfork_subcritical", "base": "pitchfork", "drift": {"x": "eps*x + 2*x**3 - x**5"},
+     "potential": "-eps*x**2/2 - x**4/2 + x**6/6", "universal": True,
+     "name": "subcritical pitchfork normal form",
+     "question": "Where does the state go when x = 0 loses stability at a subcritical pitchfork?",
+     "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#11-write-points-and-normal-forms"},
+    {"id": "rotation_canonical", "attach": ("two_spins", "qubit", None), "universal": True,
+     "name": "rotation on its smallest carrier", "tutorial": Q_CH24 + "#3-detaching-the-rotation-from-the-spins-of-chapter-11"},
+    {"id": "rotation_axis", "base": "rotation_canonical", "universal": True, "parent": "rotation_canonical",
+     "observable": [{"coefficient": 1.0, "operator": "X0"}, {"coefficient": 0.5, "operator": "Z0"}],
+     "name": "rotation measured along its axis", "tutorial": Q_CH11},
     # -- memory in model materials
-    {"id": "pitchfork", "family": "dissipative", "spec": "examples/memory/pitchfork.json",
-     "tutorial": M9 + "#3-running-the-constructor"},
     {"id": "laser", "family": "dissipative", "spec": "examples/memory/laser.json",
      "tutorial": M9 + "#3-running-the-constructor"},
     {"id": "toggle", "family": "dissipative", "spec": "examples/memory/toggle.json",
@@ -207,6 +273,58 @@ NODES = [
 # kind: param (A), term (Omega), observable (R), attach (Xi: the detached mechanism written on another carrier),
 # codiscovery (Xi: the same target derived in another realization), closure (C), protocol (P)
 EDGES = [
+    # the canonical forms: one component of the pitchfork normal form changed
+    {"id": "pf_below", "from": "pitchfork", "to": "pitchfork_below", "slot": "A", "kind": "param",
+     "change": "ε: 1 → −0.5",
+     "text": "Below ε = 0 the potential −εx<sup>2</sup>/2 + x<sup>4</sup>/4 has a single minimum. Every "
+             "preparation relaxes to x = 0, and nothing of the preparation is kept: {states_text} stable state."},
+    {"id": "pf_bias", "from": "pitchfork", "to": "pitchfork_bias", "slot": "A", "kind": "param",
+     "change": "h: 0 → 0.2", "reduces": {"h": 0.0},
+     "text": "A constant bias h unfolds the pitchfork. Along ε the state of the unfavoured sign now appears at a "
+             "fold, at ε = {write_point}, and a field past the threshold switches the state: the write becomes "
+             "one-sided (derivation {thr_word}). The same unfolding turns the write of the toggle switch with "
+             "unequal promoters and of the magnet in an oblique field into a fold."},
+    {"id": "pf_subcritical", "from": "pitchfork", "to": "pitchfork_subcritical", "slot": "Omega", "kind": "term",
+     "change": "−x<sup>3</sup> → +2x<sup>3</sup> − x<sup>5</sup>",
+     "text": "With a destabilizing cubic term and a quintic term that bounds the motion, x = 0 loses stability at "
+             "a subcritical pitchfork, at ε = {write_point}. The state does not grow continuously from zero: it "
+             "jumps to one of {states_text} distant states, as the magnetization of a particle switched along its "
+             "easy axis."},
+    {"id": "pf_to_magnet", "from": "pitchfork", "to": "stoner_wohlfarth", "slot": "Xi", "kind": "codiscovery",
+     "target": "symmetric-write", "change": "order parameter → magnetization angle",
+     "text": "The normal form is written on the angle of a magnetization: a single-domain particle in a field along "
+             "its hard axis. Its derivation ({sym_word}) ends in the same canonical form, "
+             "εx − x<sup>3</sup> + h, at h = {write_point}: the two stored states are the two directions of the "
+             "magnetization along the easy axis."},
+    {"id": "pf_to_toggle", "from": "pitchfork", "to": "toggle", "slot": "Xi", "kind": "codiscovery",
+     "target": "symmetric-write", "change": "order parameter → two repressor concentrations",
+     "text": "The normal form is written on two genes that repress each other. The derivation ({sym_word}) ends in "
+             "the same canonical form at α = {write_point}: the two stored states are the two genes, one "
+             "expressed and the other repressed."},
+    # the canonical rotation: the rotation detached from the two spins, written on a single spin-1/2
+    {"id": "rotation_detached", "from": "two_spins", "to": "rotation_canonical", "slot": "Xi", "kind": "attach",
+     "change": "two spins-½ → one spin-½",
+     "text": "The rotation detached from the two spins is written on the smallest carrier of su(2), one spin-½: "
+             "H = {rate} (sin θ X + cos θ Z)/2 with θ = {theta}°. The rate and the angle are those of the two "
+             "spins (derivation {word})."},
+    {"id": "rotation_on_axis", "from": "rotation_canonical", "to": "rotation_axis", "slot": "R", "kind": "observable",
+     "change": "Z → the rotation axis, X + Z/2",
+     "text": "Measured along the axis of the rotation, the observable commutes with H. Its closure has dimension "
+             "{closure}: the measured value is conserved."},
+    {"id": "rotation_nmr_values", "from": "rotation_canonical", "to": "nmr_spin", "slot": "A", "kind": "param",
+     "change": "the values of a nuclear spin: Ω<sub>R</sub> = 2, δ = 0.5",
+     "text": "With the fields of a nuclear spin in a radio-frequency field, Ω<sub>R</sub> = 2 and δ = 0.5 in the "
+             "rotating frame, the canonical rotation is the spin of magnetic resonance: rate {rate}, angle "
+             "{theta}° (derivation {word}). The parameters name the apparatus; the operators and the mechanism "
+             "are unchanged."},
+    {"id": "rotation_to_chain3", "from": "rotation_canonical", "to": "module14_equal", "slot": "Xi",
+     "kind": "codiscovery", "target": "rotation", "change": "one spin-½ → exchange chain of three spins",
+     "text": "An exchange chain of three spins with equal bonds carries a rotation as well: rate {rate}, angle "
+             "{theta}° (derivation {word})."},
+    {"id": "rotation_to_species", "from": "rotation_canonical", "to": "homonuclear_spins", "slot": "Xi",
+     "kind": "codiscovery", "target": "rotation", "change": "one spin-½ → two nuclear spins driven together",
+     "text": "Two nuclear spins of one species driven by the same field rotate as one collective spin: rate "
+             "{rate}, angle {theta}° (derivation {word})."},
     # the spins of Chapter 11
     {"id": "spins_field_off", "from": "two_spins", "to": "two_spins_h0", "slot": "A", "kind": "param",
      "change": "h: 0.5 → 0",
@@ -389,6 +507,32 @@ EDGES = [
 # steps: {"node": id} starts; {"edge": id} applies an edge; {"edge": id, "reverse": True} returns along it;
 # {"prepare": id} changes the preparation of a unitary node (P, a live edit)
 SEQUENCES = [
+    {"id": "canonical", "title": "From one normal form to other mechanisms",
+     "steps": [
+         {"node": "pitchfork",
+          "text": "The pitchfork normal form, dx/dt = εx − x<sup>3</sup>, written without any field. For ε &gt; 0 it "
+                  "has {states_text} stable states, and sweeping ε upward through 0 with a weak bias writes one of "
+                  "them (derivation {sym_word}). Every symmetric write on this page reduces to this form."},
+         {"edge": "pf_below"},
+         {"edge": "pf_below", "reverse": True, "text": "Above the transition again: {states_text} stable states."},
+         {"edge": "pf_bias"},
+         {"edge": "pf_bias", "reverse": True, "text": "Without the bias the two states appear together again."},
+         {"edge": "pf_subcritical"},
+         {"edge": "pf_subcritical", "reverse": True,
+          "text": "The stabilizing cubic term again: the supercritical pitchfork."},
+         {"edge": "pf_to_magnet"},
+         {"edge": "spin1_classical_aniso", "reverse": True,
+          "text": "The closure is changed back: the damped classical direction becomes a spin 1 under closed "
+                  "evolution, with the same anisotropy term. The term that gave two stored directions now prevents "
+                  "a rotation: the algebra is su(3), of dimension {dim}."},
+         {"edge": "spin1_anisotropy", "reverse": True,
+          "text": "Without the anisotropy term the spin 1 in a transverse field rotates: rate {rate}, angle "
+                  "{theta}° (derivation {word})."},
+         {"edge": "spins_to_spin1", "reverse": True,
+          "text": "The same rotation written on two coupled spins, H = g Z<sub>0</sub>Z<sub>1</sub> measured "
+                  "through X<sub>0</sub>: the correlation dynamics of Chapter 11, rate {rate} (derivation {word})."},
+         {"edge": "spins_measure_z"},
+     ]},
     {"id": "spin-to-magnet", "title": "From a spin rotation to a stored magnetization",
      "steps": [
          {"node": "two_spins",
@@ -557,7 +701,9 @@ SHORT = {
     "chain_ising": "chain + Ising", "bose_josephson": "Bose–Josephson", "interacting_bosons": "bosons + U",
     "cooper_pair": "Cooper pair", "state_transfer_chain": "transfer chain", "module14_chain": "chain 3, 4",
     "module14_equal": "chain 3, 3", "heteronuclear_spins": "two species", "homonuclear_spins": "one species",
-    "pitchfork": "normal form", "laser": "laser", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
+    "pitchfork": "pitchfork", "pitchfork_below": "below ε = 0", "pitchfork_bias": "with bias h",
+    "pitchfork_subcritical": "subcritical form", "rotation_canonical": "canonical rotation",
+    "rotation_axis": "measured on the axis", "laser": "laser", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
     "repressor_ring4": "ring of 4", "ring4_activation": "ring 4, activation", "repressilator": "repressilator",
     "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "tubes": "two tubes",
     "tubes_unequal": "unequal tubes", "colloid_patch": "capillary rods", "dipole_patch": "dipoles",
