@@ -29,16 +29,17 @@ The calculations need no API key, GPU, cluster or archive download.
 
 ## Demonstration
 
-The [web page](https://synthetix-institute.github.io/fieldbridge/) starts from the realization expression
-I<sub>real</sub> = ((Ω, Ξ); C, R, P; A) and changes one component at a time. From the two spins of
-[Chapter 11](docs/tutorial/11_quantum_closure.md), measuring Z<sub>0</sub> instead of X<sub>0</sub> (R) makes the measured
-value conserved; moving the field to the second spin (Ω) enlarges the algebra beyond su(2); attaching the rotation to a
-spin 1 (Ξ) and adding the anisotropy D J<sub>z</sub><sup>2</sup> (Ω) obstructs it. A dissipative classical closure (C)
-turns the same term into the two stored directions of a Stoner–Wohlfarth particle, whose field angle (A) moves the write
-from a supercritical pitchfork to a fold on the astroid and to a subcritical pitchfork. The symmetric write is derived
-again in a genetic toggle switch, a laser and a ring of four repressors; the sign of one coupling in a ring of genes
-decides between two stored states and an oscillation; eight oscillators lock to a drive with the same Adler law; a
-conserved field forgets as a power of time.
+The [web page](https://synthetix-institute.github.io/fieldbridge/) starts from a mechanism written without any field:
+the pitchfork normal form dx/dt = εx − x<sup>3</sup>, the canonical form of every symmetric write, as a realization
+I<sub>real</sub> = ((Ω, Ξ); C, R, P; A). Each component can be changed by one verified step. Lowering ε below zero (A)
+leaves a single state; a constant bias (A) turns the write into a fold; a destabilizing cubic term (Ω) turns it into a
+subcritical pitchfork and a jump to a distant state. A change of the carrier (Ξ) keeps the mechanism and places it in a
+field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repressor concentrations (a genetic toggle
+switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
+of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
+[Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
+(R). A map of thirteen mechanisms shows which component joins which mechanisms; a table lists the realizations of each
+mechanism by field.
 
 Every realization on the page is a specification in `examples/` or one change of one, and every change is checked to
 alter only the component it names ([site_data.py](fieldbridge/site_data.py), the realizations and changes in
@@ -48,10 +49,10 @@ that [the tests](tests/test_site_engines.py) compare with the Python calculation
 
 | Section of the page | Content |
 | --- | --- |
-| Changing one component | The expression of one realization with an editor for each component, the verified changes that leave it, the dynamics and the calculated consequences |
-| Stepped sequences | From a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
-| Map | Every realization, grouped by mechanism, and the single-component changes between them |
-| One mechanism in different fields | The canonical forms and law constants of the four targets, one curve or point per realization |
+| Changing one component of a mechanism | The map of mechanisms and the single-component changes between them; the expression of the current realization with the verified changes of each component, each named by the mechanism it reaches; the dynamics and the calculated consequences |
+| Guided sequences | From the pitchfork normal form to other mechanisms; from a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
+| One mechanism in many fields | The canonical forms and law constants of the four targets, one curve or point per realization |
+| Realizations by mechanism and field | Every realization in the row of its mechanism and the group of its field, with its source; a selected realization opens in the instrument |
 
 ```bash
 python3 -B -m fieldbridge demo --out-dir build/site

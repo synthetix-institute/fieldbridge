@@ -5,7 +5,7 @@
   const S = window.FIELDBRIDGE_SITE;
   if (!S) return;
   const U = window.FieldBridgeUnitary, D = window.FieldBridgeDissipative, F = window.FieldBridgeFields;
-  const MML = window.FieldBridgeMath, V = window.FieldBridgeViews;
+  const MML = window.FieldBridgeMath, V = window.FieldBridgeViews, M = window.FieldBridgeMechanisms;
   const $ = id => document.getElementById(id);
   const SLOTS = ['Omega', 'Xi', 'C', 'R', 'P', 'A'];
   const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -93,13 +93,21 @@
 
   // ---------------------------------------------------------------------------------------- the expression
   function render(changedSlot) {
-    const rec = S.nodes[state.node];
+    const rec = S.nodes[state.node], mech = (S.mechanisms || {})[rec.class] || {};
     $('r-name').innerHTML = rec.name;
-    $('r-field').textContent = rec.field;
+    $('r-field').textContent = rec.universal ? 'canonical form, no field' : rec.field;
     const src = rec.spec ? `<a href="${repo(rec.spec)}" target="_blank" rel="noopener">specification</a>` :
       `derived from <a href="${repo(rec.base_spec)}" target="_blank" rel="noopener">${esc(rec.base_spec.split('/').pop())}</a>`;
     $('r-source').innerHTML = src + (rec.tutorial ? ` · <a href="${repo(rec.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : '');
-    $('r-class').textContent = S.classes[rec.class] || rec.class;
+    $('r-class').innerHTML = M.glyph(rec.class, 'small') + esc(S.classes_short[rec.class] || rec.class);
+    const head = document.querySelector('.mechanism-head');
+    if (head && state.shownClass && state.shownClass !== rec.class && !reduced) { head.classList.remove('flash'); void head.offsetWidth; head.classList.add('flash'); }
+    state.shownClass = rec.class;
+    $('m-glyph').innerHTML = M.glyph(rec.class, 'big');
+    $('m-name').textContent = S.classes[rec.class] || rec.class;
+    $('m-canonical').innerHTML = mech.canonical ? 'canonical form ' + mech.canonical : '';
+    $('m-where').innerHTML = rec.universal ? 'Written without a field.' : `Realized in ${esc(rec.field)}: ${rec.name}.`;
+    $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span>`;
     $('slots').innerHTML = SLOTS.map(slot => `<li class="slot" data-slot="${slot}" id="slot-${slot}">
         <button class="slot-symbol" type="button" data-light="${slot}" aria-label="${S.slots[slot].name}">${S.slots[slot].symbol}</button>
         <span class="slot-name">${S.slots[slot].name}</span>
@@ -176,29 +184,57 @@
     if (e.kind_dynamics === 'gene') return e.terms.map(t => termChip(esc(t.label), t.id, state.removed.includes(t.id))).join(' ');
     return e.terms.map(t => termChip(esc(t.label) + ` <span class="muted">${esc(t.text)}</span>`, t.id, state.removed.includes(t.id))).join(' ');
   }
+  const GREEK = {eps: 'ε', alpha: 'α', gamma: 'γ', mu: 'μ', lam: 'λ', psi: 'ψ', delta: 'δ', Delta: 'Δ', sigma: 'σ', omega: 'ω', nu: 'ν', kappa: 'κ', beta: 'β'};
+  const symbol = name => GREEK[name] || name;
   function protocolEditor(rec) {
     const e = rec.engine, opts = [['relax', 'relaxation of random preparations']];
     const writeKind = (e.events || [])[0] ? e.events[0].kind : '';
-    if (e.control && e.events && e.events.length && !rec.facts.scale_control) opts.push(['sweep', `sweep of ${e.control.name} through the write point`]);
+    if (e.control && e.events && e.events.length && !rec.facts.scale_control) opts.push(['sweep', `sweep of ${symbol(e.control.name)} through the write point`]);
     if ((e.states || []).length >= 2 || rec.facts.states >= 2) opts.push(['pulse', 'field pulse toward the other state']);
-    if (e.drive) opts.push(['drive', `periodic modulation of ${e.drive.param}`]);
+    if (e.drive) opts.push(['drive', `periodic modulation of ${symbol(e.drive.param)}`]);
     let html = `<div class="choice">${opts.map(([id, label]) => `<button type="button" data-protocol="${id}" aria-pressed="${state.protocol === id}">${label}</button>`).join('')}</div>`;
     if (state.protocol === 'sweep') html += params({bias: [-0.5, 0.5, 0.005]}, {bias: state.bias}, 'proto', {bias: 'bias'}) + `<p class="note">The preparations start in the single state and the control crosses the write point${writeKind ? ' (' + esc(writeKind) + ')' : ''}; the bias chooses the state that is written.</p>`;
     if (state.protocol === 'pulse') html += params({pulse: [0, 3, 0.01]}, {pulse: state.pulse}, 'proto', {pulse: 'field h'}) + `<p class="note">All preparations start in one stored state; the field acts for 6 time units.</p>`;
     if (state.protocol === 'drive') html += params({amp: [0, 20, 0.1], nu: [-3, 3, 0.01]}, {amp: state.drive.amp, nu: state.drive.nu}, 'drive', {amp: 'amplitude × ε', nu: 'detuning ν/K'}) + `<p class="note">The drive frequency is ${e.drive.ratio}(ω₀ − νK); FieldBridge finds locking for |ν| &lt; 1 at weak drive.</p>`;
     return html;
   }
+  /** The label of an edge read backwards: "a → b" becomes "b → a" (keeping a prefix such as "h: "), an added term
+   *  is removed. */
+  function inverse(label) {
+    const parts = label.split(' → ');
+    if (parts.length === 2) {
+      const m = parts[0].match(/^(.*?(?::|=)\s*)(.+)$/);
+      return m ? `${m[1]}${parts[1]} → ${m[2]}` : `${parts[1]} → ${parts[0]}`;
+    }
+    if (/^\+\s/.test(label)) return 'remove ' + label.replace(/^\+\s*/, '');
+    return 'undo: ' + label;
+  }
+  function changeButton(e, reverse) {
+    const here = S.nodes[state.node], target = S.nodes[reverse ? e.from : e.to], same = target.class === here.class;
+    const where = target.universal ? 'canonical form' : esc(target.field);
+    const what = same ? (target.universal ? 'same mechanism, canonical form' : `same mechanism in ${where}`)
+      : esc(S.classes_short[target.class] || target.class);
+    return `<button type="button" class="change${reverse ? ' back' : ''}${same ? ' same' : ''}" data-edge="${e.id}"${reverse ? ' data-reverse="1"' : ''} data-to-class="${target.class}">
+        <span class="change-what">${reverse ? inverse(e.change) : e.change}</span>
+        <span class="change-to">${M.glyph(target.class, 'small')}<span><b>${what}</b><small>${esc(target.short || target.id)}${same || target.universal ? '' : ' · ' + where}</small></span></span></button>`;
+  }
   function edits(rec, slot) {
-    const fwd = (out[state.node] || []).filter(e => e.slot === slot);
-    const back = (into[state.node] || []).filter(e => e.slot === slot);
-    return fwd.map(e => `<button type="button" class="edit" data-edge="${e.id}" title="to: ${esc(S.nodes[e.to].name.replace(/<[^>]+>/g, ''))}">${e.change}</button>`).join('')
-      + back.map(e => `<button type="button" class="edit back" data-edge="${e.id}" data-reverse="1" title="undo: ${esc(e.change.replace(/<[^>]+>/g, ''))}">↩ back to ${esc(S.nodes[e.from].short || e.from)}</button>`).join('');
+    const fwd = (out[state.node] || []).filter(e => e.slot === slot).map(e => changeButton(e, false));
+    const back = (into[state.node] || []).filter(e => e.slot === slot).map(e => changeButton(e, true));
+    return fwd.concat(back).join('');
   }
   function wire(rec) {
-    document.querySelectorAll('#slots [data-edge]').forEach(b => b.addEventListener('click', () => {
-      window.FieldBridgeSite && window.FieldBridgeSite.leaveSequence();
-      applyEdge(byId[b.dataset.edge], b.dataset.reverse === '1');
-    }));
+    document.querySelectorAll('#slots [data-edge]').forEach(b => {
+      b.addEventListener('click', () => {
+        window.FieldBridgeSite && window.FieldBridgeSite.leaveSequence();
+        M.preview(null);
+        applyEdge(byId[b.dataset.edge], b.dataset.reverse === '1');
+      });
+      b.addEventListener('mouseenter', () => M.preview(b.dataset.toClass));
+      b.addEventListener('focus', () => M.preview(b.dataset.toClass));
+      b.addEventListener('mouseleave', () => M.preview(null));
+      b.addEventListener('blur', () => M.preview(null));
+    });
     document.querySelectorAll('#slots [data-term]').forEach(b => b.addEventListener('click', () => {
       if (rec.family === 'unitary') { const k = Number(b.dataset.term); state.active[k] = !state.active[k]; }
       else { const id = b.dataset.term; state.removed = state.removed.includes(id) ? state.removed.filter(x => x !== id) : [...state.removed, id]; }
@@ -264,7 +300,7 @@
         live('stable states', k + (att.moving ? `; ${att.moving} of ${att.n} preparations keep moving` : ''));
       }
       body = mechanismText(rec);
-      if (f.write_point != null) known('write point', `${f.write_param} = ${fmt(f.write_point, 4)}, ${f.write_kind}`);
+      if (f.write_point != null) known('write point', `${symbol(f.write_param)} = ${fmt(Math.abs(f.write_point) < 5e-7 ? 0 : f.write_point, 4)}, ${f.write_kind}`);
       for (const [p, name] of [['sym', 'symmetric write'], ['thr', 'one-sided write'], ['lock', 'phase locking']]) {
         if (!f[p + '_status']) continue;
         const reached = String(f[p + '_status']).startsWith('reached');
@@ -273,7 +309,7 @@
         if (reached && p === 'lock') v += `; ${f.lock_ratio}:1`;
         known(name, v);
       }
-      if (f.operating_param) known('operating point', `${f.operating_param} = ${fmt(f.operating_value)} (letter C)`);
+      if (f.operating_param) known('operating point', `${symbol(f.operating_param)} = ${fmt(f.operating_value)} (letter C)`);
       known('retention', f.loss);
       if (state.noise > 0 && state.protocol !== 'drive') live('bath', `D = ${fmt(state.noise, 3)}`);
       if (scene && scene.driveResult) live('drive', scene.driveResult);
@@ -306,7 +342,7 @@
   function mechanismText(rec) {
     const f = rec.facts;
     switch (rec.class) {
-      case 'symmetric-write': return `Two stable states appear at a supercritical pitchfork of ${f.write_param}: sweeping the control through the write point with a weak bias writes the state the bias favours.`;
+      case 'symmetric-write': return `Two stable states appear at a supercritical pitchfork of ${symbol(f.write_param)}: sweeping the control through the write point with a weak bias writes the state the bias favours.`;
       case 'threshold-write': return 'A stored state disappears at a fold: a field or a control past the threshold switches the realization to the other state, with a delay set by the Airy law.';
       case 'subcritical-write': return 'The stored state loses stability at a subcritical pitchfork: the realization jumps to a distant branch.';
       case 'field-write': return 'The control only rescales the energy; a state is written by a uniform field and kept by the barriers between states.';
@@ -366,7 +402,12 @@
     const scale = e.carrier.scale || 1;
     // the range of the drawing: the stored states and the scale of the carrier
     const pts = att.points.map(p => p.q);
-    const span = i => { const v = pts.map(q => q[i]); const hi = Math.max(scale, ...v) * 1.25; return e.carrier.kind === 'orthant' ? [0, hi] : torus ? [0, P] : [-hi, hi]; };
+    // one variable: a range set by the stored states, so that the wells and the barrier between them fill the drawing
+    const span = i => {
+      const v = pts.map(q => q[i]), reach = v.length ? Math.max(...v.map(Math.abs)) : 0;
+      const hi = dim === 1 ? Math.max(0.5 * scale, 1.45 * reach) : Math.max(scale, ...v) * 1.25;
+      return e.carrier.kind === 'orthant' ? [0, hi] : torus ? [0, P] : [-hi, hi];
+    };
     sc.xr = span(0); sc.yr = dim > 1 ? span(1) : null;
     const random = D.rng(17);
     const n = dim === 1 ? 26 : e.kind_dynamics === 'rotor' ? 1 : 70;
@@ -496,7 +537,7 @@
         } else {
           V.landscape(main, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => q[0]), states: scene.attractors.points.map(p => p.q[0]), xLabel: e.variables[0], yLabel: 'V = −∫ drift'});
         }
-        if (scene.scan && state.side !== 'energy') V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: e.control.name, events: e.events, yLabel: torus ? 'angle' : e.variables[0]});
+        if (scene.scan && state.side !== 'energy') V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: torus ? 'angle' : e.variables[0]});
         else if (torus) V.landscape(side, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => wrapA(q[0])), states: scene.attractors.points.map(p => wrapA(p.q[0])), xLabel: 'angle', yLabel: 'energy'});
         else V.series(side, {tMax: scene.tMax, cursor: scene.t, curves: scene.trails.slice(0, 8).map(tr => ({pts: tr.map((q, k) => [k * scene.dt * scene.record, q[0]])})), window: scene.window});
         return;
@@ -509,7 +550,7 @@
         return;
       }
       V.phasePlane(main, {xr: scene.xr, yr: scene.yr, trails: tr, equilibria: scene.attractors.points.map(p => Object.assign([p.q[0], p.q[1]], {stable: true})), xLabel: e.variables[0], yLabel: e.variables[1]});
-      if (scene.scan) V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: e.control.name, events: e.events, yLabel: `${e.variables[0]} − mean of the others`});
+      if (scene.scan) V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: `${e.variables[0]} − mean of the others`});
       else V.series(side, {tMax: scene.tMax, cursor: scene.t, curves: e.variables.map((v, i) => ({label: v, pts: scene.trails[0].map((q, k) => [k * scene.dt * scene.record, q[i]])})), window: scene.window});
       return;
     }
@@ -570,19 +611,23 @@
   // ---------------------------------------------------------------------------------------- path
   function renderPath() {
     const items = state.path.map((p, i) => {
-      const name = S.nodes[p.node].name, cur = i === state.path.length - 1;
+      const r = S.nodes[p.node], name = M.glyph(r.class, 'small') + `<span>${r.name}</span>`, cur = i === state.path.length - 1;
       const step = p.edge ? `<span class="path-step" data-slot="${byId[p.edge].slot}" title="${esc(byId[p.edge].change.replace(/<[^>]+>/g, ''))}">—${S.slots[byId[p.edge].slot].symbol}${p.reverse ? '↩' : ''}→</span>` : '';
-      return `<li>${step}<span class="path-node${cur ? ' current' : ''}">${name}</span></li>`;
+      return `<li>${step}<span class="path-node${cur ? ' current' : ''}" title="${esc(S.classes[r.class] || '')}">${name}</span></li>`;
     });
     $('path-list').innerHTML = items.join('');
     const n = state.path.length - 1, classes = [...state.seen].map(c => S.classes[c]).filter(Boolean);
     $('path-count').textContent = `${n} change${n === 1 ? '' : 's'} · ${classes.length} mechanism${classes.length === 1 ? '' : 's'}: ${classes.join('; ')}`;
     $('path-undo').disabled = n === 0;
+    const restart = $('path-restart');
+    if (restart) restart.hidden = state.node === S.start && n === 0;
   }
 
   // ---------------------------------------------------------------------------------------- controls
   function setup() {
     $('path-undo').addEventListener('click', () => { window.FieldBridgeSite && window.FieldBridgeSite.leaveSequence(); undo(); });
+    const restart = $('path-restart');
+    if (restart) restart.addEventListener('click', () => { window.FieldBridgeSite && window.FieldBridgeSite.leaveSequence(); start(S.start); });
     $('view-play').addEventListener('click', () => {
       state.playing = !state.playing;
       $('view-play').textContent = state.playing ? '❚❚' : '▶';

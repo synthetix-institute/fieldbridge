@@ -98,6 +98,12 @@
     const redraw = () => figs.forEach(f => f.draw(f));
     redraw();
     new ResizeObserver(redraw).observe(grid);
+    // a point of a strip of law constants names its realization and opens it in the instrument
+    grid.querySelectorAll('canvas.strip').forEach(c => {
+      const near = ev => (c._points || []).find(p => Math.hypot(p.x - ev.offsetX, p.y - ev.offsetY) < 14);
+      c.addEventListener('pointermove', ev => { const p = near(ev); c.style.cursor = p ? 'pointer' : 'default'; c.title = p ? p.label : ''; });
+      c.addEventListener('click', ev => { const p = near(ev); if (p) open(p.id); });
+    });
   }
   function color(i) { return getComputedStyle(document.documentElement).getPropertyValue(FIELD_COLORS[i % FIELD_COLORS.length]).trim(); }
   function drawRotation(f) {
@@ -137,6 +143,8 @@
     const vals = lawRows.flatMap(r => [r.law.constant - r.law.stderr, r.law.constant + r.law.stderr]).concat([f.expected]);
     const fr = V.frame(gs, {x: 0, y: 0, w: gs.w, h: gs.h}, [-0.5, lawRows.length - 0.5], V.autoRange(vals, 0.15), {xTicks: [], left: 54, bottom: 64, noGrid: true});
     gs.ctx.strokeStyle = gs.c.omega; gs.ctx.setLineDash([5, 4]); gs.ctx.beginPath(); gs.ctx.moveTo(fr.l, fr.Y(f.expected)); gs.ctx.lineTo(fr.r, fr.Y(f.expected)); gs.ctx.stroke(); gs.ctx.setLineDash([]);
+    strip._points = lawRows.map((r, i) => ({x: fr.X(i), y: fr.Y(r.law.constant), id: r.id,
+      label: `${String(r.name).replace(/<[^>]+>/g, '')}: ${V.fmt(r.law.constant, 4)} ± ${V.fmt(r.law.stderr, 2)}. Select to open it above.`}));
     lawRows.forEach((r, i) => {
       const x = fr.X(i), col = color(f.rows.indexOf(r));
       gs.ctx.strokeStyle = col; gs.ctx.lineWidth = 1.5; gs.ctx.beginPath(); gs.ctx.moveTo(x, fr.Y(r.law.constant - r.law.stderr)); gs.ctx.lineTo(x, fr.Y(r.law.constant + r.law.stderr)); gs.ctx.stroke();
@@ -146,13 +154,73 @@
     });
   }
 
-  // ---------------------------------------------------------------------------------------- sources
-  function sources() {
-    const order = ['unitary', 'dissipative', 'field', 'stochastic'];
-    const rows = Object.values(S.nodes).sort((a, b) => order.indexOf(a.family) - order.indexOf(b.family) || strip(a.name).localeCompare(strip(b.name)));
+  // ---------------------------------------------------------------------------------------- realizations
+  const matrix = {field: '', query: '', selected: null};
+  const searchable = r => strip(`${r.name} ${r.short} ${r.field} ${r.source || ''} ${S.classes[r.class] || ''}`).toLowerCase();
+  function realizations() {
+    const M = window.FieldBridgeMechanisms, all = Object.values(S.nodes);
+    const fields = [...new Set(all.filter(r => !r.universal).map(r => r.field))].sort((a, b) => a.localeCompare(b));
+    $('field-filter').innerHTML = `<button type="button" data-field="" aria-pressed="true">all fields</button>`
+      + fields.map(f => `<button type="button" data-field="${esc(f)}" aria-pressed="false">${esc(f)}</button>`).join('');
+    const chip = r => `<button type="button" class="rchip${r.universal ? ' universal' : ''}" data-id="${r.id}" data-field="${esc(r.universal ? '' : r.field)}" title="${esc(strip(r.name))}">${esc(r.short || r.id)}</button>`;
+    $('matrix').innerHTML = Object.keys(S.mechanisms).map(k => {
+      const m = S.mechanisms[k], rs = all.filter(r => r.class === k).sort((a, b) => strip(a.name).localeCompare(strip(b.name)));
+      const groups = {};
+      rs.filter(r => !r.universal).forEach(r => (groups[r.field] ||= []).push(r));
+      const canon = rs.filter(r => r.universal);
+      return `<div class="mrow" data-class="${k}">
+        <div class="mhead">${M.glyph(k)}<div><b>${esc(S.classes[k] || k)}</b><span>${m.canonical || ''}</span></div></div>
+        <div class="mcells">${canon.length ? `<span class="fgroup canonical"><span class="fname">canonical form</span>${canon.map(chip).join('')}</span>` : ''}${
+          Object.keys(groups).sort((a, b) => a.localeCompare(b)).map(f => `<span class="fgroup" data-field="${esc(f)}"><span class="fname">${esc(f)}</span>${groups[f].map(chip).join('')}</span>`).join('')}</div></div>`;
+    }).join('');
+    document.querySelectorAll('#field-filter [data-field]').forEach(b => b.addEventListener('click', () => { matrix.field = b.dataset.field; filter(); }));
+    $('matrix-search').addEventListener('input', ev => { matrix.query = ev.target.value.trim().toLowerCase(); filter(); });
+    document.querySelectorAll('#matrix .rchip').forEach(b => b.addEventListener('click', () => select(b.dataset.id)));
+    filter();
+    sourcesTable();
+  }
+  function filter() {
+    const {field, query} = matrix;
+    let n = 0;
+    const classes = new Set();
+    document.querySelectorAll('#field-filter [data-field]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.field === field)));
+    document.querySelectorAll('#matrix .rchip').forEach(b => {
+      const r = S.nodes[b.dataset.id];
+      const on = (!field || b.dataset.field === field) && (!query || searchable(r).includes(query));
+      b.classList.toggle('dim', !on);
+      if (on) { n++; classes.add(r.class); }
+    });
+    document.querySelectorAll('#matrix .mrow').forEach(row => row.classList.toggle('dim', !classes.has(row.dataset.class)));
+    document.querySelectorAll('#matrix .fgroup').forEach(g => g.classList.toggle('dim', !!field && g.dataset.field !== field));
+    const total = Object.keys(S.nodes).length;
+    $('matrix-summary').textContent = field || query
+      ? `${n} of ${total} realizations${field ? ` in ${field}` : ''}${query ? ` matching “${query}”` : ''}, in ${classes.size} mechanism${classes.size === 1 ? '' : 's'}.`
+      : `${total} realizations of ${Object.keys(S.mechanisms).length} mechanisms in ${new Set(Object.values(S.nodes).filter(r => !r.universal).map(r => r.field)).size} fields.`;
+  }
+  function select(id) {
+    const r = S.nodes[id], M = window.FieldBridgeMechanisms;
+    matrix.selected = id;
+    document.querySelectorAll('#matrix .rchip').forEach(b => b.classList.toggle('selected', b.dataset.id === id));
+    const box = $('matrix-detail'), row = document.querySelector(`#matrix .mrow[data-class="${r.class}"]`);
+    if (row && row.insertAdjacentElement) row.insertAdjacentElement('afterend', box);  // under the row of the realization
+    box.hidden = false;
+    box.innerHTML = `${M.glyph(r.class, 'big')}<div><p class="card-label">${esc(S.classes[r.class] || r.class)}</p><h3>${r.name}</h3>
+      <p class="muted">${r.universal ? 'canonical form, no field' : esc(r.field)}${r.question ? ' · ' + esc(r.question) : ''}</p>
+      <p>${r.source ? esc(r.source) + ' · ' : ''}<a href="${repo(r.spec || r.base_spec)}" target="_blank" rel="noopener">${r.spec ? 'specification' : 'derived from ' + esc((r.base_spec || '').split('/').pop())}</a>${r.tutorial ? ` · <a href="${repo(r.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : ''}</p>
+      <button type="button" class="primary" id="matrix-open">Open it in the instrument</button></div>`;
+    $('matrix-open').addEventListener('click', () => open(id));
+  }
+  function open(id) {
+    leave();
+    I().walkTo(id);
+    $('instrument').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+  }
+  function sourcesTable() {
+    const order = Object.keys(S.mechanisms);
+    const rows = Object.values(S.nodes).sort((a, b) => order.indexOf(a.class) - order.indexOf(b.class) || strip(a.name).localeCompare(strip(b.name)));
     $('sources-table').innerHTML = '<thead><tr><th>Realization</th><th>Field</th><th>Source and files</th></tr></thead><tbody>'
-      + rows.map(r => `<tr><td><button type="button" class="plain" data-go="${r.id}">${r.name}</button><br><span class="muted">${esc(S.classes[r.class] || '')}</span></td><td>${esc(r.field)}</td><td>${r.source ? esc(r.source) + '<br>' : ''}<a href="${repo(r.spec || r.base_spec)}" target="_blank" rel="noopener">${r.spec ? 'specification' : 'derived from ' + esc((r.base_spec || '').split('/').pop())}</a>${r.tutorial ? ` · <a href="${repo(r.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : ''}</td></tr>`).join('') + '</tbody>';
-    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { leave(); I().walkTo(b.dataset.go); $('instrument').scrollIntoView({block: 'start'}); }));
+      + rows.map(r => `<tr><td><button type="button" class="plain" data-go="${r.id}">${r.name}</button><br><span class="muted">${esc(S.classes[r.class] || '')}</span></td><td>${r.universal ? 'canonical form' : esc(r.field)}</td><td>${r.source ? esc(r.source) + '<br>' : ''}<a href="${repo(r.spec || r.base_spec)}" target="_blank" rel="noopener">${r.spec ? 'specification' : 'derived from ' + esc((r.base_spec || '').split('/').pop())}</a>${r.tutorial ? ` · <a href="${repo(r.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : ''}</td></tr>`).join('') + '</tbody>';
+    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => open(b.dataset.go)));
     $('boundary').textContent = S.boundary;
     const law = S.law || {};
     $('provenance').textContent = `Calculated with FieldBridge (memory implementation ${S.provenance.memory_implementation_sha256.slice(0, 12)}; Python ${S.provenance.versions.python}, numpy ${S.provenance.versions.numpy}, scipy ${S.provenance.versions.scipy}). `
@@ -160,7 +228,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    definitions(); sequences(); sources();
+    definitions(); sequences(); realizations();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);

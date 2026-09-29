@@ -3,8 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="One realization expression, I = ((Ω, Ξ); C, R, P; A), and the mechanisms obtained by changing one of its components: spin rotations, obstructions, stored magnetization, writes in genes and lasers, phase locking and the law of loss. Every result is calculated with FieldBridge.">
-  <title>FieldBridge — realizations and mechanisms</title>
+  <meta name="description" content="Mechanisms written without a field, I = ((Ω, Ξ); C, R, P; A), and the mechanisms obtained by changing one component: writes at a pitchfork or a fold, rotations and obstructions, limit cycles, phase locking and the law of loss, each realized in magnets, genes, lasers, spins and other systems. Every result is calculated with FieldBridge.">
+  <title>FieldBridge — mechanisms and their realizations</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=Spectral:wght@500;600&display=swap">
@@ -16,7 +16,7 @@
   <script defer src="site/fields.js"></script>
   <script defer src="site/mathml.js"></script>
   <script defer src="site/views.js"></script>
-  <script defer src="site/atlas.js"></script>
+  <script defer src="site/mechanisms.js"></script>
   <script defer src="site/expression.js"></script>
   <script defer src="site/site.js"></script>
 </head>
@@ -24,9 +24,9 @@
   <header class="top">
     <a class="brand" href="#expression">FieldBridge</a>
     <nav aria-label="Sections">
-      <a href="#instrument">Components</a>
-      <a href="#map">Map</a>
-      <a href="#codiscovery">Fields</a>
+      <a href="#instrument">Mechanisms</a>
+      <a href="#codiscovery">One mechanism in many fields</a>
+      <a href="#realizations">All realizations</a>
       <a href="#contribute">Add a realization</a>
       <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener">Tutorial ↗</a>
       <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">GitHub ↗</a>
@@ -36,7 +36,7 @@
   <main>
     <section id="expression" class="hero">
       <p class="eyebrow">The language of mechanisms</p>
-      <h1>Realizations and their mechanisms</h1>
+      <h1>Mechanisms and their realizations</h1>
       <p class="formula" aria-label="I real equals open parenthesis open parenthesis Omega, Xi close parenthesis; C, R, P; A close parenthesis">
         <span class="formula-lhs">I<sub>real</sub> =</span>
         <span>((</span><button class="sym" data-slot="Omega" type="button">Ω</button><span>,</span>
@@ -48,16 +48,25 @@
       </p>
       <dl class="definitions" id="definitions"></dl>
       <div class="intro">
-        <p>FieldBridge writes every model in the language of mechanisms, as a realization of the six components in the expression above. The nesting of the expression records how the components depend on one another. An operation <span class="s" data-slot="Omega">Ω</span> is defined only on a carrier <span class="s" data-slot="Xi">Ξ</span> of states, so the pair (<span class="s" data-slot="Omega">Ω</span>, <span class="s" data-slot="Xi">Ξ</span>) forms the core of the description. The closure <span class="s" data-slot="C">C</span> states what is specified or discarded to make the equations of that core closed. The observable <span class="s" data-slot="R">R</span> and the protocol <span class="s" data-slot="P">P</span> are defined on the closed dynamics, and the parameters <span class="s" data-slot="A">A</span>, the values through which a particular material or apparatus implements the model, enter last. A prediction requires all six components, and a change of any one of them can change what is predicted.</p>
-        <p>The components separate what a system is made of from what it does. An object, such as a pair of spins, a ring of genes or a magnetic particle, fixes the carrier and the parameter values, but not the mechanism. The same two spins give a rotating or a conserved signal depending on what is measured. A spin with an anisotropy term no longer carries a Bloch rotation under closed evolution, and it keeps one of two directions when the closure makes it a damped classical moment. A ring of genes stores a state or oscillates depending on the sign of one coupling. Different objects, in turn, share one mechanism: a genetic toggle switch, a single-mode laser at threshold and a magnet written by a field along its hard axis all reduce to a supercritical pitchfork with the same canonical form, and their law constants agree within their statistical errors. What a derivation establishes, a canonical form, a law or an obstruction, therefore belongs to the mechanism and holds in every realization that reduces to it. For this reason the page is organized by mechanisms rather than by objects: a result is derived once and followed across the fields that realize it, and a mechanism found in one field becomes a candidate to test in another.</p>
+        <p>FieldBridge writes a model as a realization of six components. An operation <span class="s" data-slot="Omega">Ω</span> acts on a carrier <span class="s" data-slot="Xi">Ξ</span> of states, and this pair is the core. The closure <span class="s" data-slot="C">C</span> makes its equations closed, <span class="s" data-slot="R">R</span> is what is measured, <span class="s" data-slot="P">P</span> how the system is prepared and driven, and <span class="s" data-slot="A">A</span> the parameter values of a particular material or apparatus.</p>
+        <p>A mechanism is what remains when the carrier and the parameter values are left open: a canonical form and its laws. A magnet, a genetic switch and a laser differ as objects but keep one of two states by the same mechanism, so its law is derived once and holds in each. The page therefore starts from mechanisms, not from objects.</p>
       </div>
-      <p class="lead">Below, the two spins of Chapter 11 are changed one component at a time. The chain of changes reaches a magnet that keeps one of two directions of its magnetization, genetic, optical and chemical switches written by the same mechanism, oscillators locked to a drive, and conserved fields that forget as a power of time. Every mechanism, derivation and constant shown is calculated with FieldBridge; the dynamics are recalculated in the browser for the values you set.</p>
     </section>
 
     <section id="instrument" aria-labelledby="instrument-title">
       <div class="section-head">
-        <h2 id="instrument-title">Changing one component</h2>
-        <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Stepped sequences"></div>
+        <h2 id="instrument-title">Changing one component of a mechanism</h2>
+      </div>
+      <ol class="howto">
+        <li><b>Start.</b> The expression below is the pitchfork normal form, the mechanism of every symmetric write, written without any field.</li>
+        <li><b>Change one component.</b> Each coloured button under Ω, Ξ, C, R, P or A is a verified change of that component, and it names the mechanism it leads to. Sliders change the values of A within the realization.</li>
+        <li><b>Compare.</b> The mechanism, its equations and its dynamics are recalculated. A change of Ξ keeps the mechanism and places it in a field; the other components can replace it by another mechanism.</li>
+      </ol>
+      <div class="mech-frame"><svg id="mechanisms" role="img" aria-label="Map of mechanisms and the changes of one component that join them"></svg></div>
+      <p class="map-note">Each card is a mechanism; each line a change of one component, marked with its symbol, that takes a realization of one mechanism to a realization of the other. The filled card is the current mechanism and the outlined cards are one change away. Selecting a card reaches that mechanism by the shortest chain of changes.</p>
+      <div class="sequence-bar">
+        <span class="sequence-label">Guided sequences</span>
+        <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Guided sequences"></div>
       </div>
       <div class="sequence-player" id="sequence-player" hidden>
         <div class="sequence-progress" id="sequence-progress"></div>
@@ -69,9 +78,11 @@
         </div>
       </div>
       <div class="instrument">
+        <div class="m-bar" id="m-bar" aria-hidden="true"></div>
         <div class="expression-card">
           <div class="realization-head">
             <div>
+              <p class="card-label">Realization</p>
               <h3 id="r-name"></h3>
               <p class="realization-meta"><span id="r-field"></span><span id="r-source"></span></p>
             </div>
@@ -79,45 +90,48 @@
           </div>
           <ol class="slots" id="slots"></ol>
         </div>
-        <div class="view-card">
-          <div class="view-head">
-            <p class="view-title" id="view-title"></p>
-            <div class="view-controls">
-              <button type="button" id="view-play" class="icon" aria-label="Pause the animation">❚❚</button>
-              <button type="button" id="view-restart" class="icon" aria-label="Restart from the preparation">↺</button>
+        <div class="result" id="result">
+          <div class="mechanism-head">
+            <span class="m-glyph" id="m-glyph"></span>
+            <div>
+              <p class="card-label">Mechanism</p>
+              <h3 id="m-name"></h3>
+              <p class="m-canonical" id="m-canonical"></p>
+              <p class="m-where" id="m-where"></p>
             </div>
           </div>
-          <div class="views" id="views">
-            <canvas id="view-main" role="img" aria-label="Dynamics of the realization"></canvas>
-            <canvas id="view-side" role="img" aria-label="Measured signal or diagram"></canvas>
+          <div class="view-card">
+            <div class="view-head">
+              <p class="view-title" id="view-title"></p>
+              <div class="view-controls">
+                <button type="button" id="view-play" class="icon" aria-label="Pause the animation">❚❚</button>
+                <button type="button" id="view-restart" class="icon" aria-label="Restart from the preparation">↺</button>
+              </div>
+            </div>
+            <div class="views" id="views">
+              <canvas id="view-main" role="img" aria-label="Dynamics of the realization"></canvas>
+              <canvas id="view-side" role="img" aria-label="Measured signal or diagram"></canvas>
+            </div>
+            <p class="view-legend" id="view-legend"></p>
           </div>
-          <p class="view-legend" id="view-legend"></p>
-        </div>
-        <div class="consequence" id="consequence" aria-live="polite">
-          <p class="consequence-lead" id="consequence-lead"></p>
-          <p class="consequence-text" id="consequence-text"></p>
-          <dl class="facts" id="facts"></dl>
-          <p class="derivation" id="derivation"></p>
-          <details class="card-figure" id="card-figure" hidden><summary>FieldBridge memory card of this specification</summary><img alt="" id="card-image"></details>
+          <div class="consequence" id="consequence" aria-live="polite">
+            <p class="consequence-lead" id="consequence-lead"></p>
+            <p class="consequence-text" id="consequence-text"></p>
+            <dl class="facts" id="facts"></dl>
+            <p class="derivation" id="derivation"></p>
+            <details class="card-figure" id="card-figure" hidden><summary>FieldBridge memory card of this specification</summary><img alt="" id="card-image"></details>
+          </div>
         </div>
       </div>
-      <div class="path" aria-label="Derivation path">
+      <div class="path" aria-label="Chain of changes">
         <div class="path-head">
-          <h3>Path of changes</h3>
+          <h3>Chain of changes</h3>
           <p class="path-count" id="path-count"></p>
           <button type="button" id="path-undo" class="plain">Undo the last change</button>
+          <button type="button" id="path-restart" class="plain">Start again from the pitchfork normal form</button>
         </div>
         <ol class="path-list" id="path-list"></ol>
       </div>
-    </section>
-
-    <section id="map" aria-labelledby="map-title">
-      <div class="section-head">
-        <h2 id="map-title">Realizations connected by single-component changes</h2>
-        <p class="section-note">Each column is a mechanism; each line changes one component, in its colour. A change along a column keeps the mechanism in another carrier; a change across columns replaces it. Selecting a realization walks the shortest path of changes to it.</p>
-      </div>
-      <div class="map-legend" id="map-legend"></div>
-      <div class="map-frame"><svg id="atlas" role="img" aria-label="Map of realizations and changes"></svg></div>
     </section>
 
     <section id="codiscovery" aria-labelledby="codiscovery-title">
@@ -126,6 +140,21 @@
         <p class="section-note">Derived separately in each realization, a mechanism ends in the same canonical form and the same law constant. Each curve or point is one realization, in the units of its own derivation.</p>
       </div>
       <div class="collapse-grid" id="collapse-grid"></div>
+    </section>
+
+    <section id="realizations" aria-labelledby="realizations-title">
+      <div class="section-head">
+        <h2 id="realizations-title">Realizations by mechanism and field</h2>
+        <p class="section-note">Each row is one mechanism, and its realizations are grouped by field. Selecting a field marks the mechanisms it contains; selecting a realization shows its source and opens it in the instrument.</p>
+      </div>
+      <div class="matrix-controls">
+        <input type="search" id="matrix-search" placeholder="Filter by name, field or source" aria-label="Filter the realizations">
+        <div class="field-filter" id="field-filter" role="group" aria-label="Fields"></div>
+      </div>
+      <p class="matrix-summary" id="matrix-summary" aria-live="polite"></p>
+      <div class="matrix" id="matrix"></div>
+      <div class="matrix-detail" id="matrix-detail" aria-live="polite" hidden></div>
+      <details class="sources"><summary>Sources of all realizations</summary><div class="table-frame"><table id="sources-table"></table></div></details>
     </section>
 
     <section id="contribute" aria-labelledby="contribute-title">
@@ -148,10 +177,6 @@ python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir
       </div>
     </section>
 
-    <section id="sources" aria-labelledby="sources-title">
-      <div class="section-head"><h2 id="sources-title">Realizations and sources</h2></div>
-      <div class="table-frame"><table id="sources-table"></table></div>
-    </section>
   </main>
 
   <footer class="bottom">

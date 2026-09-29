@@ -47,7 +47,7 @@ context.globalThis = context;
 vm.createContext(context);
 const load = file => vm.runInContext(fs.readFileSync(file, 'utf8'), context, {filename: file});
 load(dataFile);
-for (const name of ['model-physics.js', 'unitary.js', 'dissipative.js', 'fields.js', 'mathml.js', 'views.js', 'atlas.js', 'expression.js', 'site.js'])
+for (const name of ['model-physics.js', 'unitary.js', 'dissipative.js', 'fields.js', 'mathml.js', 'views.js', 'mechanisms.js', 'expression.js', 'site.js'])
   load(path.join(web, name));
 (docListeners.DOMContentLoaded || []).forEach(f => f());
 const flush = () => { while (timers.length) timers.shift()(); };
@@ -55,7 +55,8 @@ flush();
 
 const I = context.FieldBridgeInstrument, text = id => element(id).innerHTML.replace(/<[^>]+>/g, '');
 const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node), lead: text('consequence-lead'),
-                         facts: text('facts'), sequence: text('sequence-text'), count: element('path-count').textContent});
+                         facts: text('facts'), sequence: text('sequence-text'), count: element('path-count').textContent,
+                         mechanism: element('m-name').textContent, changes: text('slots')});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'start') I.start(step.node);

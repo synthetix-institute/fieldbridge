@@ -35,10 +35,11 @@ set of terms by which its normal form differs from the reference.
 
 ### The normal form on the web page
 
-On the [web page](https://synthetix-institute.github.io/fieldbridge/?r=pitchfork) the pitchfork
-normal form (`examples/memory/pitchfork.json`) is one realization among others: its drift terms can
-be switched off, its protocol can apply a field pulse, and its bath can be set. With a field $h$ the
-one-coordinate model is
+The [web page](https://synthetix-institute.github.io/fieldbridge/?r=pitchfork) starts from the
+pitchfork normal form (`examples/memory/pitchfork.json`), a mechanism written without any field. Its
+drift terms can be switched off, its protocol can apply a field pulse, and its bath can be set; one
+change of a component leads to the form below the transition, to the form with a constant bias (a
+fold, derived below) and to a subcritical form. With a field $h$ the one-coordinate model is
 
 $$
 dx = (\epsilon x-\gamma x^3+h)\,dt+\sqrt{2D}\,dW,
@@ -54,6 +55,11 @@ field that removes a minimum:
 $$
 |h_c|=\frac{2\epsilon^{3/2}}{3\sqrt{3\gamma}}.
 $$
+
+Read the other way, at a constant bias $h$ the minimum of the unfavoured sign appears only when
+$\epsilon$ reaches $\epsilon_c=3\gamma^{1/3}(h/2)^{2/3}$, at a fold, and a sweep of $\epsilon$ ends in
+the favoured state: the write is one-sided. The realization with $h=0.2$ on the web page has its
+fold at $\epsilon_c\approx0.646$.
 
 At $\epsilon=\gamma=1$, a pulse $h=0.8$ between $t=1$ and $t=3$ switches
 the initial negative state to the positive state. The positive state persists
