@@ -70,14 +70,6 @@
     }
     return {data,final:q,status:steps>=60000?'step_limit':'complete',time:t};
   }
-  function design(model,params){
-    if(model.design==='schlogl'){
-      const a=Math.sqrt(3*params.k3);return {...params,a,b:a**3/27};
-    }
-    if(model.design==='promoters')return {...params,gamma:1};
-    if(model.design==='tubes')return {...params,L2:params.L1};
-    return {...params};
-  }
-  const api={value,drift,integrate,distance,design};
+  const api={value,drift,evaluator,integrate,distance};
   if(typeof module!=='undefined')module.exports=api;else root.FieldBridgeModels=api;
 })(typeof window==='undefined'?globalThis:window);

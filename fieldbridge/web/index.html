@@ -1,106 +1,160 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Construct a physical model, detach its terms, and calculate the resulting memory or stochastic dynamics. An offline FieldBridge demonstration with original-paper sources.">
-  <title>FieldBridge | Mechanism constructor</title>
-  <link rel="stylesheet" href="studio/studio.css">
-  <link rel="stylesheet" href="studio/collections.css">
-  <link rel="stylesheet" href="studio/workspace.css">
-  <link rel="stylesheet" href="studio/model-studio.css">
-  <script id="studio-config" type="application/json">__CONFIG__</script>
-  <script defer src="studio/lucide.min.js"></script>
-  <script defer src="studio/physics.js"></script>
-  <script defer src="studio/model-physics.js"></script>
-  <script defer src="studio/studio.js"></script>
-  <script defer src="studio/collections.js"></script>
-  <script defer src="studio/model-studio.js"></script>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="One realization expression, I = ((Ω, Ξ); C, R, P; A), and the mechanisms obtained by changing one of its components: spin rotations, obstructions, stored magnetization, writes in genes and lasers, phase locking and the law of loss. Every result is calculated with FieldBridge.">
+  <title>FieldBridge — realizations and mechanisms</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=Spectral:wght@500;600&display=swap">
+  <link rel="stylesheet" href="site/site.css">
+  <script defer src="site/data.js"></script>
+  <script defer src="site/model-physics.js"></script>
+  <script defer src="site/unitary.js"></script>
+  <script defer src="site/dissipative.js"></script>
+  <script defer src="site/fields.js"></script>
+  <script defer src="site/mathml.js"></script>
+  <script defer src="site/views.js"></script>
+  <script defer src="site/atlas.js"></script>
+  <script defer src="site/expression.js"></script>
+  <script defer src="site/site.js"></script>
 </head>
 <body>
-  <header class="app-header">
-    <a class="brand" href="#gallery"><i data-lucide="network" aria-hidden="true"></i>FieldBridge<span>Mechanism constructor</span></a>
-    <nav aria-label="Resources">
-      <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener"><i data-lucide="book-open" aria-hidden="true"></i>Tutorial</a>
-      <button class="plain" id="sources-open"><i data-lucide="library" aria-hidden="true"></i>Sources</button>
-      <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener" aria-label="GitHub repository"><i data-lucide="code-xml" aria-hidden="true"></i><span class="wide-label">GitHub</span></a>
+  <header class="top">
+    <a class="brand" href="#expression">FieldBridge</a>
+    <nav aria-label="Sections">
+      <a href="#instrument">Components</a>
+      <a href="#map">Map</a>
+      <a href="#codiscovery">Fields</a>
+      <a href="#contribute">Add a realization</a>
+      <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener">Tutorial ↗</a>
+      <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">GitHub ↗</a>
     </nav>
   </header>
-  <div class="module-bar">
-    <div role="tablist" aria-label="Construction examples">
-      <button role="tab" id="tab-gallery" aria-controls="gallery" data-lab="gallery" aria-selected="false" tabindex="-1"><i data-lucide="git-branch" aria-hidden="true"></i>Constructor</button>
-      <button role="tab" id="tab-memory" aria-controls="workbench" data-lab="memory" aria-selected="true"><i data-lucide="chart-spline" aria-hidden="true"></i>Normal form</button>
-      <button role="tab" id="tab-spins" aria-controls="spins" data-lab="spins" aria-selected="false" tabindex="-1"><i data-lucide="atom" aria-hidden="true"></i>Spins</button>
-      <button role="tab" id="tab-stochastic" aria-controls="workbench" data-lab="stochastic" aria-selected="false" tabindex="-1"><i data-lucide="shuffle" aria-hidden="true"></i>Stochastic</button>
-    </div>
-    <span class="execution"><span></span>Local calculation</span>
-  </div>
+
   <main>
-    <section id="gallery" role="tabpanel" aria-labelledby="tab-gallery" hidden>
-      <div class="work-heading"><div><h1>Memory in model materials</h1><p id="model-question"></p></div><div class="heading-actions"><button id="model-reset" class="icon-button" aria-label="Reset material construction" title="Reset material construction"><i data-lucide="rotate-ccw"></i></button><button id="model-export" class="icon-button" aria-label="Download material construction" title="Download material construction"><i data-lucide="download"></i></button></div></div>
-      <div class="model-picker"><label for="model-select">Physical model</label><select id="model-select" aria-label="Physical model"></select><span>Deterministic dynamics</span></div>
-      <div class="model-workspace">
-        <aside class="model-controls">
-          <h2>Mechanism</h2><div id="model-terms"></div>
-          <h2>Parameters</h2><div id="model-parameters"></div>
-          <div id="model-design" hidden></div><p id="model-design-result" role="status"></p>
-          <details><summary>Preparation</summary><div id="model-preparation"></div></details>
-          <details><summary>Applied force and observation time</summary><div id="model-pulse-controls"></div></details>
-        </aside>
-        <section class="model-result" id="model-result">
-          <div class="surface-heading"><h2 id="model-name"></h2><label class="comparison-toggle"><input id="model-compare" type="checkbox" checked>Compare original</label></div>
-          <div id="model-equations" class="model-equations"></div><p id="model-drive" class="model-drive"></p>
-          <div class="model-visuals"><div><div id="model-scene" class="model-scene"></div><div class="model-player"><button id="model-play" class="icon-button" aria-label="Play evolution" title="Play evolution"><i data-lucide="play"></i></button><input id="model-time" type="range" min="0" max="15" step=".01" value="0" aria-label="Evolution time"><output id="model-clock">t = 0</output></div></div><div><div class="model-observable"><label for="model-observable">Observable</label><select id="model-observable"></select></div><canvas id="model-plot" role="img" aria-label="Calculated trajectories for two preparations and the original model"></canvas><div class="model-legend"><span>Blue: preparation 1</span><span>Red: preparation 2</span><span>Dashed: original</span></div></div></div>
-          <p id="model-final" class="model-final" aria-live="polite"></p><dl id="model-metrics" class="metrics"></dl><p id="model-status" role="status"></p>
-          <details><summary>Physical assumptions</summary><div id="model-assumptions"></div></details>
-          <details><summary>Full reference calculation</summary><div id="model-saved"></div></details>
-          <footer class="evidence-strip" id="model-sources"></footer>
-        </section>
+    <section id="expression" class="hero">
+      <p class="eyebrow">The language of mechanisms</p>
+      <h1>Realizations and their mechanisms</h1>
+      <p class="formula" aria-label="I real equals open parenthesis open parenthesis Omega, Xi close parenthesis; C, R, P; A close parenthesis">
+        <span class="formula-lhs">I<sub>real</sub> =</span>
+        <span>((</span><button class="sym" data-slot="Omega" type="button">Ω</button><span>,</span>
+        <button class="sym" data-slot="Xi" type="button">Ξ</button><span>);</span>
+        <button class="sym" data-slot="C" type="button">C</button><span>,</span>
+        <button class="sym" data-slot="R" type="button">R</button><span>,</span>
+        <button class="sym" data-slot="P" type="button">P</button><span>;</span>
+        <button class="sym" data-slot="A" type="button">A</button><span>)</span>
+      </p>
+      <dl class="definitions" id="definitions"></dl>
+      <p class="lead">A realization names six components. Changing one of them either keeps the mechanism and moves it to another field, or replaces it by a different mechanism in the same material. Below, the two spins of Chapter 11 are changed one component at a time. The chain of changes reaches a magnet that keeps one of two directions of its magnetization, genetic, optical and chemical switches written by the same mechanism, oscillators locked to a drive, and conserved fields that forget as a power of time. Every mechanism, derivation and constant shown is calculated with FieldBridge; the dynamics are recalculated in the browser for the values you set.</p>
+    </section>
+
+    <section id="instrument" aria-labelledby="instrument-title">
+      <div class="section-head">
+        <h2 id="instrument-title">Changing one component</h2>
+        <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Stepped sequences"></div>
+      </div>
+      <div class="sequence-player" id="sequence-player" hidden>
+        <div class="sequence-progress" id="sequence-progress"></div>
+        <p class="sequence-text" id="sequence-text"></p>
+        <div class="sequence-controls">
+          <button type="button" id="sequence-prev">Previous</button>
+          <button type="button" id="sequence-next" class="primary">Next step</button>
+          <button type="button" id="sequence-close" class="plain">Leave the sequence</button>
+        </div>
+      </div>
+      <div class="instrument">
+        <div class="expression-card">
+          <div class="realization-head">
+            <div>
+              <h3 id="r-name"></h3>
+              <p class="realization-meta"><span id="r-field"></span><span id="r-source"></span></p>
+            </div>
+            <span class="class-badge" id="r-class"></span>
+          </div>
+          <ol class="slots" id="slots"></ol>
+        </div>
+        <div class="view-card">
+          <div class="view-head">
+            <p class="view-title" id="view-title"></p>
+            <div class="view-controls">
+              <button type="button" id="view-play" class="icon" aria-label="Pause the animation">❚❚</button>
+              <button type="button" id="view-restart" class="icon" aria-label="Restart from the preparation">↺</button>
+            </div>
+          </div>
+          <div class="views" id="views">
+            <canvas id="view-main" role="img" aria-label="Dynamics of the realization"></canvas>
+            <canvas id="view-side" role="img" aria-label="Measured signal or diagram"></canvas>
+          </div>
+          <p class="view-legend" id="view-legend"></p>
+        </div>
+        <div class="consequence" id="consequence" aria-live="polite">
+          <p class="consequence-lead" id="consequence-lead"></p>
+          <p class="consequence-text" id="consequence-text"></p>
+          <dl class="facts" id="facts"></dl>
+          <p class="derivation" id="derivation"></p>
+          <details class="card-figure" id="card-figure" hidden><summary>FieldBridge memory card of this specification</summary><img alt="" id="card-image"></details>
+        </div>
+      </div>
+      <div class="path" aria-label="Derivation path">
+        <div class="path-head">
+          <h3>Path of changes</h3>
+          <p class="path-count" id="path-count"></p>
+          <button type="button" id="path-undo" class="plain">Undo the last change</button>
+        </div>
+        <ol class="path-list" id="path-list"></ol>
       </div>
     </section>
-    <section id="spins" role="tabpanel" aria-labelledby="tab-spins" hidden>
-      <div class="work-heading"><div><h1>Spin mechanism transfer</h1></div><button class="icon-button" id="spin-export" title="Download spin construction" aria-label="Download spin construction"><i data-lucide="download"></i></button></div>
-      <div class="spin-grid">
-        <aside class="spin-controls"><h2>Source: two coupled spins</h2><div id="spin-parts"></div><div id="spin-parameters"></div><button class="plain spin-reset" id="spin-build"><i data-lucide="rotate-ccw"></i>Reset source</button><p id="spin-status" class="build-state" role="status"></p><div class="realization-control"><label for="spin-carrier">Target carrier</label><select id="spin-carrier"><option value="chain">Exchange chain · 4 spins</option><option value="qubit">One spin-½</option><option value="spin">One spin-3/2</option><option value="bosons">Two wells · 4 bosons</option><option value="fermion-pair">Cooper-pair level</option><option value="collective">Three collective spins</option><option value="correlated-pair">Two correlated spins</option></select><div class="transfer-actions"><button id="spin-detach"><i data-lucide="unlink"></i>Detach rotation</button><button id="spin-attach" disabled><i data-lucide="link"></i>Attach carrier</button></div></div></aside>
-        <section class="spin-assembly"><div class="surface-heading"><h2>Physical construction</h2><span>ħ = 1</span></div><div id="spin-graph"></div></section>
-        <section class="spin-outcome"><div class="equation-area"><div class="equation" id="spin-equation"></div><p id="spin-native"></p></div><div class="surface-heading"><h2>Predicted observable</h2></div><div class="plot-frame"><canvas id="spin-plot" role="img" aria-label="Spin evolution and transferred rotation"></canvas><div class="plot-legend" id="spin-legend"></div></div><dl class="metrics" id="spin-metrics"></dl><div class="consequence"><i data-lucide="arrow-right"></i><p id="spin-consequence"></p></div><details class="result-detail"><summary>Preparation and normalization</summary><p>Prepare a top eigenstate of the measured operator. With o₀ = tr(O)/dim, normalize the signal as f(t) = (⟨O(t)⟩ − o₀)/(⟨O(0)⟩ − o₀). Then f(t) = cos²θ + sin²θ cos(ωt). The target Hamiltonian closes on the same three rotation generators.</p></details></section>
+
+    <section id="map" aria-labelledby="map-title">
+      <div class="section-head">
+        <h2 id="map-title">Realizations connected by single-component changes</h2>
+        <p class="section-note">Each column is a mechanism; each line changes one component, in its colour. A change along a column keeps the mechanism in another carrier; a change across columns replaces it. Selecting a realization walks the shortest path of changes to it.</p>
       </div>
-      <footer class="evidence-strip"><div><i data-lucide="file-text"></i><span><a href="https://journals.aps.org/pr/abstract/10.1103/PhysRev.70.460" target="_blank" rel="noopener">Bloch (1946)</a> · <a href="https://arxiv.org/abs/quant-ph/0309131" target="_blank" rel="noopener">Christandl et al. (2004)</a> · <a href="quantum_examples.json" target="_blank" rel="noopener">Matrix calculation records</a></span></div><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/24_spin_language.md" target="_blank" rel="noopener">Derivation &amp; Python examples<i data-lucide="arrow-up-right"></i></a></footer>
-      <details class="quantum-catalog"><summary>More quantum realizations: where the rotation closes</summary><div id="quantum-list"></div></details>
+      <div class="map-legend" id="map-legend"></div>
+      <div class="map-frame"><svg id="atlas" role="img" aria-label="Map of realizations and changes"></svg></div>
     </section>
-    <section id="workbench" role="tabpanel" aria-labelledby="tab-memory">
-      <div class="work-heading"><div><h1 id="lab-title">Memory constructor</h1><p id="lab-category">Scalar normal form</p></div><div class="heading-actions"><button class="icon-button" id="reset" title="Reset construction" aria-label="Reset construction"><i data-lucide="rotate-ccw"></i></button><button class="icon-button" id="export" title="Download construction" aria-label="Download construction"><i data-lucide="download"></i></button></div></div>
-      <div class="work-grid">
-        <aside class="ingredients" aria-label="Mechanism parts">
-          <div class="surface-heading"><h2>Attached parts</h2><span id="part-count">3 / 3</span></div>
-          <div id="parts"></div>
-          <div class="parameters" id="parameters"></div>
-          <div class="realization-control" id="realization-control"></div>
-          <p class="build-state" id="build-state" role="status">Construction calculated</p>
-        </aside>
-        <section class="outcome" aria-label="Calculated consequence">
-          <div class="equation-area"><div class="equation" id="equation"></div><div id="drive-equation" class="drive-equation"></div><details class="equation-assumptions"><summary>Model and assumptions</summary><p id="equation-note"></p></details></div>
-          <div class="surface-heading"><h2 id="plot-heading">Writing response</h2><div class="segmented" id="plot-modes" aria-label="Plot view"><button class="selected" data-plot="trajectory" aria-pressed="true">Writing</button><button data-plot="potential" aria-pressed="false">Potential</button></div></div>
-          <div class="plot-frame"><canvas id="plot" aria-label="Calculated energy landscape" role="img"></canvas><div class="plot-legend" id="plot-legend"></div></div>
-          <dl class="metrics" id="metrics"></dl>
-          <div class="consequence" id="consequence"><i data-lucide="arrow-right" aria-hidden="true"></i><p></p></div>
-          <details class="result-detail"><summary id="detail-title">Writing and retention</summary><p id="detail-text"></p></details>
-        </section>
-        <details class="assembly" aria-label="Nested mechanism graph"><summary>Nested mechanism graph</summary><div class="graph" id="graph"></div></details>
+
+    <section id="codiscovery" aria-labelledby="codiscovery-title">
+      <div class="section-head">
+        <h2 id="codiscovery-title">One mechanism in different fields</h2>
+        <p class="section-note">Derived separately in each realization, a mechanism ends in the same canonical form and the same law constant. Each curve or point is one realization, in the units of its own derivation.</p>
       </div>
-      <footer class="evidence-strip"><div><i data-lucide="file-text" aria-hidden="true"></i><span id="source-links"></span></div><a id="lesson-link" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/15_memory_first_card.md" target="_blank" rel="noopener">Derivation in the tutorial<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
+      <div class="collapse-grid" id="collapse-grid"></div>
     </section>
-    <section id="applications" role="tabpanel" aria-labelledby="tab-applications" hidden>
-      <div class="work-heading"><div><p class="eyebrow">From a mechanism to a physical question</p><h1>Find an application worth testing</h1></div><button class="icon-button" id="application-export" aria-label="Download application brief" title="Download application brief"><i data-lucide="download"></i></button></div>
-      <div class="application-grid">
-        <aside class="application-choice"><h2>Target application</h2><label for="application-target">Physical system</label><select id="application-target"><option value="mechanical">Mechanical event latch</option><option value="biological">Cellular exposure memory</option><option value="stochastic">Stochastic growth measurement</option></select><h2>Required behavior</h2><div id="requirements"></div><div class="mini-model" id="application-model"></div></aside>
-        <section class="application-main"><div class="surface-heading"><h2>Construction &amp; prior work</h2><span>Source comparison</span></div><div id="application-result"></div></section>
-        <aside class="application-test"><h2>Decisive experiment</h2><div id="application-experiment"></div><a id="application-tutorial" target="_blank" rel="noopener" href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/12_reproduction_and_discovery.md">From construction to discovery<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></aside>
+
+    <section id="contribute" aria-labelledby="contribute-title">
+      <div class="section-head"><h2 id="contribute-title">Adding a realization</h2></div>
+      <div class="contribute-grid">
+        <div>
+          <p>A realization is one JSON file: the equations of a material with their source, the parameter the experiment varies, the closure and the observable. From it FieldBridge calculates the stable states, the write points and their normal forms, the writing protocols and the law of loss, and lists the realizations of the catalog that are written by the same mechanism.</p>
+          <pre><code>python3 -B -m fieldbridge memory new my_material --carrier torus
+python3 -B -m fieldbridge memory check examples/memory/my_material.json
+python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</code></pre>
+          <p>The checks of a pull request compute the card and name the materials of other fields with the same mechanism. The Stoner–Wohlfarth particle on this page entered this way: its card places it next to the genetic toggle switch, the single-mode laser and the ring of four repressors.</p>
+        </div>
+        <ul class="contribute-links">
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">How to contribute ↗</a></li>
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/wanted_materials.md" target="_blank" rel="noopener">Models wanted from other fields ↗</a></li>
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Catalog of materials ↗</a></li>
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/23_memory_codiscovery.md" target="_blank" rel="noopener">Deriving one mechanism in several fields ↗</a></li>
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/24_spin_language.md" target="_blank" rel="noopener">The language on spins ↗</a></li>
+        </ul>
       </div>
+    </section>
+
+    <section id="sources" aria-labelledby="sources-title">
+      <div class="section-head"><h2 id="sources-title">Realizations and sources</h2></div>
+      <div class="table-frame"><table id="sources-table"></table></div>
     </section>
   </main>
-  <footer class="app-footer"><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/12_reproduction_and_discovery.md" target="_blank" rel="noopener">Application and discovery recipes<i data-lucide="arrow-up-right" aria-hidden="true"></i></a><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Model catalog<i data-lucide="arrow-up-right" aria-hidden="true"></i></a></footer>
-  <dialog id="sources-dialog" aria-labelledby="sources-title"><header><div><p class="eyebrow">Original research</p><h2 id="sources-title">Sources &amp; model assumptions</h2></div><button class="icon-button" id="sources-close" aria-label="Close sources"><i data-lucide="x"></i></button></header><div id="sources-content"></div></dialog>
-  <noscript><p class="noscript">Enable JavaScript for local calculations. The <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md">tutorial</a> includes the equations and executable Python examples.</p></noscript>
-  <script>if(document.getElementById('studio-config').textContent.trim().startsWith('__')){document.querySelector('main').innerHTML='<section class="noscript"><h1>Open the built constructor</h1><p><a href="https://synthetix-institute.github.io/fieldbridge/">FieldBridge live demo</a></p><p>This file is the source template. Build the local demo with <code>python3 -B -m fieldbridge demo --studio-only --out-dir build/demo</code>, then open <code>build/demo/index.html</code>.</p></section>';}</script>
+
+  <footer class="bottom">
+    <p id="boundary"></p>
+    <p id="provenance"></p>
+    <p><a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">FieldBridge</a> · MIT license · The page is built by <code>python3 -B -m fieldbridge demo</code>.</p>
+  </footer>
+  <noscript><p class="noscript">The calculations of this page run in the browser and need JavaScript. The <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md">tutorial</a> contains the same results with executable Python commands.</p></noscript>
 </body>
 </html>

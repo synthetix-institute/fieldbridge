@@ -29,82 +29,38 @@ The calculations need no API key, GPU, cluster or archive download.
 
 ## Demonstration
 
-```bash
-python3 -B -m fieldbridge demo --out-dir build/demo
-```
+The [web page](https://synthetix-institute.github.io/fieldbridge/) starts from the realization expression
+I<sub>real</sub> = ((Ω, Ξ); C, R, P; A) and changes one component at a time. From the two spins of
+[Chapter 11](docs/tutorial/11_quantum_closure.md), measuring Z<sub>0</sub> instead of X<sub>0</sub> (R) makes the measured
+value conserved; moving the field to the second spin (Ω) enlarges the algebra beyond su(2); attaching the rotation to a
+spin 1 (Ξ) and adding the anisotropy D J<sub>z</sub><sup>2</sup> (Ω) obstructs it. A dissipative classical closure (C)
+turns the same term into the two stored directions of a Stoner–Wohlfarth particle, whose field angle (A) moves the write
+from a supercritical pitchfork to a fold on the astroid and to a subcritical pitchfork. The symmetric write is derived
+again in a genetic toggle switch, a laser and a ring of four repressors; the sign of one coupling in a ring of genes
+decides between two stored states and an oscillation; eight oscillators lock to a drive with the same Adler law; a
+conserved field forgets as a power of time.
 
-The command runs in about a minute on a laptop and writes
-`build/demo/index.html`, an offline, modular constructor studio. The full
-Python calculations and their figures remain in the generated folders and
-the [tutorial](docs/tutorial/index.md). `--law` also measures the locking law of each oscillator
-(about ten minutes).
+Every realization on the page is a specification in `examples/` or one change of one, and every change is checked to
+alter only the component it names ([site_data.py](fieldbridge/site_data.py), the realizations and changes in
+[site_registry.py](fieldbridge/site_registry.py)). The mechanisms, derivation words and law constants shown are
+calculated by FieldBridge; the dynamics are recalculated in the browser for the values the visitor sets, by engines
+that [the tests](tests/test_site_engines.py) compare with the Python calculations.
 
-The [live constructor](https://synthetix-institute.github.io/fieldbridge/)
-shows how a mechanism is assembled and what changes when a part is removed:
-
-- **[Normal form](https://synthetix-institute.github.io/fieldbridge/#memory):** attach feedback, saturation and a writing field. Every edit
-  immediately updates the equation, stable states and writing response.
-  Vary pulse strength and duration to compare switching with retention.
-  Removing the writing
-  field prevents switching; removing feedback removes bistability.
-  [Equations and predictions](docs/tutorial/18_memory_writing_and_retention.md#scalar-constructor-demonstration).
-- **[Material constructor](https://synthetix-institute.github.io/fieldbridge/#gallery):**
-  select any of twenty tutorial models: capillary rotors, dipoles,
-  compartments, lasers, gene circuits, reactors, flow networks and eight
-  oscillators. Change native model parameters, detach a drift contribution
-  or network bond, and compare the calculated dynamics with the original.
-  Two preparations expose whether their trajectories remain distinguishable.
-  Play or scrub the evolution, select the observable, change the preparation
-  and apply a finite force. The symmetry-restoring designs calculate the
-  Schlögl cusp, equal promoter strengths or equal tube lengths.
-  [Gallery recipe](docs/tutorial/21_memory_new_material.md#3-the-gallery-of-realizations).
-- **[Spins and carriers](https://synthetix-institute.github.io/fieldbridge/#spins):**
-  change the interaction and transverse field of two spins, calculate the
-  magnetization, detach the rotation and attach it to one of seven carriers.
-  The constructor supplies the target Hamiltonian, including the exchange
-  couplings of a four-spin chain. Removing the source interaction makes its
-  transverse magnetization constant.
-  [Derivation](docs/tutorial/24_spin_language.md) · [Browser/matrix tests](tests/test_web_demo.py).
-- **Stochastic transport:** construct the generator after `Y = X²` or
-  `Y = log X`. Detaching the required drift separates the predicted mean
-  from the source mean. Both generator coefficients are verified in Python;
-  the logarithmic prediction is also tested against independent source
-  integrators. [Derivation](docs/tutorial/10_stochastic_construction.md) ·
-  [Tests](tests/test_stochastic_conventions.py).
-
-The equation, controls and predicted response occupy the same workspace.
-The nested graph can be expanded to detach or reattach its terms directly.
-The [application and discovery recipes](docs/tutorial/12_reproduction_and_discovery.md)
-describe how to take these calculations into a physical test.
-
-For the website alone, no material sweep or oscillator calculation is needed:
-
-```bash
-python3 -B -m fieldbridge demo --studio-only --out-dir build/demo
-```
-
-Open `build/demo/index.html`, not the source template in `fieldbridge/web/`.
-The build verifies the three stochastic examples symbolically and saves
-`verified_examples.json`; it also computes seven quantum attachments and
-saves their matrix-evolution checks in `quantum_examples.json`. The material
-constructor exports the source equations as restricted arithmetic trees in
-`tutorial_models.json`, and integrates their deterministic drift in the browser.
-The twelve saved Python cards remain available as reference calculations;
-their state searches and stochastic retention calculations are separate from
-the live drift trajectories. Browser controls
-use closed-form relations and a small drift integrator; there is no model API
-or GPU computation. Original
-papers, exact tutorial chapters and executable tests are linked in each module.
-The [model tests](tests/test_web_models.py) compare every exported drift with
-its original Python realization, check six trajectories with SciPy, and
-exercise model selection, term removal, parameter changes and cusp design
-through the actual browser event handlers.
-
-| Section | Calculated result |
+| Section of the page | Content |
 | --- | --- |
-| Memory card of the genetic toggle switch | 2 stable states; a supercritical pitchfork at promoter strength 2.00; a uniform field of 0.213 removes the stored state; every structural prediction agrees with the calculation |
-| Phase locking in eight oscillator models | 7 models reach the Adler equation; in the Lotka–Volterra model the derivation stops, because a family of neutral cycles has no isolated phase |
-| The Bloch rotation on ten quantum carriers | 6 carriers reach the Rabi law; in the other 4 the Hamiltonian and the observable generate a larger algebra than su(2) |
+| Changing one component | The expression of one realization with an editor for each component, the verified changes that leave it, the dynamics and the calculated consequences |
+| Stepped sequences | From a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
+| Map | Every realization, grouped by mechanism, and the single-component changes between them |
+| One mechanism in different fields | The canonical forms and law constants of the four targets, one curve or point per realization |
+
+```bash
+python3 -B -m fieldbridge demo --out-dir build/site
+```
+
+writes `build/site/index.html` in about five minutes on a laptop. The law constants (the constants of the swept write
+and of the delayed switch, and the half-width of phase locking) take about twenty minutes of simulation; they are read
+from [docs/site/law_constants.json](docs/site/law_constants.json), which `demo --law --save-law-record` recomputes, and
+are shown only for specifications that have not changed since.
 
 ## Materials and contributions
 
@@ -136,7 +92,7 @@ with the source of its equations.
 
 | Task | Command | Result |
 | --- | --- | --- |
-| Demonstration | `demo` | Three calculations and their figures on one page |
+| Web page | `demo` | The realizations of the examples, the single-component changes between them and their mechanisms |
 | Memory in a material | `memory predict`, `memory card`, `memory attach`, `memory design`, `memory phase` | What the structure excludes or allows before simulation; stable states, write points, the law of loss and writing protocols; the properties a known memory keeps on another carrier ([tutorial](docs/tutorial/15_memory_first_card.md)) |
 | One mechanism in models from different fields | `memory codiscover` | For a symmetric write, a threshold write or phase locking: the derivation in each model, the step at which a derivation stops, and field-independent invariants of the end point ([tutorial](docs/tutorial/23_memory_codiscovery.md)) |
 | Adding a material | `memory new`, `memory check`, `memory catalog` | A template specification, the checks it must pass, and the catalog of materials |
@@ -281,7 +237,7 @@ standalone.
 | --- | --- |
 | [memory/](fieldbridge/memory/) | Material specifications, structural predictions, memory cards, transfer, co-discovery and the contribution checks |
 | [quantum/](fieldbridge/quantum/) | The language of mechanisms on quantum carriers: detachment, attachment and co-discovery |
-| [demo.py](fieldbridge/demo.py) | The demonstration page |
+| [site_registry.py](fieldbridge/site_registry.py), [site_data.py](fieldbridge/site_data.py), [web/](fieldbridge/web/) | The web page: realizations, the checked changes between them, and the browser engines |
 | [routes.py](fieldbridge/routes.py), [extract.py](fieldbridge/extract.py) | Textual cues and heuristic mechanism descriptions |
 | [search.py](fieldbridge/search.py), [database.py](fieldbridge/database.py) | Loading and ranking records; target examples |
 | [constructor.py](fieldbridge/constructor.py) | Proposals, or the calculation adapter |

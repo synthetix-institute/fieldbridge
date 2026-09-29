@@ -78,21 +78,11 @@ def test_command_line_new_and_check(tmp_path):
     assert passing.returncode == 0 and "Ready to contribute" in passing.stdout
 
 
-def test_demo_writes_one_page_with_three_calculated_results(tmp_path):
-    pytest.importorskip("matplotlib")
-    from fieldbridge import demo
-    results = demo.run(tmp_path, log=lambda *a: None)
-    page = (tmp_path / "index.html").read_text(encoding="utf-8")
-    assert results["material"]["states"] == 2 and results["material"]["agreement"]
-    assert abs(results["material"]["write_point"] - 2.0) < 0.05
-    assert sum(str(r["status"]).startswith("reached") for r in results["mechanism"]["rows"]) == 7
-    assert results["quantum"]["summary"]["reached"] == 6
-    assert 'Mechanism graph' in page and 'Build &amp; calculate' in page
-    assert (tmp_path / 'verified_examples.json').exists()
-    assert (tmp_path / "demo.md").exists()
-    assert (tmp_path / "materials.html").exists()
-    assert (tmp_path / "wanted_materials.html").exists()
-    assert (tmp_path / "gallery.html").exists()
+def test_demo_command_builds_the_web_page():
+    """The web page itself is tested in tests/test_site_data.py, test_site_engines.py and test_site_ui.py."""
+    done = subprocess.run([sys.executable, "-B", "-m", "fieldbridge", "demo", "--help"], cwd=ROOT, capture_output=True,
+                          text=True)
+    assert done.returncode == 0 and "--law" in done.stdout and "--out-dir" in done.stdout
 
 
 def test_same_mechanism_lists_the_materials_written_the_same_way(tmp_path):

@@ -1,8 +1,9 @@
 # Why a change of stochastic coordinate adds a drift
 
-[Visual constructor](https://synthetix-institute.github.io/fieldbridge/#stochastic):
-detach the derived drift, build the target equation, and compare its mean with
-the source mean. The equations and Python checks below supply that demonstration.
+On the [web page](https://synthetix-institute.github.io/fieldbridge/?r=log_ito) the
+convention of this chapter is one component of the realization, its closure C:
+changing it from Itô to Stratonovich changes the mean growth of log X by σ²/2.
+The equations and Python checks below supply that result.
 
 Consider a positive fluctuating coordinate X with restoring drift. In
 dimensionless variables its Ito equation is

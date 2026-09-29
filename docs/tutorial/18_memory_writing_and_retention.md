@@ -33,10 +33,12 @@ set of terms by which its normal form differs from the reference.
 | $a_2 \neq 0$ | fold (saddle-node) | A state appears or vanishes at a threshold; the write is one-sided |
 | complex pair of eigenvalues | Hopf bifurcation | The state oscillates and no stable state is selected (Module 6) |
 
-### Scalar constructor demonstration
+### The normal form on the web page
 
-The [visual constructor](https://synthetix-institute.github.io/fieldbridge/#memory)
-uses a one-coordinate model to display what each attached term supplies:
+On the [web page](https://synthetix-institute.github.io/fieldbridge/?r=pitchfork) the pitchfork
+normal form (`examples/memory/pitchfork.json`) is one realization among others: its drift terms can
+be switched off, its protocol can apply a field pulse, and its bath can be set. With a field $h$ the
+one-coordinate model is
 
 $$
 dx = (\epsilon x-\gamma x^3+h)\,dt+\sqrt{2D}\,dW,
@@ -55,24 +57,23 @@ $$
 
 At $\epsilon=\gamma=1$, a pulse $h=0.8$ between $t=1$ and $t=3$ switches
 the initial negative state to the positive state. The positive state persists
-after the field returns to zero. Detaching the writing field leaves the
-negative preparation unchanged. Detaching feedback leaves one attracting
-state; detaching saturation leaves no finite attracting state for positive
-$\epsilon$.
+after the field returns to zero; without the pulse the negative preparation is
+unchanged. Switching off the feedback leaves one attracting state; switching off
+the saturation leaves no finite attracting state for positive $\epsilon$.
 
-[The website calculation tests](../../tests/test_web_demo.py) compare the
-equilibrium relations and switching trajectory with an independent Python
-ODE integrator. In weak noise the overdamped escape-time approximation is
-$\tau\simeq 2\pi\exp(\Delta V/D)/(\sqrt{2}\epsilon)$; the website reports
-it only when $D/\Delta V\leq0.2$. This is an approximation criterion, not a
-measured error bound. Its physical basis is activated escape
+The browser integrates the drift exported from the specification; the
+[model tests](../../tests/test_web_models.py) compare it with SciPy, and the
+[engine tests](../../tests/test_site_engines.py) compare its equilibria and write
+points with the Python analysis. In weak noise the overdamped escape time is
+approximately $\tau\simeq 2\pi\exp(\Delta V/D)/(\sqrt{2}\epsilon)$ for
+$D/\Delta V\lesssim0.2$; this is an approximation criterion, not a measured error
+bound. Its physical basis is activated escape
 ([Kramers, 1940](https://doi.org/10.1016/S0031-8914(40)90098-2)).
 
-The final realization node permits $q=q_0x$. The same dynamics then gives
-$\dot q=\epsilon q-\gamma q^3/q_0^2+q_0h$ and noise amplitude
-$q_0\sqrt{2D}$. This changes the coordinate scale, not the number or stability
-of the states. Applying the model to a material additionally requires deriving
-or measuring its force law and coefficients.
+A change of coordinate $q=q_0x$ gives $\dot q=\epsilon q-\gamma q^3/q_0^2+q_0h$ and
+noise amplitude $q_0\sqrt{2D}$. This changes the coordinate scale, not the number
+or stability of the states. Applying the model to a material additionally requires
+deriving or measuring its force law and coefficients.
 
 ### 1.2 Swept writes
 

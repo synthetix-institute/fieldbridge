@@ -1,0 +1,146 @@
+"""The data of the web page: every edit changes only the component it names, every text is filled from a
+calculation, and the recorded law constants belong to the current specifications."""
+import json
+import re
+from pathlib import Path
+
+import pytest
+
+pytest.importorskip("numpy")
+pytest.importorskip("scipy")
+pytest.importorskip("sympy")
+
+from fieldbridge import site_data as sd  # noqa: E402
+from fieldbridge import site_registry as reg  # noqa: E402
+
+ROOT = Path(__file__).resolve().parents[1]
+FACTS = {
+    "unitary": {"status", "word", "dim", "closure", "carrier", "hilbert", "sector", "rate", "theta", "rep", "residual",
+                "cause", "couplings", "tunnelling", "energy_difference", "pairing_amplitude", "single_particle_energy",
+                "field_x", "field_z", "rabi_frequency", "detuning", "ising_coupling_g", "transverse_field_h"},
+    "dissipative": {"states", "states_text", "loss", "write_point", "write_param", "write_kind", "scale_control",
+                    "operating_param", "operating_value"}
+                   | {f"{p}_{k}" for p in ("sym", "thr", "lock")
+                      for k in ("status", "word", "class", "obstruction", "law", "law_err")}
+                   | {"lock_ratio", "lock_K", "lock_period", "lock_width", "lock_width_err"},
+    "field": {"law", "exponent", "exponent_value", "exponent_fit", "rate"},
+    "stochastic": {"convention", "growth", "correction"},
+}
+
+
+def family_of(nid):
+    d = next(n for n in reg.NODES if n["id"] == nid)
+    if "family" in d:
+        return d["family"]
+    return "unitary" if "attach" in d else family_of(d["base"])
+
+
+# ------------------------------------------------------------------------------------------------ the registry
+def test_every_edge_and_step_refers_to_the_registry():
+    ids = {n["id"] for n in reg.NODES}
+    edges = {e["id"]: e for e in reg.EDGES}
+    assert len(edges) == len(reg.EDGES)
+    assert all(e["from"] in ids and e["to"] in ids and e["slot"] in reg.SLOTS for e in reg.EDGES)
+    for s in reg.SEQUENCES:
+        for st in s["steps"]:
+            assert ("node" in st and st["node"] in ids) or ("edge" in st and st["edge"] in edges) or "prepare" in st
+    assert set(reg.SHORT) == ids
+
+
+def test_every_placeholder_names_a_computed_fact():
+    for e in reg.EDGES:
+        for m in sd.PLACEHOLDER.finditer(e["text"]):
+            nid = e["from"] if m.group(1) else e["to"]
+            assert m.group(2) in FACTS[family_of(nid)], (e["id"], m.group(0))
+    for s in reg.SEQUENCES:
+        at = None
+        for st in s["steps"]:
+            at = st.get("node") or (next(e for e in reg.EDGES if e["id"] == st["edge"])[
+                "from" if st.get("reverse") else "to"] if "edge" in st else at)
+            for m in sd.PLACEHOLDER.finditer(st.get("text", "")):
+                assert m.group(2) in FACTS[family_of(at)], (s["id"], m.group(0))
+
+
+def test_every_tutorial_link_points_to_a_section():
+    def slug(heading):
+        h = heading.strip().lower()
+        h = re.sub(r"[^\w\- ]", "", h)
+        return h.replace(" ", "-")
+    for n in reg.NODES:
+        if not n.get("tutorial"):
+            continue
+        path, _, anchor = n["tutorial"].partition("#")
+        text = (ROOT / path).read_text(encoding="utf-8")
+        if anchor:
+            slugs = {slug(line.lstrip("#")) for line in text.splitlines() if line.startswith("#")}
+            assert anchor in slugs, (n["id"], anchor)
+
+
+def test_texts_are_filled_from_facts_and_a_missing_fact_is_an_error():
+    assert sd.fill("rate {rate}, angle {theta}°", {"rate": 2.2360679, "theta": 63.4349}) == "rate 2.24, angle 63.4°"
+    assert sd.fill("{exponent} and {from.states_text}", {"exponent": "−1/2"}, {"states_text": "two"}) == "−1/2 and two"
+    with pytest.raises(sd.SiteError):
+        sd.fill("{rate}", {})
+    assert sd.fill("{rate}", {}, strict=False) == "—"
+
+
+# ------------------------------------------------------------------------------------------------ the edits
+NON_CODISCOVERY = [e for e in reg.EDGES if e["kind"] != "codiscovery"]
+
+
+@pytest.fixture(scope="module")
+def nodes():
+    return sd.resolve()
+
+
+@pytest.mark.parametrize("edge", NON_CODISCOVERY, ids=[e["id"] for e in NON_CODISCOVERY])
+def test_every_edit_changes_only_the_component_it_names(edge, nodes):
+    assert sd.check_edit(edge, nodes, {})
+
+
+def test_an_edit_that_changes_another_component_is_rejected(nodes):
+    base = next(e for e in reg.EDGES if e["id"] == "toggle_promoters")
+    for wrong in ({**base, "reduces": None}, {**base, "reduces": {"gamma": 1.1}}, {**base, "to": "repressor_ring4"},
+                  {**base, "kind": "term", "slot": "Omega", "to": "repressor_ring4"}, {**base, "slot": "Omega"}):
+        with pytest.raises(sd.SiteError):
+            sd.check_edit(wrong, nodes, {})
+    field = next(e for e in reg.EDGES if e["id"] == "field_conservation")
+    with pytest.raises(sd.SiteError):
+        sd.check_edit({**field, "to": "field_dipole_1d"}, nodes, {})  # conservation and the write at once
+    spin = next(e for e in reg.EDGES if e["id"] == "spins_measure_z")
+    with pytest.raises(sd.SiteError):
+        sd.check_edit({**spin, "to": "two_spins_x1"}, nodes, {})  # the Hamiltonian changes too
+
+
+# ------------------------------------------------------------------------------------------------ the record
+def test_recorded_law_constants_belong_to_the_current_specifications(nodes):
+    record = sd.read_law_record()
+    assert record, "docs/site/law_constants.json is missing: python3 -B -m fieldbridge demo --law --save-law-record"
+    for nid, entry in record["nodes"].items():
+        assert nid in nodes, nid
+        assert entry["spec_sha256"] == sd.spec_hash(nodes[nid]["spec"]), (
+            f"{nid}: the specification changed since docs/site/law_constants.json was written; regenerate it with "
+            "python3 -B -m fieldbridge demo --law --save-law-record")
+        for target, law in entry.items():
+            if target != "spec_sha256":
+                assert law["stderr"] >= 0 and abs(law["constant"] - law["expected"]) < 5 * max(law["stderr"], 0.01)
+
+
+def test_a_small_site_builds_and_its_sequences_are_complete(tmp_path):
+    only = ["two_spins", "two_spins_x1", "two_spins_h0", "two_spins_z0", "field_nonconserved", "field_charge_1d",
+            "field_dipole_1d", "log_ito", "log_stratonovich"]
+    data = sd.build(only=only, log=lambda *a: None)
+    assert set(data["nodes"]) == set(only)
+    assert {e["id"] for e in data["edges"]} == {"spins_field_off", "spins_measure_z", "spins_field_moved",
+                                                 "field_conservation", "field_dipole_write", "stochastic_convention"}
+    assert all("—" not in e["text"] for e in data["edges"])
+    assert data["nodes"]["two_spins"]["facts"]["rate"] == pytest.approx(5 ** 0.5)
+    assert data["nodes"]["two_spins_z0"]["class"] == "conserved"
+    assert data["nodes"]["field_dipole_1d"]["facts"]["exponent"] == "−3/2"
+    assert [s["id"] for s in data["sequences"]] == []  # every sequence needs nodes outside this subset
+    page = sd.write(data, tmp_path / "site" / "data.js")
+    assert page.read_text(encoding="utf-8").startswith("window.FIELDBRIDGE_SITE = ")
+    from fieldbridge.web_demo import publish_assets
+    html = publish_assets(tmp_path).read_text(encoding="utf-8")
+    assert "site/expression.js?v=" in html and "site/data.js?v=" in html
+    assert "<select" not in html  # no list of models to choose from

@@ -1,0 +1,281 @@
+{
+ "implementation_sha256": "01c137597ceb5adfafec37c80b99de42b9f51e008a5400637052d14819fe3514",
+ "nodes": {
+  "brusselator": {
+   "phase-locking": {
+    "class": "R(phase) K(1:1) L",
+    "constant": 1.0000066557813305,
+    "expected": 1.0,
+    "stderr": 0.002528641628205208,
+    "word": "RKL"
+   },
+   "spec_sha256": "f1dd31d4280c987edccedbf34d49590caa75c5fb1fc75a5a8cf622d17f10a7f2"
+  },
+  "colloid_patch": {
+   "spec_sha256": "271e2e55c15b53a59fde39f6f66d56486bafb93c3cc0dc24473f263d779e964e",
+   "threshold-write": {
+    "class": "W R(fold) K L",
+    "constant": 1.0195275720973493,
+    "expected": 1.018792971647471,
+    "stderr": 6.312059639124179e-05,
+    "word": "WRKL"
+   }
+  },
+  "dipole_patch": {
+   "spec_sha256": "4720d32be5e422b53eae89a546155c3c6ea0422b219c77c56941634e9ede2f7e",
+   "threshold-write": {
+    "class": "W R(fold) K L",
+    "constant": 1.0187940578041137,
+    "expected": 1.018792971647471,
+    "stderr": 3.0370521607370193e-05,
+    "word": "WRKL"
+   }
+  },
+  "fitzhugh_nagumo": {
+   "phase-locking": {
+    "class": "C R(phase) K(1:1) L",
+    "constant": 0.9998829213669238,
+    "expected": 1.0,
+    "stderr": 0.003165045804111144,
+    "word": "CRKL"
+   },
+   "spec_sha256": "53a0d55d7996f78621a14addccda5c5a9fbbbd59f793e7506d2044c7e4ce07e3"
+  },
+  "goodwin": {
+   "phase-locking": {
+    "class": "R(phase) K(1:1) L",
+    "constant": 0.9997057614611304,
+    "expected": 1.0,
+    "stderr": 0.004269369705672599,
+    "word": "RKL"
+   },
+   "spec_sha256": "0881fdf3f1b0b6d3efae457f27823d9740b209b21ddd683516de7b93c9f6b476"
+  },
+  "josephson": {
+   "phase-locking": {
+    "class": "C R(phase) K(1:1) L",
+    "constant": 1.0002997530561126,
+    "expected": 1.0,
+    "stderr": 0.0003975564001130749,
+    "word": "CRKL"
+   },
+   "spec_sha256": "7c1d83a0857e906068ccf01fffe39c0e7d32ade943f0ad252ba2375ef13ada6f"
+  },
+  "laser": {
+   "spec_sha256": "fb287c29df88c12c658b43a292f6c5e58fbd8d1c1c492ee05de89328d9312cf1",
+   "symmetric-write": {
+    "class": "S(reflection) C R(pitchfork) K L",
+    "constant": 1.2756535617781317,
+    "expected": 1.3313353638003897,
+    "stderr": 0.11178102128186398,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187918069943322,
+    "expected": 1.018792971647471,
+    "stderr": 4.674633690271435e-05,
+    "word": "SCRWRKL"
+   }
+  },
+  "parametron": {
+   "phase-locking": {
+    "class": "S(reflection) R(phase) K(2:1) L",
+    "constant": 0.9998092327496717,
+    "expected": 1.0,
+    "stderr": 0.0014587202484972472,
+    "word": "SRKL"
+   },
+   "spec_sha256": "664f646e7560a88f102a501957a51385efd15a6c93d189a184ad8bc52d7e906b"
+  },
+  "pitchfork": {
+   "spec_sha256": "ff5b360098149a8dbd591da8fc649bc521c44949ccbae2bfcf913a1b94b74037",
+   "symmetric-write": {
+    "class": "S(reflection) C R(pitchfork) K L",
+    "constant": 1.478398743046284,
+    "expected": 1.3313353638003897,
+    "stderr": 0.11658576588982536,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.018792928467593,
+    "expected": 1.018792971647471,
+    "stderr": 1.991653005184446e-06,
+    "word": "SCRWRKL"
+   }
+  },
+  "predator_prey": {
+   "phase-locking": {
+    "class": "C R(phase) K(1:1) L",
+    "constant": 0.999280142698239,
+    "expected": 1.0,
+    "stderr": 0.007231636751041659,
+    "word": "CRKL"
+   },
+   "spec_sha256": "0d9cf1b72113d7bdbbd2b59370b17be932fed534b759e64903b3655a7300a173"
+  },
+  "repressilator": {
+   "phase-locking": {
+    "class": "S(cyclic, order 3) R(phase) K(3:1) L",
+    "constant": 0.9967451290041098,
+    "expected": 1.0,
+    "stderr": 0.019421885433841046,
+    "word": "SRKL"
+   },
+   "spec_sha256": "e692dbe17d39fa77f56811fe5b800d1453b9d6793bce6faff5928807a86c4d5c"
+  },
+  "repressilator_activation": {
+   "spec_sha256": "81c72545b2678a546160fdafde343ad92e2911ef5d795aac6ec8d5ea969bbe98",
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.0187738236449833,
+    "expected": 1.018792971647471,
+    "stderr": 1.8148434448583828e-06,
+    "word": "CRKL"
+   }
+  },
+  "repressor_ring4": {
+   "spec_sha256": "55e825987985e0a88d09fb34587101a914ad9364c846b8c4731ee2908a7f7ac1",
+   "symmetric-write": {
+    "class": "S(cyclic, order 4) C R(pitchfork) K L",
+    "constant": 1.19496835253357,
+    "expected": 1.3313353638003897,
+    "stderr": 0.1101256057962396,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0188028160925497,
+    "expected": 1.018792971647471,
+    "stderr": 5.5214629310906815e-05,
+    "word": "SCRWRKL"
+   }
+  },
+  "schlogl": {
+   "spec_sha256": "da82c36d398aa2ae7f0a98b4273a7e73ba52727176e176f0719b1d55981cf7d2",
+   "symmetric-write": {
+    "class": "C R(fold) U R(pitchfork) K L",
+    "constant": 1.0421955677385497,
+    "expected": 1.3313353638003897,
+    "stderr": 0.10735825000919653,
+    "word": "CRURKL"
+   },
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.0187930818095077,
+    "expected": 1.018792971647471,
+    "stderr": 2.001736926215969e-06,
+    "word": "CRKL"
+   }
+  },
+  "stoner_wohlfarth": {
+   "spec_sha256": "33bbdb89e3d78a9fbb77b0c86a37d685cb6394a4576c283e34edf884e845e903",
+   "symmetric-write": {
+    "class": "S(reflection) C R(pitchfork) K L",
+    "constant": 1.4033505094466399,
+    "expected": 1.3313353638003897,
+    "stderr": 0.1146949306800557,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187924771216335,
+    "expected": 1.018792971647471,
+    "stderr": 1.0191246339497084e-05,
+    "word": "SCRWRKL"
+   }
+  },
+  "sw_oblique": {
+   "spec_sha256": "67677491b4dc96a0b6e2aec26c7eb97cc2ffcd13fb17d71b723479fdabe3d632",
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.0187926782432133,
+    "expected": 1.018792971647471,
+    "stderr": 5.140754660848401e-06,
+    "word": "CRKL"
+   }
+  },
+  "toggle": {
+   "spec_sha256": "3504785eed63f569283069c233cc1cff5caeeaad10957a07c743f8d6cc84df4e",
+   "symmetric-write": {
+    "class": "S(exchange) C R(pitchfork) K L",
+    "constant": 1.3887177945704532,
+    "expected": 1.3313353638003897,
+    "stderr": 0.11434201067904975,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187927049920225,
+    "expected": 1.018792971647471,
+    "stderr": 2.6803691616006375e-05,
+    "word": "SCRWRKL"
+   }
+  },
+  "toggle_unequal": {
+   "spec_sha256": "b7b73704f2f5a71aa255f10866bd46ca0bf7465c6b7e0ad4880a0260123daeab",
+   "symmetric-write": {
+    "class": "C R(fold) U R(pitchfork) K L",
+    "constant": 1.4479885530689967,
+    "expected": 1.3313353638003897,
+    "stderr": 0.1158030792648737,
+    "word": "CRURKL"
+   },
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.0188039899954056,
+    "expected": 1.018792971647471,
+    "stderr": 0.00012452575083954365,
+    "word": "CRKL"
+   }
+  },
+  "tubes": {
+   "spec_sha256": "50d99e0ddafe6331ed4849cd33783832e96c5f6fa440ae67ff4e589a6e1e3aee",
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187920424253047,
+    "expected": 1.018792971647471,
+    "stderr": 1.5066631330995506e-05,
+    "word": "SCRWRKL"
+   }
+  },
+  "tubes_unequal": {
+   "spec_sha256": "4f99fe1a27eadb0d70d333967f2f31086e9caa548c833b679b20fa80165553e5",
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.018737297733147,
+    "expected": 1.018792971647471,
+    "stderr": 0.00018147025036485687,
+    "word": "CRKL"
+   }
+  },
+  "van_der_pol": {
+   "phase-locking": {
+    "class": "R(phase) K(1:1) L",
+    "constant": 0.9998193258097693,
+    "expected": 1.0,
+    "stderr": 0.0014765998530994473,
+    "word": "RKL"
+   },
+   "spec_sha256": "d5983e6bd1aca3d850bf66c2467652cee68af4156be1c8e772c03dbbb970ddf3"
+  },
+  "vdp_stiffness": {
+   "phase-locking": {
+    "class": "S(reflection) R(phase) K(2:1) L",
+    "constant": 0.9998422051638904,
+    "expected": 1.0,
+    "stderr": 0.0018223988312606743,
+    "word": "SRKL"
+   },
+   "spec_sha256": "b6528e25336bf8f45d561af940407333804b9ec7db7cef263fcfe55fd97b98b3"
+  }
+ },
+ "schema": "fieldbridge-site-laws/1",
+ "versions": {
+  "numpy": "1.26.0",
+  "python": "3.11.3",
+  "scipy": "1.14.1",
+  "sympy": "1.12"
+ }
+}

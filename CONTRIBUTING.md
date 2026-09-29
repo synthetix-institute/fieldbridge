@@ -19,6 +19,10 @@ that are not covered yet.
   the same mechanism, for example a threshold write at a fold or a symmetric write at a pitchfork, with their
   fields. A model from ecology can turn out to be written like a laser or a genetic switch; the derivations of
   [Module 9](docs/tutorial/23_memory_codiscovery.md) then compare the two routes step by step.
+- **A place on the web page.** After the next build the material appears on the
+  [web page](https://synthetix-institute.github.io/fieldbridge/): in the column of its mechanism on the map, joined to
+  a realization from another field that FieldBridge finds written by the same mechanism, with its equations and its
+  dynamics calculated in the browser.
 - **Credit.** The catalog names the source of every material and its contributor (`provenance.contributor`).
 
 ## How contributions add up

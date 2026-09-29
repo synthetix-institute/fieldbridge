@@ -27,7 +27,7 @@ fieldbridge = "fieldbridge.cli:main"
 packages = ["fieldbridge", "fieldbridge.memory", "fieldbridge.quantum"]
 
 [tool.setuptools.package-data]
-fieldbridge = ["web/*.html", "web/*.css", "web/*.js", "web/LUCIDE_LICENSE"]
+fieldbridge = ["web/*.html", "web/*.css", "web/*.js"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
