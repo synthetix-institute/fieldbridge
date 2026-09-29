@@ -88,6 +88,9 @@ section { padding: 44px 0 20px; }
 .definitions dt { font-weight: 600; color: var(--slot); }
 .definitions dt .s { font-family: var(--serif); font-size: 20px; margin-right: 6px; }
 .definitions dd { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
+.intro { display: grid; gap: 12px; margin: 0 0 24px; max-width: 80ch; }
+.intro p { font-size: 16.5px; line-height: 1.65; }
+.intro .s { font-family: var(--serif); font-size: 1.15em; line-height: 1; color: var(--slot); }
 .lead { color: var(--muted); max-width: 78ch; font-size: 16px; }
 
 /* sequences */
