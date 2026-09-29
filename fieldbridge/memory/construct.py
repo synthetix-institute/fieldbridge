@@ -323,17 +323,17 @@ def construct(real: Realization, rng, states: Optional[List[np.ndarray]] = None,
     if states is not None and len(states) >= 2 and real.carrier.dim <= max_dim:
         thr = an.restoring_threshold(real, states[0], states[1])
         rw = an.with_write_field(real, states[1], (0.0, 3.0 * thr))
-        branch, ev = an.track(rw, "h", states[0], 0.0, 3.0 * thr)
+        branch, ev = an.track(rw, an.WRITE_FIELD, states[0], 0.0, 3.0 * thr)
         wf: Dict[str, object] = {"threshold": thr, "branch": [
             {"h": b["v"], "kappa_min": b["kappa_min"],
              "overlap": float(real.overlap(np.asarray(b["q"]), states[1]))} for b in branch]}
         if ev is not None:
-            nf = an.normal_form(rw, ev["q"], "h", ev["v"])
+            nf = an.normal_form(rw, ev["q"], an.WRITE_FIELD, ev["v"])
             nf.update(event=ev["type"], source="write field")
             nf["obstruction"] = obstruction(nf)
             wf["h_c"] = float(ev["v"])
             out["events"].append(nf)
-            fine, _ = an.track(rw, "h", states[0], 0.0, 0.999 * float(ev["v"]), n_init=24)
+            fine, _ = an.track(rw, an.WRITE_FIELD, states[0], 0.0, 0.999 * float(ev["v"]), n_init=24)
             wf["branch"] = [{"h": b["v"], "kappa_min": b["kappa_min"],
                              "overlap": float(real.overlap(np.asarray(b["q"]), states[1]))} for b in fine]
         out["write_field"] = wf

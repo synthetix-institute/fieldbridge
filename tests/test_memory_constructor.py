@@ -529,3 +529,30 @@ def test_codiscover_command_writes_report_and_figure(tmp_path):
     assert report["summary"]["ratios"] == {"1:1": ["van der Pol oscillator"]}
     assert [r["status"] for r in report["rows"]] == ["reached", "obstructed"]
     assert (out3 / "codiscover.png").stat().st_size > 0
+
+
+def test_the_magnet_is_a_single_domain_particle_with_the_astroid():
+    """The Stoner-Wohlfarth realization writes by a pitchfork, a fold at the astroid field, or a subcritical
+    pitchfork, as the field turns from the hard axis to the easy axis."""
+    base = json.loads((EX / "stoner_wohlfarth.json").read_text(encoding="utf-8"))
+    for deg, kind in ((90, "supercritical pitchfork"), (60, "saddle-node"), (20, "saddle-node"), (0, "subcritical")):
+        s = json.loads(json.dumps(base))
+        s["parameters"]["psi"] = float(np.deg2rad(deg))
+        real = spec.load(s)
+        events = an.locate_writes(real, np.random.default_rng(1), values=np.linspace(0.0, 1.5, 7))
+        psi = np.deg2rad(deg)
+        astroid = (np.cos(psi) ** (2 / 3) + np.sin(psi) ** (2 / 3)) ** -1.5
+        assert abs(events[0]["v"] - astroid) < 1e-4, deg
+        nf = an.normal_form(real, np.asarray(events[0]["q"]), "h", events[0]["v"])
+        assert nf["kind"].startswith(kind), (deg, nf["kind"])
+
+
+def test_a_parameter_named_h_is_not_replaced_by_the_write_field():
+    """The write field of the analysis has its own reserved name, so a material parameter h is kept."""
+    real = spec.load(EX / "stoner_wohlfarth.json")
+    rw = an.with_write_field(real, np.array([1.0]), (0.0, 1.0))
+    assert rw.params["h"] == real.params["h"] and rw.params[an.WRITE_FIELD] == 0.0
+    changed = json.loads((EX / "stoner_wohlfarth.json").read_text(encoding="utf-8"))
+    changed["parameters"][an.WRITE_FIELD] = 0.1
+    with pytest.raises(spec.SpecError):
+        spec.load(changed)

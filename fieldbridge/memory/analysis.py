@@ -12,7 +12,7 @@
   track              continuation of a stable state along a parameter until it loses stability or vanishes
   locate_writes      parameter values at which stored states lose stability or appear (write points)
   normal_form        drift along the critical direction at a write point, reduced onto the slow manifold
-  with_write_field   the realization plus a bounded write toward a target, with the field h as parameter
+  with_write_field   the realization plus a bounded write toward a target, with the field WRITE_FIELD as parameter
   memory_kernel      for a linear realization with an observed block, K(t) = B e^{Dt} C (Mori-Zwanzig)
 """
 from __future__ import annotations
@@ -25,6 +25,9 @@ import numpy as np
 from .identity import Realization
 
 P_STAR = 0.9
+# the parameter of the added write field; reserved in specifications (spec.RESERVED), so that it cannot replace a
+# parameter of the material such as an applied field h
+WRITE_FIELD = "h_write"
 
 
 def base_length(real: Realization) -> float:
@@ -484,15 +487,15 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
 
 
 def with_write_field(real: Realization, target: np.ndarray, h_range) -> Realization:
-    """The realization with a bounded write toward target added to its drift; the field h is the control."""
+    """The realization with a bounded write toward target added to its drift; the field WRITE_FIELD is the control."""
     target = np.asarray(target, float)
     base = real
 
     def drift(q, p):
-        return base.drift(q, p) + base.write_force(q, target, p["h"])
+        return base.drift(q, p) + base.write_force(q, target, p[WRITE_FIELD])
 
     r = replace(real, name=real.name + " + write field", drift=drift, potential=None,
-                params={**real.params, "h": 0.0}, control="h", control_range=tuple(h_range))
+                params={**real.params, WRITE_FIELD: 0.0}, control=WRITE_FIELD, control_range=tuple(h_range))
     for attr in ("graph", "linear", "loop"):
         if hasattr(real, attr):
             setattr(r, attr, getattr(real, attr))

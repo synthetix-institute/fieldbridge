@@ -9,7 +9,6 @@ before writing the specification: the parameter values must be those of the pape
 
 | Field | Model | Source | Known for |
 | --- | --- | --- | --- |
-| magnetism | Stoner–Wohlfarth particle: the magnetization angle of a single-domain particle with uniaxial anisotropy in an applied field | E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948) | a switching field and hysteresis of the magnetization |
 | ferroelectrics | Landau–Khalatnikov dynamics of the polarization in a double-well free energy | L. D. Landau and I. M. Khalatnikov, Dokl. Akad. Nauk SSSR 96, 469 (1954) | polarization switching under an applied field |
 | optics | Optical bistability of atoms in a ring cavity, mean-field equations | R. Bonifacio and L. A. Lugiato, Phys. Rev. A 18, 1129 (1978) | two transmitted intensities for one input intensity |
 | mechanics | Driven Duffing oscillator, written as the averaged (slow-flow) equations of amplitude and phase | G. Duffing, *Erzwungene Schwingungen bei veränderlicher Eigenfrequenz* (Vieweg, 1918) | jumps between two response amplitudes when the drive frequency is swept |

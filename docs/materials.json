@@ -289,6 +289,22 @@
    }
   },
   {
+   "file": "examples/memory/stoner_wohlfarth.json",
+   "name": "Stoner-Wohlfarth particle",
+   "field": "magnetism",
+   "question": "Does a single-domain particle with uniaxial anisotropy keep one of two magnetization directions, and how does the direction of the applied field change the way one is written?",
+   "source": "E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948)",
+   "contributor": "Vladimir Baulin",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at h = 1; a uniform field removes the stable state at h = 0.185",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.63, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.92, retention/rewriting time ratio 0.964; field 0.4 x threshold, control swept through the write point: accuracy 0.68, not rewritten"
+   }
+  },
+  {
    "file": "examples/memory/compartments.json",
    "name": "three compartments with an unobserved imbalance",
    "field": "compartment models",

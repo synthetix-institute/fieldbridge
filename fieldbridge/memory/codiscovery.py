@@ -483,14 +483,14 @@ def _field_fold(real: Realization, states: List[np.ndarray], max_pairs: int = 12
         h_max, ev = 3.0 * an.restoring_threshold(real, states[i], states[j]), None
         for _ in range(14):
             rw = an.with_write_field(real, states[j], (0.0, h_max))
-            _, ev = an.track(rw, "h", states[i], 0.0, h_max)
+            _, ev = an.track(rw, an.WRITE_FIELD, states[i], 0.0, h_max)
             if ev is not None:
                 break
             h_max *= 4.0
         if ev is None:
             tried.append({"from": i, "to": j, "result": "the occupied state persists"})
             continue
-        nf = an.normal_form(rw, np.asarray(ev["q"], float), "h", ev["v"])
+        nf = an.normal_form(rw, np.asarray(ev["q"], float), an.WRITE_FIELD, ev["v"])
         nf["obstruction"] = obstruction(nf)
         tried.append({"from": i, "to": j, "h": float(ev["v"]), "result": nf["kind"].split(":")[0]})
         if _is_fold(nf):
@@ -559,7 +559,7 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
         word.append("R")
         steps.append({"letter": "R", "value": float(ev["v"]), "kind": nf["kind"].split(":")[0],
                       "eliminated_directions": real.carrier.dim - 1})
-        fold, route = (rw, "h", ev, nf), "field"
+        fold, route = (rw, an.WRITE_FIELD, ev, nf), "field"
     target_real, param, ev, nf = fold
     refined = refine_fold(target_real, param, ev["q"], ev["v"])
     q_f, p_f = refined if refined is not None else (np.asarray(ev["q"], float), float(ev["v"]))

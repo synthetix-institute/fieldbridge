@@ -1,0 +1,49 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Does a single-domain particle with uniaxial anisotropy keep one of two magnetization directions, and how does the direction of the applied field change the way one is written?",
+  "provenance": {
+    "source": "E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "magnetism",
+  "kind": "equations",
+  "name": "Stoner-Wohlfarth particle",
+  "carrier": {
+    "kind": "torus",
+    "name": "magnetization angle, measured from the hard axis",
+    "variables": [
+      "phi"
+    ],
+    "period": "2*pi"
+  },
+  "parameters": {
+    "h": 0.5,
+    "psi": 1.5707963267948966
+  },
+  "drift": {
+    "phi": "0.5*sin(2*phi) + h*cos(phi + psi)"
+  },
+  "potential": "0.5*cos(phi)**2 - h*sin(phi + psi)",
+  "control": {
+    "name": "h",
+    "range": [
+      0.0,
+      1.5
+    ]
+  },
+  "material": [
+    "psi"
+  ],
+  "noise": 0.05,
+  "dt": 0.01,
+  "closure": "single domain (exchange keeps the magnetization uniform); overdamped Landau-Lifshitz-Gilbert relaxation in the plane that contains the easy axis and the field; thermal bath",
+  "observable": "magnetization along the easy axis, sin(phi) (magnetometry or the magneto-optical Kerr effect)",
+  "assumptions": [
+    "energy per volume in units of 2K: e = cos(phi)^2 / 2 - h cos(phi - phi_field), with phi measured from the hard axis, so that the easy axis is phi = +-pi/2",
+    "reduced field h = mu0 Ms H / (2K); psi is the angle between the field and the easy axis, and the field points along phi_field = pi/2 - psi",
+    "overdamped (large Gilbert damping) motion confined to the plane of the easy axis and the field; the precession out of the plane is not modelled",
+    "time in units of the relaxation time (1 + alpha^2) Ms / (2 gamma K alpha)",
+    "noise D = kT / (2KV) = 0.05 chosen for the example; particles used for data storage have D of about 0.01"
+  ]
+}

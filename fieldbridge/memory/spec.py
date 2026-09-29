@@ -29,7 +29,7 @@ from .identity import Realization
 
 SCHEMA = "fieldbridge-memory/1"
 FUNCTIONS = ("sqrt", "exp", "log", "sin", "cos", "tanh", "abs")
-RESERVED = {"t", "pi", "I", "E", "S", "N", "O", "Q"}
+RESERVED = {"t", "pi", "I", "E", "S", "N", "O", "Q", "h_write"}  # h_write: the write field of analysis
 
 
 class SpecError(ValueError):

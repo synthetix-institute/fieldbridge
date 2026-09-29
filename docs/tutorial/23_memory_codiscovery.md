@@ -71,9 +71,10 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | single-mode laser | laser physics | SCRKL | reached | $P = 1$ | 1.371 ± 0.051 |
 | pitchfork normal form | statistical physics | SCRKL | reached | $\varepsilon = 0$ | 1.265 ± 0.050 |
 | ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.329 ± 0.051 |
-| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.389 ± 0.051 |
+| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.273 ± 0.050 |
+| Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.360 ± 0.051 |
 | Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.343 ± 0.051 |
-| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.383 ± 0.051 |
+| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.340 ± 0.051 |
 | ring of 3 repressors | synthetic biology | CR | stops at R: Hopf | — | — |
 | two equal tubes | transport networks | SCR | stops at R: subcritical | — | — |
 | two unequal tubes | transport networks | CR | stops at U: no supercritical cusp | — | — |
@@ -81,7 +82,7 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | caged in-plane dipoles | magnetism | — | stops at C: the control rescales the drift | — | — |
 | three compartments | compartment models | — | stops at C: no control | — | — |
 
-Six models from four fields reach the target by four classes of derivation. `codiscover.md` also lists every
+Seven models from five fields reach the target by four classes of derivation. `codiscover.md` also lists every
 derivation with its steps, for example for the laser
 
 ```text
@@ -92,7 +93,7 @@ S[reflection amp -> -amp] > C[P] > R[supercritical pitchfork; 1 direction elimin
 
 *Figure 1. The symmetric write. (a) The derivation in each model: letters on the slots of a common chain. A thin line joins the steps
 of one derivation; a red cross marks the step at which it stops, with the reason on the right. (b) The reduced
-drift at the write point in the canonical coordinate, for the six models that reach the target, against $-x^3$.
+drift at the write point in the canonical coordinate, for the seven models that reach the target, against $-x^3$.
 (c) The constant of the swept-write law estimated from the simulation of each model, against $\pi^{1/4}$; the grey
 band is the weighted mean ± one standard error.*
 
@@ -114,7 +115,10 @@ $$
 $$
 
 At threshold the cubic coefficient is $a_3 = -g\kappa/(2\gamma) = -0.5$; the constructor finds $-0.499$. The
-pitchfork normal form has the same class: the class is fixed by the kind of symmetry, not by the field.
+pitchfork normal form has the same class: the class is fixed by the kind of symmetry, not by the field. So has the
+Stoner–Wohlfarth particle in a field along its hard axis: with the magnetization angle $\varphi$ measured from the hard
+axis, the reflection $\varphi \to -\varphi$ leaves its drift $\tfrac12\sin 2\varphi - h\sin\varphi$ unchanged, and the
+two stored directions $\cos\varphi = h$ merge at $h = 1$.
 
 **By an exchange: the toggle switch.** Exchanging the two repressors, $u \leftrightarrow v$, leaves the equations
 of Module 1 unchanged and reverses the antisymmetric mode $(1, -1)$. With $n = 2$ the symmetric state $u = v = 1$
@@ -149,10 +153,10 @@ A derivation that stops is a result: it names the property of the model that dif
 
 **The canonical form.** In the coordinate $x$ the reduced drift at the write point is $\sum_n c_n x^n$. The cubic
 coefficient $c_3 = -1$ by the choice of units, so the check lies in the other coefficients. In every model that
-reaches the target, the even part is below $7 \times 10^{-10}$ of the cubic term at the edge of the fitted window,
+reaches the target, the even part is below $10^{-9}$ of the cubic term at the edge of the fitted window,
 and $c_3 < 0$. The fifth-order coefficient differs between the models: $c_5 = 1.8$ for the laser (2 from Eq. (2);
-the remainder comes from seventh-order terms within the window), 1.26 for the toggle, 0.76 for the ring and 0 for
-the Schlögl reactor and Landau theory. It sets how far from the write point the models remain equivalent. It does
+the remainder comes from seventh-order terms within the window), 1.26 for the toggle, 0.76 for the ring, 0.46 for
+the Stoner–Wohlfarth particle (1/2 from the expansion of its energy) and 0 for the Schlögl reactor and Landau theory. It sets how far from the write point the models remain equivalent. It does
 not enter the write law, because the choice is made in the linear stage.
 
 **The constant of the write law.** For each model the constructor simulates the swept write of the full model
@@ -164,8 +168,8 @@ $$
 \pi^{1/4} \approx \frac{\Phi^{-1}(P)\, D_s^{1/2}\, r^{1/4}}{h_s}  \qquad (3)
 $$
 
-With 2000 trajectories per model, the six estimates have a weighted mean of $1.346 \pm 0.021$, against
-$\pi^{1/4} = 1.331$, with $\chi^2 = 4.7$ for 6 values. The constant depends only on the canonical form. A
+With 2000 trajectories per model, the seven estimates have a weighted mean of $1.325 \pm 0.019$, against
+$\pi^{1/4} = 1.331$, with $\chi^2 = 4.2$ for 7 values. The constant depends only on the canonical form. A
 derivation that ended on another mechanism, such as a fold, would give an accuracy that does not follow Eq. (3).
 
 ## 7. A second target: the threshold write
@@ -198,6 +202,7 @@ The command takes about one minute.
 | single-mode laser | laser physics | SCRWRKL | $h = 0.05877$ | 0.889 | 1.01879 ± 0.00005 |
 | pitchfork normal form | statistical physics | SCRWRKL | $h = 0.3849$ | −0.333 | 1.018793 |
 | genetic toggle switch | synthetic biology | SCRWRKL | $h = 0.2134$ | 0.437 | 1.01879 ± 0.00003 |
+| Stoner–Wohlfarth particle | magnetism | SCRWRKL | $h = 0.1847$ | −0.438 | 1.01879 ± 0.00001 |
 | ring of 4 repressors | synthetic biology | SCRWRKL | $h = 1.5988$ | 2.975 | 1.01880 ± 0.00006 |
 | two equal tubes | transport networks | SCRWRKL | $h = 0.06396$ | 0.163 | 1.01879 ± 0.00002 |
 | caged capillary rotors | soft matter | WRKL | $h = 1.6335$ | 0.037 | 1.018793 |
@@ -205,7 +210,7 @@ The command takes about one minute.
 | ring of 3 repressors | synthetic biology | CR | stops: no stable state | — | — |
 | three compartments | compartment models | — | stops: a single stable state | — | — |
 
-Ten models from seven fields reach the target by three classes of derivation: by the control, C R(fold) K L; by a
+Eleven models from seven fields reach the target by three classes of derivation: by the control, C R(fold) K L; by a
 field after a symmetric write point, S C R(pitchfork) W R(fold) K L; and by a field where the control only rescales
 the drift, W R(fold) K L. In the second class the symmetry that forces a pitchfork along the control also forbids a
 threshold there. A field toward one of the two states breaks the symmetry, and the occupied state disappears at the
@@ -250,8 +255,8 @@ gives Eq. (5). The state runs away where $\mathrm{Ai}(-\tau) = 0$, at $\mu = 2.3
 </details>
 
 The constructor sweeps each full model without noise, records when the state crosses $s = 0$, and extrapolates
-$\mu/r^{2/3}$ to $r = 0$ (Figure 2c). In all ten models the extrapolated constant lies within $6 \times 10^{-5}$ of
-$\lvert a_1'\rvert$, and the weighted mean is $1.01879 \pm 0.00001$. The slopes of the corrections differ, from
+$\mu/r^{2/3}$ to $r = 0$ (Figure 2c). In all eleven models the extrapolated constant lies within $6 \times 10^{-5}$ of
+$\lvert a_1'\rvert$, and the weighted mean is $1.018793 \pm 0.000005$. The slopes of the corrections differ, from
 $-0.45$ for the laser to $+0.40$ for the ring of four, as the fifth-order coefficients did for the symmetric write.
 For the unequal tubes the linear and quadratic corrections have opposite signs: sweeps faster than
 $r = 2 \times 10^{-4}$ lie above the limit and slower ones up to 0.3% below it. A fit to sweeps between $10^{-2}$ and
@@ -270,6 +275,7 @@ $2 \times 10^{-3}$ for the laser and 800 for the capillary rotors, whose switch 
 | pitchfork normal form | statistical physics | S C R K L | S C R W R K L |
 | genetic toggle switch | synthetic biology | S C R K L | S C R W R K L |
 | ring of 4 repressors | synthetic biology | S C R K L | S C R W R K L |
+| Stoner–Wohlfarth particle | magnetism | S C R K L | S C R W R K L |
 | Schlögl reactor | chemical kinetics | C R U R K L | C R K L |
 | toggle, unequal promoters | synthetic biology | C R U R K L | C R K L |
 | two equal tubes | transport networks | stops at R (subcritical) | S C R W R K L |
@@ -282,7 +288,7 @@ The two targets are complementary. A symmetry makes the symmetric write possible
 along the same parameter; a field that breaks the symmetry restores the threshold. Without a symmetry the write
 along the control is a fold, and the symmetric write needs a second parameter tuned to the cusp, where two folds
 merge into a pitchfork. A fold is the generic way for a state to disappear, whereas a pitchfork requires a symmetry
-or a tuned parameter; the threshold write is therefore reached in ten models and the symmetric write in six.
+or a tuned parameter; the threshold write is therefore reached in eleven models and the symmetric write in seven.
 
 ## 8. A third target: phase locking
 
@@ -479,13 +485,13 @@ A new target mechanism is added as a function with the signature of `derive_symm
 ## Summary
 
 - A derivation of a mechanism is a word of transformations, each acting on named components of the realization.
-- The constructor derives the symmetric write in models from four fields by four classes of derivation: by a
+- The constructor derives the symmetric write in models from five fields by four classes of derivation: by a
   reflection, an exchange, a cyclic permutation, or an unfolding to a cusp.
 - A derivation that stops names the responsible property: a Hopf bifurcation, a positive cubic term, a fold
   without a supercritical cusp, or a control that only rescales the drift.
 - Two invariants test that the end points are the same mechanism: the canonical form $-x^3$ with no even part, and
-  the constant of the write law, $1.346 \pm 0.021$ against $\pi^{1/4} = 1.331$.
-- The threshold write, a fold, is reached in ten models from seven fields by three classes of derivation: by the
+  the constant of the write law, $1.325 \pm 0.019$ against $\pi^{1/4} = 1.331$.
+- The threshold write, a fold, is reached in eleven models from seven fields by three classes of derivation: by the
   control, or by a write field where a symmetry or a scale control prevents a threshold along the control.
 - The switch lags behind a sweep by $\mu = \lvert a_1'\rvert r^{2/3}$; the constant $\lvert a_1'\rvert = 1.01879$,
   the first zero of $\mathrm{Ai}'$, is recovered in every model to $6 \times 10^{-5}$.
