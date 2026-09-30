@@ -199,8 +199,9 @@ def resolve(root: Path = ROOT, only: Optional[Iterable[str]] = None) -> Dict[str
 
 
 # ------------------------------------------------------------------------------------------------ unitary
-def observable_closure(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim: int = 256) -> int:
-    """Chapter 11: the dimension of the smallest span of operators that contains O and is invariant under i[H, .]."""
+def closure_basis(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim: int = 256) -> List[np.ndarray]:
+    """Chapter 11: an orthonormal basis of the smallest span of operators that contains O and is invariant under
+    i[H, .]."""
     basis: List[np.ndarray] = []
 
     def add(A: np.ndarray) -> None:
@@ -217,7 +218,29 @@ def observable_closure(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim:
     while i < len(basis) and len(basis) <= max_dim:
         add(1j * (H @ basis[i] - basis[i] @ H))
         i += 1
-    return len(basis)
+    return basis
+
+
+def observable_closure(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim: int = 256) -> int:
+    """The dimension of the closure of O under i[H, .]."""
+    return len(closure_basis(H, O, tol, max_dim))
+
+
+def observable_frequencies(H: np.ndarray, O: np.ndarray, tol: float = 1e-7) -> List[float]:
+    """The frequencies with which the observable can move: i[H, .] restricted to the closure of O is antisymmetric,
+    and its eigenvalues are 0 and the pairs +-i omega. One frequency is the signal of a rotating three-vector,
+    whatever algebra H and O generate; several frequencies are not one rotation."""
+    basis = closure_basis(H, O)
+    if len(basis) < 2:
+        return []
+    M = np.array([[np.vdot(a, 1j * (H @ b - b @ H)) for b in basis] for a in basis])
+    w = np.linalg.eigvalsh(1j * M)
+    scale = max(1.0, float(np.max(np.abs(w))))
+    out: List[float] = []
+    for v in sorted(float(x) for x in w if x > tol * scale):
+        if not out or v - out[-1] > tol * scale:
+            out.append(v)
+    return out
 
 
 def observable_frame(canon: Dict) -> List[np.ndarray]:
@@ -275,9 +298,11 @@ def unitary_record(node: Dict, parent: Optional[Dict] = None) -> Dict:
         frame, j_top, frame_from = parent["_frame"], parent["engine"]["j_top"], parent["id"]
     cause = ql._single_term_cause(real, V) if row["status"] != "reached" and len(real.terms) > 1 else None
     sig = row.get("signature", {})
+    freqs = observable_frequencies(Hs, Os)
     facts = {"status": row["status"], "word": row["word"], "dim": int(row["algebra_dimension"]),
-             "closure": closure, "carrier": real.carrier.description, "hilbert": int(real.carrier.dim),
-             "sector": int(Hs.shape[0])}
+             "closure": closure, "frequencies": len(freqs), "frequencies_text": NUMBER_WORDS.get(len(freqs), str(len(freqs))),
+             "frequency_list": [float(f"{f:.6g}") for f in freqs[:6]],
+             "carrier": real.carrier.description, "hilbert": int(real.carrier.dim), "sector": int(Hs.shape[0])}
     if row["status"] == "reached":
         facts.update(rate=float(sig["rate"]), theta=float(sig["theta_deg"]),
                      rep=ql._rep(row["representation"]).replace(" x ", " × ").replace("j=", "j = "),
@@ -384,9 +409,14 @@ def operator_html(text: str) -> str:
 
 
 # ------------------------------------------------------------------------------------------------ dissipative
+# trajectories of the swept-write check when the law constants of the record are computed: the standard error of the
+# constant is then 0.014, 1% of pi^(1/4); with the 400 of a quick check it is 0.11
+LAW_TRAJECTORIES = 25600
+
+
 def _derive(target: str, real, nid: str, law: bool) -> Dict:
     from .memory import codiscovery
-    return codiscovery.TARGETS[target](real, _rng(nid, target), check_law=law)
+    return codiscovery.TARGETS[target](real, _rng(nid, target), check_law=law, n_traj=LAW_TRAJECTORIES)
 
 
 def _row_facts(prefix: str, row: Dict) -> Dict:
@@ -871,7 +901,7 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
 # ------------------------------------------------------------------------------------------------ build
 def _targets_for(node: Dict) -> List[str]:
     path = node["path"]
-    # the oscillators of Module 9 and the ring of three repressors: the realizations in which the tutorial derives
+    # the oscillators of Module 11 and the ring of three repressors: the realizations in which the tutorial derives
     # phase locking
     oscill = "oscillators" in path or node["id"] == "repressilator"
     if node["family"] != "dissipative":

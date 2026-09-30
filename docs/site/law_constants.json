@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "01c137597ceb5adfafec37c80b99de42b9f51e008a5400637052d14819fe3514",
+ "implementation_sha256": "090495deec374e7786206f5003f5d90be04e9d78a26a402bcd51bb08de810e83",
  "nodes": {
   "brusselator": {
    "phase-locking": {
@@ -15,9 +15,9 @@
    "spec_sha256": "271e2e55c15b53a59fde39f6f66d56486bafb93c3cc0dc24473f263d779e964e",
    "threshold-write": {
     "class": "W R(fold) K L",
-    "constant": 1.0195275720973493,
+    "constant": 1.0187931203461076,
     "expected": 1.018792971647471,
-    "stderr": 6.312059639124179e-05,
+    "stderr": 5e-07,
     "word": "WRKL"
    }
   },
@@ -25,9 +25,9 @@
    "spec_sha256": "4720d32be5e422b53eae89a546155c3c6ea0422b219c77c56941634e9ede2f7e",
    "threshold-write": {
     "class": "W R(fold) K L",
-    "constant": 1.0187940578041137,
+    "constant": 1.0187937824736861,
     "expected": 1.018792971647471,
-    "stderr": 3.0370521607370193e-05,
+    "stderr": 1.1676328346643672e-05,
     "word": "WRKL"
    }
   },
@@ -65,16 +65,16 @@
    "spec_sha256": "fb287c29df88c12c658b43a292f6c5e58fbd8d1c1c492ee05de89328d9312cf1",
    "symmetric-write": {
     "class": "S(reflection) C R(pitchfork) K L",
-    "constant": 1.2756535617781317,
+    "constant": 1.303510093314289,
     "expected": 1.3313353638003897,
-    "stderr": 0.11178102128186398,
+    "stderr": 0.01404815923151196,
     "word": "SCRKL"
    },
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0187918069943322,
+    "constant": 1.0187922991754212,
     "expected": 1.018792971647471,
-    "stderr": 4.674633690271435e-05,
+    "stderr": 7.89701418457689e-06,
     "word": "SCRWRKL"
    }
   },
@@ -92,16 +92,16 @@
    "spec_sha256": "ff5b360098149a8dbd591da8fc649bc521c44949ccbae2bfcf913a1b94b74037",
    "symmetric-write": {
     "class": "S(reflection) C R(pitchfork) K L",
-    "constant": 1.478398743046284,
+    "constant": 1.303510093314289,
     "expected": 1.3313353638003897,
-    "stderr": 0.11658576588982536,
+    "stderr": 0.01404815923151196,
     "word": "SCRKL"
    },
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.018792928467593,
+    "constant": 1.018792966483569,
     "expected": 1.018792971647471,
-    "stderr": 1.991653005184446e-06,
+    "stderr": 5e-07,
     "word": "SCRWRKL"
    }
   },
@@ -109,9 +109,9 @@
    "spec_sha256": "e9930ab7419b6e1b8ab036e5cbd7c2928f25f1d57c91c29b522f3a22e3902bfe",
    "symmetric-write": {
     "class": "S(reflection) C R(pitchfork) K L",
-    "constant": 1.3887177945704534,
+    "constant": 1.342181719072521,
     "expected": 1.3313353638003897,
-    "stderr": 0.11434201067904977,
+    "stderr": 0.014156600427299208,
     "word": "SCRKL"
    }
   },
@@ -119,9 +119,9 @@
    "spec_sha256": "2f1eefbca08273ae1b38c2cbb4f1517867142adff8e01c57e70cc0b7520f37ae",
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.018793127310488,
+    "constant": 1.0187929610769713,
     "expected": 1.018792971647471,
-    "stderr": 2.6241705819440853e-06,
+    "stderr": 5e-07,
     "word": "CRKL"
    }
   },
@@ -129,9 +129,9 @@
    "spec_sha256": "e7bfb022e2fbdce71da9dc24ec7e62e3690d642128455ade8e4952d0a65f1eee",
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0187938410316681,
+    "constant": 1.0187929553907837,
     "expected": 1.018792971647471,
-    "stderr": 3.066089009351458e-07,
+    "stderr": 5e-07,
     "word": "SCRWRKL"
    }
   },
@@ -159,9 +159,9 @@
    "spec_sha256": "81c72545b2678a546160fdafde343ad92e2911ef5d795aac6ec8d5ea969bbe98",
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.0187738236449833,
+    "constant": 1.0187930416735371,
     "expected": 1.018792971647471,
-    "stderr": 1.8148434448583828e-06,
+    "stderr": 8.889302902659324e-07,
     "word": "CRKL"
    }
   },
@@ -169,16 +169,16 @@
    "spec_sha256": "55e825987985e0a88d09fb34587101a914ad9364c846b8c4731ee2908a7f7ac1",
    "symmetric-write": {
     "class": "S(cyclic, order 4) C R(pitchfork) K L",
-    "constant": 1.19496835253357,
+    "constant": 1.3683392600779796,
     "expected": 1.3313353638003897,
-    "stderr": 0.1101256057962396,
+    "stderr": 0.014232358915417912,
     "word": "SCRKL"
    },
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0188028160925497,
+    "constant": 1.0187928297302047,
     "expected": 1.018792971647471,
-    "stderr": 5.5214629310906815e-05,
+    "stderr": 1.3662179592088819e-05,
     "word": "SCRWRKL"
    }
   },
@@ -186,16 +186,16 @@
    "spec_sha256": "da82c36d398aa2ae7f0a98b4273a7e73ba52727176e176f0719b1d55981cf7d2",
    "symmetric-write": {
     "class": "C R(fold) U R(pitchfork) K L",
-    "constant": 1.0421955677385497,
+    "constant": 1.3271464451908823,
     "expected": 1.3313353638003897,
-    "stderr": 0.10735825000919653,
+    "stderr": 0.014113938735214408,
     "word": "CRURKL"
    },
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.0187930818095077,
+    "constant": 1.0187930202700242,
     "expected": 1.018792971647471,
-    "stderr": 2.001736926215969e-06,
+    "stderr": 5e-07,
     "word": "CRKL"
    }
   },
@@ -203,16 +203,16 @@
    "spec_sha256": "33bbdb89e3d78a9fbb77b0c86a37d685cb6394a4576c283e34edf884e845e903",
    "symmetric-write": {
     "class": "S(reflection) C R(pitchfork) K L",
-    "constant": 1.4033505094466399,
+    "constant": 1.32055124153753,
     "expected": 1.3313353638003897,
-    "stderr": 0.1146949306800557,
+    "stderr": 0.014095426845768312,
     "word": "SCRKL"
    },
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0187924771216335,
+    "constant": 1.0187929200567751,
     "expected": 1.018792971647471,
-    "stderr": 1.0191246339497084e-05,
+    "stderr": 7.21023381444752e-07,
     "word": "SCRWRKL"
    }
   },
@@ -220,9 +220,9 @@
    "spec_sha256": "67677491b4dc96a0b6e2aec26c7eb97cc2ffcd13fb17d71b723479fdabe3d632",
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.0187926782432133,
+    "constant": 1.018792945497291,
     "expected": 1.018792971647471,
-    "stderr": 5.140754660848401e-06,
+    "stderr": 5e-07,
     "word": "CRKL"
    }
   },
@@ -230,16 +230,16 @@
    "spec_sha256": "3504785eed63f569283069c233cc1cff5caeeaad10957a07c743f8d6cc84df4e",
    "symmetric-write": {
     "class": "S(exchange) C R(pitchfork) K L",
-    "constant": 1.3887177945704532,
+    "constant": 1.3528682533969218,
     "expected": 1.3313353638003897,
-    "stderr": 0.11434201067904975,
+    "stderr": 0.01418731391683434,
     "word": "SCRKL"
    },
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0187927049920225,
+    "constant": 1.0187925411948326,
     "expected": 1.018792971647471,
-    "stderr": 2.6803691616006375e-05,
+    "stderr": 3.4836749687183755e-06,
     "word": "SCRWRKL"
    }
   },
@@ -247,16 +247,16 @@
    "spec_sha256": "b7b73704f2f5a71aa255f10866bd46ca0bf7465c6b7e0ad4880a0260123daeab",
    "symmetric-write": {
     "class": "C R(fold) U R(pitchfork) K L",
-    "constant": 1.4479885530689967,
+    "constant": 1.352868253396922,
     "expected": 1.3313353638003897,
-    "stderr": 0.1158030792648737,
+    "stderr": 0.014187313916834341,
     "word": "CRURKL"
    },
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.0188039899954056,
+    "constant": 1.0187917905633197,
     "expected": 1.018792971647471,
-    "stderr": 0.00012452575083954365,
+    "stderr": 9.623795318214334e-06,
     "word": "CRKL"
    }
   },
@@ -264,9 +264,9 @@
    "spec_sha256": "50d99e0ddafe6331ed4849cd33783832e96c5f6fa440ae67ff4e589a6e1e3aee",
    "threshold-write": {
     "class": "S C R(pitchfork) W R(fold) K L",
-    "constant": 1.0187920424253047,
+    "constant": 1.018792939423109,
     "expected": 1.018792971647471,
-    "stderr": 1.5066631330995506e-05,
+    "stderr": 8.995832112557167e-07,
     "word": "SCRWRKL"
    }
   },
@@ -274,9 +274,9 @@
    "spec_sha256": "4f99fe1a27eadb0d70d333967f2f31086e9caa548c833b679b20fa80165553e5",
    "threshold-write": {
     "class": "C R(fold) K L",
-    "constant": 1.018737297733147,
+    "constant": 1.0187733792197289,
     "expected": 1.018792971647471,
-    "stderr": 0.00018147025036485687,
+    "stderr": 0.00028741778950114316,
     "word": "CRKL"
    }
   },

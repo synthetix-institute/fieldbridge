@@ -427,6 +427,21 @@ def test_a_field_writes_the_landau_model_at_the_coercive_field_with_the_airy_del
     assert row["law_constant"]["constant"] == pytest.approx(cd.DELAY_CONSTANT, abs=1e-4)
 
 
+def test_the_delay_constant_is_not_biased_by_the_error_of_the_located_fold():
+    """With the seed of the web page the fold of the capillary rotors is located to 9e-9 in canonical units. The
+    term delta r^(-2/3) then dominates the slowest sweeps; an extrapolation without it gave 1.0195 +- 0.0001."""
+    from fieldbridge import site_data as sd
+    from fieldbridge.memory import codiscovery as cd
+    law = cd.derive_threshold_write(load("colloid_patch"), sd._rng("colloid_patch", "threshold-write"))["law"]
+    assert len(law["rows"]) == 9 and law["fit_terms"]["powers"] == [0, 1, 2, 3, 4, -2]
+    assert abs(law["constant"] - cd.DELAY_CONSTANT) < law["stderr"] <= 1e-6
+    assert 1e-9 < law["fold_offset"] < 1e-7
+    slowest = min(law["rows"], key=lambda r: r["rate"])
+    assert slowest["constant"] - cd.DELAY_CONSTANT > 3e-4   # the slowest sweep alone is off by delta r^(-2/3)
+    assert law["fold_offset"] * slowest["rate"] ** (-2 / 3) == pytest.approx(slowest["constant"] - cd.DELAY_CONSTANT,
+                                                                             rel=0.1)
+
+
 def test_threshold_write_by_the_control_by_a_field_and_its_obstruction():
     from fieldbridge.memory import codiscovery as cd
     rng = np.random.default_rng(1)

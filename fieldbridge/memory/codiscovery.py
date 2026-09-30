@@ -65,6 +65,7 @@ from .identity import Realization
 LAW_CONSTANT = pi ** 0.25
 DELAY_CONSTANT = 1.0187929716474710  # -a1', the first zero of Ai' (checked against scipy.special.ai_zeros in the tests)
 DELAY_RATES = tuple(float(r) for r in 10.0 ** -np.arange(3.0, 7.01, 0.5))
+DELAY_FLOOR = 5e-7  # accuracy of the delay constant set by the finite differences of the canonical scale and the solver
 DELAY_SOLVER = "LSODA"  # switches to an implicit method where the transverse modes are stiff (rotor patches)
 LETTERS = {"S": "symmetry", "C": "continuation", "W": "write field", "R": "reduction", "U": "unfolding",
            "K": "canonical form", "L": "law"}
@@ -408,9 +409,15 @@ def canonical_fold(real: Realization, param: str, q_f: np.ndarray, p_f: float, n
     over = {param: p_f}
     vec, w = np.asarray(nf["mode"], float), np.asarray(nf["left_mode"], float)
     h = 1e-3 * an.base_length(real)
-    d2 = (real.F(_shift(real, q_f, h * vec), **over) + real.F(_shift(real, q_f, -h * vec), **over)
-          - 2 * real.F(q_f, **over)) / h ** 2
-    a2 = 0.5 * float(w @ d2)
+
+    def curvature(step: float) -> float:
+        d2 = (real.F(_shift(real, q_f, step * vec), **over) + real.F(_shift(real, q_f, -step * vec), **over)
+              - 2 * real.F(q_f, **over)) / step ** 2
+        return 0.5 * float(w @ d2)
+
+    # two steps and Richardson's extrapolation: the error of the second difference is of fourth order in h. With one
+    # step its relative error, 3e-6 for a quintic drift, moved the delay constant by a third of that.
+    a2 = (4.0 * curvature(h / 2) - curvature(h)) / 3.0
     J = an.jacobian(real, q_f, over)
     a1 = float(w @ J @ vec)
     rates = np.sort(np.abs(np.linalg.eigvals(J).real))
@@ -430,9 +437,14 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
                    rates=DELAY_RATES, tau: float = 5.0) -> Dict[str, object]:
     """Sweep the parameter through the fold without noise, p = p_f + r t / (a2 b), and record the time t0 at which the
     state crosses the position of the static fold (s = 0). In canonical units mu = r t, and the crossing is at
-    mu = |a1'| r^(2/3) plus corrections in powers of r^(1/3). The constant t0 r^(1/3) is extrapolated to r = 0 by a
-    quadratic in r^(1/3) over the five slowest rates; its uncertainty is the difference from a linear fit to the
-    three slowest. Each sweep starts on the occupied branch at mu = -tau r^(2/3)."""
+    mu = |a1'| r^(2/3) plus corrections in powers of r^(1/3). An error delta of the located fold, in canonical units,
+    shifts every crossing by the same mu and adds delta r^(-2/3) to t0 r^(1/3): a term that grows at slow rates and,
+    left out, biases an extrapolation to r = 0 (for the rotor patches by 7e-4 at delta = 9e-9).
+
+    The constant is therefore fitted over all rates by C + c1 e + ... + c4 e^4 + delta e^(-2), e = r^(1/3), with
+    fewer powers when fewer rates are available. Its uncertainty is the largest of three numbers: the difference
+    from the fit of one order less, the largest change when one rate is left out, and DELAY_FLOOR, the accuracy of
+    the canonical scale a2 b and of the integration. Each sweep starts on the occupied branch at mu = -tau r^(2/3)."""
     from scipy.integrate import solve_ivp
     vec, w = np.asarray(canon["mode"], float), np.asarray(canon["left_mode"], float)
     a2, k = canon["a2"], canon["mu_per_unit_parameter"]
@@ -462,10 +474,19 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
     if len(rows) >= 5:
         e = np.array([row["rate"] for row in rows]) ** (1 / 3)
         c = np.array([row["constant"] for row in rows])
-        i5, i3 = np.argsort(e)[:5], np.argsort(e)[:3]
-        quad, lin = np.polyfit(e[i5], c[i5], 2), np.polyfit(e[i3], c[i3], 1)
-        out.update(constant=float(quad[2]), stderr=float(abs(quad[2] - lin[1])), correction_slope=float(quad[1]),
-                   fit=[float(quad[2]), float(quad[1]), float(quad[0])])
+
+        def fit(powers, keep=slice(None)):
+            A = np.array([e[keep] ** p for p in powers]).T
+            return dict(zip(powers, np.linalg.lstsq(A, c[keep], rcond=None)[0]))
+
+        order = int(min(4, len(rows) - 4))                       # at least two rates more than parameters
+        powers = tuple(range(order + 1)) + (-2,)
+        best, lower = fit(powers), fit(tuple(range(order)) + (-2,))
+        others = [fit(powers, np.arange(len(rows)) != i)[0] for i in range(len(rows))]
+        stderr = max(abs(best[0] - lower[0]), max(abs(v - best[0]) for v in others), DELAY_FLOOR)
+        out.update(constant=float(best[0]), stderr=float(stderr), correction_slope=float(best[1]),
+                   fold_offset=float(best[-2]), fit=[float(best[0]), float(best[1]), float(best.get(2, 0.0))],
+                   fit_terms={"powers": [int(k) for k in best], "coefficients": [float(v) for v in best.values()]})
     return out
 
 
@@ -620,7 +641,7 @@ def codiscover(reals: List[Realization], rng, target: str = "symmetric-write", c
         summary.update(linear_part_max=max((c["linear_part"] for c in canon), default=None),
                        c2_range=[min((c["c2"] for c in canon), default=None), max((c["c2"] for c in canon), default=None)],
                        rates=list(DELAY_RATES) if check_law else [])
-        floor = 1e-5  # integration tolerance and extrapolation
+        floor = DELAY_FLOOR  # already contained in the uncertainty of each constant
     else:
         from .phase_locking import K_REL
         ratios: Dict[str, List[str]] = {}
@@ -651,7 +672,7 @@ def markdown(report: Dict[str, object]) -> str:
     key = s.get("target_key", "symmetric-write")
     info = TARGET_INFO[key]
     classes = s["derivation_classes"]
-    digits = {"symmetric-write": 3, "threshold-write": 5}.get(key, 4)
+    digits = {"symmetric-write": 3, "threshold-write": 7}.get(key, 4)
     lines = [f"# Co-discovery by construction: {info['title']}", "",
              f"Target: {s['target']}. Reached in {s['reached']} realizations from {len(s['fields_reached'])} fields "
              f"({', '.join(s['fields_reached'])}) by {len(classes)} classes of derivation; obstructed in "
@@ -710,10 +731,10 @@ def markdown(report: Dict[str, object]) -> str:
                      f"slowest transverse rate; quadratic coefficient of the slow-manifold drift c2 = "
                      f"{s['c2_range'][0]:.4f} to {s['c2_range'][1]:.4f} (1 by the choice of units).")
         if "law_constant_mean" in s:
-            lines.append(f"- Delay of the switch: crossing of the static fold at mu = C r^(2/3), extrapolated to r = 0 "
-                         f"from {len(s['rates'])} rates per realization: C = {s['law_constant_mean']:.5f} ± "
-                         f"{s['law_constant_stderr']:.5f}; |a1'| = {s['law_constant_expected']:.5f}; largest deviation "
-                         f"{s['law_constant_max_deviation']:.1e}.")
+            lines.append(f"- Delay of the switch: crossing of the static fold at mu = C r^(2/3), fitted over "
+                         f"{len(s['rates'])} rates per realization with the offset of the located fold: C = "
+                         f"{s['law_constant_mean']:.7f} ± {s['law_constant_stderr']:.7f}; |a1'| = "
+                         f"{s['law_constant_expected']:.7f}; largest deviation {s['law_constant_max_deviation']:.1e}.")
     lines += ["", "## Letters and the slots they act on", "", "| letter | transformation | slots | action |",
               "|---|---|---|---|"]
     for k in info["letters"]:

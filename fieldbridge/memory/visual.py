@@ -534,18 +534,20 @@ def _law_panel_fold(c, reached, class_color, marker, s):
         emax = max(emax, float(e.max()))
         col = class_color[r["class"]]
         c.plot(e, v, marker[r["name"]], ms=3.2, color=col, lw=0, label=r["name"])
-        f0, f1, f2 = r["law"]["fit"]
-        ee = np.linspace(0.0, float(np.sort(e)[4]), 60)
-        c.plot(ee, f0 + f1 * ee + f2 * ee ** 2, color=col, lw=0.7, alpha=0.8)
+        terms = r["law"].get("fit_terms")
+        if terms:   # the fitted law over the rates used, with the term of the located fold
+            ee = np.linspace(float(e.min()), float(e.max()), 80)
+            c.plot(ee, sum(k * ee ** float(p) for p, k in zip(terms["powers"], terms["coefficients"])), color=col,
+                   lw=0.7, alpha=0.8)
     c.plot([0.0], [DELAY_CONSTANT], "*", ms=9, color=INK, zorder=5)
     c.axhline(DELAY_CONSTANT, color=INK, lw=0.8, ls="--")
     c.text(0.76 * emax, DELAY_CONSTANT, "|a1'| = 1.01879", fontsize=6.5, color=INK, va="bottom")
     c.set_xlim(-0.003, emax * 1.03)
     c.set_xlabel("r^(1/3) (canonical sweep rate r)")
     c.set_ylabel("mu at the crossing of the static fold / r^(2/3)")
-    c.text(0.02, 0.97, f"extrapolated to r = 0: {s['law_constant_mean']:.5f} +/- {s['law_constant_stderr']:.5f}\n"
+    c.text(0.02, 0.97, f"constant at r = 0: {s['law_constant_mean']:.7f} +/- {s['law_constant_stderr']:.7f}\n"
                        f"largest deviation from |a1'|: {s['law_constant_max_deviation']:.1e}\n"
-                       f"markers as in (b); lines: quadratic fits in r^(1/3) to the five slowest sweeps",
+                       f"markers as in (b); lines: fits in powers of r^(1/3) with the offset of the located fold",
            transform=c.transAxes, fontsize=6.2, color=INK2, va="top")
     _style(c)
 
