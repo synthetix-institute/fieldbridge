@@ -713,6 +713,60 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "subcritical-write": "distant write", "field-write": "field write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
+
+# the outcomes in which a mechanism of its group is absent: nothing is stored (memory), or nothing rotates as one
+# three-vector (quantum); the map marks them with this label and reason
+CLASS_ABSENT = {
+    "single-state": ["no memory", "every preparation relaxes to one state: nothing of it is kept"],
+    "neutral-cycles": ["no memory", "no isolated phase: nothing restores a written phase"],
+    "conserved": ["no rotation", "the observable is conserved: nothing rotates"],
+    "obstructed": ["no rotation", "the observable moves with several frequencies, not as one rotation"],
+}
+
+# the three laws by which a stored state is lost, defined in Module 4, Section 1.3; the page links every mention
+M4_RETENTION = "docs/tutorial/18_memory_writing_and_retention.md#13-retention"
+RETENTION_LAWS = {
+    "1": "relaxation in a curved minimum (κ &gt; 0): the information about the write decreases as e<sup>−2κt</sup>",
+    "2": "diffusion along a direction with κ = 0, such as the phase of a limit cycle: the information decreases as 1/t",
+    "3": "activation over a barrier ΔV between stored states, at the Kramers rate, proportional to "
+         "e<sup>−ΔV/k<sub>B</sub>T</sup>",
+}
+
+# mechanisms in preparation: studied in the tutorial or in the literature on memory, not yet derivation targets with a
+# certified law. docs/ROADMAP.md lists the same items.
+PLANNED = [
+    {"id": "frustrated-loops", "name": "frustrated loops", "group": "memory: writing a state",
+     "law": "excess energy per bond 1 − cos(Φ/N) for N equal rotor bonds with mismatch Φ",
+     "exists": "the structural prediction and <code>memory loops</code>: 91 loops of genes, spins and rotors behave as "
+               "predicted, and rotor frustration agrees with 1 − cos(Φ/N) to 3 × 10<sup>−12</sup>",
+     "missing": "a derivation target with its letters, and a browser engine for networks",
+     "tutorial": "docs/tutorial/17_memory_predictions.md#4-tests-on-many-loops-and-networks"},
+    {"id": "retention-rewriting", "name": "retention against rewriting", "group": "memory: retention",
+     "law": "the ratio of the retention time to the writing time depends only on the work E<sub>w</sub> of the write: "
+            "it grows as ln E<sub>w</sub> in a curved minimum, linearly along a zero mode and as "
+            "e<sup>E<sub>w</sub>/k<sub>B</sub>T</sup> behind a barrier",
+     "exists": "the memory card computes the ratio for each writing protocol",
+     "missing": "a target in which the write of bounded work is a letter, and its comparison across fields",
+     "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#14-relation-between-retention-and-writing-times"},
+    {"id": "hopf-onset", "name": "onset of oscillation (Hopf)", "group": "memory: phase",
+     "law": "ż = (μ + iω)z − |z|<sup>2</sup>z: an amplitude proportional to √μ; under a slow sweep of μ the onset is "
+            "delayed (Neishtadt, 1987)",
+     "exists": "FieldBridge locates Hopf bifurcations and reports them where they stop a write, as in the ring of "
+               "three repressors",
+     "missing": "the reduction to the complex amplitude and a certified law"},
+    {"id": "kuramoto", "name": "synchronization of a population (Kuramoto)", "group": "memory: phase",
+     "law": "oscillators with a symmetric, unimodal density g of natural frequencies synchronize above the coupling "
+            "K<sub>c</sub> = 2/(π g(0)) (Kuramoto, 1984)",
+     "exists": "the phase reduction and the law of locking of one oscillator (Module 11)",
+     "missing": "a carrier for populations of oscillators",
+     "tutorial": "docs/tutorial/26_memory_phase_locking.md"},
+    {"id": "return-point", "name": "return-point memory", "group": "memory: writing a state",
+     "law": "rate-independent hysteresis: the state returns to the same configuration when the field returns to an "
+            "earlier extremum, and it is set by the sequence of extrema (Sethna et al., 1993; Keim et al., 2019)",
+     "exists": "nothing yet",
+     "missing": "a specification of rate-independent elements (hysterons) driven without thermal noise"},
+]
+
 SHORT = {
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
     "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",

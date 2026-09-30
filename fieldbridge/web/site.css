@@ -154,7 +154,12 @@ section { padding: 44px 0 20px; }
 #mechanisms .mech.seen rect { stroke: var(--ink); stroke-dasharray: 4 3; }
 #mechanisms .mech.next rect { stroke: var(--slot); stroke-width: 2.4; stroke-dasharray: none; }
 #mechanisms .mech.next .glyph { color: var(--slot); }
+#mechanisms .hatch-ground { fill: var(--panel); }
+#mechanisms .hatch-line { stroke: var(--rule-strong); stroke-width: 1.4; }
+#mechanisms .mech.absent rect { fill: url(#absent-hatch); }
+#mechanisms .mech .absent-label { font: 600 9.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; fill: var(--muted); }
 #mechanisms .mech.current rect { fill: var(--ink); stroke: var(--ink); stroke-dasharray: none; }
+#mechanisms .mech.current .absent-label { fill: var(--panel); }
 #mechanisms .mech.current .name, #mechanisms .mech.current .sub { fill: var(--panel); }
 #mechanisms .mech.current .glyph { color: var(--panel); }
 #mechanisms .mech.preview rect { fill: color-mix(in srgb, var(--accent) 14%, var(--panel)); stroke: var(--accent); stroke-width: 3; }
@@ -292,8 +297,25 @@ section { padding: 44px 0 20px; }
 .material .m-text b { font-family: var(--serif); font-size: 16px; font-weight: 600; line-height: 1.25; }
 .material .m-field { font-size: 12.5px; color: var(--faint); }
 .material .m-question { font-size: 13.5px; color: var(--ink); }
-.material .m-facts { font-size: 12.5px; color: var(--muted); }
+.material .m-facts { font-size: 12.5px; color: var(--muted); margin: 0; padding: 0 12px 6px; }
 .material .m-card { font-size: 12.5px; padding: 0 12px 10px; }
+.law-link { text-decoration-style: dotted; text-underline-offset: 2px; }
+.memory-laws { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 10px 14px; margin: 0 0 16px; font-size: 14px; max-width: 110ch; }
+.memory-laws p { margin: 4px 0; }
+.memory-laws ul { margin: 4px 0 6px; padding-left: 18px; }
+.memory-laws li b { font-weight: 600; margin-right: 4px; }
+.absent-tag { font: 600 10.5px var(--mono); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); border: 1px dashed var(--rule-strong); border-radius: 6px; padding: 0 6px; }
+
+/* mechanisms in preparation */
+.planned-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 12px; }
+.planned-card { background: var(--panel); border: 1.5px dashed var(--rule-strong); border-radius: 12px; padding: 12px 14px; font-size: 14px; }
+.planned-head { display: flex; gap: 10px; align-items: center; margin-bottom: 6px; }
+.planned-head .glyph { color: var(--muted); }
+.planned-head h3 { font-size: 17px; }
+.planned-law { margin: 4px 0 8px; }
+.planned-card dl { margin: 0; display: grid; gap: 2px; }
+.planned-card dt { font: 600 11px var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); margin-top: 4px; }
+.planned-card dd { margin: 0; color: var(--muted); }
 
 /* contribute and sources */
 .contribute-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 20px; }

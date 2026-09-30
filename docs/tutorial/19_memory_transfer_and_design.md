@@ -57,7 +57,7 @@ python3 -B -m fieldbridge memory attach --from examples/memory/colloid_patch.jso
 
 | Entry (`attach.json`) | Value | Interpretation |
 | --- | --- | --- |
-| `changed` | empty | The signature is kept: reciprocal couplings, a scale control, discrete states written by a field, activated retention (Law 3), no oscillation |
+| `changed` | empty | The signature is kept: reciprocal couplings, a scale control, discrete states written by a field, activated retention ([Law 3](18_memory_writing_and_retention.md#13-retention)), no oscillation |
 | `carrier_and_material.carrier` | period $\pi \to 2\pi$ | Apolar rods are replaced by polar dipoles |
 | `carrier_and_material.reflect_to_align` | median 1.25 (range 0.50–7.5) $\to$ 3 | The capillary ratio $5(r_0/r)^4 : 4$ depends on the distance; the dipolar ratio is fixed at $3:1$ |
 

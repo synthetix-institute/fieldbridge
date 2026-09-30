@@ -1004,7 +1004,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
         law_info.update(record_implementation_sha256=record_file.get("implementation_sha256"),
                         current_implementation_sha256=_memory_hash(), record_versions=record_file.get("versions"))
     return {"schema": SCHEMA, "slots": reg.SLOTS, "classes": reg.CLASSES, "classes_short": reg.CLASS_SHORT,
-            "start": start, "mechanisms": mechanisms, "materials": materials,
+            "start": start, "mechanisms": mechanisms, "materials": materials, "absent": reg.CLASS_ABSENT,
+            "retention_laws": {"link": reg.M4_RETENTION, "laws": reg.RETENTION_LAWS}, "planned": reg.PLANNED,
             "nodes": records, "edges": edges, "sequences": sequences, "atlas": atlas,
             "codiscovery": codiscovery_summary(records), "boundary": BOUNDARY, "law": law_info,
             "provenance": {"memory_implementation_sha256": _memory_hash(), "versions": _versions()}}

@@ -163,7 +163,7 @@ quadratic term is non-zero, so a state written by the threshold field leaves sta
 | Stable states (`card.states.count`) | 4 | Two pairs; turning every rod by $\pi/2$ maps a state onto its partner (`structure.symmetries`) |
 | Write point along $\lambda$ | none | A control that only scales the landscape cannot create or remove a state |
 | Threshold field (`card.threshold`) | $h = 6.28$ | A uniform field toward state 2 removes state 1 |
-| Retention (`card.loss_law`, `card.hold`) | Law 3; no loss within 300 time units | Activated escape between stored states; the retention time exceeds the simulated interval |
+| Retention (`card.loss_law`, `card.hold`) | Law 3; no loss within 300 time units | Activation over the barrier between stored states; the retention time exceeds the simulated interval |
 | Field $0.4\times$ threshold at $\lambda = 0.6$ | accuracy 0.05 | Below the threshold the field must wait for an activated crossing |
 | Field $1.5\times$ threshold at $\lambda = 0.6$ | accuracy 1.00; rewriting time 0.37; ratio of retention to rewriting time $> 800$ | Above the threshold the field removes the barrier; the ratio is a lower bound because the retention time is censored |
 | Field $0.4\times$ threshold while $\lambda$ rises from 0.05 to 0.6 | accuracy 1.00 | The weak field acts while the barriers are low |

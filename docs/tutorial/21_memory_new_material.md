@@ -62,7 +62,7 @@ The command computes one card for each example in `examples/memory` and repeats 
 | adaptive network, two equal tubes | symmetric write to a distant state (subcritical pitchfork) | 2 | Law 3, activation |
 | adaptive network, unequal tubes | one-sided write (fold); symmetric at a cusp | 2 | Law 3, activation |
 
-The classes describe the models; none of them is a failed calculation. A fold, a subcritical write or a single
+The retention laws are defined in [Module 4, Section 1.3](18_memory_writing_and_retention.md#13-retention). The classes describe the models; none of them is a failed calculation. A fold, a subcritical write or a single
 state is a property of the material as modelled, and Modules 4–6 show what each implies for writing and
 retention.
 

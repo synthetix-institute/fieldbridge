@@ -67,14 +67,14 @@ def test_every_tutorial_link_points_to_a_section():
         h = heading.strip().lower()
         h = re.sub(r"[^\w\- ]", "", h)
         return h.replace(" ", "-")
-    for n in reg.NODES:
-        if not n.get("tutorial"):
-            continue
-        path, _, anchor = n["tutorial"].partition("#")
+    links = [n["tutorial"] for n in reg.NODES if n.get("tutorial")]
+    links += [p["tutorial"] for p in reg.PLANNED if p.get("tutorial")] + [reg.M4_RETENTION]
+    for link in links:
+        path, _, anchor = link.partition("#")
         text = (ROOT / path).read_text(encoding="utf-8")
         if anchor:
             slugs = {slug(line.lstrip("#")) for line in text.splitlines() if line.startswith("#")}
-            assert anchor in slugs, (n["id"], anchor)
+            assert anchor in slugs, (link, anchor)
 
 
 def test_texts_are_filled_from_facts_and_a_missing_fact_is_an_error():
@@ -169,6 +169,14 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
     assert files <= named and len(files) == 21
     assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
+    # the outcomes without memory or without a rotation are marked, the retention laws explained, the planned listed
+    assert data["absent"] == reg.CLASS_ABSENT and set(reg.CLASS_ABSENT) <= set(reg.CLASSES)
+    assert [reg.CLASS_ABSENT[k][0] for k in ("single-state", "neutral-cycles", "conserved", "obstructed")] == [
+        "no memory", "no memory", "no rotation", "no rotation"]
+    assert sorted(data["retention_laws"]["laws"]) == ["1", "2", "3"]
+    assert [q["id"] for q in data["planned"]] == ["frustrated-loops", "retention-rewriting", "hopf-onset", "kuramoto",
+                                                   "return-point"]
+    assert all(q["law"] and q["exists"] and q["missing"] for q in data["planned"])
 
 
 def test_every_mechanism_opens_on_a_realization_of_its_class():

@@ -59,7 +59,10 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          mechanism: element('m-name').textContent, changes: text('slots'),
                          reference: I.reference(), legend: text('view-legend'),
                          text: text('consequence-text'), derivation: text('derivation'), axis: I.axis(),
-                         memory: text('memory-summary') + ' | ' + text('memory-groups'),
+                         memory: text('memory-summary') + ' | ' + text('memory-groups'), laws: text('memory-laws'),
+                         memoryHtml: element('memory-summary').innerHTML + element('memory-groups').innerHTML,
+                         absent: (element('mechanisms').innerHTML.match(/class="mech absent"/g) || []).length,
+                         planned: text('planned-grid'),
                          selected: element('now-name').textContent + ' | ' + text('now-where')});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {

@@ -45,11 +45,21 @@ def test_the_page_opens_on_a_mechanism_written_without_a_field(data_file, tmp_pa
 
 
 def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
-    memory = scenario(data_file, [{"do": "look"}], tmp_path)[0]["memory"]
+    first = scenario(data_file, [{"do": "look"}], tmp_path)[0]
+    memory = first["memory"]
     assert memory.startswith("2 materials from 2 fields. Retention: 2 activation between stored states (Law 3)")
     for name in ("pitchfork normal form", "Stoner-Wohlfarth particle", "symmetric write (supercritical pitchfork)",
                  "2 materials", "How is a bit written and retained at a supercritical pitchfork?"):
         assert name in memory, name
+    # every mention of a retention law links to its definition, and the three laws are explained beside the materials
+    assert first["memoryHtml"].count('class="law-link"') == 3 and "18_memory_writing_and_retention.md#13-retention" in first["memoryHtml"]
+    assert "Law 1 relaxation in a curved minimum" in first["laws"] and "Law 3 activation over a barrier" in first["laws"]
+    # the map hatches the outcomes without memory or without a rotation: one state, conserved, several frequencies
+    assert first["absent"] == 3
+    # the mechanisms in preparation
+    for name in ("frustrated loops", "retention against rewriting", "onset of oscillation (Hopf)",
+                 "synchronization of a population (Kuramoto)", "return-point memory", "What is missing"):
+        assert name in first["planned"], name
 
 
 def test_one_change_of_the_normal_form_gives_another_mechanism(data_file, tmp_path):

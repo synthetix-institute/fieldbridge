@@ -225,7 +225,11 @@
     const fields = new Set(ids.map(id => S.nodes[id].field)), laws = {};
     ids.forEach(id => { const l = S.nodes[id].facts.loss || 'not calculated'; laws[l] = (laws[l] || 0) + 1; });
     $('memory-summary').innerHTML = `${ids.length} materials from ${fields.size} fields. Retention: `
-      + Object.entries(laws).sort((a, b) => b[1] - a[1]).map(([l, n]) => `<span class="law"><b>${n}</b> ${esc(l)}</span>`).join('');
+      + Object.entries(laws).sort((a, b) => b[1] - a[1]).map(([l, n]) => `<span class="law"><b>${n}</b> ${M.lawLinked(l)}</span>`).join('');
+    const R = S.retention_laws;
+    if (R) $('memory-laws').innerHTML = `<p>A stored state is lost by one of three laws, set by the form of the landscape at the state (<a href="${repo(R.link)}" target="_blank" rel="noopener">Module 4, Section 1.3 ↗</a>):</p><ul>`
+      + Object.entries(R.laws).map(([n, text]) => `<li><b>Law ${n}</b> ${text}</li>`).join('')
+      + `</ul><p>These are laws of retention. The writes have laws of their own, whose constants are the same in every field (<a href="#codiscovery">One mechanism in different fields</a>), and a written pattern in a field is lost by the laws of the retention cards on the map.</p>`;
     const groups = [];
     ids.forEach(id => { const k = S.nodes[id].class, g = groups.find(x => x.k === k); if (g) g.ids.push(id); else groups.push({k, ids: [id]}); });
     const tile = id => {
@@ -235,14 +239,26 @@
       const states = f.states != null && !String(f.loss || '').startsWith('no stable state') ? `${f.states_text || f.states} stable state${f.states === 1 ? '' : 's'}` : '';
       return `<article class="material" data-class="${r.class}">
         <button type="button" class="material-open" data-open="${id}" aria-label="Open ${esc(strip(r.name))} in the instrument">${thumb}
-          <span class="m-text"><b>${r.name}</b><span class="m-field">${esc(r.field)}</span>${r.question ? `<span class="m-question">${esc(r.question)}</span>` : ''}
-          <span class="m-facts">${states ? esc(states) + ' · ' : ''}${esc(f.loss || '')}</span></span>
-        </button>${card ? `<a class="m-card" href="${esc(card)}" target="_blank" rel="noopener">memory card ↗</a>` : ''}</article>`;
+          <span class="m-text"><b>${r.name}</b><span class="m-field">${esc(r.field)}</span>${r.question ? `<span class="m-question">${esc(r.question)}</span>` : ''}</span>
+        </button>
+        <p class="m-facts">${states ? esc(states) + ' · ' : ''}${M.lawLinked(f.loss || '')}</p>
+        ${card ? `<a class="m-card" href="${esc(card)}" target="_blank" rel="noopener">memory card ↗</a>` : ''}</article>`;
     };
+    const absent = S.absent || {};
     box.innerHTML = groups.map(g => `<div class="memory-group" data-class="${g.k}">
-        <h3>${M.glyph(g.k, 'small')}${esc(S.classes[g.k] || g.k)}<span class="muted">${g.ids.length} material${g.ids.length === 1 ? '' : 's'}</span></h3>
+        <h3>${M.glyph(g.k, 'small')}${esc(S.classes[g.k] || g.k)}${absent[g.k] ? `<span class="absent-tag" title="${esc(absent[g.k][1])}">${esc(absent[g.k][0])}</span>` : ''}<span class="muted">${g.ids.length} material${g.ids.length === 1 ? '' : 's'}</span></h3>
         <div class="memory-grid">${g.ids.map(tile).join('')}</div></div>`).join('');
     box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
+  }
+  // ---------------------------------------------------------------------------------------- mechanisms in preparation
+  function planned() {
+    const M = window.FieldBridgeMechanisms, items = S.planned || [];
+    if (!items.length) { $('planned').hidden = true; return; }
+    $('planned-grid').innerHTML = items.map(p => `<article class="planned-card" data-planned="${p.id}">
+        <div class="planned-head">${M.glyph(p.id)}<div><p class="card-label">${esc(p.group)}</p><h3>${esc(p.name)}</h3></div></div>
+        <p class="planned-law">${p.law}</p>
+        <dl><dt>What exists</dt><dd>${p.exists}${p.tutorial ? ` (<a href="${repo(p.tutorial)}" target="_blank" rel="noopener">tutorial ↗</a>)` : ''}</dd>
+        <dt>What is missing</dt><dd>${p.missing}</dd></dl></article>`).join('');
   }
   function sourcesTable() {
     const order = Object.keys(S.mechanisms);
@@ -257,7 +273,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    definitions(); sequences(); realizations(); memory();
+    definitions(); sequences(); realizations(); memory(); planned();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);

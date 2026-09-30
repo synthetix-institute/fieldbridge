@@ -71,7 +71,7 @@ by a cubic; the quadratic term vanishes, as for a symmetric pitchfork.*
 | Unstable direction (`...events[0].mode`) | $(0.707, -0.707)$ | Writing raises one concentration and lowers the other |
 | Rate of change of $\kappa$ (`...events[0].kappa_slope`) | $-0.25$ per unit $\alpha$ | The instability develops linearly in $\alpha$ beyond the write point |
 | Swept write (`...events[0].write_law`) | measured $0.82 \pm 0.02$, predicted $0.80$ | The accuracy law of the symmetric pitchfork applies to the toggle |
-| Retention law (`card.loss_law`) | activated escape between stable states (Law 3) | A barrier separates the states; noise causes rare transitions |
+| Retention law (`card.loss_law`) | activation between stored states ([Law 3](18_memory_writing_and_retention.md#13-retention)) | A barrier separates the states; noise causes rare transitions |
 | Writing protocols (`card.writes`) | field $0.4\times$ threshold at fixed $\alpha$: 0.19; field $1.5\times$ threshold: 0.99; field $0.4\times$ threshold while $\alpha$ is swept: 0.91 | See Section 5 |
 | Agreement (`comparison.all_consistent`) | `true` | Every structural prediction agrees with the calculation |
 

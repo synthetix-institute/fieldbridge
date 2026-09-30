@@ -23,7 +23,7 @@ $$
 \langle \delta\phi^2 \rangle = 2 D_\phi\, t ,
 $$
 
-so a written phase shift is lost by Law 2, as $1/t$, and not exponentially.
+so a written phase shift is lost by [Law 2](18_memory_writing_and_retention.md#13-retention), as $1/t$, and not exponentially.
 
 A phase can be written in two ways:
 

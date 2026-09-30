@@ -18,7 +18,7 @@ Time enters a realization $I_{\mathrm{real}} = ((\Omega,\Xi);\,C,\,R,\,P;\,A)$ i
 | --- | --- | --- | --- |
 | Order of the evolution | the closure $C$ | Information about a write can only decrease; the loss laws | 4, 8 |
 | Order of the operations of a protocol | the protocol $P$ | Operations that do not commute leave a result that depends on their order | — |
-| A phase coordinate | a limit cycle of $\Omega$ | Information stored in the phase is retained along a zero mode (Law 2) | 6 |
+| A phase coordinate | a limit cycle of $\Omega$ | Information stored in the phase is retained along a zero mode ([Law 2](18_memory_writing_and_retention.md#13-retention)) | 6 |
 
 The direction of the first role does not come from the equations of motion. A magnetic field breaks
 time-reversal symmetry, and a closed system in a magnetic field still conserves information. Information about a

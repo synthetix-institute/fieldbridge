@@ -24,7 +24,7 @@ Each prediction in a report names its rule, the structural input it used, and th
 | A symmetry that reverses a mode (an involution, or a cyclic symmetry of even order) | A symmetric state that loses stability along a reversed mode does so at a pitchfork, without a second tuned parameter; a weak bias selects the written state | Equivariant bifurcation theory |
 | No symmetry | One-sided writes at folds; a symmetric write requires one additional tuned parameter (a cusp) | Codimension counting |
 | A cyclic symmetry of odd order only | No pitchfork of the symmetric state; it loses stability in a Hopf bifurcation or at a fold | |
-| A continuous symmetry (a direction along which the drift does not change) | A family of states along a zero mode: Law 2; retention not protected by a barrier | Goldstone |
+| A continuous symmetry (a direction along which the drift does not change) | A family of states along a zero mode: [Law 2](18_memory_writing_and_retention.md#13-retention); retention not protected by a barrier | Goldstone |
 | Rotor bonds that are pure reflections, on a network whose loops are all even | A staggered rotation of the two sublattices is a zero mode | Holonomy of the transports |
 | The control multiplies the whole drift | The control changes no state, only the depth of the landscape relative to the noise | |
 | Bond transports around a loop | The loop can satisfy all bonds only if the composition has a fixed point; for $N$ equal rotor bonds with mismatch $\Phi$, excess energy per bond $1 - \cos(\Phi/N)$ | Toulouse; Harary; loop mismatch |

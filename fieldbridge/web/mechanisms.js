@@ -23,6 +23,12 @@
     'exponential-loss': AXES + '<path d="M5 6 C11 22 18 26 44 26.5"/>',
     'power-loss': '<path class="axis" d="M4 28 H44"/><path class="faint" d="M15 27.5 C19.5 27.5 21 5 24 5 C27 5 28.5 27.5 33 27.5"/><path d="M4 27 C13 26 16 17 24 17 C32 17 35 26 44 27"/>',
     'convention': '<path d="M4 25 L9 22 L13 24 L18 17 L22 19 L27 12 L31 14 L36 8 L40 9 L44 5"/><path class="faint" d="M4 25 L9 24 L13 26 L18 21 L22 23 L27 19 L31 21 L36 17 L40 19 L44 16"/>',
+    // mechanisms in preparation
+    'frustrated-loops': '<path class="faint" d="M11 25 L24 6 L37 25 Z"/><path d="M5 21 L17 29"/><path d="M18 7 L30 5"/><path d="M31 29 L43 21"/>',
+    'retention-rewriting': AXES + '<path d="M5 26 C18 25 30 18 44 5"/><path class="faint" d="M5 26 C14 20 24 16 44 14"/>',
+    'hopf-onset': '<ellipse class="faint" cx="24" cy="16" rx="17" ry="11"/><path d="M24 16 c2 -1 4 1 2 3 c-3 2 -7 -1 -5 -5 c3 -4 10 -2 10 4 c0 6 -8 9 -13 5"/>',
+    'kuramoto': '<ellipse class="faint" cx="24" cy="16" rx="16" ry="12"/><circle class="dot" cx="38" cy="12" r="2.3"/><circle class="dot" cx="39.6" cy="17.5" r="2.3"/><circle class="dot" cx="35" cy="7" r="2.3"/><circle class="dot" cx="37" cy="23" r="2.3"/><circle class="dot faint" cx="9" cy="21" r="2.3"/>',
+    'return-point': AXES + '<path d="M6 26 C22 26 24 6 43 6"/><path class="faint" d="M43 6 C27 6 25 26 6 26"/><path d="M18 20 C25 17 28 14 33 12 C27 16 24 18 18 20"/>',
   };
   function glyph(klass, cls = '') {
     return `<svg class="glyph ${cls}" viewBox="0 0 48 32" aria-hidden="true" focusable="false">${GLYPHS[klass] || GLYPHS['single-state']}</svg>`;
@@ -105,16 +111,22 @@
         + `<title>A change of the ${esc(names)}: ${esc(S.classes[l.a])} ↔ ${esc(S.classes[l.b])}</title></g>`;
     }).join('');
     const cards = present.map(k => {
-      const p = at(k), c = counts(S, k), m = S.mechanisms[k];
-      const sub = c.fields ? `${c.n} in ${c.fields} field${c.fields === 1 ? '' : 's'}` : `${c.n} realization${c.n === 1 ? '' : 's'}`;
-      return `<g class="mech" data-class="${k}" tabindex="0" role="button" aria-label="${esc(S.classes[k])}: ${esc(strip(m.text || ''))}">
+      const p = at(k), c = counts(S, k), m = S.mechanisms[k], absent = (S.absent || {})[k], narrow = layout === NARROW;
+      const count = c.fields ? `${c.n} in ${c.fields} field${c.fields === 1 ? '' : 's'}` : `${c.n} realization${c.n === 1 ? '' : 's'}`;
+      // an outcome without the mechanism of its group is hatched and labelled: on the wide map in a third line, on the
+      // narrow one before the count
+      const sub = absent && narrow ? `${absent[0]} · ${count}` : count, lift = absent && !narrow ? 5 : 0;
+      return `<g class="mech${absent ? ' absent' : ''}" data-class="${k}" tabindex="0" role="button" aria-label="${esc(S.classes[k])}${absent ? `, ${esc(absent[0])}` : ''}: ${esc(strip(m.text || ''))}">
         <rect x="${p.x - CARD.w / 2}" y="${p.y - CARD.h / 2}" width="${CARD.w}" height="${CARD.h}" rx="12"/>
-        <svg x="${p.x - 24}" y="${p.y - CARD.h / 2 + (layout === NARROW ? 5 : 9)}" width="48" height="32" viewBox="0 0 48 32" class="glyph">${GLYPHS[k] || ''}</svg>
-        <text class="name${(S.classes_short[k] || k).length > 16 ? ' long' : ''}" x="${p.x}" y="${p.y + (layout === NARROW ? 13 : 16)}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
-        <text class="sub" x="${p.x}" y="${p.y + (layout === NARROW ? 29 : 33)}" text-anchor="middle">${esc(sub)}</text>
-        <title>${esc(S.classes[k])}. ${esc(strip(m.text || ''))} Canonical form: ${esc(strip(m.canonical || ''))}. ${c.n} realization${c.n === 1 ? '' : 's'}${c.fields ? ` in ${c.fields} field${c.fields === 1 ? '' : 's'}` : ''}.</title></g>`;
+        <svg x="${p.x - 24}" y="${p.y - CARD.h / 2 + (narrow ? 5 : 9) - lift}" width="48" height="32" viewBox="0 0 48 32" class="glyph">${GLYPHS[k] || ''}</svg>
+        <text class="name${(S.classes_short[k] || k).length > 16 ? ' long' : ''}" x="${p.x}" y="${p.y + (narrow ? 13 : 16) - lift}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
+        <text class="sub" x="${p.x}" y="${p.y + (narrow ? 29 : 33) - lift}" text-anchor="middle">${esc(sub)}</text>
+        ${absent && !narrow ? `<text class="absent-label" x="${p.x}" y="${p.y + 40}" text-anchor="middle">${esc(absent[0])}</text>` : ''}
+        <title>${esc(S.classes[k])}${absent ? ` (${esc(absent[0])}: ${esc(absent[1])})` : ''}. ${esc(strip(m.text || ''))} Canonical form: ${esc(strip(m.canonical || ''))}. ${c.n} realization${c.n === 1 ? '' : 's'}${c.fields ? ` in ${c.fields} field${c.fields === 1 ? '' : 's'}` : ''}.</title></g>`;
     }).join('');
-    svg.innerHTML = fam + `<g class="links">${lines}</g><g class="mechs">${cards}</g>`;
+    const hatch = '<defs><pattern id="absent-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
+      + '<rect class="hatch-ground" width="7" height="7"/><path class="hatch-line" d="M0 0 V7"/></pattern></defs>';
+    svg.innerHTML = hatch + fam + `<g class="links">${lines}</g><g class="mechs">${cards}</g>`;
     svg.querySelectorAll('.mech').forEach(g => {
       const go = () => {
         const I = window.FieldBridgeInstrument, m = S.mechanisms[g.dataset.class];
@@ -163,5 +175,15 @@
     if (svg && svg.parentElement && window.ResizeObserver)
       new ResizeObserver(() => { const narrow = svg.parentElement.clientWidth < 640; if (narrow !== (layout === NARROW)) draw(); }).observe(svg.parentElement);
   });
-  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links};
+  /** A text that names a law of retention, with every '(Law N ...)' linked to its definition (Module 4, Section 1.3)
+   *  and explained on hover. The text is escaped. */
+  function lawLinked(text) {
+    const S = window.FIELDBRIDGE_SITE, R = S && S.retention_laws;
+    const html = esc(text || '');
+    if (!R) return html;
+    const href = (S.repo || 'https://github.com/synthetix-institute/fieldbridge') + '/blob/main/' + R.link;
+    return html.replace(/\(Law ([123])([^)]*)\)/g, (all, n, rest) => R.laws[n]
+      ? `(<a class="law-link" href="${href}" target="_blank" rel="noopener" title="Law ${n}: ${esc(strip(R.laws[n].replace(/<sup>/g, '^').replace(/<\/?su[bp]>/g, '')).replace(/&gt;/g, '>').replace(/&lt;/g, '<'))}">Law ${n}</a>${rest})` : all);
+  }
+  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links, lawLinked};
 })();

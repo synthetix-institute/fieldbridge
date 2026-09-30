@@ -354,7 +354,7 @@
         known(name, v);
       }
       if (f.operating_param) known('operating point', `${symbol(f.operating_param)} = ${fmt(f.operating_value)} (letter C)`);
-      known('retention', f.loss);
+      known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
       if (state.noise > 0 && state.protocol !== 'drive') live('bath', `D = ${fmt(state.noise, 3)}`);
       if (scene && scene.driveResult) live('drive', scene.driveResult);
     } else if (rec.family === 'field') {

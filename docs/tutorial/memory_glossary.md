@@ -39,7 +39,7 @@ follow the companion manuscript *Principles of material memory*.
 | --- | --- |
 | Retention time | The time after the writing field is removed at which the stored state is still identified with probability 0.9. |
 | Writing time | The time under a field of bounded strength after which the new state is identified with probability 0.9. |
-| Loss laws | Law 1, relaxation in a curved minimum: information decays as $e^{-2\kappa t}$. Law 2, diffusion along a direction with $\kappa = 0$: as $1/t$. Law 3, activated escape over a barrier: exponentially, at the Kramers rate. |
+| Loss laws | Law 1, relaxation in a curved minimum: information decays as $e^{-2\kappa t}$. Law 2, diffusion along a direction with $\kappa = 0$: as $1/t$. Law 3, activation over a barrier: exponentially, at the Kramers rate. See [Module 4, Section 1.3](18_memory_writing_and_retention.md#13-retention). |
 | Relation between retention and writing times | For a state protected by a barrier and a field of bounded strength, the ratio of retention time to writing time depends only on the work $E_w$ of the field: $\propto e^{E_w/k_BT}$. The barrier and the mobility cancel. The relation does not apply when the landscape changes between writing and retention, or when the state is written at an instability. |
 | Zero mode | A direction along which the energy does not change (a continuous symmetry). A state written along it is not protected by a barrier and is lost by diffusion (Law 2). |
 | Phase memory | Memory in the phase of a limit cycle, which is a zero mode created by the time-translation symmetry of the autonomous dynamics. |
