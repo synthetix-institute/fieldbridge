@@ -8,7 +8,7 @@
    at a fixed control;
 4. use a control calculation to test a structural prediction.
 
-**Prerequisites.** Python 3.9 or later. Terms are defined in the [glossary](memory_glossary.md).
+**Prerequisites.** Python 3.10 or later. Terms are defined in the [glossary](memory_glossary.md).
 **Time.** About 30 minutes.
 
 ```bash

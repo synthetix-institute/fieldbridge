@@ -38,8 +38,10 @@ field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repress
 switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
 of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
 [Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
-(R). A map of thirteen mechanisms shows which component joins which mechanisms; a table lists the realizations of each
-mechanism by field.
+(R). Under the expression, a map of thirteen mechanisms, each with its drawing, shows which component joins which
+mechanisms, and the selected mechanism is shown beside the expression. After a change the realization it came from is
+drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
+realizations of each mechanism by field.
 
 Every realization on the page is a specification in `examples/` or one change of one, and every change is checked to
 alter only the component it names ([site_data.py](fieldbridge/site_data.py), the realizations and changes in
@@ -49,7 +51,8 @@ that [the tests](tests/test_site_engines.py) compare with the Python calculation
 
 | Section of the page | Content |
 | --- | --- |
-| Changing one component of a mechanism | The map of mechanisms and the single-component changes between them; the expression of the current realization with the verified changes of each component, each named by the mechanism it reaches; the dynamics and the calculated consequences |
+| Expression and map of mechanisms | The realization expression, the selected mechanism with its drawing, the map of mechanisms with the single-component changes between them, and the chain of changes made |
+| Changing one component of a mechanism | The expression of the current realization with the verified changes of each component, each named by the mechanism it reaches; the dynamics, drawn against the realization before the change, and the calculated consequences |
 | Guided sequences | From the pitchfork normal form to other mechanisms; from a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
 | One mechanism in many fields | The canonical forms and law constants of the four targets, one curve or point per realization |
 | Realizations by mechanism and field | Every realization in the row of its mechanism and the group of its field, with its source; a selected realization opens in the instrument |
@@ -58,10 +61,11 @@ that [the tests](tests/test_site_engines.py) compare with the Python calculation
 python3 -B -m fieldbridge demo --out-dir build/site
 ```
 
-writes `build/site/index.html` in about five minutes on a laptop. The law constants (the constants of the swept write
-and of the delayed switch, and the half-width of phase locking) take about twenty minutes of simulation; they are read
-from [docs/site/law_constants.json](docs/site/law_constants.json), which `demo --law --save-law-record` recomputes, and
-are shown only for specifications that have not changed since.
+writes `build/site/index.html` in about ten minutes on a laptop. The law constants (the constants of the swept write
+and of the delayed switch, and the half-width of phase locking) take about an hour of simulation, most of it the
+25,600 trajectories of each swept write; they are read from
+[docs/site/law_constants.json](docs/site/law_constants.json), which `demo --law --save-law-record` recomputes, and are
+shown only for specifications that have not changed since.
 
 ## Materials and contributions
 
@@ -219,13 +223,14 @@ calculations. The small route-and-fiber fingerprint used here is not the
 
 ## Tutorial
 
-The [tutorial](docs/tutorial/index.md) has a reading path for each purpose:
-the physical construction (an Itô correction, an interacting spin), memory in
-materials (nine modules, from a first memory card to one mechanism derived in
-models from different fields), the language of mechanisms on quantum carriers,
-paper collections, and the evaluation of the code. Worked calculations include
-an input, the expected output, a change to try, and the functions and tests
-responsible for the result.
+The [tutorial](docs/tutorial/index.md) starts from two entry points: the
+language of mechanisms on quantum carriers, and memory in materials (eleven
+modules, from a first memory card to one mechanism derived in models from
+different fields). Further reading paths cover the construction from specified
+equations (an Itô correction, an interacting spin), paper collections, and the
+evaluation of the code. Worked calculations include an input, the expected
+output, a change to try, and the functions and tests responsible for the
+result.
 
 ## Repositories and implementation
 

@@ -131,7 +131,7 @@ with its source; another contributor can then write the specification.
 
 | Contribution | Where to start |
 | --- | --- |
-| A mechanism derived in models from different fields | [Module 9](docs/tutorial/23_memory_codiscovery.md) and `fieldbridge/memory/codiscovery.py`: a target is a chain of verified transformations, the obstruction at each step, and invariants of the end point |
+| A mechanism derived in models from different fields | [Modules 9 to 11](docs/tutorial/23_memory_codiscovery.md) and `fieldbridge/memory/codiscovery.py`: a target is a chain of verified transformations, the obstruction at each step, and invariants of the end point |
 | A new carrier or analysis | `fieldbridge/memory/`, with tests in `tests/test_memory_constructor.py` |
 | A quantum carrier for the language of mechanisms | [Chapter 24](docs/tutorial/24_spin_language.md), `fieldbridge/quantum/` and `examples/quantum/` |
 | Retrieval, calculation and field packs | [Extensions](docs/tutorial/12_reproduction_and_discovery.md) and [adding a field](docs/NEW_FIELD.md) |
