@@ -67,6 +67,7 @@ DELAY_CONSTANT = 1.0187929716474710  # -a1', the first zero of Ai' (checked agai
 DELAY_RATES = tuple(float(r) for r in 10.0 ** -np.arange(3.0, 7.01, 0.5))
 DELAY_FLOOR = 5e-7  # accuracy of the delay constant set by the finite differences of the canonical scale and the solver
 DELAY_SOLVER = "LSODA"  # switches to an implicit method where the transverse modes are stiff (rotor patches)
+REFINE_PASSES = 4  # root searches for a fold, each started where the previous one stopped without converging
 LETTERS = {"S": "symmetry", "C": "continuation", "W": "write field", "R": "reduction", "U": "unfolding",
            "K": "canonical form", "L": "law"}
 # the slots of the identity ((Omega, Xi); C, R, P; A) on which each transformation acts, and how
@@ -379,7 +380,12 @@ def _is_fold(nf: Dict) -> bool:
 
 def refine_fold(real: Realization, param: str, q, v: float) -> Optional[Tuple[np.ndarray, float]]:
     """The fold point from F = 0 and det J = 0, started from a state next to it on its branch. The determinant is
-    divided by the product of the other eigenvalues, so that its residual is the critical eigenvalue."""
+    divided by the product of the other eigenvalues, so that its residual is the critical eigenvalue.
+
+    The root search can stop before it converges, when its last iterations improve the residual too little; it is
+    then restarted from the point it reached. Whether the first search stops early depends on rounding and so on the
+    platform: for the rotor patch it did on one machine, with a residual of 4e-10 that displaced the fold by 9e-9 in
+    canonical units, and not on another."""
     from scipy.optimize import root
     q = np.asarray(q, float)
     n = q.size
@@ -392,7 +398,12 @@ def refine_fold(real: Realization, param: str, q, v: float) -> Optional[Tuple[np
             res = np.concatenate([real.F(y[:n], **over), [np.linalg.det(an.jacobian(real, y[:n], over)) / others]])
         return res if np.all(np.isfinite(res)) else np.full(n + 1, 1e3)
 
-    sol = root(eqs, np.concatenate([q, [v]]), method="hybr", options={"xtol": 1e-13})
+    y = np.concatenate([q, [v]])
+    for _ in range(REFINE_PASSES):
+        sol = root(eqs, y, method="hybr", options={"xtol": 1e-13})
+        if sol.success or not np.all(np.isfinite(sol.x)):
+            break
+        y = sol.x
     if not np.all(np.isfinite(sol.x)) or np.max(np.abs(sol.fun)) > 1e-8 \
             or real.carrier.distance(sol.x[:n], q) > 0.25 * an.base_length(real):
         return None
@@ -439,10 +450,10 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
     state crosses the position of the static fold (s = 0). In canonical units mu = r t, and the crossing is at
     mu = |a1'| r^(2/3) plus corrections in powers of r^(1/3). An error delta of the located fold, in canonical units,
     shifts every crossing by the same mu and adds delta r^(-2/3) to t0 r^(1/3): a term that grows at slow rates and,
-    left out, biases an extrapolation to r = 0. How well the fold is located depends on the platform: in one
-    computation of the record of the web page the fold of the rotor patch had delta = 9e-9, and the extrapolation
-    without the term was off by 7e-4. The constant is therefore fitted with this term (delay_constant). Each sweep
-    starts on the occupied branch at mu = -tau r^(2/3)."""
+    left out, biases an extrapolation to r = 0. The root search of refine_fold leaves a delta that depends on the
+    model and on the rounding of the machine, between 1e-13 and 1e-10 for the rotor patch; at the slowest rate 1e-10
+    adds 5e-6. The constant is therefore fitted with this term (delay_constant). Each sweep starts on the occupied
+    branch at mu = -tau r^(2/3)."""
     from scipy.integrate import solve_ivp
     vec, w = np.asarray(canon["mode"], float), np.asarray(canon["left_mode"], float)
     a2, k = canon["a2"], canon["mu_per_unit_parameter"]
@@ -485,7 +496,8 @@ def delay_constant(rates: Sequence[float], constants: Sequence[float]) -> Dict[s
 
     def fit(powers, keep=slice(None)):
         A = np.array([e[keep] ** p for p in powers]).T
-        return dict(zip(powers, np.linalg.lstsq(A, c[keep], rcond=None)[0]))
+        norm = np.linalg.norm(A, axis=0)  # e^-2 and e^4 differ by up to fourteen orders; columns of unit norm
+        return dict(zip(powers, np.linalg.lstsq(A / norm, c[keep], rcond=None)[0] / norm))
 
     order = int(min(4, e.size - 4))
     powers = tuple(range(order + 1)) + (-2,)
