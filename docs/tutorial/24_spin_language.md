@@ -219,6 +219,10 @@ a time. If a single term's removal leaves su(2), it names that term.
 | chain of Chapter 14 | su(3), dimension 8 | none | the bonds 3 and 4 violate Eq. (3), which requires equal bonds for three spins |
 | heteronuclear spins | dimension 6 | none | two spins that rotate at different Larmor frequencies: two rotations, not one |
 
+In these four realizations the observable also leaves Eq. (2): its closure (Chapter 11) has more than three
+operators, and the signal has two or more frequencies. A derivation that stops at A does not by itself show this.
+Exercise 1 gives a Hamiltonian with an algebra of dimension 6 for which Eq. (2) still holds.
+
 A term quadratic in $\mathbf J$ is the typical obstruction. The collective Ising interaction of Chapter 14,
 $Q = \tfrac{\lambda}{2}(M^2 - N)$ with $M = \sum_j Z_j = 2J_z$, is of this kind: $Q = 2\lambda J_z^2 - \lambda N/2$. On
 three spins driven together (the `collective` carrier) it enlarges the algebra from dimension 3 to 19. Within a
@@ -227,7 +231,7 @@ this is why the exchange chain and $Q$ could be combined in Chapter 14.
 
 ## 7. The same language in the memory modules
 
-| | This chapter (spins) | Memory ([Modules 5 and 9](19_memory_transfer_and_design.md)) |
+| | This chapter (spins) | Memory ([Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md)) |
 | --- | --- | --- |
 | carrier | a Hilbert space, or one sector of it | the states of a material: concentrations, angles, conductances |
 | mechanism detached | su(2), rate, angle | the memory signature: kind of write, retention law, symmetries |
@@ -252,9 +256,16 @@ prevents it. Attachment carries the mechanism to a carrier where it has not yet 
 
 <details><summary>Answers</summary>
 
-1. No. The algebra grows to dimension 6: the operators $X_0$, $X_1$, $Y_0Y_1$, $Y_0Z_1$, $Z_0Y_1$ and $Z_0Z_1$
-   close, and the constructor names $h\,X_1$ as the obstruction. A field on the second spin does not commute with the
-   correlation $Z_0Z_1$ of the first spin with the second.
+1. The derivation stops, but the law of $X_0$ survives. $H$ and $X_0$ generate an algebra of dimension 6, spanned
+   by $X_0$, $X_1$, $Y_0Y_1$, $Y_0Z_1$, $Z_0Y_1$ and $Z_0Z_1$, and the constructor names $h\,X_1$ as the obstruction:
+   $H$ and the observable no longer lie in one su(2). The six operators form two triples. $Z_0Z_1$, $X_1$ and
+   $Z_0Y_1$ close as an su(2) that contains $H$. $X_0$, $Y_0Z_1$ and $Y_0Y_1$ contain the observable, and $i[H,\cdot]$
+   carries them into one another. The closure of $X_0$ in the sense of Chapter 11 therefore still has three
+   operators, which move with the single frequency 2.236, and the exact signal is that of Section 3 to $10^{-10}$:
+   Eq. (2) holds with the same rate and angle. The condition tested by the letter A is sufficient for Eq. (2) and
+   not necessary. A field on both spins, $H = g\,Z_0Z_1 + h\,(X_0 + X_1)$, does break the law: the closure of $X_0$
+   then has five operators and two frequencies, 2.000 and 2.828
+   (`test_a_larger_algebra_changes_the_signal_only_when_the_closure_of_the_observable_grows`).
 2. $j = 5/2$. The tunnelling is 1.0 and the energy difference 0.5, as for four atoms. The rate and the angle do not
    depend on the number of atoms, and only the representation changes.
 3. $X_0$ flips the first spin and changes $M$ by $\pm 2$. It connects sectors in which $Q$ has different values, so

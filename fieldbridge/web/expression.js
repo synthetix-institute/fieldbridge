@@ -43,6 +43,7 @@
     state.drive = {on: false, amp: 5, nu: 0.5};
     state.side = null;
     state.message = via || null;
+    state.ref = via && via.from ? via.from : null;   // the realization the change came from: drawn as the reference
     state.seen.add(rec.class);
     render(via && via.slot);
     listeners.forEach(f => f(state));
@@ -50,8 +51,9 @@
   function applyEdge(edge, reverse, text) {
     const to = reverse ? edge.from : edge.to;
     if ((reverse ? edge.to : edge.from) !== state.node) return false;
+    const from = state.node;
     state.path.push({edge: edge.id, reverse: !!reverse, node: to});
-    load(to, {edge, reverse: !!reverse, slot: edge.slot, text});
+    load(to, {edge, reverse: !!reverse, slot: edge.slot, text, from});
     return true;
   }
   function start(id, text) {
@@ -100,8 +102,19 @@
       `derived from <a href="${repo(rec.base_spec)}" target="_blank" rel="noopener">${esc(rec.base_spec.split('/').pop())}</a>`;
     $('r-source').innerHTML = src + (rec.tutorial ? ` · <a href="${repo(rec.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : '');
     $('r-class').innerHTML = M.glyph(rec.class, 'small') + esc(S.classes_short[rec.class] || rec.class);
-    const head = document.querySelector('.mechanism-head');
-    if (head && state.shownClass && state.shownClass !== rec.class && !reduced) { head.classList.remove('flash'); void head.offsetWidth; head.classList.add('flash'); }
+    // the selection at the top of the page: the drawing of the mechanism beside the expression, and the symbol of
+    // the component that was changed
+    $('now-glyph').innerHTML = M.glyph(rec.class, 'big');
+    $('now-name').textContent = S.classes[rec.class] || rec.class;
+    $('now-where').innerHTML = rec.universal ? `${rec.name}, written without a field` : `${rec.name} · ${esc(rec.field)}`;
+    document.querySelectorAll('.formula .sym').forEach(b => {
+      b.classList.remove('changed');
+      if (changedSlot && b.dataset.slot === changedSlot && !reduced) { void b.offsetWidth; b.classList.add('changed'); }
+    });
+    const head = document.querySelector('.mechanism-head'), now = $('now');
+    if (state.shownClass && state.shownClass !== rec.class && !reduced) {
+      for (const el of [head, now]) if (el && el.classList) { el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); }
+    }
     state.shownClass = rec.class;
     $('m-glyph').innerHTML = M.glyph(rec.class, 'big');
     $('m-name').textContent = S.classes[rec.class] || rec.class;
@@ -273,22 +286,49 @@
     requestAnimationFrame(() => { pending = false; buildScene(S.nodes[state.node]); recompute(); });
   }
 
+  // ---------------------------------------------------------------------------------------- the reference
+  /** True when the visitor has changed a value or switched a term of the current realization. */
+  function isChanged(rec) {
+    const e = rec.engine;
+    const base = rec.family === 'field' ? Object.fromEntries(Object.keys(state.params).map(k => [k, e[k]])) : (e.params || {});
+    return JSON.stringify(state.params) !== JSON.stringify(base) || state.removed.length > 0 || state.active.some(x => !x);
+  }
+  /** What the view is compared with: after a change of values or terms made here, the realization at its listed
+   *  values; after a verified change, the realization it came from. Drawn dashed in every plot where the two are
+   *  comparable, so that a change of mechanism is seen against what it replaced. */
+  function reference(rec) {
+    if (isChanged(rec)) return {rec, self: true, label: 'the listed values of this realization'};
+    const from = state.ref && S.nodes[state.ref];
+    return from ? {rec: from, self: false, label: `${strip(from.name)}, the realization before the change`} : null;
+  }
+  const strip = text => String(text).replace(/<[^>]+>/g, '');
+  const sameCarrier = (a, b) => a.kind_dynamics === b.kind_dynamics && a.carrier.kind === b.carrier.kind
+    && (a.carrier.period || 0) === (b.carrier.period || 0) && JSON.stringify(a.variables) === JSON.stringify(b.variables);
+  const refCache = {};
+  const cached = (key, make) => (refCache.key === key ? refCache.value : (refCache.key = key, refCache.value = make()));
+
   // ---------------------------------------------------------------------------------------- consequences
   function recompute() {
     const rec = S.nodes[state.node], f = rec.facts, e = rec.engine;
     const lead = $('consequence-lead'), text = $('consequence-text'), facts = [];
     const live = (k, v) => facts.push([k, v, true]), known = (k, v) => facts.push([k, v, false]);
     let leadText = S.classes[rec.class] || rec.class, body = '';
-    const base = rec.family === 'field' ? Object.fromEntries(Object.keys(state.params).map(k => [k, e[k]])) : (e.params || {});
-    const changed = JSON.stringify(state.params) !== JSON.stringify(base) || state.removed.length || state.active.some(x => !x);
+    const changed = isChanged(rec);
     if (rec.family === 'unitary') {
       const a = U.analyze(e, state.params, state.active);
       analysis = a;
       leadText = S.classes[a.klass];
       if (a.reached) body = `The Hamiltonian and the observable generate su(2): a three-vector of expectations rotates at |Ω| = ${fmt(a.rate)} about an axis at θ = ${fmt(a.theta, 3)}° to R, and the measured signal follows cos²θ + sin²θ cos |Ω|t.`;
       else if (a.klass === 'conserved') body = 'R commutes with H. Its closure has dimension 1: the measured value is conserved.';
-      else body = `The commutators of H and R span an algebra of dimension ${a.dim}, not a rotating three-vector.` + (a.cause != null ? ` Without the term ${MML.math(MML.term(e.terms[a.cause].tree, e.terms[a.cause].operator, e.terms[a.cause].hc))} the algebra is su(2).` : '');
+      else {
+        const nf = a.frequencies.length;
+        body = `H and R generate an algebra of dimension ${a.dim}, larger than su(2): the derivation of a single rotation stops.`
+          + (nf === 1 ? ` The closure of R still has ${a.closure} operators, which move with one frequency: the signal is that of a rotating three-vector.`
+            : ` The closure of R has ${a.closure} operators, which move with ${nf} frequencies: the signal is not that of one rotation.`)
+          + (a.cause != null ? ` Without the term ${MML.math(MML.term(e.terms[a.cause].tree, e.terms[a.cause].operator, e.terms[a.cause].hc))} the algebra is su(2).` : '');
+      }
       live('closure of R', a.closure); live('dimension of the algebra', a.dim);
+      live('frequencies of R', a.frequencies.length ? `${a.frequencies.length}: ${a.frequencies.slice(0, 4).map(v => fmt(v, 4)).join(', ')}${a.frequencies.length > 4 ? ', …' : ''}` : 'none');
       if (a.reached) { live('rate |Ω|', fmt(a.rate, 4)); live('angle θ', fmt(a.theta, 4) + '°'); }
       known('carrier', `${f.carrier}${f.sector !== f.hilbert ? `; ${f.sector} of ${f.hilbert} states` : ''}`);
       if (f.rep) known('representation', f.rep);
@@ -383,10 +423,17 @@
       omega = Fm.map(Fa => U.inner(H0, Fa) / U.inner(Fa, Fa));
     }
     const law = a.reached && state.prep === 'top' ? U.rabi(a.theta, a.rate) : null;
-    return {kind: 'unitary', rows, tMax, law, omega, period, speed: tMax / 9,
-            legend: `Blue: exact evolution on the carrier. ${law ? 'Dashed: the Rabi law cos²θ + sin²θ cos |Ω|t. ' : ''}${e.frame ? `Axes: the frame of the rotation${e.frame_from !== rec.id ? ' of ' + esc(S.nodes[e.frame_from].name.replace(/<[^>]+>/g, '')) : ''}, R vertical. Drag the sphere to turn it.` : ''}`,
+    const src = reference(rec);
+    let ref = null;
+    if (src && src.rec.family === 'unitary') {
+      const re = src.rec.engine, start = src.self ? psi0 : U.topEigenstate(U.observable(re));
+      ref = {label: src.label, signal: U.signal(re, re.params || {}, re.terms.map(() => true), start, times).map(r => [r.t, r.f])};
+    }
+    return {kind: 'unitary', rows, tMax, law, omega, period, speed: tMax / 9, ref,
+            legend: `Blue: exact evolution on the carrier. ${law ? 'Dashed: the Rabi law cos²θ + sin²θ cos |Ω|t. ' : ''}${refLegend(ref)}${e.frame ? `Axes: the frame of the rotation${e.frame_from !== rec.id ? ' of ' + esc(S.nodes[e.frame_from].name.replace(/<[^>]+>/g, '')) : ''}, R vertical. Drag the sphere to turn it.` : ''}`,
             title: 'The expectation of the rotating three-vector, and the measured signal'};
   }
+  const refLegend = ref => ref ? `Grey, dashed: ${esc(ref.label)}. ` : '';
   function dissipativeScene(rec) {
     const e = rec.engine, dim = e.variables.length, params = {...state.params};
     const f = D.field(e, params, state.removed);
@@ -460,14 +507,26 @@
     sc.tMax = sc.tMax || (dim === 1 ? 30 : 40);
     sc.dt = Math.min(0.05, (e.dt || 0.01) * 5);
     // side: bifurcation diagram along the control for memory realizations
+    let values = null;
     if (control && !rec.facts.scale_control && rec.class !== 'oscillation' && rec.class !== 'neutral-cycles') {
-      const [lo, hi] = e.control.range, values = Array.from({length: 41}, (_, i) => lo + (hi - lo) * i / 40);
+      const [lo, hi] = e.control.range;
+      values = Array.from({length: 41}, (_, i) => lo + (hi - lo) * i / 40);
       sc.scan = D.scan(e, params, state.removed, control, values, 10);
       sc.range = [lo, hi];
     }
+    // V is zero at the middle of the range, so that two landscapes are compared at one point
+    const centred = V => { const v0 = V[Math.floor(V.length / 2)]; return V.map(v => v - v0); };
     if (dim === 1) {
       sc.xs = Array.from({length: 241}, (_, i) => (torus ? -Math.PI : sc.xr[0]) + ((torus ? 2 * Math.PI : sc.xr[1] - sc.xr[0]) * i / 240));
-      sc.V = D.potential1D(e, params, state.removed, sc.xs);
+      sc.V = centred(D.potential1D(e, params, state.removed, sc.xs));
+    }
+    const src = reference(rec);
+    if (src && src.rec.family === 'dissipative' && sameCarrier(e, src.rec.engine) && e.kind_dynamics !== 'rotor') {
+      const re = src.rec.engine, rp = re.params || {};
+      sc.ref = {label: src.label, states: (re.states || []).map(q => q.slice())};
+      if (dim === 1) sc.ref.V = centred(D.potential1D(re, rp, [], sc.xs));
+      if (values && re.control && re.control.name === control)
+        sc.ref.scan = cached(`${rec.id}|${src.rec.id}|${control}`, () => D.scan(re, rp, [], control, values, 10));
     }
     sc.title = e.kind_dynamics === 'rotor' ? 'One configuration of the rotors, and the overlap with the stored states' :
       dim === 1 ? (torus ? 'Directions of the preparations, and the energy along the angle' : 'Preparations in the energy landscape, and the states along the control') :
@@ -483,6 +542,7 @@
   }
   function legendFor(rec, sc) {
     const parts = [];
+    if (sc.ref) parts.push(refLegend(sc.ref).trim());
     if (sc.attractors.points.length) parts.push('Green circles: stable states calculated for the current values.');
     if (state.protocol === 'sweep') parts.push('Shaded: the sweep of the control with the bias.');
     if (state.protocol === 'pulse') parts.push('Shaded: the field pulse.');
@@ -496,8 +556,12 @@
     const e = {...rec.engine, ...state.params}, big = largeLattice(e);
     const times = logspace(-1, e.d === 1 ? 4.5 : 2.8, 90), snr = F.snr(big, times);
     const guide = e.conserved ? times.filter(t => t >= 10).map(t => [t, snr[times.findIndex(x => x >= 100)] * Math.pow(t / 100, rec.facts.exponent_value)]) : null;
-    return {kind: 'field', e, times, snr, guide, tMax: 3000, t: 0.1, initial: F.profile(e, 0), speed: 1,
-            title: 'The trace of a write along the lattice, and the signal it leaves', legend: `Left: the mean trace on the lattice of the specification (${e.L}${e.d === 2 ? '²' : ''} sites); dashed, at t = 0. Right: signal-to-noise ratio of the best measurement of the write on ${big.L}${big.d === 2 ? '²' : ''} sites, where the size of the lattice plays no role${e.conserved ? `; dashed, t^${rec.facts.exponent}` : ''}.`};
+    const src = reference(rec);
+    let ref = null;
+    if (src && src.rec.family === 'field')
+      ref = {label: src.label, snr: cached(`${rec.id}|${src.rec.id}|field`, () => F.snr(largeLattice(src.rec.engine), times))};
+    return {kind: 'field', e, times, snr, guide, ref, tMax: 3000, t: 0.1, initial: F.profile(e, 0), speed: 1,
+            title: 'The trace of a write along the lattice, and the signal it leaves', legend: `${refLegend(ref)}Left: the mean trace on the lattice of the specification (${e.L}${e.d === 2 ? '²' : ''} sites); dashed, at t = 0. Right: signal-to-noise ratio of the best measurement of the write on ${big.L}${big.d === 2 ? '²' : ''} sites, where the size of the lattice plays no role${e.conserved ? `; dashed, t^${rec.facts.exponent}` : ''}.`};
   }
   function stochasticScene(rec) {
     const e = rec.engine, mu = state.params.mu, s = state.params.sigma, random = D.rng(9), T = 10, dt = 0.02;
@@ -516,11 +580,12 @@
       const k = Math.min(scene.rows.length - 1, Math.round(scene.t / scene.tMax * (scene.rows.length - 1)));
       const row = scene.rows[k], trail = scene.rows.slice(Math.max(0, k - 140), k + 1).filter(r => r.m).map(r => r.m);
       V.sphere(main, {m: row.m, trail, omega: scene.omega, view: state.view, caption: row.m ? '' : 'no rotation frame for this realization'});
-      V.signal(side, {tMax: scene.tMax, law: scene.law, cursor: scene.t, curves: [{pts: scene.rows.map(r => [r.t, r.f])}], yLabel: 'measured R, relative to its top value'});
+      V.signal(side, {tMax: scene.tMax, law: scene.law, cursor: scene.t, curves: [{pts: scene.rows.map(r => [r.t, r.f])}], yLabel: 'measured R, relative to its top value',
+                      reference: scene.ref && scene.ref.signal});
       return;
     }
     if (scene.kind === 'dissipative') {
-      const e = rec.engine, dim = scene.dim;
+      const e = rec.engine, dim = scene.dim, ref = scene.ref;
       if (e.kind_dynamics === 'rotor') {
         const q = scene.particles[0];
         V.rotors(main, {positions: e.positions || e.variables.map((_, i) => [i, 0]), angles: q, m: e.graph ? e.graph.m : 2, bonds: (e.links || []).map(l => [l.source, l.target]), caption: `t = ${fmt(scene.t, 3)}`});
@@ -533,12 +598,15 @@
         const torus = e.carrier.kind === 'torus', wrapA = x => Math.atan2(Math.sin(x), Math.cos(x));
         if (torus) {
           const psi = e.params.psi != null ? state.params.psi : null, h = state.params.h;
-          V.circle(main, {angles: scene.particles.map(q => q[0]), states: scene.attractors.points.map(p => p.q[0]), field: psi != null ? Math.PI / 2 - psi : null, h, fieldLabel: 'field', easyAxis: psi != null, caption: `t = ${fmt(scene.t, 3)}`});
+          V.circle(main, {angles: scene.particles.map(q => q[0]), states: scene.attractors.points.map(p => p.q[0]), field: psi != null ? Math.PI / 2 - psi : null, h, fieldLabel: 'field', easyAxis: psi != null, caption: `t = ${fmt(scene.t, 3)}`,
+                          reference: ref && ref.states.map(q => q[0])});
         } else {
-          V.landscape(main, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => q[0]), states: scene.attractors.points.map(p => p.q[0]), xLabel: e.variables[0], yLabel: 'V = −∫ drift'});
+          V.landscape(main, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => q[0]), states: scene.attractors.points.map(p => p.q[0]), xLabel: e.variables[0], yLabel: 'V = −∫ drift',
+                             reference: ref && ref.V});
         }
-        if (scene.scan && state.side !== 'energy') V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: torus ? 'angle' : e.variables[0]});
-        else if (torus) V.landscape(side, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => wrapA(q[0])), states: scene.attractors.points.map(p => wrapA(p.q[0])), xLabel: 'angle', yLabel: 'energy'});
+        if (scene.scan && state.side !== 'energy') V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: torus ? 'angle' : e.variables[0],
+                                                                         reference: ref && ref.scan});
+        else if (torus) V.landscape(side, {xs: scene.xs, V: scene.V, balls: scene.particles.map(q => wrapA(q[0])), states: scene.attractors.points.map(p => wrapA(p.q[0])), xLabel: 'angle', yLabel: 'energy', reference: ref && ref.V});
         else V.series(side, {tMax: scene.tMax, cursor: scene.t, curves: scene.trails.slice(0, 8).map(tr => ({pts: tr.map((q, k) => [k * scene.dt * scene.record, q[0]])})), window: scene.window});
         return;
       }
@@ -549,15 +617,18 @@
         V.phaseDrift(side, {phases: scene.drive.phases, tMax: scene.drive.T, cursor: scene.t, locked: scene.drive.locked, caption: scene.drive.locked ? 'locked' : 'slipping'});
         return;
       }
-      V.phasePlane(main, {xr: scene.xr, yr: scene.yr, trails: tr, equilibria: scene.attractors.points.map(p => Object.assign([p.q[0], p.q[1]], {stable: true})), xLabel: e.variables[0], yLabel: e.variables[1]});
-      if (scene.scan) V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: `${e.variables[0]} − mean of the others`});
+      V.phasePlane(main, {xr: scene.xr, yr: scene.yr, trails: tr, equilibria: scene.attractors.points.map(p => Object.assign([p.q[0], p.q[1]], {stable: true})), xLabel: e.variables[0], yLabel: e.variables[1],
+                          reference: ref && ref.states.map(q => [q[0], q[1]])});
+      if (scene.scan) V.bifurcation(side, {scan: scene.scan, range: scene.range, current: state.params[e.control.name], param: symbol(e.control.name), events: e.events, yLabel: `${e.variables[0]} − mean of the others`,
+                                           reference: ref && ref.scan});
       else V.series(side, {tMax: scene.tMax, cursor: scene.t, curves: e.variables.map((v, i) => ({label: v, pts: scene.trails[0].map((q, k) => [k * scene.dt * scene.record, q[i]])})), window: scene.window});
       return;
     }
     if (scene.kind === 'field') {
       const t = scene.t, phi = F.profile(scene.e, t);
       V.profile(main, {phi, initial: scene.initial, caption: `t = ${fmt(t, 3)}`});
-      V.loglog(side, {t: scene.times, v: scene.snr, guide: scene.guide, cursor: Math.max(scene.times[0], t), note: rec.facts.exponent ? `t^${rec.facts.exponent}` : 'exponential'});
+      V.loglog(side, {t: scene.times, v: scene.snr, guide: scene.guide, cursor: Math.max(scene.times[0], t), note: rec.facts.exponent ? `t^${rec.facts.exponent}` : 'exponential',
+                      reference: scene.ref && scene.ref.snr});
       return;
     }
     if (scene.kind === 'stochastic') {
@@ -644,7 +715,12 @@
     document.addEventListener('visibilitychange', () => { if (document.hidden) cancelAnimationFrame(frame); else if (state.playing) loop(); });
   }
 
+  const shown = () => scene && scene.ref ? {label: scene.ref.label, signal: !!scene.ref.signal, potential: !!scene.ref.V,
+                                           scan: !!scene.ref.scan, snr: !!scene.ref.snr, states: (scene.ref.states || []).length} : null;
+  const refresh = () => { buildScene(S.nodes[state.node]); recompute(); };
+  /** Advance the dynamics by a time of the animation and draw: for tests and for a page that is not displayed. */
+  const step = seconds => { for (let k = 0; k < Math.ceil(seconds / 0.05); k++) advance(0.05); draw(); };
   window.FieldBridgeInstrument = {state, load, start, applyEdge, undo, route, walkTo, setPreparation, byId, out, into,
-                                  onChange: f => listeners.push(f), light};
+                                  onChange: f => listeners.push(f), light, reference: shown, refresh, step};
   document.addEventListener('DOMContentLoaded', setup);
 })();

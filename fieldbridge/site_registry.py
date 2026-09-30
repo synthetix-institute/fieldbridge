@@ -55,8 +55,9 @@ MECHANISMS = {
                   "text": "The observable commutes with the generator: its measured value does not change.",
                   "node": "rotation_axis"},
     "obstructed": {"canonical": "dim 𝔤 &gt; 3",
-                   "text": "The commutators of the generator and the observable span an algebra larger than su(2): "
-                           "no single rotation describes the signal.", "node": "spin1_easy_axis"},
+                   "text": "The generator and the observable generate an algebra larger than su(2): the derivation "
+                           "of a single rotation stops, and the signal generally has several frequencies.",
+                   "node": "spin1_easy_axis"},
     "single-state": {"canonical": "ẋ = −κx, κ &gt; 0",
                      "text": "Every preparation relaxes to one state, and nothing of the preparation is kept.",
                      "node": "pitchfork_below"},
@@ -99,6 +100,8 @@ AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "e
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
 M9 = "docs/tutorial/23_memory_codiscovery.md"
+M10 = "docs/tutorial/25_memory_threshold_write.md"
+M11 = "docs/tutorial/26_memory_phase_locking.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -118,6 +121,9 @@ NODES = [
     {"id": "two_spins_x1", "base": "two_spins", "replace_terms": {1: {"coefficient": "h", "operator": "X1"}},
      "name": "two coupled spins with the field on the second spin", "parent": "two_spins",
      "tutorial": Q_CH24 + "#8-exercises"},
+    {"id": "two_spins_both", "base": "two_spins", "add_terms": [{"coefficient": "h", "operator": "X1"}],
+     "name": "two coupled spins with the field on both spins", "parent": "two_spins",
+     "tutorial": Q_CH24 + "#6-obstructions"},
     # -- the bridge to the magnet
     {"id": "spin1_transverse", "attach": ("two_spins_h0", "spin", 2),
      "name": "spin 1 in a transverse field", "tutorial": Q_CH24 + "#4-attaching-the-rotation-to-the-exchange-chain-of-chapter-14"},
@@ -129,14 +135,14 @@ NODES = [
     {"id": "spin1_atom", "family": "unitary", "spec": "examples/quantum/spin1_atom.json",
      "tutorial": Q_CH24 + "#5-co-discovery-one-rotation-in-five-fields"},
     {"id": "stoner_wohlfarth", "family": "dissipative", "spec": "examples/memory/stoner_wohlfarth.json",
-     "tutorial": M9 + "#7-a-second-target-the-threshold-write"},
+     "tutorial": M10 + "#2-running-the-constructor"},
     {"id": "sw_isotropic", "base": "stoner_wohlfarth", "drift": {"phi": "h*cos(phi + psi)"},
      "potential": "-h*sin(phi + psi)", "name": "damped classical spin without anisotropy",
      "question": "Does a damped magnetic moment without anisotropy keep its direction?",
-     "tutorial": M9 + "#7-a-second-target-the-threshold-write"},
+     "tutorial": M10 + "#2-running-the-constructor"},
     {"id": "sw_oblique", "base": "stoner_wohlfarth", "params": {"psi": pi / 9},
      "name": "Stoner-Wohlfarth particle, field at 20° to the easy axis",
-     "tutorial": M9 + "#7-a-second-target-the-threshold-write"},
+     "tutorial": M10 + "#2-running-the-constructor"},
     {"id": "sw_easy", "base": "stoner_wohlfarth", "params": {"psi": 0.0},
      "name": "Stoner-Wohlfarth particle, field along the easy axis",
      "tutorial": M9 + "#5-where-a-derivation-stops"},
@@ -231,26 +237,26 @@ NODES = [
      "tutorial": "docs/tutorial/19_memory_transfer_and_design.md#2-worked-example-from-capillary-rods-to-point-dipoles"},
     # -- oscillators and phase locking
     {"id": "van_der_pol", "family": "dissipative", "spec": "examples/memory/oscillators/van_der_pol.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "vdp_stiffness", "base": "van_der_pol", "drift": {"y": "mu*(1 - x**2)*y - k*x + bias"},
      "params": {"k": 1.0}, "control": {"name": "k", "range": [0.5, 1.5]},
      "name": "van der Pol oscillator with a modulated stiffness",
      "question": "At which ratio does a modulation of the stiffness lock the van der Pol oscillator?",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "parametron", "family": "dissipative", "spec": "examples/memory/oscillators/parametron.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "brusselator", "family": "dissipative", "spec": "examples/memory/oscillators/brusselator.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "goodwin", "family": "dissipative", "spec": "examples/memory/oscillators/goodwin.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "fitzhugh_nagumo", "family": "dissipative", "spec": "examples/memory/oscillators/fitzhugh_nagumo.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "predator_prey", "family": "dissipative", "spec": "examples/memory/oscillators/predator_prey.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "lotka_volterra", "family": "dissipative", "spec": "examples/memory/oscillators/lotka_volterra.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "josephson", "family": "dissipative", "spec": "examples/memory/oscillators/josephson.json",
-     "tutorial": M9 + "#8-a-third-target-phase-locking"},
+     "tutorial": M11 + "#3-running-the-constructor"},
     # -- fields: conservation, dimension and the shape of the write
     {"id": "field_nonconserved", "family": "field", "spec": "examples/memory/fields/nonconserved_1d.json",
      "tutorial": "docs/tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write"},
@@ -337,11 +343,20 @@ EDGES = [
              "measured value is conserved, and nothing else is needed to predict it. For X<sub>0</sub> the closure "
              "had dimension {from.closure}, X<sub>0</sub> and the correlation Y<sub>0</sub>Z<sub>1</sub>: the same "
              "material requires a different description for a different measurement."},
+    {"id": "spins_field_both", "from": "two_spins", "to": "two_spins_both", "slot": "Omega", "kind": "term",
+     "change": "+ h X<sub>1</sub>",
+     "text": "With a field on the second spin as well, H and X<sub>0</sub> generate an algebra of dimension {dim}, "
+             "and the constructor names {cause} as the term that prevents closure. The closure of X<sub>0</sub> "
+             "grows from {from.closure} to {closure} operators, which move with {frequencies_text} frequencies "
+             "({frequency_list}): the measured signal leaves the Rabi law."},
     {"id": "spins_field_moved", "from": "two_spins", "to": "two_spins_x1", "slot": "Omega", "kind": "term",
      "change": "h X<sub>0</sub> → h X<sub>1</sub>",
-     "text": "A field on the second spin does not commute with the correlation Z<sub>0</sub>Z<sub>1</sub>. The "
-             "algebra grows from 3 to {dim}, and the constructor names {cause} as the term that prevents closure. "
-             "The exact signal leaves the Rabi law."},
+     "text": "With the field on the second spin instead, H and X<sub>0</sub> generate an algebra of dimension "
+             "{dim}, and the derivation of a single rotation stops: the constructor names {cause}. The measured "
+             "X<sub>0</sub> is not changed. Its closure still has {closure} operators, now X<sub>0</sub>, "
+             "Y<sub>0</sub>Z<sub>1</sub> and Y<sub>0</sub>Y<sub>1</sub>, and they move with {frequencies_text} frequency "
+             "({frequency_list}): the signal follows the same law, with the rate and the angle of the two spins. "
+             "That H and the observable lie in one su(2) is sufficient for this law, and not necessary."},
     # the bridge: from the rotation of a spin to a stored magnetization
     {"id": "spins_to_spin1", "from": "two_spins_h0", "to": "spin1_transverse", "slot": "Xi", "kind": "attach",
      "change": "two spins-½ → one spin 1",
@@ -541,9 +556,10 @@ SEQUENCES = [
                   "Z<sub>0</sub>Z<sub>1</sub>: an su(2) made of one magnetization and two correlations. The "
                   "expectation of this three-vector rotates at {rate} about an axis at {theta}° to the observable "
                   "(derivation {word})."},
-         {"edge": "spins_field_moved"},
-         {"edge": "spins_field_moved", "reverse": True,
-          "text": "Returning the field to the first spin restores su(2)."},
+         {"edge": "spins_field_both"},
+         {"edge": "spins_field_both", "reverse": True,
+          "text": "Without the field on the second spin the algebra is su(2) again, and the closure of "
+                  "X<sub>0</sub> has {closure} operators."},
          {"edge": "spins_field_off"},
          {"prepare": "plus_y",
           "text": "Two product states with the same x(0) = 0, the first spin along +y or −y, differ in the "
@@ -693,7 +709,7 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "convention": "convention"}
 SHORT = {
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
-    "two_spins_x1": "field on spin 1", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
+    "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
     "nv_centre": "NV centre", "spin1_atom": "spin-1 atom", "stoner_wohlfarth": "magnet, 90°",
     "sw_isotropic": "damped moment", "sw_oblique": "magnet, 20°", "sw_easy": "magnet, 0°",
     "nmr_spin": "nuclear spin", "nmr_chain": "chain of 4", "nmr_bosons": "bosons, 2 wells", "nmr_pair": "pair level",

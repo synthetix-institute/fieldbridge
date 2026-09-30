@@ -29,72 +29,90 @@
   }
 
   // ---------------------------------------------------------------------------------------- the map
-  // columns by family: closed evolution | relaxation and writing | cycles | fields and noise
-  const W = 1256, H = 318, CARD = {w: 136, h: 92};
-  const COL = [78, 230, 392, 544, 696, 858, 1020, 1172], ROW = [78, 222];
-  const PLACE = {
-    'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
-    'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
-    'oscillation': [5, 0], 'neutral-cycles': [5, 1], 'exponential-loss': [6, 0], 'power-loss': [6, 1], 'convention': [7, 0.5],
+  // Two arrangements of the same cards. Wide: columns by family (closed evolution | relaxation and writing | cycles |
+  // fields and noise). Narrow: two columns, placed so that every line joins neighbouring cards and none crosses another.
+  const WIDE = {
+    w: 1330, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1254], row: [78, 222],
+    place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
+            'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
+            'oscillation': [5, 0], 'neutral-cycles': [5, 1], 'exponential-loss': [6, 0], 'power-loss': [6, 1], 'convention': [7, 0.5]},
+    families: [{label: 'closed evolution', from: 0, to: 1}, {label: 'relaxation and writing', from: 2, to: 4},
+               {label: 'cycles', from: 5, to: 5}, {label: 'fields and noise', from: 6, to: 7}],
   };
-  const FAMILIES = [{label: 'closed evolution', from: 0, to: 1}, {label: 'relaxation and writing', from: 2, to: 4},
-                    {label: 'cycles', from: 5, to: 5}, {label: 'fields and noise', from: 6, to: 7}];
-  const at = k => { const [c, r] = PLACE[k]; return {x: COL[c], y: ROW[0] + (ROW[1] - ROW[0]) * r}; };
+  const NARROW = {
+    w: 360, h: 712, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
+    place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1],
+            'subcritical-write': [0, 2], 'symmetric-write': [1, 2], 'threshold-write': [0, 3], 'oscillation': [1, 3],
+            'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6]},
+    families: [],
+  };
+  let layout = WIDE;
+  const at = k => { const [c, r] = layout.place[k]; return {x: layout.col[c], y: layout.row[0] + (layout.row[1] - layout.row[0]) * r}; };
+  const ORDER = Object.keys(WIDE.place);
 
-  /** The single-component changes between classes: {a, b, slots: Set, edges: [...]} with a, b in reading order. */
+  /** The single-component changes between classes: {a, b, slots: [...], edges: [...]} with a, b in reading order. */
   function links(S) {
-    const out = new Map(), keys = Object.keys(PLACE);
+    const out = new Map();
     for (const e of S.edges) {
       const ca = S.nodes[e.from].class, cb = S.nodes[e.to].class;
-      if (ca === cb || !PLACE[ca] || !PLACE[cb]) continue;
-      const [a, b] = keys.indexOf(ca) < keys.indexOf(cb) ? [ca, cb] : [cb, ca], id = a + '|' + b;
-      if (!out.has(id)) out.set(id, {a, b, slots: new Set(), edges: []});
-      out.get(id).slots.add(e.slot); out.get(id).edges.push(e.id);
+      if (ca === cb || !WIDE.place[ca] || !WIDE.place[cb]) continue;
+      const [a, b] = ORDER.indexOf(ca) < ORDER.indexOf(cb) ? [ca, cb] : [cb, ca], id = a + '|' + b;
+      if (!out.has(id)) out.set(id, {a, b, slots: [], edges: []});
+      const l = out.get(id);
+      if (!l.slots.includes(e.slot)) l.slots.push(e.slot);
+      l.edges.push(e.id);
     }
     return [...out.values()];
   }
-  function path(a, b, bend) {
-    const p = at(a), q = at(b), mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
-    const dx = q.x - p.x, dy = q.y - p.y, n = Math.hypot(dx, dy) || 1;
-    const cx = mx - dy / n * bend, cy = my + dx / n * bend;
-    return {d: `M${p.x},${p.y} Q${cx},${cy} ${q.x},${q.y}`, lx: (p.x + 2 * cx + q.x) / 4, ly: (p.y + 2 * cy + q.y) / 4};
+  /** A line from card to card, bent by `bend` perpendicular to it; the label sits on its middle. */
+  function path(a, b, bend, shift = 0) {
+    const p = at(a), q = at(b), dx = q.x - p.x, dy = q.y - p.y, n = Math.hypot(dx, dy) || 1;
+    const ox = -dy / n, oy = dx / n, mx = (p.x + q.x) / 2, my = (p.y + q.y) / 2;
+    const cx = mx + ox * bend, cy = my + oy * bend;
+    return {d: `M${p.x + ox * shift},${p.y + oy * shift} Q${cx + ox * shift},${cy + oy * shift} ${q.x + ox * shift},${q.y + oy * shift}`,
+            lx: (p.x + 2 * cx + q.x) / 4, ly: (p.y + 2 * cy + q.y) / 4};
   }
   function counts(S, klass) {
     const rs = Object.values(S.nodes).filter(r => r.class === klass);
     const fields = new Set(rs.filter(r => !r.universal).map(r => r.field));
-    return {n: rs.length, fields: fields.size, canonical: rs.some(r => r.universal)};
+    return {n: rs.length, fields: fields.size};
   }
   function draw() {
     const S = window.FIELDBRIDGE_SITE, svg = document.getElementById('mechanisms');
     if (!S || !svg) return;
+    layout = (svg.parentElement && svg.parentElement.clientWidth && svg.parentElement.clientWidth < 640) ? NARROW : WIDE;
+    const {w: W, h: H, card: CARD} = layout;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
-    const present = Object.keys(S.mechanisms || {}).filter(k => PLACE[k]);
-    const fam = FAMILIES.map(f => {
-      const x0 = COL[f.from] - CARD.w / 2 - 10, x1 = COL[f.to] + CARD.w / 2 + 10;
+    svg.classList.toggle('narrow', layout === NARROW);
+    const present = Object.keys(S.mechanisms || {}).filter(k => layout.place[k]);
+    const fam = layout.families.map(f => {
+      const x0 = layout.col[f.from] - CARD.w / 2 - 14, x1 = layout.col[f.to] + CARD.w / 2 + 14;
       return `<g class="family"><rect x="${x0}" y="4" width="${x1 - x0}" height="${H - 8}" rx="14"/><text x="${x0 + 12}" y="${H - 14}">${esc(f.label)}</text></g>`;
     }).join('');
     // a line along a row that would cross a card of that row is bent around it: above the upper row, below the lower
-    const crosses = (a, b) => { const [ca, ra] = PLACE[a], [cb, rb] = PLACE[b];
-      return ra === rb && present.some(k => PLACE[k][1] === ra && PLACE[k][0] > Math.min(ca, cb) && PLACE[k][0] < Math.max(ca, cb)); };
-    const lines = links(S).map(l => {
-      const slots = [...l.slots], dir = Math.sign(COL[PLACE[l.b][0]] - COL[PLACE[l.a][0]]) || 1;
-      const around = crosses(l.a, l.b) ? (PLACE[l.a][1] === 0 ? -1 : 1) * dir * 118 : 0;
-      return slots.map((slot, i) => {
-        const bend = around + (i - (slots.length - 1) / 2) * 16, g = path(l.a, l.b, bend);
-        return `<g class="link" data-a="${l.a}" data-b="${l.b}" data-slot="${slot}"><path d="${g.d}"/>`
-          + `<circle cx="${g.lx}" cy="${g.ly}" r="10"/><text x="${g.lx}" y="${g.ly + 4.5}" text-anchor="middle">${esc(S.slots[slot].symbol)}</text>`
-          + `<title>${esc(S.slots[slot].name)}: ${esc(S.classes[l.a])} ↔ ${esc(S.classes[l.b])}</title></g>`;
-      }).join('');
+    const crosses = (a, b) => { const [ca, ra] = layout.place[a], [cb, rb] = layout.place[b];
+      return ra === rb && present.some(k => layout.place[k][1] === ra && layout.place[k][0] > Math.min(ca, cb) && layout.place[k][0] < Math.max(ca, cb)); };
+    const lines = links(S).filter(l => layout.place[l.a] && layout.place[l.b]).map(l => {
+      const dir = Math.sign(at(l.b).x - at(l.a).x) || 1;
+      const around = crosses(l.a, l.b) ? (layout.place[l.a][1] === 0 ? -1 : 1) * dir * 118 : 0;
+      const n = l.slots.length, mid = path(l.a, l.b, around), pw = 18 * n + 4;
+      // one line for each component, side by side; one label for the pair, with the symbol of each component
+      const strokes = l.slots.map((slot, i) => `<path data-slot="${slot}" d="${path(l.a, l.b, around, (i - (n - 1) / 2) * 4).d}"/>`).join('');
+      const symbols = l.slots.map((slot, i) => `<text data-slot="${slot}" x="${mid.lx + (i - (n - 1) / 2) * 18}" y="${mid.ly + 4.5}" text-anchor="middle">${esc(S.slots[slot].symbol)}</text>`).join('');
+      const names = l.slots.map(slot => S.slots[slot].name).join(' or ');
+      return `<g class="link" data-a="${l.a}" data-b="${l.b}" data-slots="${l.slots.join(' ')}"${n === 1 ? ` data-slot="${l.slots[0]}"` : ''}>${strokes}`
+        + `<rect class="tag" x="${mid.lx - pw / 2}" y="${mid.ly - 10}" width="${pw}" height="20" rx="10"/>${symbols}`
+        + `<title>A change of the ${esc(names)}: ${esc(S.classes[l.a])} ↔ ${esc(S.classes[l.b])}</title></g>`;
     }).join('');
     const cards = present.map(k => {
       const p = at(k), c = counts(S, k), m = S.mechanisms[k];
-      const sub = `${c.n} realization${c.n === 1 ? '' : 's'}${c.fields ? ` · ${c.fields} field${c.fields === 1 ? '' : 's'}` : ''}`;
+      const sub = c.fields ? `${c.n} in ${c.fields} field${c.fields === 1 ? '' : 's'}` : `${c.n} realization${c.n === 1 ? '' : 's'}`;
       return `<g class="mech" data-class="${k}" tabindex="0" role="button" aria-label="${esc(S.classes[k])}: ${esc(strip(m.text || ''))}">
         <rect x="${p.x - CARD.w / 2}" y="${p.y - CARD.h / 2}" width="${CARD.w}" height="${CARD.h}" rx="12"/>
-        <svg x="${p.x - 24}" y="${p.y - CARD.h / 2 + 9}" width="48" height="32" viewBox="0 0 48 32" class="glyph">${GLYPHS[k] || ''}</svg>
-        <text class="name" x="${p.x}" y="${p.y + 16}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
-        <text class="sub" x="${p.x}" y="${p.y + 33}" text-anchor="middle">${esc(sub)}</text>
-        <title>${esc(S.classes[k])}. ${esc(strip(m.text || ''))} Canonical form: ${esc(strip(m.canonical || ''))}.</title></g>`;
+        <svg x="${p.x - 24}" y="${p.y - CARD.h / 2 + (layout === NARROW ? 5 : 9)}" width="48" height="32" viewBox="0 0 48 32" class="glyph">${GLYPHS[k] || ''}</svg>
+        <text class="name" x="${p.x}" y="${p.y + (layout === NARROW ? 13 : 16)}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
+        <text class="sub" x="${p.x}" y="${p.y + (layout === NARROW ? 29 : 33)}" text-anchor="middle">${esc(sub)}</text>
+        <title>${esc(S.classes[k])}. ${esc(strip(m.text || ''))} Canonical form: ${esc(strip(m.canonical || ''))}. ${c.n} realization${c.n === 1 ? '' : 's'}${c.fields ? ` in ${c.fields} field${c.fields === 1 ? '' : 's'}` : ''}.</title></g>`;
     }).join('');
     svg.innerHTML = fam + `<g class="links">${lines}</g><g class="mechs">${cards}</g>`;
     svg.querySelectorAll('.mech').forEach(g => {
@@ -128,7 +146,7 @@
     svg.querySelectorAll('.link').forEach(l => {
       const touches = l.dataset.a === here || l.dataset.b === here;
       l.classList.toggle('near', touches);
-      l.classList.toggle('dim', !!lit && l.dataset.slot !== lit);
+      l.classList.toggle('dim', !!lit && !(l.dataset.slots || '').split(' ').includes(lit));
     });
   }
   /** A change under the pointer: its target mechanism is marked on the map. */
@@ -140,6 +158,10 @@
   document.addEventListener('DOMContentLoaded', () => {
     draw();
     window.FieldBridgeInstrument && window.FieldBridgeInstrument.onChange((st, extra) => highlight(extra));
+    // the arrangement follows the width of the frame
+    const svg = document.getElementById('mechanisms');
+    if (svg && svg.parentElement && window.ResizeObserver)
+      new ResizeObserver(() => { const narrow = svg.parentElement.clientWidth < 640; if (narrow !== (layout === NARROW)) draw(); }).observe(svg.parentElement);
   });
   window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links};
 })();

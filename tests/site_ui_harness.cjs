@@ -56,7 +56,9 @@ flush();
 const I = context.FieldBridgeInstrument, text = id => element(id).innerHTML.replace(/<[^>]+>/g, '');
 const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node), lead: text('consequence-lead'),
                          facts: text('facts'), sequence: text('sequence-text'), count: element('path-count').textContent,
-                         mechanism: element('m-name').textContent, changes: text('slots')});
+                         mechanism: element('m-name').textContent, changes: text('slots'),
+                         reference: I.reference(), legend: text('view-legend'),
+                         selected: element('now-name').textContent + ' | ' + text('now-where')});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'start') I.start(step.node);
@@ -66,7 +68,7 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'sequence') context.FieldBridgeSite.begin(step.id);
   if (step.do === 'next') element('sequence-next').click();
   if (step.do === 'prev') element('sequence-prev').click();
-  if (step.do === 'param') { I.state.params[step.name] = step.value; }
+  if (step.do === 'param') { I.state.params[step.name] = step.value; I.refresh(); }
   flush();
   out.push(snapshot());
 }

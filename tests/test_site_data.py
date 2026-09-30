@@ -15,7 +15,8 @@ from fieldbridge import site_registry as reg  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
 FACTS = {
-    "unitary": {"status", "word", "dim", "closure", "carrier", "hilbert", "sector", "rate", "theta", "rep", "residual",
+    "unitary": {"status", "word", "dim", "closure", "frequencies", "frequencies_text", "frequency_list", "carrier", "hilbert", "sector",
+                "rate", "theta", "rep", "residual",
                 "cause", "couplings", "tunnelling", "energy_difference", "pairing_amplitude", "single_particle_energy",
                 "field_x", "field_z", "rabi_frequency", "detuning", "ising_coupling_g", "transverse_field_h"},
     "dissipative": {"states", "states_text", "loss", "write_point", "write_param", "write_kind", "scale_control",

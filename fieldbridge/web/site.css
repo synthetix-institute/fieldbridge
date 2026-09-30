@@ -77,28 +77,42 @@ section { padding: 44px 0 20px; }
 .eyebrow { font-family: var(--mono); font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--faint); margin-bottom: 10px; }
 
 /* hero */
-.hero { padding-top: 40px; }
-.formula { font-family: var(--serif); font-size: clamp(30px, 6.4vw, 66px); line-height: 1.15; margin: 18px 0 20px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .08em; }
+.hero { padding-top: 30px; display: grid; gap: 18px 44px; grid-template-columns: minmax(0, 1fr); grid-template-areas: "left" "map" "intro"; }
+.hero-left { grid-area: left; min-width: 0; }
+.hero .intro { grid-area: intro; }
+.hero-map { grid-area: map; min-width: 0; }
+@media (min-width: 1000px) {
+  .hero { grid-template-columns: minmax(0, .78fr) minmax(0, 1.22fr); grid-template-areas: "left intro" "map map"; align-items: start; }
+  .hero h1 { font-size: clamp(30px, 3vw, 40px); }
+  .hero .formula { font-size: clamp(30px, 3.3vw, 44px); flex-wrap: nowrap; white-space: nowrap; }
+  .hero .intro { max-width: none; }
+}
+.now { display: flex; align-items: center; gap: 14px; margin-top: 6px; padding: 10px 14px; background: var(--panel); border: 1px solid var(--rule); border-left: 4px solid var(--accent); border-radius: 12px; box-shadow: var(--shadow); color: var(--ink); text-decoration: none; }
+.now:hover { border-color: var(--accent); }
+.now.flash { animation: flash 1.4s ease-out; }
+.now-glyph { color: var(--accent); display: flex; flex: none; }
+.now-text { display: grid; min-width: 0; }
+.now-name { font-family: var(--serif); font-weight: 600; font-size: 21px; line-height: 1.25; }
+.now-where { color: var(--muted); font-size: 13.5px; }
+.sym.changed { animation: sym-changed 1.8s ease-out; }
+@keyframes sym-changed { from { background: color-mix(in srgb, var(--slot) 38%, transparent); border-radius: 6px; } to { background: transparent; } }
+.formula { font-family: var(--serif); font-size: clamp(30px, 4.6vw, 56px); line-height: 1.15; margin: 14px 0 12px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 .08em; }
 .formula-lhs { margin-right: .25em; color: var(--muted); }
 .formula sub { font-size: .45em; }
 .sym { background: none; border: 0; padding: 0 .07em; color: var(--slot); border-bottom: .06em solid color-mix(in srgb, var(--slot) 40%, transparent); line-height: 1.05; }
 .sym:hover, .sym.lit { background: color-mix(in srgb, var(--slot) 12%, transparent); border-radius: 6px; }
-.defs > summary { display: none; }
+.defs { margin-bottom: 8px; }
+.defs > summary { cursor: pointer; color: var(--accent); font-size: 14.5px; }
+.defs[open] > summary { margin-bottom: 10px; }
 .definitions { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 10px 22px; margin: 0 0 22px; }
 .definitions div { border-top: 2px solid var(--slot); padding-top: 6px; }
 .definitions dt { font-weight: 600; color: var(--slot); }
 .definitions dt .s { font-family: var(--serif); font-size: 20px; margin-right: 6px; }
 .definitions dd { margin: 2px 0 0; color: var(--muted); font-size: 14px; }
-.intro { display: grid; gap: 12px; margin: 0 0 24px; max-width: 80ch; }
+.intro { display: grid; gap: 12px; margin: 0; max-width: 80ch; align-content: start; }
 .intro p { font-size: 16.5px; line-height: 1.65; }
 .intro .s { font-family: var(--serif); font-size: 1.15em; line-height: 1; color: var(--slot); }
 .intro .intro-note { font-size: 15px; color: var(--muted); }
-/* wide screens: the definitions beside the introduction, so that the instrument starts higher on the page */
-@media (min-width: 1000px) {
-  .hero-grid { display: grid; grid-template-columns: minmax(0, .85fr) minmax(0, 1.15fr); gap: 0 44px; align-items: start; }
-  .hero-grid .definitions { grid-template-columns: repeat(2, minmax(0, 1fr)); margin-bottom: 0; }
-  .hero-grid .intro { margin-bottom: 0; }
-}
 
 /* drawings of the mechanisms */
 .glyph { width: 48px; height: 32px; flex: none; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; overflow: visible; }
@@ -117,14 +131,17 @@ section { padding: 44px 0 20px; }
 
 /* the map of mechanisms */
 .mech-frame { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 6px; margin: 0 0 6px; overflow-x: auto; }
+.hero-map .path { margin-top: 10px; }
 #mechanisms { display: block; width: 100%; min-width: 860px; height: auto; }
+#mechanisms.narrow { min-width: 0; }
 #mechanisms .family rect { fill: var(--panel-2); opacity: .7; }
 #mechanisms .family text { font: 600 10.5px var(--mono); letter-spacing: .08em; text-transform: uppercase; fill: var(--faint); }
 #mechanisms .link path { fill: none; stroke: var(--slot); stroke-width: 1.7; opacity: .4; }
-#mechanisms .link circle { fill: var(--panel); stroke: var(--slot); stroke-width: 1.4; opacity: .7; }
-#mechanisms .link text { font: 600 12.5px var(--serif); fill: var(--slot); opacity: .75; }
-#mechanisms .link.near path { opacity: 1; stroke-width: 2.8; }
-#mechanisms .link.near circle, #mechanisms .link.near text { opacity: 1; }
+#mechanisms .link .tag { fill: var(--panel); stroke: var(--rule-strong); stroke-width: 1.2; }
+#mechanisms .link[data-slot] .tag { stroke: var(--slot); }
+#mechanisms .link text { font: 600 12.5px var(--serif); fill: var(--slot); }
+#mechanisms .link.near path { opacity: 1; stroke-width: 2.6; }
+#mechanisms .link.near .tag { stroke-width: 2; }
 #mechanisms .link.dim { opacity: .15; }
 #mechanisms .mech { cursor: pointer; }
 #mechanisms .mech:focus { outline: none; }
@@ -324,8 +341,6 @@ details.sources summary { cursor: pointer; color: var(--accent); font-size: 14.5
   #sources-table th:nth-child(2), #sources-table td:nth-child(2) { display: none; }
   .m-bar { top: 0; }
   .mrow { grid-template-columns: minmax(0, 1fr); }
-  .defs > summary { display: list-item; cursor: pointer; color: var(--accent); font-size: 15px; margin: 0 0 12px; }
-  .defs[open] > summary { margin-bottom: 10px; }
   .howto { gap: 8px; }
   .howto li { padding: 8px 12px 9px 44px; font-size: 14px; }
   .howto li::before { left: 10px; top: 9px; width: 24px; height: 24px; font-size: 13px; }

@@ -82,6 +82,8 @@ def test_browser_closures_match_the_language(quantum, tmp_path):
         got = run({"op": "unitary_analyze", "engine": rec["engine"]}, tmp_path)
         row = ql.derive_bloch_rotation(ql.load(nodes[nid]["spec"]))
         assert got["closure"] == rec["facts"]["closure"], nid
+        assert len(got["frequencies"]) == rec["facts"]["frequencies"], nid
+        assert np.allclose(got["frequencies"][:6], rec["facts"]["frequency_list"], rtol=1e-5), nid
         assert got["dim"] == row["algebra_dimension"], nid
         assert got["reached"] == (row["status"] == "reached"), nid
         if got["reached"]:
@@ -115,6 +117,30 @@ def test_browser_evolution_is_exact_and_follows_the_rabi_law(quantum, tmp_path):
     # the anisotropy term takes the expectation of J off the sphere
     got = run({"op": "unitary_signal", "engine": records["spin1_easy_axis"]["engine"], "times": [0.0, 1.5]}, tmp_path)
     assert abs(np.linalg.norm(got[0]["m"]) - 1) < 1e-9 and np.linalg.norm(got[1]["m"]) < 0.99
+
+
+@needs_node
+def test_a_larger_algebra_changes_the_signal_only_when_the_closure_of_the_observable_grows(quantum, tmp_path):
+    """With the field moved to the second spin, H and X0 generate an algebra of dimension 6 and the derivation of a
+    rotation stops, but the closure of X0 keeps three operators and the signal is that of the two spins of Chapter
+    11. With the field on both spins the closure has five operators and two frequencies: the law is left."""
+    nodes, records = quantum
+    times = list(np.linspace(0.0, 12.0, 61))
+    f = {nid: np.array([r["f"] for r in run({"op": "unitary_signal", "engine": records[nid]["engine"], "times": times},
+                                             tmp_path)]) for nid in ("two_spins", "two_spins_x1", "two_spins_both")}
+    facts = {nid: records[nid]["facts"] for nid in f}
+    assert [records[n]["class"] for n in f] == ["rotation", "obstructed", "obstructed"]
+    assert (facts["two_spins_x1"]["dim"], facts["two_spins_x1"]["closure"], facts["two_spins_x1"]["frequencies"]) == (6, 3, 1)
+    assert facts["two_spins_x1"]["frequency_list"] == pytest.approx([5 ** 0.5])
+    assert np.max(np.abs(f["two_spins_x1"] - f["two_spins"])) < 1e-10
+    assert (facts["two_spins_both"]["closure"], facts["two_spins_both"]["frequencies"]) == (5, 2)
+    assert np.max(np.abs(f["two_spins_both"] - f["two_spins"])) > 0.5
+    # every other realization of the page with a larger algebra has more than one frequency
+    for nid, rec in records.items():
+        if rec["class"] == "obstructed" and nid != "two_spins_x1":
+            assert rec["facts"]["frequencies"] > 1, nid
+        if rec["class"] == "rotation":
+            assert rec["facts"]["frequencies"] == 1, nid
 
 
 @needs_node

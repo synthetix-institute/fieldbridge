@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parents[1]
 NODE = shutil.which("node")
 pytestmark = pytest.mark.skipif(NODE is None, reason="node is not installed")
 SUBSET = ["pitchfork", "pitchfork_below", "pitchfork_bias", "pitchfork_subcritical", "two_spins", "two_spins_x1",
-          "two_spins_h0", "two_spins_z0", "spin1_transverse", "spin1_easy_axis", "stoner_wohlfarth", "sw_oblique", "sw_easy"]
+          "two_spins_both", "two_spins_h0", "two_spins_z0", "spin1_transverse", "spin1_easy_axis", "stoner_wohlfarth", "sw_oblique", "sw_easy"]
 
 
 @pytest.fixture(scope="module")
@@ -48,9 +48,30 @@ def test_one_change_of_the_normal_form_gives_another_mechanism(data_file, tmp_pa
     got = scenario(data_file, [{"do": "edge", "edge": "pf_below"}, {"do": "undo"}, {"do": "edge", "edge": "pf_bias"},
                                {"do": "undo"}, {"do": "edge", "edge": "pf_subcritical"}], tmp_path)
     assert (got[0]["mechanism"], got[0]["lead"]) == ("single stable state", "one stable state")
+    # the selection is shown beside the expression at the top of the page
+    assert got[0]["selected"] == "single stable state | pitchfork normal form below the transition, written without a field"
     assert got[1]["node"] == "pitchfork"
     assert got[2]["mechanism"] == "one-sided write (fold)"
     assert got[4]["mechanism"] == "write to a distant state (subcritical pitchfork)"
+
+
+def test_a_change_is_drawn_against_the_realization_it_came_from(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "look"}, {"do": "edge", "edge": "pf_bias"}, {"do": "undo"},
+                               {"do": "param", "name": "eps", "value": 0.3},
+                               {"do": "start", "node": "two_spins"}, {"do": "edge", "edge": "spins_field_moved"},
+                               {"do": "start", "node": "spin1_easy_axis"},
+                               {"do": "edge", "edge": "spin1_classical_aniso"}], tmp_path)
+    assert got[0]["reference"] is None                      # nothing was changed yet
+    bias = got[1]["reference"]                              # the landscape and the states along the control before the bias
+    assert bias["label"].startswith("pitchfork normal form") and bias["potential"] and bias["scan"] and bias["states"] == 2
+    assert "before the change" in got[1]["legend"]
+    assert got[2]["reference"] is None                      # undo returns to the realization itself
+    assert got[3]["reference"]["label"].startswith("the listed values") and got[3]["reference"]["potential"]
+    moved = got[5]["reference"]                             # the field moved to the second spin: the algebra is larger,
+    assert got[5]["lead"] == "algebra larger than su(2)"    # and the signal is drawn against that of the rotation it left
+    assert moved["signal"] and moved["label"].startswith("two coupled spins")
+    assert "frequenciesofR1:2.236" in got[5]["facts"].replace(" ", "")   # one frequency: the law of X0 is kept
+    assert got[7]["reference"] is None                      # a spin and a classical direction have no common plot
 
 
 def test_the_two_spins_of_chapter_11_rotate(data_file, tmp_path):

@@ -18,10 +18,9 @@
   function definitions() {
     $('definitions').innerHTML = Object.entries(S.slots).map(([k, s]) =>
       `<div data-slot="${k}"><dt><span class="s">${s.symbol}</span>${esc(s.name)}</dt><dd>${esc(s.definition)}</dd></div>`).join('');
-    // on a phone the definitions are folded under their heading: the introduction names the six components in words
-    const defs = $('defs');
-    if (defs && defs.removeAttribute && matchMedia('(max-width: 700px)').matches) defs.removeAttribute('open');
     document.querySelectorAll('.formula .sym').forEach(b => {
+      const d = S.slots[b.dataset.slot];
+      if (d) b.title = `${d.name}: ${d.definition}`;
       b.addEventListener('mouseenter', () => I().light(b.dataset.slot));
       b.addEventListener('mouseleave', () => I().light(null));
       b.addEventListener('click', () => {

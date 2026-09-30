@@ -57,6 +57,8 @@
     for (const [x, y] of pts) { if (!Number.isFinite(y)) { pen = false; continue; } if (pen) ctx.lineTo(X(x), Y(y)); else ctx.moveTo(X(x), Y(y)); pen = true; }
     ctx.stroke(); ctx.setLineDash([]);
   }
+  const REF = [3, 3];  // the dash of a reference: the realization before a change
+  function ring(ctx, x, y, r, color) { ctx.strokeStyle = color; ctx.lineWidth = 1.3; ctx.setLineDash(REF); ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); ctx.stroke(); ctx.setLineDash([]); }
   function dot(ctx, x, y, r, fill, stroke) { ctx.beginPath(); ctx.arc(x, y, r, 0, 2 * Math.PI); if (fill) { ctx.fillStyle = fill; ctx.fill(); } if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = 1.5; ctx.stroke(); } }
   function label(ctx, text, x, y, color, align = 'left', font = '12px') { ctx.font = font + ' ' + css('--sans'); ctx.fillStyle = color; ctx.textAlign = align; ctx.textBaseline = 'middle'; ctx.fillText(text, x, y); }
   function arrow(ctx, x0, y0, x1, y1, color, width = 2) {
@@ -112,6 +114,7 @@
   function signal(canvas, s) {
     const g = fit(canvas), {ctx, w, h, c} = g;
     const f = frame(g, {x: 0, y: 0, w, h}, [0, s.tMax], [-1.1, 1.1], {xLabel: 't', yLabel: s.yLabel || 'f(t)', yTicks: [-1, 0, 1]});
+    if (s.reference) line(ctx, s.reference, f.X, f.Y, c.faint, 1.6, REF);
     if (s.law) { const pts = []; for (let k = 0; k <= 240; k++) { const t = s.tMax * k / 240; pts.push([t, s.law(t)]); } line(ctx, pts, f.X, f.Y, c.omega, 1.5, [6, 4]); }
     (s.curves || []).forEach((cur, i) => line(ctx, cur.pts.filter(p => p[0] <= (s.cursor ?? Infinity)), f.X, f.Y, cur.color || css(SERIES[i % SERIES.length]), 2));
     if (s.cursor != null) { ctx.strokeStyle = c.faint; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(f.X(s.cursor), f.t); ctx.lineTo(f.X(s.cursor), f.b); ctx.stroke(); }
@@ -123,8 +126,16 @@
   }
   function landscape(canvas, s) {
     const g = fit(canvas), {ctx, w, h, c} = g;
-    const yr = autoRange(s.V, 0.12);
+    // the range follows the current landscape; a reference that leaves it by more than its height is cut, not shown small
+    const lo = Math.min(...s.V), hi = Math.max(...s.V), span = hi - lo || 1;
+    const inside = s.reference ? s.reference.filter(v => v >= lo - span && v <= hi + span) : [];
+    const yr = autoRange(s.V.concat(inside), 0.12);
     const f = frame(g, {x: 0, y: 0, w, h}, [s.xs[0], s.xs[s.xs.length - 1]], yr, {xLabel: s.xLabel || 'x', yLabel: s.yLabel || 'energy', xFormat: s.xFormat});
+    if (s.reference) {
+      ctx.save(); ctx.beginPath(); ctx.rect(f.l, f.t, f.r - f.l, f.b - f.t); ctx.clip();
+      line(ctx, s.xs.map((x, i) => [x, s.reference[i]]), f.X, f.Y, c.faint, 1.6, REF);
+      ctx.restore();
+    }
     line(ctx, s.xs.map((x, i) => [x, s.V[i]]), f.X, f.Y, c.ink, 2);
     const Vat = x => { const i = Math.max(0, Math.min(s.xs.length - 1, Math.round((x - s.xs[0]) / (s.xs[1] - s.xs[0])))); return s.V[i]; };
     (s.states || []).forEach(q => dot(ctx, f.X(q), f.Y(Vat(q)), 5, null, c.good));
@@ -132,8 +143,9 @@
   }
   function bifurcation(canvas, s) {
     const g = fit(canvas), {ctx, w, h, c} = g;
-    const ys = s.scan.flatMap(r => r.points.map(p => p.s));
+    const ys = s.scan.concat(s.reference || []).flatMap(r => r.points.map(p => p.s));
     const f = frame(g, {x: 0, y: 0, w, h}, s.range, autoRange(ys, 0.1), {xLabel: s.param, yLabel: s.yLabel || 'state'});
+    for (const row of s.reference || []) for (const p of row.points) if (p.stable) ring(ctx, f.X(row.v), f.Y(p.s), 3.4, c.faint);
     for (const row of s.scan) for (const p of row.points) dot(ctx, f.X(row.v), f.Y(p.s), p.stable ? 2.8 : 2.2, p.stable ? c.ink : null, p.stable ? null : c.faint);
     (s.events || []).forEach(e => { ctx.strokeStyle = c.a; ctx.setLineDash([2, 3]); ctx.beginPath(); ctx.moveTo(f.X(e.value), f.t); ctx.lineTo(f.X(e.value), f.b); ctx.stroke(); ctx.setLineDash([]); });
     if (s.current != null) { ctx.strokeStyle = c.accent; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(f.X(s.current), f.t); ctx.lineTo(f.X(s.current), f.b); ctx.stroke(); }
@@ -152,6 +164,7 @@
       ctx.globalAlpha = 1;
       const last = tr.pts[tr.pts.length - 1]; if (last) dot(ctx, f.X(last[0]), f.Y(last[1]), 2.2, col);
     });
+    (s.reference || []).forEach(e => ring(ctx, f.X(e[0]), f.Y(e[1]), 8, c.faint));
     (s.equilibria || []).forEach(e => dot(ctx, f.X(e[0]), f.Y(e[1]), 5, e.stable ? c.good : c.panel, e.stable ? null : c.warn));
   }
   function series(canvas, s) {
@@ -173,6 +186,7 @@
       label(ctx, 'easy axis', x1 + 6, y1 + 2, c.muted, 'left', '11px');
     }
     if (s.field != null && s.h) { const [x0, y0] = at(s.field + Math.PI, 1.3), [x1, y1] = at(s.field, 1.3), [lx, ly] = at(s.field + 0.14, 1.12); arrow(ctx, x0, y0, x1, y1, c.a, 1.6); label(ctx, s.fieldLabel || 'field', lx, ly - 8, c.a, 'center', '11px'); }
+    (s.reference || []).forEach(a => { const [x, y] = at(a); ring(ctx, x, y, 9.5, c.faint); });
     (s.states || []).forEach(a => { const [x, y] = at(a); dot(ctx, x, y, 6, null, c.good); });
     (s.angles || []).forEach(a => { const [x, y] = at(a, 0.92); ctx.globalAlpha = 0.55; arrow(ctx, cx, cy, x, y, c.xi, 1.4); ctx.globalAlpha = 1; });
     if (s.caption) label(ctx, s.caption, 10, 14, c.muted, 'left', '12px');
@@ -199,6 +213,11 @@
     const lt = s.t.map(Math.log10), lv = s.v.map(v => Math.log10(Math.max(v, 1e-300)));
     const yr = autoRange(lv.filter(v => v > -12), 0.06);
     const f = frame(g, {x: 0, y: 0, w, h}, [lt[0], lt[lt.length - 1]], yr, {xLabel: 't', yLabel: 'SNR of the write', xFormat: v => '10' + sup(v), yFormat: v => '10' + sup(v), xTicks: intTicks(lt), yTicks: intTicks(yr)});
+    if (s.reference) {
+      ctx.save(); ctx.beginPath(); ctx.rect(f.l, f.t, f.r - f.l, f.b - f.t); ctx.clip();
+      line(ctx, lt.map((x, i) => [x, Math.log10(Math.max(s.reference[i], 1e-300))]), f.X, f.Y, c.faint, 1.6, REF);
+      ctx.restore();
+    }
     if (s.guide) line(ctx, s.guide.map(([t, v]) => [Math.log10(t), Math.log10(v)]), f.X, f.Y, c.omega, 1.4, [6, 4]);
     line(ctx, lt.map((x, i) => [x, lv[i]]), f.X, f.Y, c.xi, 2.2);
     if (s.cursor != null) { ctx.strokeStyle = c.faint; ctx.beginPath(); ctx.moveTo(f.X(Math.log10(s.cursor)), f.t); ctx.lineTo(f.X(Math.log10(s.cursor)), f.b); ctx.stroke(); }

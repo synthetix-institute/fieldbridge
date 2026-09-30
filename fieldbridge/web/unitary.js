@@ -159,7 +159,7 @@
   }
 
   // ---------------------------------------------------------------------------------------- closures
-  function closureDimension(H, O, maxDim = 256) {
+  function closureBasis(H, O, maxDim = 256) {
     const basis = [];
     const add = A => {
       let v = copy(A);
@@ -169,7 +169,22 @@
     };
     add(O);
     for (let i = 0; i < basis.length && basis.length <= maxDim; i++) add(scale(bracket(H, basis[i]), -1));   // i[H, A] = -(-i[H, A])
-    return basis.length;
+    return basis;
+  }
+  const closureDimension = (H, O, maxDim = 256) => closureBasis(H, O, maxDim).length;
+  /** The frequencies with which the observable can move (site_data.observable_frequencies): i[H, .] on the closure
+   *  of O is antisymmetric, with eigenvalues 0 and pairs +-i omega. One frequency: a rotating three-vector. */
+  function closureFrequencies(H, O) {
+    const basis = closureBasis(H, O), d = basis.length;
+    if (d < 2) return [];
+    const G = zeros(d);                                   // G = i M, M_jk = <B_j, i[H, B_k]>: Hermitian
+    for (let k = 0; k < d; k++) {
+      const LB = scale(bracket(H, basis[k]), -1);
+      for (let j = 0; j < d; j++) { const [r, i] = vdot(basis[j], LB); G.re[j * d + k] = -i; G.im[j * d + k] = r; }
+    }
+    const w = Array.from(eigh(G).values), top = Math.max(1, ...w.map(Math.abs)), out = [];
+    for (const v of w.filter(x => x > 1e-7 * top).sort((a, b) => a - b)) if (!out.length || v - out[out.length - 1] > 1e-7 * top) out.push(v);
+    return out;
   }
   function lieClosure(gens, maxDim = MAX_DIM) {
     const basis = [];
@@ -240,7 +255,8 @@
     const closure = closureDimension(H, O);
     const lie = lieClosure([H, O]);
     const canon = lie.closed ? su2(lie.basis, traceless(H), traceless(O)) : null;
-    const out = {closure, dim: lie.closed ? lie.basis.length : '> ' + MAX_DIM, closed: lie.closed, reached: !!canon};
+    const out = {closure, dim: lie.closed ? lie.basis.length : '> ' + MAX_DIM, closed: lie.closed, reached: !!canon,
+                 frequencies: closureFrequencies(H, O)};
     if (canon) Object.assign(out, {rate: canon.rate, theta: canon.theta * 180 / Math.PI, weight: canon.weight});
     else if (lie.closed && lie.basis.length > 3 && on.filter(Boolean).length > 1) {
       const found = [];
@@ -270,5 +286,5 @@
   const rabi = (theta, rate) => t => { const c = Math.cos(theta * Math.PI / 180), s = Math.sin(theta * Math.PI / 180); return c * c + s * s * Math.cos(rate * t); };
 
   return {value, zeros, fromJSON, mul, bracket, inner, traceless, hamiltonian, observable, eigh, topEigenstate, expect,
-          evolver, closureDimension, lieClosure, su2, analyze, signal, rabi, MAX_DIM};
+          evolver, closureDimension, closureFrequencies, lieClosure, su2, analyze, signal, rabi, MAX_DIM};
 });
