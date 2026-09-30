@@ -345,7 +345,7 @@
         if (!f[p + '_status']) continue;
         const reached = String(f[p + '_status']).startsWith('reached');
         let v = reached ? `${f[p + '_status']} (${f[p + '_word']})` : `stops: ${f[p + '_obstruction'] || f[p + '_status']}`;
-        if (reached && f[p + '_law'] != null) v += p === 'lock' ? `; half-width ${fmt(f[p + '_law'], 4)} ± ${fmt(f[p + '_law_err'], 2)} K` : `; law constant ${fmt(f[p + '_law'], 5)} ± ${fmt(f[p + '_law_err'], 2)}`;
+        if (reached && f[p + '_law'] != null) v += p === 'lock' ? `; half-width (${V.pm(f[p + '_law'], f[p + '_law_err'])}) K` : `; law constant ${V.pm(f[p + '_law'], f[p + '_law_err'])}`;
         if (reached && p === 'lock') v += `; ${f.lock_ratio}:1`;
         known(name, v);
       }

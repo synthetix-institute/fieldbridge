@@ -16,6 +16,12 @@
     return {ctx, w, h, c: palette()};
   }
   const fmt = (v, n = 3) => { if (!Number.isFinite(v)) return '—'; const a = Math.abs(v); const s = a !== 0 && (a >= 1e4 || a < 1e-3) ? v.toExponential(1) : String(+v.toPrecision(n)); return s.replace('-', '−'); };
+  // a value with its uncertainty: the uncertainty to two significant digits, the value to the same decimal place
+  const pm = (v, err) => {
+    if (!Number.isFinite(v) || !(err > 0) || !Number.isFinite(err)) return fmt(v, 5);
+    const d = Math.min(12, Math.max(0, 1 - Math.floor(Math.log10(err))));
+    return `${v.toFixed(d)} ± ${err.toFixed(d)}`.replace(/-/g, '−');
+  };
   function ticks(lo, hi, n = 4) {
     const span = hi - lo || 1, step0 = span / n, mag = Math.pow(10, Math.floor(Math.log10(step0))), f = step0 / mag;
     const step = (f < 1.5 ? 1 : f < 3.5 ? 2 : f < 7.5 ? 5 : 10) * mag, out = [];
@@ -284,5 +290,5 @@
   }
 
   root.FieldBridgeViews = {fit, frame, line, dot, label, arrow, sphere, signal, landscape, bifurcation, phasePlane, series,
-                           circle, rotors, loglog, profile, phaseDrift, carrier, autoRange, fmt, palette};
+                           circle, rotors, loglog, profile, phaseDrift, carrier, autoRange, fmt, pm, palette};
 })(window);

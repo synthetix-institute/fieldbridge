@@ -28,5 +28,11 @@ const ops = {
   fields_profile: j => F.profile(j.engine, j.t),
   mathml_tree: j => MML.tree(j.tree),
   mathml_term: j => MML.term(j.tree, j.operator, j.hc),
+  // views.js is written for the browser; its number formats need no document
+  value_with_uncertainty: j => {
+    global.window = global.window || {};
+    require(path.join(web, 'views.js'));
+    return j.pairs.map(([v, err]) => window.FieldBridgeViews.pm(v, err));
+  },
 };
 process.stdout.write(JSON.stringify(ops[job.op](job)));

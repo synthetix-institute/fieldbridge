@@ -276,3 +276,13 @@ def test_equations_are_written_as_mathml(tmp_path):
     assert "<mfrac>" in tree and "<msup><mi>v</mi><mi>n</mi></msup>" in tree and "α" in tree
     term = run({"op": "mathml_term", "tree": arithmetic("U/2"), "operator": "na na + nb nb", "hc": False}, tmp_path)
     assert "<msup><msub><mi>n</mi><mi>a</mi></msub><mn>2</mn></msup>" in term
+
+
+@needs_node
+def test_a_constant_is_printed_to_the_decimal_place_of_its_uncertainty(tmp_path):
+    """The page printed the delay constant as 1.0188 +- 5.0e-7: a value rounded 7e-6 away from the one measured."""
+    pairs = [[1.0187931203, 5e-7], [1.0187733792, 2.87e-4], [1.3271, 0.014], [1.0000066, 0.0025286], [-0.5, 0.02],
+             [2.0, 0.0]]
+    shown = run({"op": "value_with_uncertainty", "pairs": pairs}, tmp_path)
+    assert shown == ["1.01879312 ± 0.00000050", "1.01877 ± 0.00029", "1.327 ± 0.014", "1.0000 ± 0.0025",
+                     "−0.500 ± 0.020", "2"]

@@ -146,7 +146,7 @@
     const fr = V.frame(gs, {x: 0, y: 0, w: gs.w, h: gs.h}, [-0.5, lawRows.length - 0.5], V.autoRange(vals, 0.15), {xTicks: [], left: 54, bottom: 64, noGrid: true});
     gs.ctx.strokeStyle = gs.c.omega; gs.ctx.setLineDash([5, 4]); gs.ctx.beginPath(); gs.ctx.moveTo(fr.l, fr.Y(f.expected)); gs.ctx.lineTo(fr.r, fr.Y(f.expected)); gs.ctx.stroke(); gs.ctx.setLineDash([]);
     strip._points = lawRows.map((r, i) => ({x: fr.X(i), y: fr.Y(r.law.constant), id: r.id,
-      label: `${String(r.name).replace(/<[^>]+>/g, '')}: ${V.fmt(r.law.constant, 4)} ± ${V.fmt(r.law.stderr, 2)}. Select to open it above.`}));
+      label: `${String(r.name).replace(/<[^>]+>/g, '')}: ${V.pm(r.law.constant, r.law.stderr)}. Select to open it above.`}));
     lawRows.forEach((r, i) => {
       const x = fr.X(i), col = color(f.rows.indexOf(r));
       gs.ctx.strokeStyle = col; gs.ctx.lineWidth = 1.5; gs.ctx.beginPath(); gs.ctx.moveTo(x, fr.Y(r.law.constant - r.law.stderr)); gs.ctx.lineTo(x, fr.Y(r.law.constant + r.law.stderr)); gs.ctx.stroke();
