@@ -36,8 +36,8 @@
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
             'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
             'oscillation': [5, 0], 'neutral-cycles': [5, 1], 'exponential-loss': [6, 0], 'power-loss': [6, 1], 'convention': [7, 0.5]},
-    families: [{label: 'closed evolution', from: 0, to: 1}, {label: 'relaxation and writing', from: 2, to: 4},
-               {label: 'cycles', from: 5, to: 5}, {label: 'fields and noise', from: 6, to: 7}],
+    families: [{label: 'quantum: closed evolution', from: 0, to: 1}, {label: 'memory: writing a state', from: 2, to: 4},
+               {label: 'memory: phase', from: 5, to: 5}, {label: 'memory: retention', from: 6, to: 6}, {label: 'noise', from: 7, to: 7}],
   };
   const NARROW = {
     w: 360, h: 712, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],

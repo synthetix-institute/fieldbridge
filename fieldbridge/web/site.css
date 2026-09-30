@@ -271,6 +271,30 @@ section { padding: 44px 0 20px; }
 .collapse-grid figcaption { font-size: 13.5px; color: var(--muted); margin-top: 8px; }
 .collapse-grid figcaption b { color: var(--ink); font-weight: 600; }
 
+/* memory in model materials */
+.memory-summary { color: var(--muted); font-size: 14px; margin: 0 0 14px; display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: baseline; }
+.memory-summary .law { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 1px 10px; }
+.memory-summary .law b { color: var(--ink); font-weight: 600; margin-right: 3px; }
+.memory-groups { display: grid; gap: 18px; }
+.memory-group h3 { display: flex; align-items: center; gap: 8px; font-size: 18px; margin-bottom: 8px; }
+.memory-group h3 .glyph { color: var(--accent); }
+.memory-group h3 .muted { font: 13px var(--sans); color: var(--muted); }
+.memory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 12px; }
+.material { display: flex; flex-direction: column; background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; overflow: hidden; }
+.material-open { display: flex; flex-direction: column; align-items: stretch; gap: 0; width: 100%; flex: 1; padding: 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.material-open:hover .m-text b, .material-open:focus-visible .m-text b { color: var(--accent); }
+.material-open:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+/* the thumbnail is panel (a) of the memory card, the stable states on the carrier: the top left of the card */
+.material .thumb { display: block; aspect-ratio: 600 / 440; overflow: hidden; background: #fff; border-bottom: 1px solid var(--rule); }
+.material .thumb img { display: block; width: 200%; height: auto; }
+.material .thumb.glyph-only { display: grid; place-items: center; background: var(--panel-2); color: var(--muted); }
+.material .m-text { display: grid; gap: 3px; padding: 10px 12px 8px; }
+.material .m-text b { font-family: var(--serif); font-size: 16px; font-weight: 600; line-height: 1.25; }
+.material .m-field { font-size: 12.5px; color: var(--faint); }
+.material .m-question { font-size: 13.5px; color: var(--ink); }
+.material .m-facts { font-size: 12.5px; color: var(--muted); }
+.material .m-card { font-size: 12.5px; padding: 0 12px 10px; }
+
 /* contribute and sources */
 .contribute-grid { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 20px; }
 .contribute-grid p { max-width: 78ch; margin-bottom: 8px; }

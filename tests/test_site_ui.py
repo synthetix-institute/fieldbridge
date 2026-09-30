@@ -44,6 +44,14 @@ def test_the_page_opens_on_a_mechanism_written_without_a_field(data_file, tmp_pa
         assert name in first["changes"], name
 
 
+def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
+    memory = scenario(data_file, [{"do": "look"}], tmp_path)[0]["memory"]
+    assert memory.startswith("2 materials from 2 fields. Retention: 2 activation between stored states (Law 3)")
+    for name in ("pitchfork normal form", "Stoner-Wohlfarth particle", "symmetric write (supercritical pitchfork)",
+                 "2 materials", "How is a bit written and retained at a supercritical pitchfork?"):
+        assert name in memory, name
+
+
 def test_one_change_of_the_normal_form_gives_another_mechanism(data_file, tmp_path):
     got = scenario(data_file, [{"do": "edge", "edge": "pf_below"}, {"do": "undo"}, {"do": "edge", "edge": "pf_bias"},
                                {"do": "undo"}, {"do": "edge", "edge": "pf_subcritical"}], tmp_path)

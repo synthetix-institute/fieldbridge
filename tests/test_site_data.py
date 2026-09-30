@@ -150,6 +150,27 @@ def test_the_canonical_forms_are_the_mechanisms_the_page_names():
         "symmetric-write": "pitchfork", "threshold-write": "pitchfork_bias", "subcritical-write": "pitchfork_subcritical"}
 
 
+def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
+    """The section on memory lists every specification file of examples/memory that is not a field, in the order of
+    the mechanism that writes it; variants built from a material, and the fields, are not materials."""
+    only = ["pitchfork", "pitchfork_bias", "toggle", "colloid_patch", "brusselator", "lotka_volterra",
+            "field_nonconserved"]
+    data = sd.build(only=only, log=lambda *a: None)
+    nodes = data["nodes"]
+    assert data["materials"] == ["toggle", "pitchfork", "colloid_patch", "brusselator", "lotka_volterra"]  # writes first
+    assert [nodes[i]["class"] for i in data["materials"]] == ["symmetric-write", "symmetric-write", "field-write",
+                                                             "oscillation", "neutral-cycles"]
+    assert nodes["colloid_patch"]["short"] == "capillary rotors"      # the name of the specification, not "rods"
+    assert nodes["toggle"]["facts"]["loss"] == "activation between stored states (Law 3)"
+    assert "neutral cycles" in nodes["lotka_volterra"]["facts"]["loss"]  # as on the memory card, not a limit cycle
+    # every material of the repository, in the full registry
+    files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
+             if "fields" not in p.parts}
+    named = {d["spec"] for d in sd.all_defs() if "spec" in d}
+    assert files <= named and len(files) == 21
+    assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
+
+
 def test_every_mechanism_opens_on_a_realization_of_its_class():
     assert set(reg.MECHANISMS) == set(reg.CLASSES)
     ids = {n["id"] for n in reg.NODES}

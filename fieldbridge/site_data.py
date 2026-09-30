@@ -439,6 +439,9 @@ def dissipative_record(node: Dict, rows: Dict[str, Dict]) -> Dict:
         facts.update(write_point=events[0]["value"], write_param=real.control, write_kind=events[0]["kind"])
     facts["scale_control"] = bool(scale)
     klass = _dissipative_class(states, n_unconv, events, scale, lock)
+    if klass == "neutral-cycles":  # the wording of the memory card (memory.discovery) once the cycles are neutral
+        facts["loss"] = ("no stable state: a family of neutral cycles, with no restoring force on the amplitude or the "
+                         "phase (Law 2)")
     engine = model_record(spec, nid, node["path"])
     for k in ("tutorial", "saved", "source_url", "id", "name", "question", "field", "specification",
               "assumptions", "source", "closure", "observable"):
@@ -869,6 +872,11 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
 
 
 # ------------------------------------------------------------------------------------------------ build
+# the mechanisms of the memory materials, in the order of the section on memory: the writes, then no memory, then phase
+MEMORY_ORDER = ["symmetric-write", "threshold-write", "subcritical-write", "field-write", "single-state", "oscillation",
+                "neutral-cycles"]
+
+
 def _targets_for(node: Dict) -> List[str]:
     path = node["path"]
     # the oscillators of Module 11 and the ring of three repressors: the realizations in which the tutorial derives
@@ -980,6 +988,12 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             m["node"] = sorted(r["id"] for r in records.values() if r["class"] == c)[0]
         mechanisms[c] = m
     start = reg.START if reg.START in records else sorted(records)[0]
+    # memory in model materials: every specification file of examples/memory (not the fields), each a material asked
+    # whether and how it stores a state; ordered by the mechanism that writes it, the writes first
+    order = MEMORY_ORDER + [c for c in present if c not in MEMORY_ORDER]
+    materials = sorted((r["id"] for r in records.values()
+                        if r["family"] == "dissipative" and (r.get("spec") or "").startswith("examples/memory/")),
+                       key=lambda i: (order.index(records[i]["class"]), _strip(records[i]["name"]).lower()))
     atlas = {"columns": [{"class": c, "label": reg.CLASSES[c],
                           "nodes": sorted((r["id"] for r in records.values() if r["class"] == c),
                                           key=lambda i: (records[i]["family"], records[i]["field"], i))}
@@ -990,7 +1004,7 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
         law_info.update(record_implementation_sha256=record_file.get("implementation_sha256"),
                         current_implementation_sha256=_memory_hash(), record_versions=record_file.get("versions"))
     return {"schema": SCHEMA, "slots": reg.SLOTS, "classes": reg.CLASSES, "classes_short": reg.CLASS_SHORT,
-            "start": start, "mechanisms": mechanisms,
+            "start": start, "mechanisms": mechanisms, "materials": materials,
             "nodes": records, "edges": edges, "sequences": sequences, "atlas": atlas,
             "codiscovery": codiscovery_summary(records), "boundary": BOUNDARY, "law": law_info,
             "provenance": {"memory_implementation_sha256": _memory_hash(), "versions": _versions()}}

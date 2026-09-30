@@ -217,6 +217,33 @@
     I().walkTo(id);
     $('instrument').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
   }
+  // ---------------------------------------------------------------------------------------- memory in model materials
+  function memory() {
+    const M = window.FieldBridgeMechanisms, ids = (S.materials || []).filter(id => S.nodes[id]);
+    const box = $('memory-groups');
+    if (!ids.length) { $('memory').hidden = true; return; }
+    const fields = new Set(ids.map(id => S.nodes[id].field)), laws = {};
+    ids.forEach(id => { const l = S.nodes[id].facts.loss || 'not calculated'; laws[l] = (laws[l] || 0) + 1; });
+    $('memory-summary').innerHTML = `${ids.length} materials from ${fields.size} fields. Retention: `
+      + Object.entries(laws).sort((a, b) => b[1] - a[1]).map(([l, n]) => `<span class="law"><b>${n}</b> ${esc(l)}</span>`).join('');
+    const groups = [];
+    ids.forEach(id => { const k = S.nodes[id].class, g = groups.find(x => x.k === k); if (g) g.ids.push(id); else groups.push({k, ids: [id]}); });
+    const tile = id => {
+      const r = S.nodes[id], f = r.facts, card = r.card && r.card.image;
+      const thumb = card ? `<span class="thumb"><img src="${esc(card)}" alt="" loading="lazy"></span>` : `<span class="thumb glyph-only">${M.glyph(r.class, 'big')}</span>`;
+      // the retention law of a material without a stable state already says so
+      const states = f.states != null && !String(f.loss || '').startsWith('no stable state') ? `${f.states_text || f.states} stable state${f.states === 1 ? '' : 's'}` : '';
+      return `<article class="material" data-class="${r.class}">
+        <button type="button" class="material-open" data-open="${id}" aria-label="Open ${esc(strip(r.name))} in the instrument">${thumb}
+          <span class="m-text"><b>${r.name}</b><span class="m-field">${esc(r.field)}</span>${r.question ? `<span class="m-question">${esc(r.question)}</span>` : ''}
+          <span class="m-facts">${states ? esc(states) + ' · ' : ''}${esc(f.loss || '')}</span></span>
+        </button>${card ? `<a class="m-card" href="${esc(card)}" target="_blank" rel="noopener">memory card ↗</a>` : ''}</article>`;
+    };
+    box.innerHTML = groups.map(g => `<div class="memory-group" data-class="${g.k}">
+        <h3>${M.glyph(g.k, 'small')}${esc(S.classes[g.k] || g.k)}<span class="muted">${g.ids.length} material${g.ids.length === 1 ? '' : 's'}</span></h3>
+        <div class="memory-grid">${g.ids.map(tile).join('')}</div></div>`).join('');
+    box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
+  }
   function sourcesTable() {
     const order = Object.keys(S.mechanisms);
     const rows = Object.values(S.nodes).sort((a, b) => order.indexOf(a.class) - order.indexOf(b.class) || strip(a.name).localeCompare(strip(b.name)));
@@ -230,7 +257,7 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
-    definitions(); sequences(); realizations();
+    definitions(); sequences(); realizations(); memory();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);

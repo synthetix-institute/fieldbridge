@@ -455,7 +455,7 @@ EDGES = [
      "text": "Two equal tubes of an adaptive network write at a subcritical pitchfork: the written state is a "
              "distant branch. Unequal lengths turn it into a fold at μ = {write_point}."},
     {"id": "colloids_to_dipoles", "from": "colloid_patch", "to": "dipole_patch", "slot": "Xi", "kind": "codiscovery",
-     "change": "capillary rods (period π) → point dipoles (period 2π)",
+     "change": "capillary rotors (period π) → point dipoles (period 2π)",
      "text": "The memory of the caged rods is carried over to in-plane dipoles: the control only rescales the "
              "energy in both, and a state is written by a uniform field and lost by activation."},
     # oscillators
@@ -527,6 +527,23 @@ EDGES = [
 # steps: {"node": id} starts; {"edge": id} applies an edge; {"edge": id, "reverse": True} returns along it;
 # {"prepare": id} changes the preparation of a unitary node (P, a live edit)
 SEQUENCES = [
+    # memory in model materials first: the writes and the retention of a stored state
+    {"id": "memory-writes", "title": "Writing and retention in magnets, genes and lasers",
+     "steps": [
+         {"node": "stoner_wohlfarth",
+          "text": "A single-domain particle with uniaxial anisotropy in a field along its hard axis keeps one of "
+                  "{states_text} directions of its magnetization. Lowering the field through h = {write_point} writes "
+                  "one of them (derivation {sym_word})."},
+         {"edge": "sw_to_toggle"},
+         {"edge": "toggle_promoters"},
+         {"edge": "toggle_promoters", "reverse": True, "text": "Equal promoters again."},
+         {"edge": "toggle_to_laser"},
+         {"edge": "laser_to_normal_form"},
+         {"edge": "laser_to_normal_form", "reverse": True, "text": "Back to the laser."},
+         {"edge": "toggle_to_laser", "reverse": True, "text": "Back to the toggle switch."},
+         {"edge": "toggle_to_ring4"},
+         {"edge": "ring4_activation_edit"},
+     ]},
     {"id": "canonical", "title": "From one normal form to other mechanisms",
      "steps": [
          {"node": "pitchfork",
@@ -595,22 +612,6 @@ SEQUENCES = [
          {"edge": "nmr_to_collective", "reverse": True, "text": "Back to the nuclear spin."},
          {"edge": "nmr_to_chain"},
          {"edge": "chain_ising_edit"},
-     ]},
-    {"id": "memory-writes", "title": "Writing and retention in magnets, genes and lasers",
-     "steps": [
-         {"node": "stoner_wohlfarth",
-          "text": "A single-domain particle with uniaxial anisotropy in a field along its hard axis keeps one of "
-                  "{states_text} directions of its magnetization. Lowering the field through h = {write_point} writes "
-                  "one of them (derivation {sym_word})."},
-         {"edge": "sw_to_toggle"},
-         {"edge": "toggle_promoters"},
-         {"edge": "toggle_promoters", "reverse": True, "text": "Equal promoters again."},
-         {"edge": "toggle_to_laser"},
-         {"edge": "laser_to_normal_form"},
-         {"edge": "laser_to_normal_form", "reverse": True, "text": "Back to the laser."},
-         {"edge": "toggle_to_laser", "reverse": True, "text": "Back to the toggle switch."},
-         {"edge": "toggle_to_ring4"},
-         {"edge": "ring4_activation_edit"},
      ]},
     {"id": "phase-locking", "title": "Phase locking in eight oscillators",
      "steps": [
@@ -727,7 +728,7 @@ SHORT = {
     "rotation_axis": "measured on the axis", "laser": "laser", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
     "repressor_ring4": "ring of 4", "ring4_activation": "ring 4, activation", "repressilator": "repressilator",
     "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "tubes": "two tubes",
-    "tubes_unequal": "unequal tubes", "colloid_patch": "capillary rods", "dipole_patch": "dipoles",
+    "tubes_unequal": "unequal tubes", "colloid_patch": "capillary rotors", "dipole_patch": "dipoles",
     "van_der_pol": "van der Pol", "vdp_stiffness": "stiffness drive", "parametron": "parametron",
     "brusselator": "Brusselator", "goodwin": "Goodwin", "fitzhugh_nagumo": "FitzHugh–Nagumo",
     "predator_prey": "predator–prey", "lotka_volterra": "Lotka–Volterra", "josephson": "Josephson",

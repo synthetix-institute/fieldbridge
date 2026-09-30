@@ -25,6 +25,7 @@
     <a class="brand" href="#expression">FieldBridge</a>
     <nav aria-label="Sections">
       <a href="#instrument">Mechanisms</a>
+      <a href="#memory">Memory in materials</a>
       <a href="#codiscovery">One mechanism in many fields</a>
       <a href="#realizations">All realizations</a>
       <a href="#contribute">Add a realization</a>
@@ -55,7 +56,7 @@
       </div>
       <div class="intro">
         <p>FieldBridge writes a model as a realization of six components. An operation <span class="s" data-slot="Omega">Ω</span> acts on a carrier <span class="s" data-slot="Xi">Ξ</span> of states, and this pair is the core. The closure <span class="s" data-slot="C">C</span> makes its equations closed, <span class="s" data-slot="R">R</span> is what is measured, <span class="s" data-slot="P">P</span> how the system is prepared and driven, and <span class="s" data-slot="A">A</span> the parameter values of a particular material or apparatus.</p>
-        <p>A mechanism is what remains when the carrier and the parameter values are left open: a canonical form and its laws. A magnet, a genetic switch and a laser differ as objects but keep one of two states by the same mechanism, so its law is derived once and holds in each. The page therefore starts from mechanisms, not from objects.</p>
+        <p>A mechanism is what remains when the carrier and the parameter values are left open: a canonical form and its laws. A magnet, a genetic switch and a laser differ as objects but keep one of two states by the same mechanism, so its law is derived once and holds in each. The page therefore starts from a mechanism, the simplest memory write, not from an object; most realizations on it are <a href="#memory">model materials that store a state</a>.</p>
         <p class="intro-note">FieldBridge is developed within the <a href="https://synthetix.institute" target="_blank" rel="noopener">Synthetix Institute</a>. The code, the specification of every realization shown here and the tutorial are in the <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">FieldBridge repository</a>; <a href="https://github.com/synthetix-institute/morphwiki" target="_blank" rel="noopener">MorphWiki</a>, which organizes the explanations, equations and source evidence of a field, and the institute's other public repositories are <a href="https://github.com/synthetix-institute" target="_blank" rel="noopener">on GitHub</a>.</p>
       </div>
       <div class="hero-map" id="map">
@@ -78,7 +79,7 @@
         <h2 id="instrument-title">Changing one component of a mechanism</h2>
       </div>
       <ol class="howto">
-        <li><b>Start.</b> The expression below is the pitchfork normal form, the mechanism of every symmetric write, written without any field.</li>
+        <li><b>Start.</b> The expression below is the pitchfork normal form: two stored states and the symmetric write between them, the simplest memory, written without any field.</li>
         <li><b>Change one component.</b> Each coloured button under Ω, Ξ, C, R, P or A is a verified change of that component, and it names the mechanism it leads to. Sliders change the values of A within the realization.</li>
         <li><b>Compare.</b> The mechanism, its equations and its dynamics are recalculated. A change of Ξ keeps the mechanism and places it in a field; the other components can replace it by another mechanism.</li>
       </ol>
@@ -141,6 +142,15 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <section id="memory" aria-labelledby="memory-title">
+      <div class="section-head">
+        <h2 id="memory-title">Memory in model materials</h2>
+        <p class="section-note">Each specification asks whether a model material stores a state. FieldBridge calculates how a state is written, how many states are kept and the law by which they are lost; twelve materials also have a full memory card. Selecting a material opens it in the instrument above.</p>
+      </div>
+      <p class="memory-summary" id="memory-summary"></p>
+      <div class="memory-groups" id="memory-groups"></div>
     </section>
 
     <section id="codiscovery" aria-labelledby="codiscovery-title">
