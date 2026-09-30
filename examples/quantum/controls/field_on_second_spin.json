@@ -1,0 +1,38 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "field": "quantum information",
+  "carrier": {
+    "kind": "qubits",
+    "n": 2
+  },
+  "name": "two coupled spins, field on the second spin",
+  "question": "Does the transverse magnetization of the first spin still rotate when the transverse field acts on the second spin?",
+  "parameters": {
+    "g": 1.0,
+    "h": 0.5
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "g",
+      "operator": "Z0 Z1"
+    },
+    {
+      "coefficient": "h",
+      "operator": "X1"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "X0"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "The model of examples/quantum/two_spins.json with its field moved: H = g Z0 Z1 + h X1, observable X0."
+  ],
+  "provenance": {
+    "origin": "authored control for the closure of the observable (tutorial Chapter 24, Section 6)",
+    "novelty": "known physics"
+  }
+}

@@ -4,8 +4,9 @@
   attach --from SPEC --to CARRIER    write the detached mechanism on another carrier, in that carrier's operators,
                                      and derive it there again
   carriers                           the carriers available to attach
-  codiscover [SPEC ...]              derive the Bloch rotation in realizations from different fields: derivations,
-                                     obstructions and invariants (default: every file in examples/quantum)
+  codiscover [SPEC ...]              derive the Bloch rotation in realizations from different fields: derivations
+                                     through the algebra or through the closure of the observable, obstructions and
+                                     invariants (default: every file in examples/quantum)
 
 Every command writes <name>.json and <name>.md to --out-dir, with the input hashes and the hash of the implementation.
 """
@@ -60,25 +61,39 @@ def cmd_detach(args) -> int:
     if not d["detached"]:
         md = f"# Detachment: {real.name}\n\nNothing to detach: {d['reason']}.\n\n{BOUNDARY}\n"
     else:
-        s, lb = d["signature"], d["left_behind"]
-        gens = ""
-        if lb.get("closing_operators"):
-            gens = ("\n- operators that close under commutation (A): " + ", ".join(lb["closing_operators"])
-                    + " (each divided by 2 is a spin-1/2 component)")
+        s, lb, row = d["signature"], d["left_behind"], d["derivation"]
+        if row["status"] == ql.REACHED:  # through the algebra: H and the observable generate su(2)
+            how = ""
+            relations, angle = f"algebra su(2): {s['relations']}", "angle between Omega and the observable"
+            left = f"- representation: {ql._rep(lb['representation'])}"
+            if lb.get("closing_operators"):
+                left += ("\n- operators that close under commutation (A): " + ", ".join(lb["closing_operators"])
+                         + " (each divided by 2 is a spin-1/2 component)")
+        else:
+            how = "; the rotation is reached through the closure of the observable"
+            relations = f"rotation of the operators of the closure: {s['relations']}"
+            angle = "angle between the rotation axis and the observable"
+            left = f"- {row['algebra']}"
+            if lb.get("algebra_operators"):
+                left += "\n- operators of this algebra (A): " + ", ".join(lb["algebra_operators"])
+            if lb.get("closure_operators"):
+                left += "\n- closure of the observable (O): " + ", ".join(lb["closure_operators"])
+            if lb["representation"]:
+                left += f"\n- the closure is an su(2); representation: {ql._rep(lb['representation'])}"
         if "generators" in lb:
-            gens += ("\n- the rotating vector in the canonical frame (K; J3 along Omega):\n"
+            left += ("\n- the rotating vector in the canonical frame (K; J3 along Omega):\n"
                      + "\n".join(f"  - J{a + 1} = {_terms_text(t)}" for a, t in enumerate(lb["generators"])))
         md = (f"# Detachment: {real.name}\n\n{real.spec['question']}\n\n"
-              f"Derivation: {d['derivation']['word']}.\n\n"
+              f"Derivation: {row['word']}{how}.\n\n"
               f"## Signature (independent of the carrier)\n\n"
-              f"- algebra su(2): {s['relations']}\n- rotation rate |Omega| = {s['rate']:.6g}\n"
+              f"- {relations}\n- rotation rate |Omega| = {s['rate']:.6g}\n"
               f"- weight of the observable |n| = {s['weight']:.6g}\n"
-              f"- angle between Omega and the observable: {s['theta_deg']:.4g} degrees\n"
+              f"- {angle}: {s['theta_deg']:.4g} degrees\n"
               f"- law: {s['law']}; the observable is inverted as far as it can be at t = pi/|Omega| = "
               f"{d['law']['inversion_time']:.6g}; exact evolution deviates by {d['law']['residual']:.1e}\n\n"
               f"## Left with the carrier\n\n- carrier: {lb['carrier']} ({lb['field']})\n"
               f"- Hilbert space dimension {lb['hilbert_dimension']}; sector dimension {lb['sector_dimension']}\n"
-              f"- representation: {ql._rep(lb['representation'])}{gens}\n\n{BOUNDARY}\n")
+              f"{left}\n\n{BOUNDARY}\n")
     _write(Path(args.out_dir), "detach", report, md)
     print(json.dumps({"out_dir": args.out_dir, "detached": d["detached"],
                       **({"signature": d["signature"]} if d["detached"] else {"reason": d["reason"]})}, indent=2))
@@ -102,9 +117,14 @@ def cmd_attach(args) -> int:
               "source_derivation": _strip(a["source_derivation"]), "target_derivation": _strip(a["target_derivation"])}
     p, c = a["preserved"], a["changed"]
     native = "\n".join(f"- {k.replace('_', ' ')}: {v}" for k, v in a["native"].items())
+    through = ""
+    if a["source_derivation"]["status"] == ql.REACHED_CLOSURE:
+        through = (f" In the source it is reached through the closure of the observable "
+                   f"({a['source_derivation']['word']}); on the new carrier the Hamiltonian and the observable generate "
+                   f"su(2).")
     md = (f"# Attachment: {a['source']} -> {ql.CARRIERS[a['to']]}\n\n"
           f"The rotation detached from '{a['source']}' is written in the operators of the new carrier and derived there "
-          f"again ({a['target_derivation']['word']}).\n\n## Written in the carrier's own operators\n\n{native}\n\n"
+          f"again ({a['target_derivation']['word']}).{through}\n\n## Written in the carrier's own operators\n\n{native}\n\n"
           f"The specification is saved as attached.json.\n\n## Preserved and changed\n\n"
           f"| property | source | target |\n|---|---|---|\n"
           f"| rotation rate | {p['rate']['source']:.6g} | {p['rate']['target']:.6g} |\n"
@@ -154,7 +174,8 @@ def cmd_codiscover(args) -> int:
         except ImportError:
             pass
     s = rep["summary"]
-    print(json.dumps({"out_dir": args.out_dir, "reached": s["reached"], "obstructed": s["obstructed"],
+    print(json.dumps({"out_dir": args.out_dir, "reached": s["reached"],
+                      "reached_through_closure": s["reached_through_closure"], "obstructed": s["obstructed"],
                       "fields_reached": s["fields_reached"], "law_residual_max": s["law_residual_max"],
                       "skipped": len(skipped)}, indent=2))
     return 0

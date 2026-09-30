@@ -68,8 +68,8 @@ def test_a_change_is_drawn_against_the_realization_it_came_from(data_file, tmp_p
     assert got[2]["reference"] is None                      # undo returns to the realization itself
     assert got[3]["reference"]["label"].startswith("the listed values") and got[3]["reference"]["potential"]
     moved = got[5]["reference"]                             # the field moved to the second spin: the algebra is larger,
-    assert got[5]["lead"] == "algebra larger than su(2)"    # and the signal is drawn against that of the rotation it left
-    assert moved["signal"] and moved["label"].startswith("two coupled spins")
+    assert got[5]["lead"] == "Bloch rotation"               # the rotation is reached through the closure of X0,
+    assert moved["signal"] and moved["label"].startswith("two coupled spins")   # and drawn against the two spins
     assert "frequenciesofR1:2.236" in got[5]["facts"].replace(" ", "")   # one frequency: the law of X0 is kept
     assert got[7]["reference"] is None                      # a spin and a classical direction have no common plot
 
@@ -83,9 +83,28 @@ def test_the_two_spins_of_chapter_11_rotate(data_file, tmp_path):
 def test_an_edge_changes_the_realization_and_undo_returns(data_file, tmp_path):
     got = scenario(data_file, [{"do": "start", "node": "two_spins"}, {"do": "edge", "edge": "spins_field_moved"},
                                {"do": "undo"}], tmp_path)
-    assert got[1]["node"] == "two_spins_x1" and got[1]["lead"] == "algebra larger than su(2)"
+    assert got[1]["node"] == "two_spins_x1" and got[1]["lead"] == "Bloch rotation"
     assert "dimensionofthealgebra6" in got[1]["facts"].replace(" ", "")
     assert got[2]["node"] == "two_spins" and got[2]["path"] == ["two_spins"]
+
+
+def test_the_rotation_is_reached_through_the_closure_of_the_observable(data_file, tmp_path):
+    """With the field on the second spin, H and X0 generate an algebra of dimension 6 while the closure of X0 keeps
+    three operators: the page reports the rotation, its derivation has the letter O, and the axis drawn on the sphere
+    is that of the two spins. With the field on both spins the closure has five operators; switching the field on
+    the first spin off in the browser gives the first case again."""
+    got = scenario(data_file, [{"do": "start", "node": "two_spins"}, {"do": "start", "node": "two_spins_x1"},
+                               {"do": "start", "node": "two_spins_both"}, {"do": "term", "k": 1, "on": False}], tmp_path)
+    spins, moved, both, off = got
+    assert spins["derivation"].startswith("DerivationAKL") and moved["derivation"].startswith("DerivationAOKL")
+    assert moved["lead"] == "Bloch rotation" and "close on three operators" in moved["text"]
+    assert "dimension 6, not su(2)" in moved["text"] and "the algebra is su(2)" in moved["text"]   # the term is named
+    assert moved["axis"] == pytest.approx(spins["axis"], abs=1e-9)
+    assert sum(x * x for x in moved["axis"]) == pytest.approx(5.0)                  # |Omega|^2 = 4 g^2 + 4 h^2
+    assert both["lead"] == "several frequencies" and both["derivation"].startswith("DerivationAO·")
+    assert "5 operators, which move with 2 frequencies" in both["text"]
+    assert off["lead"] == "Bloch rotation" and "close on three operators" in off["text"]
+    assert off["axis"] == pytest.approx(spins["axis"], abs=1e-9)
 
 
 def test_the_sequence_from_the_spins_to_the_magnet_applies_its_steps_in_order(data_file, tmp_path):
@@ -95,7 +114,7 @@ def test_the_sequence_from_the_spins_to_the_magnet_applies_its_steps_in_order(da
     assert nodes[0] == "two_spins" and nodes[-1] == "sw_easy"
     assert "spin1_easy_axis" in nodes and "stoner_wohlfarth" in nodes
     at = {g["node"]: g for g in got}
-    assert at["spin1_easy_axis"]["lead"] == "algebra larger than su(2)"
+    assert at["spin1_easy_axis"]["lead"] == "several frequencies"
     assert at["stoner_wohlfarth"]["lead"] == "2 stable states"
     assert at["two_spins_z0"]["lead"] == "conserved observable"
     assert got[-1]["sequence"].startswith("13 / 13")

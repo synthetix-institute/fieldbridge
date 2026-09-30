@@ -4,7 +4,7 @@ Run the chapter's commands first; they write their results under build/tut. Then
 
     python3 -B docs/tutorial/figures/quantum/make_figures.py [--build build/tut]
 
-copies the co-discovery and attachment figures here. No calculation is repeated.
+copies the co-discovery, closure and attachment figures here. No calculation is repeated.
 """
 from __future__ import annotations
 
@@ -13,7 +13,8 @@ import shutil
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
-COPIES = {"q_codiscover/codiscover.png": "q_codiscovery.png", "q_attach_chain/attach.png": "q_attach_chain.png"}
+COPIES = {"q_codiscover/codiscover.png": "q_codiscovery.png", "q_attach_chain/attach.png": "q_attach_chain.png",
+          "q_closure/codiscover.png": "q_closure.png"}
 
 
 def main() -> None:

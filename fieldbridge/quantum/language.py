@@ -10,23 +10,38 @@ A realization is I = ((Omega, Xi); C, R, P; A):
   P      the protocol: the state is prepared in the top eigenstate of the observable and H acts from t = 0
   A      the parameters, through which a material or apparatus implements the model
 
-Target: the Bloch rotation. The Hamiltonian and the observable generate the Lie algebra su(2),
-[J_a, J_b] = i eps_abc J_c. The expectation values m_a = <J_a> then rotate, dm/dt = Omega x m, and the observable
-follows the Rabi law f(t) = cos^2 theta + sin^2 theta cos(|Omega| t), with theta the angle between Omega and the
-observable, on every carrier.
+Target: the Bloch rotation. Three operators J_1, J_2, J_3 rotate under the Hamiltonian,
+i[H, J_a] = eps_abc Omega_b J_c, and the observable is n . J. The expectation values m_a = <J_a> then rotate,
+dm/dt = Omega x m, and from a state prepared along the observable the observable follows the Rabi law
+f(t) = cos^2 theta + sin^2 theta cos(|Omega| t), with theta the angle between Omega and the observable, on every
+carrier. Two routes reach it:
+
+  through the algebra   the Hamiltonian and the observable generate the Lie algebra su(2),
+                        [J_a, J_b] = i eps_abc J_c with H = Omega . J; the top eigenstate of the observable is then
+                        prepared along the observable
+  through the closure   the algebra is larger, but the commutators of the Hamiltonian with the observable close on
+                        three operators or fewer (the closure of the observable, Chapter 11), and the expectation
+                        of these operators in the top eigenstates of the observable lies along the observable
+
+Generating su(2) is sufficient for the law and not necessary. A closure of three operators or fewer is necessary
+for the observable to be a component of one rotating three-vector, and it gives a single frequency; it fixes the
+amplitude sin^2 theta only together with the condition on the prepared state.
 
 Letters of a derivation:
 
   S  sector      a conserved operator restricts the carrier to one of its eigenspaces
   A  algebra     commutators of the Hamiltonian and the observable are added until their span closes: the dynamical
                  Lie algebra
-  K  canonical   a basis J_1, J_2, J_3 with [J_a, J_b] = i eps_abc J_c is found from the Killing form, with J_3 along
-                 Omega and J_1 in the plane of Omega and the observable
+  O  closure     applied when the algebra is not su(2): commutators of the Hamiltonian with the observable are added
+                 until their span closes, and the frequencies with which these operators move are found
+  K  canonical   a frame J_1, J_2, J_3 with J_3 along Omega and J_1 in the plane of Omega and the observable: in the
+                 algebra from the Killing form, with [J_a, J_b] = i eps_abc J_c; in the closure from the generator
+                 of its motion, with i[H, J_a] = eps_abc Omega_b J_c
   L  law         the observable is evolved exactly on the carrier and compared with the Rabi law
 
-Detachment keeps the part of a realization that does not depend on the carrier: the algebra, |Omega|, the weight
-|n| of the observable and the angle theta. Attachment writes that mechanism on another carrier in the carrier's own
-operators (a tunnelling, an exchange coupling, a pairing field) and derives it there again.
+Detachment keeps the part of a realization that does not depend on the carrier: the relations of the rotation,
+|Omega|, the weight |n| of the observable and the angle theta. Attachment writes that mechanism on another carrier
+in the carrier's own operators (a tunnelling, an exchange coupling, a pairing field) and derives it there again.
 """
 from __future__ import annotations
 
@@ -42,13 +57,22 @@ from .carriers import Carrier, CarrierError, make, pauli_description, pauli_span
 
 SCHEMA = "fieldbridge-quantum/1"
 REQUIRED = ("name", "question", "assumptions", "provenance", "carrier", "hamiltonian", "observable")
-LETTERS = {"S": "sector", "A": "algebra", "K": "canonical form", "L": "law"}
+LETTERS = {"S": "sector", "A": "algebra", "O": "closure of the observable", "K": "canonical form", "L": "law"}
 SLOTS = {"S": ("Xi, C", "a conserved operator restricts the carrier to one of its eigenspaces"),
          "A": ("Omega, R", "commutators of the Hamiltonian and the observable are added until the span closes"),
-         "K": ("Omega, R", "a basis with [J_a, J_b] = i eps_abc J_c is found; J_3 along Omega"),
+         "O": ("Omega, R", "when the algebra is not su(2): commutators of the Hamiltonian with the observable are "
+                           "added until the span closes"),
+         "K": ("Omega, R", "a frame J_1, J_2, J_3 with J_3 along Omega is found: [J_a, J_b] = i eps_abc J_c in the "
+                           "algebra, i[H, J_a] = eps_abc Omega_b J_c in the closure"),
          "L": ("P, R", "the observable is evolved exactly on the carrier and compared with the Rabi law")}
+REACHED = "reached"
+REACHED_CLOSURE = "reached through the closure of the observable"
 MAX_DIM = 40
+CLOSURE_MAX = 256
 TOL = 1e-9
+# largest difference between the amplitude of the signal and sin^2 theta for which the prepared state counts as
+# lying along the observable; exact arithmetic gives zero, the examples give less than 1e-13
+ALONG_TOL = 1e-9
 
 
 class SpecError(ValueError):
@@ -243,15 +267,19 @@ def canonical_su2(basis: List[np.ndarray], H0: np.ndarray, O0: np.ndarray) -> Op
     theta = acos(max(-1.0, min(1.0, float(nv @ Om) / (N * W))))
     residual_H = float(np.linalg.norm(H0 - sum(Om[a] * J[a] for a in range(3))))
     residual_O = float(np.linalg.norm(O0 - sum(nv[a] * J[a] for a in range(3))))
-    cas = sum(X @ X for X in Jc)
+    return {"J": Jc, "rate": W, "weight": N, "theta": theta, "structure_residual": _structure_residual(Jc),
+            "decomposition_residual": max(residual_H, residual_O), "representation": _representation(Jc)}
+
+
+def _representation(J: List[np.ndarray]) -> List[Dict[str, object]]:
+    """The spins j carried by su(2) generators J and the number of copies of each, from the Casimir operator."""
+    cas = sum(X @ X for X in J)
     lam = np.linalg.eigvalsh((cas + cas.conj().T) / 2)
     js = np.round(2 * (-1 + np.sqrt(1 + 4 * np.maximum(lam, 0))) / 2) / 2
     content = {}
     for jv in js:
         content[float(jv)] = content.get(float(jv), 0) + 1
-    rep = [{"j": j, "copies": int(round(c / (2 * j + 1)))} for j, c in sorted(content.items(), reverse=True)]
-    return {"J": Jc, "rate": W, "weight": N, "theta": theta, "structure_residual": _structure_residual(Jc),
-            "decomposition_residual": max(residual_H, residual_O), "representation": rep}
+    return [{"j": j, "copies": int(round(c / (2 * j + 1)))} for j, c in sorted(content.items(), reverse=True)]
 
 
 def _structure_residual(J: List[np.ndarray]) -> float:
@@ -260,6 +288,125 @@ def _structure_residual(J: List[np.ndarray]) -> float:
     for (a, b, c) in eps:
         worst = max(worst, float(np.abs(J[a] @ J[b] - J[b] @ J[a] - 1j * J[c]).max()))
     return worst
+
+
+def closure_basis(H: np.ndarray, O: np.ndarray, tol: float = TOL, max_dim: int = CLOSURE_MAX) -> List[np.ndarray]:
+    """O: an orthonormal basis of the closure of the observable (Chapter 11), the smallest span of operators that
+    contains O and is invariant under i[H, .]. A closure larger than max_dim is returned with max_dim + 1 elements."""
+    basis: List[np.ndarray] = []
+
+    def add(A: np.ndarray) -> None:
+        v = A.astype(complex).copy()
+        for _ in range(2):
+            for B in basis:
+                v = v - np.vdot(B, v) * B
+        n = float(np.linalg.norm(v))
+        if n > tol * max(1.0, float(np.linalg.norm(A))):
+            basis.append(v / n)
+
+    add(O)
+    i = 0
+    while i < len(basis) and len(basis) <= max_dim:
+        add(1j * (H @ basis[i] - basis[i] @ H))
+        i += 1
+    return basis
+
+
+def closure_generator(H: np.ndarray, basis: List[np.ndarray]) -> np.ndarray:
+    """The motion of a closure in its basis, M_ab = <B_a, i[H, B_b]>: dB/dt = i[H, B] is a real antisymmetric matrix
+    for Hermitian operators, with the eigenvalues 0 and the pairs +-i omega."""
+    moved = [1j * (H @ b - b @ H) for b in basis]
+    return np.array([[np.vdot(a, m) for m in moved] for a in basis])
+
+
+def _frequencies(M: np.ndarray, tol: float = 1e-7) -> List[float]:
+    w = np.linalg.eigvalsh(1j * M)
+    scale = max(1.0, float(np.max(np.abs(w))))
+    out: List[float] = []
+    for v in sorted(float(x) for x in w if x > tol * scale):
+        if not out or v - out[-1] > tol * scale:
+            out.append(v)
+    return out
+
+
+def observable_frequencies(H: np.ndarray, O: np.ndarray, tol: float = 1e-7) -> List[float]:
+    """The frequencies with which the observable can move, from the generator of its closure. A closure of two or
+    three operators has one frequency, whatever algebra H and O generate; more operators have several."""
+    basis = closure_basis(H, O)
+    if len(basis) < 2:
+        return []
+    return _frequencies(closure_generator(H, basis), tol)
+
+
+def canonical_closure(basis: List[np.ndarray], H: np.ndarray, O0: np.ndarray) -> Optional[Dict[str, object]]:
+    """K on the closure of the observable: for a closure of two or three operators, the frame J with
+    i[H, J_a] = eps_abc Omega_b J_c, J_3 along the rotation axis and the observable in the plane of J_1 and J_3.
+
+    The rate is the frequency of the generator of the closure. theta is the angle between the observable and the
+    axis, between 0 and 90 degrees: an axis of the closure has no preferred direction, and the law contains theta
+    only through cos^2 theta. A closure of two operators has theta = 90 degrees; J_3 = -i[J_1, J_2] is then a
+    conserved operator outside the closure. The operators are normalized so that [J_1, J_2] has the norm of J_1,
+    as for the components of a spin, which gives the weight |n| of the observable; when the closure is an su(2),
+    these are its generators ('closes', with the representation).
+
+    From a top eigenstate of the observable the signal is 1 - b (1 - cos |Omega| t), with
+    b = sin^2 theta + (|O0| / top) sin theta cos theta <D>, where D is the unit operator of the closure
+    perpendicular to the observable and to i[H, O]. 'amplitude_offset' is b - sin^2 theta for the top eigenstate that
+    deviates most. It vanishes when the expectation of the closure operators lies along the observable, as for a
+    vector operator under the rotations that contain H, and the signal then follows the Rabi law. If the top
+    eigenvalue is degenerate ('top_dimension' > 1), b can depend on the state that is prepared: 'amplitude_range'
+    gives its smallest and its largest value over the top eigenspace."""
+    d = len(basis)
+    if d not in (2, 3):
+        return None
+    M = np.real(closure_generator(H, basis))
+    M = (M - M.T) / 2
+    c = np.array([float(np.real(np.vdot(B, O0))) for B in basis])
+    r = float(np.linalg.norm(c))
+    W = float(np.sqrt(np.sum(np.triu(M, 1) ** 2)))
+    if W < 1e-12 or r < 1e-12:
+        return None
+    par, perp, u3 = 0.0, c, None
+    if d == 3:
+        u3 = np.array([M[2, 1], M[0, 2], M[1, 0]]) / W  # M v = |Omega| u3 x v
+        if u3 @ c < 0:
+            u3 = -u3
+        par = float(u3 @ c)
+        perp = c - par * u3
+    if np.linalg.norm(perp) < 1e-12 * r:
+        return None
+    u1 = perp / np.linalg.norm(perp)
+    u2 = -(M @ u1) / W  # i[H, J_1] = -|Omega| J_2
+    E = [sum(u[k] * basis[k] for k in range(d)) for u in ((u1, u2) if d == 2 else (u1, u2, u3))]
+    E = [(X + X.conj().T) / 2 for X in E]
+    T = bracket(E[0], E[1])
+    kappa = sqrt(_inner(T, T))
+    J = [X / kappa for X in E]
+    if d == 2:
+        J.append(bracket(J[0], J[1]))
+    theta = acos(max(0.0, min(1.0, par / r)))
+    N = r * kappa
+    moved = [1j * (H @ X - X @ H) for X in J]
+    rotation = max(float(np.abs(moved[0] + W * J[1]).max()), float(np.abs(moved[1] - W * J[0]).max()),
+                   float(np.abs(moved[2]).max()))
+    decomposition = float(np.linalg.norm(O0 - N * (sin(theta) * J[0] + cos(theta) * J[2])))
+    w, U = np.linalg.eigh(O0)
+    top = float(w[-1])
+    P = U[:, w > top - 1e-9 * max(1.0, float(np.abs(w).max()))]  # the top eigenspace
+    offsets = np.zeros(1)
+    if d == 3:
+        D = P.conj().T @ (cos(theta) * E[0] - sin(theta) * E[2]) @ P
+        offsets = r / top * sin(theta) * cos(theta) * np.linalg.eigvalsh((D + D.conj().T) / 2)
+    offset = float(offsets[np.argmax(np.abs(offsets))])
+    s2 = sin(theta) ** 2
+    structure = min(_structure_residual(J), _structure_residual([J[0], J[1], -J[2]]))
+    closes = structure < 1e-9 * max(1.0, max(float(np.abs(X).max()) for X in J))
+    return {"J": J, "rate": W, "weight": N, "theta": theta, "rotation_residual": rotation,
+            "decomposition_residual": decomposition, "amplitude_offset": offset,
+            "amplitude_range": [s2 + float(offsets.min()), s2 + float(offsets.max())],
+            "top_dimension": int(P.shape[1]), "closes": closes,
+            "structure_residual": structure if closes else None,
+            "representation": _representation(J) if closes else None}
 
 
 def rabi_law(H: np.ndarray, O: np.ndarray, canon: Dict, n_times: int = 161) -> Dict[str, object]:
@@ -284,17 +431,58 @@ def rabi_law(H: np.ndarray, O: np.ndarray, canon: Dict, n_times: int = 161) -> D
             "value_at_inversion": cos(th) ** 2 - sin(th) ** 2}
 
 
-def _describe_algebra(dim: int, sector_dim: int) -> str:
-    if dim == 1:
-        return "the observable commutes with the Hamiltonian: it is conserved and nothing rotates"
+def reached(row: Dict[str, object]) -> bool:
+    """Whether a derivation reached the rotation, through the algebra or through the closure of the observable."""
+    return str(row.get("status", "")).startswith(REACHED)
+
+
+def _describe_algebra(dim: int, sector_dim: int, closed: bool = True) -> str:
+    if not closed:
+        return f"the Hamiltonian and the observable generate an algebra of dimension above {MAX_DIM}"
     if dim == sector_dim ** 2 - 1 and sector_dim > 2:
-        return (f"the algebra is su({sector_dim}), dimension {dim}: every observable of the {sector_dim}-dimensional "
-                f"carrier is reached, not only a rotating three-vector")
-    return f"the algebra has dimension {dim}, not 3: the observable is not carried by one rotating three-vector"
+        return f"the Hamiltonian and the observable generate su({sector_dim}), of dimension {dim}"
+    return f"the Hamiltonian and the observable generate an algebra of dimension {dim}"
+
+
+def _listed(values: List[float], limit: int = 4) -> str:
+    return ", ".join(f"{v:.4g}" for v in values[:limit]) + (", ..." if len(values) > limit else "")
+
+
+def _closure_obstruction(n: int, freqs: List[float], canon: Optional[Dict]) -> Tuple[str, str]:
+    """Why a closure of n operators does not give the rotation: the reason and its short form."""
+    if n == 0:
+        return "the observable is a multiple of the identity: nothing rotates", "constant observable"
+    if n == 1:
+        return "the observable commutes with the Hamiltonian: it is conserved and nothing rotates", "conserved observable"
+    if n > CLOSURE_MAX:
+        return (f"the closure of the observable has more than {CLOSURE_MAX} operators: the signal is not that of one "
+                f"rotation", f"closure of more than {CLOSURE_MAX} operators")
+    if n > 3:
+        return (f"the closure of the observable has {n} operators, which move with {len(freqs)} frequencies "
+                f"({_listed(freqs)}): the signal is not that of one rotation",
+                f"closure of {n} operators, {len(freqs)} frequencies")
+    if canon is None:
+        return f"the closure of the observable has {n} operators, but no rotation frame is found", "no rotation frame"
+    s2 = sin(canon["theta"]) ** 2
+    amp = lambda b: "0" if abs(b) < 5e-10 else f"{b:.4g}"  # noqa: E731
+    head = f"the closure of the observable has {n} operators and one frequency, {canon['rate']:.4g}, but "
+    if canon["top_dimension"] == 1:
+        return (head + f"the prepared state does not lie along the observable in the closure: the amplitude of the "
+                       f"signal is {amp(s2 + canon['amplitude_offset'])}, not sin^2 theta = {s2:.4g}",
+                "one frequency, amplitude not sin^2 theta")
+    lo, hi = canon["amplitude_range"]
+    return (head + f"the top eigenvalue of the observable has {canon['top_dimension']} states, which do not all lie "
+                   f"along the observable in the closure: the amplitude of the signal is between {amp(lo)} and "
+                   f"{amp(hi)}, depending on the state prepared, and sin^2 theta = {s2:.4g}",
+            "one frequency, amplitude depends on the prepared state")
 
 
 def derive_bloch_rotation(real: Realization, law: bool = True) -> Dict[str, object]:
-    """Derive the Bloch rotation in one realization; returns the word, the steps, the signature and the law."""
+    """Derive the Bloch rotation in one realization; returns the word, the steps, the signature and the law.
+
+    The status is 'reached' when the Hamiltonian and the observable generate su(2) (S A K L), 'reached through the
+    closure of the observable' when the algebra is larger and the closure of the observable carries the rotation
+    (S A O K L), and 'obstructed' otherwise (S A O)."""
     word: List[str] = []
     steps: List[Dict[str, object]] = []
     out: Dict[str, object] = {"name": real.name, "field": real.field, "carrier": real.carrier.description,
@@ -307,36 +495,62 @@ def derive_bloch_rotation(real: Realization, law: bool = True) -> Dict[str, obje
     basis, closed = lie_closure([Hs, Os])
     word.append("A")
     step_a = {"letter": "A", "dimension": len(basis) if closed else f"> {MAX_DIM}", "closed": closed}
-    if real.carrier.kind == "qubits" and sec is None and closed and len(basis) <= 15:
+    pauli = real.carrier.kind == "qubits" and sec is None
+    if pauli and closed and len(basis) <= 15:
         step_a["closing_operators"] = pauli_span(basis, real.carrier.spec["n"])
     steps.append(step_a)
     canon = canonical_su2(basis, _traceless(Hs), _traceless(Os)) if closed else None
-    if canon is None:
+    if canon is not None:
+        out.update(status=REACHED, algebra_dimension=3)
+        step_k = {"letter": "K", "rate": canon["rate"], "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
+                  "representation": canon["representation"], "structure_residual": canon["structure_residual"],
+                  "decomposition_residual": canon["decomposition_residual"]}
+        signature = {"algebra": "su(2)", "relations": "[J_a, J_b] = i eps_abc J_c", "rate": canon["rate"],
+                     "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
+                     "law": "f(t) = cos^2 theta + sin^2 theta cos(|Omega| t)"}
+    else:
         dim = len(basis) if closed else MAX_DIM + 1
-        reason = _describe_algebra(dim, Hs.shape[0]) if closed else f"the algebra exceeds dimension {MAX_DIM}"
-        if dim == 3:
-            reason = "the three-dimensional algebra is not su(2) (its Killing form is not negative definite)"
+        O0 = _traceless(Os)
+        closure = closure_basis(Hs, O0)
+        n = len(closure)
+        freqs = _frequencies(closure_generator(Hs, closure)) if 1 < n <= CLOSURE_MAX else []
+        word.append("O")
+        step_o = {"letter": "O", "dimension": n if n <= CLOSURE_MAX else f"> {CLOSURE_MAX}", "frequencies": freqs}
+        if pauli and 0 < n <= 15:
+            step_o["closure_operators"] = pauli_span(closure, real.carrier.spec["n"])
+        steps.append(step_o)
+        canon = canonical_closure(closure, Hs, O0)
+        algebra = _describe_algebra(dim, Hs.shape[0], closed)
         cause = _single_term_cause(real, V) if dim > 3 and len(real.terms) > 1 else None
         if cause:
-            reason += f"; without the term {cause} the algebra is su(2): that term is the obstruction"
-        out.update(obstruction=reason, algebra_dimension=dim)
-        return {**out, "word": "".join(word), "class": " ".join(word), "steps": steps}
-    word.append("K")
-    steps.append({"letter": "K", "rate": canon["rate"], "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
-                  "representation": canon["representation"], "structure_residual": canon["structure_residual"],
+            algebra += f"; without the term {cause} the algebra is su(2)"
+        out.update(algebra_dimension=dim, closure_dimension=n, frequencies=freqs)
+        if canon is None or abs(canon["amplitude_offset"]) > ALONG_TOL:
+            reason, short = _closure_obstruction(n, freqs, canon)
+            if n > 1:
+                reason += "; " + algebra
+            out.update(obstruction=reason, obstruction_short=short)
+            return {**out, "word": "".join(word), "class": " ".join(word), "steps": steps}
+        out.update(status=REACHED_CLOSURE, algebra=algebra)
+        step_k = {"letter": "K", "rate": canon["rate"], "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
+                  "rotation_residual": canon["rotation_residual"],
                   "decomposition_residual": canon["decomposition_residual"],
-                  **({"generators": [pauli_description(V @ X @ V.conj().T, real.carrier.spec["n"]) for X in canon["J"]]}
-                     if real.carrier.kind == "qubits" and sec is None else {})})
-    out.update(status="reached", algebra_dimension=3)
+                  "amplitude_offset": canon["amplitude_offset"], "closes": canon["closes"],
+                  **({"representation": canon["representation"], "structure_residual": canon["structure_residual"]}
+                     if canon["closes"] else {})}
+        signature = {"relations": "i[H, J_a] = eps_abc Omega_b J_c", "rate": canon["rate"],
+                     "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
+                     "law": "f(t) = cos^2 theta + sin^2 theta cos(|Omega| t)"}
+    word.append("K")
+    if pauli:
+        step_k["generators"] = [pauli_description(V @ X @ V.conj().T, real.carrier.spec["n"]) for X in canon["J"]]
+    steps.append(step_k)
     lawr = {}
     if law:
         lawr = rabi_law(Hs, Os, canon)
         word.append("L")
         steps.append({"letter": "L", "residual": lawr["residual"], "j_top": lawr["j_top"],
                       "inversion_time": lawr["inversion_time"], "value_at_inversion": lawr["value_at_inversion"]})
-    signature = {"algebra": "su(2)", "relations": "[J_a, J_b] = i eps_abc J_c", "rate": canon["rate"],
-                 "weight": canon["weight"], "theta_deg": degrees(canon["theta"]),
-                 "law": "f(t) = cos^2 theta + sin^2 theta cos(|Omega| t)"}
     return {**out, "word": "".join(word), "class": " ".join(word), "steps": steps, "signature": signature,
             "representation": canon["representation"], "sector_dimension": int(Hs.shape[0]), "law": lawr}
 
@@ -356,18 +570,29 @@ def _single_term_cause(real: Realization, V: np.ndarray) -> Optional[str]:
 
 # ------------------------------------------------------------------------------------------------ detach / attach
 def detach(real: Realization) -> Dict[str, object]:
-    """The carrier-free part of a realization (the signature) and the carrier-specific part that is left behind."""
+    """The carrier-free part of a realization (the signature) and the carrier-specific part that is left behind.
+
+    A rotation reached through the closure of the observable leaves with the carrier the operators of the closure
+    and the larger algebra; it has a representation only when the closure is itself an su(2)."""
     row = derive_bloch_rotation(real, law=True)
-    if row["status"] != "reached":
+    if not reached(row):
         return {"name": real.name, "detached": False, "reason": row["obstruction"], "derivation": row}
-    k = next(s for s in row["steps"] if s["letter"] == "K")
-    a = next(s for s in row["steps"] if s["letter"] == "A")
-    return {"name": real.name, "detached": True, "signature": row["signature"],
-            "left_behind": {"carrier": real.carrier.description, "field": real.field,
-                            "hilbert_dimension": real.carrier.dim, "sector_dimension": row["sector_dimension"],
-                            "representation": row["representation"],
-                            **({"closing_operators": a["closing_operators"]} if a.get("closing_operators") else {}),
-                            **({"generators": k["generators"]} if "generators" in k else {})},
+    step = {s["letter"]: s for s in row["steps"]}
+    k, a, o = step["K"], step["A"], step.get("O")
+    left = {"carrier": real.carrier.description, "field": real.field, "hilbert_dimension": real.carrier.dim,
+            "sector_dimension": row["sector_dimension"], "representation": row["representation"]}
+    if o is None:
+        if a.get("closing_operators"):
+            left["closing_operators"] = a["closing_operators"]
+    else:
+        left["algebra_dimension"] = row["algebra_dimension"]
+        if a.get("closing_operators"):
+            left["algebra_operators"] = a["closing_operators"]
+        if o.get("closure_operators"):
+            left["closure_operators"] = o["closure_operators"]
+    if "generators" in k:
+        left["generators"] = k["generators"]
+    return {"name": real.name, "detached": True, "signature": row["signature"], "left_behind": left,
             "law": {"residual": row["law"]["residual"], "inversion_time": row["law"]["inversion_time"]},
             "derivation": row}
 
@@ -463,7 +688,7 @@ def attach(source: Realization, to: str, size: Optional[int] = None) -> Dict[str
     row = derive_bloch_rotation(target)
     sig_t = row.get("signature", {})
     preserved = {k: {"source": d["signature"][k], "target": sig_t.get(k)} for k in ("rate", "weight", "theta_deg")}
-    return {"attached": row["status"] == "reached", "source": source.name, "to": to, "spec": spec,
+    return {"attached": reached(row), "source": source.name, "to": to, "spec": spec,
             "native": spec["native"], "preserved": preserved,
             "changed": {"carrier": {"source": d["left_behind"]["carrier"], "target": target.carrier.description},
                         "sector_dimension": {"source": d["left_behind"]["sector_dimension"],
@@ -478,50 +703,67 @@ def attach(source: Realization, to: str, size: Optional[int] = None) -> Dict[str
 # ------------------------------------------------------------------------------------------------ co-discovery
 def codiscover(reals: List[Realization]) -> Dict[str, object]:
     rows = [derive_bloch_rotation(r) for r in reals]
-    reached = [r for r in rows if r["status"] == "reached"]
+    got = [r for r in rows if reached(r)]
     classes: Dict[str, List[str]] = {}
-    for r in reached:
+    for r in got:
         classes.setdefault(r["class"], []).append(r["name"])
-    summary = {"target": "Bloch rotation (the Hamiltonian and the observable generate su(2))",
-               "reached": len(reached), "obstructed": len(rows) - len(reached),
-               "fields_reached": sorted({r["field"] for r in reached}), "derivation_classes": classes,
-               "law_residual_max": max((r["law"]["residual"] for r in reached), default=None),
-               "structure_residual_max": max((next(s for s in r["steps"] if s["letter"] == "K")["structure_residual"]
-                                              for r in reached), default=None)}
+    k_steps = [next(s for s in r["steps"] if s["letter"] == "K") for r in got]
+    summary = {"target": "Bloch rotation (a three-vector of expectations rotates about a fixed axis, and the observable "
+                         "follows the Rabi law)",
+               "reached": len(got), "reached_through_closure": sum(r["status"] == REACHED_CLOSURE for r in got),
+               "obstructed": len(rows) - len(got),
+               "fields_reached": sorted({r["field"] for r in got}), "derivation_classes": classes,
+               "law_residual_max": max((r["law"]["residual"] for r in got), default=None),
+               "structure_residual_max": max((k["structure_residual"] for r, k in zip(got, k_steps)
+                                              if r["status"] == REACHED), default=None),
+               "rotation_residual_max": max((k["rotation_residual"] for k in k_steps if "rotation_residual" in k),
+                                            default=None)}
     return {"summary": summary, "rows": rows}
 
 
-def _rep(rep: List[Dict]) -> str:
+def _rep(rep: Optional[List[Dict]]) -> str:
     def j_text(j):
         return f"{int(j)}" if float(j).is_integer() else f"{int(round(2 * j))}/2"
+    if not rep:
+        return "-"
     return " + ".join(f"{c} x j={j_text(r['j'])}" if (c := r["copies"]) > 1 else f"j={j_text(r['j'])}" for r in rep)
 
 
 def markdown(report: Dict[str, object]) -> str:
     s = report["summary"]
+    through = s["reached_through_closure"]
     lines = ["# Co-discovery by construction: the Bloch rotation", "",
-             f"Target: {s['target']}. Reached in {s['reached']} realizations from {len(s['fields_reached'])} fields "
-             f"({', '.join(s['fields_reached'])}); obstructed in {s['obstructed']}.", "",
+             f"Target: {s['target']}. Reached in {s['reached']} realizations from {len(s['fields_reached'])} "
+             f"field{'' if len(s['fields_reached']) == 1 else 's'} ({', '.join(s['fields_reached'])})"
+             + (f", in {through} of them through the closure of the observable" if through else "")
+             + f"; obstructed in {s['obstructed']}.", "",
              "| realization | field | carrier | derivation | algebra dimension | representation | rate | angle | "
              "law residual |", "|---|---|---|---|---:|---|---:|---:|---:|"]
     for r in report["rows"]:
-        if r["status"] == "reached":
+        if reached(r):
             sig = r["signature"]
-            lines.append(f"| {r['name']} | {r['field']} | {r['carrier']} | {r['word']} | 3 | {_rep(r['representation'])} | "
-                         f"{sig['rate']:.4g} | {sig['theta_deg']:.1f} | {r['law']['residual']:.1e} |")
+            lines.append(f"| {r['name']} | {r['field']} | {r['carrier']} | {r['word']} | {r['algebra_dimension']} | "
+                         f"{_rep(r['representation'])} | {sig['rate']:.4g} | {sig['theta_deg']:.1f} | "
+                         f"{r['law']['residual']:.1e} |")
         else:
             lines.append(f"| {r['name']} | {r['field']} | {r['carrier']} | {r['word']} | {r['algebra_dimension']} | - | "
                          f"- | - | - |")
     lines += ["", "## Obstructions", ""]
     for r in report["rows"]:
-        if r["status"] != "reached":
+        if not reached(r):
             lines.append(f"- {r['name']} ({r['field']}): {r['obstruction']}")
-    lines += ["", "## Invariants", "",
-              f"- Algebra: su(2) in every reached realization; largest deviation from [J_a, J_b] = i eps_abc J_c: "
-              f"{s['structure_residual_max']:.1e}.",
-              f"- Law: the observable follows cos^2 theta + sin^2 theta cos(|Omega| t) on every carrier; largest "
-              f"deviation of the exact evolution: {s['law_residual_max']:.1e}.", "",
-              "## Letters and the slots they act on", "", "| letter | transformation | slots | action |",
+    lines += ["", "## Invariants", ""]
+    if s["structure_residual_max"] is not None:
+        where = "every realization reached through the algebra" if through else "every reached realization"
+        lines.append(f"- Algebra: su(2) in {where}; largest deviation from [J_a, J_b] = i eps_abc J_c: "
+                     f"{s['structure_residual_max']:.1e}.")
+    if through:
+        lines.append(f"- Closure: in every realization reached through the closure of the observable, three operators "
+                     f"rotate, i[H, J_a] = eps_abc Omega_b J_c; largest deviation: {s['rotation_residual_max']:.1e}.")
+    if s["law_residual_max"] is not None:
+        lines.append(f"- Law: the observable follows cos^2 theta + sin^2 theta cos(|Omega| t) on every carrier; "
+                     f"largest deviation of the exact evolution: {s['law_residual_max']:.1e}.")
+    lines += ["", "## Letters and the slots they act on", "", "| letter | transformation | slots | action |",
               "|---|---|---|---|"]
     lines += [f"| {k} | {LETTERS[k]} | {SLOTS[k][0]} | {SLOTS[k][1]} |" for k in LETTERS]
     return "\n".join(lines) + "\n"

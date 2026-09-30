@@ -110,7 +110,7 @@
       return `<g class="mech" data-class="${k}" tabindex="0" role="button" aria-label="${esc(S.classes[k])}: ${esc(strip(m.text || ''))}">
         <rect x="${p.x - CARD.w / 2}" y="${p.y - CARD.h / 2}" width="${CARD.w}" height="${CARD.h}" rx="12"/>
         <svg x="${p.x - 24}" y="${p.y - CARD.h / 2 + (layout === NARROW ? 5 : 9)}" width="48" height="32" viewBox="0 0 48 32" class="glyph">${GLYPHS[k] || ''}</svg>
-        <text class="name" x="${p.x}" y="${p.y + (layout === NARROW ? 13 : 16)}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
+        <text class="name${(S.classes_short[k] || k).length > 16 ? ' long' : ''}" x="${p.x}" y="${p.y + (layout === NARROW ? 13 : 16)}" text-anchor="middle">${esc(S.classes_short[k] || k)}</text>
         <text class="sub" x="${p.x}" y="${p.y + (layout === NARROW ? 29 : 33)}" text-anchor="middle">${esc(sub)}</text>
         <title>${esc(S.classes[k])}. ${esc(strip(m.text || ''))} Canonical form: ${esc(strip(m.canonical || ''))}. ${c.n} realization${c.n === 1 ? '' : 's'}${c.fields ? ` in ${c.fields} field${c.fields === 1 ? '' : 's'}` : ''}.</title></g>`;
     }).join('');

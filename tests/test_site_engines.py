@@ -85,10 +85,23 @@ def test_browser_closures_match_the_language(quantum, tmp_path):
         assert len(got["frequencies"]) == rec["facts"]["frequencies"], nid
         assert np.allclose(got["frequencies"][:6], rec["facts"]["frequency_list"], rtol=1e-5), nid
         assert got["dim"] == row["algebra_dimension"], nid
-        assert got["reached"] == (row["status"] == "reached"), nid
+        assert got["reached"] == ql.reached(row), nid
+        assert got["through"] == {ql.REACHED: "algebra", ql.REACHED_CLOSURE: "closure"}.get(row["status"]), nid
         if got["reached"]:
             assert abs(got["rate"] - row["signature"]["rate"]) < 1e-9, nid
             assert abs(got["theta"] - row["signature"]["theta_deg"]) < 1e-7, nid
+            assert abs(got["weight"] - row["signature"]["weight"]) < 1e-9, nid
+            # the axis drawn on the sphere: its length is the rate, its angle to the observable (the third axis of
+            # the frame) is theta, for a frame of su(2) generators and for the frame of a closure
+            axis = np.array(run({"op": "unitary_axis", "engine": rec["engine"]}, tmp_path))
+            assert abs(np.linalg.norm(axis) - got["rate"]) < 1e-9, nid
+            assert abs(np.degrees(np.arccos(axis[2] / np.linalg.norm(axis))) - got["theta"]) < 1e-6, nid
+            assert run({"op": "unitary_leak", "engine": rec["engine"]}, tmp_path) < 1e-9, nid   # the frame rotates
+        if got["through"] == "closure":
+            # the frame the browser finds for terms switched by hand is the one stored with the realization
+            for live, stored in zip(got["frame"], rec["engine"]["frame"]):
+                assert np.allclose(live["re"], stored["re"], atol=1e-9) and np.allclose(live["im"], stored["im"], atol=1e-9), nid
+            assert abs(got["jTop"] - rec["engine"]["j_top"]) < 1e-9, nid
         if rec["facts"].get("cause"):
             term = rec["engine"]["terms"][got["cause"]]
             assert sd.operator_html(term["operator"]) in rec["facts"]["cause"], nid
@@ -121,26 +134,68 @@ def test_browser_evolution_is_exact_and_follows_the_rabi_law(quantum, tmp_path):
 
 @needs_node
 def test_a_larger_algebra_changes_the_signal_only_when_the_closure_of_the_observable_grows(quantum, tmp_path):
-    """With the field moved to the second spin, H and X0 generate an algebra of dimension 6 and the derivation of a
-    rotation stops, but the closure of X0 keeps three operators and the signal is that of the two spins of Chapter
-    11. With the field on both spins the closure has five operators and two frequencies: the law is left."""
+    """With the field moved to the second spin, H and X0 generate an algebra of dimension 6, but the closure of X0
+    keeps three operators: the rotation is reached through the closure, and the signal is that of the two spins of
+    Chapter 11. With the field on both spins the closure has five operators and two frequencies: the law is left."""
     nodes, records = quantum
     times = list(np.linspace(0.0, 12.0, 61))
     f = {nid: np.array([r["f"] for r in run({"op": "unitary_signal", "engine": records[nid]["engine"], "times": times},
                                              tmp_path)]) for nid in ("two_spins", "two_spins_x1", "two_spins_both")}
     facts = {nid: records[nid]["facts"] for nid in f}
-    assert [records[n]["class"] for n in f] == ["rotation", "obstructed", "obstructed"]
+    from fieldbridge.quantum import language as ql
+    for nid, control in (("two_spins_x1", "field_on_second_spin"), ("two_spins_both", "field_on_both_spins")):
+        page, file = ql.load(nodes[nid]["spec"]), ql.load(ROOT / "examples/quantum/controls" / f"{control}.json")
+        assert np.allclose(page.H, file.H) and np.allclose(page.O, file.O), nid   # the controls of the tutorial
+    assert [records[n]["class"] for n in f] == ["rotation", "rotation", "obstructed"]
+    assert [facts[n]["word"] for n in f] == ["AKL", "AOKL", "AO"]
+    assert facts["two_spins_x1"]["status"] == "reached through the closure of the observable"
     assert (facts["two_spins_x1"]["dim"], facts["two_spins_x1"]["closure"], facts["two_spins_x1"]["frequencies"]) == (6, 3, 1)
     assert facts["two_spins_x1"]["frequency_list"] == pytest.approx([5 ** 0.5])
+    for key in ("rate", "theta"):  # the rate and the angle of the two spins
+        assert facts["two_spins_x1"][key] == pytest.approx(facts["two_spins"][key], rel=1e-12)
     assert np.max(np.abs(f["two_spins_x1"] - f["two_spins"])) < 1e-10
     assert (facts["two_spins_both"]["closure"], facts["two_spins_both"]["frequencies"]) == (5, 2)
     assert np.max(np.abs(f["two_spins_both"] - f["two_spins"])) > 0.5
-    # every other realization of the page with a larger algebra has more than one frequency
+    # the sphere of the field on both spins is drawn in the frame of the two spins, which its Hamiltonian leaves
+    assert run({"op": "unitary_leak", "engine": records["two_spins_both"]["engine"]}, tmp_path) > 0.1
+    # on the page the class follows the closure: one frequency in every rotation, several in the class named so
     for nid, rec in records.items():
-        if rec["class"] == "obstructed" and nid != "two_spins_x1":
-            assert rec["facts"]["frequencies"] > 1, nid
+        if rec["class"] == "obstructed":
+            assert rec["facts"]["frequencies"] > 1 and rec["facts"]["closure"] > 3, nid
         if rec["class"] == "rotation":
-            assert rec["facts"]["frequencies"] == 1, nid
+            assert rec["facts"]["frequencies"] == 1 and rec["facts"]["closure"] <= 3, nid
+
+
+def _record(spec):
+    """The page record of a specification that is not a node of the page."""
+    return sd.unitary_record({"id": "test", "def": {}, "spec": spec, "name_html": spec["name"], "attach": None})
+
+
+@needs_node
+def test_the_browser_tests_the_prepared_state_of_a_closure_with_one_frequency(tmp_path):
+    """H = Z0 + Z1 with R = X0 (1 + 0.5 Z1) + 0.7 Z0: three operators, one frequency, amplitude 2.25/2.74 instead of
+    sin^2 theta = 5/6.96 (tests/test_quantum_language.py). With R = X0 X1 the top eigenvalue has two states and the
+    amplitude lies between 0 and 1. The browser reports both as the language does, and keeps the rotation of the
+    field moved to the second spin, whose two top eigenstates lie along the observable."""
+    from fieldbridge.quantum import language as ql
+    two = json.loads((ROOT / "examples/quantum/two_spins.json").read_text(encoding="utf-8"))
+    terms = lambda pairs: [{"coefficient": c, "operator": op} for c, op in pairs]  # noqa: E731
+    counter = {**two, "name": "another amplitude", "hamiltonian": terms([(1, "Z0"), (1, "Z1")]),
+               "observable": terms([(1, "X0"), (0.5, "X0 Z1"), (0.7, "Z0")])}
+    pair = {**counter, "name": "two top eigenstates", "observable": terms([(1, "X0 X1")])}
+    for spec, states, amplitude in ((counter, 1, [2.25 / 2.74] * 2), (pair, 2, [0.0, 1.0])):
+        row = ql.derive_bloch_rotation(ql.load(spec))
+        rec = _record(spec)
+        got = run({"op": "unitary_analyze", "engine": rec["engine"]}, tmp_path)
+        assert row["word"] == "AO" and rec["class"] == "obstructed" and got["klass"] == "obstructed"
+        assert got["reached"] is False and got["through"] is None and got["closure"] == 3
+        assert got["frequencies"] == pytest.approx(row["frequencies"]) and len(got["frequencies"]) == 1
+        assert got["amplitude"]["states"] == states
+        assert got["amplitude"]["range"] == pytest.approx(amplitude, abs=1e-9)
+    assert got["amplitude"]["law"] == pytest.approx(0.5)
+    moved = {**two, "hamiltonian": terms([("g", "Z0 Z1"), ("h", "X1")])}
+    ok = run({"op": "unitary_analyze", "engine": _record(moved)["engine"]}, tmp_path)
+    assert ok["through"] == "closure" and "amplitude" not in ok
 
 
 @needs_node

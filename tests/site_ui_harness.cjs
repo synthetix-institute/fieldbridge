@@ -58,6 +58,7 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          facts: text('facts'), sequence: text('sequence-text'), count: element('path-count').textContent,
                          mechanism: element('m-name').textContent, changes: text('slots'),
                          reference: I.reference(), legend: text('view-legend'),
+                         text: text('consequence-text'), derivation: text('derivation'), axis: I.axis(),
                          selected: element('now-name').textContent + ' | ' + text('now-where')});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
@@ -69,6 +70,7 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'next') element('sequence-next').click();
   if (step.do === 'prev') element('sequence-prev').click();
   if (step.do === 'param') { I.state.params[step.name] = step.value; I.refresh(); }
+  if (step.do === 'term') { I.state.active[step.k] = step.on; I.refresh(); }
   flush();
   out.push(snapshot());
 }

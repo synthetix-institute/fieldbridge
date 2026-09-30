@@ -17,6 +17,7 @@
   const byId = Object.fromEntries(S.edges.map(e => [e.id, e]));
   const LETTERS = {
     unitary: {S: ['C', 'sector: a conserved operator restricts the carrier'], A: ['Omega', 'algebra: commutators of H and R until the span closes'],
+              O: ['R', 'closure of the observable: commutators of H with R until the span closes'],
               K: ['Omega', 'canonical form: [J_a, J_b] = i ε_abc J_c'], L: ['P', 'law: exact evolution against the Rabi law']},
     dissipative: {S: ['Xi', 'symmetry of the drift'], C: ['A', 'continuation of a state along the control'], W: ['P', 'write field toward another state'],
                   R: ['Omega', 'reduction to the critical direction'], U: ['A', 'unfolding to the cusp'], K: ['Xi', 'canonical form of the reduced drift'],
@@ -118,7 +119,7 @@
     state.shownClass = rec.class;
     $('m-glyph').innerHTML = M.glyph(rec.class, 'big');
     $('m-name').textContent = S.classes[rec.class] || rec.class;
-    $('m-canonical').innerHTML = mech.canonical ? 'canonical form ' + mech.canonical : '';
+    $('m-canonical').innerHTML = mech.canonical ? 'canonical form: ' + mech.canonical : '';
     $('m-where').innerHTML = rec.universal ? 'Written without a field.' : `Realized in ${esc(rec.field)}: ${rec.name}.`;
     $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span>`;
     $('slots').innerHTML = SLOTS.map(slot => `<li class="slot" data-slot="${slot}" id="slot-${slot}">
@@ -317,16 +318,19 @@
     if (rec.family === 'unitary') {
       const a = U.analyze(e, state.params, state.active);
       analysis = a;
-      leadText = S.classes[a.klass];
-      if (a.reached) body = `The Hamiltonian and the observable generate su(2): a three-vector of expectations rotates at |Ω| = ${fmt(a.rate)} about an axis at θ = ${fmt(a.theta, 3)}° to R, and the measured signal follows cos²θ + sin²θ cos |Ω|t.`;
+      const nf = a.frequencies.length, count = n => ({2: 'two', 3: 'three'}[n] || n);
+      const without = a.cause != null ? ` Without the term ${MML.math(MML.term(e.terms[a.cause].tree, e.terms[a.cause].operator, e.terms[a.cause].hc))} the algebra is su(2).` : '';
+      // the class named after several frequencies also receives, for values set by hand, a closure with one frequency
+      leadText = a.klass !== 'obstructed' || nf > 1 ? S.classes[a.klass]
+        : a.amplitude ? `one frequency, amplitude ${a.amplitude.states > 1 ? 'depends on the prepared state' : 'not sin²θ'}` : `one frequency, closure of ${a.closure} operators`;
+      if (a.through === 'algebra') body = `The Hamiltonian and the observable generate su(2): a three-vector of expectations rotates at |Ω| = ${fmt(a.rate)} about an axis at θ = ${fmt(a.theta, 3)}° to R, and the measured signal follows cos²θ + sin²θ cos |Ω|t.`;
+      else if (a.through === 'closure') body = `H and R generate an algebra of dimension ${a.dim}, not su(2), but the commutators of H with R close on ${count(a.closure)} operators. Their expectations rotate at |Ω| = ${fmt(a.rate)} about an axis at θ = ${fmt(a.theta, 3)}° to R and point along R in the prepared state: the measured signal follows cos²θ + sin²θ cos |Ω|t.${without}`;
       else if (a.klass === 'conserved') body = 'R commutes with H. Its closure has dimension 1: the measured value is conserved.';
-      else {
-        const nf = a.frequencies.length;
-        body = `H and R generate an algebra of dimension ${a.dim}, larger than su(2): the derivation of a single rotation stops.`
-          + (nf === 1 ? ` The closure of R still has ${a.closure} operators, which move with one frequency: the signal is that of a rotating three-vector.`
-            : ` The closure of R has ${a.closure} operators, which move with ${nf} frequencies: the signal is not that of one rotation.`)
-          + (a.cause != null ? ` Without the term ${MML.math(MML.term(e.terms[a.cause].tree, e.terms[a.cause].operator, e.terms[a.cause].hc))} the algebra is su(2).` : '');
-      }
+      else body = (a.amplitude ? `The commutators of H with R close on ${count(a.closure)} operators, which move with one frequency, but `
+          + (a.amplitude.states > 1 ? `the top eigenvalue of R has ${a.amplitude.states} states, in which their expectations do not all point along R: the amplitude of the signal is between ${fmt(Math.abs(a.amplitude.range[0]) < 5e-10 ? 0 : a.amplitude.range[0], 3)} and ${fmt(a.amplitude.range[1], 3)}, depending on the state prepared, and sin²θ = ${fmt(a.amplitude.law, 3)}.`
+            : `their expectations in the prepared state do not point along R: the amplitude of the signal is ${fmt(a.amplitude.signal, 3)}, not sin²θ = ${fmt(a.amplitude.law, 3)}.`)
+        : `The closure of R has ${a.closure} operators, which move with ${nf === 1 ? 'one frequency' : nf + ' frequencies'}: the signal is not that of one rotation.`)
+        + ` H and R generate an algebra of dimension ${a.dim}.${without}`;
       live('closure of R', a.closure); live('dimension of the algebra', a.dim);
       live('frequencies of R', a.frequencies.length ? `${a.frequencies.length}: ${a.frequencies.slice(0, 4).map(v => fmt(v, 4)).join(', ')}${a.frequencies.length > 4 ? ', …' : ''}` : 'none');
       if (a.reached) { live('rate |Ω|', fmt(a.rate, 4)); live('angle θ', fmt(a.theta, 4) + '°'); }
@@ -373,7 +377,9 @@
     $('facts').innerHTML = facts.map(([k, v, isLive]) => `<dt>${esc(k)}</dt><dd class="${isLive ? 'live' : ''}">${v}</dd>`).join('');
     const word = rec.family === 'unitary' ? f.word : [f.sym_word, f.thr_word, f.lock_word].filter(w => w && w !== '—')[0];
     const letters = LETTERS[rec.family === 'unitary' ? 'unitary' : 'dissipative'];
-    $('derivation').innerHTML = word ? `<span>Derivation</span>` + word.split('').map(l => { const [slot, meaning] = letters[l] || ['A', l]; return `<span class="letter" data-slot="${slot}" title="${esc(meaning)}">${l}</span>`; }).join('')
+    // through the closure of the observable (letter O) the frame of K rotates without being an algebra
+    const closureK = ['Omega', 'canonical form: a frame of the closure with i[H, J_a] = ε_abc Ω_b J_c'];
+    $('derivation').innerHTML = word ? `<span>Derivation</span>` + word.split('').map(l => { const [slot, meaning] = (l === 'K' && word.includes('O') ? closureK : letters[l]) || ['A', l]; return `<span class="letter" data-slot="${slot}" title="${esc(meaning)}">${l}</span>`; }).join('')
       + `<span>· FieldBridge, at the listed values</span>` : '';
     const card = rec.card;
     $('card-figure').hidden = !card;
@@ -415,13 +421,16 @@
     const a = U.analyze(e, state.params, state.active);
     const period = a.reached ? 2 * Math.PI / a.rate : 6, tMax = 2 * period;
     const times = Array.from({length: 361}, (_, i) => tMax * i / 360);
-    const rows = U.signal(e, state.params, state.active, psi0, times);
-    let omega = null;
-    if (e.frame) {
-      const Fm = e._frame || (e._frame = e.frame.map(U.fromJSON));
-      const H0 = U.traceless(H);
-      omega = Fm.map(Fa => U.inner(H0, Fa) / U.inner(Fa, Fa));
-    }
+    // The frame stored with the realization is that of its listed terms, or of the realization it was changed from.
+    // When terms switched by hand reach the rotation through a closure that this frame does not span, the frame of
+    // that closure is used.
+    const stored = e.frame ? (e._frame || (e._frame = e.frame.map(U.fromJSON))) : null;
+    const live = a.through === 'closure' && (!stored || U.frameLeak(H, stored) > 1e-9) ? {frame: a.frame, jTop: a.jTop} : null;
+    const Fm = live ? live.frame : stored;
+    const rows = U.signal(e, state.params, state.active, psi0, times, live);
+    // the axis about which i[H, .] turns the frame: the projection of H on an su(2) frame, and also the axis of a
+    // closure, whose frame need not contain H
+    const omega = Fm ? U.frameRotation(H, Fm) : null;
     const law = a.reached && state.prep === 'top' ? U.rabi(a.theta, a.rate) : null;
     const src = reference(rec);
     let ref = null;
@@ -430,7 +439,7 @@
       ref = {label: src.label, signal: U.signal(re, re.params || {}, re.terms.map(() => true), start, times).map(r => [r.t, r.f])};
     }
     return {kind: 'unitary', rows, tMax, law, omega, period, speed: tMax / 9, ref,
-            legend: `Blue: exact evolution on the carrier. ${law ? 'Dashed: the Rabi law cos²θ + sin²θ cos |Ω|t. ' : ''}${refLegend(ref)}${e.frame ? `Axes: the frame of the rotation${e.frame_from !== rec.id ? ' of ' + esc(S.nodes[e.frame_from].name.replace(/<[^>]+>/g, '')) : ''}, R vertical. Drag the sphere to turn it.` : ''}`,
+            legend: `Blue: exact evolution on the carrier. ${law ? 'Dashed: the Rabi law cos²θ + sin²θ cos |Ω|t. ' : ''}${refLegend(ref)}${Fm ? `Axes: the frame of the rotation${live ? ' for the terms switched here' : e.frame_from !== rec.id ? ' of ' + esc(S.nodes[e.frame_from].name.replace(/<[^>]+>/g, '')) : ''}, R vertical. Drag the sphere to turn it.` : ''}`,
             title: 'The expectation of the rotating three-vector, and the measured signal'};
   }
   const refLegend = ref => ref ? `Grey, dashed: ${esc(ref.label)}. ` : '';
@@ -720,7 +729,9 @@
   const refresh = () => { buildScene(S.nodes[state.node]); recompute(); };
   /** Advance the dynamics by a time of the animation and draw: for tests and for a page that is not displayed. */
   const step = seconds => { for (let k = 0; k < Math.ceil(seconds / 0.05); k++) advance(0.05); draw(); };
+  /** The rotation axis drawn on the sphere, in the frame of the realization (R along the third axis). */
+  const axis = () => scene && scene.omega ? Array.from(scene.omega) : null;
   window.FieldBridgeInstrument = {state, load, start, applyEdge, undo, route, walkTo, setPreparation, byId, out, into,
-                                  onChange: f => listeners.push(f), light, reference: shown, refresh, step};
+                                  onChange: f => listeners.push(f), light, reference: shown, axis, refresh, step};
   document.addEventListener('DOMContentLoaded', setup);
 })();

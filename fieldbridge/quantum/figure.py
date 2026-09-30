@@ -1,9 +1,9 @@
 """Figures for the quantum language.
 
-codiscovery_figure(report, path)  (a) the derivation in each realization, letters S A K L; (b) the observable of every
-                                  realization that reaches the Bloch rotation, rescaled by its own angle, against the
-                                  rotation angle |Omega| t; (c) the dimension of the algebra that the Hamiltonian and the
-                                  observable generate
+codiscovery_figure(report, path)  (a) the derivation in each realization, letters S A O K L; (b) the observable of
+                                  every realization that reaches the Bloch rotation, rescaled by its own angle, against
+                                  the rotation angle |Omega| t; (c) the dimension of the algebra that the Hamiltonian and
+                                  the observable generate
 attach_figure(result, path)       the law on the source and on the attached carrier, and the design on that carrier
 """
 from __future__ import annotations
@@ -20,7 +20,7 @@ import numpy as np  # noqa: E402
 
 INK, INK2, GRID = "#1f2430", "#6b7280", "#e5e7eb"
 BLUE, ORANGE, GREEN, PURPLE, RED, CYAN = "#2563eb", "#ea580c", "#059669", "#7c3aed", "#dc2626", "#0891b2"
-LETTER_COLOR = {"S": BLUE, "A": GREEN, "K": PURPLE, "L": CYAN}
+LETTER_COLOR = {"S": BLUE, "A": GREEN, "O": ORANGE, "K": PURPLE, "L": CYAN}
 COLORS = [BLUE, ORANGE, GREEN, PURPLE, CYAN, RED, INK2]
 MARKERS = ["o", "s", "^", "D", "v", "P", "X"]
 
@@ -45,8 +45,12 @@ def _note(step: Dict) -> str:
         return f"dim {step['dimension']} of {step['full_dimension']}"
     if L == "A":
         return f"dim {step['dimension']}"
+    if L == "O":
+        return f"{step['dimension']} operator{'' if step['dimension'] == 1 else 's'}"
     if L == "K":
-        reps = step["representation"]
+        reps = step.get("representation")
+        if not reps:  # a closure that is not an su(2) carries no representation
+            return f"{step['theta_deg']:.0f} deg"
         top = max(r["j"] for r in reps)
         return f"j = {int(top) if float(top).is_integer() else f'{int(round(2 * top))}/2'}"
     if L == "L":
@@ -56,7 +60,7 @@ def _note(step: Dict) -> str:
 
 def _derivation_panel(ax, rows):
     from matplotlib.patches import FancyBboxPatch
-    heads = {"S": "sector", "A": "algebra", "K": "canonical\nform", "L": "law"}
+    heads = {"S": "sector", "A": "algebra", "O": "closure of the\nobservable", "K": "canonical\nform", "L": "law"}
     xpos = {k: i for i, k in enumerate(heads)}
     for k, x in xpos.items():
         ax.text(x, 0.72, f"{k}\n{heads[k]}", ha="center", va="bottom", fontsize=6.4, color=INK2, linespacing=1.0)
@@ -76,13 +80,13 @@ def _derivation_panel(ax, rows):
             ax.plot(xs, [y] * len(xs), color=GRID, lw=1.2, zorder=0)
         ax.text(-0.6, y + 0.1, r["name"], ha="right", va="center", fontsize=7, color=INK)
         ax.text(-0.6, y - 0.2, r["field"], ha="right", va="center", fontsize=6, color=INK2)
-        if r["status"] == "reached":
-            ax.text(3.75, y, "reached", ha="left", va="center", fontsize=6.4, color=GREEN)
+        if r["status"].startswith("reached"):
+            ax.text(4.75, y, r["status"], ha="left", va="center", fontsize=6.4, color=GREEN)
         else:
             ax.text(max(xs) + 0.55, y, "x", ha="center", va="center", fontsize=8, fontweight="bold", color=RED)
-            short = r["obstruction"].split(":")[0].split(";")[0]
-            ax.text(3.75, y, short[:70], ha="left", va="center", fontsize=6.2, color=RED)
-    ax.set_xlim(-4.2, 8.8)
+            short = r.get("obstruction_short") or r["obstruction"].split(":")[0].split(";")[0]
+            ax.text(4.75, y, short[:70], ha="left", va="center", fontsize=6.2, color=RED)
+    ax.set_xlim(-4.2, 9.8)
     ax.set_ylim(-len(rows) + 0.4, 1.45)
     ax.axis("off")
 
@@ -90,8 +94,8 @@ def _derivation_panel(ax, rows):
 def codiscovery_figure(report: Dict, path: Path):
     rows = report["rows"]
     s = report["summary"]
-    reached = [r for r in rows if r["status"] == "reached"]
-    ordered = reached + [r for r in rows if r["status"] != "reached"]
+    reached = [r for r in rows if r["status"].startswith("reached")]
+    ordered = reached + [r for r in rows if not r["status"].startswith("reached")]
     fig = plt.figure(figsize=(12.0, 9.0), constrained_layout=True)
     gs = fig.add_gridspec(2, 2, height_ratios=[1.15, 1.0])
     a = fig.add_subplot(gs[0, :])
@@ -118,7 +122,7 @@ def codiscovery_figure(report: Dict, path: Path):
     c = fig.add_subplot(gs[1, 1])
     names = [r["name"] for r in ordered][::-1]
     dims = [r["algebra_dimension"] for r in ordered][::-1]
-    cols = [GREEN if r["status"] == "reached" else RED for r in ordered][::-1]
+    cols = [GREEN if r["status"].startswith("reached") else RED for r in ordered][::-1]
     c.barh(range(len(names)), dims, color=cols, alpha=0.75)
     c.axvline(3, color=INK, lw=0.9, ls="--")
     c.text(3.2, len(names) - 0.6, "su(2): dimension 3", fontsize=6.5, color=INK, va="center")
@@ -130,8 +134,9 @@ def codiscovery_figure(report: Dict, path: Path):
     c.set_xlabel("dimension of the algebra generated by the Hamiltonian and the observable")
     _style(c)
     _title(c, "c", "Algebra generated in each realization")
-    fig.suptitle(f"Co-discovery by construction: {s['reached']} realizations from {len(s['fields_reached'])} fields reach "
-                 f"the Bloch rotation; {s['obstructed']} are obstructed", fontsize=10, color=INK, x=0.01, ha="left",
+    fields = len(s["fields_reached"])
+    fig.suptitle(f"Co-discovery by construction: {s['reached']} realizations from {fields} field{'' if fields == 1 else 's'} "
+                 f"reach the Bloch rotation; {s['obstructed']} are obstructed", fontsize=10, color=INK, x=0.01, ha="left",
                  fontweight="bold")
     fig.savefig(path, dpi=130)
     plt.close(fig)

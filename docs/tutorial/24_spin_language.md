@@ -8,10 +8,11 @@
    carrier;
 3. attach a detached mechanism to a carrier from another field and read the design this produces in that carrier's
    own operators;
-4. derive one mechanism in models from different fields, and name the term responsible when a derivation stops.
+4. derive one mechanism in models from different fields, tell a larger algebra that still carries the mechanism
+   from one that does not, and name the term responsible when a derivation stops.
 
 **Prerequisites.** [Chapter 11](11_quantum_closure.md) (observable closure). [Chapter 14](14_inverse_construction.md)
-helps for Sections 4 and 6. **Time.** About 60 minutes. The commands need `pip install -e '.[construction]'`; the
+helps for Sections 4 and 7. **Time.** About 70 minutes. The commands need `pip install -e '.[construction]'`; the
 figures also need matplotlib.
 
 ## 1. The words of the language
@@ -54,6 +55,7 @@ $$
 
 where $\theta$ is the angle between $\boldsymbol\Omega$ and $\mathbf n$ (the Rabi law). Equation (2) contains no
 property of the carrier. The dimension of the Hilbert space and the spin $j$ of the representation drop out.
+Section 6 shows that Eq. (2) holds under a weaker condition than Eq. (1).
 
 ## 2. Writing a realization
 
@@ -155,7 +157,7 @@ value, against the rotation angle, with Eq. (2). (b) The exchange couplings that
 At resonance ($\theta = 90°$) Eq. (2) gives $f = -1$ at $t = \pi/\lvert\boldsymbol\Omega\rvert$. The flipped spin
 then arrives at the other end of the chain: this is perfect state transfer (Christandl et al., 2004), and
 `examples/quantum/state_transfer_chain.json` is such a chain. For three spins Eq. (3) requires equal bonds. The
-chain of Chapter 14, with bonds 3 and 4, does not carry the rotation (Section 6).
+chain of Chapter 14, with bonds 3 and 4, does not carry the rotation (Section 7).
 
 The same rotation attaches to other carriers. `fieldbridge quantum carriers` lists them.
 
@@ -186,17 +188,17 @@ The command derives the rotation in every file of `examples/quantum`.
 | Bose–Josephson junction without interaction | cold atoms | SAKL | $2$ | 2.040 | 78.7° |
 | Cooper-pair level | superconductivity | AKL | $1/2 + 2 \times 0$ | 2.088 | 73.3° |
 | spin-1 hyperfine level in a weak field | atomic physics | AKL | $1$ | 1.530 | 78.7° |
-| Bose–Josephson junction with interaction | cold atoms | SA | stops: su(5) | — | — |
-| nitrogen-vacancy centre spin | solid-state defects | A | stops: su(3) | — | — |
-| exchange chain of Chapter 14 (bonds 3, 4) | quantum information | SA | stops: su(3) | — | — |
-| two nuclear spins of different species | nuclear magnetic resonance | A | stops: dimension 6 | — | — |
+| Bose–Josephson junction with interaction | cold atoms | SAO | stops: closure of 21 operators | — | — |
+| nitrogen-vacancy centre spin | solid-state defects | AO | stops: closure of 7 operators | — | — |
+| exchange chain of Chapter 14 (bonds 3, 4) | quantum information | SAO | stops: closure of 5 operators | — | — |
+| two nuclear spins of different species | nuclear magnetic resonance | AO | stops: closure of 5 operators | — | — |
 
 ![Co-discovery of the Bloch rotation](figures/quantum/q_codiscovery.png)
 
-*Figure 2. (a) The derivation in each realization: S sector, A algebra, K canonical form, L law. (b) The observable of
-the six realizations that reach the rotation, rescaled by its own angle, against the rotation angle; every
-realization lies on $\cos(\lvert\boldsymbol\Omega\rvert t)$ to $7 \times 10^{-15}$. (c) The dimension of the algebra
-that the Hamiltonian and the observable generate.*
+*Figure 2. (a) The derivation in each realization: S sector, A algebra, O closure of the observable (Section 6),
+K canonical form, L law. (b) The observable of the six realizations that reach the rotation, rescaled by its own
+angle, against the rotation angle; every realization lies on $\cos(\lvert\boldsymbol\Omega\rvert t)$ to
+$7 \times 10^{-15}$. (c) The dimension of the algebra that the Hamiltonian and the observable generate.*
 
 Six realizations from five fields reach the rotation by two classes of derivation. With a sector (SAKL), a conserved
 quantity first selects the states on which the rotation acts: the atom number in the junction, or the number of
@@ -205,48 +207,140 @@ field rotates the pseudospin of Anderson (1958) on the empty and doubly occupied
 states are left unchanged, so they appear as $j = 0$. The convergence is historical: Bloch's equations for nuclear
 induction (1946), the representation of two-level masers as spins (Feynman, Vernon and Hellwarth, 1957) and
 Anderson's pseudospin arrived at the same algebra from different problems. The constructor reaches it by derivation
-and checks it with Eq. (1) and Eq. (2).
+and checks it with Eq. (1) and Eq. (2). In the four other realizations the algebra is larger than su(2), and the
+derivation continues with the letter O, which Section 6 introduces, before it stops (Section 7).
 
-## 6. Obstructions
+## 6. A larger algebra: the closure of the observable
 
-A derivation stops at A when the algebra is larger than su(2). The constructor then removes one Hamiltonian term at
-a time. If a single term's removal leaves su(2), it names that term.
+Equation (2) needs less than Eq. (1). Suppose that three Hermitian operators rotate under the Hamiltonian,
 
-| Realization | Algebra | Term named | Physical reading |
-| --- | --- | --- | --- |
-| junction with interaction | su(5), dimension 24 | $\tfrac{U}{2}(n_a^2 + n_b^2)$ | In the $N$-atom sector this is $U J_z^2$ plus a constant: one-axis twisting (Kitagawa and Ueda, 1993) |
-| nitrogen-vacancy centre | su(3), dimension 8 | $D J_z^2$ | the zero-field splitting, also quadratic in $J_z$ |
-| chain of Chapter 14 | su(3), dimension 8 | none | the bonds 3 and 4 violate Eq. (3), which requires equal bonds for three spins |
-| heteronuclear spins | dimension 6 | none | two spins that rotate at different Larmor frequencies: two rotations, not one |
+$$
+i\,[H, J_a] = \varepsilon_{abc}\,\Omega_b\,J_c  \qquad (4)
+$$
 
-In these four realizations the observable also leaves Eq. (2): its closure (Chapter 11) has more than three
-operators, and the signal has two or more frequencies. A derivation that stops at A does not by itself show this.
-Exercise 1 gives a Hamiltonian with an algebra of dimension 6 for which Eq. (2) still holds.
+and that the observable is $O = \mathbf n\cdot\mathbf J$. Since $\tfrac{d}{dt}\langle J_a\rangle = \langle i[H, J_a]\rangle$,
+the expectation values obey $\dot{\mathbf m} = \boldsymbol\Omega\times\mathbf m$. This holds whether or not the three
+operators close under commutation, and whether or not $H$ is a combination of them. If in the prepared state
+$\mathbf m$ points along $\mathbf n$, the component of the rotating vector along $\mathbf n$, relative to its
+initial value, is Eq. (2). With
+$H = \boldsymbol\Omega\cdot\mathbf J$, Eq. (1) gives Eq. (4), and in a top eigenstate of $\mathbf n\cdot\mathbf J$ the
+vector $\mathbf m$ points along $\mathbf n$. The condition tested by the letter A is therefore sufficient for Eq. (2),
+and not necessary.
+
+The operators of Eq. (4) are found from the observable. Its closure (Chapter 11) is the smallest span of operators
+that contains $O$ and that $i[H,\cdot]$ maps into itself: $O$, $i[H, O]$, $i[H, i[H, O]]$ and so on. On this span
+$i[H,\cdot]$ is an antisymmetric matrix, with the eigenvalues 0 and pairs $\pm i\omega$. The values $\omega$ are the
+frequencies with which the observable can move. A closure of three operators has one frequency, and its operators
+can be chosen to satisfy Eq. (4). A closure of two operators is the case $\theta = 90°$, in which the observable
+has no component along the axis. A larger closure has several frequencies, unless some of them coincide.
+
+When A finds an algebra that is not su(2), the letter **O** (closure of the observable) computes this closure and
+its frequencies. The derivation continues to K and L under two conditions:
+
+1. the closure has two or three operators;
+2. in every top eigenstate of the observable, the expectation values of the closure operators point along the
+   observable.
+
+The status is then "reached through the closure of the observable". K takes the rate from the frequency of the
+closure and the angle from the component of the observable along the rotation axis. The axis of a closure has no
+preferred direction, so $\theta$ is given between 0° and 90°; Eq. (2) contains it only through $\cos^2\theta$. If
+either condition fails, the derivation stops at O. A closure of one operator means that the observable commutes
+with $H$: it is conserved, and the derivation stops with this statement.
+
+The second condition does not follow from the first. With three operators the signal from a top eigenstate of the
+observable is $1 - b\,(1 - \cos\lvert\boldsymbol\Omega\rvert t)$: it has one frequency, and $b = \sin^2\theta$ only
+if the second condition holds. The three specifications in `examples/quantum/controls` change the model of
+Section 3 so that each condition is met or fails in turn.
+
+```bash
+python3 -B -m fieldbridge quantum codiscover examples/quantum/two_spins.json examples/quantum/controls/*.json \
+  --out-dir build/tut/q_closure
+```
+
+| Hamiltonian | Observable | Algebra | Closure of the observable | Frequencies | Derivation |
+| --- | --- | --- | --- | --- | --- |
+| $g\,Z_0Z_1 + h\,X_0$ (Section 3) | $X_0$ | su(2) | $X_0$, $Y_0Z_1$, $Z_0Z_1$ | 2.236 | AKL |
+| $g\,Z_0Z_1 + h\,X_1$ | $X_0$ | dimension 6 | $X_0$, $Y_0Z_1$, $Y_0Y_1$ | 2.236 | AOKL |
+| $g\,Z_0Z_1 + h\,(X_0 + X_1)$ | $X_0$ | dimension 6 | $X_0$, $Y_0Z_1$, $Z_0Z_1 - Y_0Y_1$, $Z_0Y_1$, $X_1$ | 2.000, 2.828 | AO |
+| $w\,(Z_0 + Z_1)$ | $X_0(1 + a Z_1) + b\,Z_0$ | dimension 7 | $X_0(1 + aZ_1)$, $Y_0(1 + aZ_1)$, $Z_0$ | 2.000 | AO |
+
+The parameters are $g = 1$, $h = 0.5$ and $w = 1$, $a = 0.5$, $b = 0.7$.
+
+**The field on the second spin.** The six operators of the algebra form two triples. $Z_0Z_1$, $X_1$ and $Z_0Y_1$,
+each divided by 2, satisfy Eq. (1), and $H$ is a combination of them. $X_0$, $Y_0Z_1$ and $Y_0Y_1$ contain the
+observable. They do not close under commutation, since $[X_0, Y_0Z_1] = 2i\,Z_0Z_1$ lies outside their span. They
+are, however, the components of a vector under the rotations generated by the first triple, so $i[H,\cdot]$ carries
+them into one another as in Eq. (4). The top eigenvalue of $X_0$ has two states, and in both the expectation
+values of $Y_0Z_1$ and $Y_0Y_1$ vanish: $\mathbf m$ points along the observable. The rotation is reached through
+the closure with the rate 2.236, the weight 2 and the angle 63.4° of Section 3, and the exact evolution deviates
+from Eq. (2) by $9 \times 10^{-16}$. The algebra of dimension 6 and the three operators of the closure stay with
+the carrier. The three operators are not the generators of a representation of su(2), and the detached rotation
+needs none: written on the correlations of two spins (`--to correlated-pair`) it is the model of Section 3 again,
+with $g = 1$ and $h = 0.5$.
+
+**The field on both spins.** The closure of $X_0$ has five operators, which move with the frequencies
+$2g = 2.000$ and $2\sqrt{g^2 + 4h^2} = 2.828$. The signal contains both and is not that of one rotation. The first
+condition fails.
+
+**One frequency with another amplitude.** In the fourth model the closure has three operators with the single
+frequency $2w$: $X_0(1 + aZ_1)$ and $Y_0(1 + aZ_1)$ rotate about $Z_0$. The angle between the observable and this
+axis follows from the norms of the operators, $\sin^2\theta = (1 + a^2)/(1 + a^2 + b^2) = 0.718$. The operator
+$Z_1$ is conserved, and the top eigenstate of the observable lies in the sector $Z_1 = +1$. There the observable is
+$(1 + a)\,X_0 + b\,Z_0$, and the amplitude of the signal is $(1 + a)^2/\bigl((1 + a)^2 + b^2\bigr) = 0.821$. The
+signal has one frequency and this amplitude, and Eq. (2) with the angle of the closure fails by 0.21. The angle of
+the closure is taken over both sectors of $Z_1$, whereas the prepared state lies in one: the second condition
+fails. With the sector declared (Section 2) the realization is restricted to $Z_1 = +1$, and the derivation is SAKL
+with $\sin^2\theta = 0.821$.
+
+![Derivations of the rotation in the model of Section 3 and its three controls](figures/quantum/q_closure.png)
+
+*Figure 3. (a) The derivations of the four models of this section. (b) The observable of the two models that reach
+the rotation, rescaled by its own angle, against the rotation angle. (c) The dimension of the algebra: the second
+model reaches the rotation with an algebra of dimension 6, and the third does not with the same dimension.*
+
+## 7. Obstructions
+
+A derivation stops at O when the closure of the observable has more than three operators, or when the prepared
+state does not lie along the observable. The constructor then removes one Hamiltonian term at a time. If the
+removal of a single term leaves su(2), it names that term.
+
+| Realization | Algebra | Closure of the observable | Term named | Physical reading |
+| --- | --- | --- | --- | --- |
+| junction with interaction | su(5), dimension 24 | 21 operators, 10 frequencies | $\tfrac{U}{2}(n_a^2 + n_b^2)$ | In the $N$-atom sector this is $U J_z^2$ plus a constant: one-axis twisting (Kitagawa and Ueda, 1993) |
+| nitrogen-vacancy centre | su(3), dimension 8 | 7 operators, 3 frequencies | $D J_z^2$ | the zero-field splitting, also quadratic in $J_z$ |
+| chain of Chapter 14 | su(3), dimension 8 | 5 operators, 2 frequencies | none | the bonds 3 and 4 violate Eq. (3), which requires equal bonds for three spins |
+| heteronuclear spins | dimension 6 | 5 operators, 2 frequencies | none | two spins that rotate at different Larmor frequencies: two rotations, not one |
+
+In these four realizations the closure has more than three operators, and the signal has two or more frequencies.
+The dimension of the algebra does not decide this: the heteronuclear spins and the second model of Section 6 both
+have an algebra of dimension 6.
 
 A term quadratic in $\mathbf J$ is the typical obstruction. The collective Ising interaction of Chapter 14,
 $Q = \tfrac{\lambda}{2}(M^2 - N)$ with $M = \sum_j Z_j = 2J_z$, is of this kind: $Q = 2\lambda J_z^2 - \lambda N/2$. On
-three spins driven together (the `collective` carrier) it enlarges the algebra from dimension 3 to 19. Within a
-sector of fixed $M$, however, $Q$ is a constant and has no effect. A sector can therefore remove an obstruction, and
-this is why the exchange chain and $Q$ could be combined in Chapter 14.
+three spins driven together (the `collective` carrier) it enlarges the algebra from dimension 3 to 19, and the
+closure of the observable from 3 operators to 15. Within a sector of fixed $M$, however, $Q$ is a constant and has
+no effect. A sector can therefore remove an obstruction, and this is why the exchange chain and $Q$ could be
+combined in Chapter 14.
 
-## 7. The same language in the memory modules
+## 8. The same language in the memory modules
 
 | | This chapter (spins) | Memory ([Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md)) |
 | --- | --- | --- |
 | carrier | a Hilbert space, or one sector of it | the states of a material: concentrations, angles, conductances |
-| mechanism detached | su(2), rate, angle | the memory signature: kind of write, retention law, symmetries |
+| mechanism detached | the rotation: its relations, rate, weight and angle | the memory signature: kind of write, retention law, symmetries |
 | attach | write $\mathbf J$ in the carrier's operators; returns couplings, tunnelling or pairing | `memory attach` and `memory design`; returns a parameter setting |
-| letters | S sector, A algebra, K canonical form, L law | S symmetry, C continuation, W write field, R reduction, U unfolding, K canonical form, L law |
-| invariants | Eq. (1) and Eq. (2) | the canonical normal form and the constant of the write law |
-| obstruction | a term that enlarges the algebra | a term that changes the normal form: a quadratic term, a positive cubic term, a Hopf crossing |
+| letters | S sector, A algebra, O closure of the observable, K canonical form, L law | S symmetry, C continuation, W write field, R reduction, U unfolding, K canonical form, L law |
+| invariants | Eq. (1) or Eq. (4), and Eq. (2) | the canonical normal form and the constant of the write law |
+| obstruction | a term that enlarges the closure of the observable | a term that changes the normal form: a quadratic term, a positive cubic term, a Hopf crossing |
 
 In both cases a derivation records how a model from one field reaches a mechanism. An obstruction names what
 prevents it. Attachment carries the mechanism to a carrier where it has not yet been written.
 
-## 8. Exercises
+## 9. Exercises
 
-1. Move the transverse field of Section 3 to the second spin, $H = g\,Z_0Z_1 + h\,X_1$, and run `quantum detach`. Does
-   the rotation survive?
+1. Add to the model of Section 3 a field along $z$ on the second spin, $H = g\,Z_0Z_1 + h\,X_0 + h\,Z_1$, and run
+   `quantum detach`. Which algebra do $H$ and $X_0$ generate, which route reaches the rotation, and why are the rate
+   and the angle unchanged?
 2. Attach the rotation of the nuclear spin to five atoms in two wells. What is $j$, and what tunnelling does the
    attachment write?
 3. The Ising term $Q$ of Chapter 14 does not change the dynamics within a sector of fixed magnetization. Why does it
@@ -256,16 +350,12 @@ prevents it. Attachment carries the mechanism to a carrier where it has not yet 
 
 <details><summary>Answers</summary>
 
-1. The derivation stops, but the law of $X_0$ survives. $H$ and $X_0$ generate an algebra of dimension 6, spanned
-   by $X_0$, $X_1$, $Y_0Y_1$, $Y_0Z_1$, $Z_0Y_1$ and $Z_0Z_1$, and the constructor names $h\,X_1$ as the obstruction:
-   $H$ and the observable no longer lie in one su(2). The six operators form two triples. $Z_0Z_1$, $X_1$ and
-   $Z_0Y_1$ close as an su(2) that contains $H$. $X_0$, $Y_0Z_1$ and $Y_0Y_1$ contain the observable, and $i[H,\cdot]$
-   carries them into one another. The closure of $X_0$ in the sense of Chapter 11 therefore still has three
-   operators, which move with the single frequency 2.236, and the exact signal is that of Section 3 to $10^{-10}$:
-   Eq. (2) holds with the same rate and angle. The condition tested by the letter A is sufficient for Eq. (2) and
-   not necessary. A field on both spins, $H = g\,Z_0Z_1 + h\,(X_0 + X_1)$, does break the law: the closure of $X_0$
-   then has five operators and two frequencies, 2.000 and 2.828
-   (`test_a_larger_algebra_changes_the_signal_only_when_the_closure_of_the_observable_grows`).
+1. The algebra has dimension 4: the three operators of Section 3 and $Z_1$, which commutes with each of them. It is
+   not su(2), so the derivation continues with O and is AOKL. The closure of $X_0$ is $X_0$, $Y_0Z_1$ and $Z_0Z_1$,
+   the su(2) of Section 3 itself; the report therefore also gives its representation, two copies of $j = 1/2$. The
+   term $h\,Z_1$ is a constant in each of the sectors $Z_1 = \pm 1$ and changes no expectation value of the three
+   operators, so the rate is 2.236 and the angle 63.4° as before. The constructor names $h\,Z_1$ as the term
+   without which the algebra is su(2).
 2. $j = 5/2$. The tunnelling is 1.0 and the energy difference 0.5, as for four atoms. The rate and the angle do not
    depend on the number of atoms, and only the representation changes.
 3. $X_0$ flips the first spin and changes $M$ by $\pm 2$. It connects sectors in which $Q$ has different values, so
@@ -286,6 +376,9 @@ prevents it. Attachment carries the mechanism to a carrier where it has not yet 
   for four spins; at resonance they give perfect state transfer.
 - Six realizations from five fields reach the rotation; four are obstructed, two with the responsible term named.
   The rate, the angle and Eq. (2) are the same on every carrier; the representation is not.
+- That the Hamiltonian and the observable generate su(2) is sufficient for Eq. (2) and not necessary. With a larger
+  algebra the rotation is reached through the closure of the observable if the closure has two or three operators
+  and the prepared state lies along the observable. One frequency alone does not fix the amplitude of the signal.
 
 ## Reference
 
@@ -293,8 +386,9 @@ prevents it. Attachment carries the mechanism to a carrier where it has not yet 
 | --- | --- | --- |
 | Carriers and operators | [`quantum.carriers.make`](../../fieldbridge/quantum/carriers.py) | `test_carrier_operators_obey_their_algebras` |
 | Derivation S, A, K, L | [`quantum.language.derive_bloch_rotation`](../../fieldbridge/quantum/language.py), `lie_closure`, `canonical_su2`, `rabi_law` | `test_the_module_11_spins_carry_a_spin_made_of_correlations`, `test_one_rotation_on_carriers_from_five_fields` |
+| Closure of the observable, letter O | `language.closure_basis`, `observable_frequencies`, `canonical_closure` | `test_the_rotation_is_reached_through_the_closure_of_the_observable`, `test_a_closure_of_five_operators_has_two_frequencies_and_stops_the_derivation`, `test_one_frequency_does_not_fix_the_amplitude_of_the_signal`, `test_a_degenerate_top_eigenspace_is_tested_as_a_whole`, `test_the_controls_of_the_closure_give_the_results_of_the_tutorial`, `test_a_larger_algebra_changes_the_signal_only_when_the_closure_of_the_observable_grows` |
 | Obstructions | `language._single_term_cause` | `test_obstructions_name_the_term_that_breaks_the_rotation` |
-| Detach and attach | `language.detach`, `attach`, `attached_spec` | `test_attaching_the_rotation_designs_the_transfer_chain`, `test_the_detached_rotation_attaches_to_every_carrier` |
+| Detach and attach | `language.detach`, `attach`, `attached_spec` | `test_attaching_the_rotation_designs_the_transfer_chain`, `test_the_detached_rotation_attaches_to_every_carrier`, `test_a_rotation_reached_through_the_closure_detaches_and_attaches` |
 | Commands | [`quantum.cli`](../../fieldbridge/quantum/cli.py) | `test_quantum_commands_write_reports` |
 
 Sources: F. Bloch, Phys. Rev. 70, 460 (1946); R. P. Feynman, F. L. Vernon and R. W. Hellwarth, J. Appl. Phys. 28, 49

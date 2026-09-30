@@ -1,0 +1,47 @@
+{
+  "schema": "fieldbridge-quantum/1",
+  "field": "quantum information",
+  "carrier": {
+    "kind": "qubits",
+    "n": 2
+  },
+  "name": "two spins in one field, weighted observable",
+  "question": "Does one frequency of the observable fix the amplitude of its signal?",
+  "parameters": {
+    "w": 1.0,
+    "a": 0.5,
+    "b": 0.7
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "w",
+      "operator": "Z0"
+    },
+    {
+      "coefficient": "w",
+      "operator": "Z1"
+    }
+  ],
+  "observable": [
+    {
+      "coefficient": 1,
+      "operator": "X0"
+    },
+    {
+      "coefficient": "a",
+      "operator": "X0 Z1"
+    },
+    {
+      "coefficient": "b",
+      "operator": "Z0"
+    }
+  ],
+  "assumptions": [
+    "Closed unitary dynamics; hbar = 1; energies and rates in one arbitrary unit.",
+    "H = w (Z0 + Z1); the observable X0 (1 + a Z1) + b Z0 weights the transverse magnetization of the first spin by the orientation of the second, and is not a vector under the rotations that contain H."
+  ],
+  "provenance": {
+    "origin": "authored control for the closure of the observable (tutorial Chapter 24, Section 6)",
+    "novelty": "known physics"
+  }
+}

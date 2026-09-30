@@ -24,6 +24,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 import numpy as np
 
 from . import site_registry as reg
+from .quantum.language import closure_basis, observable_frequencies
 from .web_models import arithmetic, model_record
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -199,54 +200,16 @@ def resolve(root: Path = ROOT, only: Optional[Iterable[str]] = None) -> Dict[str
 
 
 # ------------------------------------------------------------------------------------------------ unitary
-def closure_basis(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim: int = 256) -> List[np.ndarray]:
-    """Chapter 11: an orthonormal basis of the smallest span of operators that contains O and is invariant under
-    i[H, .]."""
-    basis: List[np.ndarray] = []
-
-    def add(A: np.ndarray) -> None:
-        v = A.astype(complex).copy()
-        for _ in range(2):
-            for B in basis:
-                v = v - np.vdot(B, v) * B
-        n = float(np.linalg.norm(v))
-        if n > tol * max(1.0, float(np.linalg.norm(A))):
-            basis.append(v / n)
-
-    add(O)
-    i = 0
-    while i < len(basis) and len(basis) <= max_dim:
-        add(1j * (H @ basis[i] - basis[i] @ H))
-        i += 1
-    return basis
-
-
+# the closure of the observable (Chapter 11) and the frequencies with which it moves: the letter O of the derivation
 def observable_closure(H: np.ndarray, O: np.ndarray, tol: float = 1e-9, max_dim: int = 256) -> int:
     """The dimension of the closure of O under i[H, .]."""
     return len(closure_basis(H, O, tol, max_dim))
 
 
-def observable_frequencies(H: np.ndarray, O: np.ndarray, tol: float = 1e-7) -> List[float]:
-    """The frequencies with which the observable can move: i[H, .] restricted to the closure of O is antisymmetric,
-    and its eigenvalues are 0 and the pairs +-i omega. One frequency is the signal of a rotating three-vector,
-    whatever algebra H and O generate; several frequencies are not one rotation."""
-    basis = closure_basis(H, O)
-    if len(basis) < 2:
-        return []
-    M = np.array([[np.vdot(a, 1j * (H @ b - b @ H)) for b in basis] for a in basis])
-    w = np.linalg.eigvalsh(1j * M)
-    scale = max(1.0, float(np.max(np.abs(w))))
-    out: List[float] = []
-    for v in sorted(float(x) for x in w if x > tol * scale):
-        if not out or v - out[-1] > tol * scale:
-            out.append(v)
-    return out
-
-
 def observable_frame(canon: Dict) -> List[np.ndarray]:
-    """The su(2) generators in the frame of the observable: F3 along the observable, the rotation axis in the plane
-    of F1 and F3 at the angle theta from F3. canonical_su2 gives J with J3 along the axis and the observable in the
-    plane of J1 and J3."""
+    """The rotating operators in the frame of the observable: F3 along the observable, the rotation axis in the plane
+    of F1 and F3 at the angle theta from F3. canonical_su2 and canonical_closure give J with J3 along the axis and
+    the observable in the plane of J1 and J3."""
     J, th = canon["J"], float(canon["theta"])
     c, s = np.cos(th), np.sin(th)
     return [-c * J[0] + s * J[2], -J[1], s * J[0] + c * J[2]]
@@ -291,22 +254,28 @@ def unitary_record(node: Dict, parent: Optional[Dict] = None) -> Dict:
                       "coefficient": str(e["coefficient"]), "tree": tree,
                       "matrix": _mat(V.conj().T @ _operator_matrix(real, e) @ V)})
     frame, j_top, frame_from = None, None, None
-    if row["status"] == "reached":
-        canon = ql.canonical_su2(basis, ql._traceless(Hs), ql._traceless(Os))
+    reached = ql.reached(row)  # through the algebra, or through the closure of the observable
+    if reached:
+        H0, O0 = ql._traceless(Hs), ql._traceless(Os)
+        canon = (ql.canonical_su2(basis, H0, O0) if row["status"] == ql.REACHED
+                 else ql.canonical_closure(closure_basis(Hs, O0), Hs, O0))
         frame, j_top, frame_from = observable_frame(canon), float(row["law"]["j_top"]), node["id"]
     elif parent is not None and parent["engine"].get("frame") and parent["engine"]["dim"] == Hs.shape[0]:
         frame, j_top, frame_from = parent["_frame"], parent["engine"]["j_top"], parent["id"]
-    cause = ql._single_term_cause(real, V) if row["status"] != "reached" and len(real.terms) > 1 else None
+    # the term without which H and the observable generate su(2): named also when the rotation is reached through
+    # the closure, where it is the reason for the larger algebra and not an obstruction
+    cause = ql._single_term_cause(real, V) if row["status"] != ql.REACHED and len(real.terms) > 1 else None
     sig = row.get("signature", {})
     freqs = observable_frequencies(Hs, Os)
     facts = {"status": row["status"], "word": row["word"], "dim": int(row["algebra_dimension"]),
              "closure": closure, "frequencies": len(freqs), "frequencies_text": NUMBER_WORDS.get(len(freqs), str(len(freqs))),
              "frequency_list": [float(f"{f:.6g}") for f in freqs[:6]],
              "carrier": real.carrier.description, "hilbert": int(real.carrier.dim), "sector": int(Hs.shape[0])}
-    if row["status"] == "reached":
-        facts.update(rate=float(sig["rate"]), theta=float(sig["theta_deg"]),
-                     rep=ql._rep(row["representation"]).replace(" x ", " × ").replace("j=", "j = "),
-                     residual=float(row["law"]["residual"]))
+    if reached:
+        facts.update(rate=float(sig["rate"]), theta=float(sig["theta_deg"]))
+        if row["representation"]:  # a closure that is not an su(2) carries no representation
+            facts["rep"] = ql._rep(row["representation"]).replace(" x ", " × ").replace("j=", "j = ")
+        facts["residual"] = float(row["law"]["residual"])
     if cause:
         facts["cause"] = _cause_html(cause)
     if node.get("attach"):
@@ -317,7 +286,7 @@ def unitary_record(node: Dict, parent: Optional[Dict] = None) -> Dict:
                 facts[key] = float(native[key])
         if "exchange_couplings" in native:
             facts["couplings"] = [float(x) for x in native["exchange_couplings"]]
-    klass = "rotation" if row["status"] == "reached" else "conserved" if closure == 1 else "obstructed"
+    klass = "rotation" if reached else "conserved" if closure == 1 else "obstructed"
     preps = []
     for p in node["def"].get("preparations", []):
         if "product" in p:
@@ -339,7 +308,7 @@ def unitary_record(node: Dict, parent: Optional[Dict] = None) -> Dict:
                           "sector": {"operator": sec["operator"], "value": sec["value"], "dimension": sec["dimension"],
                                      "full_dimension": sec["full_dimension"]} if sec else None}}
     law = None
-    if row["status"] == "reached":
+    if reached:
         L = row["law"]
         law = {"times": L["times"][::2], "f": [float(f"{v:.6g}") for v in L["f_exact"][::2]]}
     record = {"id": node["id"], "family": "unitary", "name": node["name_html"], "field": real.field,
@@ -734,7 +703,8 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
             raise fail("a co-discovery joins two different carriers")
         target = edge.get("target")
         if target == "rotation":
-            if not (ra["facts"].get("status") == "reached" == rb["facts"].get("status")):
+            if not (str(ra["facts"].get("status", "")).startswith("reached")
+                    and str(rb["facts"].get("status", "")).startswith("reached")):
                 raise fail("the rotation is not reached in both realizations")
             return "both realizations reach the Bloch rotation (derive_bloch_rotation)"
         if target:
@@ -1047,7 +1017,7 @@ def auto_edges(nodes: Dict[str, Dict], records: Dict[str, Dict]) -> List[Dict]:
         for target in targets + [None]:
             for rid in registered:
                 r = records[rid]
-                same = (r["facts"].get("status") == "reached" if target == "rotation" else
+                same = (str(r["facts"].get("status", "")).startswith("reached") if target == "rotation" else
                         str(r["facts"].get(f"{PREFIX[target]}_status", "")).startswith("reached") if target else
                         r["class"] == rec["class"])
                 if same and not _same_carrier(nodes[rid], node):

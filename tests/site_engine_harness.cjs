@@ -8,10 +8,13 @@ const F = require(path.join(web, 'fields.js'));
 const MML = require(path.join(web, 'mathml.js'));
 const job = JSON.parse(fs.readFileSync(process.argv[2], 'utf8'));
 const vec = s => s ? {re: Float64Array.from(s.re), im: Float64Array.from(s.im)} : null;
+const plain = M => ({n: M.n, re: Array.from(M.re), im: Array.from(M.im)});
 const ops = {
   eigh: j => Array.from(U.eigh(U.fromJSON(j.matrix)).values),
   eigenvalues: j => D.eigenvalues(j.matrix),
-  unitary_analyze: j => U.analyze(j.engine, j.params || j.engine.params, j.active),
+  unitary_analyze: j => { const a = U.analyze(j.engine, j.params || j.engine.params, j.active); return a.frame ? {...a, frame: a.frame.map(plain)} : a; },
+  unitary_axis: j => U.frameRotation(U.hamiltonian(j.engine, j.params || j.engine.params, j.active), j.engine.frame.map(U.fromJSON)),
+  unitary_leak: j => U.frameLeak(U.hamiltonian(j.engine, j.params || j.engine.params, j.active), j.engine.frame.map(U.fromJSON)),
   unitary_signal: j => {
     const psi0 = vec(j.psi0) || U.topEigenstate(U.observable(j.engine));
     return U.signal(j.engine, j.params || j.engine.params, j.active, psi0, j.times);

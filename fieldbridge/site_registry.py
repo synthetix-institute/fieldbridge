@@ -32,7 +32,7 @@ SLOTS = {
 CLASSES = {
     "rotation": "Bloch rotation",
     "conserved": "conserved observable",
-    "obstructed": "algebra larger than su(2)",
+    "obstructed": "several frequencies",
     "single-state": "single stable state",
     "symmetric-write": "symmetric write (supercritical pitchfork)",
     "threshold-write": "one-sided write (fold)",
@@ -48,16 +48,20 @@ CLASSES = {
 # the mechanism of each class written without a field: its canonical form, what it does, and the realization that the
 # map of mechanisms opens for it (a canonical form where the page has one)
 MECHANISMS = {
-    "rotation": {"canonical": "[J<sub>a</sub>, J<sub>b</sub>] = iε<sub>abc</sub>J<sub>c</sub>",
+    # three operators rotate under the generator, i[H, J_a] = eps_abc Omega_b J_c: they generate su(2) together with
+    # H, or they are the closure of the observable within a larger algebra
+    "rotation": {"canonical": "<b>ṁ</b> = <b>Ω</b> × <b>m</b>",
                  "text": "A three-vector of expectations rotates about a fixed axis, and the measured signal follows "
                          "the Rabi law.", "node": "rotation_canonical"},
     "conserved": {"canonical": "[H, R] = 0",
                   "text": "The observable commutes with the generator: its measured value does not change.",
                   "node": "rotation_axis"},
-    "obstructed": {"canonical": "dim 𝔤 &gt; 3",
-                   "text": "The generator and the observable generate an algebra larger than su(2): the derivation "
-                           "of a single rotation stops, and the signal generally has several frequencies.",
-                   "node": "spin1_easy_axis"},
+    # the closure of the observable, span{R, [H, R], [H, [H, R]], ...}, decides the class: one operator is a
+    # conserved observable, two or three move with one frequency, more move with several
+    "obstructed": {"canonical": "closure of R larger than three operators",
+                   "text": "The commutators of the generator with the observable do not close on three operators: "
+                           "the observable moves with several frequencies, and the measured signal is not that of "
+                           "one rotation.", "node": "spin1_easy_axis"},
     "single-state": {"canonical": "ẋ = −κx, κ &gt; 0",
                      "text": "Every preparation relaxes to one state, and nothing of the preparation is kept.",
                      "node": "pitchfork_below"},
@@ -120,18 +124,18 @@ NODES = [
      "name": "two coupled spins measured through Z<sub>0</sub>", "parent": "two_spins_h0", "tutorial": Q_CH11},
     {"id": "two_spins_x1", "base": "two_spins", "replace_terms": {1: {"coefficient": "h", "operator": "X1"}},
      "name": "two coupled spins with the field on the second spin", "parent": "two_spins",
-     "tutorial": Q_CH24 + "#8-exercises"},
+     "tutorial": Q_CH24 + "#6-a-larger-algebra-the-closure-of-the-observable"},
     {"id": "two_spins_both", "base": "two_spins", "add_terms": [{"coefficient": "h", "operator": "X1"}],
      "name": "two coupled spins with the field on both spins", "parent": "two_spins",
-     "tutorial": Q_CH24 + "#6-obstructions"},
+     "tutorial": Q_CH24 + "#6-a-larger-algebra-the-closure-of-the-observable"},
     # -- the bridge to the magnet
     {"id": "spin1_transverse", "attach": ("two_spins_h0", "spin", 2),
      "name": "spin 1 in a transverse field", "tutorial": Q_CH24 + "#4-attaching-the-rotation-to-the-exchange-chain-of-chapter-14"},
     {"id": "spin1_easy_axis", "base": "spin1_transverse", "params": {"D": -2.0},
      "add_terms": [{"coefficient": "D", "operator": "Jz Jz"}],
-     "name": "spin 1 with easy-axis anisotropy", "parent": "spin1_transverse", "tutorial": Q_CH24 + "#6-obstructions"},
+     "name": "spin 1 with easy-axis anisotropy", "parent": "spin1_transverse", "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "nv_centre", "family": "unitary", "spec": "examples/quantum/nv_centre.json", "parent": "spin1_atom",
-     "tutorial": Q_CH24 + "#6-obstructions"},
+     "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "spin1_atom", "family": "unitary", "spec": "examples/quantum/spin1_atom.json",
      "tutorial": Q_CH24 + "#5-co-discovery-one-rotation-in-five-fields"},
     {"id": "stoner_wohlfarth", "family": "dissipative", "spec": "examples/memory/stoner_wohlfarth.json",
@@ -158,32 +162,32 @@ NODES = [
     {"id": "nmr_spin32", "attach": ("nmr_spin", "spin", 3), "name": "one spin 3/2",
      "tutorial": Q_CH24 + "#4-attaching-the-rotation-to-the-exchange-chain-of-chapter-14"},
     {"id": "nmr_collective", "attach": ("nmr_spin", "collective", 3), "name": "three spins-½ driven together",
-     "tutorial": Q_CH24 + "#6-obstructions"},
+     "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "collective_ising", "base": "nmr_collective", "params": {"lam": 0.5},
      "add_terms": [{"coefficient": "lam", "operator": "Z0 Z1 + Z0 Z2 + Z1 Z2"}],
      "name": "three driven spins with a collective Ising coupling", "parent": "nmr_collective",
-     "tutorial": Q_CH24 + "#6-obstructions"},
+     "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "chain_ising", "base": "nmr_chain", "params": {"lam": 0.5},
      "add_terms": [{"coefficient": "lam", "operator": " + ".join(f"Z{j} Z{k}" for j in range(4)
                                                                  for k in range(j + 1, 4))}],
      "name": "exchange chain with a collective Ising coupling", "parent": "nmr_chain",
-     "tutorial": Q_CH24 + "#6-obstructions"},
+     "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "bose_josephson", "family": "unitary", "spec": "examples/quantum/bose_josephson.json",
      "tutorial": Q_CH24 + "#5-co-discovery-one-rotation-in-five-fields"},
     {"id": "interacting_bosons", "family": "unitary", "spec": "examples/quantum/interacting_bosons.json",
-     "parent": "bose_josephson", "tutorial": Q_CH24 + "#6-obstructions"},
+     "parent": "bose_josephson", "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "cooper_pair", "family": "unitary", "spec": "examples/quantum/cooper_pair.json",
      "tutorial": Q_CH24 + "#5-co-discovery-one-rotation-in-five-fields"},
     {"id": "state_transfer_chain", "family": "unitary", "spec": "examples/quantum/state_transfer_chain.json",
      "tutorial": Q_CH24 + "#4-attaching-the-rotation-to-the-exchange-chain-of-chapter-14"},
     {"id": "module14_chain", "family": "unitary", "spec": "examples/quantum/module14_chain.json",
-     "name": "exchange chain of Chapter 14 (bonds 3 and 4)", "parent": "module14_equal", "tutorial": Q_CH24 + "#6-obstructions"},
+     "name": "exchange chain of Chapter 14 (bonds 3 and 4)", "parent": "module14_equal", "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "module14_equal", "base": "module14_chain", "coefficients": {1: 3},
-     "name": "exchange chain of three spins with equal bonds", "tutorial": Q_CH24 + "#6-obstructions"},
+     "name": "exchange chain of three spins with equal bonds", "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "heteronuclear_spins", "family": "unitary", "spec": "examples/quantum/heteronuclear_spins.json",
-     "parent": "homonuclear_spins", "tutorial": Q_CH24 + "#6-obstructions"},
+     "parent": "homonuclear_spins", "tutorial": Q_CH24 + "#7-obstructions"},
     {"id": "homonuclear_spins", "base": "heteronuclear_spins", "params": {"w2": 1.0},
-     "name": "two nuclear spins of one species", "tutorial": Q_CH24 + "#6-obstructions"},
+     "name": "two nuclear spins of one species", "tutorial": Q_CH24 + "#7-obstructions"},
     # -- canonical forms: mechanisms written without a field ("universal"); the page starts from the pitchfork
     {"id": "pitchfork", "family": "dissipative", "spec": "examples/memory/pitchfork.json", "universal": True,
      "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#the-normal-form-on-the-web-page"},
@@ -345,18 +349,19 @@ EDGES = [
              "material requires a different description for a different measurement."},
     {"id": "spins_field_both", "from": "two_spins", "to": "two_spins_both", "slot": "Omega", "kind": "term",
      "change": "+ h X<sub>1</sub>",
-     "text": "With a field on the second spin as well, H and X<sub>0</sub> generate an algebra of dimension {dim}, "
-             "and the constructor names {cause} as the term that prevents closure. The closure of X<sub>0</sub> "
-             "grows from {from.closure} to {closure} operators, which move with {frequencies_text} frequencies "
-             "({frequency_list}): the measured signal leaves the Rabi law."},
+     "text": "With a field on the second spin as well, H and X<sub>0</sub> generate an algebra of dimension {dim}; "
+             "without the term {cause} it is su(2). The closure of X<sub>0</sub> grows from {from.closure} to "
+             "{closure} operators, which move with {frequencies_text} frequencies ({frequency_list}): the measured "
+             "signal leaves the Rabi law."},
     {"id": "spins_field_moved", "from": "two_spins", "to": "two_spins_x1", "slot": "Omega", "kind": "term",
      "change": "h X<sub>0</sub> → h X<sub>1</sub>",
      "text": "With the field on the second spin instead, H and X<sub>0</sub> generate an algebra of dimension "
-             "{dim}, and the derivation of a single rotation stops: the constructor names {cause}. The measured "
-             "X<sub>0</sub> is not changed. Its closure still has {closure} operators, now X<sub>0</sub>, "
-             "Y<sub>0</sub>Z<sub>1</sub> and Y<sub>0</sub>Y<sub>1</sub>, and they move with {frequencies_text} frequency "
-             "({frequency_list}): the signal follows the same law, with the rate and the angle of the two spins. "
-             "That H and the observable lie in one su(2) is sufficient for this law, and not necessary."},
+             "{dim}, not su(2); without the term {cause} it is su(2). The rotation is reached through the closure "
+             "of the observable (derivation {word}): the commutators of H with X<sub>0</sub> close on {closure} "
+             "operators, X<sub>0</sub>, Y<sub>0</sub>Z<sub>1</sub> and Y<sub>0</sub>Y<sub>1</sub>, which move with "
+             "{frequencies_text} frequency ({frequency_list}). The measured signal is that of the two spins, with "
+             "rate {rate} and angle {theta}°. That H and the observable generate su(2) is sufficient for the Rabi "
+             "law, and not necessary."},
     # the bridge: from the rotation of a spin to a stored magnetization
     {"id": "spins_to_spin1", "from": "two_spins_h0", "to": "spin1_transverse", "slot": "Xi", "kind": "attach",
      "change": "two spins-½ → one spin 1",
@@ -702,7 +707,7 @@ EDGES += [
 ]
 
 # ------------------------------------------------------------------------------------------------ labels of the map
-CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "larger algebra",
+CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "several frequencies",
                "single-state": "one state", "symmetric-write": "symmetric write", "threshold-write": "one-sided write",
                "subcritical-write": "distant write", "field-write": "field write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
