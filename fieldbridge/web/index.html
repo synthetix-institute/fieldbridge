@@ -46,10 +46,13 @@
         <button class="sym" data-slot="P" type="button">P</button><span>;</span>
         <button class="sym" data-slot="A" type="button">A</button><span>)</span>
       </p>
-      <dl class="definitions" id="definitions"></dl>
+      <div class="hero-grid">
+      <details class="defs" id="defs" open><summary>The six components</summary><dl class="definitions" id="definitions"></dl></details>
       <div class="intro">
         <p>FieldBridge writes a model as a realization of six components. An operation <span class="s" data-slot="Omega">Ω</span> acts on a carrier <span class="s" data-slot="Xi">Ξ</span> of states, and this pair is the core. The closure <span class="s" data-slot="C">C</span> makes its equations closed, <span class="s" data-slot="R">R</span> is what is measured, <span class="s" data-slot="P">P</span> how the system is prepared and driven, and <span class="s" data-slot="A">A</span> the parameter values of a particular material or apparatus.</p>
         <p>A mechanism is what remains when the carrier and the parameter values are left open: a canonical form and its laws. A magnet, a genetic switch and a laser differ as objects but keep one of two states by the same mechanism, so its law is derived once and holds in each. The page therefore starts from mechanisms, not from objects.</p>
+        <p class="intro-note">FieldBridge is developed within the <a href="https://synthetix.institute" target="_blank" rel="noopener">Synthetix Institute</a>. The code, the specification of every realization shown here and the tutorial are in the <a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">FieldBridge repository</a>; <a href="https://github.com/synthetix-institute/morphwiki" target="_blank" rel="noopener">MorphWiki</a>, which organizes the explanations, equations and source evidence of a field, and the institute's other public repositories are <a href="https://github.com/synthetix-institute" target="_blank" rel="noopener">on GitHub</a>.</p>
+      </div>
       </div>
     </section>
 
@@ -57,13 +60,13 @@
       <div class="section-head">
         <h2 id="instrument-title">Changing one component of a mechanism</h2>
       </div>
+      <div class="mech-frame"><svg id="mechanisms" role="img" aria-label="Map of mechanisms and the changes of one component that join them"></svg></div>
+      <p class="map-note">Each card is a mechanism; each line a change of one component, marked with its symbol, that takes a realization of one mechanism to a realization of the other. The filled card is the current mechanism and the outlined cards are one change away. Selecting a card reaches that mechanism by the shortest chain of changes.</p>
       <ol class="howto">
         <li><b>Start.</b> The expression below is the pitchfork normal form, the mechanism of every symmetric write, written without any field.</li>
         <li><b>Change one component.</b> Each coloured button under Ω, Ξ, C, R, P or A is a verified change of that component, and it names the mechanism it leads to. Sliders change the values of A within the realization.</li>
         <li><b>Compare.</b> The mechanism, its equations and its dynamics are recalculated. A change of Ξ keeps the mechanism and places it in a field; the other components can replace it by another mechanism.</li>
       </ol>
-      <div class="mech-frame"><svg id="mechanisms" role="img" aria-label="Map of mechanisms and the changes of one component that join them"></svg></div>
-      <p class="map-note">Each card is a mechanism; each line a change of one component, marked with its symbol, that takes a realization of one mechanism to a realization of the other. The filled card is the current mechanism and the outlined cards are one change away. Selecting a card reaches that mechanism by the shortest chain of changes.</p>
       <div class="sequence-bar">
         <span class="sequence-label">Guided sequences</span>
         <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Guided sequences"></div>
@@ -182,7 +185,7 @@ python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir
   <footer class="bottom">
     <p id="boundary"></p>
     <p id="provenance"></p>
-    <p><a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">FieldBridge</a> · MIT license · The page is built by <code>python3 -B -m fieldbridge demo</code>.</p>
+    <p><a href="https://github.com/synthetix-institute/fieldbridge" target="_blank" rel="noopener">FieldBridge</a> · MIT license · developed within the <a href="https://synthetix.institute" target="_blank" rel="noopener">Synthetix Institute</a> · The page is built by <code>python3 -B -m fieldbridge demo</code>.</p>
   </footer>
   <noscript><p class="noscript">The calculations of this page run in the browser and need JavaScript. The <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md">tutorial</a> contains the same results with executable Python commands.</p></noscript>
 </body>
