@@ -109,10 +109,11 @@ gives Eq. (2). The state runs away where $\mathrm{Ai}(-\tau) = 0$, at $\mu = 2.3
 $10^{-3}$ to $10^{-7}$ and records when the state crosses $s = 0$ (Figure 1c). The values $\mu/r^{2/3}$ are fitted
 by a polynomial of fourth order in $r^{1/3}$ together with a term $\delta\,r^{-2/3}$. This term is the delay caused
 by an error $\delta$ of the located fold, in canonical units: it moves every crossing by the same $\mu$, so its
-share of $\mu/r^{2/3}$ grows at slow rates. With the random starts used for the web page the fold of the capillary
-rotors is located with $\delta = 9 \times 10^{-9}$. The slowest sweep alone then lies $4 \times 10^{-4}$ above the
-limit, and a fit without the term gave $1.0195$
-(`test_the_delay_constant_is_not_biased_by_the_error_of_the_located_fold`). The uncertainty of the constant is the
+share of $\mu/r^{2/3}$ grows at slow rates. How accurately a fold is located depends on the model and on the
+platform. In one computation of the record of the web page the fold of the capillary rotors had
+$\delta = 9 \times 10^{-9}$; the slowest sweep alone then lay $4 \times 10^{-4}$ above the limit, and an
+extrapolation without the term gave $1.0195$ (`test_the_delay_fit_recovers_the_constant_when_the_fold_is_mislocated`,
+`test_a_fold_shifted_by_hand_appears_as_the_offset_of_the_delay_law`). The uncertainty of the constant is the
 largest of three numbers: the change when the fourth-order term is left out, the largest change when one rate is
 left out, and $5 \times 10^{-7}$, the accuracy of the canonical scale $a_2 b$ and of the integration.
 
@@ -202,7 +203,7 @@ specification.
 | Result | Function | Test |
 | --- | --- | --- |
 | Threshold write: derivation, fold, canonical form | `codiscovery.derive_threshold_write`, `refine_fold`, `canonical_fold` | `test_threshold_write_by_the_control_by_a_field_and_its_obstruction` |
-| Delay of the switch | `codiscovery.fold_delay_law` | `test_a_field_writes_the_landau_model_at_the_coercive_field_with_the_airy_delay`, `test_the_delay_constant_is_the_first_zero_of_the_airy_derivative`, `test_the_delay_constant_is_not_biased_by_the_error_of_the_located_fold` |
+| Delay of the switch | `codiscovery.fold_delay_law`, `delay_constant` | `test_a_field_writes_the_landau_model_at_the_coercive_field_with_the_airy_delay`, `test_the_delay_constant_is_the_first_zero_of_the_airy_derivative`, `test_the_delay_fit_recovers_the_constant_when_the_fold_is_mislocated`, `test_a_fold_shifted_by_hand_appears_as_the_offset_of_the_delay_law` |
 | Report and figure | [`cli.cmd_codiscover`](../../fieldbridge/memory/cli.py), [`visual.codiscovery_figure`](../../fieldbridge/memory/visual.py) | `test_codiscover_command_writes_report_and_figure` |
 
 Sources: R. Haberman, SIAM J. Appl. Math. 37, 69 (1979); P. Jung, G. Gray, R. Roy and P. Mandel, Phys. Rev. Lett.

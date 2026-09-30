@@ -54,7 +54,7 @@ from __future__ import annotations
 
 from math import pi, sqrt
 from statistics import NormalDist
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Sequence, Tuple
 
 import numpy as np
 
@@ -439,12 +439,10 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
     state crosses the position of the static fold (s = 0). In canonical units mu = r t, and the crossing is at
     mu = |a1'| r^(2/3) plus corrections in powers of r^(1/3). An error delta of the located fold, in canonical units,
     shifts every crossing by the same mu and adds delta r^(-2/3) to t0 r^(1/3): a term that grows at slow rates and,
-    left out, biases an extrapolation to r = 0 (for the rotor patches by 7e-4 at delta = 9e-9).
-
-    The constant is therefore fitted over all rates by C + c1 e + ... + c4 e^4 + delta e^(-2), e = r^(1/3), with
-    fewer powers when fewer rates are available. Its uncertainty is the largest of three numbers: the difference
-    from the fit of one order less, the largest change when one rate is left out, and DELAY_FLOOR, the accuracy of
-    the canonical scale a2 b and of the integration. Each sweep starts on the occupied branch at mu = -tau r^(2/3)."""
+    left out, biases an extrapolation to r = 0. How well the fold is located depends on the platform: in one
+    computation of the record of the web page the fold of the rotor patch had delta = 9e-9, and the extrapolation
+    without the term was off by 7e-4. The constant is therefore fitted with this term (delay_constant). Each sweep
+    starts on the occupied branch at mu = -tau r^(2/3)."""
     from scipy.integrate import solve_ivp
     vec, w = np.asarray(canon["mode"], float), np.asarray(canon["left_mode"], float)
     a2, k = canon["a2"], canon["mu_per_unit_parameter"]
@@ -472,22 +470,31 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
                          "constant": float(sol.t_events[0][0] * r ** (1 / 3))})
     out: Dict[str, object] = {"rows": rows, "expected": DELAY_CONSTANT}
     if len(rows) >= 5:
-        e = np.array([row["rate"] for row in rows]) ** (1 / 3)
-        c = np.array([row["constant"] for row in rows])
-
-        def fit(powers, keep=slice(None)):
-            A = np.array([e[keep] ** p for p in powers]).T
-            return dict(zip(powers, np.linalg.lstsq(A, c[keep], rcond=None)[0]))
-
-        order = int(min(4, len(rows) - 4))                       # at least two rates more than parameters
-        powers = tuple(range(order + 1)) + (-2,)
-        best, lower = fit(powers), fit(tuple(range(order)) + (-2,))
-        others = [fit(powers, np.arange(len(rows)) != i)[0] for i in range(len(rows))]
-        stderr = max(abs(best[0] - lower[0]), max(abs(v - best[0]) for v in others), DELAY_FLOOR)
-        out.update(constant=float(best[0]), stderr=float(stderr), correction_slope=float(best[1]),
-                   fold_offset=float(best[-2]), fit=[float(best[0]), float(best[1]), float(best.get(2, 0.0))],
-                   fit_terms={"powers": [int(k) for k in best], "coefficients": [float(v) for v in best.values()]})
+        out.update(delay_constant([row["rate"] for row in rows], [row["constant"] for row in rows]))
     return out
+
+
+def delay_constant(rates: Sequence[float], constants: Sequence[float]) -> Dict[str, object]:
+    """The constant of the delay law from the crossings t0 r^(1/3) measured at several canonical rates (at least
+    five): a fit by C + c1 e + ... + delta e^(-2), e = r^(1/3), with a polynomial of fourth order when nine rates are
+    available and of lower order otherwise, so that two rates more than parameters remain. delta is the offset of the
+    located fold in canonical units. The uncertainty is the largest of the change of C at one order less, its largest
+    change when one rate is left out, and DELAY_FLOOR."""
+    e = np.asarray(rates, float) ** (1 / 3)
+    c = np.asarray(constants, float)
+
+    def fit(powers, keep=slice(None)):
+        A = np.array([e[keep] ** p for p in powers]).T
+        return dict(zip(powers, np.linalg.lstsq(A, c[keep], rcond=None)[0]))
+
+    order = int(min(4, e.size - 4))
+    powers = tuple(range(order + 1)) + (-2,)
+    best, lower = fit(powers), fit(tuple(range(order)) + (-2,))
+    others = [fit(powers, np.arange(e.size) != i)[0] for i in range(e.size)]
+    stderr = max(abs(best[0] - lower[0]), max(abs(v - best[0]) for v in others), DELAY_FLOOR)
+    return {"constant": float(best[0]), "stderr": float(stderr), "correction_slope": float(best[1]),
+            "fold_offset": float(best[-2]), "fit": [float(best[0]), float(best[1]), float(best.get(2, 0.0))],
+            "fit_terms": {"powers": [int(k) for k in best], "coefficients": [float(v) for v in best.values()]}}
 
 
 def _field_fold(real: Realization, states: List[np.ndarray], max_pairs: int = 12):

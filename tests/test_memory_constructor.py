@@ -427,19 +427,54 @@ def test_a_field_writes_the_landau_model_at_the_coercive_field_with_the_airy_del
     assert row["law_constant"]["constant"] == pytest.approx(cd.DELAY_CONSTANT, abs=1e-4)
 
 
-def test_the_delay_constant_is_not_biased_by_the_error_of_the_located_fold():
-    """With the seed of the web page the fold of the capillary rotors is located to 9e-9 in canonical units. The
-    term delta r^(-2/3) then dominates the slowest sweeps; an extrapolation without it gave 1.0195 +- 0.0001."""
+def test_the_delay_fit_recovers_the_constant_when_the_fold_is_mislocated():
+    """An error delta of the located fold adds delta r^(-2/3) to the measured constant. A quadratic extrapolation
+    over the five slowest rates, without this term, is then biased; the fit of delay_constant is not."""
+    from fieldbridge.memory import codiscovery as cd
+    r = np.array(cd.DELAY_RATES)
+    e = r ** (1 / 3)
+    clean = cd.DELAY_CONSTANT - 0.0935 * e + 0.0411 * e ** 2 - 0.0269 * e ** 3 + 0.0179 * e ** 4   # the Landau model
+    exact = cd.delay_constant(r, clean)
+    assert abs(exact["constant"] - cd.DELAY_CONSTANT) < 1e-9 and abs(exact["fold_offset"]) < 1e-12
+    assert exact["fit_terms"]["powers"] == [0, 1, 2, 3, 4, -2] and exact["stderr"] == cd.DELAY_FLOOR
+    delta = 9e-9
+    shifted = cd.delay_constant(r, clean + delta * e ** -2.0)
+    assert abs(shifted["constant"] - cd.DELAY_CONSTANT) < 1e-9
+    assert shifted["fold_offset"] == pytest.approx(delta, rel=1e-6)
+    slow = np.argsort(e)[:5]
+    biased = np.polyfit(e[slow], (clean + delta * e ** -2.0)[slow], 2)[2]
+    assert biased - cd.DELAY_CONSTANT > 3e-4          # the extrapolation without the term
+    # with five rates the polynomial has first order, and the uncertainty covers the truncation
+    few = cd.delay_constant(r[-5:], clean[-5:])
+    assert few["fit_terms"]["powers"] == [0, 1, -2] and abs(few["constant"] - cd.DELAY_CONSTANT) < few["stderr"]
+
+
+def test_a_fold_shifted_by_hand_appears_as_the_offset_of_the_delay_law():
+    """The Schloegl reactor swept through its fold, with the fold deliberately placed at a wrong value of the
+    control: the crossings move by the same mu, the fit reports the shift, and the constant is unchanged."""
+    from fieldbridge.memory import analysis as an
+    from fieldbridge.memory import codiscovery as cd
+    real = load("schlogl")
+    ev = next(e for e in an.locate_writes(real, np.random.default_rng(1), n_starts=24))
+    q_f, p_f = cd.refine_fold(real, real.control, ev["q"], ev["v"])
+    canon = cd.canonical_fold(real, real.control, q_f, p_f, an.normal_form(real, q_f, real.control, p_f))
+    right = cd.fold_delay_law(real, real.control, q_f, p_f, canon)
+    assert abs(right["constant"] - cd.DELAY_CONSTANT) < right["stderr"] <= 1e-5 and abs(right["fold_offset"]) < 1e-10
+    delta = 9e-9                                         # in canonical units: mu = a2 b (p - p_f)
+    wrong = cd.fold_delay_law(real, real.control, q_f, p_f - delta / canon["mu_per_unit_parameter"], canon)
+    assert wrong["fold_offset"] == pytest.approx(delta, rel=0.05)
+    assert abs(wrong["constant"] - cd.DELAY_CONSTANT) < 1e-6
+    slowest = min(wrong["rows"], key=lambda row: row["rate"])
+    assert slowest["constant"] - min(right["rows"], key=lambda row: row["rate"])["constant"] == pytest.approx(
+        delta * slowest["rate"] ** (-2 / 3), rel=0.05)
+
+
+def test_the_delay_constant_of_the_rotor_patch_lies_within_its_uncertainty():
     from fieldbridge import site_data as sd
     from fieldbridge.memory import codiscovery as cd
     law = cd.derive_threshold_write(load("colloid_patch"), sd._rng("colloid_patch", "threshold-write"))["law"]
-    assert len(law["rows"]) == 9 and law["fit_terms"]["powers"] == [0, 1, 2, 3, 4, -2]
-    assert abs(law["constant"] - cd.DELAY_CONSTANT) < law["stderr"] <= 1e-6
-    assert 1e-9 < law["fold_offset"] < 1e-7
-    slowest = min(law["rows"], key=lambda r: r["rate"])
-    assert slowest["constant"] - cd.DELAY_CONSTANT > 3e-4   # the slowest sweep alone is off by delta r^(-2/3)
-    assert law["fold_offset"] * slowest["rate"] ** (-2 / 3) == pytest.approx(slowest["constant"] - cd.DELAY_CONSTANT,
-                                                                             rel=0.1)
+    assert len(law["rows"]) == 9
+    assert abs(law["constant"] - cd.DELAY_CONSTANT) < max(law["stderr"], 1e-6)
 
 
 def test_threshold_write_by_the_control_by_a_field_and_its_obstruction():
