@@ -103,6 +103,11 @@ def test_structural_predictions_agree_with_the_calculation(name):
     if name in ("pitchfork", "toggle", "tubes", "repressor_ring4"):
         # the prediction is conditional; these models have a write point to which the condition applies
         assert comparison["write"]["tested_write_points"] >= 1
+    if name in ("pitchfork", "schlogl"):
+        # gradient models: the card states how the barrier between the two stable states was obtained
+        barrier = card["barrier"]
+        assert barrier["converged"] and barrier["unstable_directions"] == 1 and len(barrier["paths"]) == 1
+        assert barrier["barrier"] == pytest.approx(0.25, abs=1e-6) and "nudged elastic band" in barrier["method"]
 
 
 # ------------------------------------------------------------------------------------------------ calculations
@@ -113,6 +118,82 @@ def test_pitchfork_write_point_and_barrier():
     assert ev["v"] == pytest.approx(0.0, abs=1e-6) and nf["a3"] == pytest.approx(-1.0, rel=1e-6)
     states, *_ = an.stored_states(real, np.random.default_rng(1), 24)
     assert an.neb_barrier(real, states[0], states[1], iters=2000)["barrier"] == pytest.approx(0.25, abs=2e-3)
+
+
+def test_the_barrier_between_states_half_a_period_apart_does_not_depend_on_rounding(monkeypatch):
+    """The two most populated states of the capillary rotors differ by half a period in every coordinate, so that each
+    rotor reaches the other state in either sense. The sense was read from the rounded difference and the band was
+    iterated a fixed number of times: the same states changed by 1e-14 gave barriers between 29.4 and 53.0."""
+    real = load("colloid_patch")
+    states, *_ = an.stored_states(real, np.random.default_rng(20260923), 48)
+    a, b = states[0], states[1]
+    period = real.carrier.period
+    assert np.max(np.abs(np.abs(real.carrier.diff(a, b)) - period / 2)) < 1e-9
+    ref = an.neb_barrier(real, a, b)
+    rng = np.random.default_rng(6)  # on the reference platform this change reverses the rounded sense of three rotors
+    moved = an.neb_barrier(real, a + 1e-14 * rng.standard_normal(a.size), b + 1e-14 * rng.standard_normal(b.size))
+    assert moved["barrier"] == pytest.approx(ref["barrier"], abs=1e-6)
+    assert moved["saddle_index"] == ref["saddle_index"]
+    assert [p["senses"] for p in moved["paths"]] == [p["senses"] for p in ref["paths"]]
+    assert moved["distinct_barriers"] == pytest.approx(ref["distinct_barriers"], abs=1e-6)
+    # the second state placed 1e-14 short of half a period from the first: every rounded sense is then positive
+    short = real.carrier.wrap(a + period / 2 - 1e-14)
+    assert np.all(real.carrier.diff(a, short) > 0) and np.max(np.abs(real.carrier.diff(b, short))) < 1e-9
+    assert an.neb_barrier(real, a, short, n_paths=2)["barrier"] == pytest.approx(ref["barrier"], abs=1e-6)
+    assert ref["barrier"] == pytest.approx(30.062467, abs=1e-5) and ref["barrier_back"] == pytest.approx(ref["barrier"])
+    assert ref["converged"] and ref["residual"] < ref["tolerance"] and ref["unstable_directions"] == 1
+    assert ref["half_period_coordinates"] == list(range(12))
+    assert ref["straight_paths"] == ref["straight_paths_examined"] == 2 ** 12
+    assert len(ref["paths"]) == 8 and all(p["converged"] and p["unstable_directions"] == 1 for p in ref["paths"])
+    assert ref["distinct_barriers"] == pytest.approx([30.062467, 31.980929], abs=1e-5)
+    assert "not unique" in ref["method"]
+    # with more coordinates at half a period than are enumerated, a descent over the senses finds the same paths
+    monkeypatch.setattr(an, "MAX_SENSES", 4)
+    few = an.neb_barrier(real, a, b, n_paths=2)
+    assert few["straight_paths_examined"] < few["straight_paths"] == 2 ** 12
+    assert [p["senses"] for p in few["paths"]] == [p["senses"] for p in ref["paths"][:2]]
+    assert few["barrier"] == pytest.approx(ref["barrier"], abs=1e-6)
+
+
+def test_the_barrier_is_the_same_in_the_exact_image_with_doubled_angles():
+    """psi = 2 theta maps the nematic rotors onto vector rotors with the same energy: states half a period apart
+    remain half a period apart, and the barrier between them is the same."""
+    from fieldbridge.memory import library
+    patch = library.rotor_patch("capillary")
+    image = library.dipole_exact_map(patch)
+    states, *_ = an.stored_states(patch, np.random.default_rng(20260923), 48)
+    a, b = states[0], states[1]
+    in_patch = an.neb_barrier(patch, a, b, n_paths=2)
+    in_image = an.neb_barrier(image, image.carrier.wrap(2 * a), image.carrier.wrap(2 * b), n_paths=2)
+    assert in_patch["converged"] and in_image["converged"]
+    assert in_image["half_period_coordinates"] == in_patch["half_period_coordinates"] == list(range(12))
+    assert [p["senses"] for p in in_image["paths"]] == [p["senses"] for p in in_patch["paths"]]
+    assert in_image["barrier"] == pytest.approx(in_patch["barrier"], abs=1e-6)
+    assert in_patch["barrier"] == pytest.approx(30.062497, abs=1e-5)  # positions of the library, not rounded
+
+
+def test_a_rotor_with_unequal_arcs_between_its_states_reports_the_lower_barrier():
+    """V = -cos 2 phi + 2 eps sin^3 phi has minima at 0 and pi, half a period apart, and the maxima 1 + 2 eps and
+    1 - 2 eps on the two arcs between them. Both arcs are relaxed and the lower barrier, 2 - 2 eps, is reported."""
+    eps = 0.1
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "rotor with unequal arcs",
+                      "question": "Which of the two arcs between the states of a rotor has the lower barrier?",
+                      "assumptions": ["constructed control"], "provenance": {"source": "constructed control"},
+                      "carrier": {"kind": "torus", "variables": ["phi"], "period": "2*pi"}, "parameters": {"eps": eps},
+                      "drift": {"phi": "-2*sin(2*phi) - 6*eps*sin(phi)**2*cos(phi)"},
+                      "potential": "-cos(2*phi) + 2*eps*sin(phi)**3", "noise": 0.1})
+    rows = [an.neb_barrier(real, np.array([0.0]), np.array([np.pi + shift])) for shift in (0.0, 1e-14, -1e-14)]
+    assert [r["barrier"] for r in rows] == pytest.approx([2 - 2 * eps] * 3, abs=1e-6)
+    for r in rows:
+        assert r["half_period_coordinates"] == [0] and r["converged"] and r["unstable_directions"] == 1
+        assert [p["senses"] for p in r["paths"]] == ["-", "+"] and r["senses"] == "-"
+        assert [p["barrier"] for p in r["paths"]] == pytest.approx([2 - 2 * eps, 2 + 2 * eps], abs=1e-6)
+        assert r["distinct_barriers"] == pytest.approx([2 - 2 * eps, 2 + 2 * eps], abs=1e-6)
+    # the states of the Stoner-Wohlfarth particle at h = 1/2 are a third of a period apart: one straight path is the
+    # shortest, only that path is relaxed, and the barrier is (1 - h)^2 / 2
+    r = an.neb_barrier(load("stoner_wohlfarth"), np.array([np.pi / 3]), np.array([5 * np.pi / 3]))
+    assert r["half_period_coordinates"] == [] and len(r["paths"]) == 1 and r["converged"]
+    assert r["barrier"] == pytest.approx(0.125, abs=1e-6) and "not unique" not in r["method"]
 
 
 def test_toggle_pitchfork_and_transferred_write_law():

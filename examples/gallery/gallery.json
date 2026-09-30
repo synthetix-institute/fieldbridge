@@ -153,5 +153,26 @@
   "loops": {
     "consistent": 91,
     "total": 91
-  }
+  },
+  "recomputed": [
+    {
+      "entry": "barrier",
+      "cards": [
+        "card00",
+        "card02",
+        "card04",
+        "card07"
+      ],
+      "from": "the two most populated states stored in each card (states.q), as in discovery.evaluate",
+      "implementation_sha256": "b2534385e458335b4542a4e991c273fa9ad1012e173c5abe89c198c1805f436d",
+      "versions": {
+        "python": "3.11.3",
+        "numpy": "1.26.0",
+        "scipy": "1.14.1",
+        "sympy": "1.12",
+        "matplotlib": "3.10.0"
+      },
+      "note": "analysis.neb_barrier relaxes the band to a tolerance and, for states half a period apart, relaxes the straight paths of lowest maximum energy; every other entry of the cards is from the run recorded above"
+    }
+  ]
 }

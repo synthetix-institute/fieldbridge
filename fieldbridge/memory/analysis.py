@@ -3,7 +3,9 @@
   stored_states      stable states reached by relaxation from random starts, with basin counts
   kappa_spectrum     kappa = -eig(Jacobian): > 0 relaxing, ~ 0 flat (symmetry), < 0 unstable (writes)
   loss_law           the law by which a stored state is lost, read from the spectra and the number of states
-  neb_barrier        barrier between two stored states along the minimum-energy path (gradient systems)
+  neb_barrier        barrier between two stored states along a minimum-energy path, relaxed to a stated tolerance;
+                     for states half a period apart on a torus, the lowest over the straight paths of lowest
+                     energy, with the paths relaxed and their barriers (gradient systems)
   hold_time          Monte Carlo time for a stored state to lose its identity at noise D
   write_test         bounded write toward a target at fixed control or while sweeping the control
                      from the end of its range where the barriers are low; accuracy after release and the
@@ -204,32 +206,220 @@ def fixed_points(real: Realization, rng, n_starts: int = 40, over: Optional[Dict
 
 
 # ------------------------------------------------------------------------------------------------ barrier
-def neb_barrier(real: Realization, a: np.ndarray, b: np.ndarray, over: Optional[Dict] = None,
-                images: int = 24, iters: int = 4000, k_spring: float = 1.0) -> Dict[str, object]:
-    over = over or {}
-    step = 0.5 * safe_dt(real)
-    t = np.linspace(0, 1, images)[:, None]
-    path = real.carrier.wrap(a[None] + t * real.carrier.diff(a, b)[None])
+NEB_TOL = 1e-5     # a band is relaxed when the largest force on an image is below this (units of the drift)
+MAX_SENSES = 12    # with more coordinates at half a period, not every combination of senses is examined
+
+
+def _band_force(real: Realization, path: np.ndarray, over: Dict, k_spring: float, climbing: bool):
+    """Energies of the images and forces on the interior ones: the drift perpendicular to the band and a spring
+    force along it, with the tangent taken toward the neighbour of higher energy (Henkelman & Jonsson 2000). If
+    climbing, the highest interior image instead feels the drift with its component along the band reversed, which
+    moves it to the saddle (Henkelman, Uberuaga & Jonsson 2000). Also returns the largest drift on an image."""
+    c = real.carrier
+    E, F = real.V(path, **over), real.F(path, **over)[1:-1]
+    fwd, back = c.diff(path[1:-1], path[2:]), c.diff(path[:-2], path[1:-1])
+    up, down = E[2:] - E[1:-1], E[:-2] - E[1:-1]
+    big = np.maximum(np.abs(up), np.abs(down))[:, None]
+    small = np.minimum(np.abs(up), np.abs(down))[:, None]
+    tau = np.where(((up > 0) & (down < 0))[:, None], fwd, np.where(((up < 0) & (down > 0))[:, None], back, np.where(
+        (up > down)[:, None], fwd * big + back * small, fwd * small + back * big)))
+    tau = tau / np.maximum(np.linalg.norm(tau, axis=1, keepdims=True), 1e-300)
+    along = np.sum(F * tau, axis=1, keepdims=True) * tau
+    force = F - along + k_spring * (np.linalg.norm(fwd, axis=1) - np.linalg.norm(back, axis=1))[:, None] * tau
+    if climbing:
+        top = int(np.argmax(E[1:-1]))
+        force[top] = F[top] - 2.0 * along[top]
+    return E, force, float(np.max(np.linalg.norm(F, axis=1)))
+
+
+def _relax_band(real: Realization, path: np.ndarray, over: Dict, k_spring: float, tol: float, iters: int):
+    """Relax a band in two stages. The images first follow the force on the band with the time step of the
+    dynamics (safe_dt), which decides the path that the band approaches. Once the largest force on an image has
+    fallen to 2% of the largest drift on the band (or after half of the iterations), the highest image climbs and
+    the relaxation is completed by damped dynamics with an adaptive step (FIRE; Bitzek et al. 2006), until that
+    force is below tol. Damped dynamics applied from the straight path can carry a band over a ridge to another
+    path: between the two most populated states of the dipole patch it gave the barrier 6.62, and the descent
+    4.19. Returns the band, its energies, whether the tolerance was reached, the iterations used and the largest
+    remaining force."""
+    c = real.carrier
+    step = safe_dt(real)
+    dt_max = 1.0 / np.sqrt(0.3 / step + 4.0 * k_spring)  # from the largest rates of the drift and of the springs
+    max_move = 0.5 * float(np.mean(np.linalg.norm(c.diff(path[:-1], path[1:]), axis=1)))
+    v = np.zeros_like(path[1:-1])
+    dt, mix, n_down, damped = 0.1 * dt_max, 0.1, 0, False
     for it in range(iters):
-        E = real.V(path, **over)
-        F = real.F(path, **over)
-        climb = int(np.argmax(E[1:-1])) + 1
-        new = path.copy()
-        for i in range(1, images - 1):
-            tau = real.carrier.diff(path[i - 1], path[i + 1])
-            tau /= max(np.linalg.norm(tau), 1e-12)
-            f_par = np.dot(F[i], tau) * tau
-            if i == climb and it > iters // 4:
-                force = F[i] - 2.0 * f_par
+        E, force, drift = _band_force(real, path, over, k_spring, damped)
+        res = float(np.max(np.linalg.norm(force, axis=1)))
+        if damped and res < tol:
+            return path, E, True, it, res
+        if not damped and (res < max(tol, 2e-2 * drift) or it >= iters // 2):
+            damped = True
+            continue
+        if not damped:
+            move = step * force
+        else:
+            if np.sum(force * v) >= 0.0:
+                v = (1.0 - mix) * v + mix * np.linalg.norm(v) * force / np.linalg.norm(force)
+                n_down += 1
+                if n_down > 5:
+                    dt, mix = min(1.1 * dt, dt_max), 0.99 * mix
             else:
-                spring = k_spring * (np.linalg.norm(real.carrier.diff(path[i], path[i + 1]))
-                                     - np.linalg.norm(real.carrier.diff(path[i - 1], path[i]))) * tau
-                force = F[i] - f_par + spring
-            new[i] = path[i] + step * force
-        path = real.carrier.wrap(new)
-    E = real.V(path, **over)
-    return {"barrier": float(E.max() - E[0]), "barrier_back": float(E.max() - E[-1]), "energies": E.tolist(),
-            "saddle_index": int(np.argmax(E))}
+                v, dt, mix, n_down = np.zeros_like(v), 0.5 * dt, 0.1, 0
+            v = v + dt * force
+            move = dt * v
+            move *= min(1.0, max_move / max(float(np.max(np.linalg.norm(move, axis=1))), 1e-300))
+        path = np.concatenate([path[:1], c.wrap(path[1:-1] + move), path[-1:]])
+    E, force, _ = _band_force(real, path, over, k_spring, True)
+    return path, E, False, iters, float(np.max(np.linalg.norm(force, axis=1)))
+
+
+def _half_period(real: Realization, a: np.ndarray, b: np.ndarray, over: Dict) -> np.ndarray:
+    """Coordinates of a torus in which two states differ by half a period, so that the move from one state to the
+    other is equally short in both senses. The comparison allows for the accuracy to which the states are known:
+    ten times the Newton correction of each state, and not less than 1e-9 of the period."""
+    c = real.carrier
+    if c.kind != "torus":
+        return np.zeros(0, int)
+    slack = 1e-9 * c.period + 10.0 * sum(
+        np.abs(np.linalg.lstsq(jacobian(real, q, over), real.F(q, **over), rcond=None)[0]) for q in (a, b))
+    return np.flatnonzero(0.5 * c.period - np.abs(c.diff(a, b)) <= slack)
+
+
+def _straight_paths(real: Realization, a: np.ndarray, b: np.ndarray, over: Dict, images: int, limit: int):
+    """Displacements of the shortest straight paths from a to b. With k coordinates at half a period (_half_period)
+    there are 2^k of them, one for every combination of senses. They are ranked by the highest energy met on the
+    path, and the `limit` lowest are returned, lowest first, each with its senses and that energy above a. For
+    k <= MAX_SENSES every combination is examined; beyond, those met when one sense at a time is reversed as long
+    as the highest energy decreases, starting from all senses positive and from all negative. Returns the
+    coordinates at half a period, the number of combinations examined and the selected paths."""
+    c = real.carrier
+    d = c.diff(a, b)
+    half = _half_period(real, a, b, over)
+    k = len(half)
+    plus = np.where(d[half] > 0, d[half], d[half] + c.period)
+    minus, t = plus - c.period, np.linspace(0, 1, images)[:, None]
+    e0 = float(real.V(a, **over))
+
+    def peaks(bits):  # bits: one row per path, 1 where the coordinate moves in the negative sense
+        out = np.empty(len(bits))
+        for i in range(0, len(bits), 256):
+            disp = np.repeat(d[None], len(bits[i:i + 256]), axis=0)
+            disp[:, half] = np.where(bits[i:i + 256] > 0, minus, plus)
+            pts = c.wrap(a[None, None] + t[None] * disp[:, None])
+            out[i:i + 256] = real.V(pts.reshape(-1, a.size), **over).reshape(len(disp), images).max(axis=1) - e0
+        return out
+
+    if k <= MAX_SENSES:
+        bits = (np.arange(2 ** k)[:, None] >> np.arange(k)[None]) & 1
+    else:
+        seen = set()
+        for cur in (np.zeros(k, int), np.ones(k, int)):
+            best = float(peaks(cur[None])[0])
+            while True:
+                near = (cur[None] + np.eye(k, dtype=int)) % 2
+                values = peaks(near)
+                seen.update(map(tuple, near.tolist()), [tuple(cur.tolist())])
+                if not values.min() < best:
+                    break
+                cur, best = near[int(np.argmin(values))], float(values.min())
+        bits = np.array(sorted(seen))
+    top = peaks(bits)
+    # paths of equal highest energy (images of each other under a symmetry) are ordered by their senses
+    order = np.argsort(top, kind="stable")
+    tier = np.concatenate([[0], np.cumsum(np.diff(top[order]) > 1e-9 * max(1.0, float(np.ptp(top))))])
+    chosen = []
+    for i in sorted(range(len(order)), key=lambda j: (tier[j], bits[order[j]].tolist()))[:limit]:
+        disp = d.copy()
+        disp[half] = np.where(bits[order[i]] > 0, minus, plus)
+        chosen.append((disp, "".join("-" if s else "+" for s in bits[order[i]]), float(top[order[i]])))
+    return half, len(bits), chosen
+
+
+def neb_barrier(real: Realization, a: np.ndarray, b: np.ndarray, over: Optional[Dict] = None,
+                images: int = 24, iters: int = 20000, k_spring: float = 1.0, tol: float = NEB_TOL,
+                n_paths: int = 8) -> Dict[str, object]:
+    """Barrier between two stable states of a gradient system along a minimum-energy path.
+
+    A band of images is relaxed from the straight path between the states (nudged elastic band with a climbing
+    image, _relax_band) until the largest force on an image is below tol, for at most iters iterations. The record
+    states whether the tolerance was reached, the iterations and the remaining force, and the number of unstable
+    directions at the highest image (one at the saddle of a minimum-energy path).
+
+    On a torus the shortest straight path is not unique if the states differ by half a period in k coordinates:
+    each of them reaches its value in the other state in either sense, and the sense read from the rounded
+    difference is arbitrary. The n_paths straight paths of lowest maximum energy are then relaxed
+    (_straight_paths), and the barrier is the lowest among the relaxed bands; `senses` gives the senses of these
+    coordinates in the reported band, `paths` lists every band, `distinct_barriers` the different barriers found,
+    and `method` states in words what was done. The search does not establish the lowest barrier over all paths
+    between the two states."""
+    over = over or {}
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    half, n_examined, starts = _straight_paths(real, a, b, over, images, n_paths)
+    t = np.linspace(0, 1, images)[:, None]
+    rows = []
+    for disp, senses, peak in starts:
+        path, E, ok, n_it, res = _relax_band(real, real.carrier.wrap(a[None] + t * disp[None]), over, k_spring,
+                                             tol, iters)
+        top = int(np.argmax(E))
+        rows.append({"senses": senses, "straight_barrier": peak, "barrier": float(E[top] - E[0]),
+                     "barrier_back": float(E[top] - E[-1]), "saddle_index": top, "converged": ok,
+                     "iterations": n_it, "residual": res, "energies": E.tolist(),
+                     "unstable_directions": n_unstable(kappa_spectrum(real, path[top], over))})
+    pool = [r for r in rows if r["converged"]] or rows
+    low = min(r["barrier"] for r in pool)
+    same = 1e-6 * max(1.0, abs(low))
+    best = next(r for r in pool if r["barrier"] <= low + same)
+    distinct: List[float] = []
+    for value in sorted(r["barrier"] for r in pool):
+        if not distinct or value - distinct[-1] > same:
+            distinct.append(value)
+    out = {key: best[key] for key in ("barrier", "barrier_back", "energies", "saddle_index", "converged",
+                                      "iterations", "residual")}
+    out.update(tolerance=tol, unstable_directions=best["unstable_directions"], images=images,
+               half_period_coordinates=half.tolist(), senses=best["senses"], straight_paths=2 ** len(half),
+               straight_paths_examined=n_examined,
+               paths=[{key: value for key, value in r.items() if key != "energies"} for r in rows],
+               distinct_barriers=distinct)
+    out["method"] = _barrier_method(out)
+    return out
+
+
+def _barrier_method(r: Dict[str, object]) -> str:
+    """The calculation of a barrier in words, for the card."""
+    n, k, m = len(r["paths"]), len(r["half_period_coordinates"]), len(r["distinct_barriers"])
+    band = (f"a nudged elastic band of {r['images']} images (descent along the force on the band, then damped "
+            f"dynamics with a climbing image, until the largest force on an image is below {r['tolerance']:g})")
+    which = "the band" if n == 1 else "the reported band"
+    if k == 0:
+        text = f"The straight path between the two states was relaxed as {band}."
+    else:
+        text = (f"The two states differ by half a period in {k} coordinate{'s' if k > 1 else ''}, each of which "
+                f"reaches its value in the other state in either sense: {r['straight_paths']} straight paths are "
+                f"equally short"
+                + ("" if r["straight_paths_examined"] == r["straight_paths"] else
+                   f", of which {r['straight_paths_examined']} were examined") + ". ")
+        if n == 1:
+            text += (f"The one of lowest maximum energy was relaxed as {band}. The minimum-energy path is not "
+                     f"unique, and bands in other senses were not relaxed.")
+        else:
+            done = sum(p["converged"] for p in r["paths"])
+            text += (("Each was" if n == r["straight_paths"] else f"The {n} of lowest maximum energy were each")
+                     + f" relaxed as {band}; {done} of {n} reached the tolerance. The barrier is the lowest among "
+                     + ("these bands" if done in (0, n) else "the bands that reached it")
+                     + f", which have {m} distinct barrier{'s' if m > 1 else ''}. The minimum-energy path is not "
+                       f"unique: the bands differ in the senses of these coordinates.")
+        text += " A lower barrier on a path that was not relaxed is not excluded."
+    if not r["converged"]:
+        text += (f" The tolerance was not reached by {which} in {r['iterations']} iterations (remaining force "
+                 f"{r['residual']:.2g}), so the barrier is not converged.")
+    elif r["unstable_directions"] == 1:
+        text += f" The highest image of {which} is a saddle with one unstable direction."
+    elif r["unstable_directions"] > 1:
+        text += (f" The highest image of {which} has {r['unstable_directions']} unstable directions: the band lies "
+                 f"on a ridge, and the barrier is an upper bound for the paths beside it.")
+    else:
+        text += f" The energy along {which} is highest at one of the two states."
+    return text
 
 
 def restoring_threshold(real: Realization, a: np.ndarray, b: np.ndarray, n: int = 64) -> float:
