@@ -117,6 +117,11 @@ write is lost:
 | a direction with $\kappa = 0$ (a zero mode) | Law 2, diffusion | decreases as $1/t$ |
 | two or more minima separated by a barrier $\Delta V$ | Law 3, activation | lost at the Kramers rate, proportional to $e^{-\Delta V/k_BT}$ |
 
+Laws 1 and 2 are the loss for the two signs $\kappa > 0$ and $\kappa = 0$ of the curvature along the written
+direction. Where $\kappa < 0$ no information is lost: the expansion amplifies the write, which is how a state is
+written (Section 1.2). Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, each
+mode relaxing at its own rate $\kappa(k)$ (Module 8, Section 3).
+
 The card names the law (`loss_law`) and gives the retention time at the noise of the realization (`hold`).
 Module 8 derives Laws 1 and 2 from one expression.
 

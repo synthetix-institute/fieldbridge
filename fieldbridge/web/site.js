@@ -230,7 +230,7 @@
     const R = S.retention_laws;
     if (R) $('memory-laws').innerHTML = `<p>A stored state is lost by one of three laws, set by the form of the landscape at the state (<a href="${repo(R.link)}" target="_blank" rel="noopener">Module 4, Section 1.3 ↗</a>):</p><ul>`
       + Object.entries(R.laws).map(([n, text]) => `<li><b>Law ${n}</b> ${text}${R.reading && R.reading[n] ? ` <span class="refs">(${M.reading(R.reading[n], {only: ['sources']})})</span>` : ''}</li>`).join('')
-      + `</ul><p>These are laws of retention. The writes have laws of their own, whose constants are the same in every field (<a href="#codiscovery">One mechanism in different fields</a>), and a written pattern in a field is lost by the laws of the retention cards on the map.</p>`;
+      + `</ul><p>Laws 1 and 2 are the loss for the two signs κ &gt; 0 and κ = 0 of the curvature along the written direction. Where κ &lt; 0 no information is lost: the expansion amplifies the write, and this is how a state is written. Law 3 needs wells separated by a barrier. A pattern written in a field is lost mode by mode, each mode relaxing at its own rate κ(k) by Law 1; a conserved density, whose rates vanish at long wavelengths, loses it as a power of time (the two cards of loss in a field on the <a href="#instrument">map</a>). A state is written where a rate κ passes through zero as a control is varied, at the write points of the map; the writes have laws of their own, whose constants are the same in every field (<a href="#codiscovery">One mechanism in different fields</a>).</p>`;
     const groups = [];
     ids.forEach(id => { const k = S.nodes[id].class, g = groups.find(x => x.k === k); if (g) g.ids.push(id); else groups.push({k, ids: [id]}); });
     const tile = id => {
@@ -255,6 +255,7 @@
   function planned() {
     const M = window.FieldBridgeMechanisms, items = S.planned || [];
     if (!items.length) { $('planned').hidden = true; return; }
+    $('planned-count').textContent = ['No', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine'][items.length] || String(items.length);
     $('planned-grid').innerHTML = items.map(p => `<article class="planned-card" data-planned="${p.id}">
         <div class="planned-head">${M.glyph(p.id)}<div><p class="card-label">${esc(p.group)}</p><h3>${esc(p.name)}</h3></div></div>
         <p class="planned-law">${p.law}</p>

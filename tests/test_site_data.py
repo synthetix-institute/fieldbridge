@@ -102,6 +102,18 @@ def test_every_mechanism_and_law_has_a_definition_a_derivation_and_original_publ
         assert re.fullmatch(r"\d{4}", year) and year in b["cite"], key
 
 
+def test_three_laws_of_loss_and_no_law_for_the_write():
+    """Laws 1 and 2 are the loss for kappa > 0 and kappa = 0; kappa < 0 writes and loses nothing, and Law 3 is
+    activation over a barrier between wells. No text names a further numbered law."""
+    assert list(reg.RETENTION_LAWS) == ["1", "2", "3"]
+    assert "κ &gt; 0" in reg.RETENTION_LAWS["1"] and "κ = 0" in reg.RETENTION_LAWS["2"]
+    assert "barrier" in reg.RETENTION_LAWS["3"] and "κ &lt; 0" not in reg.RETENTION_LAWS["3"]
+    files = [*(ROOT / "fieldbridge").rglob("*.py"), *(ROOT / "fieldbridge" / "web").glob("*.js"),
+             ROOT / "fieldbridge" / "web" / "index.html", *(ROOT / "docs").rglob("*.md"), ROOT / "README.md"]
+    named = {(f.name, int(n)) for f in files for n in re.findall(r"\bLaws? (\d+)", f.read_text(encoding="utf-8"))}
+    assert {n for _, n in named} <= {1, 2, 3}, sorted(x for x in named if x[1] > 3)
+
+
 def test_the_page_of_mechanisms_is_current_and_its_anchors_exist():
     text = (ROOT / refs.DOC).read_text(encoding="utf-8")
     assert text == refs.mechanisms_doc(), "regenerate it: python3 -B -m fieldbridge mechanisms --out docs/mechanisms.md"

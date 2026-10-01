@@ -167,7 +167,7 @@ Canonical form: dI/dt = 0. A conserved quantity fills the plane with closed orbi
 
 ### Exponential loss
 
-Canonical form: SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup>. Every mode relaxes at a finite rate: the trace of a write is lost exponentially.
+Canonical form: SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup>. Each mode of the field relaxes at a finite rate κ(k) (Law 1): the trace of a write is lost exponentially.
 
 - **Defined:** [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer), non-conserved field.
 - **Derived:** [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write), conservation, dimension and the shape of the write. Code: `memory.fields.predicted_law`, `hartree_mass`.
@@ -177,7 +177,7 @@ Canonical form: SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup>. Every mode relaxes at 
 
 ### Power-law loss
 
-Canonical form: SNR ∝ t<sup>−d/2−n</sup>. A conserved density relaxes slowly at long wavelengths: the trace of a write decays as a power of time.
+Canonical form: SNR ∝ t<sup>−d/2−n</sup>. Each mode of the field relaxes at its own rate (Law 1), and for a conserved density the rate κ(k) = Mk² vanishes at long wavelengths: the trace of a write decays as a power of time.
 
 - **Defined:** [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer), conserved field.
 - **Derived:** [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write), conservation, dimension and the shape of the write. Code: `memory.fields.predicted_law`, `spectral_snr`, `exponent_check`.
@@ -201,7 +201,7 @@ Canonical form: Itô μ − σ<sup>2</sup>/2, Stratonovich μ. The reading of th
 
 ## Laws of retention
 
-A stored state is lost by one of three laws, set by the form of the landscape at the state ([Module 4, §1.3](tutorial/18_memory_writing_and_retention.md#13-retention)).
+A stored state is lost by one of three laws, set by the form of the landscape at the state ([Module 4, §1.3](tutorial/18_memory_writing_and_retention.md#13-retention)). Laws 1 and 2 are the loss for the two signs κ > 0 and κ = 0 of the curvature along the written direction; where κ < 0 no information is lost, which is how a state is written. Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, each mode at its own rate κ(k) ([Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write); the mechanisms [exponential loss](#exponential-loss) and [power-law loss](#power-law-loss)).
 
 ### Law 1
 
@@ -238,7 +238,7 @@ Activation over a barrier ΔV between stored states, at the Kramers rate, propor
 
 ## Certified laws
 
-The laws whose constant FieldBridge calculates in every realization that reaches the target, shown on the page under *One mechanism in different fields*.
+The laws whose constant FieldBridge calculates in every realization that reaches the target, shown on the page under *One mechanism in different fields*. They describe how a state is written, or how a quantum observable rotates, and not how a state is lost.
 
 ### Rabi law of the Bloch rotation
 
@@ -300,7 +300,7 @@ Law: excess energy per bond 1 − cos(Φ/N) for N equal rotor bonds with mismatc
 
 ### Retention against rewriting
 
-Law: the ratio of the retention time to the writing time depends only on the work E<sub>w</sub> of the write: it grows as ln E<sub>w</sub> in a curved minimum, linearly along a zero mode and as e<sup>E<sub>w</sub>/k<sub>B</sub>T</sup> behind a barrier.
+Law: the ratio of the retention time to the writing time depends only on the work E<sub>w</sub> of the write: it grows as ln E<sub>w</sub> in a curved minimum (Law 1), linearly along a zero mode (Law 2) and as e<sup>E<sub>w</sub>/k<sub>B</sub>T</sup> behind a barrier (Law 3).
 
 - **Defined:** [Glossary, Retention](tutorial/memory_glossary.md#retention), relation between retention and writing times.
 - **Derived:** [Module 4, §1.4](tutorial/18_memory_writing_and_retention.md#14-relation-between-retention-and-writing-times), the relation and the three kinds of protocol not subject to it. Code: `memory.analysis.hold_time`, `write_test`.

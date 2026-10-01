@@ -96,11 +96,13 @@ MECHANISMS = {
                        "text": "A conserved quantity fills the plane with closed orbits, none of which attracts its "
                                "neighbours.", "node": "lotka_volterra"},
     "exponential-loss": {"canonical": "SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup>",
-                         "text": "Every mode relaxes at a finite rate: the trace of a write is lost exponentially.",
+                         "text": "Each mode of the field relaxes at a finite rate κ(k) (Law 1): the trace of a write is "
+                                 "lost exponentially.",
                          "node": "field_nonconserved"},
     "power-loss": {"canonical": "SNR ∝ t<sup>−d/2−n</sup>",
-                   "text": "A conserved density relaxes slowly at long wavelengths: the trace of a write decays as a "
-                           "power of time.", "node": "field_charge_1d"},
+                   "text": "Each mode of the field relaxes at its own rate (Law 1), and for a conserved density the "
+                           "rate κ(k) = Mk² vanishes at long wavelengths: the trace of a write decays as a power of "
+                           "time.", "node": "field_charge_1d"},
     "convention": {"canonical": "Itô μ − σ<sup>2</sup>/2, Stratonovich μ",
                    "text": "The reading of the noise term is part of the closure: it changes the measured growth rate "
                            "of log X by σ<sup>2</sup>/2.", "node": "log_ito"},
@@ -800,8 +802,8 @@ PLANNED = [
      "tutorial": "docs/tutorial/17_memory_predictions.md#4-tests-on-many-loops-and-networks"},
     {"id": "retention-rewriting", "name": "retention against rewriting", "group": "memory: retention",
      "law": "the ratio of the retention time to the writing time depends only on the work E<sub>w</sub> of the write: "
-            "it grows as ln E<sub>w</sub> in a curved minimum, linearly along a zero mode and as "
-            "e<sup>E<sub>w</sub>/k<sub>B</sub>T</sup> behind a barrier",
+            "it grows as ln E<sub>w</sub> in a curved minimum (Law 1), linearly along a zero mode (Law 2) and as "
+            "e<sup>E<sub>w</sub>/k<sub>B</sub>T</sup> behind a barrier (Law 3)",
      "exists": "the memory card computes the ratio for each writing protocol",
      "missing": "a target in which the write of bounded work is a letter, and its comparison across fields",
      "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#14-relation-between-retention-and-writing-times"},

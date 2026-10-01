@@ -52,7 +52,10 @@ $$
 For $\kappa < 0$ the expansion outruns the noise. Only the noise that acts during the first $1/\lvert\kappa\rvert$,
 while the state is near the unstable point, competes with the write; what survives it is retained. $W$ is the same
 ratio of drift to noise that sets the accuracy of a write at an instability (Module 4). If the write is binary,
-$\pm s_0$, and the observable is the sign of $s$, the sign is kept with probability $\Phi(W^{1/2})$.
+$\pm s_0$, and the observable is the sign of $s$, the sign is kept with probability $\Phi(W^{1/2})$. The regime
+$\kappa < 0$ therefore writes and loses nothing. Activation over a barrier between wells (Law 3) is not a regime of
+Eq. (1): it needs a landscape that is not linear, in which the state is held in a well and lost only by rare
+transitions over the barrier.
 
 <details><summary>Derivation of Eq. (1)</summary>
 
@@ -95,7 +98,9 @@ information about a written profile is a sum over modes. The examples use two la
 | conserved (Model B): $\partial_t\phi = M\nabla^2\,\delta F/\delta\phi + \text{conserved noise}$ | $\tfrac12\phi^2 + \tfrac14 g\phi^4$ | $\kappa(k) = M k^2 \to 0$ as $k \to 0$ | a power law, $\mathrm{SNR} \propto t^{-(d+2n)/z}$ with $z = 2$ |
 | non-conserved (Model A): $\partial_t\phi = -M\,\delta F/\delta\phi + \text{noise}$ | $\tfrac12\kappa_0\phi^2 + \tfrac12 D_\nabla(\nabla\phi)^2 + \tfrac14 g\phi^4$ | $\kappa(k) = M(\kappa_0 + D_\nabla k^2) \geq M\kappa_0$ | exponential; the signal-to-noise ratio falls at least at the rate $2M\kappa_0$ |
 
-The exponent follows from the modes near $k = 0$. A write whose spectral weight near $k = 0$ grows as $k^{2n}$
+These are the laws of Section 2, mode by mode: every mode with $\kappa(k) > 0$ relaxes by Law 1, and the density
+of slow modes near $k = 0$ decides the form of the total loss. The exponent follows from the modes near $k = 0$. A
+write whose spectral weight near $k = 0$ grows as $k^{2n}$
 gives $\mathrm{SNR} \propto \int d^dk\, k^{2n} e^{-2Mk^2 t} \propto t^{-(d+2n)/2}$. A write that adds material to
 one site has $n = 0$. A write that moves material between two neighbouring sites leaves the total unchanged and
 has $n = 1$. In a finite conserved system the total itself never relaxes, so a write that adds material is

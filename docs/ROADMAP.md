@@ -7,7 +7,7 @@ several fields and certifies a law whose constant does not depend on the field: 
 simulating the full model, and letters that verify each step. Four laws meet this rule: the swept write (constant
 π<sup>1/4</sup>), the delayed fold (|a₁′| = 1.0188) and the half-width of phase locking (1 in units of K), which are
 the targets of `fieldbridge/memory/codiscovery.py`, and the Rabi law of the Bloch rotation
-(`fieldbridge/quantum/language.py`). Return-point memory is on the map with a structural law in place of a constant:
+(`fieldbridge/quantum/language.py`). Return-point memory is on the map with a structural condition in place of a law constant:
 the return to a turning point of a slow drive is exact when no loop of the network that counts the drive as an
 element is frustrated ([Module 12](tutorial/27_memory_return_point.md), `memory hysterons`), and six realizations
 from three fields are compared with it. The mechanisms below are studied in the tutorial or in the literature on
