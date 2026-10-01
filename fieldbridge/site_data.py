@@ -23,6 +23,7 @@ from typing import Callable, Dict, Iterable, List, Optional
 
 import numpy as np
 
+from . import site_references as refs
 from . import site_registry as reg
 from .quantum.language import closure_basis, observable_frequencies
 from .web_models import arithmetic, model_record
@@ -983,7 +984,7 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
     # the mechanism of each class present, opened on its canonical realization or, without one, on its first node
     mechanisms = {}
     for c in present:
-        m = dict(reg.MECHANISMS.get(c, {}))
+        m = dict(reg.MECHANISMS.get(c, {}), **refs.reading(c))  # empty for a class not yet in site_references
         if m.get("node") not in records or records[m["node"]]["class"] != c:
             m["node"] = sorted(r["id"] for r in records.values() if r["class"] == c)[0]
         mechanisms[c] = m
@@ -1005,7 +1006,10 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
                         current_implementation_sha256=_memory_hash(), record_versions=record_file.get("versions"))
     return {"schema": SCHEMA, "slots": reg.SLOTS, "classes": reg.CLASSES, "classes_short": reg.CLASS_SHORT,
             "start": start, "mechanisms": mechanisms, "materials": materials, "absent": reg.CLASS_ABSENT,
-            "retention_laws": {"link": reg.M4_RETENTION, "laws": reg.RETENTION_LAWS}, "planned": reg.PLANNED,
+            "retention_laws": {"link": reg.M4_RETENTION, "laws": reg.RETENTION_LAWS,
+                               "reading": {k[-1]: refs.reading(k) for k in refs.RETENTION}},
+            "planned": [dict(p, **refs.reading(p["id"])) for p in reg.PLANNED],
+            "law_reading": {k[len("law-"):]: refs.reading(k) for k in refs.CERTIFIED}, "mechanisms_doc": refs.DOC,
             "nodes": records, "edges": edges, "sequences": sequences, "atlas": atlas,
             "codiscovery": codiscovery_summary(records), "boundary": BOUNDARY, "law": law_info,
             "provenance": {"memory_implementation_sha256": _memory_hash(), "versions": _versions()}}

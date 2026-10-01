@@ -126,6 +126,12 @@ def cmd_construct(args: argparse.Namespace) -> int:
     return 2 if calculate and transfer.calculation["status"] != "calculated" else 0
 
 
+def cmd_mechanisms(args: argparse.Namespace) -> int:
+    from .site_references import write_doc
+    print(write_doc(args.out))
+    return 0
+
+
 def cmd_verify_construction(args: argparse.Namespace) -> int:
     import json
     try:
@@ -296,6 +302,11 @@ def build_parser() -> argparse.ArgumentParser:
     verify.add_argument("input", help="Construction JSON with equations, map and assumptions.")
     verify.add_argument("--out-dir", required=True, help="Directory for the calculation and its provenance.")
     verify.set_defaults(func=cmd_verify_construction)
+
+    mechanisms = sub.add_parser("mechanisms", help="Write the definitions, derivations and original publications of the "
+                                                   "mechanisms on the web page (docs/mechanisms.md).")
+    mechanisms.add_argument("--out", default="docs/mechanisms.md")
+    mechanisms.set_defaults(func=cmd_mechanisms)
 
     try:  # the memory constructor needs the memory extra; the rest of the program does not
         from .memory.cli import add_parser as add_memory_parser

@@ -11,6 +11,7 @@ pytest.importorskip("scipy")
 pytest.importorskip("sympy")
 
 from fieldbridge import site_data as sd  # noqa: E402
+from fieldbridge import site_references as refs  # noqa: E402
 from fieldbridge import site_registry as reg  # noqa: E402
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -69,12 +70,44 @@ def test_every_tutorial_link_points_to_a_section():
         return h.replace(" ", "-")
     links = [n["tutorial"] for n in reg.NODES if n.get("tutorial")]
     links += [p["tutorial"] for p in reg.PLANNED if p.get("tutorial")] + [reg.M4_RETENTION]
+    for e in refs.READING.values():  # where each mechanism is defined and derived
+        links += [e["defined"][2]] + [d[2] for d in e["derived"]]
     for link in links:
         path, _, anchor = link.partition("#")
         text = (ROOT / path).read_text(encoding="utf-8")
         if anchor:
             slugs = {slug(line.lstrip("#")) for line in text.splitlines() if line.startswith("#")}
             assert anchor in slugs, (link, anchor)
+
+
+# ------------------------------------------------------------------------------------------------ the references
+KEYS = list(dict.fromkeys(list(reg.CLASSES) + refs.RETENTION + refs.CERTIFIED + [p["id"] for p in reg.PLANNED]))
+
+
+def test_every_mechanism_and_law_has_a_definition_a_derivation_and_original_publications():
+    missing, extra = sorted(set(KEYS) - set(refs.READING)), sorted(set(refs.READING) - set(KEYS))
+    assert not missing and not extra, f"add or remove entries in fieldbridge/site_references.py: missing {missing}, extra {extra}"
+    for k in KEYS:
+        r = refs.reading(k)
+        assert r["defined"]["link"] and r["sources"], k
+        # only the mechanisms in preparation may lack a derivation in FieldBridge
+        assert r["derived"] or (k in {p["id"] for p in reg.PLANNED} and k not in reg.CLASSES), k
+    used = {key for e in refs.READING.values() for key in [s for s, _ in e["sources"]] + e.get("textbooks", [])}
+    assert used == set(refs.BIB), sorted(set(refs.BIB) ^ used)
+    for key, b in refs.BIB.items():
+        assert b["doi"] == "" or re.fullmatch(r"10\.\d{4,9}/\S+", b["doi"]), key
+        year = b["short"].rsplit(", ", 1)[1]
+        assert re.fullmatch(r"\d{4}", year) and year in b["cite"], key
+
+
+def test_the_page_of_mechanisms_is_current_and_its_anchors_exist():
+    text = (ROOT / refs.DOC).read_text(encoding="utf-8")
+    assert text == refs.mechanisms_doc(), "regenerate it: python3 -B -m fieldbridge mechanisms --out docs/mechanisms.md"
+    anchors = {refs.slug(line.lstrip("#")) for line in text.splitlines() if line.startswith("#")}
+    for k in refs.READING:
+        assert refs.reading(k)["doc"].partition("#")[2] in anchors, k
+    for anchor in re.findall(r"\]\(#([^)]+)\)", text):  # the table at the top
+        assert anchor in anchors, anchor
 
 
 def test_texts_are_filled_from_facts_and_a_missing_fact_is_an_error():

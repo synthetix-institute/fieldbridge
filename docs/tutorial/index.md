@@ -31,6 +31,9 @@ The `memory` extra covers every chapter except PDF ingestion, which uses `pip in
 writes reports and input records under `build/` and needs no paid API, model download or cluster.
 `python3 -B -m fieldbridge demo --out-dir build/site` builds the [web page](https://synthetix-institute.github.io/fieldbridge/),
 on which the realizations of the examples are joined by changes of one component.
+[Mechanisms: definitions, derivations and original publications](../mechanisms.md) names, for every mechanism and law
+of the page, the section of this tutorial that defines it, the section that derives it, and the publications in which
+it was first found.
 
 ## Choose a reading path
 
@@ -59,7 +62,8 @@ states, write points, retention laws and writing protocols. Finally, the
 program transfers a known memory mechanism to another carrier, or derives one
 mechanism in models from different fields. The modules need
 `pip install -e '.[memory]'`, run on a laptop, and define their terms in the
-[glossary](memory_glossary.md). The [catalog of materials](../materials.md)
+[glossary](memory_glossary.md); the original publications of each mechanism are listed in
+[mechanisms](../mechanisms.md). The [catalog of materials](../materials.md)
 lists the material specifications in the repository, and
 [CONTRIBUTING.md](../../CONTRIBUTING.md) describes how a material from another
 field is added (`memory new`, `memory check`).

@@ -195,6 +195,10 @@ section { padding: 44px 0 20px; }
 #m-name { font-size: 22px; margin-top: 1px; }
 .m-canonical { font-family: var(--serif); font-size: 16px; margin-top: 2px; }
 .m-where { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+.m-refs { font-size: 13px; color: var(--muted); margin-top: 4px; line-height: 1.45; }
+.m-refs:empty { display: none; }
+.refs { color: var(--muted); font-size: 13px; }
+.collapse-grid figcaption .refs { display: block; margin-top: 4px; }
 .realization-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; padding: 14px 16px 10px; }
 .realization-meta { color: var(--muted); font-size: 13.5px; display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 2px; }
 .class-badge { flex: none; display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; border: 1px solid var(--rule-strong); border-radius: 999px; padding: 2px 10px; color: var(--ink); background: var(--panel-2); white-space: nowrap; }

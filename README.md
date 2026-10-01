@@ -2,7 +2,7 @@
 
 **A computational workbench for discovering and deriving physical mechanisms across scientific fields.**
 
-[Demonstration](#demonstration) · [Tutorial](docs/tutorial/index.md) · [Catalog of materials](docs/materials.md) · [Contributing](CONTRIBUTING.md) · [Data model](docs/DATA_MODEL.md)
+[Demonstration](#demonstration) · [Tutorial](docs/tutorial/index.md) · [Mechanisms and their sources](docs/mechanisms.md) · [Catalog of materials](docs/materials.md) · [Contributing](CONTRIBUTING.md) · [Data model](docs/DATA_MODEL.md)
 
 ![FieldBridge: Scientific Mechanism Translation](docs/assets/fieldbridge-hero.svg)
 
@@ -41,7 +41,10 @@ of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same
 (R). Under the expression, a map of thirteen mechanisms, each with its drawing, shows which component joins which
 mechanisms, and the selected mechanism is shown beside the expression. After a change the realization it came from is
 drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
-realizations of each mechanism by field.
+realizations of each mechanism by field. Beside the selected mechanism the page names the section of the tutorial
+that defines it, the section that derives it and the publications in which it was first found;
+[docs/mechanisms.md](docs/mechanisms.md) lists them, with their DOIs, for every mechanism, law of retention and
+certified law, and for the mechanisms in preparation, such as the onset of oscillation (Hopf, 1942).
 
 Every realization on the page is a specification in `examples/` or one change of one, and every change is checked to
 alter only the component it names ([site_data.py](fieldbridge/site_data.py), the realizations and changes in
@@ -51,7 +54,7 @@ that [the tests](tests/test_site_engines.py) compare with the Python calculation
 
 | Section of the page | Content |
 | --- | --- |
-| Expression and map of mechanisms | The realization expression, the selected mechanism with its drawing, the map of mechanisms with the single-component changes between them, and the chain of changes made |
+| Expression and map of mechanisms | The realization expression, the selected mechanism with its drawing, its definition, derivation and original publications, the map of mechanisms with the single-component changes between them, and the chain of changes made |
 | Changing one component of a mechanism | The expression of the current realization with the verified changes of each component, each named by the mechanism it reaches; the dynamics, drawn against the realization before the change, and the calculated consequences |
 | Guided sequences | From the pitchfork normal form to other mechanisms; from a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
 | One mechanism in many fields | The canonical forms and law constants of the four targets, one curve or point per realization |

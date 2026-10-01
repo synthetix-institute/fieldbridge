@@ -121,6 +121,7 @@
     $('m-name').textContent = S.classes[rec.class] || rec.class;
     $('m-canonical').innerHTML = mech.canonical ? 'canonical form: ' + mech.canonical : '';
     $('m-where').innerHTML = rec.universal ? 'Written without a field.' : `Realized in ${esc(rec.field)}: ${rec.name}.`;
+    $('m-refs').innerHTML = M.reading ? M.reading(mech) : '';
     $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span>`;
     $('slots').innerHTML = SLOTS.map(slot => `<li class="slot" data-slot="${slot}" id="slot-${slot}">
         <button class="slot-symbol" type="button" data-light="${slot}" aria-label="${S.slots[slot].name}">${S.slots[slot].symbol}</button>

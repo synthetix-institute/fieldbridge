@@ -185,5 +185,23 @@
     return html.replace(/\(Law ([123])([^)]*)\)/g, (all, n, rest) => R.laws[n]
       ? `(<a class="law-link" href="${href}" target="_blank" rel="noopener" title="Law ${n}: ${esc(strip(R.laws[n].replace(/<sup>/g, '^').replace(/<\/?su[bp]>/g, '')).replace(/&gt;/g, '>').replace(/&lt;/g, '<'))}">Law ${n}</a>${rest})` : all);
   }
-  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links, lawLinked};
+  /** Where a mechanism or a law is defined and derived, and its original publications (site_references.py): links to
+   *  the tutorial, to the DOI of each publication and to its section of docs/mechanisms.md. `only` selects parts. */
+  function reading(r, {max = 5, only = ['defined', 'derived', 'sources', 'doc'], prefix = 'original publications: '} = {}) {
+    if (!r) return '';
+    const S = window.FIELDBRIDGE_SITE, base = (S && S.repo || 'https://github.com/synthetix-institute/fieldbridge') + '/blob/main/';
+    const plain = t => strip(t || '').replace(/&gt;/g, '>').replace(/&lt;/g, '<').replace(/&amp;/g, '&');
+    const a = (href, label, title) => `<a href="${esc(href)}" target="_blank" rel="noopener"${title ? ` title="${esc(plain(title))}"` : ''}>${label}</a>`;
+    const parts = [];
+    if (only.includes('defined') && r.defined) parts.push(`defined in ${a(base + r.defined.link, esc(r.defined.label), r.defined.what)}`);
+    if (only.includes('derived') && r.derived && r.derived.length)
+      parts.push(`derived in ${r.derived.map(d => a(base + d.link, esc(d.label), d.what)).join(', ')}`);
+    const src = r.sources || [];
+    if (only.includes('sources') && src.length)
+      parts.push(`${prefix}${src.slice(0, max).map(s => s.url ? a(s.url, esc(s.short), s.cite + (s.what ? ': ' + s.what : ''))
+        : `<span title="${esc(plain(s.cite + (s.what ? ': ' + s.what : '')))}">${esc(s.short)}</span>`).join('; ')}${src.length > max ? '; …' : ''}`);
+    if (only.includes('doc') && r.doc) parts.push(a(base + r.doc, 'all references ↗', 'docs/mechanisms.md'));
+    return parts.join(' · ');
+  }
+  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links, lawLinked, reading};
 })();

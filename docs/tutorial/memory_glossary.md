@@ -1,7 +1,9 @@
 # Glossary for the memory modules
 
 The memory modules (15–23) use the terms below with one meaning each. Symbols
-follow the companion manuscript *Principles of material memory*.
+follow the companion manuscript *Principles of material memory*. For each
+mechanism, the section that derives it and the publications in which it was first
+found are listed in [mechanisms](../mechanisms.md).
 
 ## Description of a material
 

@@ -24,7 +24,8 @@ memory, and other rate-independent or athermal materials, need a new kind of spe
 
 Sources: A. I. Neishtadt, Differential Equations 23, 1385 (1987); Y. Kuramoto, *Chemical Oscillations, Waves, and
 Turbulence* (Springer, 1984); J. P. Sethna et al., Phys. Rev. Lett. 70, 3347 (1993); N. C. Keim, J. D. Paulsen,
-Z. Zeravcic, S. Sastry and S. R. Nagel, Rev. Mod. Phys. 91, 035002 (2019).
+Z. Zeravcic, S. Sastry and S. R. Nagel, Rev. Mod. Phys. 91, 035002 (2019). The original publications of these and of
+the mechanisms on the map are listed, with their DOIs, in [mechanisms.md](mechanisms.md#mechanisms-in-preparation).
 
 ## Version 0.1
 

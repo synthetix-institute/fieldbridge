@@ -96,7 +96,8 @@
       figs.push({id: key, title, rows, expected, key, draw: drawCanonical,
         caption: rs => `<b>${title}.</b> ${rs.length} realizations from ${fieldsOf(rs).length} fields; the reduced drift at the end of each derivation in its canonical units, against ${form}. Below: the ${constName}, expected ${expText}.`});
     }
-    grid.innerHTML = figs.map(f => `<figure><canvas id="cd-${f.id}" aria-label="${esc(f.title)}"></canvas>${f.key ? `<canvas id="cd-${f.id}-law" class="strip" aria-label="${esc(f.title)}: law constants" style="aspect-ratio:4/2.1"></canvas>` : ''}<figcaption>${f.caption(f.rows)}</figcaption></figure>`).join('');
+    const lawRefs = id => { const r = (S.law_reading || {})[id], M = window.FieldBridgeMechanisms; return r && M.reading ? `<span class="refs">Law ${M.reading(r)}.</span>` : ''; };
+    grid.innerHTML = figs.map(f => `<figure><canvas id="cd-${f.id}" aria-label="${esc(f.title)}"></canvas>${f.key ? `<canvas id="cd-${f.id}-law" class="strip" aria-label="${esc(f.title)}: law constants" style="aspect-ratio:4/2.1"></canvas>` : ''}<figcaption>${f.caption(f.rows)} ${lawRefs(f.id)}</figcaption></figure>`).join('');
     const redraw = () => figs.forEach(f => f.draw(f));
     redraw();
     new ResizeObserver(redraw).observe(grid);
@@ -228,7 +229,7 @@
       + Object.entries(laws).sort((a, b) => b[1] - a[1]).map(([l, n]) => `<span class="law"><b>${n}</b> ${M.lawLinked(l)}</span>`).join('');
     const R = S.retention_laws;
     if (R) $('memory-laws').innerHTML = `<p>A stored state is lost by one of three laws, set by the form of the landscape at the state (<a href="${repo(R.link)}" target="_blank" rel="noopener">Module 4, Section 1.3 ↗</a>):</p><ul>`
-      + Object.entries(R.laws).map(([n, text]) => `<li><b>Law ${n}</b> ${text}</li>`).join('')
+      + Object.entries(R.laws).map(([n, text]) => `<li><b>Law ${n}</b> ${text}${R.reading && R.reading[n] ? ` <span class="refs">(${M.reading(R.reading[n], {only: ['sources']})})</span>` : ''}</li>`).join('')
       + `</ul><p>These are laws of retention. The writes have laws of their own, whose constants are the same in every field (<a href="#codiscovery">One mechanism in different fields</a>), and a written pattern in a field is lost by the laws of the retention cards on the map.</p>`;
     const groups = [];
     ids.forEach(id => { const k = S.nodes[id].class, g = groups.find(x => x.k === k); if (g) g.ids.push(id); else groups.push({k, ids: [id]}); });
@@ -258,7 +259,8 @@
         <div class="planned-head">${M.glyph(p.id)}<div><p class="card-label">${esc(p.group)}</p><h3>${esc(p.name)}</h3></div></div>
         <p class="planned-law">${p.law}</p>
         <dl><dt>What exists</dt><dd>${p.exists}${p.tutorial ? ` (<a href="${repo(p.tutorial)}" target="_blank" rel="noopener">tutorial ↗</a>)` : ''}</dd>
-        <dt>What is missing</dt><dd>${p.missing}</dd></dl></article>`).join('');
+        <dt>What is missing</dt><dd>${p.missing}</dd>
+        ${p.sources && p.sources.length ? `<dt>Original publications</dt><dd>${M.reading(p, {max: 6, only: ['sources', 'doc'], prefix: ''})}</dd>` : ''}</dl></article>`).join('');
   }
   function sourcesTable() {
     const order = Object.keys(S.mechanisms);
