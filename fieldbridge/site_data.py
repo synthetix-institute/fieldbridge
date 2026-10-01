@@ -569,6 +569,112 @@ def field_record(node: Dict) -> Dict:
                                       else ("M", "T", "g", "amplitude", "kappa0", "Dgrad")))}}
 
 
+def hysteron_record(node: Dict) -> Dict:
+    """Interacting hysterons under a slow drive: the prediction from the signs of the couplings and of the drive, the
+    subloops measured as by ``memory hysterons`` (same seed and count), the major loop and one excursion."""
+    from .memory import hysterons as hy
+    spec = node["spec"]
+    model = hy.from_spec(spec)
+    result = hy.check(model, np.random.default_rng(HYSTERON_SEED), count=HYSTERON_SUBLOOPS)
+    pred = result["prediction"]
+    cls = "return-point" if result["failed"] == 0 and result["did_not_end"] == 0 else "no-return"
+    lo, hi = hy.switching_window(model)
+    falling = hy.switching_window(model, falling=True)
+
+    def at(a: float, depth: float) -> Dict:
+        H1 = lo + a * (hi - lo)
+        low, up = hy.excursion_depth(H1, (lo, hi), falling)
+        return hy.excursion(model, H1, up - depth * (up - low))
+
+    # the excursion shown: one that does not return where some do not, otherwise one into the middle of the falling
+    # branch
+    shown = at(0.6, 0.5)
+    if cls == "no-return":
+        for a in (0.3, 0.45, 0.6, 0.75, 0.9):
+            for depth in (0.3, 0.5, 0.7, 0.9):
+                trial = at(a, depth)
+                if trial["differ"]:
+                    shown = trial
+                    break
+            if shown["differ"]:
+                break
+    loop = hy.major_loop(model)
+    moving = [H for branch in (loop["up"], loop["down"]) for (H, r), (_, r0) in zip(branch[1:], branch) if r != r0]
+    span = max(moving) - min(moving) if moving else 1.0
+    xr = [min(moving) - 0.08 * span, max(moving) + 0.08 * span] if moving else [lo - 1, hi + 1]
+    keep = _thin(len(shown["trace"]), 500)
+    hs = spec["hysterons"]
+    facts = {"elements": model.n, "guaranteed": "yes" if pred["guaranteed"] else "no",
+             "failed": result["failed"], "total": result["total"], "bonds": pred["bonds"],
+             "bonds_frustrated": pred["bonds_frustrated_with_drive"],
+             "couplings_frustrated": "no" if pred["couplings_balanced"] else "yes",
+             "plaquettes": "—" if pred["frustrated_plaquettes"] is None else _num(pred["frustrated_plaquettes"]),
+             "max_differ": max((r["max_differ"] for r in result["subloops"].values()), default=0),
+             "loss": "no thermal loss on the time of the drive (Law 3 neglected)",
+             "statement": pred["statement"], "verdict": result["verdict"]}
+    return {"id": node["id"], "family": "hysterons", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": cls, "facts": facts, "question": spec.get("question"), "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "hysterons", "elements": model.n, "xr": [float(f"{v:.6g}") for v in xr], "window": [lo, hi],
+                       "major": {k: _trace_points(loop[k], 500) for k in ("up", "down")},
+                       "excursion": {"H1": shown["H1"], "H2": shown["H2"], "differ": shown["differ"],
+                                     "trace": [_pair(shown["trace"][i]) for i in keep],
+                                     "progress": [float(f"{shown['progress'][i]:.5g}") for i in keep],
+                                     "unlike": [shown["unlike"][i] for i in keep]}},
+            "slots": hysteron_slots(spec, model)}
+
+
+def _thin(n: int, most: int) -> List[int]:
+    """At most `most` indices of n, the first and the last kept."""
+    if n <= most:
+        return list(range(n))
+    return sorted(set(np.linspace(0, n - 1, most).round().astype(int).tolist()))
+
+
+def _pair(p) -> List[float]:
+    return [float(f"{p[0]:.6g}"), float(f"{p[1]:.6g}")]
+
+
+def _trace_points(trace: List, most: int) -> List[List[float]]:
+    return [_pair(trace[i]) for i in _thin(len(trace), most)]
+
+
+def _amount(item, what: str) -> str:
+    if item is None or item == 0:
+        return f"no {what}"
+    if isinstance(item, (int, float)):
+        return f"{what} {_num(float(item))}"
+    if isinstance(item, list):
+        return f"{what} given element by element"
+    if item.get("distribution") == "gaussian":
+        return f"Gaussian {what} of width {_num(float(item['width']))}"
+    return f"{what} uniform between {_num(float(item['low']))} and {_num(float(item['high']))}"
+
+
+def hysteron_slots(spec: Dict, model) -> Dict[str, str]:
+    hs = spec["hysterons"]
+    lat, cp = hs.get("lattice"), hs.get("couplings")
+    if lat:
+        xi = (f"{model.n} elements on a periodic square lattice of {lat['L']} × {lat['L']}" if lat["shape"] == "square"
+              else f"{model.n} elements on a periodic chain")
+        p = float((cp or {}).get("negative_fraction", 0.0))
+        bonds = ("couplings of strength " + _num(float((cp or {}).get("value", 1.0))) + " between neighbours, "
+                 + ("all positive" if p == 0 else "all negative" if p == 1 else f"a fraction {_num(p)} of them negative"))
+    else:
+        xi = f"{model.n} elements"
+        bonds = "no couplings" if not cp else f"{len(cp)} couplings" + ("" if model.reciprocal else ", directed")
+    drive = hs.get("drive", "uniform")
+    drive_text = {"uniform": "a uniform drive", "staggered": "a drive of opposite signs on the two sublattices",
+                  "random": "a drive of random sign on each element"}.get(drive if isinstance(drive, str) else "",
+                                                                            "a drive with the given sign on each element")
+    return {"Omega": "switching at thresholds of fᵢ = Σⱼ Jᵢⱼsⱼ + hᵢ + ηᵢH, with " + bonds,
+            "Xi": xi + ", each in one of two states",
+            "C": "a quasi-static drive without thermal activation; each avalanche relaxed at a fixed drive",
+            "R": "the response Σ ηᵢsᵢ / Σ |ηᵢ|, and the configuration at each turning point",
+            "P": drive_text + ", from a large negative value, with excursions inside its turning points",
+            "A": "; ".join([_amount(hs.get("fields"), "random fields"), _amount(hs.get("half_widths"), "half-widths"),
+                            f"seed {hs.get('seed', 0)}"])}
+
+
 def stochastic_record(node: Dict) -> Dict:
     from .verification import verify_construction
     spec = node["spec"]
@@ -611,6 +717,9 @@ def _same_carrier(a: Dict, b: Dict) -> bool:
         A, B = make(ca), make(cb)
         return A.kind == B.kind and A.dim == B.dim and json.dumps(a["spec"].get("sector"), sort_keys=True) == \
             json.dumps(b["spec"].get("sector"), sort_keys=True)
+    if a["family"] == "hysterons":
+        ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
+        return ha.get("lattice") == hb.get("lattice") and ha.get("units") == hb.get("units")
     if a["family"] == "dissipative":
         ca, cb = a["spec"].get("carrier"), b["spec"].get("carrier")
         if a["spec"].get("kind") == "network" or b["spec"].get("kind") == "network":
@@ -721,6 +830,12 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
             raise fail(f"the classes differ: {ra['class']} and {rb['class']}")
         return f"both realizations are of the class {ra['class']}"
     if kind == "attach":
+        if a["family"] == "hysterons" and b["family"] == "hysterons":
+            ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
+            diff = {k for k in set(ha) | set(hb) if ha.get(k) != hb.get(k)}
+            if diff != {"lattice"}:
+                raise fail(f"a change of the lattice changes the lattice only, not {sorted(diff)}")
+            return "the hysterons differ only in the lattice"
         if a["family"] == "field":
             fa, fb = a["spec"]["field"], b["spec"]["field"]
             diff = {k for k in set(fa) | set(fb) if fa.get(k) != fb.get(k)}
@@ -756,6 +871,14 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
         raise fail("no check for this change of closure")
     if a["family"] != b["family"] or not _same_carrier(a, b):
         raise fail("the carrier changes; name the edge Xi")
+    if a["family"] == "hysterons":
+        ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
+        diff = {k for k in set(ha) | set(hb) if ha.get(k) != hb.get(k)}
+        allowed = {"term": {"couplings", "directed"}, "protocol": {"drive"},
+                   "param": {"fields", "half_widths", "seed"}}.get(kind, set())
+        if diff and diff <= allowed:
+            return f"the hysterons differ only in {', '.join(sorted(diff))}"
+        raise fail(f"the hysterons differ in {sorted(diff)}")
     if a["family"] == "field":
         fa, fb = a["spec"]["field"], b["spec"]["field"]
         diff = {k for k in set(fa) | set(fb) if fa.get(k) != fb.get(k)}
@@ -874,8 +997,10 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
 
 # ------------------------------------------------------------------------------------------------ build
 # the mechanisms of the memory materials, in the order of the section on memory: the writes, then no memory, then phase
-MEMORY_ORDER = ["symmetric-write", "threshold-write", "subcritical-write", "field-write", "single-state", "oscillation",
-                "neutral-cycles"]
+MEMORY_ORDER = ["symmetric-write", "threshold-write", "subcritical-write", "field-write", "return-point", "no-return",
+                "single-state", "oscillation", "neutral-cycles"]
+# the subloops of a hysteron node: those of ``memory hysterons`` with its default seed and count
+HYSTERON_SEED, HYSTERON_SUBLOOPS = 20260923, 24
 
 
 def _targets_for(node: Dict) -> List[str]:
@@ -917,6 +1042,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = dissipative_record(node, rows)
         elif fam == "field":
             records[nid] = field_record(node)
+        elif fam == "hysterons":
+            records[nid] = hysteron_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]
@@ -993,7 +1120,7 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
     # whether and how it stores a state; ordered by the mechanism that writes it, the writes first
     order = MEMORY_ORDER + [c for c in present if c not in MEMORY_ORDER]
     materials = sorted((r["id"] for r in records.values()
-                        if r["family"] == "dissipative" and (r.get("spec") or "").startswith("examples/memory/")),
+                        if r["family"] in ("dissipative", "hysterons") and (r.get("spec") or "").startswith("examples/memory/")),
                        key=lambda i: (order.index(records[i]["class"]), _strip(records[i]["name"]).lower()))
     atlas = {"columns": [{"class": c, "label": reg.CLASSES[c],
                           "nodes": sorted((r["id"] for r in records.values() if r["class"] == c),

@@ -1,0 +1,32 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "adsorption_pores",
+  "name": "independent pores filled by capillary condensation",
+  "field": "physical chemistry of porous media",
+  "question": "Does a porous solid return to the same set of filled pores when the vapour pressure comes back to an earlier turning point?",
+  "assumptions": [
+    "Each pore is an element that fills when the chemical potential of the vapour exceeds its condensation threshold and empties at a lower evaporation threshold",
+    "The pores do not interact: there are no couplings",
+    "The thresholds are spread by the distribution of pore sizes: the centres of the pore loops are Gaussian with width 1, and their half-widths uniform between 0.1 and 0.8",
+    "The chemical potential changes slowly; thermal activation over the barrier between filled and empty states is neglected"
+  ],
+  "provenance": {
+    "source": "independent elements with loops of their own: F. Preisach, Z. Phys. 94, 277 (1935); I. D. Mayergoyz, Mathematical Models of Hysteresis (Springer, 1991)"
+  },
+  "hysterons": {
+    "units": 400,
+    "couplings": [],
+    "fields": {
+      "distribution": "gaussian",
+      "width": 1.0
+    },
+    "half_widths": {
+      "distribution": "uniform",
+      "low": 0.1,
+      "high": 0.8
+    },
+    "drive": "uniform",
+    "seed": 3
+  }
+}

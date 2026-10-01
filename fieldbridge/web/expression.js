@@ -165,6 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
+    if (fam === 'hysterons') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -365,6 +366,16 @@
       live(`slope of ln SNR against ln t, t = 20–${fmt(t1, 3)}, ${big.L}${big.d === 2 ? '²' : ''} sites`, fmt(slope, 3));
       known('predicted', e.conserved ? `t^${f.exponent}` : `exponential, rate ${fmt(f.rate)}`);
       if (f.exponent_fit != null) known('exact spectral sum (large lattice)', fmt(f.exponent_fit, 4));
+    } else if (rec.family === 'hysterons') {
+      const x = e.excursion;
+      body = `${esc(f.statement)} Measured: ${esc(f.verdict)}.`;
+      known('loops through the drive', f.guaranteed === 'yes' ? 'none frustrated: the return is guaranteed'
+        : `${f.bonds_frustrated} of ${f.bonds} couplings close a frustrated one`);
+      known('loops of couplings', f.couplings_frustrated === 'yes' ? 'some frustrated' : 'none frustrated'
+        + (f.plaquettes !== '—' ? ` (frustrated plaquettes: ${f.plaquettes})` : ''));
+      known('subloops that did not return', `${f.failed} of ${f.total}`);
+      known('excursion shown', `H₁ = ${fmt(x.H1, 3)} → H₂ = ${fmt(x.H2, 3)} → H₁: ${x.differ} of ${e.elements} elements unlike the state at H₁`);
+      known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
     } else if (rec.family === 'stochastic') {
       body = `The mean of log X grows at ${f.growth} in the ${f.convention} reading of the noise term.`;
       const mu = state.params.mu, s = state.params.sigma;
@@ -393,6 +404,8 @@
       case 'threshold-write': return 'A stored state disappears at a fold: a field or a control past the threshold switches the realization to the other state, with a delay set by the Airy law.';
       case 'subcritical-write': return 'The stored state loses stability at a subcritical pitchfork: the realization jumps to a distant branch.';
       case 'field-write': return 'The control only rescales the energy; a state is written by a uniform field and kept by the barriers between states.';
+      case 'return-point': return 'Elements switch at thresholds of a slow drive; after any excursion inside a turning point the configuration at that turning point is recovered exactly.';
+      case 'no-return': return 'A coupling closes a frustrated loop through the drive: after an excursion the configuration at a turning point can differ.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
       case 'neutral-cycles': return 'A conserved quantity fills the plane with closed orbits: no orbit attracts its neighbours, and no drive-independent phase is kept.';
@@ -408,6 +421,7 @@
     if (rec.family === 'unitary') scene = unitaryScene(rec);
     else if (rec.family === 'dissipative') scene = dissipativeScene(rec);
     else if (rec.family === 'field') scene = fieldScene(rec);
+    else if (rec.family === 'hysterons') scene = hysteronScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
     $('view-legend').innerHTML = scene.legend || '';
@@ -573,6 +587,13 @@
     return {kind: 'field', e, times, snr, guide, ref, tMax: 3000, t: 0.1, initial: F.profile(e, 0), speed: 1,
             title: 'The trace of a write along the lattice, and the signal it leaves', legend: `${refLegend(ref)}Left: the mean trace on the lattice of the specification (${e.L}${e.d === 2 ? '²' : ''} sites); dashed, at t = 0. Right: signal-to-noise ratio of the best measurement of the write on ${big.L}${big.d === 2 ? '²' : ''} sites, where the size of the lattice plays no role${e.conserved ? `; dashed, t^${rec.facts.exponent}` : ''}.`};
   }
+  function hysteronScene(rec) {
+    const e = rec.engine, x = e.excursion, src = reference(rec);
+    const ref = src && !src.self && src.rec.family === 'hysterons' ? {label: src.label, major: src.rec.engine.major} : null;
+    return {kind: 'hysterons', e, tMax: 2, t: 0, speed: 0.5, ref,
+            title: 'The response along the major loop and along one excursion inside a turning point',
+            legend: `${refLegend(ref)}Left: the response R = Σ ηᵢsᵢ / Σ |ηᵢ| against the drive H, along the major loop (grey) and an excursion from H₁ = ${fmt(x.H1, 3)} to H₂ = ${fmt(x.H2, 3)} and back (blue). Right: the number of elements unlike the state at H₁ along the excursion; it ends at ${x.differ}.`};
+  }
   function stochasticScene(rec) {
     const e = rec.engine, mu = state.params.mu, s = state.params.sigma, random = D.rng(9), T = 10, dt = 0.02;
     const drift = e.convention === 'ito' ? mu - s * s / 2 : mu;
@@ -639,6 +660,15 @@
       V.profile(main, {phi, initial: scene.initial, caption: `t = ${fmt(t, 3)}`});
       V.loglog(side, {t: scene.times, v: scene.snr, guide: scene.guide, cursor: Math.max(scene.times[0], t), note: rec.facts.exponent ? `t^${rec.facts.exponent}` : 'exponential',
                       reference: scene.ref && scene.ref.snr});
+      return;
+    }
+    if (scene.kind === 'hysterons') {
+      const x = scene.e.excursion, n = x.progress.findIndex(p => p > scene.t), k = n < 0 ? x.progress.length : Math.max(1, n);
+      V.hysteresis(main, {xr: scene.e.xr, major: scene.e.major, path: x.trace.slice(0, k), turn: x.trace[0],
+                          reference: scene.ref && scene.ref.major});
+      V.series(side, {tMax: 2, cursor: scene.t, curves: [{pts: x.progress.map((p, i) => [p, x.unlike[i]])}],
+                      yr: [0, Math.max(4, ...x.unlike) * 1.15], yLabel: 'elements unlike the state at H₁', xLabel: '',
+                      xTicks: [0, 1, 2], xFormat: v => (v === 1 ? 'H₂' : 'H₁')});
       return;
     }
     if (scene.kind === 'stochastic') {

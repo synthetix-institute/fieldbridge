@@ -7,6 +7,7 @@
   phase    SPEC                memory in the phase of an oscillating realization (phase response, retention, writing)
   regimes                      information about a write for kappa > 0, = 0 and < 0
   field    SPEC                memory in a field: conservation and dimension set the law of loss
+  hysterons SPEC               return to a turning point of a slow drive: signs of couplings and drive against subloops
   gallery                      every example: cards, figures and an HTML gallery (index.html)
   loops                        loops of genes, spins and rotors: holonomy against simulation
   networks                     random networks of genes, spins and rotors: structure against simulation
@@ -380,6 +381,33 @@ def cmd_field(args) -> int:
     return 0
 
 
+def cmd_hysterons(args) -> int:
+    import numpy as np
+    from . import hysterons as hy
+    spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    model = hy.from_spec(spec)
+    r = hy.check(model, np.random.default_rng(args.seed), count=args.subloops)
+    pred = r["prediction"]
+    report = {"command": "hysterons", **_provenance(spec), "elements": model.n, **r}
+    names = {"least": "least stable first", "random": "random order", "least_nested": "least stable first, nested",
+             "random_nested": "random order, nested"}
+    rows = "\n".join(f"| {names[k]} | {v['subloops']} | {v['failed']} | {v['did_not_end']} | {v['max_differ']} |"
+                     for k, v in r["subloops"].items())
+    plaq = pred["frustrated_plaquettes"]
+    md = (f"# Return to a turning point\n\n{spec.get('question', '')}\n\n"
+          f"- structure: {pred['statement']}\n"
+          f"- loops of couplings alone: {'none frustrated' if pred['couplings_balanced'] else 'some frustrated'}"
+          + (f" (frustrated plaquettes: {plaq:.3f})" if plaq is not None else "")
+          + f"; couplings whose loop through the drive is frustrated: {pred['bonds_frustrated_with_drive']} of "
+          f"{pred['bonds']}\n- measured on {model.n} elements: {r['verdict']}\n\n"
+          "| Relaxation of avalanches | Subloops | Did not return | Avalanche did not end | Most elements unlike at the "
+          "return |\n| --- | --- | --- | --- | --- |\n" + rows + f"\n\n{BOUNDARY}\n")
+    _write(Path(args.out_dir), "hysterons", report, md)
+    print(json.dumps({"out_dir": args.out_dir, "guaranteed": pred["guaranteed"], "failed": r["failed"],
+                      "total": r["total"], "verdict": r["verdict"]}, indent=2))
+    return 0
+
+
 def cmd_gallery(args) -> int:
     import numpy as np
     from . import compose, discovery, spec
@@ -523,6 +551,12 @@ def add_parser(sub) -> None:
     p.add_argument("spec", help="Field specification (examples/memory/fields/*.json).")
     p.add_argument("--pairs", type=int, default=120, help="Written/unwritten pairs in the nonlinear simulation.")
     p.set_defaults(func=cmd_field)
+    p = msub.add_parser("hysterons", help="Return to a turning point: interacting hysterons under a slow drive, "
+                                          "the structural prediction against subloops.")
+    common(p, spec_arg=False)
+    p.add_argument("spec", help="Specification of kind hysterons (examples/memory/hysterons/*.json).")
+    p.add_argument("--subloops", type=int, default=24, help="Subloops for each order of relaxation, simple and nested.")
+    p.set_defaults(func=cmd_hysterons)
     p = msub.add_parser("gallery", help="Evaluate every example specification and write an HTML gallery with figures.")
     common(p, spec_arg=False)
     p.add_argument("--examples", default="examples/memory", help="Directory of specifications (kinds equations, network).")

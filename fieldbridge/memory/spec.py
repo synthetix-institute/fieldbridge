@@ -8,7 +8,8 @@ Two kinds are read here:
   network    units of one type (rotor, spin, gene) joined by edges, each with a transport
 
 A third kind, field (a lattice field, conserved or not), is read by fields.from_spec and the command
-``fieldbridge memory field``.
+``fieldbridge memory field``; a fourth, hysterons (elements that switch at thresholds of a slow drive), by
+hysterons.from_spec and ``fieldbridge memory hysterons``.
 
 Expressions are parsed by a restricted arithmetic parser: numbers, declared names, + - * / **, and the functions
 sqrt, exp, log, sin, cos, tanh; the constant pi. Nothing is evaluated with eval, and input is never passed to
@@ -116,7 +117,7 @@ def load(source: Union[str, Path, Dict]) -> Realization:
     real = _equations(spec) if kind == "equations" else _network(spec) if kind == "network" else None
     if real is None:
         raise SpecError("kind must be 'equations' or 'network' (a 'field' specification is read by "
-                        "'fieldbridge memory field')")
+                        "'fieldbridge memory field', a 'hysterons' specification by 'fieldbridge memory hysterons')")
     real.spec = spec
     real.spec_sha256 = input_hash(spec)
     return real

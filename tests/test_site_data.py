@@ -26,6 +26,8 @@ FACTS = {
                       for k in ("status", "word", "class", "obstruction", "law", "law_err")}
                    | {"lock_ratio", "lock_K", "lock_period", "lock_width", "lock_width_err"},
     "field": {"law", "exponent", "exponent_value", "exponent_fit", "rate"},
+    "hysterons": {"elements", "guaranteed", "failed", "total", "bonds", "bonds_frustrated", "couplings_frustrated",
+                  "plaquettes", "max_differ", "loss", "statement", "verdict"},
     "stochastic": {"convention", "growth", "correction"},
 }
 
@@ -200,16 +202,36 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
              if "fields" not in p.parts}
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
-    assert files <= named and len(files) == 21
+    assert files <= named and len(files) == 27
     assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
     # the outcomes without memory or without a rotation are marked, the retention laws explained, the planned listed
     assert data["absent"] == reg.CLASS_ABSENT and set(reg.CLASS_ABSENT) <= set(reg.CLASSES)
     assert [reg.CLASS_ABSENT[k][0] for k in ("single-state", "neutral-cycles", "conserved", "obstructed")] == [
         "no memory", "no memory", "no rotation", "no rotation"]
     assert sorted(data["retention_laws"]["laws"]) == ["1", "2", "3"]
-    assert [q["id"] for q in data["planned"]] == ["frustrated-loops", "retention-rewriting", "hopf-onset", "kuramoto",
-                                                   "return-point"]
+    assert [q["id"] for q in data["planned"]] == ["frustrated-loops", "retention-rewriting", "hopf-onset", "kuramoto"]
     assert all(q["law"] and q["exists"] and q["missing"] for q in data["planned"])
+
+
+HYSTERON_NODES = ["rfim_ferromagnet", "rfim_antiferromagnet", "rfim_antiferromagnet_staggered", "antiferromagnetic_chain"]
+
+
+def test_hysterons_return_to_a_turning_point_or_not_and_each_change_names_its_component(monkeypatch):
+    monkeypatch.setattr(sd, "HYSTERON_SUBLOOPS", 8)
+    data = sd.build(only=HYSTERON_NODES, derive=False, log=lambda *a: None)
+    nodes = data["nodes"]
+    assert [nodes[n]["class"] for n in HYSTERON_NODES] == ["return-point", "no-return", "return-point", "return-point"]
+    # the structure guarantees the return in the ferromagnet and in the staggered field, not in the antiferromagnets;
+    # the chain returns although it is not guaranteed
+    assert [nodes[n]["facts"]["guaranteed"] for n in HYSTERON_NODES] == ["yes", "no", "yes", "no"]
+    assert nodes["rfim_antiferromagnet"]["facts"]["plaquettes"] == "0" and nodes["rfim_antiferromagnet"]["facts"]["failed"]
+    assert nodes["rfim_antiferromagnet"]["engine"]["excursion"]["differ"] > 0  # the excursion shown does not return
+    checks = {e["id"]: e["check"] for e in data["edges"]}
+    assert checks == {"hyst_couplings_reversed": "the hysterons differ only in couplings",
+                      "hyst_drive_staggered": "the hysterons differ only in drive",
+                      "hyst_chain": "the hysterons differ only in the lattice"}
+    assert [s["id"] for s in data["sequences"]] == ["turning-points"]
+    assert data["materials"][-1] == "rfim_antiferromagnet" and data["absent"]["no-return"][0] == "no return point"
 
 
 def test_every_mechanism_opens_on_a_realization_of_its_class():

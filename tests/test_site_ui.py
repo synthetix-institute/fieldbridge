@@ -58,7 +58,7 @@ def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
     assert first["absent"] == 3
     # the mechanisms in preparation
     for name in ("frustrated loops", "retention against rewriting", "onset of oscillation (Hopf)",
-                 "synchronization of a population (Kuramoto)", "return-point memory", "What is missing"):
+                 "synchronization of a population (Kuramoto)", "What is missing"):
         assert name in first["planned"], name
 
 
@@ -154,3 +154,17 @@ def test_a_realization_is_reached_by_the_shortest_path_of_changes(data_file, tmp
     assert got["path"] == ["two_spins", "two_spins_h0", "spin1_transverse", "spin1_easy_axis", "stoner_wohlfarth",
                            "sw_oblique", "sw_easy"]
     assert got["count"].startswith("6 changes")
+
+
+def test_hysterons_draw_a_loop_and_a_change_of_couplings_breaks_the_return(tmp_path, monkeypatch):
+    monkeypatch.setattr(sd, "HYSTERON_SUBLOOPS", 4)
+    data = sd.build(only=["rfim_ferromagnet", "rfim_antiferromagnet", "rfim_antiferromagnet_staggered"], derive=False,
+                    strict=False, log=lambda *a: None)
+    small = sd.write(data, tmp_path / "site" / "data.js")
+    got = scenario(small, [{"do": "start", "node": "rfim_ferromagnet"}, {"do": "edge", "edge": "hyst_couplings_reversed"},
+                           {"do": "edge", "edge": "hyst_drive_staggered"}], tmp_path)
+    assert [g["lead"] for g in got] == ["return-point memory", "return not exact", "return-point memory"]
+    assert "the return is guaranteed" in got[0]["facts"] and "512 of 512 couplings" in got[1]["facts"]
+    assert "major loop" in got[0]["legend"] and "unlike the state at H₁" in got[1]["legend"]
+    assert got[1]["reference"] and "Grey, dashed" in got[1]["legend"]   # the ferromagnet's loop, before the change
+    assert "Relabeling one sublattice" in got[2]["text"]

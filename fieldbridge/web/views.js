@@ -176,10 +176,27 @@
   function series(canvas, s) {
     const g = fit(canvas), {ctx, w, h, c} = g;
     const vals = s.curves.flatMap(cu => cu.pts.map(p => p[1]));
-    const f = frame(g, {x: 0, y: 0, w, h}, [s.t0 ?? 0, s.tMax], s.yr || autoRange(vals), {xLabel: 't', yLabel: s.yLabel || ''});
+    const f = frame(g, {x: 0, y: 0, w, h}, [s.t0 ?? 0, s.tMax], s.yr || autoRange(vals), {xLabel: s.xLabel ?? 't', yLabel: s.yLabel || '', xTicks: s.xTicks, xFormat: s.xFormat});
     if (s.window) { ctx.fillStyle = c.p; ctx.globalAlpha = 0.1; ctx.fillRect(f.X(s.window[0]), f.t, f.X(s.window[1]) - f.X(s.window[0]), f.b - f.t); ctx.globalAlpha = 1; }
     s.curves.forEach((cu, i) => line(ctx, cu.pts.filter(p => p[0] <= (s.cursor ?? Infinity)), f.X, f.Y, cu.color || css(SERIES[i % SERIES.length]), 1.8, cu.dash || []));
     let x = f.l + 6; s.curves.forEach((cu, i) => { if (!cu.label) return; label(ctx, cu.label, x, f.t + 6, cu.color || css(SERIES[i % SERIES.length]), 'left', '11px'); x += ctx.measureText(cu.label).width + 14; });
+  }
+  /** A hysteresis loop of response against drive: the major loop, the loop before a change (dashed), and an excursion
+   *  drawn up to the cursor, from its turning point (ringed). Between events the response is constant: steps. */
+  function hysteresis(canvas, s) {
+    const g = fit(canvas), {ctx, w, h, c} = g;
+    const f = frame(g, {x: 0, y: 0, w, h}, s.xr, [-1.08, 1.08], {xLabel: s.xLabel || 'drive H', yLabel: s.yLabel || 'response R'});
+    const steps = pts => pts.flatMap((p, i) => (i ? [[p[0], pts[i - 1][1]], p] : [p]))
+      .map(([x, y]) => [Math.min(Math.max(x, s.xr[0]), s.xr[1]), y]);
+    if (s.reference) for (const b of ['up', 'down']) line(ctx, steps(s.reference[b]), f.X, f.Y, c.faint, 1.4, REF);
+    for (const b of ['up', 'down']) line(ctx, steps(s.major[b]), f.X, f.Y, c.rule, 1.6);
+    if (s.path && s.path.length) {
+      line(ctx, steps(s.path), f.X, f.Y, c.xi, 2.2);
+      const last = s.path[s.path.length - 1];
+      dot(ctx, f.X(last[0]), f.Y(last[1]), 3.4, c.xi);
+    }
+    if (s.turn) { ring(ctx, f.X(s.turn[0]), f.Y(s.turn[1]), 6.5, c.ink); label(ctx, 'H₁', f.X(s.turn[0]) + 9, f.Y(s.turn[1]) - 11, c.muted, 'left', '11px'); }
+    if (s.caption) label(ctx, s.caption, f.l + 6, f.t + 8, c.muted, 'left', '11px');
   }
   /** The magnetization in the plane of the easy axis (vertical) and the field; each moment an arrow on the circle. */
   function circle(canvas, s) {
@@ -290,5 +307,5 @@
   }
 
   root.FieldBridgeViews = {fit, frame, line, dot, label, arrow, sphere, signal, landscape, bifurcation, phasePlane, series,
-                           circle, rotors, loglog, profile, phaseDrift, carrier, autoRange, fmt, pm, palette};
+                           hysteresis, circle, rotors, loglog, profile, phaseDrift, carrier, autoRange, fmt, pm, palette};
 })(window);

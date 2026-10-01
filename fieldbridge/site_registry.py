@@ -38,6 +38,8 @@ CLASSES = {
     "threshold-write": "one-sided write (fold)",
     "subcritical-write": "write to a distant state (subcritical pitchfork)",
     "field-write": "write by a uniform field",
+    "return-point": "return-point memory",
+    "no-return": "return not exact",
     "oscillation": "limit cycle",
     "neutral-cycles": "neutral cycles",
     "exponential-loss": "exponential loss",
@@ -77,6 +79,16 @@ MECHANISMS = {
     "field-write": {"canonical": "g U(q) − h·m(q)",
                     "text": "The control only rescales the energy; a uniform field writes a state, and the barriers "
                             "between states keep it.", "node": "colloid_patch"},
+    # interacting hysterons under a slow drive: the drive counted as an element of the network; without a frustrated
+    # loop through it a relabeling gives cooperative couplings and a uniform drive (no passing)
+    "return-point": {"canonical": "f<sub>i</sub> = Σ<sub>j</sub> K<sub>ij</sub>σ<sub>j</sub> + h<sub>i</sub> + H, "
+                                  "K<sub>ij</sub> ≥ 0",
+                     "text": "Elements switch at thresholds of a slow drive. With cooperative couplings and a drive that "
+                             "pushes every element the same way, the state at a turning point is recovered exactly "
+                             "after any excursion inside it.", "node": "rfim_ferromagnet"},
+    "no-return": {"canonical": "η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> &lt; 0 on some coupling",
+                  "text": "A coupling closes a frustrated loop through the drive: after an excursion the state at a "
+                          "turning point can differ.", "node": "rfim_antiferromagnet"},
     "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
                     "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
                             "the phase inside the Adler range.", "node": "van_der_pol"},
@@ -99,17 +111,19 @@ START = "pitchfork"
 # specifications in these folders that no node names are added to the page automatically (site_data.auto_nodes):
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
-             "examples/memory/fields": "field"}
+             "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
 M9 = "docs/tutorial/23_memory_codiscovery.md"
 M10 = "docs/tutorial/25_memory_threshold_write.md"
 M11 = "docs/tutorial/26_memory_phase_locking.md"
+M12 = "docs/tutorial/27_memory_return_point.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
-# (fieldbridge.memory.fields), stochastic (fieldbridge.verification). A node without "spec" is built from "base".
+# (fieldbridge.memory.fields), hysterons (fieldbridge.memory.hysterons), stochastic (fieldbridge.verification). A node
+# without "spec" is built from "base".
 NODES = [
     # -- the spins of Chapter 11 and their edits
     {"id": "two_spins", "family": "unitary", "spec": "examples/quantum/two_spins.json",
@@ -272,6 +286,20 @@ NODES = [
      "tutorial": "docs/tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write"},
     {"id": "field_dipole_2d", "family": "field", "spec": "examples/memory/fields/conserved_2d_dipole.json",
      "tutorial": "docs/tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write"},
+    # -- hysterons: the return to a turning point of a slow drive
+    {"id": "rfim_ferromagnet", "family": "hysterons", "spec": "examples/memory/hysterons/rfim_ferromagnet.json",
+     "tutorial": M12 + "#3-the-prediction-from-structure"},
+    {"id": "rfim_antiferromagnet", "family": "hysterons", "spec": "examples/memory/hysterons/rfim_antiferromagnet.json",
+     "tutorial": M12 + "#5-frustration-of-the-couplings-is-not-the-criterion"},
+    {"id": "rfim_antiferromagnet_staggered", "family": "hysterons",
+     "spec": "examples/memory/hysterons/rfim_antiferromagnet_staggered.json",
+     "tutorial": M12 + "#5-frustration-of-the-couplings-is-not-the-criterion"},
+    {"id": "antiferromagnetic_chain", "family": "hysterons",
+     "spec": "examples/memory/hysterons/antiferromagnetic_chain.json", "tutorial": M12 + "#6-sufficient-not-necessary"},
+    {"id": "adsorption_pores", "family": "hysterons", "spec": "examples/memory/hysterons/adsorption_pores.json",
+     "tutorial": M12 + "#4-running-the-command"},
+    {"id": "soft_spots", "family": "hysterons", "spec": "examples/memory/hysterons/soft_spots.json",
+     "tutorial": M12 + "#4-running-the-command"},
     # -- the convention of a stochastic calculation
     {"id": "log_ito", "family": "stochastic", "spec": "examples/construction/log_signal_ito.json",
      "tutorial": "docs/tutorial/10_stochastic_construction.md#the-convention-changes-a-measurable-consequence"},
@@ -516,6 +544,22 @@ EDGES = [
     {"id": "field_dipole_2d_write", "from": "field_charge_2d", "to": "field_dipole_2d", "slot": "P",
      "kind": "protocol", "change": "a write that adds material → a write that moves material",
      "text": "Moving material in two dimensions: t<sup>{exponent}</sup>."},
+    # hysterons: the return to a turning point
+    {"id": "hyst_couplings_reversed", "from": "rfim_ferromagnet", "to": "rfim_antiferromagnet", "slot": "Omega",
+     "kind": "term", "change": "J → −J",
+     "text": "Reversing every coupling turns the ferromagnet into an antiferromagnet. The square lattice is bipartite, "
+             "so no plaquette becomes frustrated, but each of the {bonds} couplings now closes a frustrated loop through "
+             "the uniform field, and {failed} of {total} subloops do not return to their turning point."},
+    {"id": "hyst_drive_staggered", "from": "rfim_antiferromagnet", "to": "rfim_antiferromagnet_staggered", "slot": "P",
+     "kind": "protocol", "change": "uniform field → staggered field",
+     "text": "A field of opposite signs on the two sublattices. Relabeling one sublattice turns these couplings into "
+             "the ferromagnet in a uniform field: no loop through the drive is frustrated, and {failed} of {total} "
+             "subloops do not return."},
+    {"id": "hyst_chain", "from": "rfim_antiferromagnet", "to": "antiferromagnetic_chain", "slot": "Xi",
+     "kind": "attach", "change": "square lattice → chain",
+     "text": "The antiferromagnet on a chain. Every loop through the field is still frustrated, yet {failed} of {total} "
+             "subloops do not return: random antiferromagnetic chains return exactly (Deutsch, Dhar and Narayan, "
+             "2004). A balanced network is sufficient for the return, and not necessary."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -643,6 +687,16 @@ SEQUENCES = [
          {"edge": "field_dimension"},
          {"edge": "field_dipole_2d_write"},
      ]},
+    {"id": "turning-points", "title": "Return to a turning point",
+     "steps": [
+         {"node": "rfim_ferromagnet",
+          "text": "Domains of a disordered ferromagnet switch at thresholds of a slow field. After an excursion inside "
+                  "a turning point the configuration returns: {failed} of {total} subloops do not."},
+         {"edge": "hyst_couplings_reversed"},
+         {"edge": "hyst_drive_staggered"},
+         {"edge": "hyst_drive_staggered", "reverse": True, "text": "The uniform field again."},
+         {"edge": "hyst_chain"},
+     ]},
 ]
 
 # the attachments and obstructions of Chapter 24, referred to by the sequence "one-rotation"
@@ -710,7 +764,8 @@ EDGES += [
 # ------------------------------------------------------------------------------------------------ labels of the map
 CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "several frequencies",
                "single-state": "one state", "symmetric-write": "symmetric write", "threshold-write": "one-sided write",
-               "subcritical-write": "distant write", "field-write": "field write", "oscillation": "limit cycle",
+               "subcritical-write": "distant write", "field-write": "field write", "return-point": "return point",
+               "no-return": "return not exact", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
 
@@ -721,6 +776,8 @@ CLASS_ABSENT = {
     "neutral-cycles": ["no memory", "no isolated phase: nothing restores a written phase"],
     "conserved": ["no rotation", "the observable is conserved: nothing rotates"],
     "obstructed": ["no rotation", "the observable moves with several frequencies, not as one rotation"],
+    "no-return": ["no return point", "a frustrated loop through the drive: after an excursion the state at a turning "
+                                     "point can differ"],
 }
 
 # the three laws by which a stored state is lost, defined in Module 4, Section 1.3; the page links every mention
@@ -760,11 +817,6 @@ PLANNED = [
      "exists": "the phase reduction and the law of locking of one oscillator (Module 11)",
      "missing": "a carrier for populations of oscillators",
      "tutorial": "docs/tutorial/26_memory_phase_locking.md"},
-    {"id": "return-point", "name": "return-point memory", "group": "memory: writing a state",
-     "law": "rate-independent hysteresis: the state returns to the same configuration when the field returns to an "
-            "earlier extremum, and it is set by the sequence of extrema (Sethna et al., 1993; Keim et al., 2019)",
-     "exists": "nothing yet",
-     "missing": "a specification of rate-independent elements (hysterons) driven without thermal noise"},
 ]
 
 SHORT = {
@@ -788,4 +840,7 @@ SHORT = {
     "predator_prey": "predator–prey", "lotka_volterra": "Lotka–Volterra", "josephson": "Josephson",
     "field_nonconserved": "field, free", "field_charge_1d": "conserved, d = 1", "field_dipole_1d": "dipole, d = 1",
     "field_charge_2d": "conserved, d = 2", "field_dipole_2d": "dipole, d = 2", "log_ito": "Itô", "log_stratonovich": "Stratonovich",
+    "rfim_ferromagnet": "ferromagnet", "rfim_antiferromagnet": "antiferromagnet",
+    "rfim_antiferromagnet_staggered": "staggered field", "antiferromagnetic_chain": "chain, J < 0",
+    "adsorption_pores": "pores", "soft_spots": "soft spots",
 }

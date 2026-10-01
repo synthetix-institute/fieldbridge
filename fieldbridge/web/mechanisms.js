@@ -28,8 +28,10 @@
     'retention-rewriting': AXES + '<path d="M5 26 C18 25 30 18 44 5"/><path class="faint" d="M5 26 C14 20 24 16 44 14"/>',
     'hopf-onset': '<ellipse class="faint" cx="24" cy="16" rx="17" ry="11"/><path d="M24 16 c2 -1 4 1 2 3 c-3 2 -7 -1 -5 -5 c3 -4 10 -2 10 4 c0 6 -8 9 -13 5"/>',
     'kuramoto': '<ellipse class="faint" cx="24" cy="16" rx="16" ry="12"/><circle class="dot" cx="38" cy="12" r="2.3"/><circle class="dot" cx="39.6" cy="17.5" r="2.3"/><circle class="dot" cx="35" cy="7" r="2.3"/><circle class="dot" cx="37" cy="23" r="2.3"/><circle class="dot faint" cx="9" cy="21" r="2.3"/>',
-    'return-point': AXES + '<path d="M6 26 C22 26 24 6 43 6"/><path class="faint" d="M43 6 C27 6 25 26 6 26"/><path d="M18 20 C25 17 28 14 33 12 C27 16 24 18 18 20"/>',
   };
+  // the return to a turning point: an excursion that closes on its turning point, or one that ends beside it
+  GLYPHS['return-point'] = AXES + '<path d="M6 26 C22 26 24 6 43 6"/><path class="faint" d="M43 6 C27 6 25 26 6 26"/><path d="M18 20 C25 17 28 14 33 12 C27 16 24 18 18 20"/><circle class="dot" cx="33" cy="12" r="2.2"/>';
+  GLYPHS['no-return'] = AXES + '<path d="M6 26 C22 26 24 6 43 6"/><path class="faint" d="M43 6 C27 6 25 26 6 26"/><path d="M18 21 C25 18 28 15 33 12 C28 17 26 20 23 23"/><circle class="dot" cx="33" cy="12" r="2.2"/><circle class="dot faint" cx="23" cy="23" r="2.2"/>';
   function glyph(klass, cls = '') {
     return `<svg class="glyph ${cls}" viewBox="0 0 48 32" aria-hidden="true" focusable="false">${GLYPHS[klass] || GLYPHS['single-state']}</svg>`;
   }
@@ -38,18 +40,21 @@
   // Two arrangements of the same cards. Wide: columns by family (closed evolution | relaxation and writing | cycles |
   // fields and noise). Narrow: two columns, placed so that every line joins neighbouring cards and none crosses another.
   const WIDE = {
-    w: 1330, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1254], row: [78, 222],
+    w: 1504, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428], row: [78, 222],
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
             'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
-            'oscillation': [5, 0], 'neutral-cycles': [5, 1], 'exponential-loss': [6, 0], 'power-loss': [6, 1], 'convention': [7, 0.5]},
+            'return-point': [5, 0], 'no-return': [5, 1],
+            'oscillation': [6, 0], 'neutral-cycles': [6, 1], 'exponential-loss': [7, 0], 'power-loss': [7, 1], 'convention': [8, 0.5]},
     families: [{label: 'quantum: closed evolution', from: 0, to: 1}, {label: 'memory: writing a state', from: 2, to: 4},
-               {label: 'memory: phase', from: 5, to: 5}, {label: 'memory: retention', from: 6, to: 6}, {label: 'noise', from: 7, to: 7}],
+               {label: 'memory: turning points', from: 5, to: 5}, {label: 'memory: phase', from: 6, to: 6},
+               {label: 'memory: retention', from: 7, to: 7}, {label: 'noise', from: 8, to: 8}],
   };
   const NARROW = {
-    w: 360, h: 712, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
+    w: 360, h: 814, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
     place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1],
             'subcritical-write': [0, 2], 'symmetric-write': [1, 2], 'threshold-write': [0, 3], 'oscillation': [1, 3],
-            'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6]},
+            'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6],
+            'return-point': [1, 6], 'no-return': [0, 7]},
     families: [],
   };
   let layout = WIDE;

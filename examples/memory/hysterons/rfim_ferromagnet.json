@@ -1,0 +1,32 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "rfim_ferromagnet",
+  "name": "random-field Ising ferromagnet",
+  "field": "magnetism",
+  "question": "Does a disordered ferromagnet return to the same magnetic configuration when the applied field comes back to an earlier turning point?",
+  "assumptions": [
+    "Domains are elements with two states, coupled ferromagnetically to their four neighbours on a square lattice",
+    "Quenched disorder enters as Gaussian random local fields of width 2 in units of the coupling",
+    "The field changes slowly compared with the switching, and thermal activation is neglected"
+  ],
+  "provenance": {
+    "source": "J. P. Sethna, K. Dahmen, S. Kartha, J. A. Krumhansl, B. W. Roberts and J. D. Shore, Phys. Rev. Lett. 70, 3347 (1993)"
+  },
+  "hysterons": {
+    "lattice": {
+      "shape": "square",
+      "L": 16
+    },
+    "couplings": {
+      "value": 1.0,
+      "negative_fraction": 0.0
+    },
+    "fields": {
+      "distribution": "gaussian",
+      "width": 2.0
+    },
+    "drive": "uniform",
+    "seed": 1
+  }
+}

@@ -62,6 +62,10 @@ found are listed in [mechanisms](../mechanisms.md).
 | Conserved field | A field whose total is fixed by the closure (Model B). Its slow modes have $\kappa(k) \propto k^2$, and a written profile is lost as $t^{-(d+2n)/z}$, with $n = 0$ for a write that adds material, $n = 1$ for one that moves it, and $z = 2$ for diffusive relaxation. |
 | Non-conserved field | A field whose total is not fixed (Model A). Every mode relaxes at a rate of at least $M\kappa_0$, and a written profile is lost exponentially. |
 | Signal-to-noise ratio (SNR) | For a written profile, the squared signal of the write divided by the equilibrium variance, summed over the modes of the field. |
+| Hysteron | An element with two states that switches at thresholds of its local field, behind a barrier large compared with the thermal energy; independent hysterons form the Preisach model ([Module 12](27_memory_return_point.md)). |
+| Return-point memory | After an excursion of a slow drive that stays inside a turning point $H_1$, the configuration at $H_1$ is recovered exactly: the excursion is erased and the turning points that enclose it are retained. |
+| No passing | A configuration that lies above another at every element stays above it under the same history of the drive. It holds for cooperative couplings and a drive that pushes every element the same way, and it implies return-point memory. |
+| Loop through the drive | A loop of the network that counts the drive as an element joined to every driven element with the sign $\eta_i$; a coupling $ij$ closes one with the sign $\eta_i J_{ij} \eta_j$. If none is frustrated, a relabeling makes the couplings cooperative and the drive uniform, and the return to a turning point is exact. |
 
 ## Derivations across fields
 

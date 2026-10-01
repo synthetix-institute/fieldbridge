@@ -1,0 +1,38 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "soft_spots",
+  "name": "soft spots of an amorphous solid under shear",
+  "field": "mechanics of amorphous solids",
+  "question": "Does a cyclically sheared amorphous solid return to the same configuration when the strain comes back to an earlier turning point?",
+  "assumptions": [
+    "Soft spots are elements with two states and a loop of their own, with half-widths uniform between 0.1 and 0.6",
+    "They interact through elastic fields of either sign: half of the couplings between neighbours on a square lattice are negative",
+    "A soft spot is switched forward by positive or by negative strain: the strain acts on it with a random sign",
+    "The strain changes slowly; thermal activation is neglected"
+  ],
+  "provenance": {
+    "source": "interacting hysterons: M. van Hecke, Phys. Rev. E 104, 054608 (2021)"
+  },
+  "hysterons": {
+    "lattice": {
+      "shape": "square",
+      "L": 12
+    },
+    "couplings": {
+      "value": 0.4,
+      "negative_fraction": 0.5
+    },
+    "fields": {
+      "distribution": "gaussian",
+      "width": 1.0
+    },
+    "half_widths": {
+      "distribution": "uniform",
+      "low": 0.1,
+      "high": 0.6
+    },
+    "drive": "random",
+    "seed": 4
+  }
+}

@@ -38,7 +38,7 @@ field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repress
 switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
 of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
 [Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
-(R). Under the expression, a map of thirteen mechanisms, each with its drawing, shows which component joins which
+(R). Under the expression, a map of fifteen mechanisms, each with its drawing, shows which component joins which
 mechanisms, and the selected mechanism is shown beside the expression. After a change the realization it came from is
 drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
 realizations of each mechanism by field. Beside the selected mechanism the page names the section of the tutorial

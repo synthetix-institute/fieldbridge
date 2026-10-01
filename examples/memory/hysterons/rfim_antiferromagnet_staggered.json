@@ -1,0 +1,32 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "rfim_antiferromagnet_staggered",
+  "name": "random-field Ising antiferromagnet in a staggered field",
+  "field": "magnetism",
+  "question": "Does the same antiferromagnet return to its configuration when the field has opposite signs on the two sublattices?",
+  "assumptions": [
+    "The couplings and random fields of the antiferromagnet in a uniform field",
+    "The field acts with opposite signs on the two sublattices of the square lattice",
+    "The field changes slowly; thermal activation is neglected"
+  ],
+  "provenance": {
+    "source": "model; relabeling one sublattice maps it onto the ferromagnet in a uniform field"
+  },
+  "hysterons": {
+    "lattice": {
+      "shape": "square",
+      "L": 16
+    },
+    "couplings": {
+      "value": 1.0,
+      "negative_fraction": 1.0
+    },
+    "fields": {
+      "distribution": "gaussian",
+      "width": 2.0
+    },
+    "drive": "staggered",
+    "seed": 1
+  }
+}

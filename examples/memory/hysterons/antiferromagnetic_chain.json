@@ -1,0 +1,32 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "antiferromagnetic_chain",
+  "name": "random-field Ising antiferromagnetic chain",
+  "field": "magnetism",
+  "question": "Does an antiferromagnetic chain return to its configuration at a turning point, although every loop through the field is frustrated?",
+  "assumptions": [
+    "A periodic chain of 256 elements with two states and antiferromagnetic nearest-neighbour couplings",
+    "Gaussian random local fields of width 2 in units of the coupling",
+    "A uniform field, changed slowly from a large negative value; thermal activation is neglected"
+  ],
+  "provenance": {
+    "source": "J. M. Deutsch, A. Dhar and O. Narayan, Phys. Rev. Lett. 92, 227203 (2004)"
+  },
+  "hysterons": {
+    "lattice": {
+      "shape": "chain",
+      "L": 256
+    },
+    "couplings": {
+      "value": 1.0,
+      "negative_fraction": 1.0
+    },
+    "fields": {
+      "distribution": "gaussian",
+      "width": 2.0
+    },
+    "drive": "uniform",
+    "seed": 1
+  }
+}

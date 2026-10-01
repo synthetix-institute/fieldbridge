@@ -1,0 +1,32 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "rfim_antiferromagnet",
+  "name": "random-field Ising antiferromagnet in a uniform field",
+  "field": "magnetism",
+  "question": "Does an antiferromagnet with quenched disorder return to the same configuration when a uniform field comes back to an earlier turning point?",
+  "assumptions": [
+    "Elements with two states coupled antiferromagnetically to their four neighbours on a square lattice, which is bipartite: no loop of couplings is frustrated",
+    "Gaussian random local fields of width 2 in units of the coupling",
+    "A uniform field, changed slowly; thermal activation is neglected"
+  ],
+  "provenance": {
+    "source": "model; for antiferromagnetic chains see J. M. Deutsch, A. Dhar and O. Narayan, Phys. Rev. Lett. 92, 227203 (2004)"
+  },
+  "hysterons": {
+    "lattice": {
+      "shape": "square",
+      "L": 16
+    },
+    "couplings": {
+      "value": 1.0,
+      "negative_fraction": 1.0
+    },
+    "fields": {
+      "distribution": "gaussian",
+      "width": 2.0
+    },
+    "drive": "uniform",
+    "seed": 1
+  }
+}

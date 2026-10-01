@@ -8,7 +8,7 @@ control that must change the prediction, and the test responsible for it.
   [The language, shown on spins](24_spin_language.md) then writes this model as a realization, detaches its rotation
   and attaches it to an exchange chain, atoms in two wells and a Cooper-pair level.
 - **Memory in materials.** [A first memory card](15_memory_first_card.md) asks which states a genetic toggle switch
-  stores and how a state is written. It is Module 1 of [eleven modules](#memory-in-materials-eleven-modules).
+  stores and how a state is written. It is Module 1 of [twelve modules](#memory-in-materials-twelve-modules).
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -40,7 +40,7 @@ it was first found.
 | Your purpose | Read in this order |
 | --- | --- |
 | Learn the language of mechanisms (detach, attach, co-discover) | [Quantum closure](11_quantum_closure.md) → [The language, shown on spins](24_spin_language.md) → [Inverse interaction design](14_inverse_construction.md); for memory, [Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md) |
-| Analyse memory in a material from any field | [Modules 1–11 on memory](#memory-in-materials-eleven-modules), starting with [a first memory card](15_memory_first_card.md) |
+| Analyse memory in a material from any field | [Modules 1–12 on memory](#memory-in-materials-twelve-modules), starting with [a first memory card](15_memory_first_card.md) |
 | Understand the physical construction | [First run](08_end_to_end_walkthrough.md) → [Equations and assumptions](09_equations_and_assumptions.md) → [Stochastic map](10_stochastic_construction.md) → [Quantum closure](11_quantum_closure.md) |
 | Solve for a new physical construction | [Quantum closure](11_quantum_closure.md) → [Inverse interaction design](14_inverse_construction.md) → [Discovery requirements](12_reproduction_and_discovery.md) |
 | Connect equations recovered from papers | [Fingerprint](01_operational_fingerprints.md) → [Mechanism sheet](02_mechanism_sheets.md) → [Retrieval](03_cross_field_retrieval.md) → [Proposal](04_constructor_transfers.md) → [Calculated source](13_retrieval_to_calculation.md) |
@@ -50,9 +50,9 @@ it was first found.
 Chapter filenames retain their numbers so that previous links remain valid. The paths above are the recommended
 reading order.
 
-## Memory in materials: eleven modules
+## Memory in materials: twelve modules
 
-Chapters 15–23, 25 and 26 treat memory. A material is described
+Chapters 15–23 and 25–27 treat memory. A material is described
 once, as a realization: an operation on a carrier, with its closure,
 observable, protocol and parameters. From the structure alone, the program
 states which behaviours are excluded and which are possible: whether the
@@ -81,10 +81,11 @@ field is added (`memory new`, `memory check`).
 | 9 | [One mechanism from different fields](23_memory_codiscovery.md) | How do models from different fields reach the same mechanism, a symmetric write, where does a derivation stop, and which invariants show that the end points agree? | `memory codiscover` |
 | 10 | [The threshold write](25_memory_threshold_write.md) | How is a state lost at a fold, by the control or by a field, and by how much does the switch lag behind a sweep? | `memory codiscover --target threshold-write` |
 | 11 | [Phase locking](26_memory_phase_locking.md) | At which ratio and over which range does a periodic drive fix the phase of an oscillator? | `memory codiscover --target phase-locking` |
+| 12 | [Return to a turning point](27_memory_return_point.md) | When do interacting hysterons return exactly to their state at a turning point of a slow drive? | `memory hysterons` |
 
 Modules 1–4 form the core and should be read in order. Modules 5, 6 and 8 each build on Module 4 and can be read in
-any order. Module 7 draws on all of them. Module 9 builds on Modules 4 and 5, Module 10 on Module 9, and Module 11
-on Modules 6 and 9. The figures of the modules are produced from the saved results by
+any order. Module 7 draws on all of them. Module 9 builds on Modules 4 and 5, Module 10 on Module 9, Module 11 on
+Modules 6 and 9, and Module 12 on Modules 3 and 4. The figures of the modules are produced from the saved results by
 [`figures/memory/make_figures.py`](figures/memory/make_figures.py).
 
 ## Construction from specified equations

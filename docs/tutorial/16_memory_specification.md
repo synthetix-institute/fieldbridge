@@ -88,6 +88,7 @@ Each refusal names what to change. All of them are covered by tests.
 | a control that is not a parameter | must be a declared parameter | The control is varied by the program |
 | a potential that does not generate the drift | drift = -grad(potential) | A gradient claim must hold |
 | `kind: "field"` given to `memory card` | read by 'fieldbridge memory field' | Fields have their own command (Module 8) |
+| `kind: "hysterons"` given to `memory card` | read by 'fieldbridge memory hysterons' | Hysterons under a slow drive have their own command (Module 12) |
 
 ## 5. Exercises
 
