@@ -102,6 +102,7 @@ with the source of its equations.
 | --- | --- | --- |
 | Web page | `demo` | The realizations of the examples, the single-component changes between them and their mechanisms |
 | Memory in a material | `memory predict`, `memory card`, `memory attach`, `memory design`, `memory phase` | What the structure excludes or allows before simulation; stable states, write points, the law of loss and writing protocols; the properties a known memory keeps on another carrier ([tutorial](docs/tutorial/15_memory_first_card.md)) |
+| Return to a turning point of a slow drive | `memory hysterons` | Whether interacting hysterons return exactly to their state at a turning point, from the signs of their couplings and of the drive, against subloops of the quasi-static dynamics ([tutorial](docs/tutorial/27_memory_return_point.md)) |
 | One mechanism in models from different fields | `memory codiscover` | For a symmetric write, a threshold write or phase locking: the derivation in each model, the step at which a derivation stops, and field-independent invariants of the end point ([tutorial](docs/tutorial/23_memory_codiscovery.md)) |
 | Adding a material | `memory new`, `memory check`, `memory catalog` | A template specification, the checks it must pass, and the catalog of materials |
 | Quantum mechanisms on different carriers | `quantum detach`, `quantum attach`, `quantum codiscover` | The Bloch rotation on spins, atoms in two wells, exchange chains and Cooper pairs, or the term that obstructs it ([tutorial](docs/tutorial/24_spin_language.md)) |
