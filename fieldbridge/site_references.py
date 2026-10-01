@@ -153,6 +153,12 @@ BIB = {
                            "Rev. Lett. 70, 3347 (1993)", "short": "Sethna et al., 1993", "doi": "10.1103/PhysRevLett.70.3347"},
     "keim2019": {"cite": "N. C. Keim, J. D. Paulsen, Z. Zeravcic, S. Sastry and S. R. Nagel, Rev. Mod. Phys. 91, 035002 "
                          "(2019)", "short": "Keim et al., 2019", "doi": "10.1103/RevModPhys.91.035002"},
+    "angeli2003": {"cite": "D. Angeli and E. D. Sontag, IEEE Trans. Automat. Control 48, 1684 (2003)",
+                   "short": "Angeli and Sontag, 2003", "doi": "10.1109/TAC.2003.817920"},
+    "deutsch2004": {"cite": "J. M. Deutsch, A. Dhar and O. Narayan, Phys. Rev. Lett. 92, 227203 (2004)",
+                    "short": "Deutsch, Dhar and Narayan, 2004", "doi": "10.1103/PhysRevLett.92.227203"},
+    "vanhecke2021": {"cite": "M. van Hecke, Phys. Rev. E 104, 054608 (2021)", "short": "van Hecke, 2021",
+                     "doi": "10.1103/PhysRevE.104.054608"},
     # textbooks
     "strogatz1994": {"cite": "S. H. Strogatz, Nonlinear Dynamics and Chaos (Addison-Wesley, Reading, 1994)",
                      "short": "Strogatz, 1994", "doi": ""},
@@ -175,6 +181,7 @@ BIB = {
 S24 = T + "24_spin_language.md"
 M4 = T + "18_memory_writing_and_retention.md"
 M8 = T + "22_memory_time.md"
+M12 = T + "27_memory_return_point.md"
 
 READING: Dict[str, Dict] = {
     # ---------------------------------------------------------------- mechanisms of the map (site_registry.CLASSES)
@@ -270,6 +277,30 @@ READING: Dict[str, Dict] = {
         "sources": [("stoner1948", "hysteresis of single-domain particles written by a uniform field"),
                     ("neel1949", "thermally activated loss of the magnetization of fine grains"),
                     ("brown1963", "the thermal fluctuations of a single-domain particle")],
+    },
+    "return-point": {
+        "defined": ("Module 12, §1", "return-point memory", M12 + "#1-the-question"),
+        "derived": [("Module 12, §3", "the drive counted as an element: the relabeling and no passing",
+                     M12 + "#3-the-prediction-from-structure"),
+                    ("Module 12, §4", "six realizations from three fields", M12 + "#4-running-the-command")],
+        "code": "memory.hysterons.predict, relabel, check",
+        "sources": [("preisach1935", "hysteresis as a population of elementary loops (hysterons)"),
+                    ("barker1983", "return-point memory and minor loops in magnets"),
+                    ("middleton1992", "the order of states under a monotonic drive (no passing)"),
+                    ("sethna1993", "return-point memory in a disordered model of first-order transitions"),
+                    ("harary1953", "the balance of a signed graph, here with the drive as one of its vertices"),
+                    ("angeli2003", "the same sign condition for a monotone system with an input")],
+        "textbooks": ["keim2019"],
+    },
+    "no-return": {
+        "defined": ("Module 12, §5", "the frustration of the couplings is not the criterion",
+                    M12 + "#5-frustration-of-the-couplings-is-not-the-criterion"),
+        "derived": [("Module 12, §6", "a frustrated loop through the drive allows a failure and does not force one",
+                     M12 + "#6-sufficient-not-necessary")],
+        "code": "memory.hysterons.predict, check",
+        "sources": [("deutsch2004", "random antiferromagnetic chains return exactly, although no passing fails"),
+                    ("vanhecke2021", "most transition graphs of three interacting hysterons violate return-point "
+                                     "memory")],
     },
     "oscillation": {
         "defined": ("Glossary, Retention", "phase memory, phase response curve, phase diffusion",
@@ -440,16 +471,6 @@ READING: Dict[str, Dict] = {
         "sources": [("winfree1967", "the phase response and the synchronization of populations of oscillators"),
                     ("kuramoto1975", "the synchronization threshold of a population of coupled phase oscillators")],
         "textbooks": ["kuramoto1984", "strogatz2000"],
-    },
-    "return-point": {
-        "defined": ("Roadmap", "mechanisms in preparation", "docs/ROADMAP.md#mechanisms-in-preparation"),
-        "derived": [],
-        "code": "",
-        "sources": [("preisach1935", "hysteresis as a population of elementary loops (hysterons)"),
-                    ("barker1983", "return-point memory and minor loops in magnets"),
-                    ("middleton1992", "the order of states under a monotonic drive (no passing)"),
-                    ("sethna1993", "return-point memory in a disordered model of first-order transitions")],
-        "textbooks": ["keim2019"],
     },
 }
 

@@ -14,6 +14,8 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [One-sided write (fold)](#one-sided-write-fold) | ẋ = μ + x<sup>2</sup> | [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields) | [Module 10, §1](tutorial/25_memory_threshold_write.md#1-the-target), [Module 10, §3](tutorial/25_memory_threshold_write.md#3-the-delay-law) | Poincaré, 1885; Stoner and Wohlfarth, 1948; Haberman, 1979; Jung, Gray, Roy and Mandel, 1990 |
 | [Write to a distant state (subcritical pitchfork)](#write-to-a-distant-state-subcritical-pitchfork) | ẋ = εx + ax<sup>3</sup> − x<sup>5</sup>, a &gt; 0 | [Glossary, Writing](tutorial/memory_glossary.md#writing) | [Module 4, §1.1](tutorial/18_memory_writing_and_retention.md#11-write-points-and-normal-forms) | Griffiths, 1970 |
 | [Write by a uniform field](#write-by-a-uniform-field) | g U(q) − h·m(q) | [Glossary, Description of a material](tutorial/memory_glossary.md#description-of-a-material) | [Module 4, §2](tutorial/18_memory_writing_and_retention.md#2-worked-example-anisotropic-colloids-at-a-fluid-interface), [Module 4, §1.4](tutorial/18_memory_writing_and_retention.md#14-relation-between-retention-and-writing-times) | Stoner and Wohlfarth, 1948; Néel, 1949; Brown, 1963 |
+| [Return-point memory](#return-point-memory) | f<sub>i</sub> = Σ<sub>j</sub> K<sub>ij</sub>σ<sub>j</sub> + h<sub>i</sub> + H, K<sub>ij</sub> ≥ 0 | [Module 12, §1](tutorial/27_memory_return_point.md#1-the-question) | [Module 12, §3](tutorial/27_memory_return_point.md#3-the-prediction-from-structure), [Module 12, §4](tutorial/27_memory_return_point.md#4-running-the-command) | Preisach, 1935; Harary, 1953; Barker et al., 1983; Middleton, 1992; Sethna et al., 1993; Angeli and Sontag, 2003 |
+| [Return not exact](#return-not-exact) | η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> &lt; 0 on some coupling | [Module 12, §5](tutorial/27_memory_return_point.md#5-frustration-of-the-couplings-is-not-the-criterion) | [Module 12, §6](tutorial/27_memory_return_point.md#6-sufficient-not-necessary) | Deutsch, Dhar and Narayan, 2004; van Hecke, 2021 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
 | [Neutral cycles](#neutral-cycles) | dI/dt = 0 | [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields) | [Module 11, §6](tutorial/26_memory_phase_locking.md#6-where-the-derivation-stops) | Lotka, 1920; Volterra, 1926 |
 | [Exponential loss](#exponential-loss) | SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup> | [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer) | [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write) | Hohenberg and Halperin, 1977; Allen and Cahn, 1979 |
@@ -111,6 +113,31 @@ Canonical form: g U(q) − h·m(q). The control only rescales the energy; a unif
   - E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948), [doi:10.1098/rsta.1948.0007](https://doi.org/10.1098/rsta.1948.0007): hysteresis of single-domain particles written by a uniform field.
   - L. Néel, Ann. Géophys. 5, 99 (1949): thermally activated loss of the magnetization of fine grains.
   - W. F. Brown, Phys. Rev. 130, 1677 (1963), [doi:10.1103/PhysRev.130.1677](https://doi.org/10.1103/PhysRev.130.1677): the thermal fluctuations of a single-domain particle.
+
+### Return-point memory
+
+Canonical form: f<sub>i</sub> = Σ<sub>j</sub> K<sub>ij</sub>σ<sub>j</sub> + h<sub>i</sub> + H, K<sub>ij</sub> ≥ 0. Elements switch at thresholds of a slow drive. With cooperative couplings and a drive that pushes every element the same way, the state at a turning point is recovered exactly after any excursion inside it.
+
+- **Defined:** [Module 12, §1](tutorial/27_memory_return_point.md#1-the-question), return-point memory.
+- **Derived:** [Module 12, §3](tutorial/27_memory_return_point.md#3-the-prediction-from-structure), the drive counted as an element: the relabeling and no passing; [Module 12, §4](tutorial/27_memory_return_point.md#4-running-the-command), six realizations from three fields. Code: `memory.hysterons.predict`, `relabel`, `check`.
+- **Original publications:**
+  - F. Preisach, Z. Phys. 94, 277 (1935), [doi:10.1007/BF01349418](https://doi.org/10.1007/BF01349418): hysteresis as a population of elementary loops (hysterons).
+  - F. Harary, Michigan Math. J. 2, 143 (1953), [doi:10.1307/mmj/1028989917](https://doi.org/10.1307/mmj/1028989917): the balance of a signed graph, here with the drive as one of its vertices.
+  - J. A. Barker, D. E. Schreiber, B. G. Huth and D. H. Everett, Proc. R. Soc. Lond. A 386, 251 (1983), [doi:10.1098/rspa.1983.0035](https://doi.org/10.1098/rspa.1983.0035): return-point memory and minor loops in magnets.
+  - A. A. Middleton, Phys. Rev. Lett. 68, 670 (1992), [doi:10.1103/PhysRevLett.68.670](https://doi.org/10.1103/PhysRevLett.68.670): the order of states under a monotonic drive (no passing).
+  - J. P. Sethna, K. Dahmen, S. Kartha, J. A. Krumhansl, B. W. Roberts and J. D. Shore, Phys. Rev. Lett. 70, 3347 (1993), [doi:10.1103/PhysRevLett.70.3347](https://doi.org/10.1103/PhysRevLett.70.3347): return-point memory in a disordered model of first-order transitions.
+  - D. Angeli and E. D. Sontag, IEEE Trans. Automat. Control 48, 1684 (2003), [doi:10.1109/TAC.2003.817920](https://doi.org/10.1109/TAC.2003.817920): the same sign condition for a monotone system with an input.
+- **Reviews and textbooks:** N. C. Keim, J. D. Paulsen, Z. Zeravcic, S. Sastry and S. R. Nagel, Rev. Mod. Phys. 91, 035002 (2019), [doi:10.1103/RevModPhys.91.035002](https://doi.org/10.1103/RevModPhys.91.035002).
+
+### Return not exact
+
+Canonical form: η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> &lt; 0 on some coupling. A coupling closes a frustrated loop through the drive: after an excursion the state at a turning point can differ.
+
+- **Defined:** [Module 12, §5](tutorial/27_memory_return_point.md#5-frustration-of-the-couplings-is-not-the-criterion), the frustration of the couplings is not the criterion.
+- **Derived:** [Module 12, §6](tutorial/27_memory_return_point.md#6-sufficient-not-necessary), a frustrated loop through the drive allows a failure and does not force one. Code: `memory.hysterons.predict`, `check`.
+- **Original publications:**
+  - J. M. Deutsch, A. Dhar and O. Narayan, Phys. Rev. Lett. 92, 227203 (2004), [doi:10.1103/PhysRevLett.92.227203](https://doi.org/10.1103/PhysRevLett.92.227203): random antiferromagnetic chains return exactly, although no passing fails.
+  - M. van Hecke, Phys. Rev. E 104, 054608 (2021), [doi:10.1103/PhysRevE.104.054608](https://doi.org/10.1103/PhysRevE.104.054608): most transition graphs of three interacting hysterons violate return-point memory.
 
 ### Limit cycle
 
@@ -306,16 +333,3 @@ Law: oscillators with a symmetric, unimodal density g of natural frequencies syn
   - A. T. Winfree, J. Theor. Biol. 16, 15 (1967), [doi:10.1016/0022-5193(67)90051-3](https://doi.org/10.1016/0022-5193(67)90051-3): the phase response and the synchronization of populations of oscillators.
   - Y. Kuramoto, in International Symposium on Mathematical Problems in Theoretical Physics, Lecture Notes in Physics 39 (Springer, Berlin, 1975), p. 420, [doi:10.1007/BFb0013365](https://doi.org/10.1007/BFb0013365): the synchronization threshold of a population of coupled phase oscillators.
 - **Reviews and textbooks:** Y. Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, Berlin, 1984), [doi:10.1007/978-3-642-69689-3](https://doi.org/10.1007/978-3-642-69689-3); S. H. Strogatz, Physica D 143, 1 (2000), [doi:10.1016/S0167-2789(00)00094-4](https://doi.org/10.1016/S0167-2789(00)00094-4).
-
-### Return-point memory
-
-Law: rate-independent hysteresis: the state returns to the same configuration when the field returns to an earlier extremum, and it is set by the sequence of extrema (Sethna et al., 1993; Keim et al., 2019).
-
-- **Defined:** [Roadmap](ROADMAP.md#mechanisms-in-preparation), mechanisms in preparation.
-- **Derived:** not yet in FieldBridge.
-- **Original publications:**
-  - F. Preisach, Z. Phys. 94, 277 (1935), [doi:10.1007/BF01349418](https://doi.org/10.1007/BF01349418): hysteresis as a population of elementary loops (hysterons).
-  - J. A. Barker, D. E. Schreiber, B. G. Huth and D. H. Everett, Proc. R. Soc. Lond. A 386, 251 (1983), [doi:10.1098/rspa.1983.0035](https://doi.org/10.1098/rspa.1983.0035): return-point memory and minor loops in magnets.
-  - A. A. Middleton, Phys. Rev. Lett. 68, 670 (1992), [doi:10.1103/PhysRevLett.68.670](https://doi.org/10.1103/PhysRevLett.68.670): the order of states under a monotonic drive (no passing).
-  - J. P. Sethna, K. Dahmen, S. Kartha, J. A. Krumhansl, B. W. Roberts and J. D. Shore, Phys. Rev. Lett. 70, 3347 (1993), [doi:10.1103/PhysRevLett.70.3347](https://doi.org/10.1103/PhysRevLett.70.3347): return-point memory in a disordered model of first-order transitions.
-- **Reviews and textbooks:** N. C. Keim, J. D. Paulsen, Z. Zeravcic, S. Sastry and S. R. Nagel, Rev. Mod. Phys. 91, 035002 (2019), [doi:10.1103/RevModPhys.91.035002](https://doi.org/10.1103/RevModPhys.91.035002).
