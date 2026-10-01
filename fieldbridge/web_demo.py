@@ -25,7 +25,8 @@ STYLES = ("site.css",)
 
 
 def _gallery_cards(out: Path) -> dict:
-    """The full memory card of each specification in examples/gallery, keyed by its name."""
+    """The card of each specification in examples/gallery, keyed by its name. The image is versioned by the hash of
+    its content: a regenerated gallery numbers its cards anew, and a browser must not show an older card08.png."""
     gallery = ROOT / "examples" / "gallery"
     index = json.loads((gallery / "gallery.json").read_text(encoding="utf-8"))
     dest = out / "gallery"
@@ -35,7 +36,8 @@ def _gallery_cards(out: Path) -> dict:
         png = gallery / f"{card['id']}.png"
         if png.exists():
             shutil.copy2(png, dest / png.name)
-            cards[card["name"]] = {"image": f"gallery/{png.name}", "verdict": card["verdict"]}
+            version = hashlib.sha256(png.read_bytes()).hexdigest()[:12]
+            cards[card["name"]] = {"image": f"gallery/{png.name}?v={version}", "verdict": card["verdict"]}
     return cards
 
 

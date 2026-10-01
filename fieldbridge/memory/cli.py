@@ -386,9 +386,14 @@ def cmd_hysterons(args) -> int:
     from . import hysterons as hy
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
     model = hy.from_spec(spec)
-    r = hy.check(model, np.random.default_rng(args.seed), count=args.subloops)
+    c = hy.card(model, np.random.default_rng(args.seed), count=args.subloops)
+    r = c["check"]
     pred = r["prediction"]
-    report = {"command": "hysterons", **_provenance(spec), "elements": model.n, **r}
+    if not args.no_figure:
+        from .visual import hysteron_figure
+        Path(args.out_dir).mkdir(parents=True, exist_ok=True)
+        hysteron_figure(c, Path(args.out_dir) / "hysterons.png")
+    report = {"command": "hysterons", **_provenance(spec), "elements": model.n, "class": c["class"], **r}
     names = {"least": "least stable first", "random": "random order", "least_nested": "least stable first, nested",
              "random_nested": "random order, nested"}
     rows = "\n".join(f"| {names[k]} | {v['subloops']} | {v['failed']} | {v['did_not_end']} | {v['max_differ']} |"
@@ -411,20 +416,49 @@ def cmd_hysterons(args) -> int:
 def cmd_gallery(args) -> int:
     import numpy as np
     from . import compose, discovery, spec
-    reals, skipped = [], []
-    for path in sorted(Path(args.examples).glob("*.json")):
+    from . import hysterons as hy
+    from .visual import hysteron_figure
+    # every material under the examples folder, in subfolders too: drift equations and networks get a memory card,
+    # hysterons a card of their return to a turning point; fields have their own command (memory field)
+    reals, hysteron_specs, skipped = [], [], []
+    root = Path(args.examples)
+    for path in sorted(root.rglob("*.json")):
+        rel = path.relative_to(root).as_posix()
+        try:
+            kind = json.loads(path.read_text(encoding="utf-8")).get("kind")
+        except (json.JSONDecodeError, UnicodeDecodeError) as err:
+            skipped.append(f"{rel}: {err}")
+            continue
+        if kind == "field":
+            continue
+        if kind == hy.KIND:
+            hysteron_specs.append(path)
+            continue
         try:
             reals.append(spec.load(path))
         except spec.SpecError as err:
-            skipped.append(f"{path.name}: {err}")
+            skipped.append(f"{rel}: {err}")
     loops = None if args.no_loops else compose.run_loops(np.random.default_rng(args.seed))
     out = Path(args.out_dir)
     cards = discovery.run(reals, out, seed=args.seed, figures=True, quick=args.quick, loops=loops)
     rows = [{"id": c["id"], "name": c["name"], "verdict": c["verdict"]} for c in cards]
+    for k, path in enumerate(hysteron_specs):
+        model = hy.from_spec(json.loads(path.read_text(encoding="utf-8")))
+        c = hy.card(model, np.random.default_rng(args.seed), count=args.subloops)
+        c["id"] = f"card{len(cards) + k:02d}"
+        c["verdict"] = {"stores": f"{model.n} elements with two states each", "writes": "turning points of a slow drive",
+                        "constructs": "return-point memory" if c["class"] == "return-point" else "return not exact",
+                        "holds": "no thermal loss on the time of the drive (Law 3 neglected)",
+                        "lock": c["check"]["verdict"]}
+        (out / f"{c['id']}.json").write_text(json.dumps(c, indent=1, default=float), encoding="utf-8")
+        hysteron_figure(c, out / f"{c['id']}.png")
+        rows.append({"id": c["id"], "name": c["name"], "verdict": c["verdict"]})
+        print(f"[{c['id']}] {model.name}: {c['verdict']['constructs']}", flush=True)
     report = {"command": "gallery", **_provenance(), "input": {"examples": str(args.examples), "quick": args.quick},
               "cards": rows, "skipped": skipped,
               "loops": None if loops is None else {"consistent": sum(r["consistent"] for r in loops), "total": len(loops)}}
-    md = ("# Gallery of realizations\n\nOpen `index.html` in a browser. One card per example specification:\n\n"
+    md = ("# Gallery of realizations\n\nOne card per example specification; `index.html` shows the memory cards in a "
+          "browser, and the cards of hysterons are the figures of `memory hysterons`:\n\n"
           + "\n".join(f"- `{r['id']}` {r['name']}: {r['verdict']['constructs']}" for r in rows)
           + f"\n\n{BOUNDARY}\n")
     _write(out, "gallery", report, md)
@@ -556,11 +590,15 @@ def add_parser(sub) -> None:
     common(p, spec_arg=False)
     p.add_argument("spec", help="Specification of kind hysterons (examples/memory/hysterons/*.json).")
     p.add_argument("--subloops", type=int, default=24, help="Subloops for each order of relaxation, simple and nested.")
+    p.add_argument("--no-figure", action="store_true", help="Skip the figure hysterons.png.")
     p.set_defaults(func=cmd_hysterons)
     p = msub.add_parser("gallery", help="Evaluate every example specification and write an HTML gallery with figures.")
     common(p, spec_arg=False)
-    p.add_argument("--examples", default="examples/memory", help="Directory of specifications (kinds equations, network).")
+    p.add_argument("--examples", default="examples/memory",
+                   help="Directory of specifications, read with its subfolders: equations and networks get a memory "
+                        "card, hysterons the card of memory hysterons; fields are left to memory field.")
     p.add_argument("--quick", action="store_true", help="Fewer trajectories; no swept-write check.")
+    p.add_argument("--subloops", type=int, default=24, help="Subloops of each card of hysterons, per procedure.")
     p.add_argument("--no-loops", action="store_true", help="Omit the loops section.")
     p.set_defaults(func=cmd_gallery)
     p = msub.add_parser("loops", help="Loops of genes, spins and rotors: holonomy against simulation.")

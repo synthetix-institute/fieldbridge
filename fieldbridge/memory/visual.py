@@ -373,6 +373,122 @@ def card_figure(card: Dict, path: Path):
     plt.close(fig)
 
 
+# ------------------------------------------------------------------------------------------------ hysterons
+def _steps(pts) -> np.ndarray:
+    """A response that is constant between events, drawn as steps through the points (H, R) after each event."""
+    out = []
+    for k, (x, y) in enumerate(pts):
+        if k:
+            out.append((x, pts[k - 1][1]))
+        out.append((x, y))
+    return np.array(out, dtype=float).reshape(-1, 2)
+
+
+def hysteron_figure(card: Dict, path: Path):
+    """Four panels of a material of hysterons under a slow drive (hysterons.card): the response along the major loop
+    and one excursion inside a turning point, the elements unlike the state at the turning point along it, the signs
+    of the network with the drive, and the subloops that do not return. The same size as card_figure, so that panel
+    (a) is the thumbnail of the page."""
+    from matplotlib.lines import Line2D
+    fig, axes = plt.subplots(2, 2, figsize=(10.0, 8.2), constrained_layout=True)
+    (a, b), (c, d) = axes
+    loop, x, chk = card.get("loop"), card.get("excursion"), card["check"]
+    col = BLUE if card["class"] == "return-point" else ORANGE
+    if loop and x:
+        moving = [H for br in (loop["up"], loop["down"]) for (H, r), (_, r0) in zip(br[1:], br) if r != r0]
+        lo, hi = (min(moving), max(moving)) if moving else (x["H2"] - 1, x["H1"] + 1)
+        pad = 0.08 * (hi - lo or 1.0)
+        for br in ("up", "down"):
+            st = _steps(loop[br])
+            st[:, 0] = np.clip(st[:, 0], lo - pad, hi + pad)
+            a.plot(st[:, 0], st[:, 1], color="#b9b8b4", lw=1.1, label="major loop" if br == "up" else None)
+        st = _steps(x["trace"])
+        a.plot(st[:, 0], st[:, 1], color=col, lw=1.9,
+               label=f"excursion $H_1$ = {x['H1']:.3g} → $H_2$ = {x['H2']:.3g} → $H_1$")
+        a.plot([x["trace"][0][0]], [x["trace"][0][1]], "o", mfc="none", mec=INK, ms=10, mew=1.3)
+        a.annotate("$H_1$", (x["trace"][0][0], x["trace"][0][1]), xytext=(8, 8), textcoords="offset points",
+                   fontsize=8, color=INK2)
+        a.set_xlim(lo - pad, hi + pad)
+        a.set_ylim(-1.08, 1.08)
+        a.legend(fontsize=7, loc="lower right", frameon=False)
+        b.step(x["progress"], x["unlike"], where="post", color=col, lw=1.7)
+        b.set_xticks([0, 1, 2], ["$H_1$", "$H_2$", "$H_1$"])
+        b.set_xlim(0, 2)
+        b.set_ylim(0, max(4, max(x["unlike"])) * 1.18)
+        b.text(0.98, 0.95, f"{x['differ']} of {card['elements']} elements unlike the state at $H_1$ at the return",
+               transform=b.transAxes, ha="right", va="top", fontsize=7.5, color=INK)
+    else:
+        _note(a, "an avalanche on the rising branch does not end")
+        _note(b, "no excursion")
+    a.set_xlabel("drive H")
+    a.set_ylabel(r"response $R = \Sigma\,\eta_i s_i\,/\,\Sigma\,|\eta_i|$")
+    _style(a)
+    _title(a, "a", "Response along the major loop and one excursion")
+    b.set_xlabel("drive along the excursion")
+    b.set_ylabel("elements unlike the state at $H_1$")
+    _style(b)
+    _title(b, "b", "Elements unlike the state at the turning point")
+    st = card["structure"]
+    if st["shape"] in ("square", "chain"):
+        for x1, y1, x2, y2, k in st["bonds"]:
+            c.plot([x1, x2], [y1, y2], color=BLUE if k > 0 else ORANGE, lw=1.7 if k > 0 else 2.4,
+                   solid_capstyle="round", zorder=1)
+        for x0, y0, e in st["nodes"]:
+            c.plot([x0], [y0], "o", ms=7, mfc=INK if e > 0 else "white", mec=INK, mew=1.0, zorder=2)
+        c.set_aspect("equal")
+        c.axis("off")
+        c.legend(handles=[Line2D([], [], color=BLUE, lw=2, label=r"$\eta_i J_{ij} \eta_j > 0$: cooperative"),
+                          Line2D([], [], color=ORANGE, lw=2.4,
+                                 label=r"$\eta_i J_{ij} \eta_j < 0$: loop through the drive frustrated"),
+                          Line2D([], [], ls="", marker="o", mfc=INK, mec=INK, label="drive raises the element"),
+                          Line2D([], [], ls="", marker="o", mfc="white", mec=INK, label="drive lowers the element")],
+                 fontsize=7, loc="upper center", bbox_to_anchor=(0.5, -0.01), ncol=2, frameon=False)
+        what = "a patch of the lattice" if st["shape"] == "square" else "a segment of the chain"
+        _title(c, "c", f"Signs of the couplings with the drive, {what}")
+    elif st["shape"] == "independent":
+        pts = np.array(st["preisach"], dtype=float).reshape(-1, 2)
+        c.scatter(pts[:, 0], pts[:, 1], s=9, color=col, alpha=0.75, linewidths=0)
+        lim = [float(pts.min()), float(pts.max())] if len(pts) else [-1.0, 1.0]
+        c.plot(lim, lim, color=INK2, lw=0.8, ls="--")
+        c.set_xlabel("drive at which the element switches down")
+        c.set_ylabel("drive at which it switches up")
+        c.text(0.03, 0.97, "no couplings: independent elements (the Preisach model)", transform=c.transAxes,
+               ha="left", va="top", fontsize=7.5, color=INK)
+        _style(c)
+        _title(c, "c", "Switching fields of the independent elements")
+    else:
+        _note(c, "a graph of couplings without a lattice")
+        c.axis("off")
+        _title(c, "c", "Signs of the couplings with the drive")
+    names = {"least": "least stable first", "random": "random order", "least_nested": "least stable first, nested",
+             "random_nested": "random order, nested"}
+    rows = chk["subloops"]
+    keys = [k for k in names if k in rows]
+    if keys:
+        y = np.arange(len(keys))[::-1]
+        failed = [rows[k]["failed"] for k in keys]
+        total = max(rows[k]["subloops"] for k in keys)
+        d.barh(y, failed, color=col, height=0.55)
+        for yy, k in zip(y, keys):
+            d.text(rows[k]["failed"] + 0.02 * total, yy, f"{rows[k]['failed']} of {rows[k]['subloops']}",
+                   va="center", fontsize=7.5, color=INK)
+        d.set_yticks(y, [names[k] for k in keys], fontsize=7.5)
+        d.set_xlim(0, total * 1.15)
+        d.set_ylim(-0.8, len(keys) + 0.9)
+    pred = chk["prediction"]
+    d.text(0.02, 0.98, ("structure: no loop through the drive is frustrated; the return is guaranteed"
+                        if pred["guaranteed"] else
+                        f"structure: {pred['bonds_frustrated_with_drive']} of {pred['bonds']} couplings close a "
+                        "frustrated loop through the drive; the return is not guaranteed"),
+           transform=d.transAxes, ha="left", va="top", fontsize=7.2, color=INK, wrap=True)
+    d.set_xlabel("subloops that do not return")
+    _style(d)
+    _title(d, "d", "Subloops that do not return")
+    fig.suptitle(card["name"], fontsize=10.5, color=INK, x=0.01, ha="left", fontweight="bold")
+    fig.savefig(path, dpi=120)
+    plt.close(fig)
+
+
 # ------------------------------------------------------------------------------------------------ loops
 def loops_figure(rows: List[Dict], path: Path):
     fig, axes = plt.subplots(2, 2, figsize=(11.0, 8.4), constrained_layout=True)

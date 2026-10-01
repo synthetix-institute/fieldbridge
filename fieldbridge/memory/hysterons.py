@@ -515,3 +515,64 @@ def check(model: Hysterons, rng: np.random.Generator, count: int = 24) -> Dict[s
                    "without forcing one")
     return {"prediction": pred, "subloops": rows, "total": total, "failed": failed, "did_not_end": endless,
             "verdict": verdict, "consistent": ok}
+
+
+# ------------------------------------------------------------------------------------------------ the card
+def shown_excursion(model: Hysterons, rising: Tuple[float, float], falling: Tuple[float, float],
+                    failing: bool = False) -> Dict[str, object]:
+    """The excursion a figure shows: from the middle of the rising window into the middle of the falling one, or,
+    with failing=True, the first of a grid of excursions that does not return (the middle one if none fails)."""
+    lo, hi = rising
+
+    def at(a: float, depth: float) -> Dict[str, object]:
+        H1 = lo + a * (hi - lo)
+        low, up = excursion_depth(H1, rising, falling)
+        return excursion(model, H1, up - depth * (up - low))
+
+    shown = at(0.6, 0.5)
+    if failing:
+        for a in (0.3, 0.45, 0.6, 0.75, 0.9):
+            for depth in (0.3, 0.5, 0.7, 0.9):
+                trial = at(a, depth)
+                if trial["differ"]:
+                    return trial
+    return shown
+
+
+def structure(model: Hysterons, patch: int = 8) -> Dict[str, object]:
+    """The signs of the network with the drive, for a figure: a patch of the lattice with the sign of each element's
+    drive and the sign of eta_i J_ij eta_j on each bond, or, without couplings, the switching fields of each element
+    (its Preisach pair)."""
+    shape = model.geometry.get("shape")
+    if shape in ("square", "chain"):
+        L = int(model.geometry["L"])
+        side = min(L, patch) if shape == "square" else min(L, 3 * patch)
+        pos = ({r * L + c: (c, r) for r in range(side) for c in range(side)} if shape == "square"
+               else {i: (i, 0) for i in range(side)})
+        bonds = [[*pos[i], *pos[j], int(np.sign(model.eta[i] * J * model.eta[j]))]
+                 for i, j, J in model.undirected() if i in pos and j in pos and J != 0
+                 and abs(pos[i][0] - pos[j][0]) + abs(pos[i][1] - pos[j][1]) == 1]
+        return {"shape": shape, "nodes": [[x, y, int(np.sign(model.eta[i]))] for i, (x, y) in pos.items()],
+                "bonds": bonds}
+    if not model.bonds:
+        driven = model.eta != 0
+        up = (model.b - model.h) / np.where(driven, np.abs(model.eta), 1)
+        down = -(model.b + model.h) / np.where(driven, np.abs(model.eta), 1)
+        return {"shape": "independent", "preisach": [[float(d), float(u)] for d, u in zip(down[driven], up[driven])]}
+    return {"shape": "graph"}
+
+
+def card(model: Hysterons, rng: np.random.Generator, count: int = 24) -> Dict[str, object]:
+    """Everything a figure or the page shows of one material: the prediction and the measured subloops (check, with
+    this generator first), the class, the major loop, one excursion and the signs of the network with the drive."""
+    result = check(model, rng, count)
+    cls = "return-point" if result["failed"] == 0 and result["did_not_end"] == 0 else "no-return"
+    out = {"kind": KIND, "name": model.name, "class": cls, "elements": model.n, "check": result,
+           "structure": structure(model), "window": None, "falling": None, "loop": None, "excursion": None}
+    try:
+        rising, falling = switching_window(model), switching_window(model, falling=True)
+        out.update(window=list(rising), falling=list(falling), loop=major_loop(model),
+                   excursion=shown_excursion(model, rising, falling, failing=cls == "no-return"))
+    except AvalancheError:
+        pass
+    return out

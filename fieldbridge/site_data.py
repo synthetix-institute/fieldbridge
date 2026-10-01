@@ -575,35 +575,14 @@ def hysteron_record(node: Dict) -> Dict:
     from .memory import hysterons as hy
     spec = node["spec"]
     model = hy.from_spec(spec)
-    result = hy.check(model, np.random.default_rng(HYSTERON_SEED), count=HYSTERON_SUBLOOPS)
+    c = hy.card(model, np.random.default_rng(HYSTERON_SEED), count=HYSTERON_SUBLOOPS)
+    result, cls, loop, shown = c["check"], c["class"], c["loop"], c["excursion"]
     pred = result["prediction"]
-    cls = "return-point" if result["failed"] == 0 and result["did_not_end"] == 0 else "no-return"
-    lo, hi = hy.switching_window(model)
-    falling = hy.switching_window(model, falling=True)
-
-    def at(a: float, depth: float) -> Dict:
-        H1 = lo + a * (hi - lo)
-        low, up = hy.excursion_depth(H1, (lo, hi), falling)
-        return hy.excursion(model, H1, up - depth * (up - low))
-
-    # the excursion shown: one that does not return where some do not, otherwise one into the middle of the falling
-    # branch
-    shown = at(0.6, 0.5)
-    if cls == "no-return":
-        for a in (0.3, 0.45, 0.6, 0.75, 0.9):
-            for depth in (0.3, 0.5, 0.7, 0.9):
-                trial = at(a, depth)
-                if trial["differ"]:
-                    shown = trial
-                    break
-            if shown["differ"]:
-                break
-    loop = hy.major_loop(model)
+    lo, hi = c["window"]
     moving = [H for branch in (loop["up"], loop["down"]) for (H, r), (_, r0) in zip(branch[1:], branch) if r != r0]
     span = max(moving) - min(moving) if moving else 1.0
     xr = [min(moving) - 0.08 * span, max(moving) + 0.08 * span] if moving else [lo - 1, hi + 1]
     keep = _thin(len(shown["trace"]), 500)
-    hs = spec["hysterons"]
     facts = {"elements": model.n, "guaranteed": "yes" if pred["guaranteed"] else "no",
              "failed": result["failed"], "total": result["total"], "bonds": pred["bonds"],
              "bonds_frustrated": pred["bonds_frustrated_with_drive"],

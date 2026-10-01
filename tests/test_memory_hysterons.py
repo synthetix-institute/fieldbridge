@@ -165,6 +165,21 @@ def test_a_drive_that_acts_on_no_element_is_refused():
         hy.Run(model)
 
 
+def test_the_card_of_a_material_draws_its_loop_its_excursion_and_the_signs_with_the_drive(tmp_path):
+    from fieldbridge.memory.visual import hysteron_figure
+    card = hy.card(lattice(L=8, p=1.0), np.random.default_rng(1), count=2)
+    assert card["loop"]["up"] and card["excursion"]["trace"] and card["check"]["total"] == 8
+    # in a uniform field every bond of the antiferromagnet closes a frustrated loop through the drive
+    assert card["structure"]["bonds"] and all(k < 0 for *_, k in card["structure"]["bonds"])
+    hysteron_figure(card, tmp_path / "card.png")
+    assert (tmp_path / "card.png").stat().st_size > 10_000
+    # without couplings the card shows each element's switching fields, the upper never below the lower
+    pores = hy.card(hy.from_spec(json.loads((EX / "adsorption_pores.json").read_text(encoding="utf-8"))),
+                    np.random.default_rng(1), count=2)
+    assert pores["structure"]["shape"] == "independent"
+    assert all(up >= down for down, up in pores["structure"]["preisach"])
+
+
 # ------------------------------------------------------------------------------------------------ examples, command
 EXPECTED = {"rfim_ferromagnet": True, "rfim_antiferromagnet": False, "rfim_antiferromagnet_staggered": True,
             "antiferromagnetic_chain": False, "adsorption_pores": True, "soft_spots": False}
@@ -190,3 +205,4 @@ def test_command_line_writes_a_report_with_provenance(tmp_path):
     assert report["command"] == "hysterons" and report["novelty_established"] is False
     assert report["prediction"]["guaranteed"] and report["failed"] == 0 and report["total"] == 8
     assert "Return to a turning point" in (out / "hysterons.md").read_text(encoding="utf-8")
+    assert report["class"] == "return-point" and (out / "hysterons.png").stat().st_size > 10_000

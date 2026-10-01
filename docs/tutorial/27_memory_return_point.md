@@ -75,13 +75,16 @@ realization extended by its protocol: the couplings alone do not decide it.
 python3 -B -m fieldbridge memory hysterons examples/memory/hysterons/rfim_antiferromagnet.json --out-dir out/afm
 ```
 
-The command reads the specification, predicts from the signs, then measures 24 subloops for each of four
-procedures: least stable element first and random order, each with simple excursions and with excursions that contain
-a nested subloop ($H_1 \to H_2 \to H_3 \to H_2 \to H_1$ with $H_2 < H_3 < H_1$). The excursions of one procedure
-start from one rising branch, followed from saturation and stopped at each $H_1$ in turn. $H_1$ is drawn inside the
-switching window of the rising branch of the major loop, between 10 and 90 per cent of its switches, and $H_2$ inside
-that of the falling branch, below $H_1$: the descent reaches the part of the loop in which elements switch back. The report `hysterons.md` states the prediction, the measured returns and the largest number of
-elements whose state at the return differs from that at $H_1$.
+The command reads the specification, predicts from the signs, then measures 24 subloops for each of four procedures:
+least stable element first and random order, each with simple excursions and with excursions that contain a nested
+subloop ($H_1 \to H_2 \to H_3 \to H_2 \to H_1$ with $H_2 < H_3 < H_1$). The excursions of one procedure start from
+one rising branch, followed from saturation and stopped at each $H_1$ in turn. $H_1$ is drawn inside the switching
+window of the rising branch of the major loop, between 10 and 90 per cent of its switches, and $H_2$ inside that of
+the falling branch, below $H_1$: the descent reaches the part of the loop in which elements switch back. The report
+`hysterons.md` states the prediction, the measured returns and the largest number of elements whose state at the
+return differs from that at $H_1$. The figure `hysterons.png` draws the major loop with one excursion, the elements
+unlike the state at $H_1$ along it, the signs of the couplings with the drive and the subloops that do not return;
+the web page shows its first panel for each material.
 
 The six examples in [`examples/memory/hysterons`](../../examples/memory/hysterons) come from three fields
 (default seed, 96 subloops each):
@@ -183,6 +186,7 @@ barriers are large compared with the thermal energy, and on which time scale the
 | Specification and model | [`hysterons.from_spec`](../../fieldbridge/memory/hysterons.py), `Hysterons` | `test_specifications_outside_the_contract_are_refused` |
 | Prediction from structure | `hysterons.predict`, `relabel`, `canonical_form` | `test_a_network_cooperative_after_relabeling_returns_to_every_turning_point`, `test_the_relabeling_maps_the_dynamics_onto_the_cooperative_form` |
 | Dynamics and subloops | `hysterons.Run`, `subloops`, `check` | `test_a_frustrated_loop_through_the_drive_can_break_the_return_and_need_not` |
+| Card and figure | `hysterons.card`, [`visual.hysteron_figure`](../../fieldbridge/memory/visual.py) | `test_the_card_of_a_material_draws_its_loop_its_excursion_and_the_signs_with_the_drive` |
 | Report | [`cli.cmd_hysterons`](../../fieldbridge/memory/cli.py) | `test_command_line_writes_a_report_with_provenance` |
 
 Sources: F. Preisach, Z. Phys. 94, 277 (1935); F. Harary, Michigan Math. J. 2, 143 (1953); I. D. Mayergoyz,

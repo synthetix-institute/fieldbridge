@@ -234,6 +234,27 @@ def test_hysterons_return_to_a_turning_point_or_not_and_each_change_names_its_co
     assert data["materials"][-1] == "rfim_antiferromagnet" and data["absent"]["no-return"][0] == "no return point"
 
 
+def test_every_material_of_the_page_has_a_card_in_the_gallery():
+    # the thumbnails of "Memory in model materials" are panel (a) of these cards; a material without one shows only
+    # the drawing of its mechanism
+    gallery = json.loads((ROOT / "examples/gallery/gallery.json").read_text(encoding="utf-8"))
+    names = {c["name"] for c in gallery["cards"]}
+    specs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "examples/memory").rglob("*.json"))
+             if "fields" not in p.parts]
+    missing = sorted(s["name"] for s in specs if s["name"] not in names)
+    assert not missing, ("regenerate the gallery: python3 -B -m fieldbridge memory gallery --out-dir examples/gallery "
+                         f"--quick (missing: {missing})")
+    assert all((ROOT / "examples/gallery" / f"{c['id']}.png").exists() for c in gallery["cards"])
+
+
+def test_the_card_images_are_versioned_by_their_content(tmp_path):
+    # a regenerated gallery numbers its cards anew; a versioned address keeps a browser from showing an older card
+    from fieldbridge.web_demo import _gallery_cards
+    cards = _gallery_cards(tmp_path)
+    assert cards and all(re.fullmatch(r"gallery/card\d+\.png\?v=[0-9a-f]{12}", c["image"]) for c in cards.values())
+    assert all((tmp_path / c["image"].split("?")[0]).exists() for c in cards.values())
+
+
 def test_every_mechanism_opens_on_a_realization_of_its_class():
     assert set(reg.MECHANISMS) == set(reg.CLASSES)
     ids = {n["id"] for n in reg.NODES}
