@@ -2,7 +2,8 @@ name: material card
 
 # For every material specification a pull request adds or changes: the contribution check, the memory card and the
 # materials of the catalog that are written the same way, shown in the summary of this run; the card figures are
-# kept as an artifact. The job needs no secrets and only reads the repository, so it also runs for pull requests
+# kept as an artifact. A specification of hysterons (examples/memory/hysterons) gets the report of memory hysterons
+# instead: the prediction from the signs of its couplings and drive, against its subloops. The job needs no secrets and only reads the repository, so it also runs for pull requests
 # from forks.
 
 on:
@@ -35,10 +36,19 @@ jobs:
             {
               echo "# $f"
               echo
-              python -B -m fieldbridge memory check "$f" || status=1
-              if python -B -m fieldbridge memory card "$f" --quick --out-dir "cards/$name" > /dev/null; then
-                cat "cards/$name/card.md"
-              fi
+              case "$f" in
+                examples/memory/hysterons/*)
+                  if python -B -m fieldbridge memory hysterons "$f" --out-dir "cards/$name" > /dev/null; then
+                    cat "cards/$name/hysterons.md"
+                  else
+                    status=1
+                  fi ;;
+                *)
+                  python -B -m fieldbridge memory check "$f" || status=1
+                  if python -B -m fieldbridge memory card "$f" --quick --out-dir "cards/$name" > /dev/null; then
+                    cat "cards/$name/card.md"
+                  fi ;;
+              esac
               echo
             } >> "$GITHUB_STEP_SUMMARY" 2>&1
           done
