@@ -36,7 +36,7 @@ class Realization:
     noise: float = 0.05
     dt: float = 0.01
     closure: str = ""
-    observable: str = "identity of the nearest stored state"
+    observable: str = "identity of the stored state to which the configuration relaxes"
     observable_fn: Optional[Callable[[np.ndarray], np.ndarray]] = None
     provenance: str = ""
     transport: Optional[str] = None

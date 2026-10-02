@@ -9,10 +9,12 @@ evaluate(real) returns a card:
                swept-write law checked by simulation (construct.py)
   bifurcation  fixed points along the control, for the diagram
   barrier      minimum-energy-path barrier between the two most populated states (gradient systems)
-  hold         Monte Carlo retention time at the realization's noise (censored at the simulated interval)
+  hold         Monte Carlo retention time at the realization's noise (censored at the simulated interval): the time
+               at which a fraction 1 - P_STAR of the trajectories has left the basin of the stored state
   writes       bounded writes below and above the restoring threshold at fixed control, and below it while the
-               control is swept, from the end of its range where the barriers are low; accuracy, rewriting time,
-               and the ratio of retention time to rewriting time (a lower bound when the retention is censored)
+               control is swept, from the end of its range where the barriers are low; accuracy (the fraction in
+               the basin of the target after release), rewriting time, and the ratio of retention time to rewriting
+               time (a lower bound when the retention is censored)
   kernel       memory kernel of an unobserved linear block, if the realization declares one
   transfers    intertwining defects of construction maps whose source is this realization
 """
@@ -99,13 +101,15 @@ def evaluate(real: Realization, rng: np.random.Generator, transfers: Optional[Li
         T_w, T_rel = float(np.clip(30 / kmin, 5, 150)), float(np.clip(10 / kmin, 2, 50))
         t_max = float(min(300.0, 30000 * real.dt))
         n_traj = (60 if quick else 150) if real.carrier.dim <= 4 else (40 if quick else 80)
-        card["hold"] = an.hold_time(real, 0, states, real.noise, rng, n_traj=n_traj, t_max=t_max)
-        writes = [an.write_test(real, 0, 1, states, f * thr, T_w, T_rel, real.noise, rng, n_traj=n_traj)
+        # a trajectory is identified with the stored state whose basin contains it, not with the nearest one
+        radii = an.basin_balls(real, states)
+        card["hold"] = an.hold_time(real, 0, states, real.noise, rng, n_traj=n_traj, t_max=t_max, radii=radii)
+        writes = [an.write_test(real, 0, 1, states, f * thr, T_w, T_rel, real.noise, rng, n_traj=n_traj, radii=radii)
                   for f in (0.4, 1.5)]
         start = real.control_range[0] if scale else _sweep_start(real, scan)
         if start is not None:
             sweep = an.write_test(real, 0, 1, states, 0.4 * thr, T_w, T_rel, real.noise, rng, n_traj=n_traj,
-                                  mode="sweep", sweep_from=start)
+                                  mode="sweep", sweep_from=start, radii=radii)
             sweep["sweep_from"], sweep["sweep_to"] = float(start), float(real.params[real.control])
             writes.append(sweep)
         for w in writes:
