@@ -617,9 +617,13 @@ def _law_panel_pitchfork(c, reached, class_color, s):
         c.axis("off")
         _note(c, "the law was not simulated in this run")
         return
+    from .construct import same_equations
+    first = same_equations([r["law_constant"].get("signature") for r in with_law])
     for j, r in enumerate(with_law):
-        k = r["law_constant"]
-        c.errorbar(k["constant"], -j, xerr=k["stderr"], fmt="o", ms=4, color=class_color[r["class"]], capsize=2, lw=1.0)
+        k, col = r["law_constant"], class_color[r["class"]]
+        # a realization that simulates the equations of one above it is drawn open: a replicate, not a new model
+        c.errorbar(k["constant"], -j, xerr=k["stderr"], fmt="o", ms=4, color=col, capsize=2, lw=1.0,
+                   mfc=col if first[j] == j else "white")
     c.set_yticks([-j for j in range(len(with_law))])
     c.set_yticklabels([r["name"] for r in with_law], fontsize=6.5)
     c.axvline(LAW_CONSTANT, color=INK, lw=1.0, ls="--")
@@ -629,8 +633,9 @@ def _law_panel_pitchfork(c, reached, class_color, s):
     c.set_ylim(-len(with_law) + 0.4, 1.0)
     c.set_xlabel("Phi^-1(P) D_s^(1/2) r^(1/4) / h_s from the measured accuracy P")
     c.text(0.02, 0.03, f"weighted mean {m:.3f} +/- {e:.3f}; pi^(1/4) = {LAW_CONSTANT:.3f}\n"
-                       f"chi^2 = {s['law_constant_chi2']:.1f} for {s['law_constant_dof']} values; "
-                       f"{s['trajectories_per_realization']} trajectories each",
+                       f"chi^2 = {s['law_constant_chi2']:.1f} for {s['law_constant_dof']} models; "
+                       f"{s['trajectories_per_realization']} trajectories each"
+                       + ("; open: the equations of a model above" if any(f != j for j, f in enumerate(first)) else ""),
            transform=c.transAxes, fontsize=6.2, color=INK2, va="bottom")
     _style(c)
 

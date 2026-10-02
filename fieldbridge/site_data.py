@@ -380,13 +380,17 @@ def operator_html(text: str) -> str:
 
 # ------------------------------------------------------------------------------------------------ dissipative
 # trajectories of the swept-write check when the law constants of the record are computed: the standard error of the
-# constant is then 0.014, 1% of pi^(1/4); with the 400 of a quick check it is 0.11
+# constant is then 0.014 to 0.018, about 1% of pi^(1/4); with the 400 of a quick check it is 0.11
 LAW_TRAJECTORIES = 25600
+# independent runs into which those trajectories are split: the error of a constant is the larger of their scatter and
+# the binomial error
+LAW_REPLICATES = 8
 
 
 def _derive(target: str, real, nid: str, law: bool) -> Dict:
     from .memory import codiscovery
-    return codiscovery.TARGETS[target](real, _rng(nid, target), check_law=law, n_traj=LAW_TRAJECTORIES)
+    return codiscovery.TARGETS[target](real, _rng(nid, target), check_law=law, n_traj=LAW_TRAJECTORIES,
+                                       replicates=LAW_REPLICATES)
 
 
 def _row_facts(prefix: str, row: Dict) -> Dict:
@@ -506,7 +510,8 @@ def _row_summary(row: Dict) -> Dict:
     const = row.get("law_constant") or {}
     if const.get("constant") is not None:
         out["law"] = {"constant": float(const["constant"]), "stderr": float(const["stderr"]),
-                      "expected": float(const.get("expected", float("nan")))}
+                      "expected": float(const.get("expected", float("nan"))),
+                      **({"signature": const["signature"]} if const.get("signature") else {})}
     if row.get("write_point"):
         out["write_point"] = {"param": row["write_point"]["param"], "value": float(row["write_point"]["value"])}
     return out
@@ -963,7 +968,7 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
         if target not in PREFIX or target not in rec["rows"]:
             continue
         row = rec["rows"][target]
-        row["law"] = {k: law[k] for k in ("constant", "stderr", "expected") if k in law}
+        row["law"] = {k: law[k] for k in ("constant", "stderr", "expected", "signature") if k in law}
         if law.get("word"):
             row["word"], row["class"] = law["word"], law.get("class", row.get("class"))
             rec["facts"][f"{PREFIX[target]}_word"] = law["word"]
@@ -1172,7 +1177,16 @@ def codiscovery_summary(records: Dict[str, Dict]) -> Dict:
             if row and str(row.get("status", "")).startswith("reached"):
                 rows.append({"id": r["id"], "name": r["name"], "field": r["field"], "word": row.get("word"),
                              **({"canonical": row["canonical"]} if row.get("canonical") else {}),
-                             **({"law": row["law"]} if row.get("law") else {})})
+                             **({"law": {k: v for k, v in row["law"].items() if k != "signature"}}
+                                if row.get("law") else {})})
+        # a realization that simulates the equations of another (the unfolded unequal toggle and the toggle) is a
+        # replicate of that model: the page draws it open and names the model
+        from .memory.construct import same_equations
+        first = same_equations([((records[x["id"]].get("rows") or {}).get(target) or {}).get("law", {}).get("signature")
+                                for x in rows])
+        for x, f in zip(rows, first):
+            if f != rows.index(x):
+                x["same_as"] = rows[f]["id"]
         out[target] = rows
     return out
 

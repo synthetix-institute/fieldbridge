@@ -249,12 +249,17 @@ def _phi(x: float) -> float:
 
 
 def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, rate: float = 0.02,
-                      gamma: float = 0.05, n_traj: int = 400) -> Dict[str, float]:
+                      gamma: float = 0.05, n_traj: int = 400, replicates: int = 1) -> Dict[str, float]:
     """Transfer the swept-write law of the pitchfork to the target and test it. The control is swept through its
     critical value so that the linear coefficient of the critical mode grows at `rate`; a bias of fixed size
     along the critical direction is chosen so that the transferred law, P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})),
     predicts target_p. It is tested at a noise set by Gamma = D_s |a3| / r (the noise relative to the growth of
-    the barrier behind the choice) and at the material's own noise."""
+    the barrier behind the choice) and at the material's own noise.
+
+    With replicates > 1 the trajectories of the test are split into that many runs, each on its own random stream
+    spawned from rng, and the standard error of the accuracy is the larger of the scatter of the runs and the
+    binomial error. `signature` is the drift along the sweep at fixed probe states, with the bias and the noise: two
+    realizations with the same signature simulate the same equations."""
     from statistics import NormalDist
     vc = nf["value"]
     qc, vec = np.asarray(nf["state"], float), np.asarray(nf["mode"], float)
@@ -275,22 +280,63 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
     path = lambda t: vc - dv * t_half + dv * t
     z = NormalDist().inv_cdf(target_p)
 
-    def run(D):
+    def run(D, gen, n):
         D_s = D * float(w @ w)
         h_s = z * sqrt(D_s) * rate ** 0.25 / np.pi ** 0.25
-        q = np.repeat(qc[None], n_traj, axis=0)
-        q, _, _ = an.integrate(real, q, 2 * t_half, D, rng, over={}, write=(target, h_s / h_per), control_path=path)
-        m = float(np.mean((real.carrier.diff(np.repeat(qc[None], n_traj, axis=0), q) @ w) > 0))
+        q = np.repeat(qc[None], n, axis=0)
+        q, _, _ = an.integrate(real, q, 2 * t_half, D, gen, over={}, write=(target, h_s / h_per), control_path=path)
+        m = float(np.mean((real.carrier.diff(np.repeat(qc[None], n, axis=0), q) @ w) > 0))
         return {"D": float(D), "D_along_mode": D_s, "gamma": D_s * a3 / rate, "h": float(h_s / h_per),
-                "h_along_mode": float(h_s), "measured": m, "stderr": float(sqrt(m * (1 - m) / n_traj))}
+                "h_along_mode": float(h_s), "measured": m, "stderr": float(sqrt(m * (1 - m) / n))}
 
     D_law = gamma * rate / (a3 * float(w @ w))
-    inside = run(D_law)
-    own = run(real.noise)
+    extra: Dict[str, object] = {}
+    if replicates > 1:
+        # independent streams, not consecutive stretches of one stream: a stretch shifted by a few draws assigns
+        # nearly the same noise to the trajectories in another order and repeats the count
+        seeds = np.random.SeedSequence(int(rng.integers(2 ** 63))).spawn(replicates)
+        n_each = max(1, n_traj // replicates)
+        parts = [run(D_law, np.random.default_rng(s), n_each) for s in seeds]
+        ms = np.array([p["measured"] for p in parts])
+        m = float(ms.mean())
+        se_binomial = sqrt(m * (1 - m) / (n_each * replicates))
+        se_runs = float(ms.std(ddof=1) / sqrt(replicates))
+        inside = dict(parts[0], measured=m, stderr=max(se_binomial, se_runs))
+        extra = {"replicates": replicates, "trajectories_per_run": n_each, "runs": [float(v) for v in ms],
+                 "stderr_binomial": se_binomial, "stderr_runs": se_runs}
+    else:
+        inside = run(D_law, rng, n_traj)
+    own = run(real.noise, rng, n_traj)
+    # the equations simulated: drift at three probe states at the start, middle and end of the sweep, the bias and
+    # the noise of the test
+    probes = real.carrier.wrap(qc[None] + 0.05 * an.base_length(real)
+                               * np.random.default_rng(0).standard_normal((3, qc.size)))
+    signature = np.concatenate([np.asarray(real.F(probes, **{real.control: path(t)}), float).ravel()
+                                for t in (0.0, t_half, 2 * t_half)]
+                               + [inside["h"] * np.asarray(real.write_force(probes, target, 1.0), float).ravel(),
+                                  [D_law]])
     return {"rate": rate, "sweep_rate_control": float(rv), "predicted": float(target_p),
             "measured": inside["measured"], "stderr": inside["stderr"], "gamma": inside["gamma"],
             "h_along_mode": inside["h_along_mode"], "D_along_mode": inside["D_along_mode"],
-            "at_material_noise": own}
+            "at_material_noise": own, "signature": [float(f"{v:.10g}") for v in signature], **extra}
+
+
+def same_equations(signatures: List[Optional[List[float]]], rtol: float = 1e-4) -> List[int]:
+    """For each signature of swept_write_check, the index of the first signature equal to it (itself if none is):
+    realizations with equal signatures simulate the same equations, and their law constants are replicates of one
+    model rather than separate models. The tolerance allows for the located write point, accurate to about 1e-6 in
+    the control; distinct models differ by per cent."""
+    first: List[int] = []
+    for i, s in enumerate(signatures):
+        match = i
+        for j in range(i):
+            t = signatures[j]
+            if s is not None and t is not None and len(s) == len(t) and first[j] == j and np.allclose(
+                    s, t, rtol=rtol, atol=rtol * max(1e-12, float(np.max(np.abs(t))))):
+                match = j
+                break
+        first.append(match)
+    return first
 
 
 def construct(real: Realization, rng, states: Optional[List[np.ndarray]] = None, n_scan: int = 7,

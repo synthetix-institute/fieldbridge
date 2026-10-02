@@ -94,7 +94,7 @@
       const rows = cd[key] || [];
       if (!rows.length) continue;
       figs.push({id: key, title, rows, expected, key, draw: drawCanonical,
-        caption: rs => `<b>${title}.</b> ${rs.length} realizations from ${fieldsOf(rs).length} fields; the reduced drift at the end of each derivation in its canonical units, against ${form}. Below: the ${constName}, expected ${expText}.`});
+        caption: rs => `<b>${title}.</b> ${rs.length} realizations from ${fieldsOf(rs).length} fields; the reduced drift at the end of each derivation in its canonical units, against ${form}. Below: the ${constName}, expected ${expText}.${rs.some(r => r.same_as) ? ' An open circle is a realization that simulates the equations of another: a replicate, not a separate model.' : ''}`});
     }
     const lawRefs = id => { const r = (S.law_reading || {})[id], M = window.FieldBridgeMechanisms; return r && M.reading ? `<span class="refs">Law ${M.reading(r)}.</span>` : ''; };
     grid.innerHTML = figs.map(f => `<figure><canvas id="cd-${f.id}" aria-label="${esc(f.title)}"></canvas>${f.key ? `<canvas id="cd-${f.id}-law" class="strip" aria-label="${esc(f.title)}: law constants" style="aspect-ratio:4/2.1"></canvas>` : ''}<figcaption>${f.caption(f.rows)} ${lawRefs(f.id)}</figcaption></figure>`).join('');
@@ -146,12 +146,15 @@
     const vals = lawRows.flatMap(r => [r.law.constant - r.law.stderr, r.law.constant + r.law.stderr]).concat([f.expected]);
     const fr = V.frame(gs, {x: 0, y: 0, w: gs.w, h: gs.h}, [-0.5, lawRows.length - 0.5], V.autoRange(vals, 0.15), {xTicks: [], left: 54, bottom: 64, noGrid: true});
     gs.ctx.strokeStyle = gs.c.omega; gs.ctx.setLineDash([5, 4]); gs.ctx.beginPath(); gs.ctx.moveTo(fr.l, fr.Y(f.expected)); gs.ctx.lineTo(fr.r, fr.Y(f.expected)); gs.ctx.stroke(); gs.ctx.setLineDash([]);
+    // a realization that simulates the equations of another is a replicate of that model, drawn open
+    const sameAs = r => r.same_as && S.nodes[r.same_as] ? ` Same equations as the ${String(S.nodes[r.same_as].name).replace(/<[^>]+>/g, '')}: a replicate of that model.` : '';
     strip._points = lawRows.map((r, i) => ({x: fr.X(i), y: fr.Y(r.law.constant), id: r.id,
-      label: `${String(r.name).replace(/<[^>]+>/g, '')}: ${V.pm(r.law.constant, r.law.stderr)}. Select to open it above.`}));
+      label: `${String(r.name).replace(/<[^>]+>/g, '')}: ${V.pm(r.law.constant, r.law.stderr)}.${sameAs(r)} Select to open it above.`}));
     lawRows.forEach((r, i) => {
       const x = fr.X(i), col = color(f.rows.indexOf(r));
       gs.ctx.strokeStyle = col; gs.ctx.lineWidth = 1.5; gs.ctx.beginPath(); gs.ctx.moveTo(x, fr.Y(r.law.constant - r.law.stderr)); gs.ctx.lineTo(x, fr.Y(r.law.constant + r.law.stderr)); gs.ctx.stroke();
-      V.dot(gs.ctx, x, fr.Y(r.law.constant), 3, col);
+      if (r.same_as) V.dot(gs.ctx, x, fr.Y(r.law.constant), 3.2, gs.c.panel, col);
+      else V.dot(gs.ctx, x, fr.Y(r.law.constant), 3, col);
       gs.ctx.save(); gs.ctx.translate(x, fr.b + 4); gs.ctx.rotate(-Math.PI / 4); gs.ctx.fillStyle = gs.c.muted; gs.ctx.font = '10px ' + getComputedStyle(document.body).fontFamily; gs.ctx.textAlign = 'right'; gs.ctx.textBaseline = 'middle';
       gs.ctx.fillText(S.nodes[r.id] && S.nodes[r.id].short || r.id, 0, 0); gs.ctx.restore();
     });

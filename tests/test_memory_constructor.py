@@ -411,6 +411,34 @@ def test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle():
     assert abs(s["law_constant_mean"] - cd.LAW_CONSTANT) < 3.5 * s["law_constant_stderr"]
 
 
+def test_realizations_that_simulate_the_same_equations_count_as_one_model():
+    """The unequal toggle, unfolded to equal promoters, is the toggle: its law constant is a replicate of the
+    toggle's, not a second model. The laser reduces to the same canonical form by other equations."""
+    from fieldbridge.memory import codiscovery as cd
+    rep = cd.codiscover([load(n) for n in ("toggle", "toggle_unequal", "laser")], np.random.default_rng(3),
+                        n_traj=400, replicates=4)
+    s = rep["summary"]
+    assert s["law_constant_realizations"] == 3 and s["law_constant_dof"] == 2
+    assert s["same_equations"] == [[load("toggle").name, load("toggle_unequal").name]]
+
+
+def test_the_error_of_a_swept_write_comes_from_independent_runs():
+    from fieldbridge.memory import analysis as an, construct
+    real = load("toggle")
+    ev = an.locate_writes(real, np.random.default_rng(7), n_starts=24)[0]
+    nf = an.normal_form(real, ev["q"], real.control, ev["v"])
+    law = construct.swept_write_check(real, nf, np.random.default_rng(1), n_traj=800, replicates=4)
+    assert law["replicates"] == 4 and len(law["runs"]) == 4 and law["trajectories_per_run"] == 200
+    assert law["measured"] == pytest.approx(np.mean(law["runs"]))
+    assert law["stderr"] == max(law["stderr_binomial"], law["stderr_runs"])
+    # the runs use streams spawned from the generator, not the generator itself: a few numbers drawn from it first
+    # give other runs, not the same noise assigned to the trajectories in another order
+    shifted = np.random.default_rng(1)
+    shifted.standard_normal(6)
+    other = construct.swept_write_check(real, nf, shifted, n_traj=800, replicates=4)
+    assert other["runs"] != law["runs"]
+
+
 def test_the_delay_constant_is_the_first_zero_of_the_airy_derivative():
     from scipy.special import ai_zeros
     from fieldbridge.memory import codiscovery as cd

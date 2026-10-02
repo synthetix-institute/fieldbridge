@@ -59,7 +59,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from . import analysis as an
-from .construct import along_path, cancel_asymmetry, obstruction, swept_write_check
+from .construct import along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check
 from .identity import Realization
 
 LAW_CONSTANT = pi ** 0.25
@@ -254,10 +254,15 @@ def law_constant(law: Dict) -> Dict[str, float]:
     z = nd.inv_cdf(p_c)
     scale = sqrt(law["D_along_mode"]) * law["rate"] ** 0.25 / law["h_along_mode"]
     dz = se / max(nd.pdf(z), 1e-12)
-    return {"constant": float(z * scale), "stderr": float(dz * scale), "expected": LAW_CONSTANT}
+    out = {"constant": float(z * scale), "stderr": float(dz * scale), "expected": LAW_CONSTANT}
+    for k in ("replicates", "signature"):
+        if k in law:
+            out[k] = law[k]
+    return out
 
 
-def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_traj: int = 400) -> Dict[str, object]:
+def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_traj: int = 400,
+                           replicates: int = 1) -> Dict[str, object]:
     """Derive the symmetric write in one realization; returns the word, the steps and the certificate."""
     word: List[str] = []
     steps: List[Dict[str, object]] = []
@@ -355,12 +360,13 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                   "quintic": canon.get("quintic")})
     law, const = {}, {}
     if check_law:
-        law = swept_write_check(target_real, target_nf, rng, n_traj=n_traj)
+        law = swept_write_check(target_real, target_nf, rng, n_traj=n_traj, replicates=replicates)
         const = law_constant(law)
         if law:
             word.append("L")
             steps.append({"letter": "L", "predicted": law["predicted"], "measured": law["measured"],
-                          "stderr": law["stderr"], "gamma": law["gamma"], **{f"law_{k}": v for k, v in const.items()}})
+                          "stderr": law["stderr"], "gamma": law["gamma"],
+                          **{f"law_{k}": v for k, v in const.items() if k != "signature"}})
     if out["status"] == "obstructed":
         out["status"] = "reached"
     return {**out, "word": "".join(word), "route": route_string(steps), "class": derivation_class(steps),
@@ -538,7 +544,8 @@ def _field_fold(real: Realization, states: List[np.ndarray], max_pairs: int = 12
     return None, None, None, None, None, tried
 
 
-def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_traj: int = 0) -> Dict[str, object]:
+def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_traj: int = 0,
+                           replicates: int = 1) -> Dict[str, object]:
     """Derive the threshold write in one realization: first along the control (C, R); if the control gives no fold,
     by a write field toward another stored state (W, R). The fold is then refined, rescaled (K) and its delay law
     tested (L). n_traj is not used: the law is deterministic."""
@@ -626,8 +633,10 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
 
 
 # ------------------------------------------------------------------------------------------------ phase locking
-def derive_phase_locking(real: Realization, rng, check_law: bool = True, n_traj: int = 0) -> Dict[str, object]:
-    """Derive phase locking in one realization (phase_locking.derive). n_traj is not used: the law is deterministic."""
+def derive_phase_locking(real: Realization, rng, check_law: bool = True, n_traj: int = 0,
+                         replicates: int = 1) -> Dict[str, object]:
+    """Derive phase locking in one realization (phase_locking.derive). n_traj and replicates are not used: the law
+    is deterministic."""
     from .phase_locking import derive
     return derive(real, rng, check_law=check_law)
 
@@ -638,10 +647,10 @@ TARGETS = {"symmetric-write": derive_symmetric_write, "threshold-write": derive_
 
 
 def codiscover(reals: List[Realization], rng, target: str = "symmetric-write", check_law: bool = True,
-               n_traj: int = 400) -> Dict[str, object]:
+               n_traj: int = 400, replicates: int = 1) -> Dict[str, object]:
     """Derive the target in every realization and compare the ends: derivation classes, fields and invariants."""
     info = TARGET_INFO[target]
-    rows = [TARGETS[target](r, rng, check_law=check_law, n_traj=n_traj) for r in reals]
+    rows = [TARGETS[target](r, rng, check_law=check_law, n_traj=n_traj, replicates=replicates) for r in reals]
     reached = [r for r in rows if r["status"].startswith("reached")]
     classes: Dict[str, List[str]] = {}
     for r in reached:
@@ -669,14 +678,28 @@ def codiscover(reals: List[Realization], rng, target: str = "symmetric-write", c
         summary.update(ratios=ratios, deviation_max=max((c["deviation"] for c in canon), default=None),
                        amplitudes=list(K_REL) if check_law else [])
         floor = 1e-4  # integration tolerance and extrapolation
-    consts = [r["law_constant"] for r in reached if r.get("law_constant")]
-    if consts:
-        c = np.array([k["constant"] for k in consts])
-        e = np.array([max(k["stderr"], floor) for k in consts])
+    with_law = [r for r in reached if r.get("law_constant")]
+    if with_law:
+        # realizations that simulate the same equations (an unfolded unequal toggle and the toggle, a normal form
+        # continued from below its write point and the normal form) are replicates of one model: their constants are
+        # combined before the statistics over models
+        first = same_equations([r["law_constant"].get("signature") for r in with_law])
+        models: Dict[int, List[Dict]] = {}
+        for i, r in zip(first, with_law):
+            models.setdefault(i, []).append(r)
+        c, e = [], []
+        for group in models.values():
+            gc = np.array([g["law_constant"]["constant"] for g in group])
+            ge = np.array([max(g["law_constant"]["stderr"], floor) for g in group])
+            c.append(float(np.sum(gc / ge ** 2) / np.sum(1 / ge ** 2)))
+            e.append(float(1 / np.sqrt(np.sum(1 / ge ** 2))))
+        c, e = np.array(c), np.array(e)
         wmean = float(np.sum(c / e ** 2) / np.sum(1 / e ** 2))
         summary.update(law_constant_mean=wmean, law_constant_stderr=float(1 / np.sqrt(np.sum(1 / e ** 2))),
                        law_constant_chi2=float(np.sum(((c - info["constant"]) / e) ** 2)), law_constant_dof=int(c.size),
-                       law_constant_max_deviation=float(np.max(np.abs(c - info["constant"]))))
+                       law_constant_max_deviation=float(np.max(np.abs(c - info["constant"]))),
+                       law_constant_realizations=len(with_law),
+                       same_equations=[[g["name"] for g in group] for group in models.values() if len(group) > 1])
     return {"summary": summary, "rows": rows}
 
 
@@ -728,10 +751,13 @@ def markdown(report: Dict[str, object]) -> str:
                      f"in every reached realization; largest even part {_sci(s['even_part_max'])} of the cubic term "
                      f"at the edge of the window.")
         if "law_constant_mean" in s:
+            same = "; ".join(" and ".join(g) for g in s.get("same_equations", []))
             lines.append(f"- Constant of the swept-write law ({s['trajectories_per_realization']} trajectories per "
-                         f"realization): {s['law_constant_mean']:.3f} ± {s['law_constant_stderr']:.3f} over the "
-                         f"reached realizations; pi^(1/4) = {s['law_constant_expected']:.3f}; chi^2 = "
-                         f"{s['law_constant_chi2']:.1f} for {s['law_constant_dof']} values.")
+                         f"realization): {s['law_constant_mean']:.3f} ± {s['law_constant_stderr']:.3f} over "
+                         f"{s['law_constant_dof']} models from {s['law_constant_realizations']} realizations"
+                         + (f" ({same} simulate the same equations and count as one model)" if same else "")
+                         + f"; pi^(1/4) = {s['law_constant_expected']:.3f}; chi^2 = {s['law_constant_chi2']:.1f} for "
+                         f"{s['law_constant_dof']} values.")
     elif key == "phase-locking":
         lines.append("- Locking ratios: " + "; ".join(f"{k} in {', '.join(v)}" for k, v in s["ratios"].items())
                      + ". A ratio above 1:1 comes from a symmetry that maps the cycle onto itself a fraction of a "

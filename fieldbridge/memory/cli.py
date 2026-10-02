@@ -480,11 +480,11 @@ def cmd_codiscover(args) -> int:
         except spec.SpecError as err:
             skipped.append(f"{path.name}: {err}")
     rep = codiscovery.codiscover(reals, np.random.default_rng(args.seed), target=args.target,
-                                 check_law=not args.no_law, n_traj=args.trajectories)
+                                 check_law=not args.no_law, n_traj=args.trajectories, replicates=args.replicates)
     out = Path(args.out_dir)
     report = {"command": "codiscover", **_provenance(),
               "input": {"specifications": [str(p) for p in paths], "target": args.target, "law": not args.no_law,
-                        "trajectories": args.trajectories, "seed": args.seed},
+                        "trajectories": args.trajectories, "replicates": args.replicates, "seed": args.seed},
               "specifications_sha256": {r.name: r.spec_sha256 for r in reals}, **rep, "skipped": skipped}
     _write(out, "codiscover", report, codiscovery.markdown(rep) + f"\n{BOUNDARY}\n")
     if not args.no_figure:
@@ -621,6 +621,9 @@ def add_parser(sub) -> None:
                         "locking (Adler equation).")
     p.add_argument("--trajectories", type=int, default=400,
                    help="Trajectories per realization for the swept-write law (symmetric write only).")
+    p.add_argument("--replicates", type=int, default=8,
+                   help="Independent runs into which the trajectories are split; the error of each law constant is "
+                        "the larger of their scatter and the binomial error (symmetric write only).")
     p.add_argument("--no-law", action="store_true", help="Derivations and canonical forms only; no simulation.")
     p.add_argument("--no-figure", action="store_true")
     p.set_defaults(func=cmd_codiscover)
