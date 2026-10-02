@@ -583,8 +583,8 @@ def mechanisms_doc() -> str:
     out += ["## Laws of retention", "",
             f"A stored state is lost by one of three laws, set by the form of the landscape at the state "
             f"({_md_link('Module 4, §1.3', reg.M4_RETENTION)}). Laws 1 and 2 are the loss for the two signs κ > 0 and "
-            f"κ = 0 of the curvature along the written direction; where κ < 0 no information is lost, which is how a "
-            f"state is written. Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, "
+            f"κ = 0 of the curvature along the written direction; where κ < 0 the information stops decreasing once the "
+            f"expansion outruns the noise, at ½ ln(1 + W), which is how a state is written. Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, "
             f"each mode at its own rate κ(k) "
             f"({_md_link('Module 8, §3', M8 + '#3-fields-conservation-dimension-and-the-shape-of-the-write')}; the "
             f"mechanisms [exponential loss](#exponential-loss) and [power-law loss](#power-law-loss)).", ""]

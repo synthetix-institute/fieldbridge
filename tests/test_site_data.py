@@ -103,7 +103,8 @@ def test_every_mechanism_and_law_has_a_definition_a_derivation_and_original_publ
 
 
 def test_three_laws_of_loss_and_no_law_for_the_write():
-    """Laws 1 and 2 are the loss for kappa > 0 and kappa = 0; kappa < 0 writes and loses nothing, and Law 3 is
+    """Laws 1 and 2 are the loss for kappa > 0 and kappa = 0; kappa < 0 writes, after which the information stops
+    decreasing, and Law 3 is
     activation over a barrier between wells. No text names a further numbered law."""
     assert list(reg.RETENTION_LAWS) == ["1", "2", "3"]
     assert "κ &gt; 0" in reg.RETENTION_LAWS["1"] and "κ = 0" in reg.RETENTION_LAWS["2"]

@@ -98,7 +98,7 @@
     const present = Object.keys(S.mechanisms || {}).filter(k => layout.place[k]);
     const fam = layout.families.map(f => {
       const x0 = layout.col[f.from] - CARD.w / 2 - 14, x1 = layout.col[f.to] + CARD.w / 2 + 14;
-      return `<g class="family"><rect x="${x0}" y="4" width="${x1 - x0}" height="${H - 8}" rx="14"/><text x="${x0 + 12}" y="${H - 14}">${esc(f.label)}</text></g>`;
+      return `<g class="family"><rect x="${x0}" y="4" width="${x1 - x0}" height="${H - 8}" rx="14"/><text x="${x0 + 8}" y="${H - 14}">${esc(f.label)}</text></g>`;
     }).join('');
     // a line along a row that would cross a card of that row is bent around it: above the upper row, below the lower
     const crosses = (a, b) => { const [ca, ra] = layout.place[a], [cb, rb] = layout.place[b];

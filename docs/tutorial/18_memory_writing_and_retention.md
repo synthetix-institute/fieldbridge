@@ -118,8 +118,9 @@ write is lost:
 | two or more minima separated by a barrier $\Delta V$ | Law 3, activation | lost at the Kramers rate, proportional to $e^{-\Delta V/k_BT}$ |
 
 Laws 1 and 2 are the loss for the two signs $\kappa > 0$ and $\kappa = 0$ of the curvature along the written
-direction. Where $\kappa < 0$ no information is lost: the expansion amplifies the write, which is how a state is
-written (Section 1.2). Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, each
+direction. Where $\kappa < 0$ the information decreases only while the state is near the unstable point and then
+stays at $\tfrac12\ln(1 + W)$ (Module 8): the expansion amplifies the write, which is how a state is written
+(Section 1.2). Law 3 needs wells separated by a barrier. A field loses a written pattern mode by mode, each
 mode relaxing at its own rate $\kappa(k)$ (Module 8, Section 3).
 
 The card names the law (`loss_law`) and gives the retention time at the noise of the realization (`hold`).

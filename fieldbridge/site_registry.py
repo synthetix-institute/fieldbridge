@@ -86,9 +86,11 @@ MECHANISMS = {
                      "text": "Elements switch at thresholds of a slow drive. With cooperative couplings and a drive that "
                              "pushes every element the same way, the state at a turning point is recovered exactly "
                              "after any excursion inside it.", "node": "rfim_ferromagnet"},
-    "no-return": {"canonical": "η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> &lt; 0 on some coupling",
-                  "text": "A coupling closes a frustrated loop through the drive: after an excursion the state at a "
-                          "turning point can differ.", "node": "rfim_antiferromagnet"},
+    "no-return": {"canonical": "a subloop that does not return; it needs η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> "
+                               "&lt; 0 on some coupling",
+                  "text": "After an excursion the state at a turning point differs in a measured subloop. This needs a "
+                          "frustrated loop through the drive, which allows a failure without forcing one.",
+                  "node": "rfim_antiferromagnet"},
     "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
                     "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
                             "the phase inside the Adler range.", "node": "van_der_pol"},
@@ -778,8 +780,8 @@ CLASS_ABSENT = {
     "neutral-cycles": ["no memory", "no isolated phase: nothing restores a written phase"],
     "conserved": ["no rotation", "the observable is conserved: nothing rotates"],
     "obstructed": ["no rotation", "the observable moves with several frequencies, not as one rotation"],
-    "no-return": ["no return point", "a frustrated loop through the drive: after an excursion the state at a turning "
-                                     "point can differ"],
+    "no-return": ["no return point", "a measured subloop does not return to the state at its turning point; a "
+                                     "frustrated loop through the drive allows this without forcing it"],
 }
 
 # the three laws by which a stored state is lost, defined in Module 4, Section 1.3; the page links every mention

@@ -228,9 +228,9 @@ calculations. The small route-and-fiber fingerprint used here is not the
 ## Tutorial
 
 The [tutorial](docs/tutorial/index.md) starts from two entry points: the
-language of mechanisms on quantum carriers, and memory in materials (eleven
+language of mechanisms on quantum carriers, and memory in materials (twelve
 modules, from a first memory card to one mechanism derived in models from
-different fields). Further reading paths cover the construction from specified
+different fields and the return to a turning point of a slow drive). Further reading paths cover the construction from specified
 equations (an Itô correction, an interacting spin), paper collections, and the
 evaluation of the code. Worked calculations include an input, the expected
 output, a change to try, and the functions and tests responsible for the

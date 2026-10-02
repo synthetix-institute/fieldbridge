@@ -54,7 +54,7 @@ def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
     # every mention of a retention law links to its definition, and the three laws are explained beside the materials
     assert first["memoryHtml"].count('class="law-link"') == 3 and "18_memory_writing_and_retention.md#13-retention" in first["memoryHtml"]
     assert "Law 1 relaxation in a curved minimum" in first["laws"] and "Law 3 activation over a barrier" in first["laws"]
-    assert "no information is lost" in first["laws"] and "Law 3 needs wells separated by a barrier" in first["laws"]
+    assert "stops decreasing, at ½ ln(1 + W)" in first["laws"] and "Law 3 needs wells separated by a barrier" in first["laws"]
     # the map hatches the outcomes without memory or without a rotation: one state, conserved, several frequencies
     assert first["absent"] == 3
     # the mechanisms in preparation

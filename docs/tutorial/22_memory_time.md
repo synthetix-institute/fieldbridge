@@ -53,7 +53,7 @@ For $\kappa < 0$ the expansion outruns the noise. Only the noise that acts durin
 while the state is near the unstable point, competes with the write; what survives it is retained. $W$ is the same
 ratio of drift to noise that sets the accuracy of a write at an instability (Module 4). If the write is binary,
 $\pm s_0$, and the observable is the sign of $s$, the sign is kept with probability $\Phi(W^{1/2})$. The regime
-$\kappa < 0$ therefore writes and loses nothing. Activation over a barrier between wells (Law 3) is not a regime of
+$\kappa < 0$ therefore writes: after the first few amplification times it loses no further information. Activation over a barrier between wells (Law 3) is not a regime of
 Eq. (1): it needs a landscape that is not linear, in which the state is held in a well and lost only by rare
 transitions over the barrier.
 
