@@ -127,11 +127,44 @@ A material can also be proposed without a specification, through the
 [material proposal form](https://github.com/synthetix-institute/fieldbridge/issues/new?template=material.yml)
 with its source; another contributor can then write the specification.
 
+## Adding a mechanism
+
+A mechanism enters the map of the web page when FieldBridge derives it in models from several fields, each by its
+own chain of verified transformations, and certifies a law whose constant does not depend on the field (or, as for
+return-point memory, a structural condition checked in each model). A new mechanism is a derivation target in
+`fieldbridge/memory/codiscovery.py`; the module docstring describes the three targets that exist. A target needs:
+
+1. **A canonical form and its check.** The reduced drift at the write point, rescaled so that its leading coefficient
+   is fixed (letter K), and an invariant that the other coefficients must satisfy in every model, for example no even
+   part at a pitchfork or no linear part at a fold. Give its entry in `TARGET_INFO`: `title`, `letters`,
+   `canonical`, `check`, `target`, `law`, `constant_name`, `constant`, the meaning of the letters that differ from
+   those of `LETTERS`, and `check_key` and `point`.
+2. **A law with a field-independent constant**, estimated in every model by simulating the full realization (letter
+   L), with an uncertainty. A constant from stochastic trajectories is split into independent runs on spawned
+   random streams, as in `construct.swept_write_check`; a deterministic constant is extrapolated with a stated error
+   floor, as in `fold_delay_law`.
+3. **A derivation function** `derive_<target>(real, rng, check_law=True, n_traj=..., replicates=1)` that returns
+   the fields of `derive_symmetric_write` (`status`, `word`, `steps`, `canonical`, `law`, `law_constant`,
+   `write_point`) and, where a step fails, `status = "obstructed"` with the obstruction named (`obstruction`,
+   `obstruction_short`). Add it to `TARGETS`.
+4. **Tests** in `tests/test_memory_constructor.py`: models from at least two fields that reach the target by
+   different words, a model whose derivation stops at a named step, and the law constant within its error of the
+   expected value. Compare numbers differentially; do not pin solver residuals.
+
+On the web page the target appears under *One mechanism in different fields* once `site_data.TARGETS` and `PREFIX`
+include it and `site.js` (`collapse`) draws its figure. Its class on the map needs entries in `site_registry.py`
+(`CLASSES`, `MECHANISMS`, `CLASS_SHORT`), a glyph in `web/mechanisms.js` (`GLYPHS`), and its definition, derivation
+and original publications in `site_references.py` (`READING`), from which `docs/mechanisms.md` is regenerated
+(`python3 -B -m fieldbridge mechanisms --out docs/mechanisms.md`). The law constants of the page come from
+`docs/site/law_constants.json`, regenerated with `python3 -B -m fieldbridge demo --law --save-law-record`. Until its
+law is certified, a mechanism is listed under *Mechanisms in preparation* (`PLANNED` in `site_registry.py` and
+`docs/ROADMAP.md`).
+
 ## Other contributions
 
 | Contribution | Where to start |
 | --- | --- |
-| A mechanism derived in models from different fields | [Modules 9 to 11](docs/tutorial/23_memory_codiscovery.md) and `fieldbridge/memory/codiscovery.py`: a target is a chain of verified transformations, the obstruction at each step, and invariants of the end point |
+| A mechanism derived in models from different fields | [Adding a mechanism](#adding-a-mechanism), [Modules 9 to 11](docs/tutorial/23_memory_codiscovery.md) and `fieldbridge/memory/codiscovery.py` |
 | A new carrier or analysis | `fieldbridge/memory/`, with tests in `tests/test_memory_constructor.py` |
 | A quantum carrier for the language of mechanisms | [Chapter 24](docs/tutorial/24_spin_language.md), `fieldbridge/quantum/` and `examples/quantum/` |
 | Retrieval, calculation and field packs | [Extensions](docs/tutorial/12_reproduction_and_discovery.md) and [adding a field](docs/NEW_FIELD.md) |

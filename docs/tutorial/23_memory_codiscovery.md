@@ -24,7 +24,8 @@ Such convergence is not directed: neither derivation was aimed at the other.
 > same class of mechanism. In 98.6% of the 625,534 pairs the derivations differ. The number of pairs is 4.6% smaller
 > than the 655,470 obtained when the field labels are permuted among papers of the same year ($z = -10$): the
 > classes are more specific to fields than the permutation makes them, and the corpus shows no excess of convergence
-> across fields. Neither count tests whether the end points are one mechanism; that is established by the normal
+> across fields. These counts include every pair; restricted to pairs whose chains differ both in their first
+> mechanism and in their derivation word, they are 487,348 against 508,776 ($z = -8.8$). Neither count tests whether the end points are one mechanism; that is established by the normal
 > form and its field-independent invariants, as in this module.
 
 The constructor makes the convergence deliberate; the command is `memory codiscover` (co-discovery by
