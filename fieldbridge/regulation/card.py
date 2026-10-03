@@ -57,7 +57,8 @@ def sample_parameters(m: Regulated, count: int, rng, factor: float = 2.0) -> Lis
     return out
 
 
-def card(m: Regulated, samples: int = 32, seed: int = 0, steps: bool = True) -> Dict[str, object]:
+def card(m: Regulated, samples: int = 32, seed: int = 0, steps: bool = True, first_step_only: bool = False,
+         trace: bool = False) -> Dict[str, object]:
     rng = np.random.default_rng(seed)
     p = m.pvec(m.u0)
     out: Dict[str, object] = {"name": m.name, "field": m.field, "source": m.source, "spec": m.path,
@@ -119,7 +120,8 @@ def card(m: Regulated, samples: int = 32, seed: int = 0, steps: bool = True) -> 
                          if stable_rows else None}
 
     # ---- steps
-    resp = [step_response(m, p, q, u1, integ, L) for u1 in m.steps[1:]] if steps else []
+    stepped = m.steps[1:2] if first_step_only else m.steps[1:]
+    resp = [step_response(m, p, q, u1, integ, L, trace=trace) for u1 in stepped] if steps else []
     out["step_responses"] = resp
 
     # ---- class

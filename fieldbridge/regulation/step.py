@@ -21,7 +21,10 @@ from .steady import output_along, rates, refine
 
 
 def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ: Optional[Dict] = None,
-                  L: Optional[np.ndarray] = None, tol: float = 1e-9, max_chunks: int = 14) -> Dict[str, object]:
+                  L: Optional[np.ndarray] = None, tol: float = 1e-9, max_chunks: int = 14,
+                  trace: bool = False) -> Dict[str, object]:
+    """The response to a step of the input to u1 from the steady state q0; with trace=True also the output, and phi
+    when an integrator is given, at up to 400 times."""
     p1 = p0.copy()
     p1[m.u_index] = u1
     y_ref = m.y(q0, p0)
@@ -40,7 +43,7 @@ def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ
     lam = np.abs(rates(m, p1, q0, L).real)
     lam = lam[lam > 1e-9 * max(lam.max(initial=0.0), 1e-300)]
     chunk = 10.0 / max(lam.min() if lam.size else 1.0, 1e-12)
-    t0, ts_all, ys_all, settled = 0.0, [], [], False
+    t0, ts_all, ys_all, qs_all, settled = 0.0, [], [], [], False
     for _ in range(max_chunks):
         ts = np.linspace(t0, t0 + chunk, 2000)
         sol = solve_ivp(rhs, (t0, t0 + chunk), x, method="LSODA", rtol=1e-11,
@@ -49,6 +52,8 @@ def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ
             return {"u1": u1, "failure": sol.message}
         ts_all.append(ts)
         ys_all.append(output_along(m, p1, sol.y[: m.n].T))
+        if trace:
+            qs_all.append(sol.y[: m.n].T)
         x, t0 = sol.y[:, -1], t0 + chunk
         q = x[: m.n]
         F = m.f(q, p1)
@@ -74,6 +79,12 @@ def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ
            "final_over_peak": final / peak if peak != 0 else None,
            "return_time": float(t[far[-1]]) if far.size else 0.0, "integral_of_deviation": float(x[m.n]),
            "q_end": x[: m.n].tolist()}
+    if trace:
+        keep = np.unique(np.linspace(0, len(t) - 1, min(400, len(t))).round().astype(int))
+        Qs = np.vstack(qs_all)[keep]
+        out["trace"] = {"t": [float(f"{v:.6g}") for v in t[keep]], "y": [float(f"{v:.6g}") for v in y[keep]],
+                        "phi": ([float(f"{phi(integ['coefficients'], m.variables, q):.6g}") for q in Qs]
+                                if has_int else None)}
     if has_int:
         dphi = phi(integ["coefficients"], m.variables, x[: m.n]) - phi(integ["coefficients"], m.variables, q0)
         out["delta_phi"] = float(dphi)

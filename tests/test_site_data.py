@@ -28,6 +28,8 @@ FACTS = {
     "field": {"law", "exponent", "exponent_value", "exponent_fit", "rate"},
     "hysterons": {"elements", "guaranteed", "failed", "total", "bonds", "bonds_frustrated", "couplings_frustrated",
                   "plaquettes", "max_differ", "loss", "statement", "verdict"},
+    "regulation": {"integrator", "gain_ratio", "set_point", "u0", "u1", "input", "output", "peak", "final",
+                   "final_over_peak", "return_time", "robust", "clamp", "calibration"},
     "stochastic": {"convention", "growth", "correction"},
 }
 

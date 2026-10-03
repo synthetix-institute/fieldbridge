@@ -13,7 +13,7 @@ element is frustrated ([Module 12](tutorial/27_memory_return_point.md), `memory 
 from three fields are compared with it. The return to a set point after a step of an input is a second family with a
 structural condition: an integrator together with a stable steady state makes the return exact
 ([Regulation, Module 1](tutorial/28_regulation_set_point.md), `regulation card`), and published models from five
-fields are compared with it; it is not yet on the web page. The mechanisms below are studied in the tutorial or in the literature on
+fields are compared with it, in the column "regulation: set point" of the map on the web page. The mechanisms below are studied in the tutorial or in the literature on
 memory and are not yet derivation targets. The web page lists them under "Mechanisms in preparation".
 
 | Mechanism | Canonical form or law | What exists | What is missing |

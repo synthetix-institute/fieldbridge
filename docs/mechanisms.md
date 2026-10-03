@@ -16,6 +16,10 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Write by a uniform field](#write-by-a-uniform-field) | g U(q) − h·m(q) | [Glossary, Description of a material](tutorial/memory_glossary.md#description-of-a-material) | [Module 4, §2](tutorial/18_memory_writing_and_retention.md#2-worked-example-anisotropic-colloids-at-a-fluid-interface), [Module 4, §1.4](tutorial/18_memory_writing_and_retention.md#14-relation-between-retention-and-writing-times) | Stoner and Wohlfarth, 1948; Néel, 1949; Brown, 1963 |
 | [Return-point memory](#return-point-memory) | f<sub>i</sub> = Σ<sub>j</sub> K<sub>ij</sub>σ<sub>j</sub> + h<sub>i</sub> + H, K<sub>ij</sub> ≥ 0 | [Module 12, §1](tutorial/27_memory_return_point.md#1-the-question) | [Module 12, §3](tutorial/27_memory_return_point.md#3-the-prediction-from-structure), [Module 12, §4](tutorial/27_memory_return_point.md#4-running-the-command) | Preisach, 1935; Harary, 1953; Barker et al., 1983; Middleton, 1992; Sethna et al., 1993; Angeli and Sontag, 2003 |
 | [Return not exact](#return-not-exact) | a subloop that does not return; it needs η<sub>i</sub>J<sub>ij</sub>η<sub>j</sub> &lt; 0 on some coupling | [Module 12, §5](tutorial/27_memory_return_point.md#5-frustration-of-the-couplings-is-not-the-criterion) | [Module 12, §6](tutorial/27_memory_return_point.md#6-sufficient-not-necessary) | Deutsch, Dhar and Narayan, 2004; van Hecke, 2021 |
+| [Perfect adaptation](#perfect-adaptation) | dφ/dt = g(q) (y − y<sub>0</sub>), g of one sign | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §4](tutorial/28_regulation_set_point.md#4-running-the-command), [Regulation 1, §7](tutorial/28_regulation_set_point.md#7-certificates) | Francis and Wonham, 1976; Barkai and Leibler, 1997; Yi et al., 2000; Sontag, 2003; Tu, Shimizu and Berg, 2008; Shinar and Feinberg, 2010; Briat, Gupta and Khammash, 2016; Cappelletti, Gupta and Khammash, 2020 |
+| [Fine-tuned adaptation](#fine-tuned-adaptation) | G = 0 only where k<sub>1</sub>k<sub>4</sub> = k<sub>2</sub>k<sub>3</sub> | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §9](tutorial/28_regulation_set_point.md#9-exercises) | Ma et al., 2009; Shoval et al., 2010 |
+| [Partial adaptation](#partial-adaptation) | dφ/dt = k (y − y<sub>0</sub>) − δφ: a fraction 1/(1 + kg/δ) remains | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §6](tutorial/28_regulation_set_point.md#6-leaks) | Ma et al., 2009; Qian and Del Vecchio, 2018 |
+| [No adaptation](#no-adaptation) | no integrator: G = dy/du ≠ 0 and no return after the peak | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | Briat, Gupta and Khammash, 2016 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
 | [Neutral cycles](#neutral-cycles) | dI/dt = 0 | [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields) | [Module 11, §6](tutorial/26_memory_phase_locking.md#6-where-the-derivation-stops) | Lotka, 1920; Volterra, 1926 |
 | [Exponential loss](#exponential-loss) | SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup> | [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer) | [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write) | Hohenberg and Halperin, 1977; Allen and Cahn, 1979 |
@@ -138,6 +142,55 @@ Canonical form: a subloop that does not return; it needs η<sub>i</sub>J<sub>ij<
 - **Original publications:**
   - J. M. Deutsch, A. Dhar and O. Narayan, Phys. Rev. Lett. 92, 227203 (2004), [doi:10.1103/PhysRevLett.92.227203](https://doi.org/10.1103/PhysRevLett.92.227203): random antiferromagnetic chains return exactly, although no passing fails.
   - M. van Hecke, Phys. Rev. E 104, 054608 (2021), [doi:10.1103/PhysRevE.104.054608](https://doi.org/10.1103/PhysRevE.104.054608): most transition graphs of three interacting hysterons violate return-point memory.
+
+### Perfect adaptation
+
+Canonical form: dφ/dt = g(q) (y − y<sub>0</sub>), g of one sign. An integrator of the error and a stable steady state: after a step of the input the output returns exactly to its set point, whatever the values of the rates.
+
+- **Defined:** [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure), an integrator of the error and a stable steady state.
+- **Derived:** [Regulation 1, §4](tutorial/28_regulation_set_point.md#4-running-the-command), published models from five fields, each with a control; [Regulation 1, §7](tutorial/28_regulation_set_point.md#7-certificates), certificates checked without repeating the search. Code: `regulation.integrator.find_integrator`, `card.card`, `certificate.check`.
+- **Original publications:**
+  - B. A. Francis and W. M. Wonham, Automatica 12, 457 (1976), [doi:10.1016/0005-1098(76)90006-6](https://doi.org/10.1016/0005-1098(76)90006-6): the internal model principle: a robust regulator contains a model of the signals it rejects.
+  - N. Barkai and S. Leibler, Nature 387, 913 (1997), [doi:10.1038/43199](https://doi.org/10.1038/43199): adaptation in bacterial chemotaxis follows from the structure of the network, not from tuned rates.
+  - T.-M. Yi, Y. Huang, M. I. Simon and J. Doyle, Proc. Natl. Acad. Sci. USA 97, 4649 (2000), [doi:10.1073/pnas.97.9.4649](https://doi.org/10.1073/pnas.97.9.4649): the chemotaxis network contains integral feedback.
+  - E. D. Sontag, Syst. Control Lett. 50, 119 (2003), [doi:10.1016/S0167-6911(03)00136-1](https://doi.org/10.1016/S0167-6911(03)00136-1): adaptation to a class of inputs implies an internal model of that class.
+  - Y. Tu, T. S. Shimizu and H. C. Berg, Proc. Natl. Acad. Sci. USA 105, 14855 (2008), [doi:10.1073/pnas.0807569105](https://doi.org/10.1073/pnas.0807569105): the methylation rate of chemoreceptors as a function of their activity alone.
+  - G. Shinar and M. Feinberg, Science 327, 1389 (2010), [doi:10.1126/science.1183372](https://doi.org/10.1126/science.1183372): the structural source of absolute concentration robustness, EnvZ–OmpR.
+  - C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15 (2016), [doi:10.1016/j.cels.2016.01.004](https://doi.org/10.1016/j.cels.2016.01.004): the antithetic pair of controller species integrates the error, also with noise.
+  - D. Cappelletti, A. Gupta and M. Khammash, J. R. Soc. Interface 17, 20200437 (2020), [doi:10.1098/rsif.2020.0437](https://doi.org/10.1098/rsif.2020.0437): an integrator, logarithmic or with a gain that depends on the state, behind absolute concentration robustness.
+- **Reviews and textbooks:** K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021); M. H. Khammash, Cell Syst. 12, 509 (2021), [doi:10.1016/j.cels.2021.05.020](https://doi.org/10.1016/j.cels.2021.05.020).
+
+### Fine-tuned adaptation
+
+Canonical form: G = 0 only where k<sub>1</sub>k<sub>4</sub> = k<sub>2</sub>k<sub>3</sub>. The output returns exactly only at tuned parameters: the integrator exists only on the surface where two paths of the input cancel.
+
+- **Defined:** [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure), a vanishing gain at the stated parameters only.
+- **Derived:** [Regulation 1, §9](tutorial/28_regulation_set_point.md#9-exercises), the subtractive feedforward loop: an integrator only on the surface where two paths cancel. Code: `regulation.card.card`, `sample_parameters`.
+- **Original publications:**
+  - W. Ma, A. Trusina, H. El-Samad, W. A. Lim and C. Tang, Cell 138, 760 (2009), [doi:10.1016/j.cell.2009.06.013](https://doi.org/10.1016/j.cell.2009.06.013): three-node topologies that adapt in regions of parameter space.
+  - O. Shoval, L. Goentoro, Y. Hart, A. Mayo, E. Sontag and U. Alon, Proc. Natl. Acad. Sci. USA 107, 15995 (2010), [doi:10.1073/pnas.1002352107](https://doi.org/10.1073/pnas.1002352107): incoherent feedforward loops that adapt exactly and detect fold changes.
+- **Reviews and textbooks:** J. E. Ferrell Jr., Cell Syst. 2, 62 (2016), [doi:10.1016/j.cels.2016.02.006](https://doi.org/10.1016/j.cels.2016.02.006).
+
+### Partial adaptation
+
+Canonical form: dφ/dt = k (y − y<sub>0</sub>) − δφ: a fraction 1/(1 + kg/δ) remains. A leaky integrator: after a step the output returns part of the way, and the fraction that remains falls as the leak falls.
+
+- **Defined:** [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure), a leaky integrator leaves the fraction 1/(1 + G) of the step.
+- **Derived:** [Regulation 1, §6](tutorial/28_regulation_set_point.md#6-leaks), leaks: dilution in growing cells, Michaelis constants of a buffer node. Code: `regulation.gains.clamped_gain`, `step.step_response`.
+- **Original publications:**
+  - W. Ma, A. Trusina, H. El-Samad, W. A. Lim and C. Tang, Cell 138, 760 (2009), [doi:10.1016/j.cell.2009.06.013](https://doi.org/10.1016/j.cell.2009.06.013): near-perfect adaptation when the enzymes on a buffer node are saturated.
+  - Y. Qian and D. Del Vecchio, J. R. Soc. Interface 15, 20170902 (2018), [doi:10.1098/rsif.2017.0902](https://doi.org/10.1098/rsif.2017.0902): dilution makes integral control in growing cells leaky; fast controller reactions make the error small.
+- **Reviews and textbooks:** K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021).
+
+### No adaptation
+
+Canonical form: no integrator: G = dy/du ≠ 0 and no return after the peak. The output moves to its new value and stays there; feedback that is only proportional reduces the change without returning it.
+
+- **Defined:** [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls), controls that remove the integrator.
+- **Derived:** [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls), proportional feedback reduces the change and does not return it. Code: `regulation.card.card`, `gains.attenuation`.
+- **Original publications:**
+  - C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15 (2016), [doi:10.1016/j.cels.2016.01.004](https://doi.org/10.1016/j.cels.2016.01.004): a static controller of Hill type does not adapt to a change of the process.
+- **Reviews and textbooks:** K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021).
 
 ### Limit cycle
 

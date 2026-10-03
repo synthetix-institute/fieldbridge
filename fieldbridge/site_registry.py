@@ -40,6 +40,10 @@ CLASSES = {
     "field-write": "write by a uniform field",
     "return-point": "return-point memory",
     "no-return": "return not exact",
+    "perfect-adaptation": "perfect adaptation",
+    "fine-tuned-adaptation": "fine-tuned adaptation",
+    "partial-adaptation": "partial adaptation",
+    "no-adaptation": "no adaptation",
     "oscillation": "limit cycle",
     "neutral-cycles": "neutral cycles",
     "exponential-loss": "exponential loss",
@@ -91,6 +95,22 @@ MECHANISMS = {
                   "text": "After an excursion the state at a turning point differs in a measured subloop. This needs a "
                           "frustrated loop through the drive, which allows a failure without forcing one.",
                   "node": "rfim_antiferromagnet"},
+    # regulation: the return of an output to its set point after a step of an input; an integrator of the error with a
+    # stable steady state makes the return exact at every parameter value (the internal model principle)
+    "perfect-adaptation": {"canonical": "dφ/dt = g(q) (y − y<sub>0</sub>), g of one sign",
+                           "text": "An integrator of the error and a stable steady state: after a step of the input the "
+                                   "output returns exactly to its set point, whatever the values of the rates.",
+                           "node": "reg_pi_loop"},
+    "fine-tuned-adaptation": {"canonical": "G = 0 only where k<sub>1</sub>k<sub>4</sub> = k<sub>2</sub>k<sub>3</sub>",
+                              "text": "The output returns exactly only at tuned parameters: the integrator exists only "
+                                      "on the surface where two paths of the input cancel.",
+                              "node": "reg_feedforward_subtractive"},
+    "partial-adaptation": {"canonical": "dφ/dt = k (y − y<sub>0</sub>) − δφ: a fraction 1/(1 + kg/δ) remains",
+                           "text": "A leaky integrator: after a step the output returns part of the way, and the "
+                                   "fraction that remains falls as the leak falls.", "node": "reg_leaky_integrator"},
+    "no-adaptation": {"canonical": "no integrator: G = dy/du ≠ 0 and no return after the peak",
+                      "text": "The output moves to its new value and stays there; feedback that is only proportional "
+                              "reduces the change without returning it.", "node": "cruise_control_p"},
     "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
                     "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
                             "the phase inside the Adler range.", "node": "van_der_pol"},
@@ -115,7 +135,8 @@ START = "pitchfork"
 # specifications in these folders that no node names are added to the page automatically (site_data.auto_nodes):
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
-             "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons"}
+             "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
+             "examples/regulation": "regulation"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
@@ -123,6 +144,7 @@ M9 = "docs/tutorial/23_memory_codiscovery.md"
 M10 = "docs/tutorial/25_memory_threshold_write.md"
 M11 = "docs/tutorial/26_memory_phase_locking.md"
 M12 = "docs/tutorial/27_memory_return_point.md"
+R1 = "docs/tutorial/28_regulation_set_point.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -304,6 +326,41 @@ NODES = [
      "tutorial": M12 + "#4-running-the-command"},
     {"id": "soft_spots", "family": "hysterons", "spec": "examples/memory/hysterons/soft_spots.json",
      "tutorial": M12 + "#4-running-the-command"},
+    # -- regulation: the return of an output to its set point after a step of an input
+    {"id": "reg_pi_loop", "family": "regulation", "spec": "examples/regulation/benchmarks/pi_loop.json",
+     "tutorial": R1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "reg_leaky_integrator", "family": "regulation", "spec": "examples/regulation/benchmarks/leaky_integrator.json",
+     "tutorial": R1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "reg_feedforward_subtractive", "family": "regulation",
+     "spec": "examples/regulation/benchmarks/feedforward_subtractive.json", "tutorial": R1 + "#9-exercises"},
+    {"id": "chemotaxis_tu2008", "family": "regulation", "spec": "examples/regulation/chemotaxis_tu2008.json",
+     "tutorial": R1 + "#4-running-the-command"},
+    {"id": "chemotaxis_turnover", "family": "regulation",
+     "spec": "examples/regulation/controls/chemotaxis_tu2008_control1.json", "tutorial": R1 + "#5-controls"},
+    {"id": "antithetic_briat2016", "family": "regulation", "spec": "examples/regulation/antithetic_briat2016.json",
+     "tutorial": R1 + "#4-running-the-command"},
+    {"id": "antithetic_hill", "family": "regulation",
+     "spec": "examples/regulation/controls/antithetic_briat2016_control1.json", "tutorial": R1 + "#5-controls"},
+    {"id": "cruise_control_pi", "family": "regulation", "spec": "examples/regulation/cruise_control_pi.json",
+     "tutorial": R1 + "#4-running-the-command"},
+    {"id": "cruise_control_p", "family": "regulation",
+     "spec": "examples/regulation/controls/cruise_control_pi_control1.json", "tutorial": R1 + "#5-controls"},
+    {"id": "envz_ompr", "family": "regulation", "spec": "examples/regulation/envz_ompr.json",
+     "tutorial": R1 + "#7-certificates"},
+    {"id": "envz_ompr_phosphatase", "family": "regulation",
+     "spec": "examples/regulation/controls/envz_ompr_control1.json", "tutorial": R1 + "#5-controls"},
+    {"id": "qian2018_quasi", "family": "regulation", "spec": "examples/regulation/qian2018_quasi.json",
+     "tutorial": R1 + "#6-leaks"},
+    {"id": "qian2018_leaky", "family": "regulation",
+     "spec": "examples/regulation/controls/qian2018_quasi_control1.json", "tutorial": R1 + "#6-leaks"},
+    {"id": "qian2018_ideal", "family": "regulation",
+     "spec": "examples/regulation/controls/qian2018_quasi_control2.json", "tutorial": R1 + "#6-leaks"},
+    {"id": "ma2009_nfblb", "family": "regulation", "spec": "examples/regulation/ma2009_nfblb.json",
+     "tutorial": R1 + "#6-leaks"},
+    {"id": "ma2009_nfblb_saturated", "family": "regulation", "spec": "examples/regulation/ma2009_nfblb_saturated.json",
+     "tutorial": R1 + "#6-leaks"},
+    {"id": "ma2009_ifflp", "family": "regulation", "spec": "examples/regulation/ma2009_ifflp.json",
+     "tutorial": R1 + "#4-running-the-command"},
     # -- the convention of a stochastic calculation
     {"id": "log_ito", "family": "stochastic", "spec": "examples/construction/log_signal_ito.json",
      "tutorial": "docs/tutorial/10_stochastic_construction.md#the-convention-changes-a-measurable-consequence"},
@@ -564,6 +621,31 @@ EDGES = [
      "text": "The antiferromagnet on a chain. Every loop through the field is still frustrated, yet {failed} of {total} "
              "subloops do not return: random antiferromagnetic chains return exactly (Deutsch, Dhar and Narayan, "
              "2004). A balanced network is sufficient for the return, and not necessary."},
+    # regulation: the leak, the turnover, a second phosphatase, the speed of the controller, dilution, saturation
+    {"id": "reg_leak", "from": "reg_pi_loop", "to": "reg_leaky_integrator", "slot": "Omega", "kind": "term",
+     "change": "+ −δz in the integral",
+     "text": "A leak of the integral. The integral of the error is lost at rate δ, and a fraction {gain_ratio} of the "
+             "step remains: the clamp of the integral gives δλ/(δλ + k<sub>I</sub>)."},
+    {"id": "reg_methylation_turnover", "from": "chemotaxis_tu2008", "to": "chemotaxis_turnover", "slot": "Omega",
+     "kind": "term", "change": "+ −k<sub>d</sub>(m − m<sub>0</sub>)",
+     "text": "A turnover of the methylation level. Its rate no longer depends on the receptor activity alone, the "
+             "integrator is gone, and a fraction {gain_ratio} of the step remains."},
+    {"id": "reg_second_phosphatase", "from": "envz_ompr", "to": "envz_ompr_phosphatase", "slot": "Omega",
+     "kind": "term", "change": "+ OmpR-P → OmpR",
+     "text": "A second phosphatase of OmpR-P that does not pass through EnvZ-ADP. The structure of absolute "
+             "concentration robustness is broken, and a fraction {gain_ratio} of a step of the total OmpR remains."},
+    {"id": "reg_slow_controller", "from": "qian2018_quasi", "to": "qian2018_leaky", "slot": "A", "kind": "param",
+     "change": "ε = 0.02 → 1",
+     "text": "Controller reactions as slow as dilution. The memory of the error leaks, and {gain_ratio} of the step "
+             "remains, against {from.gain_ratio} with fast controller reactions."},
+    {"id": "reg_no_dilution", "from": "qian2018_quasi", "to": "qian2018_ideal", "slot": "A", "kind": "param",
+     "change": "γ = 1 → 0",
+     "text": "No dilution of the controller species. The difference z₂ − z₁ integrates the error exactly, and the "
+             "output returns to its set point."},
+    {"id": "reg_saturation", "from": "ma2009_nfblb", "to": "ma2009_nfblb_saturated", "slot": "A", "kind": "param",
+     "change": "K<sub>CB</sub> = K′<sub>FBB</sub> = 0.1 → 0.01",
+     "text": "The enzymes on the buffer node closer to saturation. The buffer node integrates the output more nearly, "
+             "and the fraction that remains falls from {from.gain_ratio} to {gain_ratio}."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -691,6 +773,22 @@ SEQUENCES = [
          {"edge": "field_dimension"},
          {"edge": "field_dipole_2d_write"},
      ]},
+    {"id": "set-point", "title": "Return to a set point",
+     "steps": [
+         {"node": "reg_pi_loop",
+          "text": "An output y held at a set point by the integral z of its error. After a step of the input the output "
+                  "moves and returns exactly to its set point, {set_point}."},
+         {"edge": "reg_leak"},
+         {"node": "chemotaxis_tu2008",
+          "text": "Bacterial chemotaxis. The methylation level integrates a function of the receptor activity, and "
+                  "the activity returns to {set_point} after a step of the attractant."},
+         {"edge": "reg_methylation_turnover"},
+         {"node": "envz_ompr",
+          "text": "EnvZ–OmpR. The integrator has a gain proportional to EnvZ-ADP; OmpR-P returns to {set_point} after "
+                  "a step of the total OmpR."},
+         {"edge": "reg_second_phosphatase"},
+         {"edge": "reg_slow_controller"},
+     ]},
     {"id": "turning-points", "title": "Return to a turning point",
      "steps": [
          {"node": "rfim_ferromagnet",
@@ -769,7 +867,9 @@ EDGES += [
 CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "several frequencies",
                "single-state": "one state", "symmetric-write": "symmetric write", "threshold-write": "one-sided write",
                "subcritical-write": "distant write", "field-write": "field write", "return-point": "return point",
-               "no-return": "return not exact", "oscillation": "limit cycle",
+               "no-return": "return not exact", "perfect-adaptation": "perfect adaptation",
+               "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
+               "no-adaptation": "no adaptation", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
 
@@ -780,6 +880,7 @@ CLASS_ABSENT = {
     "neutral-cycles": ["no memory", "no isolated phase: nothing restores a written phase"],
     "conserved": ["no rotation", "the observable is conserved: nothing rotates"],
     "obstructed": ["no rotation", "the observable moves with several frequencies, not as one rotation"],
+    "no-adaptation": ["no regulation", "the output moves to its new value and stays there: nothing returns it"],
     "no-return": ["no return point", "a measured subloop does not return to the state at its turning point; a "
                                      "frustrated loop through the drive allows this without forcing it"],
 }
@@ -824,6 +925,13 @@ PLANNED = [
 ]
 
 SHORT = {
+    "reg_pi_loop": "integral control", "reg_leaky_integrator": "leaky integral", "reg_feedforward_subtractive":
+    "subtractive feedforward", "chemotaxis_tu2008": "E. coli chemotaxis", "chemotaxis_turnover": "chemotaxis + turnover",
+    "antithetic_briat2016": "antithetic controller", "antithetic_hill": "Hill controller",
+    "cruise_control_pi": "cruise control, PI", "cruise_control_p": "cruise control, P", "envz_ompr": "EnvZ–OmpR",
+    "envz_ompr_phosphatase": "EnvZ–OmpR + phosphatase", "qian2018_quasi": "quasi-integral, ε = 0.02",
+    "qian2018_leaky": "leaky, ε = 1", "qian2018_ideal": "without dilution", "ma2009_nfblb": "buffer node, K = 0.1",
+    "ma2009_nfblb_saturated": "buffer node, K = 0.01", "ma2009_ifflp": "proportioner node",
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
     "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
     "nv_centre": "NV centre", "spin1_atom": "spin-1 atom", "stoner_wohlfarth": "magnet, 90°",

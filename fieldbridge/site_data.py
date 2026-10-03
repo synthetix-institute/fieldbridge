@@ -152,8 +152,9 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
             fam = "field" if spec.get("kind") == "field" else family
             nid = path.stem if path.stem not in ids else f"{path.stem}_{Path(folder).name}"
             out.append({"id": nid, "family": fam, "spec": rel, "auto": True,
-                        "tutorial": "docs/tutorial/21_memory_new_material.md" if fam != "unitary"
-                        else "docs/tutorial/24_spin_language.md#2-writing-a-realization"})
+                        "tutorial": ("docs/tutorial/28_regulation_set_point.md#8-a-model-from-your-field"
+                                     if fam == "regulation" else "docs/tutorial/21_memory_new_material.md"
+                                     if fam != "unitary" else "docs/tutorial/24_spin_language.md#2-writing-a-realization")})
             ids.add(nid)
     return out
 
@@ -659,6 +660,63 @@ def hysteron_slots(spec: Dict, model) -> Dict[str, str]:
                             f"seed {hs.get('seed', 0)}"])}
 
 
+# the parameter points of a regulated node: fewer than ``regulation card`` (32), so that the page builds quickly
+REGULATION_SAMPLES = 8
+REGULATION_CLASSES = ("perfect-adaptation", "fine-tuned-adaptation", "partial-adaptation", "no-adaptation")
+
+
+def regulation_record(node: Dict) -> Dict:
+    """A regulated realization: the card of ``regulation card`` (with fewer parameter points) and the response of the
+    output to the first step of the input."""
+    from .regulation import card as rcard
+    from .regulation import spec as rspec
+    from .regulation.cli import _short_phi
+    spec = node["spec"]
+    real = rspec.load(spec)
+    res = rcard.card(real, samples=REGULATION_SAMPLES, seed=0, first_step_only=True, trace=True)
+    if res["class"] not in REGULATION_CLASSES:
+        raise SiteError(f"{node['id']}: {res['class']}: a regulated realization on the page needs a stable steady "
+                        f"state at its reference input")
+    step = res["step_responses"][0]
+    rob = res["robustness"]
+    att = [a for a in res.get("attenuation") or [] if a.get("remaining_fraction") is not None]
+    clamp = min(att, key=lambda a: abs(a["remaining_fraction"])) if att else None
+    integ = res.get("integrator") or {}
+    ratio = res.get("gain_ratio") or 0.0
+    # without a variable to clamp the reference gain is the gain itself, and the ratio says nothing
+    shown_ratio = "0" if ratio < 1e-9 else _num(ratio) if att else "— (no variable to clamp)"
+    facts = {"integrator": _short_phi(integ), "gain_ratio": shown_ratio,
+             "set_point": _num(res["y0_steady"]), "u0": _num(real.u0), "u1": _num(step["u1"]),
+             "input": real.input, "output": real.output_text if len(real.output_text) <= 24 else "the observable",
+             "peak": _num(step["peak"]), "final": "0" if abs(step["final"]) < 1e-9 else _num(step["final"]),
+             "final_over_peak": "0" if step.get("final_over_peak") is None or abs(step["final_over_peak"]) < 1e-9
+             else _num(step["final_over_peak"]),
+             "return_time": _num(step["return_time"]),
+             "robust": f"{rob['gain_zero']} of {rob['stable']}",
+             "clamp": f"{clamp['variable']} ({clamp['role']}): {_num(clamp['remaining_fraction'])}" if clamp else "—",
+             "calibration": "—" if step.get("calibration_ratio") is None
+             else f"{abs(step['calibration_ratio'] - 1):.1e}"}
+    tr = step["trace"]
+    return {"id": node["id"], "family": "regulation", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": res["class"], "facts": facts, "question": spec.get("question"),
+            "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "regulation", "t": tr["t"], "y": tr["y"], "phi": tr["phi"],
+                       "y_ref": step["y_ref"], "y_end": step["y_end"], "set_point": res["y0_steady"],
+                       "u0": real.u0, "u1": step["u1"], "input": real.input},
+            "slots": regulation_slots(spec, real, step)}
+
+
+def regulation_slots(spec: Dict, real, step: Dict) -> Dict[str, str]:
+    reg = spec["regulation"]
+    params = [k for k in real.params if k != real.input]
+    return {"Omega": f"the drift of {', '.join(real.variables)} ({spec.get('kind', 'equations')})",
+            "Xi": f"{len(real.variables)} variables on the {spec['carrier'].get('kind', 'euclid')} carrier",
+            "C": spec.get("closure") or "; ".join(spec.get("assumptions", [])[:1]) or "as in the source",
+            "R": f"the output {reg['output']}" if len(reg["output"]) <= 40 else (spec.get("observable") or "the output"),
+            "P": f"a step of {real.input} from {_num(real.u0)} to {_num(step['u1'])}",
+            "A": ", ".join(f"{k} = {_num(real.params[k])}" for k in params[:6]) + (" …" if len(params) > 6 else "")}
+
+
 def stochastic_record(node: Dict) -> Dict:
     from .verification import verify_construction
     spec = node["spec"]
@@ -688,6 +746,8 @@ def sympy_html(text: str) -> str:
 # ------------------------------------------------------------------------------------------------ edges
 def _numeric_drift(spec: Dict) -> Callable[[np.ndarray, Dict[str, float]], np.ndarray]:
     from .memory import spec as mspec
+    if spec.get("schema") == "fieldbridge-regulation/1":      # the body of a regulated realization
+        spec = {**{k: v for k, v in spec.items() if k != "regulation"}, "schema": mspec.SCHEMA}
     real = mspec.load(spec)
     return lambda q, p: real.drift(np.atleast_2d(q), {**real.params, **p})
 
@@ -704,7 +764,7 @@ def _same_carrier(a: Dict, b: Dict) -> bool:
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         return ha.get("lattice") == hb.get("lattice") and ha.get("units") == hb.get("units")
-    if a["family"] == "dissipative":
+    if a["family"] in ("dissipative", "regulation"):
         ca, cb = a["spec"].get("carrier"), b["spec"].get("carrier")
         if a["spec"].get("kind") == "network" or b["spec"].get("kind") == "network":
             return a["spec"].get("network") == b["spec"].get("network")
@@ -855,6 +915,13 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
         raise fail("no check for this change of closure")
     if a["family"] != b["family"] or not _same_carrier(a, b):
         raise fail("the carrier changes; name the edge Xi")
+    if a["family"] == "regulation":
+        ra_, rb_ = a["spec"]["regulation"], b["spec"]["regulation"]
+        for key in ("input", "output", "steps"):
+            if ra_.get(key) != rb_.get(key):
+                raise fail(f"a change of {slot} keeps the {key} of the regulation block")
+        if kind not in ("param", "term"):
+            raise fail(f"no check for {kind} on a regulated realization")
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         diff = {k for k in set(ha) | set(hb) if ha.get(k) != hb.get(k)}
@@ -1028,6 +1095,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = field_record(node)
         elif fam == "hysterons":
             records[nid] = hysteron_record(node)
+        elif fam == "regulation":
+            records[nid] = regulation_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]

@@ -159,6 +159,35 @@ BIB = {
                     "short": "Deutsch, Dhar and Narayan, 2004", "doi": "10.1103/PhysRevLett.92.227203"},
     "vanhecke2021": {"cite": "M. van Hecke, Phys. Rev. E 104, 054608 (2021)", "short": "van Hecke, 2021",
                      "doi": "10.1103/PhysRevE.104.054608"},
+    # regulation: the return of an output to its set point
+    "francis1976": {"cite": "B. A. Francis and W. M. Wonham, Automatica 12, 457 (1976)", "short": "Francis and Wonham, 1976",
+                    "doi": "10.1016/0005-1098(76)90006-6"},
+    "barkai1997": {"cite": "N. Barkai and S. Leibler, Nature 387, 913 (1997)", "short": "Barkai and Leibler, 1997",
+                   "doi": "10.1038/43199"},
+    "yi2000": {"cite": "T.-M. Yi, Y. Huang, M. I. Simon and J. Doyle, Proc. Natl. Acad. Sci. USA 97, 4649 (2000)",
+               "short": "Yi et al., 2000", "doi": "10.1073/pnas.97.9.4649"},
+    "sontag2003": {"cite": "E. D. Sontag, Syst. Control Lett. 50, 119 (2003)", "short": "Sontag, 2003",
+                   "doi": "10.1016/S0167-6911(03)00136-1"},
+    "tu2008": {"cite": "Y. Tu, T. S. Shimizu and H. C. Berg, Proc. Natl. Acad. Sci. USA 105, 14855 (2008)",
+               "short": "Tu, Shimizu and Berg, 2008", "doi": "10.1073/pnas.0807569105"},
+    "ma2009": {"cite": "W. Ma, A. Trusina, H. El-Samad, W. A. Lim and C. Tang, Cell 138, 760 (2009)",
+               "short": "Ma et al., 2009", "doi": "10.1016/j.cell.2009.06.013"},
+    "shoval2010": {"cite": "O. Shoval, L. Goentoro, Y. Hart, A. Mayo, E. Sontag and U. Alon, Proc. Natl. Acad. Sci. USA "
+                           "107, 15995 (2010)", "short": "Shoval et al., 2010", "doi": "10.1073/pnas.1002352107"},
+    "shinar2010": {"cite": "G. Shinar and M. Feinberg, Science 327, 1389 (2010)", "short": "Shinar and Feinberg, 2010",
+                   "doi": "10.1126/science.1183372"},
+    "briat2016": {"cite": "C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15 (2016)",
+                  "short": "Briat, Gupta and Khammash, 2016", "doi": "10.1016/j.cels.2016.01.004"},
+    "qian2018": {"cite": "Y. Qian and D. Del Vecchio, J. R. Soc. Interface 15, 20170902 (2018)",
+                 "short": "Qian and Del Vecchio, 2018", "doi": "10.1098/rsif.2017.0902"},
+    "cappelletti2020": {"cite": "D. Cappelletti, A. Gupta and M. Khammash, J. R. Soc. Interface 17, 20200437 (2020)",
+                        "short": "Cappelletti, Gupta and Khammash, 2020", "doi": "10.1098/rsif.2020.0437"},
+    "ferrell2016": {"cite": "J. E. Ferrell Jr., Cell Syst. 2, 62 (2016)", "short": "Ferrell, 2016",
+                    "doi": "10.1016/j.cels.2016.02.006"},
+    "khammash2021": {"cite": "M. H. Khammash, Cell Syst. 12, 509 (2021)", "short": "Khammash, 2021",
+                     "doi": "10.1016/j.cels.2021.05.020"},
+    "astrom2021": {"cite": "K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021)",
+                   "short": "Åström and Murray, 2021", "doi": ""},
     # textbooks
     "strogatz1994": {"cite": "S. H. Strogatz, Nonlinear Dynamics and Chaos (Addison-Wesley, Reading, 1994)",
                      "short": "Strogatz, 1994", "doi": ""},
@@ -182,6 +211,7 @@ S24 = T + "24_spin_language.md"
 M4 = T + "18_memory_writing_and_retention.md"
 M8 = T + "22_memory_time.md"
 M12 = T + "27_memory_return_point.md"
+R1 = T + "28_regulation_set_point.md"
 
 READING: Dict[str, Dict] = {
     # ---------------------------------------------------------------- mechanisms of the map (site_registry.CLASSES)
@@ -301,6 +331,55 @@ READING: Dict[str, Dict] = {
         "sources": [("deutsch2004", "random antiferromagnetic chains return exactly, although no passing fails"),
                     ("vanhecke2021", "most transition graphs of three interacting hysterons violate return-point "
                                      "memory")],
+    },
+    "perfect-adaptation": {
+        "defined": ("Regulation 1, §3", "an integrator of the error and a stable steady state",
+                    R1 + "#3-the-prediction-from-structure"),
+        "derived": [("Regulation 1, §4", "published models from five fields, each with a control",
+                     R1 + "#4-running-the-command"),
+                    ("Regulation 1, §7", "certificates checked without repeating the search", R1 + "#7-certificates")],
+        "code": "regulation.integrator.find_integrator, card.card, certificate.check",
+        "sources": [("francis1976", "the internal model principle: a robust regulator contains a model of the signals "
+                                    "it rejects"),
+                    ("barkai1997", "adaptation in bacterial chemotaxis follows from the structure of the network, not "
+                                   "from tuned rates"),
+                    ("yi2000", "the chemotaxis network contains integral feedback"),
+                    ("sontag2003", "adaptation to a class of inputs implies an internal model of that class"),
+                    ("briat2016", "the antithetic pair of controller species integrates the error, also with noise"),
+                    ("cappelletti2020", "an integrator, logarithmic or with a gain that depends on the state, behind "
+                                        "absolute concentration robustness"),
+                    ("tu2008", "the methylation rate of chemoreceptors as a function of their activity alone"),
+                    ("shinar2010", "the structural source of absolute concentration robustness, EnvZ–OmpR")],
+        "textbooks": ["astrom2021", "khammash2021"],
+    },
+    "fine-tuned-adaptation": {
+        "defined": ("Regulation 1, §3", "a vanishing gain at the stated parameters only",
+                    R1 + "#3-the-prediction-from-structure"),
+        "derived": [("Regulation 1, §9", "the subtractive feedforward loop: an integrator only on the surface where "
+                                         "two paths cancel", R1 + "#9-exercises")],
+        "code": "regulation.card.card, sample_parameters",
+        "sources": [("ma2009", "three-node topologies that adapt in regions of parameter space"),
+                    ("shoval2010", "incoherent feedforward loops that adapt exactly and detect fold changes")],
+        "textbooks": ["ferrell2016"],
+    },
+    "partial-adaptation": {
+        "defined": ("Regulation 1, §3", "a leaky integrator leaves the fraction 1/(1 + G) of the step",
+                    R1 + "#3-the-prediction-from-structure"),
+        "derived": [("Regulation 1, §6", "leaks: dilution in growing cells, Michaelis constants of a buffer node",
+                     R1 + "#6-leaks")],
+        "code": "regulation.gains.clamped_gain, step.step_response",
+        "sources": [("qian2018", "dilution makes integral control in growing cells leaky; fast controller reactions "
+                                 "make the error small"),
+                    ("ma2009", "near-perfect adaptation when the enzymes on a buffer node are saturated")],
+        "textbooks": ["astrom2021"],
+    },
+    "no-adaptation": {
+        "defined": ("Regulation 1, §5", "controls that remove the integrator", R1 + "#5-controls"),
+        "derived": [("Regulation 1, §5", "proportional feedback reduces the change and does not return it",
+                     R1 + "#5-controls")],
+        "code": "regulation.card.card, gains.attenuation",
+        "sources": [("briat2016", "a static controller of Hill type does not adapt to a change of the process")],
+        "textbooks": ["astrom2021"],
     },
     "oscillation": {
         "defined": ("Glossary, Retention", "phase memory, phase response curve, phase diffusion",

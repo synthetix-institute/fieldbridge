@@ -165,7 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
-    if (fam === 'hysterons') return `<span>${esc(rec.slots[slot])}</span>`;
+    if (fam === 'hysterons' || fam === 'regulation') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -376,6 +376,16 @@
       known('subloops that did not return', `${f.failed} of ${f.total}`);
       known('excursion shown', `H₁ = ${fmt(x.H1, 3)} → H₂ = ${fmt(x.H2, 3)} → H₁: ${x.differ} of ${e.elements} elements unlike the state at H₁`);
       known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
+    } else if (rec.family === 'regulation') {
+      body = mechanismText(rec);
+      known('integrator', f.integrator);
+      known('fraction of the step that remains, G/G_open', f.gain_ratio);
+      known('parameter points with G = 0', f.robust);
+      known('step shown', `${f.input}: ${f.u0} → ${f.u1}`);
+      known('deviation of the output', `peak ${f.peak}, final ${f.final} (final/peak ${f.final_over_peak})`);
+      known('return time', f.return_time);
+      if (f.clamp !== '—') known('clamp with the smallest remaining fraction', f.clamp);
+      if (f.calibration !== '—') known('calibration |∫ dφ/dt dt / Δφ − 1|', f.calibration);
     } else if (rec.family === 'stochastic') {
       body = `The mean of log X grows at ${f.growth} in the ${f.convention} reading of the noise term.`;
       const mu = state.params.mu, s = state.params.sigma;
@@ -406,6 +416,10 @@
       case 'field-write': return 'The control only rescales the energy; a state is written by a uniform field and kept by the barriers between states.';
       case 'return-point': return 'Elements switch at thresholds of a slow drive; after any excursion inside a turning point the configuration at that turning point is recovered exactly.';
       case 'no-return': return 'A coupling closes a frustrated loop through the drive: after an excursion the configuration at a turning point can differ.';
+      case 'perfect-adaptation': return 'An integrator of the error and a stable steady state: after a step of the input the output returns exactly to its set point, at every value of the rates.';
+      case 'fine-tuned-adaptation': return 'The output returns exactly only at the stated parameters: the integrator exists only on the surface where two paths of the input cancel.';
+      case 'partial-adaptation': return 'After the step the output returns part of the way: the integrator leaks, and a fraction of the step remains.';
+      case 'no-adaptation': return 'The output moves to its new value and stays there: no variable returns it.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
       case 'neutral-cycles': return 'A conserved quantity fills the plane with closed orbits: no orbit attracts its neighbours, and no drive-independent phase is kept.';
@@ -422,6 +436,7 @@
     else if (rec.family === 'dissipative') scene = dissipativeScene(rec);
     else if (rec.family === 'field') scene = fieldScene(rec);
     else if (rec.family === 'hysterons') scene = hysteronScene(rec);
+    else if (rec.family === 'regulation') scene = regulationScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
     $('view-legend').innerHTML = scene.legend || '';
@@ -594,6 +609,12 @@
             title: 'The response along the major loop and along one excursion inside a turning point',
             legend: `${refLegend(ref)}Left: the response R = Σ ηᵢsᵢ / Σ |ηᵢ| against the drive H, along the major loop (grey) and an excursion from H₁ = ${fmt(x.H1, 3)} to H₂ = ${fmt(x.H2, 3)} and back (blue). Right: the number of elements unlike the state at H₁ along the excursion; it ends at ${x.differ}.`};
   }
+  function regulationScene(rec) {
+    const e = rec.engine, tMax = e.t[e.t.length - 1] || 1;
+    return {kind: 'regulation', e, tMax, t: 0, speed: tMax / 6,
+            title: 'The output after a step of the input, and the variable that integrates the error',
+            legend: `Left: the output after ${esc(e.input)} steps from ${fmt(e.u0, 4)} to ${fmt(e.u1, 4)} at t = 0; dashed, its value before the step and its final value. Right: ${e.phi ? 'the integrator φ, which changes until the output is back at its set point' : 'no integrator was found; the input, stepped at t = 0'}.`};
+  }
   function stochasticScene(rec) {
     const e = rec.engine, mu = state.params.mu, s = state.params.sigma, random = D.rng(9), T = 10, dt = 0.02;
     const drift = e.convention === 'ito' ? mu - s * s / 2 : mu;
@@ -669,6 +690,16 @@
       V.series(side, {tMax: 2, cursor: scene.t, curves: [{pts: x.progress.map((p, i) => [p, x.unlike[i]])}],
                       yr: [0, Math.max(4, ...x.unlike) * 1.15], yLabel: 'elements unlike the state at H₁', xLabel: '',
                       xTicks: [0, 1, 2], xFormat: v => (v === 1 ? 'H₂' : 'H₁')});
+      return;
+    }
+    if (scene.kind === 'regulation') {
+      // the levels are drawn at the times of the trace, so that they advance with the cursor like the output
+      const e = scene.e, pts = e.t.map((t, i) => [t, e.y[i]]), level = v => e.t.map(t => [t, v]);
+      V.series(main, {tMax: scene.tMax, cursor: scene.t, yLabel: 'output y', curves: [
+        {pts}, {pts: level(e.y_ref), dash: [5, 4]}, {pts: level(e.y_end), dash: [2, 3]}]});
+      if (e.phi) V.series(side, {tMax: scene.tMax, cursor: scene.t, yLabel: 'integrator φ', curves: [{pts: e.t.map((t, i) => [t, e.phi[i]])}]});
+      else V.series(side, {tMax: scene.tMax, cursor: scene.t, yLabel: 'input ' + e.input, curves: [{pts: level(e.u1)}],
+                           yr: [Math.min(e.u0, e.u1) - 0.1 * Math.abs(e.u1 - e.u0 || 1), Math.max(e.u0, e.u1) + 0.1 * Math.abs(e.u1 - e.u0 || 1)]});
       return;
     }
     if (scene.kind === 'stochastic') {
