@@ -80,7 +80,11 @@ least stable element first and random order, each with simple excursions and wit
 subloop ($H_1 \to H_2 \to H_3 \to H_2 \to H_1$ with $H_2 < H_3 < H_1$). The excursions of one procedure start from
 one rising branch, followed from saturation and stopped at each $H_1$ in turn. $H_1$ is drawn inside the switching
 window of the rising branch of the major loop, between 10 and 90 per cent of its switches, and $H_2$ inside that of
-the falling branch, below $H_1$: the descent reaches the part of the loop in which elements switch back. The report
+the falling branch, below $H_1$: the descent reaches the part of the loop in which elements switch back. These
+excursions are a sample. All of them start from the rising branch of the major loop, and an excursion that starts from
+another turning point of a longer history can fail where none of the sampled ones does: a count of zero shows that the
+sampled excursions return, not that every excursion does. Where the network extended by the drive is balanced, the
+structure guarantees the return of every excursion. The report
 `hysterons.md` states the prediction, the measured returns and the largest number of elements whose state at the
 return differs from that at $H_1$. The figure `hysterons.png` draws the major loop with one excursion, the elements
 unlike the state at $H_1$ along it, the signs of the couplings with the drive and the subloops that do not return;
