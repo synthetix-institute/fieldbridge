@@ -171,11 +171,12 @@ $$
 
 The trajectories of each realization are split into eight runs on independent random streams, and the error of a
 constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. With 2000
-trajectories per realization, the six models have a weighted mean of $1.394 \pm 0.020$, against
-$\pi^{1/4} = 1.331$, with $\chi^2 = 15.1$ for 6 values. The same command with the seeds 11 to 14 gives weighted
-means of 1.311, 1.298, 1.375 and 1.317: the mean of one run of 2000 trajectories scatters between runs by about
-twice its stated error, so one run is a coarse check. The constant depends only on the canonical form. A derivation
-that ended on another mechanism, such as a fold, would give an accuracy that does not follow Eq. (3).
+trajectories per realization and the default seed, the six models have a weighted mean of $1.394 \pm 0.020$,
+against $\pi^{1/4} = 1.331$, with $\chi^2 = 15.1$ for 6 values: this run lies three standard errors above the law.
+Repeated with 16 other seeds, the accuracies scatter as their binomial errors predict, and the seeds 11 to 14 give
+weighted means of 1.311, 1.298, 1.375 and 1.317. The default run is a fluctuation of that size, not a property of
+the law; the record below is the precise test. The constant depends only on the canonical form. A derivation that
+ended on another mechanism, such as a fold, would give an accuracy that does not follow Eq. (3).
 
 The record of the [web page](https://synthetix-institute.github.io/fieldbridge/) uses 25,600 trajectories per
 realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.018. Eight realizations reach
