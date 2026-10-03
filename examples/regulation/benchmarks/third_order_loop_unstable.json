@@ -1,0 +1,55 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "integral control of a second-order plant, gain above 2 lam^2",
+  "field": "control theory",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Astrom and Murray, Feedback Systems, 2nd ed. (Princeton, 2021): integral action",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless variables and time",
+    "stable for kI < 2 lam^2 (Routh-Hurwitz)"
+  ],
+  "carrier": {
+    "kind": "euclid",
+    "name": "state",
+    "variables": [
+      "x1",
+      "x2",
+      "z"
+    ]
+  },
+  "parameters": {
+    "lam": 1.0,
+    "kI": 2.1,
+    "y0": 1.0,
+    "u": 2.0
+  },
+  "drift": {
+    "x1": "-lam*x1 + u - z",
+    "x2": "lam*(x1 - x2)",
+    "z": "kI*(x2 - y0)"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "u",
+    "output": "x2",
+    "steps": [
+      2.0,
+      2.2,
+      3.0
+    ],
+    "initial": {
+      "x1": 1.0,
+      "x2": 1.0,
+      "z": 1.0
+    },
+    "fixed": [
+      "lam",
+      "kI"
+    ],
+    "expect": "unstable loop"
+  }
+}

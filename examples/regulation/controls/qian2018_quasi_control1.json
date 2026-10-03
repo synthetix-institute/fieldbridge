@@ -1,0 +1,62 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "leaky integral control in a growing cell (type II, eps = 1; control)",
+  "field": "synthetic biology",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Qian and Del Vecchio, J. R. Soc. Interface 15, 20170902 (2018), doi:10.1098/rsif.2017.0902: type II quasi-integral controller, Eq. (2.7), with the process of Fig. 1; parameters of Fig. 1d",
+    "kind": "published model"
+  },
+  "assumptions": [
+    "concentrations in nM, time in hours",
+    "dilution of every controller species at the growth rate gamma",
+    "the step of the source: the disturbance d from 0 to 5 nM/h (Fig. 1d)"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "x",
+      "z1",
+      "z2"
+    ]
+  },
+  "parameters": {
+    "alpha": 1.0,
+    "delta": 1.0,
+    "k": 1.0,
+    "theta": 1.0,
+    "gamma": 1.0,
+    "eps": 1.0,
+    "u": 10.0,
+    "d": 0.0
+  },
+  "drift": {
+    "x": "alpha*z1 - delta*x + d",
+    "z1": "(k/eps)*u - (theta/eps)*z1*z2 - gamma*z1",
+    "z2": "(k/eps)*x - (theta/eps)*z1*z2 - gamma*z2"
+  },
+  "noise": 0.0,
+  "observable": "protein concentration x relative to the set point u",
+  "regulation": {
+    "input": "d",
+    "output": "x",
+    "steps": [
+      0.0,
+      5.0,
+      10.0
+    ],
+    "initial": {
+      "x": 10.0,
+      "z1": 10.0,
+      "z2": 0.1
+    },
+    "fixed": [
+      "u"
+    ],
+    "expect": "partial-adaptation",
+    "control_of": "qian2018_quasi.json",
+    "change": "controller reactions as slow as in the leaky controller of Eq. (2.4): eps = 1"
+  }
+}

@@ -1,0 +1,50 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "integrator with a leak",
+  "field": "control theory",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Astrom and Murray, Feedback Systems, 2nd ed. (Princeton, 2021): integral action",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless variables and time",
+    "the integral decays at rate delta"
+  ],
+  "carrier": {
+    "kind": "euclid",
+    "name": "state",
+    "variables": [
+      "y",
+      "z"
+    ]
+  },
+  "parameters": {
+    "lam": 1.0,
+    "kI": 0.5,
+    "y0": 1.0,
+    "delta": 0.05,
+    "u": 2.0
+  },
+  "drift": {
+    "y": "-lam*y + u - z",
+    "z": "kI*(y - y0) - delta*z"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "u",
+    "output": "y",
+    "steps": [
+      2.0,
+      2.2,
+      3.0,
+      4.0
+    ],
+    "initial": {
+      "y": 0.0,
+      "z": 0.0
+    },
+    "expect": "partial-adaptation"
+  }
+}

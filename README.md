@@ -12,6 +12,7 @@ FieldBridge automates this cross-field translation:
 1. **Derivation Chains:** Derives one target mechanism in models from different fields as a sequence of verified transformations, and tests with field-independent invariants whether the end points agree.
 2. **Obstruction Identification:** When two models fail to reach the same behavior, FieldBridge identifies the exact mathematical obstruction (such as a broken symmetry, a Hopf bifurcation, or missing feedback).
 3. **Material Memory Cards:** For a system of governing equations, it computes a memory card: the stable states, write thresholds, writing protocols, and the law by which a stored state is lost.
+4. **Return to a Set Point:** For a model with an input that is stepped and an output that is measured, it finds the integrator that returns the output exactly, or the fraction of the step that remains, and writes a certificate that a reader can check without repeating the search.
 
 The calculations require no API key, GPU, cluster, or archive download; every derivation step is checked by symbolic or numerical calculation.
 
@@ -105,6 +106,7 @@ with the source of its equations.
 | Return to a turning point of a slow drive | `memory hysterons` | Whether interacting hysterons return exactly to their state at a turning point, from the signs of their couplings and of the drive, against subloops of the quasi-static dynamics ([tutorial](docs/tutorial/27_memory_return_point.md)) |
 | One mechanism in models from different fields | `memory codiscover` | For a symmetric write, a threshold write or phase locking: the derivation in each model, the step at which a derivation stops, and field-independent invariants of the end point ([tutorial](docs/tutorial/23_memory_codiscovery.md)) |
 | Adding a material | `memory new`, `memory check`, `memory catalog` | A template specification, the checks it must pass, and the catalog of materials |
+| Return to a set point after a step of an input | `regulation card`, `regulation survey`, `regulation check` | Whether the output returns exactly, part of the way or not at all; the integrator that returns it, or the variable whose clamp shows the remaining fraction; a certificate checked against the specification without the search ([tutorial](docs/tutorial/28_regulation_set_point.md)) |
 | Quantum mechanisms on different carriers | `quantum detach`, `quantum attach`, `quantum codiscover` | The Bloch rotation on spins, atoms in two wells, exchange chains and Cooper pairs, or the term that obstructs it ([tutorial](docs/tutorial/24_spin_language.md)) |
 | Derivation from supplied equations | `verify-construction` | An exact local stochastic transformation or a finite quantum closure |
 | Interaction design | `design-spin-cancellation` | Coupling constraints, the predicted polarization and the comparison with a restricted interaction |
@@ -227,10 +229,11 @@ calculations. The small route-and-fiber fingerprint used here is not the
 
 ## Tutorial
 
-The [tutorial](docs/tutorial/index.md) starts from two entry points: the
-language of mechanisms on quantum carriers, and memory in materials (twelve
+The [tutorial](docs/tutorial/index.md) starts from three entry points: the
+language of mechanisms on quantum carriers, memory in materials (twelve
 modules, from a first memory card to one mechanism derived in models from
-different fields and the return to a turning point of a slow drive). Further reading paths cover the construction from specified
+different fields and the return to a turning point of a slow drive), and the
+return of an output to its set point after a step of an input. Further reading paths cover the construction from specified
 equations (an Itô correction, an interacting spin), paper collections, and the
 evaluation of the code. Worked calculations include an input, the expected
 output, a change to try, and the functions and tests responsible for the
@@ -247,6 +250,8 @@ standalone.
 | --- | --- |
 | [memory/](fieldbridge/memory/) | Material specifications, structural predictions, memory cards, transfer, co-discovery and the contribution checks |
 | [quantum/](fieldbridge/quantum/) | The language of mechanisms on quantum carriers: detachment, attachment and co-discovery |
+| [regulation/](fieldbridge/regulation/) | Return to a set point: static gains, clamps, integrators, step responses and certificates |
+| [core/](fieldbridge/core/) | Provenance and writing of reports for the families added after memory and quantum |
 | [site_registry.py](fieldbridge/site_registry.py), [site_data.py](fieldbridge/site_data.py), [web/](fieldbridge/web/) | The web page: realizations, the checked changes between them, and the browser engines |
 | [routes.py](fieldbridge/routes.py), [extract.py](fieldbridge/extract.py) | Textual cues and heuristic mechanism descriptions |
 | [search.py](fieldbridge/search.py), [database.py](fieldbridge/database.py) | Loading and ranking records; target examples |

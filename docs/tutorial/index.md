@@ -1,6 +1,6 @@
 # FieldBridge tutorial
 
-The tutorial has two entry points. Each is a calculation with a physical question, a result to compare with, a
+The tutorial has three entry points. Each is a calculation with a physical question, a result to compare with, a
 control that must change the prediction, and the test responsible for it.
 
 - **The language of mechanisms.** [Quantum closure](11_quantum_closure.md) asks whether the transverse magnetization
@@ -9,6 +9,8 @@ control that must change the prediction, and the test responsible for it.
   and attaches it to an exchange chain, atoms in two wells and a Cooper-pair level.
 - **Memory in materials.** [A first memory card](15_memory_first_card.md) asks which states a genetic toggle switch
   stores and how a state is written. It is Module 1 of [twelve modules](#memory-in-materials-twelve-modules).
+- **Regulation.** [Return to a set point](28_regulation_set_point.md) asks whether the output of a cell, a machine or
+  a material returns exactly after a step of its input, and through which variable.
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -49,6 +51,12 @@ it was first found.
 
 Chapter filenames retain their numbers so that previous links remain valid. The paths above are the recommended
 reading order.
+
+## Regulation
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [Return to a set point](28_regulation_set_point.md) | Does the output return exactly after a step of the input, through which variable, and is the result checkable without repeating the search? | `regulation card`, `survey`, `check` |
 
 ## Memory in materials: twelve modules
 

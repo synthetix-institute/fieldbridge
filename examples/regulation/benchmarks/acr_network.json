@@ -1,0 +1,58 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "absolute concentration robustness: A + B -> 2B, B -> A, A <-> C",
+  "field": "chemical reaction networks",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Shinar and Feinberg, Science 327, 1389 (2010): structural condition for absolute concentration robustness; the logarithmic integrator (1/k1) ln B of A + B -> 2B, B -> A: Cappelletti, Gupta and Khammash, J. R. Soc. Interface 17, 20200437 (2020)",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "mass-action kinetics",
+    "dimensionless concentrations and time",
+    "total A + B + C = 5 fixed by the initial state"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "parameters": {
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 0.5,
+    "k4": 1.0
+  },
+  "drift": {
+    "A": "-k1*A*B + k2*B - k3*A + k4*C",
+    "B": "k1*A*B - k2*B",
+    "C": "k3*A - k4*C"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "k3",
+    "output": "A",
+    "steps": [
+      0.5,
+      0.75,
+      1.0,
+      1.5
+    ],
+    "initial": {
+      "A": 1.0,
+      "B": 3.0,
+      "C": 1.0
+    },
+    "set_point": 1.0,
+    "fixed": [
+      "k1",
+      "k2"
+    ],
+    "expect": "perfect-adaptation"
+  }
+}

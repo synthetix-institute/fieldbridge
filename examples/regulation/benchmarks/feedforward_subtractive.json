@@ -1,0 +1,50 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "incoherent feedforward loop with a subtractive proportioner",
+  "field": "biochemical networks",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Ma, Trusina, El-Samad, Lim and Tang, Cell 138, 760 (2009): incoherent feedforward, linear form",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless concentrations and time",
+    "k1 = k2 k3 / k4 cancels the input exactly"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "x",
+      "y"
+    ]
+  },
+  "parameters": {
+    "k1": 1.0,
+    "k2": 1.0,
+    "k3": 1.0,
+    "k4": 1.0,
+    "k5": 1.0,
+    "u": 1.0
+  },
+  "drift": {
+    "x": "k3*u - k4*x",
+    "y": "k1*u - k2*x - k5*y + 1"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "u",
+    "output": "y",
+    "steps": [
+      1.0,
+      2.0,
+      4.0
+    ],
+    "initial": {
+      "x": 1.0,
+      "y": 1.0
+    },
+    "expect": "fine-tuned-adaptation"
+  }
+}

@@ -24,7 +24,7 @@ memory = ["sympy>=1.12,<2", "numpy>=1.24,<3", "scipy>=1.10", "matplotlib>=3.7"]
 fieldbridge = "fieldbridge.cli:main"
 
 [tool.setuptools]
-packages = ["fieldbridge", "fieldbridge.memory", "fieldbridge.quantum"]
+packages = ["fieldbridge", "fieldbridge.core", "fieldbridge.memory", "fieldbridge.quantum", "fieldbridge.regulation"]
 
 [tool.setuptools.package-data]
 fieldbridge = ["web/*.html", "web/*.css", "web/*.js"]

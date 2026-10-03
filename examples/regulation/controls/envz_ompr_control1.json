@@ -1,0 +1,81 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "EnvZ-OmpR with a second phosphatase of OmpR-P (control)",
+  "field": "chemical reaction networks",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Shinar and Feinberg, Science 327, 1389 (2010), doi:10.1126/science.1183372: the EnvZ-OmpR mechanism; reactions and rate constants as in Anderson, Enciso and Johnston, J. R. Soc. Interface 11, 20130943 (2014), Fig. 2 (arXiv:1310.3761)",
+    "kind": "published model"
+  },
+  "assumptions": [
+    "mass action; ADP and ATP constant and absorbed in the rates (as in the source)",
+    "the rate constants are those of the reproduction by Anderson, Enciso and Johnston (the original was not read)",
+    "free EnvZ and free OmpR written through the totals Xtot and Ytot, so that a step of the total OmpR is a step of a parameter",
+    "constructed control: the added reaction breaks the structure of Shinar and Feinberg"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "XD",
+      "XT",
+      "Xp",
+      "XpY",
+      "Yp",
+      "XDYp"
+    ]
+  },
+  "parameters": {
+    "k1": 0.5,
+    "k2": 0.5,
+    "k3": 0.5,
+    "k4": 0.5,
+    "k5": 0.1,
+    "k6": 0.5,
+    "k7": 0.5,
+    "k8": 0.5,
+    "k9": 0.5,
+    "k10": 0.5,
+    "k11": 0.1,
+    "D": 1.0,
+    "T": 1.0,
+    "Xtot": 1.0,
+    "Ytot": 35.0,
+    "k12": 0.05
+  },
+  "drift": {
+    "XD": "-k1*XD + k2*D*(Xtot - XD - XT - Xp - XpY - XDYp) - k9*XD*Yp + k10*XDYp + k11*XDYp",
+    "XT": "k3*T*(Xtot - XD - XT - Xp - XpY - XDYp) - k4*XT - k5*XT",
+    "Xp": "k5*XT - k6*Xp*(Ytot - XpY - XDYp - Yp) + k7*XpY",
+    "XpY": "k6*Xp*(Ytot - XpY - XDYp - Yp) - k7*XpY - k8*XpY",
+    "Yp": "k8*XpY - k9*XD*Yp + k10*XDYp - k12*Yp",
+    "XDYp": "k9*XD*Yp - k10*XDYp - k11*XDYp"
+  },
+  "noise": 0.0,
+  "observable": "phosphorylated OmpR (OmpR-P)",
+  "regulation": {
+    "input": "Ytot",
+    "output": "Yp",
+    "steps": [
+      35.0,
+      40.0,
+      50.0,
+      70.0
+    ],
+    "initial": {
+      "XD": 0.2,
+      "XT": 0.2,
+      "Xp": 0.2,
+      "XpY": 0.1,
+      "Yp": 1.0,
+      "XDYp": 0.1
+    },
+    "expect": [
+      "partial-adaptation",
+      "no-adaptation"
+    ],
+    "control_of": "envz_ompr.json",
+    "change": "an added reaction Yp -> Y (k12 = 0.05) that does not pass through XD"
+  }
+}

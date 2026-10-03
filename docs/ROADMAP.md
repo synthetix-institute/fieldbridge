@@ -10,7 +10,10 @@ the targets of `fieldbridge/memory/codiscovery.py`, and the Rabi law of the Bloc
 (`fieldbridge/quantum/language.py`). Return-point memory is on the map with a structural condition in place of a law constant:
 the return to a turning point of a slow drive is exact when no loop of the network that counts the drive as an
 element is frustrated ([Module 12](tutorial/27_memory_return_point.md), `memory hysterons`), and six realizations
-from three fields are compared with it. The mechanisms below are studied in the tutorial or in the literature on
+from three fields are compared with it. The return to a set point after a step of an input is a second family with a
+structural condition: an integrator together with a stable steady state makes the return exact
+([Regulation, Module 1](tutorial/28_regulation_set_point.md), `regulation card`), and published models from five
+fields are compared with it; it is not yet on the web page. The mechanisms below are studied in the tutorial or in the literature on
 memory and are not yet derivation targets. The web page lists them under "Mechanisms in preparation".
 
 | Mechanism | Canonical form or law | What exists | What is missing |

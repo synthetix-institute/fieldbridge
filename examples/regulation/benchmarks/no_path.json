@@ -1,0 +1,39 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "input that does not reach the output",
+  "field": "control theory",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "constructed control",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless"
+  ],
+  "carrier": {
+    "kind": "euclid",
+    "name": "state",
+    "variables": [
+      "x",
+      "y"
+    ]
+  },
+  "parameters": {
+    "u": 1.0
+  },
+  "drift": {
+    "x": "u - x",
+    "y": "1 - y"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "u",
+    "output": "y",
+    "steps": [
+      1.0,
+      2.0
+    ],
+    "expect": "no response"
+  }
+}

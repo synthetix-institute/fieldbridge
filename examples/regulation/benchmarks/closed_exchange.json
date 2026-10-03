@@ -1,0 +1,46 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "exchange between two compartments",
+  "field": "chemical kinetics",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "first-order exchange A <-> B with a conserved total",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless amounts and time"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "A",
+      "B"
+    ]
+  },
+  "parameters": {
+    "kf": 1.0,
+    "kb": 1.0
+  },
+  "drift": {
+    "A": "-kf*A + kb*B",
+    "B": "kf*A - kb*B"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "kf",
+    "output": "A",
+    "steps": [
+      1.0,
+      1.5,
+      2.0,
+      3.0
+    ],
+    "initial": {
+      "A": 1.0,
+      "B": 1.0
+    },
+    "expect": "no-adaptation"
+  }
+}

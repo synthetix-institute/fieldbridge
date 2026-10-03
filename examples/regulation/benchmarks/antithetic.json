@@ -1,0 +1,65 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "antithetic integral feedback on a two-step cascade",
+  "field": "synthetic biology",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Briat, Gupta and Khammash, Cell Systems 2, 15 (2016): the antithetic motif, here with illustrative rates",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless concentrations and time",
+    "illustrative rates, not those of the source",
+    "the disturbance d adds to the production of x1"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "x1",
+      "x2",
+      "z1",
+      "z2"
+    ]
+  },
+  "parameters": {
+    "mu": 1.0,
+    "theta": 1.0,
+    "eta": 10.0,
+    "k": 1.0,
+    "g1": 1.0,
+    "k2": 1.0,
+    "g2": 1.0,
+    "d": 0.2
+  },
+  "drift": {
+    "x1": "k*z1 + d - g1*x1",
+    "x2": "k2*x1 - g2*x2",
+    "z1": "mu - eta*z1*z2",
+    "z2": "theta*x2 - eta*z1*z2"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "d",
+    "output": "x2",
+    "steps": [
+      0.2,
+      0.3,
+      0.5,
+      0.7
+    ],
+    "initial": {
+      "x1": 1.0,
+      "x2": 1.0,
+      "z1": 0.8,
+      "z2": 0.1
+    },
+    "set_point": 1.0,
+    "fixed": [
+      "mu",
+      "theta"
+    ],
+    "expect": "perfect-adaptation"
+  }
+}

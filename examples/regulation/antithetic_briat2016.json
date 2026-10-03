@@ -1,0 +1,65 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "antithetic integral feedback on gene expression",
+  "field": "synthetic biology",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Briat, Gupta and Khammash, Cell Systems 2, 15 (2016), doi:10.1016/j.cels.2016.01.004 (arXiv:1410.6064v7): reactions (1) and (10) with mass action; parameters of Fig. 3",
+    "kind": "published model"
+  },
+  "assumptions": [
+    "deterministic mass-action equations of the reactions (the source studies the stochastic model and prints the deterministic one for k2 = theta = gamma1 = gamma2 = 1)",
+    "the step of the source: k2 from 3 to 6 (Fig. 3)",
+    "molecule numbers as concentrations"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "x1",
+      "x2",
+      "z1",
+      "z2"
+    ]
+  },
+  "parameters": {
+    "mu": 3.0,
+    "theta": 1.0,
+    "k": 1.0,
+    "gamma1": 3.0,
+    "k2": 3.0,
+    "gamma2": 1.0,
+    "eta": 50.0
+  },
+  "drift": {
+    "x1": "k*z1 - gamma1*x1",
+    "x2": "k2*x1 - gamma2*x2",
+    "z1": "mu - eta*z1*z2",
+    "z2": "theta*x2 - eta*z1*z2"
+  },
+  "noise": 0.0,
+  "observable": "mean protein number E[X2]",
+  "regulation": {
+    "input": "k2",
+    "output": "x2",
+    "steps": [
+      3.0,
+      4.0,
+      6.0,
+      9.0
+    ],
+    "initial": {
+      "x1": 1.0,
+      "x2": 3.0,
+      "z1": 3.0,
+      "z2": 0.02
+    },
+    "set_point": 3.0,
+    "fixed": [
+      "mu",
+      "theta"
+    ],
+    "expect": "perfect-adaptation"
+  }
+}

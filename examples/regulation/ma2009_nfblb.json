@@ -1,0 +1,69 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "negative feedback loop with a buffer node (NFBLB)",
+  "field": "biochemical networks",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "Ma, Trusina, El-Samad, Lim and Tang, Cell 138, 760 (2009), doi:10.1016/j.cell.2009.06.013: Eqs. (1) and (5); Michaelis constants and rates on B and C from the Fig. 3 legend",
+    "kind": "published model, partly stated parameters"
+  },
+  "assumptions": [
+    "rate constants and Michaelis constants not stated in the main text (k_IA, K_IA, k'_FAA, K'_FAA and the others named in model_sheet.md) set to 1, the centre of the sampled ranges (0.1-10 and 0.001-100)",
+    "basal enzymes F_A = F_B = 0.5 (as in the source)",
+    "the input renamed Iin; step 0.5 -> 0.6 as in the source",
+    "Fig. 3A, top panel: K_CB = K'_FBB = 0.1, k_AC = k'_BC = 10"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "A",
+      "B",
+      "C"
+    ]
+  },
+  "parameters": {
+    "Iin": 0.5,
+    "kIA": 1.0,
+    "KIA": 1.0,
+    "FA": 0.5,
+    "kFA": 1.0,
+    "KFA": 1.0,
+    "kCB": 1.0,
+    "KCB": 0.1,
+    "FB": 0.5,
+    "kFB": 1.0,
+    "KFB": 0.1,
+    "kAC": 10.0,
+    "KAC": 1.0,
+    "kBC": 10.0,
+    "KBC": 1.0
+  },
+  "drift": {
+    "A": "Iin*kIA*(1 - A)/((1 - A) + KIA) - FA*kFA*A/(A + KFA)",
+    "B": "C*kCB*(1 - B)/((1 - B) + KCB) - FB*kFB*B/(B + KFB)",
+    "C": "A*kAC*(1 - C)/((1 - C) + KAC) - B*kBC*C/(C + KBC)"
+  },
+  "noise": 0.0,
+  "observable": "active fraction of the output node C",
+  "regulation": {
+    "input": "Iin",
+    "output": "C",
+    "steps": [
+      0.5,
+      0.6,
+      0.8
+    ],
+    "initial": {
+      "A": 0.3,
+      "B": 0.3,
+      "C": 0.5
+    },
+    "fixed": [
+      "FA",
+      "FB"
+    ],
+    "expect": "partial-adaptation"
+  }
+}

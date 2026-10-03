@@ -1,0 +1,52 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "autocatalytic controller diluted by growth",
+  "field": "chemical kinetics",
+  "question": "Does the output return to its set point after a step of the input, and through which variable?",
+  "provenance": {
+    "source": "exponential (autocatalytic) integral controller dz/dt = k z (y - y0): Drengstig, Ni, Thorsen, Jolma and Ruoff, J. Phys. Chem. B 116, 5355 (2012); Briat, SIAM J. Appl. Dyn. Syst. 19, 619 (2020)",
+    "kind": "analytic benchmark"
+  },
+  "assumptions": [
+    "dimensionless concentrations and time",
+    "the controller is diluted at rate delta"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "y",
+      "z"
+    ]
+  },
+  "parameters": {
+    "u": 1.0,
+    "gam": 1.0,
+    "k": 1.0,
+    "y0": 1.0,
+    "delta": 0.2
+  },
+  "drift": {
+    "y": "u - gam*y*z",
+    "z": "k*z*(y - y0) - delta*z"
+  },
+  "noise": 0.0,
+  "regulation": {
+    "input": "u",
+    "output": "y",
+    "steps": [
+      1.0,
+      1.5,
+      2.0,
+      3.0
+    ],
+    "initial": {
+      "y": 0.5,
+      "z": 0.5
+    },
+    "set_point": 1.2,
+    "expect": "perfect-adaptation",
+    "note": "d ln z/dt = k (y - y0 - delta/k): dilution moves the set point to y0 + delta/k and leaves no residual"
+  }
+}
