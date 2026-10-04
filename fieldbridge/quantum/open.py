@@ -9,7 +9,8 @@ Specification schema ``fieldbridge-quantum-open/1``:
                  the coefficient by i; "hc" adds the Hermitian conjugate of the term
     dissipators  [{"rate": expr, "operator": "a"}]                      Lindblad terms rate * D[operator]
     protocol     {"sweep": {"parameter": "eps2", "from": 0, "to": 1.2, "rate": 0.01}, "hold": 10,
-                  "bias": {"parameter": "h", "value": 0.05}, "initial": {"thermal": expr}}
+                  "bias": {"parameter": "h", "value": 0.05, "off_at": t}, "initial": {"thermal": expr}}
+                 "off_at" (optional) switches the bias off at that time, counted from the start of the ramp
     observable   {"sign_of": "a + ad"}                                   the branch is the sign of this quadrature
 
 The derivation of the target ``quantum-write`` has the letters G (Gaussian stage: the generator is quadratic plus
@@ -177,9 +178,13 @@ def load(source: Union[str, Path, Dict]) -> Realization:
     nbar0 = _real_number((proto.get("initial") or {}).get("thermal", 0), params)
     if nbar0 < 0:
         raise SpecError("the initial thermal occupation is negative")
+    off_at = bias.get("off_at")
+    if off_at is not None and float(off_at) <= 0:
+        raise SpecError("protocol.bias.off_at must be a positive time")
     protocol = {"sweep_parameter": sweep["parameter"], "from": float(sweep["from"]), "to": float(sweep["to"]),
                 "rate": float(sweep["rate"]), "hold": float(proto.get("hold", 0.0)),
-                "bias_parameter": bias["parameter"], "bias": float(bias["value"]), "nbar0": nbar0}
+                "bias_parameter": bias["parameter"], "bias": float(bias["value"]),
+                "bias_off_at": float(off_at) if off_at is not None else None, "nbar0": nbar0}
     return Realization(name=spec["name"], field=str(spec.get("field", "unspecified")), spec=spec, carrier=carrier,
                        params=params, protocol=protocol, hamiltonian=hamiltonian, terms=terms,
                        dissipators=dissipators, quadrature=quadrature, initial=thermal_state(dim, nbar0))
@@ -209,28 +214,41 @@ def evolve(real: Realization, rtol: float = 1e-8, atol: float = 1e-11) -> Dict[s
     T = (pr["to"] - pr["from"]) / pr["rate"]
     jumps = [(g, L, L.conj().T @ L) for g, L, _ in real.dissipators if g > 0]
 
-    def rhs_factory(eps_of_t):
+    off_at = pr.get("bias_off_at")
+
+    def bias_at(t_abs: float) -> float:
+        return 0.0 if (off_at is not None and t_abs >= off_at) else pr["bias"]
+
+    def rhs_factory(eps_of_t, t_offset=0.0):
         def rhs(t, y):
             rho = y.reshape(dim, dim)
-            H = real.hamiltonian(eps_of_t(t), pr["bias"])
+            H = real.hamiltonian(eps_of_t(t), bias_at(t + t_offset))
             d = -1j * (H @ rho - rho @ H)
             for g, L, LdL in jumps:
                 d += g * (L @ rho @ L.conj().T - 0.5 * (LdL @ rho + rho @ LdL))
             return d.ravel()
         return rhs
 
-    sol = solve_ivp(rhs_factory(lambda t: pr["from"] + pr["rate"] * t), (0.0, T), real.initial.ravel(),
-                    method="DOP853", rtol=rtol, atol=atol)
-    if not sol.success:
-        raise RuntimeError(sol.message)
-    rho_ramp = sol.y[:, -1].reshape(dim, dim)
-    rho_end, nfev = rho_ramp, int(sol.nfev)
+    ramp_segments = [(0.0, T)] if off_at is None or not (0.0 < off_at < T) else [(0.0, off_at), (off_at, T)]
+    y = real.initial.ravel()
+    nfev = 0
+    for a, b in ramp_segments:  # integrate up to the switch-off, then from it, so the step does not straddle it
+        sol = solve_ivp(rhs_factory(lambda t: pr["from"] + pr["rate"] * t), (a, b), y, method="DOP853", rtol=rtol, atol=atol)
+        if not sol.success:
+            raise RuntimeError(sol.message)
+        y, nfev = sol.y[:, -1], nfev + int(sol.nfev)
+    rho_ramp = y.reshape(dim, dim)
+    rho_end = rho_ramp
     if pr["hold"] > 0:
-        sol2 = solve_ivp(rhs_factory(lambda t: pr["to"]), (0.0, pr["hold"]), rho_ramp.ravel(), method="DOP853",
-                         rtol=rtol, atol=atol)
-        if not sol2.success:
-            raise RuntimeError(sol2.message)
-        rho_end, nfev = sol2.y[:, -1].reshape(dim, dim), nfev + int(sol2.nfev)
+        cut = off_at - T if (off_at is not None and T < off_at < T + pr["hold"]) else None
+        hold_segments = [(0.0, pr["hold"])] if cut is None else [(0.0, cut), (cut, pr["hold"])]
+        y = rho_ramp.ravel()
+        for a, b in hold_segments:
+            sol2 = solve_ivp(rhs_factory(lambda t: pr["to"], t_offset=T), (a, b), y, method="DOP853", rtol=rtol, atol=atol)
+            if not sol2.success:
+                raise RuntimeError(sol2.message)
+            y, nfev = sol2.y[:, -1], nfev + int(sol2.nfev)
+        rho_end = y.reshape(dim, dim)
     return {"rho_end": rho_end, "rho_ramp": rho_ramp, "T_ramp": T, "nfev": nfev}
 
 
@@ -368,10 +386,11 @@ def derive_quantum_write(real: Realization, law: bool = True) -> Dict[str, objec
         out["word"], out["status"], out["class"] = "".join(word), REACHED, "linear-stage write"
         return out
     # the law fails: is it the equilibrium write?
-    eq = equilibrium(real, pr["to"], pr["bias"])
+    bias_end = 0.0 if (pr.get("bias_off_at") is not None and pr["bias_off_at"] <= ev["T_ramp"] + pr["hold"]) else pr["bias"]
+    eq = equilibrium(real, pr["to"], bias_end)
     out["equilibrium"] = eq
     if eq is not None:
-        near = equilibrium(real, min(threshold + 0.5 * kappa, pr["to"]), pr["bias"])
+        near = equilibrium(real, min(threshold + 0.5 * kappa, pr["to"]), bias_end)
         eq["gap_near_threshold"] = near["gap"] if near else None
     if eq is not None and abs(p_exact - eq["P_eq"]) <= 0.02:
         return _obstructed(out, "L", f"P_exact = {p_exact:.4f} leaves the law ({p_law:.4f}) and equals the selection "
@@ -407,6 +426,8 @@ def law_along_protocol(real: Realization, kappa: float, nbar: float, nbar0: floa
     eps = pr["from"] + pr["rate"] * np.minimum(t, T)
     gain = np.array([linear_stage(real, float(e), 0.0)["gain"] for e in eps])
     push = np.array([linear_stage(real, float(e), 1.0)["push"].real for e in eps]) * pr["bias"]
+    if pr.get("bias_off_at") is not None:
+        push = np.where(t >= pr["bias_off_at"], 0.0, push)
     rate_of_growth = gain - kappa / 2.0
     phi = np.concatenate([[0.0], np.cumsum(0.5 * (rate_of_growth[1:] + rate_of_growth[:-1]) * np.diff(t))])
     phi_min = float(phi.min())
