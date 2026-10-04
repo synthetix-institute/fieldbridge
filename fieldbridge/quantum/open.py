@@ -333,19 +333,21 @@ def derive_quantum_write(real: Realization, law: bool = True) -> Dict[str, objec
     # K: the canonical linear equation
     def gain(eps2):
         return linear_stage(real, eps2, 0.0)["gain"]
-    r_eff = (gain(pr["to"]) - gain(pr["from"])) / (pr["to"] - pr["from"]) * pr["rate"]
-    h_eff = push.real * pr["bias"]
-    two_d = kappa * (2.0 * nbar + 1.0) / 4.0
-    sigma0_sq = (2.0 * pr["nbar0"] + 1.0) / 4.0
-    steps.append({"letter": "K", "text": f"x' = (eps(t) - kappa/2) x + h + sqrt(2D) xi with eps(t) = {gain(pr['from']):.4g} + "
-                                         f"{r_eff:.4g} t, h = {h_eff:.5g}, 2D = {two_d:.5g}, sigma0^2 = {sigma0_sq:.4g}",
+    along = law_along_protocol(real, kappa, nbar, pr["nbar0"])
+    r_eff = along["r_local"]
+    h_eff = along["h_end"]
+    two_d, sigma0_sq = along["two_d"], along["sigma0_sq"]
+    steps.append({"letter": "K", "text": f"x' = (eps(t) - kappa/2) x + h(t) + sqrt(2D) xi; the growth rate crosses zero at "
+                                         f"t = {along['t_threshold']:.4g} with slope r = {r_eff:.4g}; h = {h_eff:.5g} at the "
+                                         f"end of the ramp, 2D = {two_d:.5g}, sigma0^2 = {sigma0_sq:.4g}",
                   "r": r_eff, "h": h_eff, "two_d": two_d, "sigma0_sq": sigma0_sq, "kappa": kappa, "nbar": nbar})
     word.append("K")
     canon = {"r": r_eff, "h": h_eff, "two_d": two_d, "sigma0_sq": sigma0_sq, "kappa": kappa, "nbar": nbar,
-             "threshold": threshold, "gain_from": gain(pr["from"]), "gain_to": gain(pr["to"])}
+             "threshold": threshold, "gain_from": gain(pr["from"]), "gain_to": gain(pr["to"]),
+             "t_threshold": along["t_threshold"]}
     out["canonical"] = canon
-    p_law = protocol_probability(canon, pr)
-    out["law"] = {"P_law": p_law}
+    p_law = along["P_law"]
+    out["law"] = {"P_law": p_law, "probit": along["probit"]}
     if not law:
         out["word"], out["status"], out["class"] = "".join(word), "derived without the law", "linear-stage write"
         return out
@@ -390,6 +392,42 @@ def _obstructed(out: Dict, letter: str, reason: str, short: str) -> Dict:
     out["obstruction"], out["obstruction_short"] = reason, short
     out["class"] = short
     return out
+
+
+def law_along_protocol(real: Realization, kappa: float, nbar: float, nbar0: float, samples: int = 4000) -> Dict[str, float]:
+    """The Gaussian-stage law for the protocol as specified: the gain and the push of the bias are sampled along the
+    ramp and the hold, phi(t) = int (eps(s) - kappa/2) ds, and P = Phi(int h(s) e^{-phi(s)} ds / sqrt(sigma0^2 + 2D int
+    e^{-2 phi(s)} ds)), the common amplification having cancelled. Exact for a quadratic generator with linear loss,
+    whatever the shape of the ramp."""
+    from scipy.special import ndtr
+    pr = real.protocol
+    T = (pr["to"] - pr["from"]) / pr["rate"]
+    t_end = T + pr["hold"]
+    t = np.linspace(0.0, t_end, samples)
+    eps = pr["from"] + pr["rate"] * np.minimum(t, T)
+    gain = np.array([linear_stage(real, float(e), 0.0)["gain"] for e in eps])
+    push = np.array([linear_stage(real, float(e), 1.0)["push"].real for e in eps]) * pr["bias"]
+    rate_of_growth = gain - kappa / 2.0
+    phi = np.concatenate([[0.0], np.cumsum(0.5 * (rate_of_growth[1:] + rate_of_growth[:-1]) * np.diff(t))])
+    phi_min = float(phi.min())
+    two_d = kappa * (2.0 * nbar + 1.0) / 4.0
+    sigma0_sq = (2.0 * nbar0 + 1.0) / 4.0
+    i1 = float(np.trapz(push * np.exp(-(phi - phi_min)), t))
+    i2 = float(np.trapz(np.exp(-2.0 * (phi - phi_min)), t))
+    # m / sigma with the factor e^{phi_min} restored: m ~ e^{-phi_min} i1, sigma^2 ~ sigma0^2 + 2D e^{-2 phi_min} i2
+    log_var = float(np.logaddexp(math.log(sigma0_sq), math.log(two_d) + math.log(i2) - 2.0 * phi_min)) if two_d > 0 \
+        else math.log(sigma0_sq)
+    z = 0.0 if i1 == 0 else math.copysign(math.exp(math.log(abs(i1)) - phi_min - 0.5 * log_var), i1)
+    # where the growth rate crosses zero, and its slope there (the local sweep rate of the canonical equation)
+    crossing = np.where(np.diff(np.sign(rate_of_growth)) > 0)[0]
+    if crossing.size:
+        k = int(crossing[0])
+        r_local = float((rate_of_growth[k + 1] - rate_of_growth[k]) / (t[k + 1] - t[k]))
+        t_star = float(t[k])
+    else:
+        r_local, t_star = float("nan"), float("nan")
+    return {"P_law": float(ndtr(z)), "probit": z, "two_d": two_d, "sigma0_sq": sigma0_sq, "r_local": r_local,
+            "t_threshold": t_star, "h_end": float(push[-1]), "gain_end": float(gain[-1]), "T_ramp": T}
 
 
 def protocol_probability(canon: Dict, pr: Dict) -> float:
