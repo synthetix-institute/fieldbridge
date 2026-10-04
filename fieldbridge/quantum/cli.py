@@ -7,6 +7,9 @@
   codiscover [SPEC ...]              derive the Bloch rotation in realizations from different fields: derivations
                                      through the algebra or through the closure of the observable, obstructions and
                                      invariants (default: every file in examples/quantum)
+  write [SPEC ...]                   derive the quantum write on open carriers: a parametric oscillator swept
+                                     through its threshold with a bias, the Gaussian-stage law with the vacuum seed,
+                                     and the equilibrium write where the law fails (default: examples/quantum/open)
 
 Every command writes <name>.json and <name>.md to --out-dir, with the input hashes and the hash of the implementation.
 """
@@ -181,6 +184,27 @@ def cmd_codiscover(args) -> int:
     return 0
 
 
+def cmd_write(args) -> int:
+    from . import open as qo
+    paths = [Path(p) for p in args.specs] or sorted(Path(args.examples).glob("*.json"))
+    reals, skipped = [], []
+    for p in paths:
+        try:
+            reals.append(qo.load(p))
+        except qo.SpecError as err:
+            skipped.append(f"{p.name}: {err}")
+    rep = qo.codiscover(reals, law=not args.no_law)
+    out = Path(args.out_dir)
+    report = {"command": "quantum write", **_provenance([r.spec for r in reals]),
+              "summary": rep["summary"], "rows": rep["rows"], "skipped": skipped}
+    _write(out, "write", report, qo.markdown(rep) + f"\n{BOUNDARY}\n")
+    s = rep["summary"]
+    print(json.dumps({"out_dir": args.out_dir, "models": s["models"], "reached": s["reached"],
+                      "classes": s["classes"], "law_difference_max": s["law_difference_max"],
+                      "skipped": len(skipped)}, indent=2))
+    return 0
+
+
 def add_parser(sub) -> None:
     import numpy  # noqa: F401  (the quantum language needs numpy and sympy: pip install -e '.[construction]')
     import sympy  # noqa: F401
@@ -205,3 +229,9 @@ def add_parser(sub) -> None:
     p.add_argument("--out-dir", required=True)
     p.add_argument("--no-figure", action="store_true")
     p.set_defaults(func=cmd_codiscover)
+    p = qsub.add_parser("write", help="Derive the quantum write on open carriers (a swept parametric oscillator with a bias).")
+    p.add_argument("specs", nargs="*", help="Specifications fieldbridge-quantum-open/1 (default: every file in --examples).")
+    p.add_argument("--examples", default="examples/quantum/open")
+    p.add_argument("--out-dir", required=True)
+    p.add_argument("--no-law", action="store_true", help="Stop after the canonical form; do not evolve the density operator.")
+    p.set_defaults(func=cmd_write)

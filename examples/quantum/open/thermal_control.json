@@ -1,0 +1,35 @@
+{
+  "schema": "fieldbridge-quantum-open/1",
+  "name": "Kerr parametric oscillator at thermal occupation 0.6",
+  "field": "superconducting circuits",
+  "question": "How does a thermal bath change the probability of the favoured state of a swept Kerr parametric oscillator with a bias?",
+  "carrier": {"kind": "mode", "max_quanta": 89},
+  "parameters": {"K": 0.02, "kappa": 1.0, "nbar": 0.6},
+  "hamiltonian": [
+    {"coefficient": "-K", "operator": "ad ad a a"},
+    {"coefficient": "eps2/2", "operator": "ad ad", "imaginary": true, "hc": true},
+    {"coefficient": "h", "operator": "ad", "imaginary": true, "hc": true}
+  ],
+  "dissipators": [
+    {"rate": "kappa*(nbar+1)", "operator": "a"},
+    {"rate": "kappa*nbar", "operator": "ad"}
+  ],
+  "protocol": {
+    "sweep": {"parameter": "eps2", "from": 0.0, "to": 1.2, "rate": 0.1},
+    "hold": 10.0,
+    "bias": {"parameter": "h", "value": 0.10691},
+    "initial": {"thermal": "nbar"}
+  },
+  "observable": {"sign_of": "a + ad"},
+  "assumptions": [
+    "Frame rotating at half the pump frequency; hbar = 1; rates in units of the single-photon loss kappa.",
+    "Loss and thermal excitation at occupation 0.6: the seed noise is (2 nbar + 1) times the vacuum noise.",
+    "Same Kerr coefficient, sweep and bias as the 27-photon oscillator: the control changes only the bath.",
+    "The law predicts a lower probability than at zero temperature, with the argument of the normal distribution function reduced by (2 nbar + 1)^(-1/2)."
+  ],
+  "provenance": {
+    "origin": "authored control in reduced units",
+    "reference": "thermal noise in parametrically driven oscillators, M. I. Dykman, Fluctuating Nonlinear Oscillators (Oxford, 2012), chapter 7",
+    "contributor": "FieldBridge quantum examples"
+  }
+}

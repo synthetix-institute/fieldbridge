@@ -1,0 +1,35 @@
+{
+  "schema": "fieldbridge-quantum-open/1",
+  "name": "Kerr parametric oscillator, 27 stored photons",
+  "field": "superconducting circuits",
+  "question": "Which of its two states does a Kerr parametric oscillator choose when its two-photon drive is swept through threshold with a weak one-photon bias, and with what probability?",
+  "carrier": {"kind": "mode", "max_quanta": 69},
+  "parameters": {"K": 0.02, "kappa": 1.0, "nbar": 0.0},
+  "hamiltonian": [
+    {"coefficient": "-K", "operator": "ad ad a a"},
+    {"coefficient": "eps2/2", "operator": "ad ad", "imaginary": true, "hc": true},
+    {"coefficient": "h", "operator": "ad", "imaginary": true, "hc": true}
+  ],
+  "dissipators": [
+    {"rate": "kappa*(nbar+1)", "operator": "a"},
+    {"rate": "kappa*nbar", "operator": "ad"}
+  ],
+  "protocol": {
+    "sweep": {"parameter": "eps2", "from": 0.0, "to": 1.2, "rate": 0.1},
+    "hold": 10.0,
+    "bias": {"parameter": "h", "value": 0.10691},
+    "initial": {"thermal": "nbar"}
+  },
+  "observable": {"sign_of": "a + ad"},
+  "assumptions": [
+    "Frame rotating at half the pump frequency; hbar = 1; rates in units of the single-photon loss kappa.",
+    "Single-photon loss only; the two-photon drive is ramped linearly from zero and then held.",
+    "The stored states hold about 27 photons at the end of the ramp; the truncation at 69 quanta leaves their Fock tails below 1e-8.",
+    "The bias is set so that the Gaussian-stage law predicts a probability of 0.75 for the favoured state."
+  ],
+  "provenance": {
+    "origin": "authored benchmark in reduced units",
+    "reference": "Kerr parametric oscillators of H. Goto, Sci. Rep. 6, 21686 (2016) and N. E. Frattini et al., Phys. Rev. X 14, 031040 (2024); the selection law of D. K. Kondepudi and G. W. Nelson, Nature 314, 438 (1985); the bias-probability relation of A. Gu et al., Phys. Rev. Research 7, L022056 (2025)",
+    "contributor": "FieldBridge quantum examples"
+  }
+}
