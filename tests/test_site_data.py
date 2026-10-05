@@ -31,6 +31,8 @@ FACTS = {
     "regulation": {"integrator", "gain_ratio", "set_point", "u0", "u1", "input", "output", "peak", "final",
                    "final_over_peak", "return_time", "robust", "clamp", "calibration"},
     "stochastic": {"convention", "growth", "correction"},
+    "open": {"word", "P_exact", "P_law", "difference", "photons", "kappa", "nbar", "two_d", "r", "h", "threshold",
+             "truncation", "P_eq", "gap"},
 }
 
 

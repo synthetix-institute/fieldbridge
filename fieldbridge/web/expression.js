@@ -165,7 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
-    if (fam === 'hysterons' || fam === 'regulation') return `<span>${esc(rec.slots[slot])}</span>`;
+    if (fam === 'hysterons' || fam === 'regulation' || fam === 'open') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -376,6 +376,16 @@
       known('subloops that did not return', `${f.failed} of ${f.total}`);
       known('excursion shown', `H₁ = ${fmt(x.H1, 3)} → H₂ = ${fmt(x.H2, 3)} → H₁: ${x.differ} of ${e.elements} elements unlike the state at H₁`);
       known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
+    } else if (rec.family === 'open') {
+      body = mechanismText(rec);
+      known('probability of the favoured state, exact', f.P_exact);
+      known('the law of the linear stage', `${f.P_law} (difference ${f.difference})`);
+      known('stored photons at the end', f.photons);
+      known('noise of the seed, 2D = κ(2n̄ + 1)/4', f.two_d);
+      known('sweep rate r and bias h', `${f.r}, ${f.h}`);
+      known('threshold of the drive', f.threshold);
+      if (f.P_eq !== '—') known('selection of the biased steady state', `${f.P_eq} (gap just above threshold ${f.gap})`);
+      known('derivation word', f.word);
     } else if (rec.family === 'regulation') {
       body = mechanismText(rec);
       known('integrator', f.integrator);
@@ -419,6 +429,8 @@
       case 'perfect-adaptation': return 'An integrator of the error and a stable steady state: after a step of the input the output returns exactly to its set point, at every value of the rates.';
       case 'fine-tuned-adaptation': return 'The output returns exactly only at the stated parameters: the integrator exists only on the surface where two paths of the input cancel.';
       case 'partial-adaptation': return 'After the step the output returns part of the way: the integrator leaks, and a fraction of the step remains.';
+      case 'linear-stage-write': return 'The state is chosen in the linear stage: the amplified quadrature follows the classical write equation with the noise fixed by the loss and the temperature, and the probability of the favoured state follows the law with no free parameter.';
+      case 'equilibrium-write': return 'The two wells are shallow and exchange population faster than the sweep passes: the probability of the favoured state is the selection of the biased steady state, below the linear-stage law.';
       case 'no-adaptation': return 'The output moves to its new value and stays there: no variable returns it.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
@@ -437,6 +449,7 @@
     else if (rec.family === 'field') scene = fieldScene(rec);
     else if (rec.family === 'hysterons') scene = hysteronScene(rec);
     else if (rec.family === 'regulation') scene = regulationScene(rec);
+    else if (rec.family === 'open') scene = openScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
     $('view-legend').innerHTML = scene.legend || '';
@@ -609,6 +622,12 @@
             title: 'The response along the major loop and along one excursion inside a turning point',
             legend: `${refLegend(ref)}Left: the response R = Σ ηᵢsᵢ / Σ |ηᵢ| against the drive H, along the major loop (grey) and an excursion from H₁ = ${fmt(x.H1, 3)} to H₂ = ${fmt(x.H2, 3)} and back (blue). Right: the number of elements unlike the state at H₁ along the excursion; it ends at ${x.differ}.`};
   }
+  function openScene(rec) {
+    const e = rec.engine, tMax = e.t[e.t.length - 1] || 1;
+    return {kind: 'open', e, tMax, t: 0, speed: tMax / 6,
+            title: 'The amplified quadrature during the sweep, and the photon number',
+            legend: `Left: the mean of the quadrature x (solid) and its width (dashed) while the two-photon drive is swept through the threshold at t = ${fmt(e.t_threshold, 3)} and held after t = ${fmt(e.T_ramp, 3)}; the probability of the favoured state at the end is ${fmt(e.P_exact, 4)} against the law's ${fmt(e.P_law, 4)}. Right: the photon number.`};
+  }
   function regulationScene(rec) {
     const e = rec.engine, tMax = e.t[e.t.length - 1] || 1;
     return {kind: 'regulation', e, tMax, t: 0, speed: tMax / 6,
@@ -690,6 +709,13 @@
       V.series(side, {tMax: 2, cursor: scene.t, curves: [{pts: x.progress.map((p, i) => [p, x.unlike[i]])}],
                       yr: [0, Math.max(4, ...x.unlike) * 1.15], yLabel: 'elements unlike the state at H₁', xLabel: '',
                       xTicks: [0, 1, 2], xFormat: v => (v === 1 ? 'H₂' : 'H₁')});
+      return;
+    }
+    if (scene.kind === 'open') {
+      const e = scene.e;
+      const mean = e.t.map((t, i) => [t, e.x_mean[i]]), up = e.t.map((t, i) => [t, e.x_mean[i] + e.x_std[i]]), lo = e.t.map((t, i) => [t, e.x_mean[i] - e.x_std[i]]);
+      V.series(main, {tMax: scene.tMax, cursor: scene.t, yLabel: 'quadrature x', curves: [{pts: mean}, {pts: up, dash: [5, 4]}, {pts: lo, dash: [5, 4]}]});
+      V.series(side, {tMax: scene.tMax, cursor: scene.t, yLabel: 'photons', curves: [{pts: e.t.map((t, i) => [t, e.n[i]])}]});
       return;
     }
     if (scene.kind === 'regulation') {

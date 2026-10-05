@@ -689,3 +689,50 @@ def write_doc(out: str | Path = ROOT / DOC) -> Path:
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(mechanisms_doc(), encoding="utf-8")
     return path
+
+
+# ------------------------------------------------------------------------------------------------ the quantum write
+BIB.update({
+    "marthaler2006": {"cite": "M. Marthaler and M. I. Dykman, Phys. Rev. A 73, 042108 (2006)", "short": "Marthaler and Dykman, 2006",
+                      "doi": "10.1103/PhysRevA.73.042108"},
+    "roquescarmes2023": {"cite": "C. Roques-Carmes et al., Science 381, 205 (2023)", "short": "Roques-Carmes et al., 2023",
+                         "doi": "10.1126/science.adh4920"},
+    "frattini2024": {"cite": "N. E. Frattini et al., Phys. Rev. X 14, 031040 (2024)", "short": "Frattini et al., 2024",
+                     "doi": "10.1103/PhysRevX.14.031040"},
+    "gu2025": {"cite": "A. Gu et al., Phys. Rev. Research 7, L022056 (2025)", "short": "Gu et al., 2025",
+               "doi": "10.1103/PhysRevResearch.7.L022056"},
+    "yamaji2025": {"cite": "T. Yamaji et al., Phys. Rev. Applied 24, 064052 (2025)", "short": "Yamaji et al., 2025",
+                   "doi": "10.1103/PhysRevApplied.24.064052"},
+})
+QW = T + "29_quantum_write.md"
+READING.update({
+    "linear-stage-write": {
+        "defined": ("Quantum write, §2", "the Gaussian stage of a swept parametric oscillator: the amplified quadrature "
+                                         "obeys the classical write equation with the noise fixed by the loss and the "
+                                         "temperature", QW + "#2-the-mechanism"),
+        "derived": [("Quantum write, §3", "the 27-photon oscillator: the exact evolution of the density operator against "
+                                          "the law along the protocol", QW + "#3-the-worked-example"),
+                    ("Quantum write, §4", "the thermal control and the crossover between the dissipative and the closed "
+                                          "limits", QW + "#4-the-results")],
+        "code": "quantum.open.derive_quantum_write, law_along_protocol, evolve, prob_positive",
+        "sources": [("kondepudi1985", "the selection law of a pitchfork swept with a bias and noise, "
+                                      "P = Φ(π^{1/4} h / (D^{1/2} r^{1/4}))"),
+                    ("gu2025", "the bias-probability relation of a parametric oscillator for a step of the gain, with the "
+                               "initial quantum state and the gain noise"),
+                    ("roquescarmes2023", "bias pulses below one photon set the probabilities of the two states of an "
+                                         "optical parametric oscillator"),
+                    ("yamaji2025", "a Josephson oscillator with twelve photons, its pump raised with a one-photon bias, "
+                                   "and the probability of the favoured state against the bias")],
+    },
+    "equilibrium-write": {
+        "defined": ("Quantum write, §5", "at a few stored photons the switching between the wells outruns the sweep and "
+                                         "the probability relaxes to the selection of the biased steady state",
+                    QW + "#5-the-control-calculation"),
+        "derived": [("Quantum write, §5", "the half-photon oscillator: the exact probability against the biased steady "
+                                          "state and the gap of the Lindbladian", QW + "#5-the-control-calculation")],
+        "code": "quantum.open.equilibrium, derive_quantum_write",
+        "sources": [("marthaler2006", "switching between the two states of a parametrically modulated oscillator by "
+                                      "quantum activation"),
+                    ("frattini2024", "a few-photon Kerr parametric oscillator and the quantum regime of the Arrhenius law")],
+    },
+})

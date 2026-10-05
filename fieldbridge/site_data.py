@@ -706,6 +706,50 @@ def regulation_record(node: Dict) -> Dict:
             "slots": regulation_slots(spec, real, step)}
 
 
+OPEN_CLASSES = ("linear-stage-write", "equilibrium-write")
+OPEN_TRACE = 160
+
+
+def open_record(node: Dict) -> Dict:
+    """An open realization: the quantum write of ``quantum write`` with a trace of the amplified quadrature."""
+    from .quantum import open as qo
+    spec = node["spec"]
+    real = qo.load(spec)
+    row = qo.derive_quantum_write(real, law=True, trace=OPEN_TRACE)
+    cls = (row.get("class") or "").replace(" ", "-")
+    if cls not in OPEN_CLASSES:
+        raise SiteError(f"{node['id']}: {row.get('class')}: an open realization on the page reaches the linear-stage "
+                        f"or the equilibrium write")
+    law, canon, eq = row["law"], row["canonical"], row.get("equilibrium") or {}
+    facts = {"word": row["word"], "P_exact": _num(law["P_exact"]), "P_law": _num(law["P_law"]),
+             "difference": f"{law['difference']:+.1e}", "photons": _num(law["n_end"]),
+             "kappa": _num(canon["kappa"]), "nbar": _num(canon["nbar"]), "two_d": _num(canon["two_d"]),
+             "r": _num(canon["r"]), "h": _num(canon["h"]), "threshold": _num(canon["threshold"]),
+             "truncation": f"{law['truncation']:.1e}",
+             "P_eq": _num(eq["P_eq"]) if eq.get("P_eq") is not None else "—",
+             "gap": _num(eq["gap_near_threshold"]) if eq.get("gap_near_threshold") is not None else "—"}
+    tr = row["trace"]
+    return {"id": node["id"], "family": "open", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": cls, "facts": facts, "question": spec.get("question"),
+            "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "open", "t": tr["t"], "x_mean": tr["x_mean"], "x_std": tr["x_std"], "n": tr["n"],
+                       "T_ramp": law["T_ramp"], "t_threshold": canon.get("t_threshold"),
+                       "P_exact": law["P_exact"], "P_law": law["P_law"]},
+            "slots": open_slots(spec, real)}
+
+
+def open_slots(spec: Dict, real) -> Dict[str, str]:
+    pr = real.protocol
+    params = real.params
+    return {"Omega": "the Lindbladian: the Kerr term, the two-photon drive, the one-photon bias and the loss",
+            "Xi": f"one bosonic mode, at most {spec['carrier']['max_quanta']} quanta",
+            "C": "the frame rotating at half the pump frequency; the truncation of the Fock space",
+            "R": f"the sign of the quadrature ({spec['observable']['sign_of']})/2 at the end",
+            "P": f"{pr['sweep_parameter']} from {_num(pr['from'])} to {_num(pr['to'])} at the rate {_num(pr['rate'])}, "
+                 f"held for {_num(pr['hold'])}, with the bias {pr['bias_parameter']} = {_num(pr['bias'])}",
+            "A": ", ".join(f"{k} = {_num(v)}" for k, v in list(params.items())[:6])}
+
+
 def regulation_slots(spec: Dict, real, step: Dict) -> Dict[str, str]:
     reg = spec["regulation"]
     params = [k for k in real.params if k != real.input]
@@ -915,6 +959,14 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
         raise fail("no check for this change of closure")
     if a["family"] != b["family"] or not _same_carrier(a, b):
         raise fail("the carrier changes; name the edge Xi")
+    if a["family"] == "open":
+        if kind != "param":
+            raise fail(f"no check for {kind} on an open realization")
+        strip = lambda sp: {k: v for k, v in sp.items() if k not in ("parameters", "carrier", "name", "question",  # noqa: E731
+                                                                     "assumptions", "provenance")}
+        if strip(a["spec"]) != strip(b["spec"]):
+            raise fail("a change of parameters keeps the generator, the protocol and the observable")
+        return "the specifications differ only in their parameters and truncation"
     if a["family"] == "regulation":
         ra_, rb_ = a["spec"]["regulation"], b["spec"]["regulation"]
         for key in ("input", "output", "steps"):
@@ -1097,6 +1149,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = hysteron_record(node)
         elif fam == "regulation":
             records[nid] = regulation_record(node)
+        elif fam == "open":
+            records[nid] = open_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]

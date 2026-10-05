@@ -206,12 +206,19 @@ def thermal_state(dim: int, nbar: float) -> np.ndarray:
 
 
 # ------------------------------------------------------------------------------------------------ evolution
-def evolve(real: Realization, rtol: float = 1e-8, atol: float = 1e-11) -> Dict[str, object]:
-    """Exact Lindblad evolution over the protocol; returns the final state and the state at the end of the ramp."""
+def evolve(real: Realization, rtol: float = 1e-8, atol: float = 1e-11, trace: int = 0) -> Dict[str, object]:
+    """Exact Lindblad evolution over the protocol; returns the final state and the state at the end of the ramp.
+    With trace = n > 0, also the mean, the width and the photon number of the quadrature at n times."""
     from scipy.integrate import solve_ivp
     dim = real.carrier.dim
     pr = real.protocol
     T = (pr["to"] - pr["from"]) / pr["rate"]
+    trace_rows = []
+
+    def record(t_abs: float, y: np.ndarray) -> None:
+        if trace:
+            m = moments(y.reshape(dim, dim), real)
+            trace_rows.append((t_abs, m["x_mean"], m["x_std"], m["n_mean"]))
     jumps = [(g, L, L.conj().T @ L) for g, L, _ in real.dissipators if g > 0]
 
     off_at = pr.get("bias_off_at")
@@ -233,9 +240,14 @@ def evolve(real: Realization, rtol: float = 1e-8, atol: float = 1e-11) -> Dict[s
     y = real.initial.ravel()
     nfev = 0
     for a, b in ramp_segments:  # integrate up to the switch-off, then from it, so the step does not straddle it
-        sol = solve_ivp(rhs_factory(lambda t: pr["from"] + pr["rate"] * t), (a, b), y, method="DOP853", rtol=rtol, atol=atol)
+        t_eval = np.linspace(a, b, max(2, int(round(trace * (b - a) / (T + pr["hold"]))) + 1)) if trace else None
+        sol = solve_ivp(rhs_factory(lambda t: pr["from"] + pr["rate"] * t), (a, b), y, method="DOP853", rtol=rtol,
+                        atol=atol, t_eval=t_eval)
         if not sol.success:
             raise RuntimeError(sol.message)
+        if trace:
+            for k in range(sol.y.shape[1]):
+                record(float(sol.t[k]), sol.y[:, k])
         y, nfev = sol.y[:, -1], nfev + int(sol.nfev)
     rho_ramp = y.reshape(dim, dim)
     rho_end = rho_ramp
@@ -244,12 +256,21 @@ def evolve(real: Realization, rtol: float = 1e-8, atol: float = 1e-11) -> Dict[s
         hold_segments = [(0.0, pr["hold"])] if cut is None else [(0.0, cut), (cut, pr["hold"])]
         y = rho_ramp.ravel()
         for a, b in hold_segments:
-            sol2 = solve_ivp(rhs_factory(lambda t: pr["to"], t_offset=T), (a, b), y, method="DOP853", rtol=rtol, atol=atol)
+            t_eval = np.linspace(a, b, max(2, int(round(trace * (b - a) / (T + pr["hold"]))) + 1)) if trace else None
+            sol2 = solve_ivp(rhs_factory(lambda t: pr["to"], t_offset=T), (a, b), y, method="DOP853", rtol=rtol,
+                             atol=atol, t_eval=t_eval)
             if not sol2.success:
                 raise RuntimeError(sol2.message)
+            if trace:
+                for k in range(sol2.y.shape[1]):
+                    record(T + float(sol2.t[k]), sol2.y[:, k])
             y, nfev = sol2.y[:, -1], nfev + int(sol2.nfev)
         rho_end = y.reshape(dim, dim)
-    return {"rho_end": rho_end, "rho_ramp": rho_ramp, "T_ramp": T, "nfev": nfev}
+    out = {"rho_end": rho_end, "rho_ramp": rho_ramp, "T_ramp": T, "nfev": nfev}
+    if trace:
+        out["trace"] = {"t": [r[0] for r in trace_rows], "x_mean": [r[1] for r in trace_rows],
+                        "x_std": [r[2] for r in trace_rows], "n": [r[3] for r in trace_rows]}
+    return out
 
 
 def hermite_functions(q: np.ndarray, N: int) -> np.ndarray:
@@ -307,7 +328,7 @@ def linear_stage(real: Realization, eps2: float, h: float) -> Dict[str, object]:
             "direction": v, "gain": 2.0 * abs(g)}
 
 
-def derive_quantum_write(real: Realization, law: bool = True) -> Dict[str, object]:
+def derive_quantum_write(real: Realization, law: bool = True, trace: int = 0) -> Dict[str, object]:
     pr = real.protocol
     out = {"name": real.name, "field": real.field, "target": "quantum-write", "word": "", "steps": [], "status": ""}
     steps, word = out["steps"], []
@@ -371,7 +392,9 @@ def derive_quantum_write(real: Realization, law: bool = True) -> Dict[str, objec
         return out
 
     # L: exact evolution against the law
-    ev = evolve(real)
+    ev = evolve(real, trace=trace)
+    if trace:
+        out["trace"] = ev["trace"]
     m_end = moments(ev["rho_end"], real)
     p_exact = prob_positive(ev["rho_end"])
     trunc = max(m_end["top_population"] * 10.0, abs(m_end["trace"] - 1.0) * 10.0, 1e-5)

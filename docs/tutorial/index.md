@@ -1,6 +1,6 @@
 # FieldBridge tutorial
 
-The tutorial has three entry points. Each is a calculation with a physical question, a result to compare with, a
+The tutorial has four entry points. Each is a calculation with a physical question, a result to compare with, a
 control that must change the prediction, and the test responsible for it.
 
 - **The language of mechanisms.** [Quantum closure](11_quantum_closure.md) asks whether the transverse magnetization
@@ -11,6 +11,9 @@ control that must change the prediction, and the test responsible for it.
   stores and how a state is written. It is Module 1 of [twelve modules](#memory-in-materials-twelve-modules).
 - **Regulation.** [Return to a set point](28_regulation_set_point.md) asks whether the output of a cell, a machine or
   a material returns exactly after a step of its input, and through which variable.
+- **The quantum write.** [A parametric oscillator swept through its threshold](29_quantum_write.md) asks with which
+  probability a weak bias writes one of the two states of an oscillator whose seed noise is the vacuum, and where the
+  classical write law gives way to the balance of two shallow wells.
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -43,6 +46,7 @@ it was first found.
 | --- | --- |
 | Learn the language of mechanisms (detach, attach, co-discover) | [Quantum closure](11_quantum_closure.md) → [The language, shown on spins](24_spin_language.md) → [Inverse interaction design](14_inverse_construction.md); for memory, [Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md) |
 | Analyse memory in a material from any field | [Modules 1–12 on memory](#memory-in-materials-twelve-modules), starting with [a first memory card](15_memory_first_card.md) |
+| Write a bit into a quantum oscillator | [The language, shown on spins](24_spin_language.md) → [Module 4 on writing](18_memory_writing_and_retention.md) → [Quantum write](29_quantum_write.md) |
 | Understand the physical construction | [First run](08_end_to_end_walkthrough.md) → [Equations and assumptions](09_equations_and_assumptions.md) → [Stochastic map](10_stochastic_construction.md) → [Quantum closure](11_quantum_closure.md) |
 | Solve for a new physical construction | [Quantum closure](11_quantum_closure.md) → [Inverse interaction design](14_inverse_construction.md) → [Discovery requirements](12_reproduction_and_discovery.md) |
 | Connect equations recovered from papers | [Fingerprint](01_operational_fingerprints.md) → [Mechanism sheet](02_mechanism_sheets.md) → [Retrieval](03_cross_field_retrieval.md) → [Proposal](04_constructor_transfers.md) → [Calculated source](13_retrieval_to_calculation.md) |
@@ -57,6 +61,12 @@ reading order.
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Return to a set point](28_regulation_set_point.md) | Does the output return exactly after a step of the input, through which variable, and is the result checkable without repeating the search? | `regulation card`, `survey`, `check` |
+
+## The quantum write: one module
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [Quantum write](29_quantum_write.md) | With which probability does a sweep of the two-photon drive through the threshold write the favoured state of a parametric oscillator, with the vacuum as the seed, and when does the balance of two shallow wells decide instead? | `quantum write` |
 
 ## Memory in materials: twelve modules
 

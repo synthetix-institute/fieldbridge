@@ -44,6 +44,8 @@ CLASSES = {
     "fine-tuned-adaptation": "fine-tuned adaptation",
     "partial-adaptation": "partial adaptation",
     "no-adaptation": "no adaptation",
+    "linear-stage-write": "linear-stage write (vacuum seed)",
+    "equilibrium-write": "equilibrium write (balance of the wells)",
     "oscillation": "limit cycle",
     "neutral-cycles": "neutral cycles",
     "exponential-loss": "exponential loss",
@@ -111,6 +113,19 @@ MECHANISMS = {
     "no-adaptation": {"canonical": "no integrator: G = dy/du ≠ 0 and no return after the peak",
                       "text": "The output moves to its new value and stays there; feedback that is only proportional "
                               "reduces the change without returning it.", "node": "cruise_control_p"},
+    # the quantum write: a parametric oscillator swept through its threshold with a weak bias chooses one of its two
+    # states; in the linear stage the noise of the seed is fixed by the loss and the temperature (the vacuum)
+    "linear-stage-write": {"canonical": "ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4",
+                           "text": "A parametric oscillator swept through its threshold with a weak bias chooses one of "
+                                   "its two states in the linear stage: the probability of the favoured state is "
+                                   "Φ(h I<sub>1</sub>/√(σ<sub>0</sub><sup>2</sup> + 2D I<sub>2</sub>)), the classical write "
+                                   "law with the noise fixed by the loss and the temperature and no free parameter.",
+                           "node": "kpo_27"},
+    "equilibrium-write": {"canonical": "dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p]",
+                          "text": "At a few stored photons the two wells are shallow and switch faster than the sweep "
+                                  "passes: the probability relaxes to the selection of the biased steady state at the "
+                                  "rate of the Lindbladian's gap, below the linear-stage law.",
+                          "node": "kpo_few"},
     "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
                     "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
                             "the phase inside the Adler range.", "node": "van_der_pol"},
@@ -136,7 +151,7 @@ START = "pitchfork"
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
-             "examples/regulation": "regulation"}
+             "examples/regulation": "regulation", "examples/quantum/open": "open"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
@@ -145,6 +160,7 @@ M10 = "docs/tutorial/25_memory_threshold_write.md"
 M11 = "docs/tutorial/26_memory_phase_locking.md"
 M12 = "docs/tutorial/27_memory_return_point.md"
 R1 = "docs/tutorial/28_regulation_set_point.md"
+QW = "docs/tutorial/29_quantum_write.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -361,6 +377,13 @@ NODES = [
      "tutorial": R1 + "#6-leaks"},
     {"id": "ma2009_ifflp", "family": "regulation", "spec": "examples/regulation/ma2009_ifflp.json",
      "tutorial": R1 + "#4-running-the-command"},
+    # -- the quantum write: a parametric oscillator swept through its threshold with a bias
+    {"id": "kpo_27", "family": "open", "spec": "examples/quantum/open/kerr_parametric_oscillator.json",
+     "tutorial": QW + "#3-the-worked-example", "universal": True},
+    {"id": "kpo_few", "family": "open", "spec": "examples/quantum/open/few_photon_oscillator.json",
+     "tutorial": QW + "#5-the-control-calculation"},
+    {"id": "kpo_thermal", "family": "open", "spec": "examples/quantum/open/thermal_control.json",
+     "tutorial": QW + "#4-the-results"},
     # -- the convention of a stochastic calculation
     {"id": "log_ito", "family": "stochastic", "spec": "examples/construction/log_signal_ito.json",
      "tutorial": "docs/tutorial/10_stochastic_construction.md#the-convention-changes-a-measurable-consequence"},
@@ -864,12 +887,26 @@ EDGES += [
 ]
 
 # ------------------------------------------------------------------------------------------------ labels of the map
+EDGES += [
+    # the quantum write: the Kerr coefficient (the photon number of the stored states) and the thermal bath
+    {"id": "kpo_kerr", "from": "kpo_27", "to": "kpo_few", "slot": "A", "kind": "param",
+     "change": "K: 0.02 → 1",
+     "text": "The Kerr coefficient rises fifty-fold and the stored states hold half a photon instead of 27. The two "
+             "shallow wells switch faster than the sweep passes, and the probability of the favoured state leaves the "
+             "linear-stage law for the selection of the biased steady state: 0.684 against the law's 0.750."},
+    {"id": "kpo_bath", "from": "kpo_27", "to": "kpo_thermal", "slot": "A", "kind": "param",
+     "change": "n̄: 0 → 0.6",
+     "text": "A thermal bath at occupation 0.6 raises the noise of the seed by 2n̄ + 1 = 2.2. The probability of the "
+             "favoured state falls from 0.750 to 0.676, as the law predicts, still with no free parameter."},
+]
+
 CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "several frequencies",
                "single-state": "one state", "symmetric-write": "symmetric write", "threshold-write": "one-sided write",
                "subcritical-write": "distant write", "field-write": "field write", "return-point": "return point",
                "no-return": "return not exact", "perfect-adaptation": "perfect adaptation",
                "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
-               "no-adaptation": "no adaptation", "oscillation": "limit cycle",
+               "no-adaptation": "no adaptation", "linear-stage-write": "linear-stage write",
+               "equilibrium-write": "equilibrium write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
 
@@ -925,6 +962,7 @@ PLANNED = [
 ]
 
 SHORT = {
+    "kpo_27": "27 photons", "kpo_few": "½ photon", "kpo_thermal": "bath, n̄ = 0.6",
     "reg_pi_loop": "integral control", "reg_leaky_integrator": "leaky integral", "reg_feedforward_subtractive":
     "subtractive feedforward", "chemotaxis_tu2008": "E. coli chemotaxis", "chemotaxis_turnover": "chemotaxis + turnover",
     "antithetic_briat2016": "antithetic controller", "antithetic_hill": "Hill controller",

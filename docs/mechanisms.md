@@ -20,6 +20,8 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Fine-tuned adaptation](#fine-tuned-adaptation) | G = 0 only where k<sub>1</sub>k<sub>4</sub> = k<sub>2</sub>k<sub>3</sub> | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §9](tutorial/28_regulation_set_point.md#9-exercises) | Ma et al., 2009; Shoval et al., 2010 |
 | [Partial adaptation](#partial-adaptation) | dφ/dt = k (y − y<sub>0</sub>) − δφ: a fraction 1/(1 + kg/δ) remains | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §6](tutorial/28_regulation_set_point.md#6-leaks) | Ma et al., 2009; Qian and Del Vecchio, 2018 |
 | [No adaptation](#no-adaptation) | no integrator: G = dy/du ≠ 0 and no return after the peak | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | Briat, Gupta and Khammash, 2016 |
+| [Linear-stage write (vacuum seed)](#linear-stage-write-vacuum-seed) | ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4 | [Quantum write, §2](tutorial/29_quantum_write.md#2-the-mechanism) | [Quantum write, §3](tutorial/29_quantum_write.md#3-the-worked-example), [Quantum write, §4](tutorial/29_quantum_write.md#4-the-results) | Kondepudi and Nelson, 1985; Roques-Carmes et al., 2023; Gu et al., 2025; Yamaji et al., 2025 |
+| [Equilibrium write (balance of the wells)](#equilibrium-write-balance-of-the-wells) | dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p] | [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation) | [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation) | Marthaler and Dykman, 2006; Frattini et al., 2024 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
 | [Neutral cycles](#neutral-cycles) | dI/dt = 0 | [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields) | [Module 11, §6](tutorial/26_memory_phase_locking.md#6-where-the-derivation-stops) | Lotka, 1920; Volterra, 1926 |
 | [Exponential loss](#exponential-loss) | SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup> | [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer) | [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write) | Hohenberg and Halperin, 1977; Allen and Cahn, 1979 |
@@ -191,6 +193,28 @@ Canonical form: no integrator: G = dy/du ≠ 0 and no return after the peak. The
 - **Original publications:**
   - C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15 (2016), [doi:10.1016/j.cels.2016.01.004](https://doi.org/10.1016/j.cels.2016.01.004): a static controller of Hill type does not adapt to a change of the process.
 - **Reviews and textbooks:** K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021).
+
+### Linear-stage write (vacuum seed)
+
+Canonical form: ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4. A parametric oscillator swept through its threshold with a weak bias chooses one of its two states in the linear stage: the probability of the favoured state is Φ(h I<sub>1</sub>/√(σ<sub>0</sub><sup>2</sup> + 2D I<sub>2</sub>)), the classical write law with the noise fixed by the loss and the temperature and no free parameter.
+
+- **Defined:** [Quantum write, §2](tutorial/29_quantum_write.md#2-the-mechanism), the Gaussian stage of a swept parametric oscillator: the amplified quadrature obeys the classical write equation with the noise fixed by the loss and the temperature.
+- **Derived:** [Quantum write, §3](tutorial/29_quantum_write.md#3-the-worked-example), the 27-photon oscillator: the exact evolution of the density operator against the law along the protocol; [Quantum write, §4](tutorial/29_quantum_write.md#4-the-results), the thermal control and the crossover between the dissipative and the closed limits. Code: `quantum.open.derive_quantum_write`, `law_along_protocol`, `evolve`, `prob_positive`.
+- **Original publications:**
+  - D. K. Kondepudi and G. W. Nelson, Nature 314, 438 (1985), [doi:10.1038/314438a0](https://doi.org/10.1038/314438a0): the selection law of a pitchfork swept with a bias and noise, P = Φ(π^{1/4} h / (D^{1/2} r^{1/4})).
+  - C. Roques-Carmes et al., Science 381, 205 (2023), [doi:10.1126/science.adh4920](https://doi.org/10.1126/science.adh4920): bias pulses below one photon set the probabilities of the two states of an optical parametric oscillator.
+  - A. Gu et al., Phys. Rev. Research 7, L022056 (2025), [doi:10.1103/PhysRevResearch.7.L022056](https://doi.org/10.1103/PhysRevResearch.7.L022056): the bias-probability relation of a parametric oscillator for a step of the gain, with the initial quantum state and the gain noise.
+  - T. Yamaji et al., Phys. Rev. Applied 24, 064052 (2025), [doi:10.1103/PhysRevApplied.24.064052](https://doi.org/10.1103/PhysRevApplied.24.064052): a Josephson oscillator with twelve photons, its pump raised with a one-photon bias, and the probability of the favoured state against the bias.
+
+### Equilibrium write (balance of the wells)
+
+Canonical form: dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p]. At a few stored photons the two wells are shallow and switch faster than the sweep passes: the probability relaxes to the selection of the biased steady state at the rate of the Lindbladian's gap, below the linear-stage law.
+
+- **Defined:** [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation), at a few stored photons the switching between the wells outruns the sweep and the probability relaxes to the selection of the biased steady state.
+- **Derived:** [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation), the half-photon oscillator: the exact probability against the biased steady state and the gap of the Lindbladian. Code: `quantum.open.equilibrium`, `derive_quantum_write`.
+- **Original publications:**
+  - M. Marthaler and M. I. Dykman, Phys. Rev. A 73, 042108 (2006), [doi:10.1103/PhysRevA.73.042108](https://doi.org/10.1103/PhysRevA.73.042108): switching between the two states of a parametrically modulated oscillator by quantum activation.
+  - N. E. Frattini et al., Phys. Rev. X 14, 031040 (2024), [doi:10.1103/PhysRevX.14.031040](https://doi.org/10.1103/PhysRevX.14.031040): a few-photon Kerr parametric oscillator and the quantum regime of the Arrhenius law.
 
 ### Limit cycle
 

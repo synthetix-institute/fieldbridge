@@ -1,31 +1,69 @@
 {
   "schema": "fieldbridge-quantum-open/1",
-  "name": "Kerr parametric oscillator, 1.5 stored photons",
+  "name": "Kerr parametric oscillator, half a stored photon",
   "field": "superconducting circuits",
-  "question": "Does a few-photon Kerr parametric oscillator, swept through threshold with a bias, choose its state by the linear stage or by the balance of its two shallow wells?",
-  "carrier": {"kind": "mode", "max_quanta": 29},
-  "parameters": {"K": 1.0, "kappa": 1.0, "nbar": 0.0},
+  "question": "Does a Kerr parametric oscillator whose stored states hold less than one photon, swept through threshold with the same bias as the 27-photon oscillator, choose its state by the linear stage or by the balance of its two shallow wells?",
+  "carrier": {
+    "kind": "mode",
+    "max_quanta": 29
+  },
+  "parameters": {
+    "K": 1.0,
+    "kappa": 1.0,
+    "nbar": 0.0
+  },
   "hamiltonian": [
-    {"coefficient": "-K", "operator": "ad ad a a"},
-    {"coefficient": "eps2/2", "operator": "ad ad", "imaginary": true, "hc": true},
-    {"coefficient": "h", "operator": "ad", "imaginary": true, "hc": true}
+    {
+      "coefficient": "-K",
+      "operator": "ad ad a a"
+    },
+    {
+      "coefficient": "eps2/2",
+      "operator": "ad ad",
+      "imaginary": true,
+      "hc": true
+    },
+    {
+      "coefficient": "h",
+      "operator": "ad",
+      "imaginary": true,
+      "hc": true
+    }
   ],
   "dissipators": [
-    {"rate": "kappa*(nbar+1)", "operator": "a"},
-    {"rate": "kappa*nbar", "operator": "ad"}
+    {
+      "rate": "kappa*(nbar+1)",
+      "operator": "a"
+    },
+    {
+      "rate": "kappa*nbar",
+      "operator": "ad"
+    }
   ],
   "protocol": {
-    "sweep": {"parameter": "eps2", "from": 0.0, "to": 3.0, "rate": 0.1},
+    "sweep": {
+      "parameter": "eps2",
+      "from": 0.0,
+      "to": 1.2,
+      "rate": 0.1
+    },
     "hold": 10.0,
-    "bias": {"parameter": "h", "value": 0.10762},
-    "initial": {"thermal": "nbar"}
+    "bias": {
+      "parameter": "h",
+      "value": 0.10691
+    },
+    "initial": {
+      "thermal": "nbar"
+    }
   },
-  "observable": {"sign_of": "a + ad"},
+  "observable": {
+    "sign_of": "a + ad"
+  },
   "assumptions": [
     "Frame rotating at half the pump frequency; hbar = 1; rates in units of the single-photon loss kappa.",
-    "The Kerr coefficient equals the loss, so the stored states hold about 1.5 photons at the end of the ramp.",
-    "The bias is the one for which the Gaussian-stage law would predict 0.90 at a sweep rate of 0.01; here the rate is 0.1.",
-    "A control of the linear-stage law: the exact probability is expected at the selection of the biased steady state."
+    "The same sweep, hold and bias as the 27-photon oscillator; only the Kerr coefficient changes, from 0.02 to 1, so the stored states hold 0.48 photons instead of 27 and the two wells are shallow.",
+    "The bias is the one for which the Gaussian-stage law predicts a probability of 0.75.",
+    "A control of the linear-stage law: the exact probability is expected at the selection of the biased steady state, which the switching between the wells reaches during the sweep."
   ],
   "provenance": {
     "origin": "authored control in reduced units",
