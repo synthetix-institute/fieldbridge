@@ -1,0 +1,41 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "One linear mode, x_t = a x_{t-1} + u_t",
+ "field": "",
+ "question": "What does one linear mode remember of its input? The profile is (1 - a^2) a^(2k).",
+ "assumptions": [
+  "a benchmark written without a field; its capacities are known in closed form or by symmetry"
+ ],
+ "provenance": {
+  "source": "analytic benchmark"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "x"
+  ]
+ },
+ "parameters": {
+  "a": 0.8,
+  "u": 0.0
+ },
+ "drift": {
+  "x": "a*x + u"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 1.0,
+  "hold": 1.0,
+  "observables": [
+   "x"
+  ],
+  "washout": 100,
+  "length": 3000,
+  "substeps": 12,
+  "expect": "linear-memory",
+  "form": "map"
+ }
+}

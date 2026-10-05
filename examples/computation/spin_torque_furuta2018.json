@@ -1,0 +1,62 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "Macrospin magnetic tunnel junction with a perpendicular reference layer, reduced to m_z",
+ "field": "spintronics",
+ "question": "Which functions of the history of the input voltage does the junction resistance represent?",
+ "provenance": {
+  "source": "Furuta, Fujii, Nakajima, Tsunegi, Kubota, Suzuki and Miwa, Phys. Rev. Applied 10, 034063 (2018), arXiv:1805.09977, Eqs. (12)-(16) and Table I; reduced to m_z with the corrections listed in model_sheet.md section 3c",
+  "contributor": "FieldBridge computation module"
+ },
+ "assumptions": [
+  "the standard dissipative Landau-Lifshitz-Gilbert-Slonczewski equation in place of the printed Eq. (12) (sign of the precession term and the missing division by the angular momentum of the layer)",
+  "Eq. (16) with the factor 2 that gives R = R_P and R_AP at the parallel and antiparallel states",
+  "spin polarization P = 0.548 from Julliere's relation (not stated in the source); it reproduces the source's +-44 mV",
+  "gyromagnetic ratio 1.76e11 rad/(s T) (not stated in the source)",
+  "axial symmetry: R depends on m_z alone, so the azimuth is a mode hidden from the observable and the body reduces to m_z",
+  "time in ns, Vin in mV, R in ohm; no thermal fluctuations (as in the source)"
+ ],
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "mz"
+  ]
+ },
+ "parameters": {
+  "P": 0.5477225575051661,
+  "RAP": 390.0,
+  "RP": 210.0,
+  "kJ": 1.7934527849408066,
+  "damp": 0.1584773667,
+  "alpha": 0.009,
+  "Vin": 0.0
+ },
+ "drift": {
+  "mz": "(1 - mz**2)*(-kJ*P/(1 + P**2*mz)*Vin/(2*RAP*RP/((RAP + RP) + (RAP - RP)*mz)) - damp*mz)/(1 + alpha**2)"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "Vin",
+  "law": "binary",
+  "amplitude": 44.0,
+  "offset": 0.0,
+  "hold": 20.0,
+  "observables": [
+   "2*RAP*RP/((RAP + RP) + (RAP - RP)*mz)"
+  ],
+  "virtual_nodes": 50,
+  "washout": 200,
+  "length": 3000,
+  "substeps": 200,
+  "initial": [
+   0.0
+  ],
+  "expect": "nonlinear-capacity",
+  "exact_box": [
+   [
+    -1.0,
+    1.0
+   ]
+  ]
+ }
+}

@@ -1,0 +1,44 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "A linear stage that drives the square of its state into a second stage",
+ "field": "",
+ "question": "Where does the degree of a feedforward cascade end?",
+ "assumptions": [
+  "a benchmark written without a field; its capacities are known in closed form or by symmetry"
+ ],
+ "provenance": {
+  "source": "analytic benchmark"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "x1",
+   "x2"
+  ]
+ },
+ "parameters": {
+  "k1": 0.5,
+  "k2": 0.8,
+  "u": 0.0
+ },
+ "drift": {
+  "x1": "-k1*x1 + u",
+  "x2": "-k2*x2 + x1**2"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 2.0,
+  "hold": 1.0,
+  "observables": [
+   "x1",
+   "x2"
+  ],
+  "washout": 100,
+  "length": 3000,
+  "substeps": 12,
+  "expect": "nonlinear-capacity"
+ }
+}

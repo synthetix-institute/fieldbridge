@@ -1,0 +1,62 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "E. coli chemotaxis: receptor methylation driven by a held log-ligand input",
+ "field": "bacterial chemotaxis",
+ "question": "Which functions of the history of the attractant concentration do the kinase activity and the methylation level represent?",
+ "provenance": {
+  "source": "Tu, Shimizu and Berg, PNAS 105, 14855 (2008), doi:10.1073/pnas.0807569105: a = G(m, [L]) (Eqs. 2-4), f_m = alpha (m0 - m), dm/dt = F(a) piecewise linear (Fig. 2 legend); values from the text after Fig. 1 and the Fig. 2 legend",
+  "contributor": "FieldBridge computation module"
+ },
+ "assumptions": [
+  "mean field; ligand binding and kinase activity at quasi-equilibrium (as in the source)",
+  "K_A = K_I/C with C = 0.0062 (the source states C, not K_A)",
+  "time in units of 1/F(0) (F(0) = 1 in the source's simulations; physical F(0) about 7e-3 per s)",
+  "F(a) written as a line plus abs terms; identical to the source's piecewise-linear form",
+  "the input u = ln([L]/[L]0) with [L]0 = 158 uM, the geometric mean of the source's 50-500 uM range (Fig. 3); amplitude 1.151, the source's A_L = (1/2) ln([L]_h/[L]_l)",
+  "u redrawn for every interval of 0.05/F(0) and held within it (the source uses ramps, sine waves and a pulse)"
+ ],
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "m"
+  ]
+ },
+ "parameters": {
+  "alpha": 2.0,
+  "m0": 1.0,
+  "Nc": 6.0,
+  "KI": 18.2,
+  "KA": 2935.483870967742,
+  "a0": 0.3333333333333333,
+  "eps1": 0.05,
+  "eps2": 0.1,
+  "f1": 0.15,
+  "F0": 1.0,
+  "L0": 158.11388300841898,
+  "u": 0.0
+ },
+ "drift": {
+  "m": "F0*(((((-f1/(a0*eps1)) - (-(1 - f1)/(a0*(1 - eps1))))/2)*((a0*(1 - eps1)) + (a0*(1 + eps2))) - (-f1/(a0*eps1))*a0) + (-(1 - f1)/(a0*(1 - eps1)))*(1/(1 + exp(Nc*(alpha*(m0 - m) + log(1 + L0*exp(u)/KI) - log(1 + L0*exp(u)/KA))))) + (((-f1/(a0*eps1)) - (-(1 - f1)/(a0*(1 - eps1))))/2)*(abs((1/(1 + exp(Nc*(alpha*(m0 - m) + log(1 + L0*exp(u)/KI) - log(1 + L0*exp(u)/KA))))) - (a0*(1 - eps1))) - abs((1/(1 + exp(Nc*(alpha*(m0 - m) + log(1 + L0*exp(u)/KI) - log(1 + L0*exp(u)/KA))))) - (a0*(1 + eps2)))))"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 1.151,
+  "offset": 0.0,
+  "hold": 0.05,
+  "observables": [
+   "1/(1 + exp(Nc*(alpha*(m0 - m) + log(1 + L0*exp(u)/KI) - log(1 + L0*exp(u)/KA))))",
+   "m"
+  ],
+  "virtual_nodes": 1,
+  "washout": 200,
+  "length": 6000,
+  "substeps": 10,
+  "initial": [
+   2.0514
+  ],
+  "expect": "nonlinear-capacity"
+ }
+}

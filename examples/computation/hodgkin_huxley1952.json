@@ -1,0 +1,65 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "Hodgkin-Huxley space-clamped membrane driven by a held current",
+ "field": "neurophysiology",
+ "question": "Which functions of the history of an injected current does the membrane potential represent?",
+ "provenance": {
+  "source": "A. L. Hodgkin and A. F. Huxley, J. Physiol. 117, 500-544 (1952), Eqs. (7), (12)-(16), (20)-(26), Table 3 (values chosen), doi:10.1113/jphysiol.1952.sp004764",
+  "contributor": "FieldBridge computation module"
+ },
+ "assumptions": [
+  "the source convention: V is the displacement from rest in mV, depolarization negative; Iext is the membrane current density I of Eq. (26) in uA/cm2, inward positive, so a depolarizing injected current is Iext < 0 (the name I is reserved by the parser)",
+  "temperature 6.3 C, so phi = 1 (the rate expressions as printed)",
+  "the input Iext is redrawn for every interval of 1 ms and held within it (not in the source, which applies shocks and constant currents)",
+  "the observable is V, measured at the end of each interval (or at virtual_nodes times within it)"
+ ],
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "V",
+   "n",
+   "m",
+   "h"
+  ]
+ },
+ "parameters": {
+  "CM": 1.0,
+  "gNa": 120.0,
+  "gK": 36.0,
+  "gl": 0.3,
+  "VNa": -115.0,
+  "VK": 12.0,
+  "Vl": -10.613,
+  "phi": 1.0,
+  "Iext": 0.0
+ },
+ "drift": {
+  "V": "(Iext - gK*n**4*(V - VK) - gNa*m**3*h*(V - VNa) - gl*(V - Vl))/CM",
+  "n": "phi*(0.01*(V + 10)/(exp((V + 10)/10) - 1)*(1 - n) - 0.125*exp(V/80)*n)",
+  "m": "phi*(0.1*(V + 25)/(exp((V + 25)/10) - 1)*(1 - m) - 4*exp(V/18)*m)",
+  "h": "phi*(0.07*exp(V/20)*(1 - h) - 1/(exp((V + 30)/10) + 1)*h)"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "Iext",
+  "law": "uniform",
+  "amplitude": 1.0,
+  "offset": 0.0,
+  "hold": 1.0,
+  "observables": [
+   "V"
+  ],
+  "virtual_nodes": 1,
+  "washout": 200,
+  "length": 6000,
+  "substeps": 50,
+  "initial": [
+   0.0,
+   0.31768,
+   0.05293,
+   0.59612
+  ],
+  "expect": "nonlinear-capacity"
+ }
+}
