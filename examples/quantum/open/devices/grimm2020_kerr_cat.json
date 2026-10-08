@@ -1,0 +1,77 @@
+{
+  "schema": "fieldbridge-quantum-open/1",
+  "name": "Grimm 2020, Kerr-cat resonator, with a hypothetical bias during the ramp",
+  "field": "superconducting circuits",
+  "question": "If the squeezing drive of the Kerr-cat resonator were raised along its tanh ramp with a weak one-photon bias, which cat well would the resonator choose, and would the choice follow the linear-stage law or the balance of the two wells?",
+  "carrier": {
+    "kind": "mode",
+    "max_quanta": 24
+  },
+  "parameters": {
+    "K": 653.0,
+    "kappa": 1.0,
+    "nbar": 0.04,
+    "p": 3510.0
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "-K",
+      "operator": "ad ad a a"
+    },
+    {
+      "coefficient": "p*(1+tanh(5*(2*s-1)))/4",
+      "operator": "ad ad",
+      "imaginary": true,
+      "hc": true
+    },
+    {
+      "coefficient": "h",
+      "operator": "ad",
+      "imaginary": true,
+      "hc": true
+    }
+  ],
+  "dissipators": [
+    {
+      "rate": "kappa*(nbar+1)",
+      "operator": "a"
+    },
+    {
+      "rate": "kappa*nbar",
+      "operator": "ad"
+    }
+  ],
+  "protocol": {
+    "sweep": {
+      "parameter": "s",
+      "from": 0.0,
+      "to": 1.0,
+      "rate": 48.5
+    },
+    "hold": 0.1,
+    "bias": {
+      "parameter": "h",
+      "value": 50.0
+    },
+    "initial": {
+      "thermal": "nbar"
+    }
+  },
+  "observable": {
+    "sign_of": "a + ad"
+  },
+  "assumptions": [
+    "Units: the amplitude damping rate kappa = 1/T1 = 1/15.5 us = 6.45e4 per second is 1; time in units of T1.",
+    "Kerr: K/2 pi = 6.7 MHz, so K = 653 kappa; the resonator is deep in the single-photon Kerr regime.",
+    "Squeezing drive: epsilon_2/2 pi = 17.5 MHz at the plateau, so eps2 = 2 epsilon_2 = 3510 kappa and the stored cat states hold epsilon_2/K = 2.6 photons; the drive follows a tanh profile over 320 ns = 0.0206/kappa, written as (1 + tanh(5(2s - 1)))/2 in the sweep variable s = t/(320 ns), since the paper states the shape and duration but not the width of the tanh; the width is chosen so that the drive starts below the threshold kappa/2 (eps2 = 0.16 kappa at s = 0).",
+    "Thermal occupation of the resonator n_th = 0.04 (the paper's value), entering the loss as kappa n_th D[a\u2020].",
+    "The bias is hypothetical: the paper prepares the wells by the parity of a Fock state and applies the one-photon drive only after the ramp; here a one-photon drive h = 50 kappa (below the paper's cat-Rabi drives of 72 to 633 kappa) is kept on during the ramp to ask which well a bias would select.",
+    "The ramp is fast against the loss, kappa/sqrt(r) of order 1e-3, so the seed is the preparation (the closed limit of the law), and slow against 1/2K as the paper requires.",
+    "Truncation at 24 quanta for cat states of 2.6 photons; the hold of 0.1/kappa (1.5 us) keeps the drive on after the ramp."
+  ],
+  "provenance": {
+    "origin": "published parameters, hypothetical bias",
+    "reference": "A. Grimm et al., Stabilization and operation of a Kerr-cat qubit, Nature 584, 205 (2020), arXiv:1907.12131v2: K/2 pi = 6.7 MHz, T1 = 15.5 us, epsilon_2/2 pi = 15.5 to 18 MHz, n_th = 0.04, tanh ramp over 320 ns (main text and Section VII, Table 2)",
+    "contributor": "KnowledgeParser modules/quantum_write/realizations"
+  }
+}

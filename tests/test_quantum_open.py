@@ -128,3 +128,16 @@ def test_the_command_writes_a_report(tmp_path):
     assert report["novelty_established"] is False
     assert report["rows"][0]["word"] == "GK"
     assert "The quantum write on open carriers" in (tmp_path / "write.md").read_text(encoding="utf-8")
+
+
+def test_the_device_specifications_load_and_reach_the_canonical_form():
+    # published parameters (a Josephson oscillator with a t^5 ramp; a Kerr-cat resonator with a tanh ramp): the
+    # letters G and K hold without evolving the density operator, which takes minutes for these devices
+    devices = sorted((EX / "devices").glob("*.json"))
+    assert [p.name for p in devices] == ["grimm2020_kerr_cat.json", "yamaji2025_jpo.json"]
+    for path in devices:
+        real = qo.load(path)
+        assert real.spec["provenance"]["origin"].startswith("published parameters")
+        row = qo.derive_quantum_write(real, law=False)
+        assert row["word"] == "GK", (path.name, row.get("obstruction"))
+        assert row["canonical"]["threshold"] > 0 and row["law"]["P_law"] > 0.5

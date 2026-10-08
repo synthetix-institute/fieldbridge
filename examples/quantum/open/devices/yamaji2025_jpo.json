@@ -1,0 +1,84 @@
+{
+  "schema": "fieldbridge-quantum-open/1",
+  "name": "Yamaji 2025, one Josephson parametric oscillator (JPO L), zero detuning",
+  "field": "superconducting circuits",
+  "question": "With the pump raised as t^5 over 100 ns and a one-photon bias raised linearly with it, which oscillation state does the oscillator lock to, and with what error against the bias power?",
+  "carrier": {
+    "kind": "mode",
+    "max_quanta": 44
+  },
+  "parameters": {
+    "K": 5.9,
+    "kappa": 1.0,
+    "nbar": 0.0,
+    "gamma": 0.0064,
+    "p": 140.0
+  },
+  "hamiltonian": [
+    {
+      "coefficient": "-K",
+      "operator": "ad ad a a"
+    },
+    {
+      "coefficient": "p*s**5/2",
+      "operator": "ad ad",
+      "imaginary": true,
+      "hc": true
+    },
+    {
+      "coefficient": "h*s",
+      "operator": "ad",
+      "imaginary": true,
+      "hc": true
+    }
+  ],
+  "dissipators": [
+    {
+      "rate": "kappa*(nbar+1)",
+      "operator": "a"
+    },
+    {
+      "rate": "kappa*nbar",
+      "operator": "ad"
+    },
+    {
+      "rate": "gamma",
+      "operator": "na"
+    }
+  ],
+  "protocol": {
+    "sweep": {
+      "parameter": "s",
+      "from": 0.0,
+      "to": 1.0,
+      "rate": 1.5
+    },
+    "hold": 2.0,
+    "bias": {
+      "parameter": "h",
+      "value": 4.0,
+      "off_at": 1.333
+    },
+    "initial": {
+      "thermal": "nbar"
+    }
+  },
+  "observable": {
+    "sign_of": "a + ad"
+  },
+  "assumptions": [
+    "Units: the total photon loss rate kappa_aL = 2 pi (0.75 + 0.31) MHz = 6.66e6 per second is 1; time in units of 1/kappa (150 ns).",
+    "Kerr: the paper writes (K_j/2) a\u2020a\u2020aa with K_L/2 pi = -12.6 MHz, so K = |K_L|/2 = 2 pi 6.3 MHz = 5.9 kappa.",
+    "Pump: p_L/2 pi = 148 MHz, so p = 140 kappa; the two-photon drive rises as (t/t_s)^5 over t_s = 100 ns = 0.666/kappa, i.e. the sweep variable s = t/t_s runs from 0 to 1 at the rate 1.5 kappa.",
+    "Bias: the one-photon drive rises linearly over the same 100 ns (slope exponent 1); its plateau amplitude h = Omega_dL/kappa is set from the signal power by Omega = sqrt(P kappa_eL/(hbar omega_r)) with kappa_eL/2 pi = 0.75 MHz and omega_r/2 pi = 9.88 GHz; the bias is assumed to push the amplified quadrature (the paper's optimal signal phase), which may differ from the paper's geometry by a factor cos(angle), i.e. by up to 3 dB in power.",
+    "Zero detuning throughout (the measurement without frequency chirping at Delta = 0); pure dephasing gamma_L/2 pi = 6.8 kHz = 0.0064 kappa as a dissipator on the photon number.",
+    "The one-photon drive is switched off 200 ns after the start of the ramp (its 100 ns rise plus its 100 ns plateau, Table I), i.e. at t = 1.333/kappa; the two-photon drive stays on.",
+    "The hold of 2/kappa = 300 ns brings the state to the start of the measurement window; the measurement integrates over the following 400 ns, which is not simulated.",
+    "Truncation at 44 quanta for stored states of about 12 photons."
+  ],
+  "provenance": {
+    "origin": "published parameters",
+    "reference": "T. Yamaji et al., Quantum annealing in capacitively coupled Kerr parametric oscillators using frequency-chirped drives, Phys. Rev. Applied 24, 064052 (2025), arXiv:2506.23539v2: Eq. (B2), Appendix B (K, kappa, p, alpha), Appendix C and Table I (pulse sequence), Appendix E (dephasing 6.8 kHz), Fig. 3(d) and 4(b) (locking error against signal power)",
+    "contributor": "KnowledgeParser modules/quantum_write"
+  }
+}
