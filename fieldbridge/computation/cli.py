@@ -118,13 +118,8 @@ def cmd_survey(args) -> int:
                      "exact": ex["by_degree"] if ex else None})
         print(f"{path.name}: {CLASS_TEXT[res['class']]}" + (f" (expected {CLASS_TEXT.get(res.get('expect'), res.get('expect'))})"
                                                           if res.get("expect") else ""), flush=True)
-    md = ["| Body | Field | Class | Memory, slowest rate | Modes reached and seen | n_lin / signals | Odd | Exact capacity by degree |",
-          "| --- | --- | --- | --- | --- | --- | --- | --- |"]
-    for r in rows:
-        exact = "—" if not r["exact"] else ", ".join(f"{k}: {v:.3g}" for k, v in sorted(r["exact"].items(), key=lambda kv: int(kv[0])))
-        md.append(f"| {r['name']} | {r['field'] or '—'} | {CLASS_TEXT[r['class']]} | {r['memory']}, {r['slowest_rate']:.3g} | "
-                  f"{r['modes']} | {r['n_lin']} / {r['signals']} | {'yes' if r['odd'] else 'no'} | {exact} |")
-    text = "\n".join(md) + "\n"
+    md = survey_table(rows)
+    text = md
     print(text)
     mismatched = [r for r in rows if r["expect"] and r["expect"] != r["class"]]
     if args.out_dir:
@@ -134,6 +129,22 @@ def cmd_survey(args) -> int:
         print("classes different from the expected ones: " + ", ".join(r["path"] for r in mismatched))
         return 1
     return 0
+
+
+def _cap(v: float) -> str:
+    return "0" if abs(v) < 1e-9 else f"{v:.3g}"
+
+
+def survey_table(rows: List[Dict]) -> str:
+    """The markdown table of a survey: one row per specification."""
+    md = ["| Body | Field | Class | Memory, slowest rate | Modes reached and seen | n_lin / signals | Odd | Exact capacity by degree |",
+          "| --- | --- | --- | --- | --- | --- | --- | --- |"]
+    for r in rows:
+        exact = "—" if not r["exact"] else ", ".join(f"{k}: {_cap(v)}" for k, v in sorted(r["exact"].items(), key=lambda kv: int(kv[0])))
+        memory = "fading, " + f"{r['slowest_rate']:.3g}" if r["memory"] == "fading" else "none (integrating)"
+        md.append(f"| {r['name']} | {r['field'] or '—'} | {CLASS_TEXT[r['class']]} | {memory} | {r['modes']} | "
+                  f"{r['n_lin']} / {r['signals']} | {'yes' if r['odd'] else 'no'} | {exact} |")
+    return "\n".join(md) + "\n"
 
 
 def add_parser(sub) -> None:

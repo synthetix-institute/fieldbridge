@@ -107,24 +107,24 @@ class ExactCapacities:
         """The state after one interval; with record, also the states at the V measurement times."""
         return self.body.interval(X, U, record=record)
 
-    def _box(self, margin: float, seed: int) -> np.ndarray:
-        """The range of the driven state from one long run and the steady states at the extreme inputs, widened by
-        the margin."""
+    def _box(self, margin: float, seed: int, streams: int = 64, intervals: int = 400) -> np.ndarray:
+        """The range of the driven state from independent streams run side by side and the steady states at the
+        extreme inputs, widened by the margin."""
         b = self.body
         states = []
         for u in (-b.amplitude, b.amplitude):
             try:
                 states.append(b.steady(b.offset + u))
-            except (RuntimeError, ValueError):   # no steady state at the extreme input: the long run bounds the state
+            except (RuntimeError, ValueError):   # no steady state at the extreme input: the runs bound the state
                 pass
-        # follow one long stream to bound the attractor
         rng = np.random.default_rng(seed)
-        X = b.steady()[None, :]
-        traj = []
-        for u in b.draw(rng, 20000) + b.offset:
-            X = self._interval_map(X, np.array([u]))
-            traj.append(X[0])
-        traj = np.array(traj + states)
+        X = np.repeat(b.steady()[None, :], streams, axis=0)
+        seen = []
+        for t in range(intervals):
+            X = self._interval_map(X, b.draw(rng, streams) + b.offset)
+            if t >= intervals // 20:
+                seen.append(X.copy())
+        traj = np.concatenate(seen + ([np.array(states)] if states else []))
         lo, hi = traj.min(axis=0), traj.max(axis=0)
         pad = margin * (hi - lo) + 1e-9
         return np.stack([lo - pad, hi + pad], axis=1)

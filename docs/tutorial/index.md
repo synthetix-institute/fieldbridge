@@ -1,6 +1,6 @@
 # FieldBridge tutorial
 
-The tutorial has three entry points. Each is a calculation with a physical question, a result to compare with, a
+The tutorial has four entry points. Each is a calculation with a physical question, a result to compare with, a
 control that must change the prediction, and the test responsible for it.
 
 - **The language of mechanisms.** [Quantum closure](11_quantum_closure.md) asks whether the transverse magnetization
@@ -11,6 +11,9 @@ control that must change the prediction, and the test responsible for it.
   stores and how a state is written. It is Module 1 of [twelve modules](#memory-in-materials-twelve-modules).
 - **Regulation.** [Return to a set point](28_regulation_set_point.md) asks whether the output of a cell, a machine or
   a material returns exactly after a step of its input, and through which variable.
+- **Computation.** [Which functions of an input history a body represents](29_computation_capacity.md) asks how
+  many functions of its past input, and of which degree, a neuron, a bacterium, a magnetic junction or a network of
+  springs holds in a few measured observables.
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -57,6 +60,12 @@ reading order.
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Return to a set point](28_regulation_set_point.md) | Does the output return exactly after a step of the input, through which variable, and is the result checkable without repeating the search? | `regulation card`, `survey`, `check` |
+
+## Computation
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [Which functions of an input history a body represents](29_computation_capacity.md) | Does the body have fading memory, how many functions of the input history do its observables reproduce, which degrees does symmetry exclude, and what changes with the measurement noise? | `computation predict`, `card`, `survey` |
 
 ## Memory in materials: twelve modules
 

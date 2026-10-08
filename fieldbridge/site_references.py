@@ -188,6 +188,40 @@ BIB = {
                      "doi": "10.1016/j.cels.2021.05.020"},
     "astrom2021": {"cite": "K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021)",
                    "short": "Åström and Murray, 2021", "doi": ""},
+    # computation: which functions of an input history a driven body represents
+    "jaeger2001": {"cite": "H. Jaeger, The \"echo state\" approach to analysing and training recurrent neural networks, "
+                           "GMD Report 148 (German National Research Center for Information Technology, 2001)",
+                   "short": "Jaeger, 2001", "doi": ""},
+    "jaeger2002": {"cite": "H. Jaeger, Short term memory in echo state networks, GMD Report 152 (German National Research "
+                           "Center for Information Technology, 2002)", "short": "Jaeger, 2002", "doi": ""},
+    "boyd1985": {"cite": "S. Boyd and L. O. Chua, IEEE Trans. Circuits Syst. 32, 1150 (1985)", "short": "Boyd and Chua, 1985",
+                 "doi": "10.1109/TCS.1985.1085649"},
+    "dambre2012": {"cite": "J. Dambre, D. Verstraeten, B. Schrauwen and S. Massar, Sci. Rep. 2, 514 (2012)",
+                   "short": "Dambre et al., 2012", "doi": "10.1038/srep00514"},
+    "grigoryeva2015": {"cite": "L. Grigoryeva, J. Henriques, L. Larger and J.-P. Ortega, Sci. Rep. 5, 12858 (2015)",
+                       "short": "Grigoryeva et al., 2015", "doi": "10.1038/srep12858"},
+    "gonon2020": {"cite": "L. Gonon, L. Grigoryeva and J.-P. Ortega, Physica D 414, 132721 (2020)",
+                  "short": "Gonon, Grigoryeva and Ortega, 2020", "doi": "10.1016/j.physd.2020.132721"},
+    "herteux2020": {"cite": "J. Herteux and C. Räth, Chaos 30, 123142 (2020)", "short": "Herteux and Räth, 2020",
+                    "doi": "10.1063/5.0028993"},
+    "kubota2021": {"cite": "T. Kubota, H. Takahashi and K. Nakajima, Phys. Rev. Research 3, 043135 (2021)",
+                   "short": "Kubota, Takahashi and Nakajima, 2021", "doi": "10.1103/PhysRevResearch.3.043135"},
+    "hulser2023": {"cite": "T. Hülser, F. Köster, L. Jaurigue and K. Lüdge, Nanophotonics 12, 937 (2023)",
+                   "short": "Hülser et al., 2023", "doi": "10.1515/nanoph-2022-0415"},
+    "koster2024": {"cite": "F. Köster, S. Yanchuk and K. Lüdge, IEEE Trans. Neural Netw. Learn. Syst. 35, 7712 (2024)",
+                   "short": "Köster, Yanchuk and Lüdge, 2024", "doi": "10.1109/TNNLS.2022.3220532"},
+    "ballarin2024": {"cite": "G. Ballarin, L. Grigoryeva and J.-P. Ortega, J. Mach. Learn. Res. 25(243), 1 (2024)",
+                     "short": "Ballarin, Grigoryeva and Ortega, 2024", "doi": ""},
+    "hodgkin1952": {"cite": "A. L. Hodgkin and A. F. Huxley, J. Physiol. 117, 500 (1952)", "short": "Hodgkin and Huxley, 1952",
+                    "doi": "10.1113/jphysiol.1952.sp004764"},
+    "huang1996": {"cite": "C.-Y. F. Huang and J. E. Ferrell, Proc. Natl. Acad. Sci. USA 93, 10078 (1996)",
+                  "short": "Huang and Ferrell, 1996", "doi": "10.1073/pnas.93.19.10078"},
+    "hauser2011": {"cite": "H. Hauser, A. J. Ijspeert, R. M. Füchslin, R. Pfeifer and W. Maass, Biol. Cybern. 105, 355 (2011)",
+                   "short": "Hauser et al., 2011", "doi": "10.1007/s00422-012-0471-0"},
+    "torrejon2017": {"cite": "J. Torrejon et al., Nature 547, 428 (2017)", "short": "Torrejon et al., 2017",
+                     "doi": "10.1038/nature23011"},
+    "furuta2018": {"cite": "T. Furuta, K. Fujii, K. Nakajima, S. Tsunegi, H. Kubota, Y. Suzuki and S. Miwa, Phys. Rev. "
+                           "Applied 10, 034063 (2018)", "short": "Furuta et al., 2018", "doi": "10.1103/PhysRevApplied.10.034063"},
     # textbooks
     "strogatz1994": {"cite": "S. H. Strogatz, Nonlinear Dynamics and Chaos (Addison-Wesley, Reading, 1994)",
                      "short": "Strogatz, 1994", "doi": ""},
@@ -212,6 +246,7 @@ M4 = T + "18_memory_writing_and_retention.md"
 M8 = T + "22_memory_time.md"
 M12 = T + "27_memory_return_point.md"
 R1 = T + "28_regulation_set_point.md"
+C1 = T + "29_computation_capacity.md"
 
 READING: Dict[str, Dict] = {
     # ---------------------------------------------------------------- mechanisms of the map (site_registry.CLASSES)
@@ -380,6 +415,56 @@ READING: Dict[str, Dict] = {
         "code": "regulation.card.card, gains.attenuation",
         "sources": [("briat2016", "a static controller of Hill type does not adapt to a change of the process")],
         "textbooks": ["astrom2021"],
+    },
+    "linear-memory": {
+        "defined": ("Computation 1, §3", "a linear body with linear observables: capacity at degree 1 only",
+                    C1 + "#3-the-prediction-from-structure"),
+        "derived": [("Computation 1, §3", "the profile of one mode and the rank of the linear response, from the "
+                                          "equations", C1 + "#3-the-prediction-from-structure"),
+                    ("Computation 1, §6", "the rank counts directions far below any measurement", C1 + "#6-measurement-noise")],
+        "code": "computation.predict.linear, ipc.capacities",
+        "sources": [("jaeger2002", "the short-term memory of an echo state network; at most the number of its variables"),
+                    ("dambre2012", "the capacity of a dynamical system for functions of its input history"),
+                    ("gonon2020", "the memory capacity of a linear network equals the rank of its controllability matrix"),
+                    ("ballarin2024", "the numerical rank of that matrix and the bias of the estimator")],
+        "textbooks": [],
+    },
+    "odd-capacity": {
+        "defined": ("Computation 1, §3", "an odd body, odd observables and a symmetric input: odd degrees only",
+                    C1 + "#3-the-prediction-from-structure"),
+        "derived": [("Computation 1, §5", "a bias of the input brings the even degrees", C1 + "#5-controls")],
+        "code": "computation.predict.odd, ipc.capacities",
+        "sources": [("dambre2012", "the capacities of an echo state network vanish at even degrees"),
+                    ("herteux2020", "the symmetry of the equations of an echo state network and how a bias breaks it"),
+                    ("kubota2021", "the capacities as coefficients of an expansion of the measured signals")],
+        "textbooks": [],
+    },
+    "nonlinear-capacity": {
+        "defined": ("Computation 1, §2", "with fading memory the capacities of all degrees sum to the number of "
+                                         "independent measured signals", C1 + "#2-the-measure"),
+        "derived": [("Computation 1, §4", "exact capacities of every degree and delay for one or two state variables",
+                     C1 + "#4-running-the-command"),
+                    ("Computation 1, §7", "published bodies from six fields", C1 + "#7-the-published-bodies")],
+        "code": "computation.exact.ExactCapacities, card.card, ipc.capacities",
+        "sources": [("boyd1985", "fading memory and the approximation of time-invariant filters by Volterra series"),
+                    ("dambre2012", "the total capacity and its distribution over degrees"),
+                    ("grigoryeva2015", "closed-form capacities of linear and quadratic tasks for delay systems"),
+                    ("koster2024", "the linear capacity at every delay from the linearization of a delay system"),
+                    ("hulser2023", "the error on a named task from the capacity profile"),
+                    ("hodgkin1952", "the membrane of the squid giant axon"),
+                    ("huang1996", "ultrasensitivity of the MAPK cascade"),
+                    ("hauser2011", "networks of nonlinear springs and masses as computing bodies"),
+                    ("furuta2018", "a macrospin tunnel junction measured at many times per input"),
+                    ("torrejon2017", "computing with a spin-torque oscillator in experiment")],
+        "textbooks": [],
+    },
+    "integrating": {
+        "defined": ("Computation 1, §5", "a mode without decay: no capacity at a fixed delay", C1 + "#5-controls"),
+        "derived": [("Computation 1, §5", "a rate set to zero turns the class", C1 + "#5-controls")],
+        "code": "computation.predict.linear",
+        "sources": [("jaeger2001", "the echo state property: the state forgets its initial condition"),
+                    ("boyd1985", "fading memory")],
+        "textbooks": [],
     },
     "oscillation": {
         "defined": ("Glossary, Retention", "phase memory, phase response curve, phase diffusion",

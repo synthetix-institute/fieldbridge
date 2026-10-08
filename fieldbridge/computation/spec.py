@@ -198,10 +198,15 @@ class Driven(Body):
         u0 = self.offset if u0 is None else u0
         x0 = np.asarray(self.initial if self.initial is not None else np.zeros(self.n), float)
         if self.form == "map":
-            sol = root(lambda x: self.f(x[None, :], u0)[0] - x, x0, tol=1e-12)
+            g = lambda x: self.f(x[None, :], u0)[0] - x  # noqa: E731
         else:
-            sol = root(lambda x: self.f(x[None, :], u0)[0], x0, tol=1e-12)
-        if not sol.success:
+            g = lambda x: self.f(x[None, :], u0)[0]  # noqa: E731
+        # judged by the residual: started at the steady state itself, the solver makes no progress and reports failure
+        small = 1e-10 * (1.0 + float(np.abs(x0).max(initial=0.0)))
+        if np.abs(g(x0)).max(initial=0.0) < small:
+            return x0
+        sol = root(g, x0, tol=1e-12)
+        if not sol.success and np.abs(sol.fun).max(initial=0.0) >= small:
             raise SpecError(f"no steady state found from {x0.tolist()} at the input {u0}; give computation.initial")
         return sol.x
 

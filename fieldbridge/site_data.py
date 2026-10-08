@@ -153,7 +153,9 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
             nid = path.stem if path.stem not in ids else f"{path.stem}_{Path(folder).name}"
             out.append({"id": nid, "family": fam, "spec": rel, "auto": True,
                         "tutorial": ("docs/tutorial/28_regulation_set_point.md#8-a-model-from-your-field"
-                                     if fam == "regulation" else "docs/tutorial/21_memory_new_material.md"
+                                     if fam == "regulation" else
+                                     "docs/tutorial/29_computation_capacity.md#8-a-model-from-your-field"
+                                     if fam == "computation" else "docs/tutorial/21_memory_new_material.md"
                                      if fam != "unitary" else "docs/tutorial/24_spin_language.md#2-writing-a-realization")})
             ids.add(nid)
     return out
@@ -717,6 +719,72 @@ def regulation_slots(spec: Dict, real, step: Dict) -> Dict[str, str]:
             "A": ", ".join(f"{k} = {_num(real.params[k])}" for k in params[:6]) + (" …" if len(params) > 6 else "")}
 
 
+# exact capacities on the page: at a measurement noise of one part in a thousand (without noise the capacity counts
+# directions of the signals far below any measurement), on the module's grid for one variable and a coarse grid for two
+COMPUTATION_NOISE = 1e-3
+COMPUTATION_DELAYS = {1: 20, 2: 5, 3: 3}
+COMPUTATION_CLASSES = ("linear-memory", "odd-capacity", "nonlinear-capacity", "integrating")
+COMPUTATION_TEXT = {"linear-memory": "linear memory", "odd-capacity": "odd degrees only",
+                    "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory"}
+
+
+def computation_record(node: Dict) -> Dict:
+    """A driven body: the predictions of ``computation predict`` and, for one or two state variables, the exact
+    capacities of every degree and delay at a stated measurement noise."""
+    from .computation import spec as cspec
+    from .computation.exact import ExactCapacities
+    from .computation.predict import predict
+    spec = node["spec"]
+    body = cspec.load(spec)
+    pr = predict(body)
+    if pr["structure"] not in COMPUTATION_CLASSES:
+        raise SiteError(f"{node['id']}: {pr['structure']}")
+    exact, profile_exact = None, None
+    if body.n <= 2 and pr["class"] == "fading" and body.law != "gaussian":
+        ex = ExactCapacities(body, box=body.exact_box, noise=COMPUTATION_NOISE)    # default grid, as the survey
+        exact = ex.capacities(COMPUTATION_DELAYS)
+        profile_exact = [ex.capacity(((k, 1),)) for k in range(COMPUTATION_DELAYS[1] + 1)]
+    by = exact["by_degree"] if exact else {}
+    facts = {"structure": COMPUTATION_TEXT[pr["structure"]], "memory": pr["class"],
+             "rate": _num(pr["slowest_rate"]) if np.isfinite(pr["slowest_rate"]) else "—",
+             "modes": f"{pr['modes_reached_and_seen']} of {pr['modes']}", "n_lin": str(pr["n_lin"]),
+             "signals": str(pr["signals"]), "odd": "yes" if pr["odd"] else "no",
+             "linear": "yes" if pr["linear"] else "no",
+             "profile": ", ".join(f"{v:.3f}" for v in pr["profile_degree_1"][:5]),
+             "input": f"{body.input}: {body.law} on ±{_num(body.amplitude)} around {_num(body.offset)}, held {_num(body.hold)}",
+             "observables": "; ".join(body.obs_text)[:80] + (f", {body.V} times per interval" if body.V > 1 else ""),
+             "exact": "—" if not exact else ", ".join(f"degree {k}: {_num(v)}" for k, v in sorted(by.items())),
+             "degree_2": _num(by[2]) if 2 in by else "—", "noise": f"{COMPUTATION_NOISE:g}",
+             "grid": "—" if not exact else (f"{exact['grid']} points" if body.n == 1 else f"{exact['grid']} × {exact['grid']} points")}
+    return {"id": node["id"], "family": "computation", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": pr["structure"], "facts": facts, "question": spec.get("question"),
+            "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "computation", "profile": pr["profile_degree_1"][:COMPUTATION_DELAYS[1] + 1],
+                       "profile_exact": profile_exact, "singular": pr["singular_values"][:24],
+                       "input": body.input, "hold": body.hold, "noise": COMPUTATION_NOISE},
+            "slots": computation_slots(spec, body)}
+
+
+def computation_slots(spec: Dict, body) -> Dict[str, str]:
+    if spec.get("schema") == "fieldbridge-springs/1":
+        net = spec["network"]
+        omega = f"the forces of {len(net['springs'])} nonlinear springs on {body.n // 4} free masses"
+        xi = f"{body.n} variables: positions and velocities of the free masses"
+        params = (f"k1, d1 in [{_num(min(net['k1']))}, {_num(max(net['k1']))}], k3, d3 in "
+                  f"[{_num(min(net['k3']))}, {_num(max(net['k3']))}]")
+    else:
+        names = body.variables
+        omega = f"the drift of {', '.join(names[:5])}{' …' if len(names) > 5 else ''} ({spec.get('kind', 'equations')})"
+        xi = f"{body.n} variables on the {spec['carrier'].get('kind', 'euclid')} carrier" + (", a map" if body.form == "map" else "")
+        ps = [k for k in body.real.params if k != body.input]
+        params = ", ".join(f"{k} = {_num(body.real.params[k])}" for k in ps[:6]) + (" …" if len(ps) > 6 else "")
+    return {"Omega": omega, "Xi": xi,
+            "C": spec.get("closure") or "; ".join(spec.get("assumptions", [])[:1]) or "as in the source",
+            "R": "; ".join(body.obs_text)[:60] + (f" at {body.V} times per interval" if body.V > 1 else ""),
+            "P": f"{body.input} {body.law} on ±{_num(body.amplitude)} around {_num(body.offset)}, held for {_num(body.hold)}",
+            "A": params or "—"}
+
+
 def stochastic_record(node: Dict) -> Dict:
     from .verification import verify_construction
     spec = node["spec"]
@@ -748,6 +816,8 @@ def _numeric_drift(spec: Dict) -> Callable[[np.ndarray, Dict[str, float]], np.nd
     from .memory import spec as mspec
     if spec.get("schema") == "fieldbridge-regulation/1":      # the body of a regulated realization
         spec = {**{k: v for k, v in spec.items() if k != "regulation"}, "schema": mspec.SCHEMA}
+    if spec.get("schema") == "fieldbridge-computation/1":     # the body of a driven realization
+        spec = {**{k: v for k, v in spec.items() if k != "computation"}, "schema": mspec.SCHEMA}
     real = mspec.load(spec)
     return lambda q, p: real.drift(np.atleast_2d(q), {**real.params, **p})
 
@@ -764,7 +834,7 @@ def _same_carrier(a: Dict, b: Dict) -> bool:
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         return ha.get("lattice") == hb.get("lattice") and ha.get("units") == hb.get("units")
-    if a["family"] in ("dissipative", "regulation"):
+    if a["family"] in ("dissipative", "regulation", "computation"):
         ca, cb = a["spec"].get("carrier"), b["spec"].get("carrier")
         if a["spec"].get("kind") == "network" or b["spec"].get("kind") == "network":
             return a["spec"].get("network") == b["spec"].get("network")
@@ -922,6 +992,21 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
                 raise fail(f"a change of {slot} keeps the {key} of the regulation block")
         if kind not in ("param", "term"):
             raise fail(f"no check for {kind} on a regulated realization")
+    if a["family"] == "computation":
+        ca, cb = a["spec"]["computation"], b["spec"]["computation"]
+        if kind == "protocol":
+            diff = {k for k in set(ca) | set(cb) if ca.get(k) != cb.get(k)} - {"expect", "initial"}
+            if not diff or not diff <= {"offset", "amplitude", "hold", "law"}:
+                raise fail(f"a change of P changes the law, amplitude, offset or hold of the input only, not {sorted(diff)}")
+            meta = ("computation", "name", "question", "assumptions", "provenance")
+            if {k: v for k, v in a["spec"].items() if k not in meta} != {k: v for k, v in b["spec"].items() if k not in meta}:
+                raise fail("a change of P keeps the body")
+            return f"the bodies are the same; the input differs in {', '.join(sorted(diff))}"
+        for key in ("input", "observables", "virtual_nodes", "law", "hold", "offset", "amplitude"):
+            if ca.get(key) != cb.get(key):
+                raise fail(f"a change of {slot} keeps the {key} of the computation block")
+        if kind not in ("param", "term"):
+            raise fail(f"no check for {kind} on a driven realization")
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         diff = {k for k in set(ha) | set(hb) if ha.get(k) != hb.get(k)}
@@ -1097,6 +1182,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = hysteron_record(node)
         elif fam == "regulation":
             records[nid] = regulation_record(node)
+        elif fam == "computation":
+            records[nid] = computation_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]

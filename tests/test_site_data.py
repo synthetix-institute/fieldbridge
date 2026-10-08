@@ -30,6 +30,8 @@ FACTS = {
                   "plaquettes", "max_differ", "loss", "statement", "verdict"},
     "regulation": {"integrator", "gain_ratio", "set_point", "u0", "u1", "input", "output", "peak", "final",
                    "final_over_peak", "return_time", "robust", "clamp", "calibration"},
+    "computation": {"structure", "memory", "rate", "modes", "n_lin", "signals", "odd", "linear", "profile", "input",
+                    "observables", "exact", "degree_2", "noise", "grid"},
     "stochastic": {"convention", "growth", "correction"},
 }
 

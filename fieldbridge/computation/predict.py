@@ -2,7 +2,7 @@
 
 The body is linearized at its steady state x* for the input offset u0: J = dF/dx, B = dF/du and H = dh/dx,
 H_u = dh/du for the observables h (exact derivatives of the parsed expressions; central differences for a body given
-as data). Over one interval with the input held, the deviation obeys
+as data or with more than 12 variables). Over one interval with the input held, the deviation obeys
 
     s_t = Phi s_{t-1} + Gamma (u_t - u0),   Phi = e^{J dt},   Gamma = int_0^dt e^{J s} ds B,
 
@@ -37,7 +37,8 @@ CLASSES = ("linear-memory", "odd-capacity", "nonlinear-capacity", "integrating")
 def linearization(body: Body, u0: float | None = None) -> Dict:
     u0 = body.offset if u0 is None else u0
     x = body.steady(u0)
-    if not hasattr(body, "real"):
+    if not hasattr(body, "real") or body.n > 12:
+        # bodies given as data, and large ones, whose symbolic Jacobian is slow to compile: central differences
         return _numeric_linearization(body, x, u0)
     sp = memory_spec._sympy()
     usym = next(s for s in body.psyms if str(s) == body.input)
@@ -94,13 +95,26 @@ def linear(body: Body, K: int = 400, tol: float = 1e-6) -> Dict:
     _, sv, Vt = np.linalg.svd(G, full_matrices=False)
     n_lin = int(np.sum(sv > tol * sv[0])) if sv.size and sv[0] > 0 else 0
     profile = np.sum(Vt[:n_lin] ** 2, axis=0)
-    lam, R = np.linalg.eig(Phi)
+    # the modes from J (Phi = e^{J dt} shares its eigenvectors): fast modes of a flow cluster near 0 in Phi, where its
+    # eigenvectors are ill-conditioned and the count of modes reached and seen would depend on rounding
+    if body.form == "map":
+        lam, R = np.linalg.eig(J)
+    else:
+        mu, R = np.linalg.eig(J)
+        lam = np.exp(mu * dt)
     L = np.linalg.inv(R)
     weight = np.abs(L @ Gamma) * np.linalg.norm(R, axis=0) * np.linalg.norm(H @ R, axis=0)
-    live = weight > 1e-9 * weight.max() if weight.max() > 0 else np.zeros(len(lam), bool)
+    # the same relative tolerance as the rank: below it a mode is not reached or not seen (a conserved amount that the
+    # input cannot change, even when the Jacobian comes from differences and its eigenvalue is 1e-10 instead of 0)
+    live = weight > tol * weight.max() if weight.max() > 0 else np.zeros(len(lam), bool)
     rho = float(np.max(np.abs(lam[live]))) if live.any() else 0.0
     cls = "fading" if rho < 1 - 1e-9 else ("integrating" if rho < 1 + 1e-9 else "unstable")
-    rates = -np.log(np.abs(lam[live]) + 1e-300) / dt if live.any() else np.array([np.inf])
+    if not live.any():
+        rates = np.array([np.inf])
+    elif body.form == "map":
+        rates = -np.log(np.abs(lam[live]) + 1e-300) / dt
+    else:
+        rates = -mu[live].real
     return {"class": cls, "spectral_radius": rho, "slowest_rate": float(np.min(rates)),
             "modes_reached_and_seen": int(live.sum()), "modes": len(lam), "n_lin": n_lin,
             "singular_values": (sv / sv[0]).tolist() if sv.size and sv[0] > 0 else [],

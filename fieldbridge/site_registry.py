@@ -44,6 +44,10 @@ CLASSES = {
     "fine-tuned-adaptation": "fine-tuned adaptation",
     "partial-adaptation": "partial adaptation",
     "no-adaptation": "no adaptation",
+    "linear-memory": "linear memory",
+    "odd-capacity": "odd degrees only",
+    "nonlinear-capacity": "nonlinear capacity",
+    "integrating": "no fading memory",
     "oscillation": "limit cycle",
     "neutral-cycles": "neutral cycles",
     "exponential-loss": "exponential loss",
@@ -111,6 +115,24 @@ MECHANISMS = {
     "no-adaptation": {"canonical": "no integrator: G = dy/du ≠ 0 and no return after the peak",
                       "text": "The output moves to its new value and stays there; feedback that is only proportional "
                               "reduces the change without returning it.", "node": "cruise_control_p"},
+    # computation: which functions of the input history a linear combination of the measured observables of a driven
+    # body represents (the information processing capacity of Dambre et al. 2012), decided by its equations
+    "linear-memory": {"canonical": "C(k) = (1 − a²) a<sup>2k</sup>; Σ<sub>k</sub> C(k) = n<sub>lin</sub>",
+                      "text": "A linear body with linear observables represents past inputs, not their products: the "
+                              "capacity lies at degree 1, falls with the delay as the modes decay, and sums to the "
+                              "rank of the linear response.", "node": "comp_one_mode"},
+    "odd-capacity": {"canonical": "F(−x, −u) = −F(x, u): C = 0 at every even degree",
+                     "text": "A body odd about its steady state, measured by odd observables and driven by a symmetric "
+                             "input, represents products of an odd number of past inputs only.",
+                     "node": "comp_odd_oscillator"},
+    "nonlinear-capacity": {"canonical": "C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent "
+                                        "measured signals",
+                           "text": "Nonlinear terms move capacity to products of past inputs; with fading memory the "
+                                   "capacities of all degrees together equal the number of independent measured "
+                                   "signals.", "node": "comp_square_cascade"},
+    "integrating": {"canonical": "κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub>",
+                    "text": "A mode without decay keeps the running sum of the input; its correlation with the input at "
+                            "any fixed delay vanishes as the sum grows.", "node": "comp_running_sum"},
     "oscillation": {"canonical": "driven: φ̇ = ν − K sin φ",
                     "text": "The preparations settle on a limit cycle whose phase is neutral; a periodic drive locks "
                             "the phase inside the Adler range.", "node": "van_der_pol"},
@@ -136,7 +158,7 @@ START = "pitchfork"
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
-             "examples/regulation": "regulation"}
+             "examples/regulation": "regulation", "examples/computation": "computation"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
@@ -145,6 +167,7 @@ M10 = "docs/tutorial/25_memory_threshold_write.md"
 M11 = "docs/tutorial/26_memory_phase_locking.md"
 M12 = "docs/tutorial/27_memory_return_point.md"
 R1 = "docs/tutorial/28_regulation_set_point.md"
+C1 = "docs/tutorial/29_computation_capacity.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -361,6 +384,35 @@ NODES = [
      "tutorial": R1 + "#6-leaks"},
     {"id": "ma2009_ifflp", "family": "regulation", "spec": "examples/regulation/ma2009_ifflp.json",
      "tutorial": R1 + "#4-running-the-command"},
+    # -- computation: which functions of the input history the measured observables of a driven body represent
+    {"id": "comp_one_mode", "family": "computation", "spec": "examples/computation/benchmarks/one_mode_map.json",
+     "tutorial": C1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "comp_linear_chain", "family": "computation", "spec": "examples/computation/benchmarks/linear_chain.json",
+     "tutorial": C1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "comp_linear_chain_no_decay", "family": "computation",
+     "spec": "examples/computation/controls/linear_chain_no_decay.json", "tutorial": C1 + "#5-controls",
+     "universal": True},
+    {"id": "comp_running_sum", "family": "computation", "spec": "examples/computation/benchmarks/running_sum.json",
+     "tutorial": C1 + "#5-controls", "universal": True},
+    {"id": "comp_odd_oscillator", "family": "computation", "spec": "examples/computation/benchmarks/odd_oscillator.json",
+     "tutorial": C1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "comp_odd_oscillator_bias", "family": "computation",
+     "spec": "examples/computation/controls/odd_oscillator_bias.json", "tutorial": C1 + "#5-controls",
+     "universal": True},
+    {"id": "comp_square_cascade", "family": "computation", "spec": "examples/computation/benchmarks/square_cascade.json",
+     "tutorial": C1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "chemotaxis_methylation_tu2008", "family": "computation",
+     "spec": "examples/computation/chemotaxis_methylation_tu2008.json", "tutorial": C1 + "#4-running-the-command"},
+    {"id": "spin_torque_furuta2018", "family": "computation", "spec": "examples/computation/spin_torque_furuta2018.json",
+     "tutorial": C1 + "#6-measurement-noise"},
+    {"id": "hodgkin_huxley1952", "family": "computation", "spec": "examples/computation/hodgkin_huxley1952.json",
+     "tutorial": C1 + "#7-the-published-bodies"},
+    {"id": "mapk_huang_ferrell1996", "family": "computation", "spec": "examples/computation/mapk_huang_ferrell1996.json",
+     "tutorial": C1 + "#7-the-published-bodies"},
+    {"id": "echo_state_dambre2012", "family": "computation", "spec": "examples/computation/echo_state_dambre2012.json",
+     "tutorial": C1 + "#7-the-published-bodies"},
+    {"id": "mass_spring_hauser2011", "family": "computation", "spec": "examples/computation/mass_spring_hauser2011.json",
+     "tutorial": C1 + "#7-the-published-bodies"},
     # -- the convention of a stochastic calculation
     {"id": "log_ito", "family": "stochastic", "spec": "examples/construction/log_signal_ito.json",
      "tutorial": "docs/tutorial/10_stochastic_construction.md#the-convention-changes-a-measurable-consequence"},
@@ -646,6 +698,15 @@ EDGES = [
      "change": "K<sub>CB</sub> = K′<sub>FBB</sub> = 0.1 → 0.01",
      "text": "The enzymes on the buffer node closer to saturation. The buffer node integrates the output more nearly, "
              "and the fraction that remains falls from {from.gain_ratio} to {gain_ratio}."},
+    # computation: a bias of the input, the decay of a stage
+    {"id": "comp_bias", "from": "comp_odd_oscillator", "to": "comp_odd_oscillator_bias", "slot": "P", "kind": "protocol",
+     "change": "offset of the input 0 → 0.5",
+     "text": "A constant bias of the input. The body is no longer odd about its steady state, and degree 2 takes "
+             "{degree_2} of the capacity, against {from.degree_2} without the bias."},
+    {"id": "comp_no_decay", "from": "comp_linear_chain", "to": "comp_linear_chain_no_decay", "slot": "A", "kind": "param",
+     "change": "k<sub>1</sub> = 0.5 → 0",
+     "text": "The first stage loses its decay. It keeps the running sum of the input, and the chain has no fading "
+             "memory: the capacity at every fixed delay vanishes as the sum grows."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -789,6 +850,26 @@ SEQUENCES = [
          {"edge": "reg_second_phosphatase"},
          {"edge": "reg_slow_controller"},
      ]},
+    {"id": "computation", "title": "Computation by a body",
+     "steps": [
+         {"node": "comp_one_mode",
+          "text": "One linear mode. A linear combination of its state reproduces the input k intervals back with "
+                  "capacity (1 − a²)a<sup>2k</sup>; the capacities sum to {n_lin}."},
+         {"node": "comp_linear_chain",
+          "text": "Three linear stages: {n_lin} independent functions of the input history, all of degree 1."},
+         {"edge": "comp_no_decay"},
+         {"node": "comp_odd_oscillator",
+          "text": "An oscillator with a cubic restoring force. It is odd about rest, so only odd degrees carry capacity: "
+                  "{exact}."},
+         {"edge": "comp_bias"},
+         {"node": "chemotaxis_methylation_tu2008",
+          "text": "Bacterial chemotaxis. The kinase activity follows the attractant at once and the methylation keeps "
+                  "about one interval of it: {exact}."},
+         {"node": "spin_torque_furuta2018",
+          "text": "A magnetic tunnel junction measured 50 times per pulse. Its linear response has {n_lin} directions; "
+                  "the nonlinear signals add many weak ones, so the capacity depends on how precisely the "
+                  "resistance is measured."},
+     ]},
     {"id": "turning-points", "title": "Return to a turning point",
      "steps": [
          {"node": "rfim_ferromagnet",
@@ -869,7 +950,8 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "subcritical-write": "distant write", "field-write": "field write", "return-point": "return point",
                "no-return": "return not exact", "perfect-adaptation": "perfect adaptation",
                "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
-               "no-adaptation": "no adaptation", "oscillation": "limit cycle",
+               "no-adaptation": "no adaptation", "linear-memory": "linear memory", "odd-capacity": "odd degrees",
+               "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
 
@@ -881,6 +963,8 @@ CLASS_ABSENT = {
     "conserved": ["no rotation", "the observable is conserved: nothing rotates"],
     "obstructed": ["no rotation", "the observable moves with several frequencies, not as one rotation"],
     "no-adaptation": ["no regulation", "the output moves to its new value and stays there: nothing returns it"],
+    "integrating": ["no capacity", "a mode without decay keeps a running sum: no input at a fixed delay can be "
+                                        "recovered from it"],
     "no-return": ["no return point", "a measured subloop does not return to the state at its turning point; a "
                                      "frustrated loop through the drive allows this without forcing it"],
 }
@@ -932,6 +1016,13 @@ SHORT = {
     "envz_ompr_phosphatase": "EnvZ–OmpR + phosphatase", "qian2018_quasi": "quasi-integral, ε = 0.02",
     "qian2018_leaky": "leaky, ε = 1", "qian2018_ideal": "without dilution", "ma2009_nfblb": "buffer node, K = 0.1",
     "ma2009_nfblb_saturated": "buffer node, K = 0.01", "ma2009_ifflp": "proportioner node",
+    "comp_one_mode": "one linear mode", "comp_linear_chain": "three linear stages",
+    "comp_linear_chain_no_decay": "stages, first without decay", "comp_running_sum": "running sum",
+    "comp_odd_oscillator": "cubic oscillator", "comp_odd_oscillator_bias": "cubic oscillator + bias",
+    "comp_square_cascade": "square cascade", "chemotaxis_methylation_tu2008": "chemotaxis, methylation",
+    "spin_torque_furuta2018": "tunnel junction", "hodgkin_huxley1952": "Hodgkin–Huxley membrane",
+    "mapk_huang_ferrell1996": "MAPK cascade", "echo_state_dambre2012": "echo state network",
+    "mass_spring_hauser2011": "mass–spring network",
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
     "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
     "nv_centre": "NV centre", "spin1_atom": "spin-1 atom", "stoner_wohlfarth": "magnet, 90°",
