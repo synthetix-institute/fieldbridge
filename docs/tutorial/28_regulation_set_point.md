@@ -48,7 +48,10 @@ $$
 A variable can be clamped, that is, held at its steady value as a reservoir would hold it. The gain with that
 variable clamped, $G_{\rm open}$, is the response without the part of the loop that passes through the variable, and
 $G/G_{\rm open}$ is the fraction of the step that remains. The output adapts perfectly when $G = 0$ at every parameter
-point, and it is fine-tuned when $G = 0$ only at the stated parameters.
+point, and it is fine-tuned when $G = 0$ only at the stated parameters. A gain counts as zero below $10^{-8}$ of the
+largest open-loop gain of the clamps: a gain that vanishes exactly comes out of the linear algebra as 0 or as a number
+of order $10^{-17}$, depending on the build. Where $G_{\rm open}$ is zero, the output does not respond with the variable
+clamped, and the fraction is undefined.
 
 A robust return needs an integrator (the internal model principle: Francis and Wonham, 1976; Sontag, 2003; for
 chemotaxis, Yi et al., 2000). This is a function $\phi$ of the state with

@@ -253,6 +253,21 @@ def test_hysterons_return_to_a_turning_point_or_not_and_each_change_names_its_co
     assert data["materials"][-1] == "rfim_antiferromagnet" and data["absent"]["no-return"][0] == "no return point"
 
 
+def test_the_clamp_shown_does_not_depend_on_the_rounding():
+    # equal fractions (all 0 where the output adapts, as in EnvZ-OmpR) go to the largest open-loop gain, then to the
+    # first variable; the two equal clamps of qian2018_quasi differ in the last digits between NumPy builds
+    def row(v, fraction, g_open):
+        return {"variable": v, "role": "feedback", "remaining_fraction": fraction, "G_open": g_open}
+    envz = [row("XD", 0.0, 1.03e-4), row("XT", 0.0, -1.46e-4), row("Xp", 0.0, 3.83e-2), row("XpY", 0.0, -1.03e-4)]
+    assert sd.least_clamp(envz)["variable"] == "Xp"
+    for f1, f2, g2 in [(0.021595843850105042, 0.021595843850105118, 1.0),
+                       (0.021595843850105118, 0.021595843850105042, 1.0000000000000002)]:
+        assert sd.least_clamp([row("z1", f1, 1.0), row("z2", f2, g2)])["variable"] == "z1"
+    partial = [row("XD", 0.437, 4.1e-5), row("Xp", 0.00178, 1.0e-2), row("XT", -1.24, -1.4e-5)]
+    assert sd.least_clamp(partial)["variable"] == "Xp"
+    assert sd.least_clamp([]) is None
+
+
 def test_every_material_of_the_page_has_a_card_in_the_gallery():
     # the thumbnails of "Memory in model materials" are panel (a) of these cards; a material without one shows only
     # the drawing of its mechanism

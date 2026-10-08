@@ -64,10 +64,15 @@ def markdown(res: Dict) -> str:
                   "state, a rate that depends on the state only through the output).", ""]
     if res.get("note"):
         lines += [f"Note: {res['note']}.", ""]
-    att = [a for a in res.get("attenuation") or [] if a.get("remaining_fraction") is not None]
+    att = [a for a in res.get("attenuation") or []
+           if a.get("remaining_fraction") is not None or a.get("open_loop_zero")]
     if att:
         lines += ["## Clamps", "", "| Variable | Role | Remaining fraction G/G_open |", "| --- | --- | --- |"]
-        lines += [f"| {a['variable']} | {a['role']} | {a['remaining_fraction']:.4g} |" for a in att] + [""]
+        for a in att:
+            fraction = ("undefined: G_open = 0, no response with the variable clamped" if a.get("open_loop_zero")
+                        else f"{a['remaining_fraction']:.4g}")
+            lines.append(f"| {a['variable']} | {a['role']} | {fraction} |")
+        lines.append("")
     rob = res.get("robustness")
     if rob:
         lines += [f"Parameter points (each free parameter multiplied by a factor in [1/2, 2]): {rob['stable']} of "

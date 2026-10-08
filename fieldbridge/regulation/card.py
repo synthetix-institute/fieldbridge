@@ -21,13 +21,12 @@ from typing import Dict, List, Optional
 
 import numpy as np
 
-from .gains import attenuation, input_reaches_output, reference_gain, static_gain
+from .gains import GAIN_ZERO, attenuation, input_reaches_output, reference_gain, static_gain
 from .integrator import conservation_laws, find_integrator
 from .spec import Regulated
 from .step import step_response
 from .steady import steady_state
 
-GAIN_ZERO = 1e-8       # |G| / G_reference below this is a steady output independent of the input
 RETURN_MIN = 0.02      # a return of less than 2 % of the peak deviation counts as no return
 
 
@@ -92,7 +91,7 @@ def card(m: Regulated, samples: int = 32, seed: int = 0, steps: bool = True, fir
     centers = np.vstack([q, m.initial])
     integ = find_integrator(m, p, centers, rng, y0_steady=st["y"])
     out["integrator"] = integ
-    out["attenuation"] = attenuation(m, p, q, L)
+    out["attenuation"] = attenuation(m, p, q, L, g_ref)
 
     # ---- robustness over parameter points
     rows = []

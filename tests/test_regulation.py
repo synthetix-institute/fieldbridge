@@ -56,6 +56,43 @@ def test_clamping_the_leaky_integrator_gives_the_remaining_fraction():
     z = next(r for r in gains.attenuation(m, p, st["q"], L) if r["variable"] == "z")
     assert z["role"] == "feedback"
     assert z["remaining_fraction"] == pytest.approx(0.05 / (0.05 + 0.5), rel=1e-9)
+    assert not z["open_loop_zero"]
+
+
+def test_a_clamp_that_removes_the_response_has_no_remaining_fraction(monkeypatch):
+    # ACR network with B clamped: k3 A = k4 C cancels in dA/dt, which leaves k1 A = k2, so G_open = 0 (and G = 0).
+    # The rounding gives G_open = 0 or about 1e-17, depending on the LAPACK build (with NumPy 2, G_open = -1.39e-17 and
+    # G = 2.07e-17: a fraction of -1.49). Imposed here, the fraction stays undefined
+    m = load("acr_network")
+    p, st, L = settled(m)
+    b = m.variables.index("B")
+    ref = gains.reference_gain(m, p, st["q"], L)
+    exact_clamp, exact_gain = gains.clamped_gain, gains.static_gain
+    for g_open, g_closed in [(None, None), (0.0, 0.0), (-1.39e-17, 2.07e-17), (1e-17, -3e-17)]:
+        def clamped(m_, p_, q_, k, L_=None, g=g_open):
+            c = exact_clamp(m_, p_, q_, k, L_)
+            return {**c, "G": g} if g is not None and k == b else c
+
+        def static(m_, p_, q_, L_=None, g=g_closed):
+            s = exact_gain(m_, p_, q_, L_)
+            return {**s, "G": g} if g is not None else s
+
+        monkeypatch.setattr(gains, "clamped_gain", clamped)
+        monkeypatch.setattr(gains, "static_gain", static)
+        row = next(r for r in gains.attenuation(m, p, st["q"], L, ref) if r["variable"] == "B")
+        assert row["open_loop_zero"] and row["remaining_fraction"] is None
+
+
+def test_a_vanishing_closed_gain_leaves_no_fraction_at_a_clamp(monkeypatch):
+    # PI loop: G = 0 and G_open = 1/lam with z clamped; a closed gain of the size of the rounding leaves 0, not 1e-17
+    m = load("pi_loop")
+    p, st, L = settled(m)
+    exact = gains.static_gain
+    for g in (0.0, 1e-17, -1e-17):
+        monkeypatch.setattr(gains, "static_gain", lambda m_, p_, q_, L_=None, g=g: {**exact(m_, p_, q_, L_), "G": g})
+        z = next(r for r in gains.attenuation(m, p, st["q"], L) if r["variable"] == "z")
+        assert z["G_open"] == pytest.approx(1.0 / m.params["lam"], rel=1e-9) and not z["open_loop_zero"]
+        assert z["remaining_fraction"] == 0.0
 
 
 def test_a_clamp_that_leaves_a_singular_block_has_no_gain(tmp_path):
