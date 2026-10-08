@@ -164,6 +164,18 @@ def rate(info: Dict[str, object], m: Regulated, q: np.ndarray, p: np.ndarray, y:
     return gain_value(info, m.variables, q) * (y - float(info["set_point"]))
 
 
+def rate_gradient(info: Dict[str, object], m: Regulated, q: np.ndarray, y: float, J: np.ndarray,
+                  grad_h: np.ndarray) -> np.ndarray:
+    """The gradient of rate() in q, from the Jacobian J of the drift and the gradient of the output at q: w.J for
+    stage 3, g grad h + (y - y0) grad g for stages 1 and 2."""
+    if info.get("stage") == 3:
+        return np.array([info["coefficients"]["w"].get(v, 0.0) for v in m.variables]) @ J
+    grad_g = np.zeros(m.n)
+    if info.get("stage") == 2:
+        grad_g = np.array([info["gain_coefficients"].get(v, 0.0) for v in m.variables])
+    return gain_value(info, m.variables, q) * grad_h + (y - float(info["set_point"])) * grad_g
+
+
 def _check(m: Regulated, p, x, rate: Callable, centers, rng, logs) -> Tuple[float, np.ndarray, np.ndarray]:
     """Largest relative residual of the identity AF x = rate(Q, Y) on fresh, wider samples."""
     count = max(200, 20 * len(x))
