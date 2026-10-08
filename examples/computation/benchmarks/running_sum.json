@@ -1,0 +1,40 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "A running sum of the input",
+ "field": "",
+ "question": "What does a mode without decay hold at fixed delays?",
+ "assumptions": [
+  "a benchmark written without a field; its capacities are known in closed form or by symmetry"
+ ],
+ "provenance": {
+  "source": "analytic benchmark"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "x"
+  ]
+ },
+ "parameters": {
+  "k": 0.0,
+  "u": 0.0
+ },
+ "drift": {
+  "x": "u - k*x"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 1.0,
+  "hold": 1.0,
+  "observables": [
+   "x"
+  ],
+  "washout": 100,
+  "length": 3000,
+  "substeps": 12,
+  "expect": "integrating"
+ }
+}

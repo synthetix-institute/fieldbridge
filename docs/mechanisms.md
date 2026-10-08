@@ -20,6 +20,10 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Fine-tuned adaptation](#fine-tuned-adaptation) | G = 0 only where k<sub>1</sub>k<sub>4</sub> = k<sub>2</sub>k<sub>3</sub> | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §9](tutorial/28_regulation_set_point.md#9-exercises) | Ma et al., 2009; Shoval et al., 2010 |
 | [Partial adaptation](#partial-adaptation) | dφ/dt = k (y − y<sub>0</sub>) − δφ: a fraction 1/(1 + kg/δ) remains | [Regulation 1, §3](tutorial/28_regulation_set_point.md#3-the-prediction-from-structure) | [Regulation 1, §6](tutorial/28_regulation_set_point.md#6-leaks) | Ma et al., 2009; Qian and Del Vecchio, 2018 |
 | [No adaptation](#no-adaptation) | no integrator: G = dy/du ≠ 0 and no return after the peak | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | [Regulation 1, §5](tutorial/28_regulation_set_point.md#5-controls) | Briat, Gupta and Khammash, 2016 |
+| [Linear memory](#linear-memory) | C(k) = (1 − a²) a<sup>2k</sup>; Σ<sub>k</sub> C(k) = n<sub>lin</sub> | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure) | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure), [Computation 1, §6](tutorial/29_computation_capacity.md#6-measurement-noise) | Jaeger, 2002; Dambre et al., 2012; Gonon, Grigoryeva and Ortega, 2020; Ballarin, Grigoryeva and Ortega, 2024 |
+| [Odd degrees only](#odd-degrees-only) | F(−x, −u) = −F(x, u): C = 0 at every even degree | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Dambre et al., 2012; Herteux and Räth, 2020; Kubota, Takahashi and Nakajima, 2021 |
+| [Nonlinear capacity](#nonlinear-capacity) | C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent measured signals | [Computation 1, §2](tutorial/29_computation_capacity.md#2-the-measure) | [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies) | Hodgkin and Huxley, 1952; Boyd and Chua, 1985; Huang and Ferrell, 1996; Hauser et al., 2011; Dambre et al., 2012; Grigoryeva et al., 2015; Torrejon et al., 2017; Furuta et al., 2018; Hülser et al., 2023; Köster, Yanchuk and Lüdge, 2024 |
+| [No fading memory](#no-fading-memory) | κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub> | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Boyd and Chua, 1985; Jaeger, 2001 |
 | [Linear-stage write (vacuum seed)](#linear-stage-write-vacuum-seed) | ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4 | [Quantum write, §2](tutorial/29_quantum_write.md#2-the-mechanism) | [Quantum write, §3](tutorial/29_quantum_write.md#3-the-worked-example), [Quantum write, §4](tutorial/29_quantum_write.md#4-the-results), [Quantum write, §6](tutorial/29_quantum_write.md#6-measured-oscillators) | Kondepudi and Nelson, 1985; Grimm et al., 2020; Roques-Carmes et al., 2023; Gu et al., 2025; Yamaji et al., 2025 |
 | [Equilibrium write (balance of the wells)](#equilibrium-write-balance-of-the-wells) | dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p] | [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation) | [Quantum write, §5](tutorial/29_quantum_write.md#5-the-control-calculation) | Marthaler and Dykman, 2006; Frattini et al., 2024 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
@@ -193,6 +197,57 @@ Canonical form: no integrator: G = dy/du ≠ 0 and no return after the peak. The
 - **Original publications:**
   - C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15 (2016), [doi:10.1016/j.cels.2016.01.004](https://doi.org/10.1016/j.cels.2016.01.004): a static controller of Hill type does not adapt to a change of the process.
 - **Reviews and textbooks:** K. J. Åström and R. M. Murray, Feedback Systems, 2nd edn (Princeton University Press, 2021).
+
+### Linear memory
+
+Canonical form: C(k) = (1 − a²) a<sup>2k</sup>; Σ<sub>k</sub> C(k) = n<sub>lin</sub>. A linear body with linear observables represents past inputs, not their products: the capacity lies at degree 1, falls with the delay as the modes decay, and sums to the rank of the linear response.
+
+- **Defined:** [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure), a linear body with linear observables: capacity at degree 1 only.
+- **Derived:** [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure), the profile of one mode and the rank of the linear response, from the equations; [Computation 1, §6](tutorial/29_computation_capacity.md#6-measurement-noise), the rank counts directions far below any measurement. Code: `computation.predict.linear`, `ipc.capacities`.
+- **Original publications:**
+  - H. Jaeger, Short term memory in echo state networks, GMD Report 152 (German National Research Center for Information Technology, 2002): the short-term memory of an echo state network; at most the number of its variables.
+  - J. Dambre, D. Verstraeten, B. Schrauwen and S. Massar, Sci. Rep. 2, 514 (2012), [doi:10.1038/srep00514](https://doi.org/10.1038/srep00514): the capacity of a dynamical system for functions of its input history.
+  - L. Gonon, L. Grigoryeva and J.-P. Ortega, Physica D 414, 132721 (2020), [doi:10.1016/j.physd.2020.132721](https://doi.org/10.1016/j.physd.2020.132721): the memory capacity of a linear network equals the rank of its controllability matrix.
+  - G. Ballarin, L. Grigoryeva and J.-P. Ortega, J. Mach. Learn. Res. 25(243), 1 (2024): the numerical rank of that matrix and the bias of the estimator.
+
+### Odd degrees only
+
+Canonical form: F(−x, −u) = −F(x, u): C = 0 at every even degree. A body odd about its steady state, measured by odd observables and driven by a symmetric input, represents products of an odd number of past inputs only.
+
+- **Defined:** [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure), an odd body, odd observables and a symmetric input: odd degrees only.
+- **Derived:** [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls), a bias of the input brings the even degrees. Code: `computation.predict.odd`, `ipc.capacities`.
+- **Original publications:**
+  - J. Dambre, D. Verstraeten, B. Schrauwen and S. Massar, Sci. Rep. 2, 514 (2012), [doi:10.1038/srep00514](https://doi.org/10.1038/srep00514): the capacities of an echo state network vanish at even degrees.
+  - J. Herteux and C. Räth, Chaos 30, 123142 (2020), [doi:10.1063/5.0028993](https://doi.org/10.1063/5.0028993): the symmetry of the equations of an echo state network and how a bias breaks it.
+  - T. Kubota, H. Takahashi and K. Nakajima, Phys. Rev. Research 3, 043135 (2021), [doi:10.1103/PhysRevResearch.3.043135](https://doi.org/10.1103/PhysRevResearch.3.043135): the capacities as coefficients of an expansion of the measured signals.
+
+### Nonlinear capacity
+
+Canonical form: C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent measured signals. Nonlinear terms move capacity to products of past inputs; with fading memory the capacities of all degrees together equal the number of independent measured signals.
+
+- **Defined:** [Computation 1, §2](tutorial/29_computation_capacity.md#2-the-measure), with fading memory the capacities of all degrees sum to the number of independent measured signals.
+- **Derived:** [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), exact capacities of every degree and delay for one or two state variables; [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies), published bodies from six fields. Code: `computation.exact.ExactCapacities`, `card.card`, `ipc.capacities`.
+- **Original publications:**
+  - A. L. Hodgkin and A. F. Huxley, J. Physiol. 117, 500 (1952), [doi:10.1113/jphysiol.1952.sp004764](https://doi.org/10.1113/jphysiol.1952.sp004764): the membrane of the squid giant axon.
+  - S. Boyd and L. O. Chua, IEEE Trans. Circuits Syst. 32, 1150 (1985), [doi:10.1109/TCS.1985.1085649](https://doi.org/10.1109/TCS.1985.1085649): fading memory and the approximation of time-invariant filters by Volterra series.
+  - C.-Y. F. Huang and J. E. Ferrell, Proc. Natl. Acad. Sci. USA 93, 10078 (1996), [doi:10.1073/pnas.93.19.10078](https://doi.org/10.1073/pnas.93.19.10078): ultrasensitivity of the MAPK cascade.
+  - H. Hauser, A. J. Ijspeert, R. M. Füchslin, R. Pfeifer and W. Maass, Biol. Cybern. 105, 355 (2011), [doi:10.1007/s00422-012-0471-0](https://doi.org/10.1007/s00422-012-0471-0): networks of nonlinear springs and masses as computing bodies.
+  - J. Dambre, D. Verstraeten, B. Schrauwen and S. Massar, Sci. Rep. 2, 514 (2012), [doi:10.1038/srep00514](https://doi.org/10.1038/srep00514): the total capacity and its distribution over degrees.
+  - L. Grigoryeva, J. Henriques, L. Larger and J.-P. Ortega, Sci. Rep. 5, 12858 (2015), [doi:10.1038/srep12858](https://doi.org/10.1038/srep12858): closed-form capacities of linear and quadratic tasks for delay systems.
+  - J. Torrejon et al., Nature 547, 428 (2017), [doi:10.1038/nature23011](https://doi.org/10.1038/nature23011): computing with a spin-torque oscillator in experiment.
+  - T. Furuta, K. Fujii, K. Nakajima, S. Tsunegi, H. Kubota, Y. Suzuki and S. Miwa, Phys. Rev. Applied 10, 034063 (2018), [doi:10.1103/PhysRevApplied.10.034063](https://doi.org/10.1103/PhysRevApplied.10.034063): a macrospin tunnel junction measured at many times per input.
+  - T. Hülser, F. Köster, L. Jaurigue and K. Lüdge, Nanophotonics 12, 937 (2023), [doi:10.1515/nanoph-2022-0415](https://doi.org/10.1515/nanoph-2022-0415): the error on a named task from the capacity profile.
+  - F. Köster, S. Yanchuk and K. Lüdge, IEEE Trans. Neural Netw. Learn. Syst. 35, 7712 (2024), [doi:10.1109/TNNLS.2022.3220532](https://doi.org/10.1109/TNNLS.2022.3220532): the linear capacity at every delay from the linearization of a delay system.
+
+### No fading memory
+
+Canonical form: κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub>. A mode without decay keeps the running sum of the input; its correlation with the input at any fixed delay vanishes as the sum grows.
+
+- **Defined:** [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls), a mode without decay: no capacity at a fixed delay.
+- **Derived:** [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls), a rate set to zero turns the class. Code: `computation.predict.linear`.
+- **Original publications:**
+  - S. Boyd and L. O. Chua, IEEE Trans. Circuits Syst. 32, 1150 (1985), [doi:10.1109/TCS.1985.1085649](https://doi.org/10.1109/TCS.1985.1085649): fading memory.
+  - H. Jaeger, The "echo state" approach to analysing and training recurrent neural networks, GMD Report 148 (German National Research Center for Information Technology, 2001): the echo state property: the state forgets its initial condition.
 
 ### Linear-stage write (vacuum seed)
 

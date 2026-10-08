@@ -178,7 +178,13 @@
     const vals = s.curves.flatMap(cu => cu.pts.map(p => p[1]));
     const f = frame(g, {x: 0, y: 0, w, h}, [s.t0 ?? 0, s.tMax], s.yr || autoRange(vals), {xLabel: s.xLabel ?? 't', yLabel: s.yLabel || '', xTicks: s.xTicks, xFormat: s.xFormat});
     if (s.window) { ctx.fillStyle = c.p; ctx.globalAlpha = 0.1; ctx.fillRect(f.X(s.window[0]), f.t, f.X(s.window[1]) - f.X(s.window[0]), f.b - f.t); ctx.globalAlpha = 1; }
-    s.curves.forEach((cu, i) => line(ctx, cu.pts.filter(p => p[0] <= (s.cursor ?? Infinity)), f.X, f.Y, cu.color || css(SERIES[i % SERIES.length]), 1.8, cu.dash || []));
+    // levels: horizontal references (dashed, faint) with a label at the right end
+    (s.levels || []).forEach(lv => { line(ctx, [[s.t0 ?? 0, lv.y], [s.tMax, lv.y]], f.X, f.Y, c.faint, 1.2, REF); if (lv.label) label(ctx, lv.label, f.r - 4, f.Y(lv.y) - 8, c.muted, 'right', '11px'); });
+    s.curves.forEach((cu, i) => {
+      const pts = cu.pts.filter(p => p[0] <= (s.cursor ?? Infinity)), col = cu.color || css(SERIES[i % SERIES.length]);
+      if (cu.dots) pts.forEach(([x, y]) => { if (Number.isFinite(y)) dot(ctx, f.X(x), f.Y(y), 3, col); });  // discrete values
+      else line(ctx, pts, f.X, f.Y, col, 1.8, cu.dash || []);
+    });
     let x = f.l + 6; s.curves.forEach((cu, i) => { if (!cu.label) return; label(ctx, cu.label, x, f.t + 6, cu.color || css(SERIES[i % SERIES.length]), 'left', '11px'); x += ctx.measureText(cu.label).width + 14; });
   }
   /** A hysteresis loop of response against drive: the major loop, the loop before a change (dashed), and an excursion

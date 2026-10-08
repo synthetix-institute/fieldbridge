@@ -37,6 +37,11 @@
   GLYPHS['fine-tuned-adaptation'] = AXES + '<path class="faint" d="M6 20 H43"/><path d="M6 20 H12 C14 8 17 6 20 12 C24 20 30 20 43 20"/><circle class="dot" cx="38" cy="20" r="2.2"/>';
   GLYPHS['partial-adaptation'] = AXES + '<path class="faint" d="M6 20 H43"/><path d="M6 20 H12 C14 8 17 6 20 11 C24 16 30 15 43 15"/>';
   GLYPHS['no-adaptation'] = AXES + '<path class="faint" d="M6 20 H43"/><path d="M6 20 H12 C16 10 22 9 43 9"/>';
+  // computation: the capacity against the delay (bars), at degree 1 only, odd degrees, all degrees, or none
+  GLYPHS['linear-memory'] = AXES + '<path d="M9 30 V8 M15 30 V13 M21 30 V18 M27 30 V22 M33 30 V25 M39 30 V27"/>';
+  GLYPHS['odd-capacity'] = AXES + '<path d="M9 30 V9 M15 30 V15 M21 30 V20"/><path class="faint" d="M27 30 V26 M33 30 V28"/><circle class="dot" cx="39" cy="22" r="2.2"/>';
+  GLYPHS['nonlinear-capacity'] = AXES + '<path d="M9 30 V10 M15 30 V16 M21 30 V21"/><path class="faint" d="M27 30 V18 M33 30 V22 M39 30 V25"/>';
+  GLYPHS['integrating'] = AXES + '<path d="M6 28 C14 26 22 20 30 14 C35 10 39 8 43 7"/><path class="faint" d="M9 30 V29 M15 30 V29 M21 30 V29"/>';
   // the quantum write: a swept parametric oscillator chooses one of two states; in the linear stage the chosen branch
   // grows from the seed, at a few photons the two shallow wells exchange population before the choice is frozen
   GLYPHS['linear-stage-write'] = AXES + '<path class="faint" d="M6 12 C16 12 22 17 43 20"/><path d="M6 12 C16 12 22 7 43 4"/><circle class="dot" cx="10" cy="12" r="1.6"/>';
@@ -49,26 +54,29 @@
   // Two arrangements of the same cards. Wide: columns by family (closed evolution | relaxation and writing | cycles |
   // fields and noise). Narrow: two columns, placed so that every line joins neighbouring cards and none crosses another.
   const WIDE = {
-    w: 2026, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950], row: [78, 222],
+    w: 2374, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950, 2124, 2298], row: [78, 222],
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
             'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
             'return-point': [5, 0], 'no-return': [5, 1],
             'oscillation': [6, 0], 'neutral-cycles': [6, 1], 'exponential-loss': [7, 0], 'power-loss': [7, 1], 'convention': [8, 0.5],
             'perfect-adaptation': [9, 0], 'fine-tuned-adaptation': [9, 1], 'partial-adaptation': [10, 0], 'no-adaptation': [10, 1],
-            'linear-stage-write': [11, 0], 'equilibrium-write': [11, 1]},
+            'linear-memory': [11, 0], 'odd-capacity': [11, 1], 'integrating': [12, 0], 'nonlinear-capacity': [12, 1],
+            'linear-stage-write': [13, 0], 'equilibrium-write': [13, 1]},
     families: [{label: 'quantum: closed evolution', from: 0, to: 1}, {label: 'memory: writing a state', from: 2, to: 4},
                {label: 'memory: turning points', from: 5, to: 5}, {label: 'memory: phase', from: 6, to: 6},
                {label: 'memory: retention', from: 7, to: 7}, {label: 'noise', from: 8, to: 8},
-               {label: 'regulation: set point', from: 9, to: 10}, {label: 'quantum: open evolution', from: 11, to: 11}],
+               {label: 'regulation: set point', from: 9, to: 10}, {label: 'computation: capacity', from: 11, to: 12},
+               {label: 'quantum: open evolution', from: 13, to: 13}],
   };
   const NARROW = {
-    w: 360, h: 1120, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
+    w: 360, h: 1324, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
     place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1],
             'subcritical-write': [0, 2], 'symmetric-write': [1, 2], 'threshold-write': [0, 3], 'oscillation': [1, 3],
             'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6],
             'return-point': [1, 6], 'no-return': [0, 7],
             'perfect-adaptation': [0, 8], 'fine-tuned-adaptation': [1, 8], 'partial-adaptation': [0, 9], 'no-adaptation': [1, 9],
-            'linear-stage-write': [0, 10], 'equilibrium-write': [1, 10]},
+            'linear-memory': [0, 10], 'integrating': [1, 10], 'odd-capacity': [0, 11], 'nonlinear-capacity': [1, 11],
+            'linear-stage-write': [0, 12], 'equilibrium-write': [1, 12]},
     families: [],
   };
   let layout = WIDE;

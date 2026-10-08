@@ -165,7 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
-    if (fam === 'hysterons' || fam === 'regulation' || fam === 'open') return `<span>${esc(rec.slots[slot])}</span>`;
+    if (fam === 'hysterons' || fam === 'regulation' || fam === 'computation' || fam === 'open') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -396,6 +396,15 @@
       known('return time', f.return_time);
       if (f.clamp !== '—') known('clamp with the smallest remaining fraction', f.clamp);
       if (f.calibration !== '—') known('calibration |∫ dφ/dt dt / Δφ − 1|', f.calibration);
+    } else if (rec.family === 'computation') {
+      body = mechanismText(rec);
+      known('memory', f.memory === 'fading' ? `fading, slowest rate ${f.rate}` : 'no fading memory (a mode without decay)');
+      known('modes that the input reaches and the observables see', f.modes);
+      known('rank of the linear response', `${f.n_lin} of ${f.signals} measured signals`);
+      known('linear capacity at delays 0–4 (small amplitude)', f.profile);
+      known('odd about the steady state', f.odd === 'yes' ? 'yes: no capacity at even degrees' : 'no');
+      if (f.exact !== '—') known(`from the equations on a grid of ${f.grid}, measurement noise ${f.noise}`, f.exact);
+      known('input', f.input);
     } else if (rec.family === 'stochastic') {
       body = `The mean of log X grows at ${f.growth} in the ${f.convention} reading of the noise term.`;
       const mu = state.params.mu, s = state.params.sigma;
@@ -432,6 +441,10 @@
       case 'linear-stage-write': return 'The state is chosen in the linear stage: the amplified quadrature follows the classical write equation with the noise fixed by the loss and the temperature, and the probability of the favoured state follows the law with no free parameter.';
       case 'equilibrium-write': return 'The two wells are shallow and exchange population faster than the sweep passes: the probability of the favoured state is the selection of the biased steady state, below the linear-stage law.';
       case 'no-adaptation': return 'The output moves to its new value and stays there: no variable returns it.';
+      case 'linear-memory': return 'A linear body with linear observables: a linear combination of the measured signals reproduces past inputs, not their products, and the capacities sum to the rank of the linear response.';
+      case 'odd-capacity': return 'The body is odd about its steady state and the input is symmetric: only products of an odd number of past inputs can be reproduced.';
+      case 'nonlinear-capacity': return 'Nonlinear terms move part of the capacity to products of past inputs; with fading memory all degrees together sum to the number of independent measured signals.';
+      case 'integrating': return 'A mode without decay keeps the running sum of the input: no input at a fixed delay can be recovered from it.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
       case 'neutral-cycles': return 'A conserved quantity fills the plane with closed orbits: no orbit attracts its neighbours, and no drive-independent phase is kept.';
@@ -449,6 +462,7 @@
     else if (rec.family === 'field') scene = fieldScene(rec);
     else if (rec.family === 'hysterons') scene = hysteronScene(rec);
     else if (rec.family === 'regulation') scene = regulationScene(rec);
+    else if (rec.family === 'computation') scene = computationScene(rec);
     else if (rec.family === 'open') scene = openScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
@@ -634,6 +648,12 @@
             title: 'The output after a step of the input, and the variable that integrates the error',
             legend: `Left: the output after ${esc(e.input)} steps from ${fmt(e.u0, 4)} to ${fmt(e.u1, 4)} at t = 0; dashed, its value before the step and its final value. Right: ${e.phi ? 'the integrator φ, which changes until the output is back at its set point' : 'no integrator was found; the input, stepped at t = 0'}.`};
   }
+  function computationScene(rec) {
+    const e = rec.engine, tMax = Math.max(1, e.profile.length - 1);
+    return {kind: 'computation', e, tMax, t: 0, speed: tMax / 4,
+            title: 'Capacity for the input k intervals back, and the strength of the independent directions',
+            legend: `Left: the capacity of a linear combination of the measured signals for the input ${esc(e.input)} held k intervals back (each interval ${fmt(e.hold, 3)})${e.profile_exact ? '; solid, predicted from the linearization at small amplitude; dashed, from the equations at the stated amplitude with measurement noise ' + fmt(e.noise, 2) : ', predicted from the linearization at small amplitude'}. Right: log₁₀ of the singular values of the linear response, relative to the largest; the rank counts those above the tolerance 10⁻⁶, and a measurement resolves only those above its noise.`};
+  }
   function stochasticScene(rec) {
     const e = rec.engine, mu = state.params.mu, s = state.params.sigma, random = D.rng(9), T = 10, dt = 0.02;
     const drift = e.convention === 'ito' ? mu - s * s / 2 : mu;
@@ -726,6 +746,19 @@
       if (e.phi) V.series(side, {tMax: scene.tMax, cursor: scene.t, yLabel: 'integrator φ', curves: [{pts: e.t.map((t, i) => [t, e.phi[i]])}]});
       else V.series(side, {tMax: scene.tMax, cursor: scene.t, yLabel: 'input ' + e.input, curves: [{pts: level(e.u1)}],
                            yr: [Math.min(e.u0, e.u1) - 0.1 * Math.abs(e.u1 - e.u0 || 1), Math.max(e.u0, e.u1) + 0.1 * Math.abs(e.u1 - e.u0 || 1)]});
+      return;
+    }
+    if (scene.kind === 'computation') {
+      const e = scene.e, curves = [{pts: e.profile.map((c, k) => [k, c])}];
+      if (e.profile_exact) curves.push({pts: e.profile_exact.map((c, k) => [k, c]), dash: [5, 4]});
+      V.series(main, {tMax: scene.tMax, cursor: scene.t, curves, yr: [0, 1.05], xLabel: 'delay k', yLabel: 'capacity C(k)'});
+      // one dot per direction of the linear response; the rank counts those above the tolerance 10⁻⁶
+      const sv = e.singular.length ? e.singular : [1], n = sv.length, lg = sv.map(v => Math.log10(Math.max(v, 1e-16)));
+      const step = n <= 10 ? 1 : n <= 30 ? 5 : 10, xt = [];
+      for (let i = step === 1 ? 1 : step; i <= n; i += step) xt.push(i);
+      V.series(side, {t0: 0.5, tMax: n + 0.5, xLabel: 'direction', yLabel: 'log₁₀ relative strength', xTicks: xt,
+                      xFormat: v => String(v), yr: [Math.min(-7, Math.floor(Math.min(...lg))) - 0.5, 1.5],
+                      levels: [{y: -6, label: 'rank tolerance'}], curves: [{pts: lg.map((v, i) => [i + 1, v]), dots: true}]});
       return;
     }
     if (scene.kind === 'stochastic') {

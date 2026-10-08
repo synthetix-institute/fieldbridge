@@ -326,6 +326,12 @@ def build_parser() -> argparse.ArgumentParser:
     except ImportError:
         pass
 
+    try:  # the computation module reads its bodies with the memory parser (the memory extra)
+        from .computation.cli import add_parser as add_computation_parser
+        add_computation_parser(sub)
+    except ImportError:
+        pass
+
     try:  # the demo calculates with the memory and quantum packages (the memory extra)
         from .demo import add_parser as add_demo_parser
         add_demo_parser(sub)

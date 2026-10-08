@@ -13,6 +13,7 @@ FieldBridge automates this cross-field translation:
 2. **Obstruction Identification:** When two models fail to reach the same behavior, FieldBridge identifies the exact mathematical obstruction (such as a broken symmetry, a Hopf bifurcation, or missing feedback).
 3. **Material Memory Cards:** For a system of governing equations, it computes a memory card: the stable states, write thresholds, writing protocols, and the law by which a stored state is lost.
 4. **Return to a Set Point:** For a model with an input that is stepped and an output that is measured, it finds the integrator that returns the output exactly, or the fraction of the step that remains, and writes a certificate that a reader can check without repeating the search.
+5. **Computation by a Driven Body:** For a model driven by an input and measured through a few observables, it predicts from the equations whether the body has fading memory, how many independent functions of the input history its observables can reproduce, and which degrees symmetry excludes; for one or two state variables it computes the capacity of every function exactly.
 
 The calculations require no API key, GPU, cluster, or archive download; every derivation step is checked by symbolic or numerical calculation.
 
@@ -39,7 +40,7 @@ field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repress
 switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
 of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
 [Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
-(R). Under the expression, a map of twenty-one mechanisms, each with its drawing, shows which component joins which
+(R). Under the expression, a map of twenty-five mechanisms, each with its drawing, shows which component joins which
 mechanisms, and the selected mechanism is shown beside the expression. After a change the realization it came from is
 drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
 realizations of each mechanism by field. Beside the selected mechanism the page names the section of the tutorial
@@ -107,6 +108,7 @@ with the source of its equations.
 | One mechanism in models from different fields | `memory codiscover` | For a symmetric write, a threshold write or phase locking: the derivation in each model, the step at which a derivation stops, and field-independent invariants of the end point ([tutorial](docs/tutorial/23_memory_codiscovery.md)) |
 | Adding a material | `memory new`, `memory check`, `memory catalog` | A template specification, the checks it must pass, and the catalog of materials |
 | Return to a set point after a step of an input | `regulation card`, `regulation survey`, `regulation check` | Whether the output returns exactly, part of the way or not at all; the integrator that returns it, or the variable whose clamp shows the remaining fraction; a certificate checked against the specification without the search ([tutorial](docs/tutorial/28_regulation_set_point.md)) |
+| Functions of an input history that a driven body represents | `computation predict`, `computation card`, `computation survey` | Fading memory over the modes the input reaches and the observables see; the rank of the linear response and its profile over delays; the degrees excluded by symmetry; capacities by degree, exact for one or two state variables, at a stated amplitude and measurement noise ([tutorial](docs/tutorial/29_computation_capacity.md)) |
 | The quantum write on an open carrier | `quantum write` | A parametric oscillator swept through its threshold with a bias: the probability of the favoured state against the law with the vacuum as the seed, or the balance of its two shallow wells |
 | Quantum mechanisms on different carriers | `quantum detach`, `quantum attach`, `quantum codiscover` | The Bloch rotation on spins, atoms in two wells, exchange chains and Cooper pairs, or the term that obstructs it ([tutorial](docs/tutorial/24_spin_language.md)) |
 | Derivation from supplied equations | `verify-construction` | An exact local stochastic transformation or a finite quantum closure |
@@ -234,8 +236,9 @@ The [tutorial](docs/tutorial/index.md) starts from four entry points: the
 language of mechanisms on quantum carriers, memory in materials (twelve
 modules, from a first memory card to one mechanism derived in models from
 different fields and the return to a turning point of a slow drive), and the
-return of an output to its set point after a step of an input, and the quantum write of a parametric oscillator
-swept through its threshold. Further reading paths cover the construction from specified
+return of an output to its set point after a step of an input, the functions of an
+input history that a driven body represents, and the quantum write of a parametric
+oscillator swept through its threshold. Further reading paths cover the construction from specified
 equations (an Itô correction, an interacting spin), paper collections, and the
 evaluation of the code. Worked calculations include an input, the expected
 output, a change to try, and the functions and tests responsible for the
@@ -253,6 +256,7 @@ standalone.
 | [memory/](fieldbridge/memory/) | Material specifications, structural predictions, memory cards, transfer, co-discovery and the contribution checks |
 | [quantum/](fieldbridge/quantum/) | The language of mechanisms on quantum carriers: detachment, attachment and co-discovery |
 | [regulation/](fieldbridge/regulation/) | Return to a set point: static gains, clamps, integrators, step responses and certificates |
+| [computation/](fieldbridge/computation/) | Computation by a driven body: specifications (equations or networks of springs), predictions from the linearization and symmetry, exact capacities from the driven Markov chain, the capacity estimator |
 | [core/](fieldbridge/core/) | Provenance and writing of reports for the families added after memory and quantum |
 | [site_registry.py](fieldbridge/site_registry.py), [site_data.py](fieldbridge/site_data.py), [web/](fieldbridge/web/) | The web page: realizations, the checked changes between them, and the browser engines |
 | [routes.py](fieldbridge/routes.py), [extract.py](fieldbridge/extract.py) | Textual cues and heuristic mechanism descriptions |

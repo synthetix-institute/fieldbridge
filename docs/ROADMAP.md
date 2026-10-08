@@ -13,10 +13,14 @@ element is frustrated ([Module 12](tutorial/27_memory_return_point.md), `memory 
 from three fields are compared with it. The return to a set point after a step of an input is a second family with a
 structural condition: an integrator together with a stable steady state makes the return exact
 ([Regulation, Module 1](tutorial/28_regulation_set_point.md), `regulation card`), and published models from five
-fields are compared with it, in the column "regulation: set point" of the map on the web page. The quantum write is a
-third addition: a parametric oscillator swept through its threshold with a bias follows the classical write law with
-the noise fixed by the loss and the temperature, exact for a quadratic generator, and leaves it for the selection of
-its biased steady state when the stored states hold a few photons ([Quantum write](tutorial/29_quantum_write.md),
+fields are compared with it, in the column "regulation: set point" of the map on the web page. Computation by a
+driven body is a third family whose classes follow from structure: fading memory over the modes that the input
+reaches and the observables see, an affine body that holds only degree 1, and an odd body that holds only odd
+degrees ([Computation, Module 1](tutorial/29_computation_capacity.md), `computation card`); published models from six
+fields are compared with it, in the column "computation: capacity". The quantum write is a fourth addition: a
+parametric oscillator swept through its threshold with a bias follows the classical write law with the noise fixed
+by the loss and the temperature, exact for a quadratic generator, and leaves it for the selection of its biased
+steady state when the stored states hold a few photons ([Quantum write](tutorial/29_quantum_write.md),
 `quantum write`), in the column "quantum: open evolution". The mechanisms below are studied in the tutorial or in the literature on
 memory and are not yet derivation targets. The web page lists them under "Mechanisms in preparation".
 

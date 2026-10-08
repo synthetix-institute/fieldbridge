@@ -1,0 +1,50 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "Duffing oscillator with a constant bias of the input",
+ "field": "",
+ "question": "Which degrees does an odd body represent?",
+ "assumptions": [
+  "the odd oscillator of the benchmarks with the input offset by 0.5, which breaks the odd symmetry"
+ ],
+ "provenance": {
+  "source": "analytic benchmark"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "x",
+   "v"
+  ]
+ },
+ "parameters": {
+  "g": 0.5,
+  "w2": 1.0,
+  "beta": 1.0,
+  "u": 0.0
+ },
+ "drift": {
+  "x": "v",
+  "v": "-g*v - w2*x - beta*x**3 + u"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 1.0,
+  "hold": 1.0,
+  "observables": [
+   "x",
+   "v"
+  ],
+  "washout": 100,
+  "length": 3000,
+  "substeps": 12,
+  "expect": "nonlinear-capacity",
+  "offset": 0.5,
+  "initial": [
+   0.4,
+   0.0
+  ]
+ }
+}

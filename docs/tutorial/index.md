@@ -11,6 +11,9 @@ control that must change the prediction, and the test responsible for it.
   stores and how a state is written. It is Module 1 of [twelve modules](#memory-in-materials-twelve-modules).
 - **Regulation.** [Return to a set point](28_regulation_set_point.md) asks whether the output of a cell, a machine or
   a material returns exactly after a step of its input, and through which variable.
+- **Computation.** [Which functions of an input history a body represents](29_computation_capacity.md) asks how
+  many functions of its past input, and of which degree, a neuron, a bacterium, a magnetic junction or a network of
+  springs holds in a few measured observables.
 - **The quantum write.** [A parametric oscillator swept through its threshold](29_quantum_write.md) asks with which
   probability a weak bias writes one of the two states of an oscillator whose seed noise is the vacuum, and where the
   classical write law gives way to the balance of two shallow wells.
@@ -61,6 +64,12 @@ reading order.
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Return to a set point](28_regulation_set_point.md) | Does the output return exactly after a step of the input, through which variable, and is the result checkable without repeating the search? | `regulation card`, `survey`, `check` |
+
+## Computation
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [Which functions of an input history a body represents](29_computation_capacity.md) | Does the body have fading memory, how many functions of the input history do its observables reproduce, which degrees does symmetry exclude, and what changes with the measurement noise? | `computation predict`, `card`, `survey` |
 
 ## The quantum write: one module
 

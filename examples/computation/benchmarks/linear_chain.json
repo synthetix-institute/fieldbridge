@@ -1,0 +1,48 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "Three linear stages in a chain",
+ "field": "",
+ "question": "How many independent functions of the input history do three linear stages hold?",
+ "assumptions": [
+  "a benchmark written without a field; its capacities are known in closed form or by symmetry"
+ ],
+ "provenance": {
+  "source": "analytic benchmark"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "x1",
+   "x2",
+   "x3"
+  ]
+ },
+ "parameters": {
+  "k1": 0.5,
+  "k2": 0.8,
+  "k3": 1.2,
+  "u": 0.0
+ },
+ "drift": {
+  "x1": "-k1*x1 + u",
+  "x2": "-k2*x2 + x1",
+  "x3": "-k3*x3 + x2"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 1.0,
+  "hold": 1.0,
+  "observables": [
+   "x1",
+   "x2",
+   "x3"
+  ],
+  "washout": 100,
+  "length": 3000,
+  "substeps": 12,
+  "expect": "linear-memory"
+ }
+}

@@ -1,0 +1,108 @@
+{
+ "schema": "fieldbridge-computation/1",
+ "kind": "equations",
+ "name": "MAPK cascade (Huang and Ferrell 1996) driven by a held log-input of its activator E1",
+ "field": "cell signalling",
+ "question": "Which functions of the history of the activator E1 does the doubly phosphorylated MAPK represent?",
+ "provenance": {
+  "source": "C.-Y. F. Huang and J. E. Ferrell, PNAS 93, 10078 (1996), Eqs. 1-35 (mass action); rate constants a = 1000 /(uM min), d = k = 150 /min from Qiao et al., PLoS Comput. Biol. 3, e184 (2007), Text S1 central values; totals as in the source",
+  "contributor": "FieldBridge computation module"
+ },
+ "assumptions": [
+  "the individual a, d, k are Qiao's central values (the source states K_m = 300 nM only); time in minutes",
+  "free enzymes from their conservation laws: E1 = E1_tot - [KKK.E1], E2, KK phosphatase and K phosphatase likewise",
+  "input u: E1_tot = E1c exp(u), E1c = 4.16e-6 uM, the derived EC50 of the total active MAPK-PP (hf96_check.py); held for intervals of 10 min (the source applies steady inputs only)",
+  "observable: the total active fraction of MAPK, ([K-PP] + [K-PP.K P'ase])/K_tot (the free form would change n_H by about 0.2)"
+ ],
+ "carrier": {
+  "kind": "euclid",
+  "variables": [
+   "KKK",
+   "KKKE1",
+   "KKKs",
+   "KKKsE2",
+   "KK",
+   "KK_KKKs",
+   "KKP",
+   "KKP_KKPase",
+   "KKP_KKKs",
+   "KKPP",
+   "KKPP_KKPase",
+   "K",
+   "K_KKPP",
+   "KP",
+   "KP_KPase",
+   "KP_KKPP",
+   "KPP",
+   "KPP_KPase"
+  ]
+ },
+ "parameters": {
+  "a": 1000.0,
+  "d": 150.0,
+  "k": 150.0,
+  "E1c": 4.16e-06,
+  "E2t": 0.0003,
+  "KKPt": 0.0003,
+  "KPt": 0.12,
+  "Kt": 1.2,
+  "u": 0.0
+ },
+ "drift": {
+  "KKK": "-a*KKK*(E1c*exp(u) - KKKE1) + d*KKKE1 + k*KKKsE2",
+  "KKKE1": "a*KKK*(E1c*exp(u) - KKKE1) - (d + k)*KKKE1",
+  "KKKs": "-a*KKKs*(E2t - KKKsE2) + d*KKKsE2 + k*KKKE1 + (k + d)*KK_KKKs - a*KKKs*KK + (k + d)*KKP_KKKs - a*KKP*KKKs",
+  "KKKsE2": "a*KKKs*(E2t - KKKsE2) - (d + k)*KKKsE2",
+  "KK": "-a*KK*KKKs + d*KK_KKKs + k*KKP_KKPase",
+  "KK_KKKs": "a*KK*KKKs - (d + k)*KK_KKKs",
+  "KKP": "-a*KKP*(KKPt - KKP_KKPase - KKPP_KKPase) + d*KKP_KKPase + k*KK_KKKs + k*KKPP_KKPase + d*KKP_KKKs - a*KKP*KKKs",
+  "KKP_KKPase": "a*KKP*(KKPt - KKP_KKPase - KKPP_KKPase) - (d + k)*KKP_KKPase",
+  "KKP_KKKs": "a*KKP*KKKs - (d + k)*KKP_KKKs",
+  "KKPP": "k*KKP_KKKs - a*KKPP*(KKPt - KKP_KKPase - KKPP_KKPase) + d*KKPP_KKPase - a*KKPP*K + (d + k)*K_KKPP + (d + k)*KP_KKPP - a*KP*KKPP",
+  "KKPP_KKPase": "a*KKPP*(KKPt - KKP_KKPase - KKPP_KKPase) - (d + k)*KKPP_KKPase",
+  "K": "-a*K*KKPP + d*K_KKPP + k*KP_KPase",
+  "K_KKPP": "a*K*KKPP - (d + k)*K_KKPP",
+  "KP": "k*K_KKPP - a*KP*(KPt - KP_KPase - KPP_KPase) + d*KP_KPase - a*KP*KKPP + d*KP_KKPP + k*KPP_KPase",
+  "KP_KPase": "a*KP*(KPt - KP_KPase - KPP_KPase) - (d + k)*KP_KPase",
+  "KP_KKPP": "a*KP*KKPP - (d + k)*KP_KKPP",
+  "KPP": "-a*KPP*(KPt - KP_KPase - KPP_KPase) + d*KPP_KPase + k*KP_KKPP",
+  "KPP_KPase": "a*KPP*(KPt - KP_KPase - KPP_KPase) - (d + k)*KPP_KPase"
+ },
+ "noise": 0.0,
+ "computation": {
+  "input": "u",
+  "law": "uniform",
+  "amplitude": 0.5,
+  "offset": 0.0,
+  "hold": 10.0,
+  "observables": [
+   "(KPP + KPP_KPase)/Kt"
+  ],
+  "virtual_nodes": 1,
+  "washout": 100,
+  "length": 2000,
+  "substeps": 20,
+  "solver": "stiff",
+  "initial": [
+   0.002823637860319863,
+   3.8789354694790155e-08,
+   3.87943707234974e-05,
+   3.878935469481021e-08,
+   0.8583235805293732,
+   0.0001109937439459206,
+   0.20489915802042577,
+   0.00011099374394591035,
+   2.649644632392291e-05,
+   0.048913563497313683,
+   2.6496446323911452e-05,
+   0.21409823394994765,
+   0.03490769186991161,
+   0.3231068558026175,
+   0.03490769186991161,
+   0.052681025692395696,
+   0.4876174751215363,
+   0.05268102569239569
+  ],
+  "expect": "nonlinear-capacity"
+ }
+}
