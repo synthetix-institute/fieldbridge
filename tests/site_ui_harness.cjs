@@ -62,6 +62,8 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          memory: text('memory-summary') + ' | ' + text('memory-groups'), laws: text('memory-laws'),
                          memoryHtml: element('memory-summary').innerHTML + element('memory-groups').innerHTML,
                          absent: (element('mechanisms').innerHTML.match(/class="mech absent"/g) || []).length,
+                         cards: (element('mechanisms').innerHTML.match(/class="mech( absent)?"/g) || []).length,
+                         module: context.FieldBridgeMechanisms.module(),
                          planned: text('planned-grid'),
                          selected: element('now-name').textContent + ' | ' + text('now-where')});
 const out = [];
@@ -70,6 +72,7 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'edge') I.applyEdge(I.byId[step.edge], !!step.reverse);
   if (step.do === 'walk') I.walkTo(step.node);
   if (step.do === 'undo') I.undo();
+  if (step.do === 'module') context.FieldBridgeMechanisms.module(step.key);
   if (step.do === 'sequence') context.FieldBridgeSite.begin(step.id);
   if (step.do === 'next') element('sequence-next').click();
   if (step.do === 'prev') element('sequence-prev').click();

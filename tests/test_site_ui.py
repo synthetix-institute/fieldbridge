@@ -55,12 +55,29 @@ def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
     assert first["memoryHtml"].count('class="law-link"') == 3 and "18_memory_writing_and_retention.md#13-retention" in first["memoryHtml"]
     assert "Law 1 relaxation in a curved minimum" in first["laws"] and "Law 3 activation over a barrier" in first["laws"]
     assert "stops decreasing, at ½ ln(1 + W)" in first["laws"] and "Law 3 needs wells separated by a barrier" in first["laws"]
-    # the map hatches the outcomes without memory or without a rotation: one state, conserved, several frequencies
-    assert first["absent"] == 3
+    # the map opens on the memory module and hatches its outcome without memory, one state
+    assert first["module"] == "memory" and first["absent"] == 1
     # the mechanisms in preparation
     for name in ("frustrated loops", "retention against rewriting", "onset of oscillation (Hopf)",
                  "synchronization of a population (Kuramoto)", "What is missing"):
         assert name in first["planned"], name
+
+
+def test_the_map_shows_one_module_and_follows_the_selection(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "look"}, {"do": "module", "key": "all"}, {"do": "walk", "node": "two_spins"},
+                               {"do": "module", "key": "memory"}, {"do": "walk", "node": "pitchfork"},
+                               {"do": "walk", "node": "two_spins"}], tmp_path)
+    # the page opens on the memory module; all mechanisms add the quantum cards and their two hatched outcomes
+    # (conserved, several frequencies) to the one without memory
+    assert got[0]["module"] == "memory" and got[0]["absent"] == 1
+    assert got[1]["module"] == "all" and got[1]["absent"] == 3 and got[1]["cards"] > got[0]["cards"]
+    # the whole map stays while the selection moves to a quantum mechanism
+    assert got[2]["module"] == "all" and got[2]["node"] == "two_spins"
+    # a module chosen by hand is kept while the selection is elsewhere, and while it moves within that module
+    assert got[3]["module"] == "memory" and got[3]["node"] == "two_spins"
+    assert got[4]["module"] == "memory" and got[4]["absent"] == 1
+    # the map follows the selection into another module
+    assert got[5]["module"] == "quantum" and got[5]["absent"] == 2
 
 
 def test_one_change_of_the_normal_form_gives_another_mechanism(data_file, tmp_path):

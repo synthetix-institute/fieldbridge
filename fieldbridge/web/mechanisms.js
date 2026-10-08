@@ -51,8 +51,9 @@
   }
 
   // ---------------------------------------------------------------------------------------- the map
-  // Two arrangements of the same cards. Wide: columns by family (closed evolution | relaxation and writing | cycles |
-  // fields and noise). Narrow: two columns, placed so that every line joins neighbouring cards and none crosses another.
+  // Two arrangements of the same cards. Wide: columns by family, the families grouped in modules. Narrow: two columns,
+  // placed so that every line joins neighbouring cards and none crosses another. The map shows one module at a time,
+  // the module of the selected mechanism unless another is chosen, or every module.
   const WIDE = {
     w: 2374, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950, 2124, 2298], row: [78, 222],
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
@@ -62,11 +63,13 @@
             'perfect-adaptation': [9, 0], 'fine-tuned-adaptation': [9, 1], 'partial-adaptation': [10, 0], 'no-adaptation': [10, 1],
             'linear-memory': [11, 0], 'odd-capacity': [11, 1], 'integrating': [12, 0], 'nonlinear-capacity': [12, 1],
             'linear-stage-write': [13, 0], 'equilibrium-write': [13, 1]},
-    families: [{label: 'quantum: closed evolution', from: 0, to: 1}, {label: 'memory: writing a state', from: 2, to: 4},
-               {label: 'memory: turning points', from: 5, to: 5}, {label: 'memory: phase', from: 6, to: 6},
-               {label: 'memory: retention', from: 7, to: 7}, {label: 'noise', from: 8, to: 8},
-               {label: 'regulation: set point', from: 9, to: 10}, {label: 'computation: capacity', from: 11, to: 12},
-               {label: 'quantum: open evolution', from: 13, to: 13}],
+    families: [{label: 'quantum: closed evolution', from: 0, to: 1, module: 'quantum'},
+               {label: 'memory: writing a state', from: 2, to: 4, module: 'memory'},
+               {label: 'memory: turning points', from: 5, to: 5, module: 'memory'}, {label: 'memory: phase', from: 6, to: 6, module: 'memory'},
+               {label: 'memory: retention', from: 7, to: 7, module: 'memory'}, {label: 'noise', from: 8, to: 8, module: 'memory'},
+               {label: 'regulation: set point', from: 9, to: 10, module: 'regulation'},
+               {label: 'computation: capacity', from: 11, to: 12, module: 'computation'},
+               {label: 'quantum: open evolution', from: 13, to: 13, module: 'quantum'}],
   };
   const NARROW = {
     w: 360, h: 1324, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
@@ -79,8 +82,32 @@
             'linear-stage-write': [0, 12], 'equilibrium-write': [1, 12]},
     families: [],
   };
+  const MODULES = [{key: 'memory', label: 'memory'}, {key: 'quantum', label: 'quantum'}, {key: 'regulation', label: 'regulation'},
+                   {key: 'computation', label: 'computation'}, {key: 'all', label: 'all mechanisms'}];
+  const moduleOf = k => { const f = WIDE.place[k] && WIDE.families.find(f => WIDE.place[k][0] >= f.from && WIDE.place[k][0] <= f.to); return f ? f.module : null; };
+  let shown = 'memory';
   let layout = WIDE;
-  const at = k => { const [c, r] = layout.place[k]; return {x: layout.col[c], y: layout.row[0] + (layout.row[1] - layout.row[0]) * r}; };
+  let view = {place: {}, col: WIDE.col, row: WIDE.row, w: WIDE.w, h: WIDE.h, families: []};
+  const visible = k => shown === 'all' || moduleOf(k) === shown;
+  /** The cards shown, packed: the wide map drops the columns without a card and keeps the spacing of neighbouring
+   *  columns (a wider gap between families); the narrow map drops the rows without a card. */
+  function arrange(keys) {
+    const wide = layout === WIDE, axis = wide ? 0 : 1;
+    const used = [...new Set(keys.map(k => layout.place[k][axis]))].sort((a, b) => a - b);
+    const index = new Map(used.map((v, i) => [v, i]));
+    const place = {};
+    keys.forEach(k => { const [c, r] = layout.place[k]; place[k] = wide ? [index.get(c), r] : [c, index.get(r)]; });
+    if (!wide) {
+      const pitch = layout.row[1] - layout.row[0];
+      return {place, col: layout.col, row: layout.row, w: layout.w, h: used.length ? 2 * layout.row[0] + pitch * (used.length - 1) : layout.h, families: []};
+    }
+    const col = [];
+    used.forEach((c, i) => col.push(i === 0 ? layout.col[0] : col[i - 1] + (c === used[i - 1] + 1 ? layout.col[c] - layout.col[c - 1] : 174)));
+    const families = layout.families.map(f => ({label: f.label, cols: used.filter(c => c >= f.from && c <= f.to)}))
+      .filter(f => f.cols.length).map(f => ({label: f.label, from: index.get(f.cols[0]), to: index.get(f.cols[f.cols.length - 1])}));
+    return {place, col, row: layout.row, w: used.length ? col[col.length - 1] + layout.col[0] : layout.w, h: layout.h, families};
+  }
+  const at = k => { const [c, r] = view.place[k]; return {x: view.col[c], y: view.row[0] + (view.row[1] - view.row[0]) * r}; };
   const ORDER = Object.keys(WIDE.place);
 
   /** The single-component changes between classes: {a, b, slots: [...], edges: [...]} with a, b in reading order. */
@@ -114,20 +141,25 @@
     const S = window.FIELDBRIDGE_SITE, svg = document.getElementById('mechanisms');
     if (!S || !svg) return;
     layout = (svg.parentElement && svg.parentElement.clientWidth && svg.parentElement.clientWidth < 640) ? NARROW : WIDE;
-    const {w: W, h: H, card: CARD} = layout;
+    const present = Object.keys(S.mechanisms || {}).filter(k => layout.place[k] && visible(k));
+    view = arrange(present);
+    const {w: W, h: H} = view, CARD = layout.card;
     svg.setAttribute('viewBox', `0 0 ${W} ${H}`);
     svg.classList.toggle('narrow', layout === NARROW);
-    const present = Object.keys(S.mechanisms || {}).filter(k => layout.place[k]);
-    const fam = layout.families.map(f => {
-      const x0 = layout.col[f.from] - CARD.w / 2 - 14, x1 = layout.col[f.to] + CARD.w / 2 + 14;
+    svg.dataset.module = shown;
+    // the wide map is drawn at its design size when the frame is wide enough and scales down below that
+    svg.style.width = layout === WIDE ? `${W}px` : '';
+    svg.style.minWidth = layout === WIDE ? `${Math.min(860, W)}px` : '';
+    const fam = view.families.map(f => {
+      const x0 = view.col[f.from] - CARD.w / 2 - 14, x1 = view.col[f.to] + CARD.w / 2 + 14;
       return `<g class="family"><rect x="${x0}" y="4" width="${x1 - x0}" height="${H - 8}" rx="14"/><text x="${x0 + 8}" y="${H - 14}">${esc(f.label)}</text></g>`;
     }).join('');
     // a line along a row that would cross a card of that row is bent around it: above the upper row, below the lower
-    const crosses = (a, b) => { const [ca, ra] = layout.place[a], [cb, rb] = layout.place[b];
-      return ra === rb && present.some(k => layout.place[k][1] === ra && layout.place[k][0] > Math.min(ca, cb) && layout.place[k][0] < Math.max(ca, cb)); };
-    const lines = links(S).filter(l => layout.place[l.a] && layout.place[l.b]).map(l => {
+    const crosses = (a, b) => { const [ca, ra] = view.place[a], [cb, rb] = view.place[b];
+      return ra === rb && present.some(k => view.place[k][1] === ra && view.place[k][0] > Math.min(ca, cb) && view.place[k][0] < Math.max(ca, cb)); };
+    const lines = links(S).filter(l => view.place[l.a] && view.place[l.b]).map(l => {
       const dir = Math.sign(at(l.b).x - at(l.a).x) || 1;
-      const around = crosses(l.a, l.b) ? (layout.place[l.a][1] === 0 ? -1 : 1) * dir * 118 : 0;
+      const around = crosses(l.a, l.b) ? (view.place[l.a][1] === 0 ? -1 : 1) * dir * 118 : 0;
       const n = l.slots.length, mid = path(l.a, l.b, around), pw = 18 * n + 4;
       // one line for each component, side by side; one label for the pair, with the symbol of each component
       const strokes = l.slots.map((slot, i) => `<path data-slot="${slot}" d="${path(l.a, l.b, around, (i - (n - 1) / 2) * 4).d}"/>`).join('');
@@ -154,6 +186,15 @@
     const hatch = '<defs><pattern id="absent-hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">'
       + '<rect class="hatch-ground" width="7" height="7"/><path class="hatch-line" d="M0 0 V7"/></pattern></defs>';
     svg.innerHTML = hatch + fam + `<g class="links">${lines}</g><g class="mechs">${cards}</g>`;
+    // a family label wider than its box (a family of one column) widens the box, and the map when the box is the last
+    let right = W;
+    svg.querySelectorAll('.family').forEach(g => {
+      const t = g.querySelector('text'), r = g.querySelector('rect');
+      if (!t || !r || typeof t.getComputedTextLength !== 'function') return;
+      const need = Math.ceil(t.getComputedTextLength()) + 16, x = Number(r.getAttribute('x'));
+      if (need > Number(r.getAttribute('width'))) { r.setAttribute('width', need); right = Math.max(right, x + need); }
+    });
+    if (right > W) { svg.setAttribute('viewBox', `0 0 ${right} ${H}`); if (layout === WIDE) svg.style.width = `${right}px`; }
     svg.querySelectorAll('.mech').forEach(g => {
       const go = () => {
         const I = window.FieldBridgeInstrument, m = S.mechanisms[g.dataset.class];
@@ -164,13 +205,32 @@
       g.addEventListener('click', go);
       g.addEventListener('keydown', ev => { if (ev.key === 'Enter' || ev.key === ' ') { ev.preventDefault(); go(); } });
     });
-    highlight();
+    chips();
+    highlight({keep: true});
   }
-  /** Current mechanism filled; the mechanisms one change away outlined in the colour of that change. */
+  /** The buttons above the map: one for each module with mechanisms on the map, and one for all of them. */
+  function chips() {
+    const S = window.FIELDBRIDGE_SITE, box = document.getElementById('map-modules');
+    if (!S || !box) return;
+    const all = Object.keys(S.mechanisms || {}).filter(k => WIDE.place[k]);
+    box.innerHTML = MODULES.map(m => ({...m, n: m.key === 'all' ? all.length : all.filter(k => moduleOf(k) === m.key).length}))
+      .filter(m => m.n).map(m => `<button type="button" class="module${m.key === shown ? ' on' : ''}" data-module="${m.key}" `
+        + `aria-pressed="${m.key === shown}" title="${m.key === 'all' ? 'Every mechanism on the map' : `The mechanisms of the ${esc(m.label)} module`}">`
+        + `${esc(m.label)} <small>${m.n}</small></button>`).join('');
+    box.querySelectorAll('.module').forEach(b => b.addEventListener('click', () => module(b.dataset.module)));
+  }
+  /** The module shown on the map; with a key, shows that module ('all' for every mechanism) and returns it. */
+  function module(key) {
+    if (key !== undefined && key !== shown && MODULES.some(m => m.key === key)) { shown = key; draw(); }
+    return shown;
+  }
+  /** Current mechanism filled; the mechanisms one change away outlined in the colour of that change. When the
+   *  selection moves to a mechanism outside the module shown, the map follows it (not after a choice by hand: `keep`). */
   function highlight(extra) {
     const S = window.FIELDBRIDGE_SITE, I = window.FieldBridgeInstrument, svg = document.getElementById('mechanisms');
     if (!S || !I || !svg || !I.state.node) return;
     const here = S.nodes[I.state.node].class, next = new Map();
+    if (!(extra && extra.keep) && shown !== 'all' && moduleOf(here) && moduleOf(here) !== shown) { shown = moduleOf(here); draw(); return; }
     for (const e of (I.out[I.state.node] || [])) next.set(S.nodes[e.to].class, e.slot);
     for (const e of (I.into[I.state.node] || [])) next.set(S.nodes[e.from].class, e.slot);
     const seen = new Set(I.state.path.map(p => S.nodes[p.node].class));
@@ -188,11 +248,12 @@
       l.classList.toggle('dim', !!lit && !(l.dataset.slots || '').split(' ').includes(lit));
     });
   }
-  /** A change under the pointer: its target mechanism is marked on the map. */
+  /** A change under the pointer: its target mechanism is marked on the map, or, when the target lies outside the
+   *  module shown, the button of its module. */
   function preview(klass) {
-    const svg = document.getElementById('mechanisms');
-    if (!svg) return;
-    svg.querySelectorAll('.mech').forEach(g => g.classList.toggle('preview', !!klass && g.dataset.class === klass));
+    const svg = document.getElementById('mechanisms'), box = document.getElementById('map-modules');
+    if (svg) svg.querySelectorAll('.mech').forEach(g => g.classList.toggle('preview', !!klass && g.dataset.class === klass));
+    if (box) box.querySelectorAll('.module').forEach(b => b.classList.toggle('preview', !!klass && !visible(klass) && b.dataset.module === moduleOf(klass)));
   }
   document.addEventListener('DOMContentLoaded', () => {
     draw();
@@ -230,5 +291,5 @@
     if (only.includes('doc') && r.doc) parts.push(a(base + r.doc, 'all references ↗', 'docs/mechanisms.md'));
     return parts.join(' · ');
   }
-  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links, lawLinked, reading};
+  window.FieldBridgeMechanisms = {glyph, draw, highlight, preview, links, lawLinked, reading, module, modules: MODULES.map(m => m.key)};
 })();

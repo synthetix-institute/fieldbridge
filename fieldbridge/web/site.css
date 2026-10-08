@@ -130,9 +130,16 @@ section { padding: 44px 0 20px; }
 .howto b { display: block; font-weight: 600; margin-bottom: 1px; }
 
 /* the map of mechanisms */
+.map-modules { display: flex; flex-wrap: wrap; gap: 6px; margin: 0 0 8px; }
+.map-modules .module { background: var(--panel); border: 1px solid var(--rule-strong); border-radius: 999px; padding: 3px 11px; font-size: 13.5px; line-height: 1.4; color: var(--muted); transition: background .15s, color .15s, border-color .15s; }
+.map-modules .module small { font-size: 12px; color: var(--label); margin-left: 2px; }
+.map-modules .module:hover { border-color: var(--ink); color: var(--ink); }
+.map-modules .module.on { background: var(--ink); border-color: var(--ink); color: var(--panel); }
+.map-modules .module.on small { color: color-mix(in srgb, var(--panel) 72%, transparent); }
+.map-modules .module.preview { border-color: var(--accent); color: var(--accent); }
 .mech-frame { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; padding: 6px; margin: 0 0 6px; overflow-x: auto; }
 .hero-map .path { margin-top: 10px; }
-#mechanisms { display: block; width: 100%; min-width: 860px; height: auto; }
+#mechanisms { display: block; width: 100%; max-width: 100%; min-width: 860px; height: auto; margin: 0 auto; }
 #mechanisms.narrow { min-width: 0; }
 #mechanisms .family rect { fill: var(--panel-2); opacity: .7; }
 #mechanisms .family text { font: 600 13px var(--sans); fill: var(--label); }
@@ -406,5 +413,6 @@ details.sources summary { cursor: pointer; color: var(--accent); font-size: 14.5
 }
 @media (prefers-reduced-motion: reduce) {
   .slot.changed { animation: none; }
+  .map-modules .module, #mechanisms .mech rect { transition: none; }
   html { scroll-behavior: auto; }
 }
