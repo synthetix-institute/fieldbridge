@@ -703,6 +703,8 @@ BIB.update({
                "doi": "10.1103/PhysRevResearch.7.L022056"},
     "yamaji2025": {"cite": "T. Yamaji et al., Phys. Rev. Applied 24, 064052 (2025)", "short": "Yamaji et al., 2025",
                    "doi": "10.1103/PhysRevApplied.24.064052"},
+    "grimm2020": {"cite": "A. Grimm et al., Nature 584, 205 (2020)", "short": "Grimm et al., 2020",
+                  "doi": "10.1038/s41586-020-2587-z"},
 })
 QW = T + "29_quantum_write.md"
 READING.update({
@@ -713,7 +715,11 @@ READING.update({
         "derived": [("Quantum write, §3", "the 27-photon oscillator: the exact evolution of the density operator against "
                                           "the law along the protocol", QW + "#3-the-worked-example"),
                     ("Quantum write, §4", "the thermal control and the crossover between the dissipative and the closed "
-                                          "limits", QW + "#4-the-results")],
+                                          "limits", QW + "#4-the-results"),
+                    ("Quantum write, §6", "two devices with published parameters, the Josephson oscillator of Yamaji et "
+                                          "al. and the Kerr-cat resonator of Grimm et al.: both leave the law by 0.04 "
+                                          "with frozen wells, the choice made in the nonlinear stage",
+                     QW + "#6-measured-oscillators")],
         "code": "quantum.open.derive_quantum_write, law_along_protocol, evolve, prob_positive",
         "sources": [("kondepudi1985", "the selection law of a pitchfork swept with a bias and noise, "
                                       "P = Φ(π^{1/4} h / (D^{1/2} r^{1/4}))"),
@@ -722,7 +728,9 @@ READING.update({
                     ("roquescarmes2023", "bias pulses below one photon set the probabilities of the two states of an "
                                          "optical parametric oscillator"),
                     ("yamaji2025", "a Josephson oscillator with twelve photons, its pump raised with a one-photon bias, "
-                                   "and the probability of the favoured state against the bias")],
+                                   "and the probability of the favoured state against the bias"),
+                    ("grimm2020", "a Kerr-cat resonator with 2.6 photons per well, its squeezing drive raised along a "
+                                  "tanh ramp; the parameters of the second device of §6")],
     },
     "equilibrium-write": {
         "defined": ("Quantum write, §5", "at a few stored photons the switching between the wells outruns the sweep and "

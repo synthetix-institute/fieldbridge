@@ -18,7 +18,9 @@ linear loss while the amplitude is small, the sweep crosses the threshold, the a
 one and the bias pushes it), K (the canonical linear equation x' = (eps(t) - kappa/2) x + h + sqrt(2D) xi with the
 noise fixed by the loss and the temperature) and L (the law P = Phi(h I1 / sqrt(sigma0^2 + 2 D I2)) over the protocol,
 compared with the exact evolution of the density operator). Where the law fails, the biased steady state and the
-switching gap of the Lindbladian decide whether the write is an equilibrium write.
+switching gap of the Lindbladian decide whether the write is an equilibrium write (the probability equals the
+selection of the biased steady state) or whether the choice is made in the nonlinear stage of the growth (the law is
+exact without the nonlinear terms, so they act on the choice; the report says whether the wells exchange population).
 
 Nothing in a specification is evaluated: coefficients go through the restricted parser of the memory module.
 """
@@ -50,6 +52,7 @@ REACHED = "reached"
 MAX_QUANTA = 160
 STEADY_MAX_DIM = 48
 TOL_LAW = 2e-3          # the law is a calibration: the exact evolution has no sampling error
+TOL_FROZEN = 0.02       # switching gap times the duration of the protocol: below it the wells exchange under 2 percent
 TOL_DIRECTION = 1e-6
 
 
@@ -374,11 +377,13 @@ def derive_quantum_write(real: Realization, law: bool = True, trace: int = 0) ->
         return linear_stage(real, eps2, 0.0)["gain"]
     along = law_along_protocol(real, kappa, nbar, pr["nbar0"])
     r_eff = along["r_local"]
-    h_eff = along["h_end"]
+    h_eff = along["h_top"]
     two_d, sigma0_sq = along["two_d"], along["sigma0_sq"]
+    off_at = pr.get("bias_off_at")
     steps.append({"letter": "K", "text": f"x' = (eps(t) - kappa/2) x + h(t) + sqrt(2D) xi; the growth rate crosses zero at "
                                          f"t = {along['t_threshold']:.4g} with slope r = {r_eff:.4g}; h = {h_eff:.5g} at the "
-                                         f"end of the ramp, 2D = {two_d:.5g}, sigma0^2 = {sigma0_sq:.4g}",
+                                         f"top of the sweep" + (f", switched off at t = {off_at:.4g}" if off_at is not None else "")
+                                         + f", 2D = {two_d:.5g}, sigma0^2 = {sigma0_sq:.4g}",
                   "r": r_eff, "h": h_eff, "two_d": two_d, "sigma0_sq": sigma0_sq, "kappa": kappa, "nbar": nbar})
     word.append("K")
     canon = {"r": r_eff, "h": h_eff, "two_d": two_d, "sigma0_sq": sigma0_sq, "kappa": kappa, "nbar": nbar,
@@ -421,10 +426,24 @@ def derive_quantum_write(real: Realization, law: bool = True, trace: int = 0) ->
                                      f"above threshold, {eq['gap_near_threshold']:.3g}, is not small against the sweep "
                                      f"scale sqrt(r) = {math.sqrt(r_eff):.3g}, so the wells equilibrate during the "
                                      f"passage: the write is decided by the balance of the wells", "equilibrium write")
-    return _obstructed(out, "L", f"P_exact = {p_exact:.4f} leaves the law ({p_law:.4f})"
-                                 + (f" and the biased steady state ({eq['P_eq']:.4f})" if eq else "")
-                                 + ": neither the linear stage nor the balance of the wells decides alone",
-                       "intermediate regime")
+    # the law is exact without the nonlinear terms, so they act on the choice; do the wells exchange population?
+    duration = ev["T_ramp"] + pr["hold"]
+    if eq is None:
+        return _obstructed(out, "L", f"P_exact = {p_exact:.4f} leaves the law ({p_law:.4f}), so the nonlinear terms act on "
+                                     f"the choice; the biased steady state was not computed (dimension {real.carrier.dim} "
+                                     f"above the limit {STEADY_MAX_DIM})", "nonlinear stage")
+    settle = eq["gap"] * duration
+    eq.update({"settle": settle, "duration": duration})
+    if settle < TOL_FROZEN:
+        text = (f"P_exact = {p_exact:.4f} leaves the law ({p_law:.4f}) and the stored states do not exchange population at "
+                f"the final drive (switching gap {eq['gap']:.3g} over the protocol of duration {duration:.3g}, product "
+                f"{settle:.2g}), so the balance of the wells P_eq = {eq['P_eq']:.4f} plays no part: the choice is made in the "
+                f"nonlinear stage of the growth")
+    else:
+        text = (f"P_exact = {p_exact:.4f} leaves the law ({p_law:.4f}) and lies away from the balance of the wells "
+                f"P_eq = {eq['P_eq']:.4f} although they exchange population (switching gap {eq['gap']:.3g} over the "
+                f"protocol of duration {duration:.3g}, product {settle:.2g}): a partial equilibration in the nonlinear stage")
+    return _obstructed(out, "L", text, "nonlinear stage")
 
 
 def _obstructed(out: Dict, letter: str, reason: str, short: str) -> Dict:
@@ -471,7 +490,8 @@ def law_along_protocol(real: Realization, kappa: float, nbar: float, nbar0: floa
     else:
         r_local, t_star = float("nan"), float("nan")
     return {"P_law": float(ndtr(z)), "probit": z, "two_d": two_d, "sigma0_sq": sigma0_sq, "r_local": r_local,
-            "t_threshold": t_star, "h_end": float(push[-1]), "gain_end": float(gain[-1]), "T_ramp": T}
+            "t_threshold": t_star, "h_end": float(push[-1]), "gain_end": float(gain[-1]), "T_ramp": T,
+            "h_top": float(linear_stage(real, pr["to"], 1.0)["push"].real * pr["bias"])}
 
 
 def protocol_probability(canon: Dict, pr: Dict) -> float:

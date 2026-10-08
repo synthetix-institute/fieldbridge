@@ -59,7 +59,9 @@ Kondepudi and Nelson (1985) with the noise fixed.
 Where L fails, the derivation computes the biased steady state of the Lindbladian at the final drive and the smallest
 nonzero decay rate, the switching gap. If the probability equals the selection of that steady state, the class is the
 **equilibrium write**: the two wells are shallow, switch faster than the sweep passes, and the write is decided by
-their balance, not by the linear stage.
+their balance, not by the linear stage. Otherwise the choice is made in the **nonlinear stage** of the growth: the
+law is exact without the nonlinear terms, so they act on the choice, and the report says whether the wells exchange
+population over the protocol. In the two measured devices of Section 6 they do not.
 
 ## 3. The worked example
 
@@ -113,17 +115,38 @@ Lindbladian toward the biased steady state,
 with Γ the gap and P<sub>eq</sub> the selection, both computed from the generator; it reproduces the exact probability
 within 0.01 over two decades of rate.
 
-## 6. A measured oscillator
+## 6. Measured oscillators
 
-The Josephson parametric oscillator of Yamaji et al. (2025) has K/κ = 5.9, about twelve stored photons, a pump that
-rises as t<sup>5</sup> over 100 ns with a one-photon bias raised alongside, and a measured locking error against the
-bias power at zero detuning. With the paper's own parameters, the exact evolution reproduces that curve over ten
-powers within 0.04 once the signal phase is chosen at each power, as the experiment itself does, and the Gaussian law
-holds at the weak biases. The specification, the digitized measurement and the comparison script are in the research
-module of KnowledgeParser (`modules/quantum_write/realizations/`), since each point takes minutes to evolve; the
-figure is reproduced here.
+Two specifications with published parameters are kept apart from the pinned examples, in
+`examples/quantum/open/devices/`, because each evolution takes minutes:
+
+    python3 -B -m fieldbridge quantum write examples/quantum/open/devices/yamaji2025_jpo.json examples/quantum/open/devices/grimm2020_kerr_cat.json --out-dir out/devices
+
+**The Josephson parametric oscillator of Yamaji et al. (2025)**, `yamaji2025_jpo.json`: K/κ = 5.9, a pump rising as
+t<sup>5</sup> over 100 ns to about twelve stored photons, a one-photon bias rising linearly with it and switched off
+100 ns after the ramp, pure dephasing of 6.8 kHz, zero detuning. At a signal power of −120 dBm the bias reaches
+h = 4κ at the top of the sweep; the exact probability is 0.781 against the law's 0.822. Once formed, the stored states
+do not exchange population (switching gap 1.0 × 10<sup>−3</sup> κ over a protocol of 2.7/κ), so the balance of the
+wells plays no part and the derivation stops at L with the diagnosis that the choice is made in the nonlinear stage.
+The research runs behind this module repeat the calculation over the paper's ten signal powers: the exact evolution
+reproduces the measured locking error within 0.04 once the signal phase is chosen at each power, as the experiment
+itself does; the law holds within 0.01 at the weakest biases and the deficit below it grows with the bias power. The
+digitized measurement and the comparison script are in the research module of KnowledgeParser
+(`modules/quantum_write/realizations/`); the figure is reproduced here.
 
 ![Locking error of the Josephson oscillator against the bias power: measurement and model](../figures/quantum/yamaji2025_locking_error.png)
+
+**The Kerr-cat resonator of Grimm et al. (2020)**, `grimm2020_kerr_cat.json`: K/κ = 653, a tanh ramp of the
+squeezing drive over 320 ns to 2.6 stored photons, n̄ = 0.04. The paper prepares the wells by parity and applies no
+bias during the ramp; the specification adds a hypothetical one-photon drive of 50κ during the ramp, below the
+paper's cat-Rabi drives, to ask which well a bias would select. The ramp lasts 0.02/κ, so the seed is the thermal
+state of the preparation rather than the loss. The exact probability is 0.759 against the law's 0.794; the wells are
+frozen (gap 0.040κ over 0.12/κ) and the biased steady state would select 0.516, so again the nonlinear stage decides.
+
+Both devices leave the law by 0.04 with frozen wells, a different route from the equilibration of the control
+calculation. The research module's scan of the Kerr coefficient found the deficit growing as K<sup>2</sup> at large
+photon numbers for a slow ramp; the two devices show it for fast ramps, κ/√r = 0.29 and 0.045. Its mechanism is
+open, and the dependence on the signal phase measured by Yamaji et al. belongs to the same stage.
 
 ## 7. Exercises
 
@@ -143,7 +166,8 @@ stage the amplified quadrature obeys the classical write equation with the noise
 temperature, and the probability follows a law with no free parameter, exact to the truncation of the Fock space.
 At a few stored photons the two wells exchange population faster than the sweep passes and the probability relaxes
 to the selection of the biased steady state, below the law. The letters G, K and L record which case a realization
-is, and the obstructions name what is missing: a threshold, the right quadrature, a bias that pushes it.
+is, and the obstructions name what is missing: a threshold, the right quadrature, a bias that pushes it; where the law
+fails without the wells equilibrating, the report names the nonlinear stage of the growth.
 
 ## Reference
 
@@ -152,6 +176,6 @@ is, and the obstructions name what is missing: a threshold, the right quadrature
 | Schema and loader | `fieldbridge/quantum/open.py`: `SCHEMA`, `load`, `SpecError` |
 | Derivation | `derive_quantum_write`, `law_along_protocol`, `evolve`, `prob_positive`, `equilibrium` |
 | Command | `fieldbridge quantum write` (`fieldbridge/quantum/cli.py`, `cmd_write`) |
-| Examples | `examples/quantum/open/` |
-| Tests | `tests/test_quantum_open.py`: the limits of the law, exactness for a quadratic generator, parity, refusals, the classes of the examples, the command |
-| Sources | Kondepudi and Nelson 1985; Gu et al. 2025; Roques-Carmes et al. 2023; Marthaler and Dykman 2006; Frattini et al. 2024; Yamaji et al. 2025, listed in [docs/mechanisms.md](../mechanisms.md) |
+| Examples | `examples/quantum/open/` (pinned, read by the page) and `examples/quantum/open/devices/` (published parameters, run on request) |
+| Tests | `tests/test_quantum_open.py`: the limits of the law, exactness for a quadratic generator, parity, refusals, the classes of the examples, the device specifications reach K, the command |
+| Sources | Kondepudi and Nelson 1985; Gu et al. 2025; Roques-Carmes et al. 2023; Marthaler and Dykman 2006; Frattini et al. 2024; Yamaji et al. 2025; Grimm et al. 2020, listed in [docs/mechanisms.md](../mechanisms.md) |
