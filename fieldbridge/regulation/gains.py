@@ -21,6 +21,19 @@ import numpy as np
 
 from .spec import Regulated
 
+SINGULAR = 1e-10       # smallest/largest singular value of a clamped system below this: no unique shift of the state
+
+
+def _singular(A: np.ndarray) -> bool:
+    """True when the linear system A dq = b left by a clamp does not fix dq: A empty or not finite, or its smallest
+    singular value below SINGULAR times its largest. The determinant does not show this: a block that is singular in
+    exact arithmetic (Lorenz at C+- with z clamped: [[-sigma, sigma], [1, -1]]) has det of order 1e-15 in floating
+    point, and solve then raises or returns a gain of order 1/eps, depending on the LAPACK build."""
+    if A.size == 0 or not np.all(np.isfinite(A)):
+        return True
+    s = np.linalg.svd(A, compute_uv=False)
+    return bool(s[-1] <= SINGULAR * s[0])
+
 
 def static_gain(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.ndarray] = None) -> Dict[str, object]:
     J, Fu, gh, hu = m.jac(q, p), m.fu(q, p), m.gradh(q, p), m.hu(q, p)
@@ -58,7 +71,8 @@ def reference_gain(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.nd
 
 def clamped_gain(m: Regulated, p: np.ndarray, q: np.ndarray, k, L: Optional[np.ndarray] = None) -> Dict[str, object]:
     """Gain with variable k (an index, or a set of indices) held at its value in q. Laws that involve a clamped
-    variable no longer hold; the others do."""
+    variable no longer hold; the others do. When the remaining system (stacked with those laws) is singular, the
+    gain through the clamp is undefined: G is None and singular is True."""
     ks = {k} if isinstance(k, (int, np.integer)) else set(k)
     keep = [i for i in range(m.n) if i not in ks]
     J, Fu, gh, hu = m.jac(q, p), m.fu(q, p), m.gradh(q, p), m.hu(q, p)
@@ -67,15 +81,19 @@ def clamped_gain(m: Regulated, p: np.ndarray, q: np.ndarray, k, L: Optional[np.n
     if L is not None and len(L):
         rows = [r for r in L if all(abs(r[j]) < 1e-12 * np.max(np.abs(r)) for j in ks)]
         Lr = np.array([r[keep] for r in rows]) if rows else None
+    singular = {"G": None, "S": None, "stable": False, "singular": True}
+    if _singular(Jr if Lr is None else np.vstack([Jr, Lr])):
+        return singular
     if Lr is not None and len(Lr):
         dq = np.linalg.lstsq(np.vstack([Jr, Lr]), np.concatenate([-Fur, np.zeros(len(Lr))]), rcond=None)[0]
         from scipy.linalg import null_space
         U = null_space(Lr)
         lam = np.linalg.eigvals(U.T @ Jr @ U) if U.size else np.zeros(0)
     else:
-        if Jr.size == 0 or abs(np.linalg.det(Jr)) < 1e-300:
-            return {"G": None, "S": None, "stable": False, "singular": True}
-        dq = -np.linalg.solve(Jr, Fur)
+        try:
+            dq = -np.linalg.solve(Jr, Fur)
+        except np.linalg.LinAlgError:
+            return singular
         lam = np.linalg.eigvals(Jr)
     G = float(hu + ghr @ dq)
     y, u = m.y(q, p), float(p[m.u_index])

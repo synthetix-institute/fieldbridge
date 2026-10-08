@@ -58,6 +58,30 @@ def test_clamping_the_leaky_integrator_gives_the_remaining_fraction():
     assert z["remaining_fraction"] == pytest.approx(0.05 / (0.05 + 0.5), rel=1e-9)
 
 
+def test_a_clamp_that_leaves_a_singular_block_has_no_gain(tmp_path):
+    # Lorenz at C+ = (x*, x*, r - 1), x* = sqrt(b (r - 1)), input r, output y. Clamping z leaves the block
+    # [[-sigma, sigma], [r - z, -1]], singular at r - z = 1; z one rounding away from r - 1 must not give it a gain.
+    # Clamping x and z leaves dy/dt = x* - y, so G_open = x*; G = dx*/dr = b/(2 x*), and G/G_open = 1/(2 (r - 1)).
+    spec = json.loads((BENCH / "pi_loop.json").read_text(encoding="utf-8"))
+    spec["carrier"]["variables"] = ["x", "y", "z"]
+    spec["parameters"] = {"sigma": 10.0, "b": 8.0 / 3.0, "r": 13.375}
+    spec["drift"] = {"x": "sigma*(y - x)", "y": "x*(r - z) - y", "z": "x*y - b*z"}
+    spec["regulation"] = {"input": "r", "output": "y", "steps": [13.375, 14.0], "fixed": ["sigma", "b"]}
+    path = tmp_path / "lorenz.json"
+    path.write_text(json.dumps(spec), encoding="utf-8")
+    m = model.load(path)
+    b, r = m.params["b"], m.params["r"]
+    xs = np.sqrt(b * (r - 1))
+    p, q = m.pvec(m.u0), np.array([xs, xs, np.nextafter(r - 1, np.inf)])
+    c = gains.clamped_gain(m, p, q, m.variables.index("z"))
+    assert c["singular"] and c["G"] is None
+    ref = gains.reference_gain(m, p, q)
+    assert ref == pytest.approx(xs, rel=1e-9)
+    assert abs(gains.static_gain(m, p, q)["G"]) / ref == pytest.approx(1 / (2 * (r - 1)), rel=1e-9)
+    z = next(row for row in gains.attenuation(m, p, q) if row["variable"] == "z")
+    assert z["G_open"] is None and z["remaining_fraction"] is None
+
+
 def test_output_dependent_on_the_input_enters_the_gain(tmp_path):
     # y = x + u with dx/dt = -x: dy/du = 1 through h_u alone
     spec = json.loads((BENCH / "no_path.json").read_text(encoding="utf-8"))
@@ -140,6 +164,18 @@ def test_conservation_law_is_not_an_integrator():
 
 
 # ------------------------------------------------------------------------------------------------ dynamics
+def test_a_settle_test_below_the_error_of_the_integrator_ends_at_its_floor():
+    # third-order loop from (1, 1, 1) to q* = (y0, y0, u - lam y0) at y0 = 1.25. |F| <= 1e-14 fast |q| lies far below
+    # the error of the integrator (rtol 1e-10) and is never met; the trajectory is settled once its residual stops
+    # falling near q*
+    m = load("third_order_loop")
+    p = m.pvec(m.u0, y0=1.25)
+    s = steady.settle(m, p, m.initial, tol=1e-14, max_chunks=6)
+    q_star = np.array([1.25, 1.25, m.u0 - m.params["lam"] * 1.25])
+    assert s["converged"]
+    assert np.linalg.norm(s["q"] - q_star) <= steady.FLOOR * np.linalg.norm(q_star)
+
+
 def test_integral_gain_threshold_of_the_second_order_plant():
     # s^3 + 2 lam s^2 + lam^2 s + lam kI = 0 is stable iff kI < 2 lam^2
     m = load("third_order_loop")
@@ -160,6 +196,40 @@ def test_response_integral_equals_the_change_of_the_integrator():
     assert r["settled"] and r["calibration_ratio"] == pytest.approx(1.0, abs=1e-8)
     assert m.params["kI"] * r["integral_of_deviation"] == pytest.approx(3.0 - m.u0, rel=1e-8)
     assert r["final"] == pytest.approx(0.0, abs=1e-8) and abs(r["peak"]) > 0.1
+
+
+def test_a_chunk_over_the_budget_of_lsoda_is_integrated_by_bdf(monkeypatch):
+    # PI loop with LSODA cut off after 10 calls: BDF integrates the response, and the identity of the previous test
+    # holds as it does with LSODA
+    m = load("pi_loop")
+    p, st, L = settled(m)
+    info = integrator.find_integrator(m, p, st["q"][None, :], np.random.default_rng(8), y0_steady=st["y"])
+    monkeypatch.setattr(steady, "BUDGET", 10)
+    r = step.step_response(m, p, st["q"], 3.0, info, L)
+    assert r["settled"] and r["calibration_ratio"] == pytest.approx(1.0, abs=1e-8)
+    assert m.params["kI"] * r["integral_of_deviation"] == pytest.approx(3.0 - m.u0, rel=1e-8)
+
+
+@pytest.mark.parametrize("path", [BENCH / "pi_loop.json", BENCH / "feedforward_product.json",
+                                  SPECS / "chemotaxis_tu2008.json"], ids=lambda p: p.stem)
+def test_the_jacobian_given_to_bdf_is_the_derivative_of_the_step_response(path, monkeypatch):
+    # integrators of stage 1 (constant gain), 2 (gain linear in the state) and 3 (w.F); central differences at a
+    # point off the steady state
+    m = model.load(path)
+    p, st, L = settled(m)
+    info = integrator.find_integrator(m, p, np.vstack([st["q"], m.initial]), np.random.default_rng(0),
+                                      y0_steady=st["y"])
+    seen = []
+    monkeypatch.setattr(step, "integrate_chunk", lambda fun, jac, span, x0, *a, **k: seen.append((fun, jac, x0))
+                        or steady.integrate_chunk(fun, jac, span, x0, *a, **k))
+    step.step_response(m, p, st["q"], m.steps[1], info, L, max_chunks=1)
+    fun, jac, x0 = seen[0]
+    assert len(x0) == m.n + 2                                   # the state, I1 and I2
+    x = x0 * (1 + 0.05 * np.sin(np.arange(len(x0)) + 1.0)) + 0.01
+    h = 1e-6 * np.maximum(np.abs(x), 1.0)
+    fd = np.column_stack([(fun(0.0, x + h[j] * e) - fun(0.0, x - h[j] * e)) / (2 * h[j])
+                          for j, e in enumerate(np.eye(len(x)))])
+    assert np.abs(jac(0.0, x) - fd).max() <= 1e-6 * np.abs(fd).max()
 
 
 @pytest.mark.parametrize("path", sorted(BENCH.glob("*.json")), ids=lambda p: p.stem)

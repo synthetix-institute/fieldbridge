@@ -13,11 +13,10 @@ from __future__ import annotations
 from typing import Dict, Optional
 
 import numpy as np
-from scipy.integrate import solve_ivp
 
-from .integrator import phi, rate
+from .integrator import phi, rate, rate_gradient
 from .spec import Regulated
-from .steady import output_along, rates, refine
+from .steady import at_floor, integrate_chunk, output_along, rates, refine
 
 
 def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ: Optional[Dict] = None,
@@ -39,15 +38,25 @@ def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ
             extra.append(rate(integ, m, q, p1, y))
         return np.concatenate([m.f(q, p1), extra])
 
+    def jac(t, x):
+        q = x[: m.n]
+        J = np.zeros((len(x), len(x)))
+        J[: m.n, : m.n] = m.jac(q, p1)
+        J[m.n, : m.n] = grad_h = m.gradh(q, p1)
+        if has_int:
+            J[m.n + 1, : m.n] = rate_gradient(integ, m, q, m.y(q, p1), J[: m.n, : m.n], grad_h)
+        return J
+
     x = np.concatenate([np.asarray(q0, float), np.zeros(2 if has_int else 1)])
     lam = np.abs(rates(m, p1, q0, L).real)
     lam = lam[lam > 1e-9 * max(lam.max(initial=0.0), 1e-300)]
     chunk = 10.0 / max(lam.min() if lam.size else 1.0, 1e-12)
-    t0, ts_all, ys_all, qs_all, settled = 0.0, [], [], [], False
+    t0, ts_all, ys_all, qs_all, settled, res_before, stiff = 0.0, [], [], [], False, None, False
     for _ in range(max_chunks):
         ts = np.linspace(t0, t0 + chunk, 2000)
-        sol = solve_ivp(rhs, (t0, t0 + chunk), x, method="LSODA", rtol=1e-11,
-                        atol=1e-13 * max(1.0, float(np.max(np.abs(x[: m.n])))), t_eval=ts)
+        sol, stiff = integrate_chunk(rhs, jac, (t0, t0 + chunk), x, 1e-11,
+                                     1e-13 * max(1.0, float(np.max(np.abs(x[: m.n])))), ts, lsoda_jac=False,
+                                     stiff=stiff)
         if not sol.success:
             return {"u1": u1, "failure": sol.message}
         ts_all.append(ts)
@@ -58,9 +67,11 @@ def step_response(m: Regulated, p0: np.ndarray, q0: np.ndarray, u1: float, integ
         q = x[: m.n]
         F = m.f(q, p1)
         fast = float(np.abs(rates(m, p1, q, L)).max(initial=1.0))
-        if np.linalg.norm(F) <= tol * fast * max(np.linalg.norm(q), 1e-12):
+        res = float(np.linalg.norm(F)) / max(fast * max(np.linalg.norm(q), 1e-12), 1e-300)
+        if np.linalg.norm(F) <= tol * fast * max(np.linalg.norm(q), 1e-12) or at_floor(m, p1, q, L, res, res_before):
             settled = True
             break
+        res_before = res
         chunk *= 1.5
     t, y = np.concatenate(ts_all), np.concatenate(ys_all)
     totals = L @ np.asarray(q0, float) if L is not None and len(L) else None
