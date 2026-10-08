@@ -665,6 +665,19 @@ def hysteron_slots(spec: Dict, model) -> Dict[str, str]:
 # the parameter points of a regulated node: fewer than ``regulation card`` (32), so that the page builds quickly
 REGULATION_SAMPLES = 8
 REGULATION_CLASSES = ("perfect-adaptation", "fine-tuned-adaptation", "partial-adaptation", "no-adaptation")
+CLAMP_TIE = 1e-9       # remaining fractions, and open-loop gains relative to the largest, closer than this are equal
+
+
+def least_clamp(att: List[Dict]) -> Optional[Dict]:
+    """The clamp that leaves the smallest fraction of the step. Fractions within CLAMP_TIE are equal (all are 0 where
+    the output adapts); among equal fractions the clamp with the largest open-loop gain is shown, and among equal
+    gains the first in the order of the variables, so that the rounding does not choose between equal clamps."""
+    if not att:
+        return None
+    least = min(abs(a["remaining_fraction"]) for a in att)
+    tied = [a for a in att if abs(a["remaining_fraction"]) <= least + CLAMP_TIE]
+    top = max(abs(a["G_open"]) for a in tied)
+    return next(a for a in tied if abs(a["G_open"]) >= (1 - CLAMP_TIE) * top)
 
 
 def regulation_record(node: Dict) -> Dict:
@@ -682,7 +695,7 @@ def regulation_record(node: Dict) -> Dict:
     step = res["step_responses"][0]
     rob = res["robustness"]
     att = [a for a in res.get("attenuation") or [] if a.get("remaining_fraction") is not None]
-    clamp = min(att, key=lambda a: abs(a["remaining_fraction"])) if att else None
+    clamp = least_clamp(att)
     integ = res.get("integrator") or {}
     ratio = res.get("gain_ratio") or 0.0
     # without a variable to clamp the reference gain is the gain itself, and the ratio says nothing

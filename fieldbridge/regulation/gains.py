@@ -40,6 +40,9 @@ def static_gain(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.ndarr
     return {"G": G, "S": S, "dq_du": dq, "bordered": bordered}
 
 
+GAIN_ZERO = 1e-8       # |G| / G_reference below this is a steady output independent of the input
+
+
 def reference_gain(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.ndarray] = None) -> float:
     """The scale against which a vanishing gain is judged: the largest open-loop gain over the clamps of each variable
     the output does not read and of all of them together (the local response of the output); without such a
@@ -119,16 +122,25 @@ def input_reaches_output(m: Regulated) -> bool:
     return m.output_reads_input or bool(outs & _reach(m, ins))
 
 
-def attenuation(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.ndarray] = None) -> List[Dict[str, object]]:
-    """For each variable that is not read by the output: its role and the remaining fraction G_closed/G_open."""
+def attenuation(m: Regulated, p: np.ndarray, q: np.ndarray, L: Optional[np.ndarray] = None,
+                g_ref: Optional[float] = None) -> List[Dict[str, object]]:
+    """For each variable that is not read by the output: its role and the remaining fraction G_closed/G_open.
+
+    Both gains are judged against reference_gain (g_ref), as the card judges G. A closed gain below GAIN_ZERO of it
+    leaves the fraction 0 at every clamp. An open-loop gain below it (open_loop_zero) means that with the variable
+    clamped the output does not respond: the fraction is undefined, None. A gain that vanishes in exact arithmetic
+    comes out as 0 or as a rounding error of order 1e-17, depending on the LAPACK build, and the ratio of two such
+    errors is any number (the clamp of B in the ACR network: None with NumPy 1.26, -1.49 with NumPy 2)."""
     closed = static_gain(m, p, q, L)["G"]
+    zero = GAIN_ZERO * (reference_gain(m, p, q, L) if g_ref is None else g_ref)
     rows = []
     for k, name in enumerate(m.variables):
         r = role(m, k)
         if r == "output":
             continue
         c = clamped_gain(m, p, q, k, L)
-        ratio = closed / c["G"] if c["G"] not in (None, 0.0) else None
-        rows.append({"variable": name, "role": r, "G_open": c["G"], "open_loop_stable": c["stable"],
-                     "remaining_fraction": ratio})
+        open_zero = c["G"] is not None and abs(c["G"]) <= zero
+        ratio = None if c["G"] is None or open_zero else 0.0 if abs(closed) <= zero else closed / c["G"]
+        rows.append({"variable": name, "role": r, "G_open": c["G"], "open_loop_zero": open_zero,
+                     "open_loop_stable": c["stable"], "remaining_fraction": ratio})
     return rows
