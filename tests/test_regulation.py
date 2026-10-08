@@ -58,6 +58,30 @@ def test_clamping_the_leaky_integrator_gives_the_remaining_fraction():
     assert z["remaining_fraction"] == pytest.approx(0.05 / (0.05 + 0.5), rel=1e-9)
 
 
+def test_a_clamp_that_leaves_a_singular_block_has_no_gain(tmp_path):
+    # Lorenz at C+ = (x*, x*, r - 1), x* = sqrt(b (r - 1)), input r, output y. Clamping z leaves the block
+    # [[-sigma, sigma], [r - z, -1]], singular at r - z = 1; z one rounding away from r - 1 must not give it a gain.
+    # Clamping x and z leaves dy/dt = x* - y, so G_open = x*; G = dx*/dr = b/(2 x*), and G/G_open = 1/(2 (r - 1)).
+    spec = json.loads((BENCH / "pi_loop.json").read_text(encoding="utf-8"))
+    spec["carrier"]["variables"] = ["x", "y", "z"]
+    spec["parameters"] = {"sigma": 10.0, "b": 8.0 / 3.0, "r": 13.375}
+    spec["drift"] = {"x": "sigma*(y - x)", "y": "x*(r - z) - y", "z": "x*y - b*z"}
+    spec["regulation"] = {"input": "r", "output": "y", "steps": [13.375, 14.0], "fixed": ["sigma", "b"]}
+    path = tmp_path / "lorenz.json"
+    path.write_text(json.dumps(spec), encoding="utf-8")
+    m = model.load(path)
+    b, r = m.params["b"], m.params["r"]
+    xs = np.sqrt(b * (r - 1))
+    p, q = m.pvec(m.u0), np.array([xs, xs, np.nextafter(r - 1, np.inf)])
+    c = gains.clamped_gain(m, p, q, m.variables.index("z"))
+    assert c["singular"] and c["G"] is None
+    ref = gains.reference_gain(m, p, q)
+    assert ref == pytest.approx(xs, rel=1e-9)
+    assert abs(gains.static_gain(m, p, q)["G"]) / ref == pytest.approx(1 / (2 * (r - 1)), rel=1e-9)
+    z = next(row for row in gains.attenuation(m, p, q) if row["variable"] == "z")
+    assert z["G_open"] is None and z["remaining_fraction"] is None
+
+
 def test_output_dependent_on_the_input_enters_the_gain(tmp_path):
     # y = x + u with dx/dt = -x: dy/du = 1 through h_u alone
     spec = json.loads((BENCH / "no_path.json").read_text(encoding="utf-8"))
