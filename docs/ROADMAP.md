@@ -20,7 +20,7 @@ degrees ([Computation, Module 1](tutorial/29_computation_capacity.md), `computat
 fields are compared with it, in the column "computation: capacity". The quantum write is a fourth addition: a
 parametric oscillator swept through its threshold with a bias follows the classical write law with the noise fixed
 by the loss and the temperature, exact for a quadratic generator, and leaves it for the selection of its biased
-steady state when the stored states hold a few photons ([Quantum write](tutorial/29_quantum_write.md),
+steady state when the stored states hold a few photons ([Quantum write](tutorial/30_quantum_write.md),
 `quantum write`), in the column "quantum: open evolution". The mechanisms below are studied in the tutorial or in the literature on
 memory and are not yet derivation targets. The web page lists them under "Mechanisms in preparation".
 

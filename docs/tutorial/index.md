@@ -14,7 +14,7 @@ control that must change the prediction, and the test responsible for it.
 - **Computation.** [Which functions of an input history a body represents](29_computation_capacity.md) asks how
   many functions of its past input, and of which degree, a neuron, a bacterium, a magnetic junction or a network of
   springs holds in a few measured observables.
-- **The quantum write.** [A parametric oscillator swept through its threshold](29_quantum_write.md) asks with which
+- **The quantum write.** [A parametric oscillator swept through its threshold](30_quantum_write.md) asks with which
   probability a weak bias writes one of the two states of an oscillator whose seed noise is the vacuum, and where the
   classical write law gives way to the balance of two shallow wells.
 
@@ -49,7 +49,7 @@ it was first found.
 | --- | --- |
 | Learn the language of mechanisms (detach, attach, co-discover) | [Quantum closure](11_quantum_closure.md) → [The language, shown on spins](24_spin_language.md) → [Inverse interaction design](14_inverse_construction.md); for memory, [Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md) |
 | Analyse memory in a material from any field | [Modules 1–12 on memory](#memory-in-materials-twelve-modules), starting with [a first memory card](15_memory_first_card.md) |
-| Write a bit into a quantum oscillator | [The language, shown on spins](24_spin_language.md) → [Module 4 on writing](18_memory_writing_and_retention.md) → [Quantum write](29_quantum_write.md) |
+| Write a bit into a quantum oscillator | [The language, shown on spins](24_spin_language.md) → [Module 4 on writing](18_memory_writing_and_retention.md) → [Quantum write](30_quantum_write.md) |
 | Understand the physical construction | [First run](08_end_to_end_walkthrough.md) → [Equations and assumptions](09_equations_and_assumptions.md) → [Stochastic map](10_stochastic_construction.md) → [Quantum closure](11_quantum_closure.md) |
 | Solve for a new physical construction | [Quantum closure](11_quantum_closure.md) → [Inverse interaction design](14_inverse_construction.md) → [Discovery requirements](12_reproduction_and_discovery.md) |
 | Connect equations recovered from papers | [Fingerprint](01_operational_fingerprints.md) → [Mechanism sheet](02_mechanism_sheets.md) → [Retrieval](03_cross_field_retrieval.md) → [Proposal](04_constructor_transfers.md) → [Calculated source](13_retrieval_to_calculation.md) |
@@ -75,7 +75,7 @@ reading order.
 
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
-| 1 | [Quantum write](29_quantum_write.md) | With which probability does a sweep of the two-photon drive through the threshold write the favoured state of a parametric oscillator, with the vacuum as the seed, and when does the balance of two shallow wells decide instead? | `quantum write` |
+| 1 | [Quantum write](30_quantum_write.md) | With which probability does a sweep of the two-photon drive through the threshold write the favoured state of a parametric oscillator, with the vacuum as the seed, and when does the balance of two shallow wells decide instead? | `quantum write` |
 
 ## Memory in materials: twelve modules
 

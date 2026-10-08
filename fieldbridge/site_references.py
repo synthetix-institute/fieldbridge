@@ -791,7 +791,7 @@ BIB.update({
     "grimm2020": {"cite": "A. Grimm et al., Nature 584, 205 (2020)", "short": "Grimm et al., 2020",
                   "doi": "10.1038/s41586-020-2587-z"},
 })
-QW = T + "29_quantum_write.md"
+QW = T + "30_quantum_write.md"
 READING.update({
     "linear-stage-write": {
         "defined": ("Quantum write, §2", "the Gaussian stage of a swept parametric oscillator: the amplified quadrature "

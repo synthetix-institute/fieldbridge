@@ -183,7 +183,7 @@ M11 = "docs/tutorial/26_memory_phase_locking.md"
 M12 = "docs/tutorial/27_memory_return_point.md"
 R1 = "docs/tutorial/28_regulation_set_point.md"
 C1 = "docs/tutorial/29_computation_capacity.md"
-QW = "docs/tutorial/29_quantum_write.md"
+QW = "docs/tutorial/30_quantum_write.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
