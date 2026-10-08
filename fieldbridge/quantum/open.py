@@ -35,6 +35,8 @@ from typing import Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
+_trapezoid = getattr(np, "trapezoid", None) or getattr(np, "trapz")   # the name changed in NumPy 2.0
+
 from ..memory.spec import SpecError as MemorySpecError, parse_expression
 from .carriers import Carrier, CarrierError
 
@@ -475,8 +477,8 @@ def law_along_protocol(real: Realization, kappa: float, nbar: float, nbar0: floa
     phi_min = float(phi.min())
     two_d = kappa * (2.0 * nbar + 1.0) / 4.0
     sigma0_sq = (2.0 * nbar0 + 1.0) / 4.0
-    i1 = float(np.trapz(push * np.exp(-(phi - phi_min)), t))
-    i2 = float(np.trapz(np.exp(-2.0 * (phi - phi_min)), t))
+    i1 = float(_trapezoid(push * np.exp(-(phi - phi_min)), t))
+    i2 = float(_trapezoid(np.exp(-2.0 * (phi - phi_min)), t))
     # m / sigma with the factor e^{phi_min} restored: m ~ e^{-phi_min} i1, sigma^2 ~ sigma0^2 + 2D e^{-2 phi_min} i2
     log_var = float(np.logaddexp(math.log(sigma0_sq), math.log(two_d) + math.log(i2) - 2.0 * phi_min)) if two_d > 0 \
         else math.log(sigma0_sq)
