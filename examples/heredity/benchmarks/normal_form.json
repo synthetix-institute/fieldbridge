@@ -1,0 +1,53 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "equations",
+  "name": "Pitchfork normal form with the size as its control",
+  "field": "",
+  "question": "Does a daughter born below the threshold keep its parent's sign when growth carries it back through the pitchfork?",
+  "assumptions": [
+    "benchmark written without a field: dphi/dt = a (L - L_c) phi - b phi^3 with a = b = L_c = 1",
+    "exponential growth at the rate 0.05; division keeps the order and halves the size",
+    "additive noise of intensity 3e-3"
+  ],
+  "provenance": {
+    "source": "normal form of a pitchfork with the size as its control (mission 7, law 2)"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "variables": [
+      "phi"
+    ]
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 1.0,
+    "Lc": 1.0,
+    "L": 1.0
+  },
+  "drift": {
+    "phi": "a*(L - Lc)*phi - b*phi**3"
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      0.5,
+      1.5
+    ],
+    "symmetric_state": [
+      0.0
+    ],
+    "growth": {
+      "law": "exponential",
+      "rate": 0.05
+    },
+    "division": {
+      "at": 1.5,
+      "variables": {
+        "phi": "keep"
+      }
+    },
+    "noise": 0.003,
+    "start_spread": 0.3,
+    "expect": "inherited-through-threshold"
+  }
+}

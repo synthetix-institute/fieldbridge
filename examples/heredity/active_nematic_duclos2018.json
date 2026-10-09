@@ -1,0 +1,62 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "field",
+  "name": "Active nematic stripe that flows only above a critical width",
+  "field": "active matter",
+  "question": "Is the sense of the spontaneous shear flow of a stripe inherited when the stripe divides below its critical width?",
+  "assumptions": [
+    "the dimensionless parameters of the corrected Fig. 4 caption: K = gamma = zeta Dmu = eta = W_s = 1, nu = -2 (extensile, flow aligning; supercritical)",
+    "the achiral model: the cells of the source carry a chiral field that selects one tilt in more than 90% of stripes",
+    "growth of the width by uniform proliferation at the rate 0.05; division by a new edge with the same anchoring at 1.6 L_c",
+    "additive orientational noise of intensity 5e-4 per unit width"
+  ],
+  "provenance": {
+    "source": "G. Duclos et al., Nat. Phys. 14, 728 (2018), Supplementary Note Eqs. 7-8 (Author Correction, Nat. Phys. 15, 868, 2019); after R. Voituriez, J.-F. Joanny and J. Prost, Europhys. Lett. 70, 404 (2005)"
+  },
+  "cells": {
+    "number": 32,
+    "variables": [
+      "theta"
+    ],
+    "reaction": {
+      "theta": "-zdm*sin(2*theta)*(nu*cos(2*theta) - 1)/(4*eta + gam*nu**2*sin(2*theta)**2)"
+    },
+    "mobility": {
+      "theta": "K/gam*(4*eta + gam*(nu**2 - 2*nu*cos(2*theta) + 1))/(4*eta + gam*nu**2*sin(2*theta)**2)"
+    },
+    "reference": {
+      "theta": "pi/2"
+    },
+    "faces": {
+      "extrapolation": "dext"
+    }
+  },
+  "parameters": {
+    "K": 1.0,
+    "gam": 1.0,
+    "zdm": 1.0,
+    "eta": 1.0,
+    "nu": -2.0,
+    "dext": 1.0,
+    "L": 3.0
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      1.9,
+      4.5
+    ],
+    "growth": {
+      "law": "exponential",
+      "rate": 0.05,
+      "mode": "uniform"
+    },
+    "division": {
+      "at_relative": 1.6
+    },
+    "noise": 0.0005,
+    "dt": 0.004,
+    "start_spread": 0.05,
+    "expect": "inherited-through-threshold"
+  }
+}

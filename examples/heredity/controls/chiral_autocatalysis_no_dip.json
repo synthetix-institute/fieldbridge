@@ -1,0 +1,65 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "equations",
+  "name": "Chiral autocatalysis transferred at a content above twice the critical content",
+  "field": "chemistry",
+  "question": "Is the handedness kept when the transferred volume stays above the critical content?",
+  "assumptions": [
+    "k1 = 0, kappa2 = 4e-3 k0, lambda = k0 (Section 5 of the source); time in units of 1/k0",
+    "growth: achiral substrate supplied at a constant rate at fixed volume, so the content c rises linearly (rate 1 per unit time)",
+    "division: serial transfer at the content 100, so the daughter starts at 50, above the critical content 39.5",
+    "a vessel omega = 16 times the source volume at the same concentrations; the intrinsic noise as the chemical Langevin equation of the four reactions"
+  ],
+  "provenance": {
+    "source": "Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), eqs. (5)-(8), (31); arXiv cond-mat/0612385"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "variables": [
+      "r",
+      "s"
+    ]
+  },
+  "parameters": {
+    "k0": 1.0,
+    "k2": 0.004,
+    "lam": 1.0,
+    "c": 50.0,
+    "omega": 16.0
+  },
+  "drift": {
+    "r": "(k0 + k2*r**2)*(c - r - s) - lam*r",
+    "s": "(k0 + k2*s**2)*(c - r - s) - lam*s"
+  },
+  "lineage": {
+    "size": "c",
+    "threshold": [
+      25.0,
+      60.0
+    ],
+    "symmetric_state": [
+      10.0,
+      10.0
+    ],
+    "growth": {
+      "law": "linear",
+      "rate": 1.0
+    },
+    "division": {
+      "at": 100.0,
+      "variables": {
+        "r": "halve",
+        "s": "halve"
+      },
+      "partition": "binomial",
+      "volume": "omega"
+    },
+    "noise": {
+      "r": "((k0 + k2*r**2)*(c - r - s) + lam*r)/(2*omega)",
+      "s": "((k0 + k2*s**2)*(c - r - s) + lam*s)/(2*omega)"
+    },
+    "dt": 0.01,
+    "start_spread": 1.0,
+    "expect": "kept-above-threshold"
+  }
+}

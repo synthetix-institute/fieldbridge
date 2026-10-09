@@ -1,0 +1,63 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "field",
+  "name": "Cell polarity of a mass-conserving reaction-diffusion system",
+  "field": "cell biology",
+  "question": "Is the direction of a polarity inherited when a cell divides below its critical length?",
+  "assumptions": [
+    "the kinetics of the appendix of the source (from Mori et al. 2008) with its example values k = 0.07, D_m = 1, D_c = 10, mean density n = 2.4 (supercritical near the inflection point of the nullcline)",
+    "growth of the length at the rate 0.002; the growth dilutes both forms and the cell takes up the cytosolic form at the mean density n",
+    "division at L = 14 into two halves, each with the densities it received",
+    "additive noise of intensity 1e-6 per unit length"
+  ],
+  "provenance": {
+    "source": "F. Brauns, J. Halatek and E. Frey, Phys. Rev. X 10, 041036 (2020), appendix; arXiv 1812.08684"
+  },
+  "cells": {
+    "number": 24,
+    "variables": [
+      "m",
+      "c"
+    ],
+    "reaction": {
+      "m": "(k + m**2/(1 + m**2))*c - m - gam*m",
+      "c": "-((k + m**2/(1 + m**2))*c - m) - gam*c + gam*nbar"
+    },
+    "mobility": {
+      "m": "Dm",
+      "c": "Dc"
+    },
+    "faces": "zero_flux"
+  },
+  "parameters": {
+    "k": 0.07,
+    "Dm": 1.0,
+    "Dc": 10.0,
+    "nbar": 2.4,
+    "gam": 0.002,
+    "L": 8.0
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      5.0,
+      13.0
+    ],
+    "symmetric_state": {
+      "m": 0.66,
+      "c": 1.74
+    },
+    "growth": {
+      "law": "exponential",
+      "rate": "gam",
+      "mode": "uniform"
+    },
+    "division": {
+      "at": 14.0
+    },
+    "noise": 1e-06,
+    "dt": 0.05,
+    "start_spread": 0.01,
+    "expect": "threshold-moved"
+  }
+}

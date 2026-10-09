@@ -1,0 +1,53 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "equations",
+  "name": "Pitchfork normal form divided at 1.3 times the threshold",
+  "field": "",
+  "question": "Does the order survive a generation when the dip is long against the regrowth?",
+  "assumptions": [
+    "benchmark written without a field: dphi/dt = a (L - L_c) phi - b phi^3 with a = b = L_c = 1",
+    "exponential growth at the rate 0.05; division at 1.3 L_c: ln G = (0.65 - ln 2)/0.05 < 0",
+    "additive noise of intensity 3e-3"
+  ],
+  "provenance": {
+    "source": "normal form of a pitchfork with the size as its control (mission 7, law 2)"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "variables": [
+      "phi"
+    ]
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 1.0,
+    "Lc": 1.0,
+    "L": 1.0
+  },
+  "drift": {
+    "phi": "a*(L - Lc)*phi - b*phi**3"
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      0.5,
+      1.5
+    ],
+    "symmetric_state": [
+      0.0
+    ],
+    "growth": {
+      "law": "exponential",
+      "rate": 0.05
+    },
+    "division": {
+      "at": 1.3,
+      "variables": {
+        "phi": "keep"
+      }
+    },
+    "noise": 0.003,
+    "start_spread": 0.3,
+    "expect": "lost-in-the-dip"
+  }
+}

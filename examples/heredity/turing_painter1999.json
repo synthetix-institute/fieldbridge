@@ -1,0 +1,63 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "field",
+  "name": "Turing system on a growing domain of one half-stripe (Lengyel-Epstein kinetics)",
+  "field": "developmental pattern formation",
+  "question": "Is the end that holds the peak of the activator inherited when the domain divides below its critical length?",
+  "assumptions": [
+    "the Lengyel-Epstein kinetics of Fig. 8 of the source with its fixed-domain equations under exponential growth (dilution -r u, -r v), one dimension",
+    "a domain of one half-stripe, in which the first instability is a polarity; zero flux at both ends",
+    "division at L = 0.50 into two halves (the second mode becomes unstable at 0.57)",
+    "additive noise of intensity 1e-3 per unit length on both species"
+  ],
+  "provenance": {
+    "source": "K. J. Painter, P. K. Maini and H. G. Othmer, Proc. Natl. Acad. Sci. USA 96, 5549 (1999), Fig. 8 and Eq. 4"
+  },
+  "cells": {
+    "number": 24,
+    "variables": [
+      "u",
+      "v"
+    ],
+    "reaction": {
+      "u": "k1 - u - 4*u*v/(1 + u**2) - r*u",
+      "v": "k2*(u - u*v/(1 + u**2)) - r*v"
+    },
+    "mobility": {
+      "u": "Du",
+      "v": "Dv"
+    },
+    "faces": "zero_flux"
+  },
+  "parameters": {
+    "k1": 10.0,
+    "k2": 17.6,
+    "Du": 0.01,
+    "Dv": 2.0,
+    "r": 0.05,
+    "L": 0.3
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      0.15,
+      0.5
+    ],
+    "symmetric_state": {
+      "u": 2.0,
+      "v": 5.0
+    },
+    "growth": {
+      "law": "exponential",
+      "rate": "r",
+      "mode": "uniform"
+    },
+    "division": {
+      "at": 0.5
+    },
+    "noise": 0.001,
+    "dt": 0.004,
+    "start_spread": 0.01,
+    "expect": "inherited-through-threshold"
+  }
+}

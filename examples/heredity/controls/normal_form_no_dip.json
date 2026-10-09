@@ -1,0 +1,53 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "equations",
+  "name": "Pitchfork normal form divided above twice the threshold",
+  "field": "",
+  "question": "Is the order kept when the daughters are born above the threshold?",
+  "assumptions": [
+    "benchmark written without a field: dphi/dt = a (L - L_c) phi - b phi^3 with a = b = L_c = 1",
+    "exponential growth at the rate 0.05; division at 2.4 L_c, so the daughters are born at 1.2 L_c",
+    "additive noise of intensity 3e-3"
+  ],
+  "provenance": {
+    "source": "normal form of a pitchfork with the size as its control (mission 7, law 2)"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "variables": [
+      "phi"
+    ]
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 1.0,
+    "Lc": 1.0,
+    "L": 1.0
+  },
+  "drift": {
+    "phi": "a*(L - Lc)*phi - b*phi**3"
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      0.5,
+      1.5
+    ],
+    "symmetric_state": [
+      0.0
+    ],
+    "growth": {
+      "law": "exponential",
+      "rate": 0.05
+    },
+    "division": {
+      "at": 2.4,
+      "variables": {
+        "phi": "keep"
+      }
+    },
+    "noise": 0.003,
+    "start_spread": 0.3,
+    "expect": "kept-above-threshold"
+  }
+}

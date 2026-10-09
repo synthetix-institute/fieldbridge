@@ -1,0 +1,45 @@
+{
+  "schema": "fieldbridge-heredity/1",
+  "body": "chain",
+  "name": "Filament severed at 1.4 times its critical length",
+  "field": "polymer mechanics",
+  "question": "Does the buckle survive a generation when the filament is severed close to its critical length?",
+  "assumptions": [
+    "an inextensible wormlike chain in a plane, both ends on the axis of the load, free to slide along it and free to turn; ten rigid segments",
+    "units kappa = zeta_perp = 1, F = pi^2 (so that L_c = pi (kappa/F)^(1/2) = 1), zeta_par = zeta_perp/2",
+    "growth by uniform elongation at the rate 5, fast against the relaxation of the residual buckle (a viscous or crowded medium); for microtubules in water the residual relaxes about 1e4 times faster than the filament regrows",
+    "division by severing at 1.4 L_c: the regrowth above L_c does not restore what the dip removes (ln G < 0)",
+    "thermal noise k_B T = 1e-2 (reduced temperature t = L/(pi^2 L_p) of about 1e-3)"
+  ],
+  "provenance": {
+    "source": "K. Baczynski, R. Lipowsky and J. Kierfeld, Phys. Rev. E 76, 061914 (2007), Eqs. 1-2, 6, 26; dynamics of O. Hallatschek, E. Frey and K. Kroy, Phys. Rev. E 75, 031905 (2007), Eqs. 8-11"
+  },
+  "chain": {
+    "segments": 10,
+    "bending": 1.0,
+    "load": 9.869604401089358,
+    "drag_perp": 1.0,
+    "drag_par": 0.5
+  },
+  "parameters": {
+    "L": 1.0
+  },
+  "lineage": {
+    "size": "L",
+    "threshold": [
+      0.8,
+      1.2
+    ],
+    "growth": {
+      "law": "exponential",
+      "rate": 5.0
+    },
+    "division": {
+      "at_relative": 1.4
+    },
+    "noise": 0.01,
+    "dt": 0.0001,
+    "start_spread": 0.02,
+    "expect": "lost-in-the-dip"
+  }
+}
