@@ -32,6 +32,8 @@ FACTS = {
                    "final_over_peak", "return_time", "robust", "clamp", "calibration"},
     "computation": {"structure", "memory", "rate", "modes", "n_lin", "signals", "odd", "linear", "profile", "input",
                     "observables", "exact", "degree_2", "noise", "grid"},
+    "heredity": {"structure", "L_c", "a", "b", "L_div", "L_birth", "dip", "lnG", "Lambda", "P_body", "P_history",
+                 "P_normal_form", "order_at_crossing", "growth", "division", "size"},
     "stochastic": {"convention", "growth", "correction"},
     "open": {"word", "P_exact", "P_law", "difference", "photons", "kappa", "nbar", "two_d", "r", "h", "threshold",
              "truncation", "P_eq", "gap"},

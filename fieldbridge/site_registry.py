@@ -48,6 +48,10 @@ CLASSES = {
     "odd-capacity": "odd degrees only",
     "nonlinear-capacity": "nonlinear capacity",
     "integrating": "no fading memory",
+    "inherited-through-threshold": "inherited through a threshold",
+    "kept-above-threshold": "kept above the threshold",
+    "lost-in-the-dip": "lost in the dip",
+    "threshold-moved": "threshold moved by division",
     "linear-stage-write": "linear-stage write (vacuum seed)",
     "equilibrium-write": "equilibrium write (balance of the wells)",
     "oscillation": "limit cycle",
@@ -135,6 +139,23 @@ MECHANISMS = {
     "integrating": {"canonical": "κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub>",
                     "text": "A mode without decay keeps the running sum of the input; its correlation with the input at "
                             "any fixed delay vanishes as the sum grows.", "node": "comp_running_sum"},
+    # heredity: a body whose order exists only above a critical size divides below it and regrows through the pitchfork
+    "inherited-through-threshold": {"canonical": "P = Φ(φ<sub>c</sub>/σ<sub>c</sub>), σ<sub>c</sub><sup>2</sup> = "
+                                                 "2D<sub>s</sub>(π/ar)<sup>1/2</sup>Φ(aμ<sub>0</sub>(2/ar)<sup>1/2</sup>)",
+                                    "text": "A daughter born below the threshold loses part of its order in the dip; "
+                                            "growth carries it back through the pitchfork, where it keeps its "
+                                            "parent's sign when the order that remains outweighs the noise of the "
+                                            "crossing.", "node": "her_normal_form"},
+    "kept-above-threshold": {"canonical": "L<sub>div</sub>/2 &gt; L<sub>c</sub>: no dip",
+                             "text": "The daughter is born above the threshold, and the order passes to it, kept "
+                                     "behind its barrier.", "node": "her_normal_form_no_dip"},
+    "lost-in-the-dip": {"canonical": "ln G = ∫λ dt over a generation &lt; 0",
+                        "text": "The dip removes more order than the regrowth restores: without noise the order dies "
+                                "out over the generations.", "node": "her_normal_form_lost"},
+    "threshold-moved": {"canonical": "the halves differ in a conserved amount that sets L<sub>c</sub>",
+                        "text": "The order is a redistribution of a conserved amount: division gives the daughters "
+                                "different amounts, which moves their thresholds, and the parent's order is not passed "
+                                "on.", "node": "polarity_brauns2020"},
     # the quantum write: a parametric oscillator swept through its threshold with a weak bias chooses one of its two
     # states; in the linear stage the noise of the seed is fixed by the loss and the temperature (the vacuum)
     "linear-stage-write": {"canonical": "ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4",
@@ -173,7 +194,8 @@ START = "pitchfork"
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
-             "examples/regulation": "regulation", "examples/computation": "computation", "examples/quantum/open": "open"}
+             "examples/regulation": "regulation", "examples/computation": "computation", "examples/quantum/open": "open",
+             "examples/heredity": "heredity"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
@@ -184,6 +206,7 @@ M12 = "docs/tutorial/27_memory_return_point.md"
 R1 = "docs/tutorial/28_regulation_set_point.md"
 C1 = "docs/tutorial/29_computation_capacity.md"
 QW = "docs/tutorial/30_quantum_write.md"
+H1 = "docs/tutorial/31_heredity_threshold.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -429,6 +452,29 @@ NODES = [
      "tutorial": C1 + "#7-the-published-bodies"},
     {"id": "mass_spring_hauser2011", "family": "computation", "spec": "examples/computation/mass_spring_hauser2011.json",
      "tutorial": C1 + "#7-the-published-bodies"},
+    # -- heredity: inheritance through a threshold of the size
+    {"id": "her_normal_form", "family": "heredity", "spec": "examples/heredity/benchmarks/normal_form.json",
+     "tutorial": H1 + "#3-the-prediction-from-structure", "universal": True},
+    {"id": "her_normal_form_no_dip", "family": "heredity", "spec": "examples/heredity/controls/normal_form_no_dip.json",
+     "tutorial": H1 + "#5-controls", "universal": True},
+    {"id": "her_normal_form_lost", "family": "heredity", "spec": "examples/heredity/controls/normal_form_lost.json",
+     "tutorial": H1 + "#5-controls", "universal": True},
+    {"id": "chiral_autocatalysis_saito2007", "family": "heredity",
+     "spec": "examples/heredity/chiral_autocatalysis_saito2007.json", "tutorial": H1 + "#4-running-the-command"},
+    {"id": "chiral_autocatalysis_no_dip", "family": "heredity",
+     "spec": "examples/heredity/controls/chiral_autocatalysis_no_dip.json", "tutorial": H1 + "#5-controls"},
+    {"id": "turing_painter1999", "family": "heredity", "spec": "examples/heredity/turing_painter1999.json",
+     "tutorial": H1 + "#7-the-published-bodies"},
+    {"id": "active_nematic_duclos2018", "family": "heredity", "spec": "examples/heredity/active_nematic_duclos2018.json",
+     "tutorial": H1 + "#7-the-published-bodies"},
+    {"id": "ferroelectric_film_lgd", "family": "heredity", "spec": "examples/heredity/ferroelectric_film_lgd.json",
+     "tutorial": H1 + "#7-the-published-bodies"},
+    {"id": "filament_baczynski2007", "family": "heredity", "spec": "examples/heredity/filament_baczynski2007.json",
+     "tutorial": H1 + "#6-lineages"},
+    {"id": "filament_short_division", "family": "heredity",
+     "spec": "examples/heredity/controls/filament_short_division.json", "tutorial": H1 + "#5-controls"},
+    {"id": "polarity_brauns2020", "family": "heredity", "spec": "examples/heredity/polarity_brauns2020.json",
+     "tutorial": H1 + "#5-controls"},
     # -- the quantum write: a parametric oscillator swept through its threshold with a bias
     {"id": "kpo_27", "family": "open", "spec": "examples/quantum/open/kerr_parametric_oscillator.json",
      "tutorial": QW + "#3-the-worked-example", "universal": True},
@@ -730,6 +776,23 @@ EDGES = [
      "change": "k<sub>1</sub> = 0.5 → 0",
      "text": "The first stage loses its decay. It keeps the running sum of the input, and the chain has no fading "
              "memory: the capacity at every fixed delay vanishes as the sum grows."},
+    # heredity: the size at which the body divides
+    {"id": "her_no_dip", "from": "her_normal_form", "to": "her_normal_form_no_dip", "slot": "P", "kind": "protocol",
+     "change": "division at 1.5 → 2.4 L<sub>c</sub>",
+     "text": "The body divides above twice its threshold. The daughters are born at {L_birth}, above L<sub>c</sub> = "
+             "{L_c}, and the order passes to them without a dip."},
+    {"id": "her_lost", "from": "her_normal_form", "to": "her_normal_form_lost", "slot": "P", "kind": "protocol",
+     "change": "division at 1.5 → 1.3 L<sub>c</sub>",
+     "text": "The body divides closer to its threshold. The dip is long against the regrowth, ln G = {lnG} over a "
+             "generation, and the order dies out without noise."},
+    {"id": "her_chiral_no_dip", "from": "chiral_autocatalysis_saito2007", "to": "chiral_autocatalysis_no_dip",
+     "slot": "P", "kind": "protocol", "change": "transfer at the content 64 → 100",
+     "text": "The volume is transferred at a larger content. The daughter starts at {L_birth} molecules per source "
+             "volume, above the critical content {L_c}, and keeps the handedness without a dip."},
+    {"id": "her_filament_short", "from": "filament_baczynski2007", "to": "filament_short_division", "slot": "P",
+     "kind": "protocol", "change": "severing at 1.6 → 1.4 L<sub>c</sub>",
+     "text": "The filament is severed closer to its critical length. The regrowth above L<sub>c</sub> no longer "
+             "restores what the dip removes (ln G = {lnG}), and the buckle is lost without noise."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -893,6 +956,24 @@ SEQUENCES = [
                   "the nonlinear signals add many weak ones, so the capacity depends on how precisely the "
                   "resistance is measured."},
      ]},
+    {"id": "heredity", "title": "Inheritance through growth and division",
+     "steps": [
+         {"node": "her_normal_form",
+          "text": "A pitchfork with the size as its control. A daughter is born at {L_birth}, below L<sub>c</sub> = {L_c}; "
+                  "growth carries it back through the threshold, and it keeps its parent's sign with P = {P_body}."},
+         {"edge": "her_lost"},
+         {"node": "chiral_autocatalysis_saito2007",
+          "text": "Chiral autocatalysis in a volume diluted by serial transfer. The handedness passes through the "
+                  "critical content with P = {P_body}."},
+         {"edge": "her_chiral_no_dip"},
+         {"node": "filament_baczynski2007",
+          "text": "A filament severed below its Euler length under a fixed load. The side of its buckle passes with "
+                  "P = {P_body}; the normal form with a linear ramp would give {P_normal_form}, since the decay in the "
+                  "dip goes as L<sup>−4</sup>."},
+         {"node": "polarity_brauns2020",
+          "text": "A polarity made of a redistributed conserved protein. Division gives the halves different amounts, "
+                  "and neither daughter polarizes again from the parent's order."},
+     ]},
     {"id": "turning-points", "title": "Return to a turning point",
      "steps": [
          {"node": "rfim_ferromagnet",
@@ -988,6 +1069,8 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
                "no-adaptation": "no adaptation", "linear-memory": "linear memory", "odd-capacity": "odd degrees",
                "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory",
+               "inherited-through-threshold": "inherited", "kept-above-threshold": "kept above",
+               "lost-in-the-dip": "lost in the dip", "threshold-moved": "threshold moved",
                "linear-stage-write": "linear-stage write", "equilibrium-write": "equilibrium write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
@@ -1002,6 +1085,9 @@ CLASS_ABSENT = {
     "no-adaptation": ["no regulation", "the output moves to its new value and stays there: nothing returns it"],
     "integrating": ["no capacity", "a mode without decay keeps a running sum: no input at a fixed delay can be "
                                         "recovered from it"],
+    "lost-in-the-dip": ["not inherited", "the order dies out over the generations without noise"],
+    "threshold-moved": ["not inherited", "division moves the daughters' thresholds; the parent's order becomes a "
+                                         "difference between the daughters"],
     "no-return": ["no return point", "a measured subloop does not return to the state at its turning point; a "
                                      "frustrated loop through the drive allows this without forcing it"],
 }
@@ -1061,6 +1147,11 @@ SHORT = {
     "spin_torque_furuta2018": "tunnel junction", "hodgkin_huxley1952": "Hodgkin–Huxley membrane",
     "mapk_huang_ferrell1996": "MAPK cascade", "echo_state_dambre2012": "echo state network",
     "mass_spring_hauser2011": "mass–spring network",
+    "her_normal_form": "normal form", "her_normal_form_no_dip": "divided at 2.4 L_c", "her_normal_form_lost":
+    "divided at 1.3 L_c", "chiral_autocatalysis_saito2007": "chiral autocatalysis", "chiral_autocatalysis_no_dip":
+    "transfer at 100", "turing_painter1999": "Turing domain", "active_nematic_duclos2018": "active nematic stripe",
+    "ferroelectric_film_lgd": "ferroelectric film", "filament_baczynski2007": "filament under load",
+    "filament_short_division": "severed at 1.4 L_c", "polarity_brauns2020": "mass-conserving polarity",
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
     "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
     "nv_centre": "NV centre", "spin1_atom": "spin-1 atom", "stoner_wohlfarth": "magnet, 90°",

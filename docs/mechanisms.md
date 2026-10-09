@@ -24,6 +24,10 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Odd degrees only](#odd-degrees-only) | F(−x, −u) = −F(x, u): C = 0 at every even degree | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Dambre et al., 2012; Herteux and Räth, 2020; Kubota, Takahashi and Nakajima, 2021 |
 | [Nonlinear capacity](#nonlinear-capacity) | C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent measured signals | [Computation 1, §2](tutorial/29_computation_capacity.md#2-the-measure) | [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies) | Hodgkin and Huxley, 1952; Boyd and Chua, 1985; Huang and Ferrell, 1996; Hauser et al., 2011; Dambre et al., 2012; Grigoryeva et al., 2015; Torrejon et al., 2017; Furuta et al., 2018; Hülser et al., 2023; Köster, Yanchuk and Lüdge, 2024 |
 | [No fading memory](#no-fading-memory) | κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub> | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Boyd and Chua, 1985; Jaeger, 2001 |
+| [Inherited through a threshold](#inherited-through-a-threshold) | P = Φ(φ<sub>c</sub>/σ<sub>c</sub>), σ<sub>c</sub><sup>2</sup> = 2D<sub>s</sub>(π/ar)<sup>1/2</sup>Φ(aμ<sub>0</sub>(2/ar)<sup>1/2</sup>) | [Heredity 1, §2](tutorial/31_heredity_threshold.md#2-the-law) | [Heredity 1, §4](tutorial/31_heredity_threshold.md#4-running-the-command), [Heredity 1, §6](tutorial/31_heredity_threshold.md#6-lineages), [Heredity 1, §7](tutorial/31_heredity_threshold.md#7-the-published-bodies) | Kretschmer and Binder, 1979; Kondepudi and Nelson, 1983; Tilley and Zeks, 1984; van den Broeck and Mandel, 1987; Lythe, 1996; Painter, Maini and Othmer, 1999; Voituriez, Joanny and Prost, 2005; Saito, Sugimori and Hyuga, 2007; Baczynski, Lipowsky and Kierfeld, 2007; Hallatschek, Frey and Kroy, 2007; Duclos et al., 2018 |
+| [Kept above the threshold](#kept-above-the-threshold) | L<sub>div</sub>/2 &gt; L<sub>c</sub>: no dip | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Saito, Sugimori and Hyuga, 2007 |
+| [Lost in the dip](#lost-in-the-dip) | ln G = ∫λ dt over a generation &lt; 0 | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Baczynski, Lipowsky and Kierfeld, 2007 |
+| [Threshold moved by division](#threshold-moved-by-division) | the halves differ in a conserved amount that sets L<sub>c</sub> | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Brauns, Halatek and Frey, 2020 |
 | [Linear-stage write (vacuum seed)](#linear-stage-write-vacuum-seed) | ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4 | [Quantum write, §2](tutorial/30_quantum_write.md#2-the-mechanism) | [Quantum write, §3](tutorial/30_quantum_write.md#3-the-worked-example), [Quantum write, §4](tutorial/30_quantum_write.md#4-the-results), [Quantum write, §6](tutorial/30_quantum_write.md#6-measured-oscillators) | Kondepudi and Nelson, 1985; Grimm et al., 2020; Roques-Carmes et al., 2023; Gu et al., 2025; Yamaji et al., 2025 |
 | [Equilibrium write (balance of the wells)](#equilibrium-write-balance-of-the-wells) | dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p] | [Quantum write, §5](tutorial/30_quantum_write.md#5-the-control-calculation) | [Quantum write, §5](tutorial/30_quantum_write.md#5-the-control-calculation) | Marthaler and Dykman, 2006; Frattini et al., 2024 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
@@ -248,6 +252,52 @@ Canonical form: κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub>. A mode
 - **Original publications:**
   - S. Boyd and L. O. Chua, IEEE Trans. Circuits Syst. 32, 1150 (1985), [doi:10.1109/TCS.1985.1085649](https://doi.org/10.1109/TCS.1985.1085649): fading memory.
   - H. Jaeger, The "echo state" approach to analysing and training recurrent neural networks, GMD Report 148 (German National Research Center for Information Technology, 2001): the echo state property: the state forgets its initial condition.
+
+### Inherited through a threshold
+
+Canonical form: P = Φ(φ<sub>c</sub>/σ<sub>c</sub>), σ<sub>c</sub><sup>2</sup> = 2D<sub>s</sub>(π/ar)<sup>1/2</sup>Φ(aμ<sub>0</sub>(2/ar)<sup>1/2</sup>). A daughter born below the threshold loses part of its order in the dip; growth carries it back through the pitchfork, where it keeps its parent's sign when the order that remains outweighs the noise of the crossing.
+
+- **Defined:** [Heredity 1, §2](tutorial/31_heredity_threshold.md#2-the-law), a daughter below the threshold keeps its parent's sign with P = Φ(φ_c/σ_c).
+- **Derived:** [Heredity 1, §4](tutorial/31_heredity_threshold.md#4-running-the-command), the law for a daughter, from the body's own equations; [Heredity 1, §6](tutorial/31_heredity_threshold.md#6-lineages), lineages of the full body in five fields against the law; [Heredity 1, §7](tutorial/31_heredity_threshold.md#7-the-published-bodies), the published bodies. Code: `heredity.predict.predict`, `lineage.condition`, `law.probability`.
+- **Original publications:**
+  - R. Kretschmer and K. Binder, Phys. Rev. B 20, 1065 (1979), [doi:10.1103/PhysRevB.20.1065](https://doi.org/10.1103/PhysRevB.20.1065): the critical thickness of a ferroelectric film with surface terms.
+  - D. K. Kondepudi and G. W. Nelson, Phys. Rev. Lett. 50, 1023 (1983), [doi:10.1103/PhysRevLett.50.1023](https://doi.org/10.1103/PhysRevLett.50.1023): the sign selected by a swept pitchfork with a bias.
+  - D. R. Tilley and B. Zeks, Solid State Commun. 49, 823 (1984), [doi:10.1016/0038-1098(84)90089-9](https://doi.org/10.1016/0038-1098(84)90089-9): the Landau theory of a ferroelectric film of finite thickness.
+  - C. van den Broeck and P. Mandel, Phys. Lett. A 122, 36 (1987), [doi:10.1016/0375-9601(87)90771-7](https://doi.org/10.1016/0375-9601(87)90771-7): delayed bifurcations in the presence of noise.
+  - G. D. Lythe, Phys. Rev. E 53, R4271 (1996), [doi:10.1103/PhysRevE.53.R4271](https://doi.org/10.1103/PhysRevE.53.R4271): a slow passage from an initial offset: the Gaussian statistics of the order.
+  - K. J. Painter, P. K. Maini and H. G. Othmer, Proc. Natl. Acad. Sci. USA 96, 5549 (1999), [doi:10.1073/pnas.96.10.5549](https://doi.org/10.1073/pnas.96.10.5549): Turing patterns on a growing domain.
+  - R. Voituriez, J.-F. Joanny and J. Prost, Europhys. Lett. 70, 404 (2005), [doi:10.1209/epl/i2004-10501-2](https://doi.org/10.1209/epl/i2004-10501-2): the spontaneous flow transition of an active polar gel above a critical thickness.
+  - Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), [doi:10.1143/JPSJ.76.044802](https://doi.org/10.1143/JPSJ.76.044802): chiral autocatalysis with a critical number of molecules.
+  - K. Baczynski, R. Lipowsky and J. Kierfeld, Phys. Rev. E 76, 061914 (2007), [doi:10.1103/PhysRevE.76.061914](https://doi.org/10.1103/PhysRevE.76.061914): the critical length of a filament under a fixed compressive load.
+  - O. Hallatschek, E. Frey and K. Kroy, Phys. Rev. E 75, 031905 (2007), [doi:10.1103/PhysRevE.75.031905](https://doi.org/10.1103/PhysRevE.75.031905): the overdamped dynamics of a semiflexible filament with thermal noise.
+  - G. Duclos et al., Nat. Phys. 14, 728 (2018), [doi:10.1038/s41567-018-0099-7](https://doi.org/10.1038/s41567-018-0099-7): the spontaneous shear flow of a confined cellular nematic above a critical width.
+
+### Kept above the threshold
+
+Canonical form: L<sub>div</sub>/2 &gt; L<sub>c</sub>: no dip. The daughter is born above the threshold, and the order passes to it, kept behind its barrier.
+
+- **Defined:** [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure), the daughter is born above the threshold: no dip.
+- **Derived:** [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls), division above twice the threshold. Code: `heredity.predict.predict`.
+- **Original publications:**
+  - Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), [doi:10.1143/JPSJ.76.044802](https://doi.org/10.1143/JPSJ.76.044802): chiral autocatalysis above its critical number of molecules.
+
+### Lost in the dip
+
+Canonical form: ln G = ∫λ dt over a generation &lt; 0. The dip removes more order than the regrowth restores: without noise the order dies out over the generations.
+
+- **Defined:** [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure), ln G = ∫λ dt over a generation < 0.
+- **Derived:** [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls), division closer to the threshold. Code: `heredity.lineage.ln_gain`.
+- **Original publications:**
+  - K. Baczynski, R. Lipowsky and J. Kierfeld, Phys. Rev. E 76, 061914 (2007), [doi:10.1103/PhysRevE.76.061914](https://doi.org/10.1103/PhysRevE.76.061914): the relaxation of a filament below its critical length.
+
+### Threshold moved by division
+
+Canonical form: the halves differ in a conserved amount that sets L<sub>c</sub>. The order is a redistribution of a conserved amount: division gives the daughters different amounts, which moves their thresholds, and the parent's order is not passed on.
+
+- **Defined:** [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure), division moves the daughters away from the symmetric state of their size.
+- **Derived:** [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls), a polarity of a conserved protein. Code: `heredity.predict.predict`.
+- **Original publications:**
+  - F. Brauns, J. Halatek and E. Frey, Phys. Rev. X 10, 041036 (2020), [doi:10.1103/PhysRevX.10.041036](https://doi.org/10.1103/PhysRevX.10.041036): polarity by mass-conserving reaction and diffusion: the window of densities.
 
 ### Linear-stage write (vacuum seed)
 

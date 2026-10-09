@@ -165,7 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
-    if (fam === 'hysterons' || fam === 'regulation' || fam === 'computation' || fam === 'open') return `<span>${esc(rec.slots[slot])}</span>`;
+    if (fam === 'hysterons' || fam === 'regulation' || fam === 'computation' || fam === 'open' || fam === 'heredity') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -405,6 +405,13 @@
       known('odd about the steady state', f.odd === 'yes' ? 'yes: no capacity at even degrees' : 'no');
       if (f.exact !== '—') known(`from the equations on a grid of ${f.grid}, measurement noise ${f.noise}`, f.exact);
       known('input', f.input);
+    } else if (rec.family === 'heredity') {
+      body = mechanismText(rec);
+      known('threshold of the symmetric state', `at ${f.size} = ${f.L_c}; reduction a = ${f.a}, b = ${f.b}`);
+      known('growth and division', `${f.growth}; division ${f.division}, daughters born at ${f.L_birth}`);
+      known('linear gain over a generation', f.lnG === '—' ? 'no dip: the daughters are born above the threshold' : `ln G = ${f.lnG}`);
+      known('Λ = a·ramp / (b D_s) (the law needs Λ ≫ 1)', f.Lambda);
+      if (f.P_body !== '—') known('probability of keeping the sign', `${f.P_body} from the body's own decay to the threshold; ${f.P_normal_form} from the normal form with a linear ramp`);
     } else if (rec.family === 'stochastic') {
       body = `The mean of log X grows at ${f.growth} in the ${f.convention} reading of the noise term.`;
       const mu = state.params.mu, s = state.params.sigma;
@@ -444,6 +451,10 @@
       case 'linear-memory': return 'A linear body with linear observables: a linear combination of the measured signals reproduces past inputs, not their products, and the capacities sum to the rank of the linear response.';
       case 'odd-capacity': return 'The body is odd about its steady state and the input is symmetric: only products of an odd number of past inputs can be reproduced.';
       case 'nonlinear-capacity': return 'Nonlinear terms move part of the capacity to products of past inputs; with fading memory all degrees together sum to the number of independent measured signals.';
+      case 'inherited-through-threshold': return 'The daughter is born below the threshold; its order decays in the dip and growth carries it back through the pitchfork, where it keeps its parent\'s sign with P = Φ(φ_c/σ_c).';
+      case 'kept-above-threshold': return 'The daughter is born above the threshold: the order passes to it without a dip.';
+      case 'lost-in-the-dip': return 'The dip removes more order than the regrowth restores: without noise the order dies out over the generations.';
+      case 'threshold-moved': return 'Division gives the daughters different amounts of a conserved quantity that sets the threshold: the parent\'s order becomes a difference between the daughters and is not passed on.';
       case 'integrating': return 'A mode without decay keeps the running sum of the input: no input at a fixed delay can be recovered from it.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
@@ -463,6 +474,7 @@
     else if (rec.family === 'hysterons') scene = hysteronScene(rec);
     else if (rec.family === 'regulation') scene = regulationScene(rec);
     else if (rec.family === 'computation') scene = computationScene(rec);
+    else if (rec.family === 'heredity') scene = heredityScene(rec);
     else if (rec.family === 'open') scene = openScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
@@ -654,6 +666,12 @@
             title: 'Capacity for the input k intervals back, and the strength of the independent directions',
             legend: `Left: the capacity of a linear combination of the measured signals for the input ${esc(e.input)} held k intervals back (each interval ${fmt(e.hold, 3)})${e.profile_exact ? '; solid, predicted from the linearization at small amplitude; dashed, from the equations at the stated amplitude with measurement noise ' + fmt(e.noise, 2) : ', predicted from the linearization at small amplitude'}. Right: log₁₀ of the singular values of the linear response, relative to the largest; the rank counts those above the tolerance 10⁻⁶, and a measurement resolves only those above its noise.`};
   }
+  function heredityScene(rec) {
+    const e = rec.engine, tMax = e.t[e.t.length - 1] || 1;
+    return {kind: 'heredity', e, tMax, t: 0, speed: tMax / 6,
+            title: 'The order of a lineage through divisions, and the critical eigenvalue over a generation',
+            legend: `Left: the order w·(q − q_sym) of a lineage without noise, from a parent that leaves the threshold with the noise amplitude; at each division (${esc(e.size)} = ${fmt(e.L_div, 3)}) the daughter is born at half the size${e.L_div / 2 < e.L_c ? ', below the threshold, and its order decays until growth carries it back above ' + fmt(e.L_c, 3) : ', above the threshold'}. Right: the critical eigenvalue λ at the symmetric state over one generation, against ${esc(e.size)}; shaded, the dip below the threshold. Its integral over the generation, ln G, must be positive for the order to survive without noise.`};
+  }
   function stochasticScene(rec) {
     const e = rec.engine, mu = state.params.mu, s = state.params.sigma, random = D.rng(9), T = 10, dt = 0.02;
     const drift = e.convention === 'ito' ? mu - s * s / 2 : mu;
@@ -759,6 +777,15 @@
       V.series(side, {t0: 0.5, tMax: n + 0.5, xLabel: 'direction', yLabel: 'log₁₀ relative strength', xTicks: xt,
                       xFormat: v => String(v), yr: [Math.min(-7, Math.floor(Math.min(...lg))) - 0.5, 1.5],
                       levels: [{y: -6, label: 'rank tolerance'}], curves: [{pts: lg.map((v, i) => [i + 1, v]), dots: true}]});
+      return;
+    }
+    if (scene.kind === 'heredity') {
+      const e = scene.e;
+      V.series(main, {tMax: scene.tMax, cursor: scene.t, curves: [{pts: e.t.map((t, k) => [t, e.order[k]])}],
+                      levels: [{y: 0}], xLabel: 't', yLabel: 'order'});
+      const lo = e.L_div / 2, hi = Math.min(e.L_c, e.L_div);
+      V.series(side, {t0: lo, tMax: e.L_div, curves: [{pts: e.lam_L.map((L, k) => [L, e.lam[k]])}], levels: [{y: 0}],
+                      window: lo < hi ? [lo, hi] : null, xLabel: e.size, yLabel: 'λ', xFormat: v => fmt(v, 3)});
       return;
     }
     if (scene.kind === 'stochastic') {

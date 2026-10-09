@@ -1,6 +1,6 @@
 # FieldBridge tutorial
 
-The tutorial has four entry points. Each is a calculation with a physical question, a result to compare with, a
+The tutorial has six entry points. Each is a calculation with a physical question, a result to compare with, a
 control that must change the prediction, and the test responsible for it.
 
 - **The language of mechanisms.** [Quantum closure](11_quantum_closure.md) asks whether the transverse magnetization
@@ -17,6 +17,9 @@ control that must change the prediction, and the test responsible for it.
 - **The quantum write.** [A parametric oscillator swept through its threshold](30_quantum_write.md) asks with which
   probability a weak bias writes one of the two states of an oscillator whose seed noise is the vacuum, and where the
   classical write law gives way to the balance of two shallow wells.
+- **Heredity.** [Inheritance through a threshold](31_heredity_threshold.md) asks whether a daughter born below the
+  critical size of its parent's order, a reaction volume, a Turing domain, a flowing active stripe, a ferroelectric
+  film or a buckled filament, keeps its parent's sign when it grows through the threshold again.
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -70,6 +73,12 @@ reading order.
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Which functions of an input history a body represents](29_computation_capacity.md) | Does the body have fading memory, how many functions of the input history do its observables reproduce, which degrees does symmetry exclude, and what changes with the measurement noise? | `computation predict`, `card`, `survey` |
+
+## Heredity
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [Inheritance through a threshold](31_heredity_threshold.md) | Does a daughter born below the critical size of its parent's order keep the parent's sign when it grows through the threshold again, and with what probability? | `heredity predict`, `card`, `survey` |
 
 ## The quantum write: one module
 

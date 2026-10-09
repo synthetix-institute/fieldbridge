@@ -21,7 +21,11 @@ fields are compared with it, in the column "computation: capacity". The quantum 
 parametric oscillator swept through its threshold with a bias follows the classical write law with the noise fixed
 by the loss and the temperature, exact for a quadratic generator, and leaves it for the selection of its biased
 steady state when the stored states hold a few photons ([Quantum write](tutorial/30_quantum_write.md),
-`quantum write`), in the column "quantum: open evolution". The mechanisms below are studied in the tutorial or in the literature on
+`quantum write`), in the column "quantum: open evolution". Inheritance through a threshold is a fifth: a daughter
+born below the critical size of its parent's order keeps the parent's sign with P = Φ(φ<sub>c</sub>/σ<sub>c</sub>)
+when division leaves the threshold in place, the order survives a generation without noise and the noise of the
+crossing is small ([Heredity, Module 1](tutorial/31_heredity_threshold.md), `heredity card`); published models from
+six fields are compared with it, in the column "heredity: threshold". The mechanisms below are studied in the tutorial or in the literature on
 memory and are not yet derivation targets. The web page lists them under "Mechanisms in preparation".
 
 | Mechanism | Canonical form or law | What exists | What is missing |

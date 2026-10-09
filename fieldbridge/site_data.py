@@ -155,7 +155,9 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
                         "tutorial": ("docs/tutorial/28_regulation_set_point.md#8-a-model-from-your-field"
                                      if fam == "regulation" else
                                      "docs/tutorial/29_computation_capacity.md#8-a-model-from-your-field"
-                                     if fam == "computation" else "docs/tutorial/21_memory_new_material.md"
+                                     if fam == "computation" else
+                                     "docs/tutorial/31_heredity_threshold.md#8-a-model-from-your-field"
+                                     if fam == "heredity" else "docs/tutorial/21_memory_new_material.md"
                                      if fam != "unitary" else "docs/tutorial/24_spin_language.md#2-writing-a-realization")})
             ids.add(nid)
     return out
@@ -868,6 +870,69 @@ def sympy_html(text: str) -> str:
     return t.replace("**2", "²").replace("*", "·").replace("-", "−")
 
 
+HEREDITY_CLASSES = ("inherited-through-threshold", "kept-above-threshold", "lost-in-the-dip", "threshold-moved")
+HEREDITY_TEXT = {"inherited-through-threshold": "inherited through a threshold",
+                 "kept-above-threshold": "kept above the threshold", "lost-in-the-dip": "lost in the dip",
+                 "threshold-moved": "threshold moved by division"}
+
+
+def heredity_record(node: Dict) -> Dict:
+    """A body that grows and divides: the predictions of ``heredity predict`` (threshold, conditions of the law, class,
+    and the law for the daughter of a lineage without noise), with that lineage and the critical eigenvalue over a
+    generation for the scene."""
+    from .heredity import spec as hspec
+    from .heredity.lineage import eigenvalue_history
+    from .heredity.predict import predict, reduction
+    spec = node["spec"]
+    lin = hspec.load(spec)
+    red = reduction(lin)
+    pr = predict(lin, red)
+    if pr["class"] not in HEREDITY_CLASSES:
+        raise SiteError(f"{node['id']}: {pr['class']}")
+    law = pr.get("law", {})
+    Lc, Ldiv = pr["L_c"], pr["L_div"]
+    _, Ls, lam, _ = eigenvalue_history(lin, red, Ldiv / 2, Ldiv, points=60)
+    path = pr["path"]
+    keep = slice(None, None, max(1, len(path["t"]) // 240))
+    g = lin.growth
+    facts = {"structure": HEREDITY_TEXT[pr["class"]], "L_c": _num(Lc), "a": _num(pr["a"]), "b": _num(pr["b"]),
+             "L_div": _num(Ldiv), "L_birth": _num(Ldiv / 2), "dip": "yes" if pr["dip"] else "no",
+             "lnG": _num(pr["lnG"]) if pr["lnG"] is not None else "—",
+             "Lambda": _num(pr["Lambda"]) if np.isfinite(pr["Lambda"]) else "—",
+             "P_body": f"{law['P_body']:.3f}" if law else "—", "P_history": f"{law['P_history']:.3f}" if law else "—",
+             "P_normal_form": f"{law['P_normal_form']:.3f}" if law else "—",
+             "order_at_crossing": _num(law["order_at_crossing"]) if law else "—",
+             "growth": f"{g.law} at the rate {_num(g.rate)}", "division": f"at {_num(Ldiv)} ({_num(Ldiv / Lc)} L_c)",
+             "size": lin.size}
+    return {"id": node["id"], "family": "heredity", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": pr["class"], "facts": facts, "question": spec.get("question"),
+            "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "heredity", "t": path["t"][keep], "L": path["L"][keep], "order": path["order"][keep],
+                       "L_c": Lc, "L_div": Ldiv, "lam_L": [float(x) for x in Ls], "lam": [float(x) for x in lam],
+                       "size": lin.size},
+            "slots": heredity_slots(spec, lin)}
+
+
+def heredity_slots(spec: Dict, lin) -> Dict[str, str]:
+    b = lin.body
+    if lin.kind == "equations":
+        omega = f"the drift of {', '.join(b.variables)}"
+        xi = f"{b.n} variables on the {spec['carrier'].get('kind', 'euclid')} carrier"
+    elif lin.kind == "field":
+        omega = f"reactions and {'mobility' if len(b.variables) == 1 else 'mobilities'} of {', '.join(b.variables)}"
+        xi = f"{', '.join(b.variables)} on {b.N} cells of a body of length {lin.size}"
+    else:
+        omega = f"bending {_num(b.kappa)} and a dead load {_num(b.F)}, overdamped drag"
+        xi = f"{b.N} rigid segments of a chain of length {lin.size}"
+    params = [k for k in b.p if k != lin.size]
+    return {"Omega": omega, "Xi": xi,
+            "C": spec.get("closure") or "; ".join(spec.get("assumptions", [])[:1])[:120] or "as in the source",
+            "R": "the sign of the order w·(q − q_sym) at each division",
+            "P": f"{lin.growth.law} growth of {lin.size} at the rate {_num(lin.growth.rate)}; division at "
+                 f"{_num(lin.L_div(1.0)) + ' L_c' if lin.division_relative else _num(lin.division_at)}",
+            "A": ", ".join(f"{k} = {_num(b.p[k])}" for k in params[:6]) + (" …" if len(params) > 6 else "") or "—"}
+
+
 # ------------------------------------------------------------------------------------------------ edges
 def _numeric_drift(spec: Dict) -> Callable[[np.ndarray, Dict[str, float]], np.ndarray]:
     from .memory import spec as mspec
@@ -891,6 +956,9 @@ def _same_carrier(a: Dict, b: Dict) -> bool:
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         return ha.get("lattice") == hb.get("lattice") and ha.get("units") == hb.get("units")
+    if a["family"] == "heredity":
+        key = {"equations": "carrier", "field": "cells", "chain": "chain"}.get(a["spec"].get("body"))
+        return a["spec"].get("body") == b["spec"].get("body") and a["spec"].get(key) == b["spec"].get(key)
     if a["family"] in ("dissipative", "regulation", "computation"):
         ca, cb = a["spec"].get("carrier"), b["spec"].get("carrier")
         if a["spec"].get("kind") == "network" or b["spec"].get("kind") == "network":
@@ -1072,6 +1140,17 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
                 raise fail(f"a change of {slot} keeps the {key} of the computation block")
         if kind not in ("param", "term"):
             raise fail(f"no check for {kind} on a driven realization")
+    if a["family"] == "heredity":
+        la, lb = a["spec"]["lineage"], b["spec"]["lineage"]
+        if kind != "protocol":
+            raise fail(f"no check for {kind} on a body that grows and divides")
+        diff = {k for k in set(la) | set(lb) if la.get(k) != lb.get(k)} - {"expect"}
+        if not diff or not diff <= {"division", "growth"}:
+            raise fail(f"a change of P changes the growth or the division only, not {sorted(diff)}")
+        meta = ("lineage", "name", "question", "assumptions", "provenance")
+        if {k: v for k, v in a["spec"].items() if k not in meta} != {k: v for k, v in b["spec"].items() if k not in meta}:
+            raise fail("a change of P keeps the body")
+        return f"the bodies are the same; the lineage differs in its {' and '.join(sorted(diff))}"
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         diff = {k for k in set(ha) | set(hb) if ha.get(k) != hb.get(k)}
@@ -1251,6 +1330,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = open_record(node)
         elif fam == "computation":
             records[nid] = computation_record(node)
+        elif fam == "heredity":
+            records[nid] = heredity_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]
