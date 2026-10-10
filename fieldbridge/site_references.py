@@ -336,7 +336,7 @@ READING: Dict[str, Dict] = {
     "threshold-write": {
         "defined": ("Glossary, Derivations across fields", "threshold write, write field, delay of a switch",
                     GLOSSARY + "#derivations-across-fields"),
-        "derived": [("Module 10, §1", "the target and the derivation in seven fields",
+        "derived": [("Module 10, §1", "the target and the derivation in eight fields",
                      T + "25_memory_threshold_write.md#1-the-target"),
                     ("Module 10, §3", "the delay law", T + "25_memory_threshold_write.md#3-the-delay-law")],
         "code": "memory.codiscovery.derive_threshold_write, fold_delay_law, delay_constant",

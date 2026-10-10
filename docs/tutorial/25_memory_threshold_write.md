@@ -1,4 +1,4 @@
-# Module 10. The threshold write in models from seven fields
+# Module 10. The threshold write in models from eight fields
 
 **Learning objectives.** After this module you can
 
@@ -49,17 +49,18 @@ The command takes about one minute.
 | toggle, unequal promoters | synthetic biology | CRKL | $\alpha = 3.2731$ | −0.006 | 1.018792 ± 0.000010 |
 | two unequal tubes | transport networks | CRKL | $\mu = 1.2128$ | −0.535 | 1.01877 ± 0.00029 |
 | single-mode laser | laser physics | SCRWRKL | $h = 0.05877$ | 0.889 | 1.018792 ± 0.000008 |
+| convection roll | fluid dynamics | SCRWRKL | $h = 0.2605$ | −0.746 | 1.0187929 ± 0.0000011 |
 | pitchfork normal form | statistical physics | SCRWRKL | $h = 0.3849$ | −0.333 | 1.0187930 ± 0.0000005 |
 | genetic toggle switch | synthetic biology | SCRWRKL | $h = 0.2134$ | 0.437 | 1.0187925 ± 0.0000035 |
 | Stoner–Wohlfarth particle | magnetism | SCRWRKL | $h = 0.1847$ | −0.438 | 1.0187929 ± 0.0000007 |
 | ring of 4 repressors | synthetic biology | SCRWRKL | $h = 1.5988$ | 2.975 | 1.018793 ± 0.000014 |
 | two equal tubes | transport networks | SCRWRKL | $h = 0.06396$ | 0.163 | 1.0187929 ± 0.0000009 |
 | caged capillary rotors | soft matter | WRKL | $h = 1.6335$ | 0.037 | 1.0187929 ± 0.0000005 |
-| caged in-plane dipoles | magnetism | WRKL | $h = 0.06189$ | 0.016 | 1.018794 ± 0.000012 |
+| caged in-plane dipoles | magnetism | WRKL | $h = 0.02038$ | 0.747 | 1.01887 ± 0.00045 |
 | ring of 3 repressors | synthetic biology | CR | stops: no stable state | — | — |
 | three compartments | compartment models | — | stops: a single stable state | — | — |
 
-Eleven models from seven fields reach the target by three classes of derivation: by the control, C R(fold) K L; by a
+Twelve models from eight fields reach the target by three classes of derivation: by the control, C R(fold) K L; by a
 field after a symmetric write point, S C R(pitchfork) W R(fold) K L; and by a field where the control only rescales
 the drift, W R(fold) K L. In the second class the symmetry that forces a pitchfork along the control also forbids a
 threshold there. A field toward one of the two states breaks the symmetry, and the occupied state disappears at the
@@ -193,7 +194,7 @@ specification.
 
 ## Summary
 
-- The threshold write, a fold, is reached in eleven models from seven fields by three classes of derivation: by the
+- The threshold write, a fold, is reached in twelve models from eight fields by three classes of derivation: by the
   control, or by a write field where a symmetry or a scale control prevents a threshold along the control.
 - The switch lags behind a sweep by $\mu = \lvert a_1'\rvert r^{2/3}$; the constant $\lvert a_1'\rvert = 1.0187930$,
   the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in ten models and to $2 \times 10^{-5}$ in the

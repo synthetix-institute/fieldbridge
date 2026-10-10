@@ -1,0 +1,34 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Can the sense of rotation of a convection roll in a liquid layer heated from below hold a written bit?",
+  "provenance": {
+    "source": "Saltzman, J. Atmos. Sci. 19, 329 (1962); Lorenz, J. Atmos. Sci. 20, 130 (1963): three-mode truncation of the Boussinesq equations for a layer heated from below, free-slip boundaries",
+    "kind": "authored example"
+  },
+  "field": "fluid dynamics",
+  "kind": "equations",
+  "name": "convection roll (Lorenz-Saltzman)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "roll amplitude X, temperature mode Y and distortion Z of the mean temperature profile",
+    "variables": ["X", "Y", "Z"],
+    "scale": 1
+  },
+  "parameters": {"r": 1.5, "sigma": 7.0, "b": 2.6666666666666665},
+  "drift": {
+    "X": "sigma*(Y - X)",
+    "Y": "r*X - Y - X*Z",
+    "Z": "X*Y - b*Z"
+  },
+  "control": {"name": "r", "range": [0.3, 2.0]},
+  "noise": 0.005,
+  "dt": 0.005,
+  "closure": "one roll mode at the critical wavenumber with its temperature mode and the distortion of the horizontally averaged temperature (Saltzman truncation); thermal fluctuations enter as additive noise",
+  "observable": "sign of X: the sense of rotation of the roll",
+  "assumptions": [
+    "free-slip top and bottom boundaries; wavenumber at the critical value, b = 8/3",
+    "Prandtl number 7 (water near room temperature)",
+    "r is the Rayleigh number in units of its critical value",
+    "additive Gaussian noise of fixed strength"
+  ]
+}

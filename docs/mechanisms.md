@@ -105,7 +105,7 @@ Canonical form: ẋ = εx − x<sup>3</sup> + h. Two stable states appear togeth
 Canonical form: ẋ = μ + x<sup>2</sup>. A stored state disappears at a fold; a field past the threshold switches the state after a delay set by the Airy law.
 
 - **Defined:** [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields), threshold write, write field, delay of a switch.
-- **Derived:** [Module 10, §1](tutorial/25_memory_threshold_write.md#1-the-target), the target and the derivation in seven fields; [Module 10, §3](tutorial/25_memory_threshold_write.md#3-the-delay-law), the delay law. Code: `memory.codiscovery.derive_threshold_write`, `fold_delay_law`, `delay_constant`.
+- **Derived:** [Module 10, §1](tutorial/25_memory_threshold_write.md#1-the-target), the target and the derivation in eight fields; [Module 10, §3](tutorial/25_memory_threshold_write.md#3-the-delay-law), the delay law. Code: `memory.codiscovery.derive_threshold_write`, `fold_delay_law`, `delay_constant`.
 - **Original publications:**
   - H. Poincaré, Acta Math. 7, 259 (1885), [doi:10.1007/BF02402204](https://doi.org/10.1007/BF02402204): the bifurcation of a family of equilibria as a parameter changes.
   - E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948), [doi:10.1098/rsta.1948.0007](https://doi.org/10.1098/rsta.1948.0007): switching of a single-domain particle when the field removes the occupied minimum (the coercive field).

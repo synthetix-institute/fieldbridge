@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "aff8f088f9fd361f9cd898342a5d894969e167bfc759175f012cadc3a4986547",
+  "implementation_sha256": "4d673ae596d5c4df8cdc57c388019346bcff1a0e9d34d7bd167cfb2d262e8261",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -40,28 +40,39 @@
     },
     {
       "id": "card02",
-      "name": "caged in-plane dipoles",
+      "name": "convection roll (Lorenz-Saltzman)",
       "verdict": {
-        "stores": "10 stable state(s) (sampled)",
-        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 1.36",
-        "constructs": "no bifurcation along the control; writing requires a field",
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at r = 1",
+        "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.25, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.28, retention/rewriting time ratio 0.2; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.30, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.00, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.52, not rewritten"
       }
     },
     {
       "id": "card03",
+      "name": "caged in-plane dipoles",
+      "verdict": {
+        "stores": "12 stable state(s) (sampled)",
+        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 0.965",
+        "constructs": "no bifurcation along the control; writing requires a field",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.25, retention/rewriting time ratio 0.133; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.25, not rewritten"
+      }
+    },
+    {
+      "id": "card04",
       "name": "single-mode laser",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "supercritical pitchfork at P = 1",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.03, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.05, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.40, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.03, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.05, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.60, not rewritten"
       }
     },
     {
-      "id": "card04",
+      "id": "card05",
       "name": "Brusselator",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -72,7 +83,7 @@
       }
     },
     {
-      "id": "card05",
+      "id": "card06",
       "name": "FitzHugh-Nagumo neuron",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -83,7 +94,7 @@
       }
     },
     {
-      "id": "card06",
+      "id": "card07",
       "name": "Goodwin clock",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -94,7 +105,7 @@
       }
     },
     {
-      "id": "card07",
+      "id": "card08",
       "name": "overdamped Josephson junction",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -105,7 +116,7 @@
       }
     },
     {
-      "id": "card08",
+      "id": "card09",
       "name": "Lotka-Volterra predator and prey",
       "verdict": {
         "stores": "no stable state: a family of neutral cycles, with no restoring force on the amplitude or the phase (Law 2)",
@@ -116,7 +127,7 @@
       }
     },
     {
-      "id": "card09",
+      "id": "card10",
       "name": "pumped oscillator (parametron principle)",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -127,7 +138,7 @@
       }
     },
     {
-      "id": "card10",
+      "id": "card11",
       "name": "Rosenzweig-MacArthur predator and prey",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -138,7 +149,7 @@
       }
     },
     {
-      "id": "card11",
+      "id": "card12",
       "name": "van der Pol oscillator",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -149,18 +160,18 @@
       }
     },
     {
-      "id": "card12",
+      "id": "card13",
       "name": "pitchfork normal form",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "supercritical pitchfork at eps = 0; a uniform field removes the stable state at h = 0.385",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.47, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.95, retention/rewriting time ratio 3.38; field 0.4 x threshold, control swept through the write point: accuracy 0.92, retention/rewriting time ratio 1.74"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.38, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.95, retention/rewriting time ratio 1.77; field 0.4 x threshold, control swept through the write point: accuracy 0.73, not rewritten"
       }
     },
     {
-      "id": "card13",
+      "id": "card14",
       "name": "ring of 3 repressors",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -171,84 +182,84 @@
       }
     },
     {
-      "id": "card14",
+      "id": "card15",
       "name": "ring of 4 repressors",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "supercritical pitchfork at alpha = 1.01; a uniform field removes the stable state at h = 1.6",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.75, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.82, not rewritten"
       }
     },
     {
-      "id": "card15",
+      "id": "card16",
       "name": "Schl\u00f6gl reactor",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "saddle-node (fold) at b = 1.49; saddle-node (fold) at b = 2.26; a uniform field removes the stable state at h = 0.385",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp a = 4.153, b = 2.654 (supercritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.10, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 28.6"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.10, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio 14.6"
       }
     },
     {
-      "id": "card16",
+      "id": "card17",
       "name": "Stoner-Wohlfarth particle",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "supercritical pitchfork at h = 1; a uniform field removes the stable state at h = 0.185",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.62, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.90, retention/rewriting time ratio 1.38; field 0.4 x threshold, control swept through the write point: accuracy 0.83, retention/rewriting time ratio 0.462"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.52, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.85, retention/rewriting time ratio 1.5; field 0.4 x threshold, control swept through the write point: accuracy 0.77, not rewritten"
       }
     },
     {
-      "id": "card17",
+      "id": "card18",
       "name": "genetic toggle switch",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "supercritical pitchfork at alpha = 2; a uniform field removes the stable state at h = 0.213",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.17, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 15.4; field 0.4 x threshold, control swept through the write point: accuracy 0.93, retention/rewriting time ratio > 7.14"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.22, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.98, retention/rewriting time ratio > 12.5; field 0.4 x threshold, control swept through the write point: accuracy 0.87, retention/rewriting time ratio > 5.88"
       }
     },
     {
-      "id": "card18",
+      "id": "card19",
       "name": "genetic toggle, unequal promoters",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "saddle-node (fold) at alpha = 3.27; a uniform field removes the stable state at h = 0.446",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp gamma = 1, alpha = 2 (supercritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.72, retention/rewriting time ratio > 25.8; field 0.4 x threshold, control swept through the write point: accuracy 0.25, retention/rewriting time ratio > 129"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio > 25.8; field 0.4 x threshold, control swept through the write point: accuracy 0.28, retention/rewriting time ratio > 129"
       }
     },
     {
-      "id": "card19",
+      "id": "card20",
       "name": "adaptive transport network, two tubes",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "subcritical pitchfork at mu = 1.38; a uniform field removes the stable state at h = 0.064",
         "constructs": "subcritical pitchfork: symmetric write, but the state jumps to a distant branch; a saturating term is needed for a local write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.58, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.87, retention/rewriting time ratio 1.16; field 0.4 x threshold, control swept through the write point: accuracy 0.75, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.48, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.90, retention/rewriting time ratio 0.596; field 0.4 x threshold, control swept through the write point: accuracy 0.78, not rewritten"
       }
     },
     {
-      "id": "card20",
+      "id": "card21",
       "name": "adaptive transport network, unequal tubes",
       "verdict": {
         "stores": "2 stable state(s)",
         "writes": "saddle-node (fold) at mu = 1.21; a uniform field removes the stable state at h = 0.0785",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp L2 = 1, mu = 1.383 (subcritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.42, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.72, retention/rewriting time ratio 2.21; field 0.4 x threshold, control swept through the write point: accuracy 0.35, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.48, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.68, retention/rewriting time ratio 3.43; field 0.4 x threshold, control swept through the write point: accuracy 0.38, not rewritten"
       }
     },
     {
-      "id": "card21",
+      "id": "card22",
       "name": "independent pores filled by capillary condensation",
       "verdict": {
         "stores": "400 elements with two states each",
@@ -259,7 +270,7 @@
       }
     },
     {
-      "id": "card22",
+      "id": "card23",
       "name": "random-field Ising antiferromagnetic chain",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -270,7 +281,7 @@
       }
     },
     {
-      "id": "card23",
+      "id": "card24",
       "name": "random-field Ising antiferromagnet in a uniform field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -281,7 +292,7 @@
       }
     },
     {
-      "id": "card24",
+      "id": "card25",
       "name": "random-field Ising antiferromagnet in a staggered field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -292,7 +303,7 @@
       }
     },
     {
-      "id": "card25",
+      "id": "card26",
       "name": "random-field Ising ferromagnet",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -303,7 +314,7 @@
       }
     },
     {
-      "id": "card26",
+      "id": "card27",
       "name": "soft spots of an amorphous solid under shear",
       "verdict": {
         "stores": "144 elements with two states each",

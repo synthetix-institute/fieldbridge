@@ -61,16 +61,16 @@ targets. The command takes about 15 minutes on a laptop, or 2 minutes with `--no
 | --- | --- | --- | --- | --- | --- | --- |
 | van der Pol oscillator | electronics | RKL | bias $= 0$ | 1:1 | 0.2674 | 0.9998 ± 0.0015 |
 | Brusselator | chemical kinetics | RKL | $b = 3$ | 1:1 | 0.5120 | 1.0000 ± 0.0025 |
-| Goodwin clock | chronobiology | RKL | $\mathrm{tr} = 10$ | 1:1 | 0.1579 | 0.9996 ± 0.0043 |
+| Goodwin clock | chronobiology | RKL | $\mathrm{tr} = 10$ | 1:1 | 0.1579 | 0.9998 ± 0.0042 |
 | FitzHugh–Nagumo neuron | neuroscience | CRKL | current $= 0.7$ | 1:1 | 0.2128 | 0.9999 ± 0.0032 |
 | Rosenzweig–MacArthur predator and prey | ecology | CRKL | capacity $= 3.25$ | 1:1 | 0.0591 | 0.9992 ± 0.0073 |
-| overdamped Josephson junction | superconductivity | CRKL | current $= 1.6$ | 1:1 | 0.4003 | 1.0008 ± 0.0009 |
+| overdamped Josephson junction | superconductivity | CRKL | current $= 1.6$ | 1:1 | 0.4003 | 0.9997 ± 0.0002 |
 | pumped oscillator (parametron principle) | computing hardware | SRKL | $k = 1$ | 2:1 | 0.2542 | 0.9998 ± 0.0015 |
 | ring of 3 repressors | synthetic biology | SRKL | $\alpha = 10$ | 3:1 | 0.0165 | 0.997 ± 0.019 |
 | Lotka–Volterra predator and prey | ecology | R | stops at R: a family of neutral cycles | — | — | — |
 | capillary rotors, dipoles | soft matter, magnetism | — | stop: the control only rescales time | — | — | — |
 | three compartments | compartment models | — | stops: no control | — | — | — |
-| models of the write targets | five fields | — | stop at C: no oscillation in the control range | — | — | — |
+| models of the write targets | six fields | — | stop at C: no oscillation in the control range | — | — | — |
 
 Eight models from eight fields reach the target by four classes of derivation. Three oscillate as specified (R K L).
 Three must first be moved into oscillation (C R K L). The FitzHugh–Nagumo neuron is excitable without current and

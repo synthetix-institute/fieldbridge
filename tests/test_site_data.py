@@ -225,7 +225,7 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
              if "fields" not in p.parts}
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
-    assert files <= named and len(files) == 27
+    assert files <= named and len(files) == 28
     assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
     # the outcomes without memory or without a rotation are marked, the retention laws explained, the planned listed
     assert data["absent"] == reg.CLASS_ABSENT and set(reg.CLASS_ABSENT) <= set(reg.CLASSES)

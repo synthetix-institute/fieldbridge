@@ -81,6 +81,22 @@
    }
   },
   {
+   "file": "examples/memory/convection_roll.json",
+   "name": "convection roll (Lorenz-Saltzman)",
+   "field": "fluid dynamics",
+   "question": "Can the sense of rotation of a convection roll in a liquid layer heated from below hold a written bit?",
+   "source": "Saltzman, J. Atmos. Sci. 19, 329 (1962); Lorenz, J. Atmos. Sci. 20, 130 (1963): three-mode truncation of the Boussinesq equations for a layer heated from below, free-slip boundaries",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at r = 1",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.00, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.50, not rewritten"
+   }
+  },
+  {
    "file": "examples/memory/oscillators/fitzhugh_nagumo.json",
    "name": "FitzHugh-Nagumo neuron",
    "field": "neuroscience",

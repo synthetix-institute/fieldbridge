@@ -351,6 +351,8 @@ NODES = [
     # -- memory in model materials
     {"id": "laser", "family": "dissipative", "spec": "examples/memory/laser.json",
      "tutorial": M9 + "#3-running-the-constructor"},
+    {"id": "convection_roll", "family": "dissipative", "spec": "examples/memory/convection_roll.json",
+     "tutorial": M9 + "#3-running-the-constructor"},
     {"id": "toggle", "family": "dissipative", "spec": "examples/memory/toggle.json",
      "tutorial": "docs/tutorial/15_memory_first_card.md"},
     {"id": "toggle_unequal", "family": "dissipative", "spec": "examples/memory/toggle_unequal.json",
@@ -694,6 +696,11 @@ EDGES = [
      "change": "repressor concentrations → field amplitude and inversion",
      "text": "The single-mode laser reaches the same write at the lasing threshold, P = {write_point} (derivation "
              "{sym_word}): the two signs of the field amplitude are the two stored states."},
+    {"id": "laser_to_convection_roll", "from": "laser", "to": "convection_roll", "slot": "Xi", "kind": "codiscovery",
+     "target": "symmetric-write",
+     "change": "field amplitude and inversion → roll, temperature mode and mean temperature profile",
+     "text": "A convection roll in a liquid layer heated from below reaches the same write at the onset of convection, "
+             "r = {write_point} (derivation {sym_word}): its two senses of rotation are the two stored states."},
     {"id": "laser_to_normal_form", "from": "laser", "to": "pitchfork", "slot": "Xi", "kind": "codiscovery", "target": "symmetric-write",
      "change": "field amplitude and inversion → one order parameter",
      "text": "The pitchfork normal form is the end point of every derivation of the symmetric write (derivation "
@@ -1283,7 +1290,7 @@ SHORT = {
     "module14_equal": "chain 3, 3", "heteronuclear_spins": "two species", "homonuclear_spins": "one species",
     "pitchfork": "pitchfork", "pitchfork_below": "below ε = 0", "pitchfork_bias": "with bias h",
     "pitchfork_subcritical": "subcritical form", "rotation_canonical": "canonical rotation",
-    "rotation_axis": "measured on the axis", "laser": "laser", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
+    "rotation_axis": "measured on the axis", "laser": "laser", "convection_roll": "convection roll", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
     "repressor_ring4": "ring of 4", "ring4_activation": "ring 4, activation", "repressilator": "repressilator",
     "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "tubes": "two tubes",
     "tubes_unequal": "unequal tubes", "colloid_patch": "capillary rotors", "dipole_patch": "dipoles",
