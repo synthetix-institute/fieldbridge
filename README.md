@@ -15,6 +15,7 @@ FieldBridge automates this cross-field translation:
 4. **Return to a Set Point:** For a model with an input that is stepped and an output that is measured, it finds the integrator that returns the output exactly, or the fraction of the step that remains, and writes a certificate that a reader can check without repeating the search.
 5. **Computation by a Driven Body:** For a model driven by an input and measured through a few observables, it predicts from the equations whether the body has fading memory, how many independent functions of the input history its observables can reproduce, and which degrees symmetry excludes; for one or two state variables it computes the capacity of every function exactly.
 6. **Inheritance Through a Threshold:** For a body whose order exists only above a critical size and that grows and divides, it finds the threshold and its pitchfork, checks whether division leaves the threshold in place and whether the order survives a generation without noise, and gives the probability that a daughter keeps its parent's sign, against lineages of the full body.
+7. **Collective Decisions of Populations:** For a population of units it computes, from their equations, the coupling at which limit-cycle units synchronize and the growth rate of synchrony; the probability that a population swept through its collective threshold follows a weak bias, for N units and a sweep rate, and when the composition of a random sample sets the outcome instead; and the window of times in which a population leaves a state that a step has made unstable.
 
 The calculations require no API key, GPU, cluster, or archive download; every derivation step is checked by symbolic or numerical calculation.
 
@@ -41,7 +42,7 @@ field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repress
 switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
 of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
 [Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
-(R). Under the expression, a map of twenty-five mechanisms in four modules, each with its drawing and shown one module
+(R). Under the expression, a map of thirty-five mechanisms in six modules, each with its drawing and shown one module
 at a time or all together, shows which component joins which mechanisms, and the selected mechanism is shown beside
 the expression. After a change the realization it came from is
 drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
@@ -112,6 +113,7 @@ with the source of its equations.
 | Return to a set point after a step of an input | `regulation card`, `regulation survey`, `regulation check` | Whether the output returns exactly, part of the way or not at all; the integrator that returns it, or the variable whose clamp shows the remaining fraction; a certificate checked against the specification without the search ([tutorial](docs/tutorial/28_regulation_set_point.md)) |
 | Functions of an input history that a driven body represents | `computation predict`, `computation card`, `computation survey` | Fading memory over the modes the input reaches and the observables see; the rank of the linear response and its profile over delays; the degrees excluded by symmetry; capacities by degree, exact for one or two state variables, at a stated amplitude and measurement noise ([tutorial](docs/tutorial/29_computation_capacity.md)) |
 | Inheritance of an order through growth and division | `heredity predict`, `heredity card`, `heredity survey` | The threshold along the size and its reduction; the dip, the gain of the order over a generation and whether division moves the threshold; the probability P = Φ(φ_c/σ_c) that a daughter keeps its parent's sign, and with `--simulate` lineages of the full body against it ([tutorial](docs/tutorial/31_heredity_threshold.md)) |
+| Collective decisions of a population | `decision predict`, `decision card`, `decision survey` | The onset of synchrony from the reduction of limit-cycle units to the density of their frequencies and their coupling function; the probability that a swept population follows a weak bias, P = Φ(π^(1/4) h_s h / (D_s^(1/2) (ar)^(1/4))) with D_s ∝ 1/N, along the actual passage, or set by the sample of a diverse population; the window of passage times after a step; with `--simulate` full units or replicas against them ([tutorial](docs/tutorial/32_decision_population.md)) |
 | The quantum write on an open carrier | `quantum write` | A parametric oscillator swept through its threshold with a bias: the probability of the favoured state against the law with the vacuum as the seed, or the balance of its two shallow wells |
 | Quantum mechanisms on different carriers | `quantum detach`, `quantum attach`, `quantum codiscover` | The Bloch rotation on spins, atoms in two wells, exchange chains and Cooper pairs, or the term that obstructs it ([tutorial](docs/tutorial/24_spin_language.md)) |
 | Derivation from supplied equations | `verify-construction` | An exact local stochastic transformation or a finite quantum closure |
@@ -235,14 +237,14 @@ calculations. The small route-and-fiber fingerprint used here is not the
 
 ## Tutorial
 
-The [tutorial](docs/tutorial/index.md) starts from six entry points: the
+The [tutorial](docs/tutorial/index.md) starts from seven entry points: the
 language of mechanisms on quantum carriers, memory in materials (twelve
 modules, from a first memory card to one mechanism derived in models from
 different fields and the return to a turning point of a slow drive), and the
 return of an output to its set point after a step of an input, the functions of an
 input history that a driven body represents, the quantum write of a parametric
-oscillator swept through its threshold, and the inheritance of an order by daughters
-born below a critical size. Further reading paths cover the construction from specified
+oscillator swept through its threshold, the inheritance of an order by daughters
+born below a critical size, and the collective decisions of populations. Further reading paths cover the construction from specified
 equations (an Itô correction, an interacting spin), paper collections, and the
 evaluation of the code. Worked calculations include an input, the expected
 output, a change to try, and the functions and tests responsible for the
@@ -261,8 +263,9 @@ standalone.
 | [quantum/](fieldbridge/quantum/) | The language of mechanisms on quantum carriers: detachment, attachment and co-discovery |
 | [regulation/](fieldbridge/regulation/) | Return to a set point: static gains, clamps, integrators, step responses and certificates |
 | [heredity/](fieldbridge/heredity/) | Inheritance through a threshold: bodies that grow and divide (equations, fields on cells, elastic chains), the threshold and its reduction, the law and lineages |
+| [decision/](fieldbridge/decision/) | Collective decisions of populations: limit-cycle units reduced to phases (the onset and growth of synchrony), collectives with a noise that falls as 1/N and diverse units (the swept write and the frozen bias of a sample), the passage from a seed after a step |
 | [computation/](fieldbridge/computation/) | Computation by a driven body: specifications (equations or networks of springs), predictions from the linearization and symmetry, exact capacities from the driven Markov chain, the capacity estimator |
-| [core/](fieldbridge/core/) | Provenance and writing of reports for the families added after memory and quantum |
+| [core/](fieldbridge/core/) | Provenance and writing of reports for the families added after memory and quantum; the list of module families mounted on the command line |
 | [site_registry.py](fieldbridge/site_registry.py), [site_data.py](fieldbridge/site_data.py), [web/](fieldbridge/web/) | The web page: realizations, the checked changes between them, and the browser engines |
 | [routes.py](fieldbridge/routes.py), [extract.py](fieldbridge/extract.py) | Textual cues and heuristic mechanism descriptions |
 | [search.py](fieldbridge/search.py), [database.py](fieldbridge/database.py) | Loading and ranking records; target examples |

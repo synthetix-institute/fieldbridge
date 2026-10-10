@@ -95,7 +95,7 @@ class Oscillators:
         Zk = pr["Z"][:, self.k]
         H = np.array([np.mean(Zk * (np.roll(cx, -n) - cx)) for n in range(n_grid)])
         phi = 2 * pi * np.arange(n_grid) / n_grid
-        return {"omega": 2 * pi / T, "period": T, "kappa": float(cyc["kappa"]), "H": H,
+        return {"omega": 2 * pi / T, "period": T, "kappa": float(cyc["kappa"]), "H": H, "phi": phi,
                 "a1": float(2 * np.mean(H * np.cos(phi))), "b1": float(2 * np.mean(H * np.sin(phi)))}
 
     def frequency(self, value: float) -> float:
@@ -128,8 +128,11 @@ class Oscillators:
         scale = self.spread * cf["omega"]
         Kc = onset.critical_coupling(g, cf["a1"], cf["b1"], centre=cf["omega"], scale=scale, support=(lo, hi),
                                      grid=61)
+        keep = slice(None, None, max(1, len(cf["H"]) // 128))
         out = {**{k: cf[k] for k in ("omega", "period", "kappa", "a1", "b1")}, "domega_dp": float(slope),
-               "param_spread": float(s), "g": g, "support": (lo, hi), "scale": scale,
+               "H_phi": [float(x) for x in cf["phi"][keep]], "H": [float(x) for x in cf["H"][keep]],
+               "g_omega": [float(x) for x in xs[::40]], "g": [float(x) for x in gs[::40]],
+               "param_spread": float(s), "density": g, "support": (lo, hi), "scale": scale,
                "K_c": None if Kc is None else Kc["K_c"], "Omega_c": None if Kc is None else Kc["Omega"], "rows": []}
         if Kc is not None:
             for f in self.factors:

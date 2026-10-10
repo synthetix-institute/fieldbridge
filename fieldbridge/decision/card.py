@@ -31,8 +31,9 @@ def card(pop, simulate: bool = False, replicas: int = 2000, seed: int = 1) -> Di
     t0 = time.time()
     b, red = pop.body, pr["_red"]
     if pop.target == "synchronization":
-        if red["K_c"] is not None:
-            out["simulation"] = b.simulate(red, pop.body.factors[0])
+        out["simulation"] = (b.simulate(red, pop.body.factors[0]) if red["K_c"] is not None else
+                             {"skipped": "no root of the dispersion relation inside the band: there is no onset, and "
+                                         "no coupling above one to simulate"})
     elif pop.target == "collective-write":
         rows = []
         for k, row in enumerate(pr["rows"]):

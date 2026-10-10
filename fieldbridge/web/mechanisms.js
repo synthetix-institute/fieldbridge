@@ -27,7 +27,6 @@
     'frustrated-loops': '<path class="faint" d="M11 25 L24 6 L37 25 Z"/><path d="M5 21 L17 29"/><path d="M18 7 L30 5"/><path d="M31 29 L43 21"/>',
     'retention-rewriting': AXES + '<path d="M5 26 C18 25 30 18 44 5"/><path class="faint" d="M5 26 C14 20 24 16 44 14"/>',
     'hopf-onset': '<ellipse class="faint" cx="24" cy="16" rx="17" ry="11"/><path d="M24 16 c2 -1 4 1 2 3 c-3 2 -7 -1 -5 -5 c3 -4 10 -2 10 4 c0 6 -8 9 -13 5"/>',
-    'kuramoto': '<ellipse class="faint" cx="24" cy="16" rx="16" ry="12"/><circle class="dot" cx="38" cy="12" r="2.3"/><circle class="dot" cx="39.6" cy="17.5" r="2.3"/><circle class="dot" cx="35" cy="7" r="2.3"/><circle class="dot" cx="37" cy="23" r="2.3"/><circle class="dot faint" cx="9" cy="21" r="2.3"/>',
   };
   // the return to a turning point: an excursion that closes on its turning point, or one that ends beside it
   GLYPHS['return-point'] = AXES + '<path d="M6 26 C22 26 24 6 43 6"/><path class="faint" d="M43 6 C27 6 25 26 6 26"/><path d="M18 20 C25 17 28 14 33 12 C27 16 24 18 18 20"/><circle class="dot" cx="33" cy="12" r="2.2"/>';
@@ -52,6 +51,14 @@
   // grows from the seed, at a few photons the two shallow wells exchange population before the choice is frozen
   GLYPHS['linear-stage-write'] = AXES + '<path class="faint" d="M6 12 C16 12 22 17 43 20"/><path d="M6 12 C16 12 22 7 43 4"/><circle class="dot" cx="10" cy="12" r="1.6"/>';
   GLYPHS['equilibrium-write'] = AXES + '<path d="M6 6 C12 22 18 22 24 9 C30 22 36 22 43 6"/><circle class="dot" cx="15" cy="18" r="2"/><circle class="dot faint" cx="33" cy="18" r="2"/>';
+  // decision: phases that gather on one side of a cycle, or stay spread; a pitchfork whose favoured branch is taken, or
+  // decided by a scatter of samples; growth from a seed into two branches, or a spiral that grows
+  GLYPHS['synchronizes'] = '<ellipse class="faint" cx="24" cy="16" rx="16" ry="12"/><circle class="dot" cx="38" cy="12" r="2.3"/><circle class="dot" cx="39.6" cy="17.5" r="2.3"/><circle class="dot" cx="35" cy="7" r="2.3"/><circle class="dot" cx="37" cy="23" r="2.3"/><circle class="dot faint" cx="9" cy="21" r="2.3"/>';
+  GLYPHS['no-onset'] = '<ellipse class="faint" cx="24" cy="16" rx="16" ry="12"/><circle class="dot" cx="40" cy="16" r="2.3"/><circle class="dot" cx="24" cy="4" r="2.3"/><circle class="dot" cx="8" cy="16" r="2.3"/><circle class="dot" cx="24" cy="28" r="2.3"/><circle class="dot" cx="35" cy="7.5" r="2.3"/><circle class="dot" cx="13" cy="24.5" r="2.3"/>';
+  GLYPHS['follows-the-bias'] = AXES + '<path d="M6 17 H22 C28 17 32 10 44 6"/><path class="faint" d="M22 17 C28 17 32 24 44 28"/><circle class="dot" cx="44" cy="6" r="2.2"/>';
+  GLYPHS['set-by-the-sample'] = AXES + '<path class="faint" d="M6 17 H22 C28 17 32 10 44 6 M22 17 C28 17 32 24 44 28"/><circle class="dot" cx="10" cy="14" r="1.6"/><circle class="dot" cx="14" cy="20" r="1.6"/><circle class="dot" cx="18" cy="13" r="1.6"/><circle class="dot" cx="12" cy="18" r="1.6"/><circle class="dot" cx="16" cy="21.5" r="1.6"/>';
+  GLYPHS['reflection-seed'] = AXES + '<path class="faint" d="M6 17 H44"/><path d="M8 17 C24 17 32 14 44 5 M8 17 C24 17 32 20 44 29"/><circle class="dot" cx="8" cy="17" r="1.8"/>';
+  GLYPHS['rotation-seed'] = '<path d="M24 16 c1 -1 2 0 1.5 1 c-1 1.5 -3.5 0.5 -3 -1.5 c0.8 -3 5.5 -3 6.5 0 c1.2 4 -3 7.5 -7.5 6.5 c-5 -1.2 -6 -8 -2 -11.5 c4.5 -4 13 -2.5 14.5 4 c1.6 7 -4.5 12.5 -12 12"/>';
   function glyph(klass, cls = '') {
     return `<svg class="glyph ${cls}" viewBox="0 0 48 32" aria-hidden="true" focusable="false">${GLYPHS[klass] || GLYPHS['single-state']}</svg>`;
   }
@@ -61,7 +68,7 @@
   // placed so that every line joins neighbouring cards and none crosses another. The map shows one module at a time,
   // the module of the selected mechanism unless another is chosen, or every module.
   const WIDE = {
-    w: 2722, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950, 2124, 2298, 2472, 2646], row: [78, 222],
+    w: 3244, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950, 2124, 2298, 2472, 2646, 2820, 2994, 3168], row: [78, 222],
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
             'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
             'return-point': [5, 0], 'no-return': [5, 1],
@@ -69,7 +76,9 @@
             'perfect-adaptation': [9, 0], 'fine-tuned-adaptation': [9, 1], 'partial-adaptation': [10, 0], 'no-adaptation': [10, 1],
             'linear-memory': [11, 0], 'odd-capacity': [11, 1], 'integrating': [12, 0], 'nonlinear-capacity': [12, 1],
             'linear-stage-write': [13, 0], 'equilibrium-write': [13, 1],
-            'inherited-through-threshold': [14, 0], 'kept-above-threshold': [15, 0], 'lost-in-the-dip': [14, 1], 'threshold-moved': [15, 1]},
+            'inherited-through-threshold': [14, 0], 'kept-above-threshold': [15, 0], 'lost-in-the-dip': [14, 1], 'threshold-moved': [15, 1],
+            'synchronizes': [16, 0], 'no-onset': [16, 1], 'follows-the-bias': [17, 0], 'set-by-the-sample': [17, 1],
+            'reflection-seed': [18, 0], 'rotation-seed': [18, 1]},
     families: [{label: 'quantum: closed evolution', from: 0, to: 1, module: 'quantum'},
                {label: 'memory: writing a state', from: 2, to: 4, module: 'memory'},
                {label: 'memory: turning points', from: 5, to: 5, module: 'memory'}, {label: 'memory: phase', from: 6, to: 6, module: 'memory'},
@@ -77,10 +86,13 @@
                {label: 'regulation: set point', from: 9, to: 10, module: 'regulation'},
                {label: 'computation: capacity', from: 11, to: 12, module: 'computation'},
                {label: 'quantum: open evolution', from: 13, to: 13, module: 'quantum'},
-               {label: 'heredity: threshold', from: 14, to: 15, module: 'heredity'}],
+               {label: 'heredity: threshold', from: 14, to: 15, module: 'heredity'},
+               {label: 'decision: synchrony', from: 16, to: 16, module: 'decision'},
+               {label: 'decision: choice', from: 17, to: 17, module: 'decision'},
+               {label: 'decision: passage', from: 18, to: 18, module: 'decision'}],
   };
   const NARROW = {
-    w: 360, h: 1528, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
+    w: 360, h: 1834, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
     place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1],
             'subcritical-write': [0, 2], 'symmetric-write': [1, 2], 'threshold-write': [0, 3], 'oscillation': [1, 3],
             'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6],
@@ -88,11 +100,14 @@
             'perfect-adaptation': [0, 8], 'fine-tuned-adaptation': [1, 8], 'partial-adaptation': [0, 9], 'no-adaptation': [1, 9],
             'linear-memory': [0, 10], 'integrating': [1, 10], 'odd-capacity': [0, 11], 'nonlinear-capacity': [1, 11],
             'linear-stage-write': [0, 12], 'equilibrium-write': [1, 12],
-            'inherited-through-threshold': [0, 13], 'kept-above-threshold': [1, 13], 'lost-in-the-dip': [0, 14], 'threshold-moved': [1, 14]},
+            'inherited-through-threshold': [0, 13], 'kept-above-threshold': [1, 13], 'lost-in-the-dip': [0, 14], 'threshold-moved': [1, 14],
+            'synchronizes': [0, 15], 'no-onset': [1, 15], 'follows-the-bias': [0, 16], 'set-by-the-sample': [1, 16],
+            'reflection-seed': [0, 17], 'rotation-seed': [1, 17]},
     families: [],
   };
   const MODULES = [{key: 'memory', label: 'memory'}, {key: 'quantum', label: 'quantum'}, {key: 'regulation', label: 'regulation'},
                    {key: 'computation', label: 'computation'}, {key: 'heredity', label: 'heredity'},
+                   {key: 'decision', label: 'decision'},
                    {key: 'all', label: 'all mechanisms'}];
   const moduleOf = k => { const f = WIDE.place[k] && WIDE.families.find(f => WIDE.place[k][0] >= f.from && WIDE.place[k][0] <= f.to); return f ? f.module : null; };
   let shown = 'memory';

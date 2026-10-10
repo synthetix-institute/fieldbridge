@@ -158,7 +158,9 @@ and original publications in `site_references.py` (`READING`), from which `docs/
 (`python3 -B -m fieldbridge mechanisms --out docs/mechanisms.md`). The law constants of the page come from
 `docs/site/law_constants.json`, regenerated with `python3 -B -m fieldbridge demo --law --save-law-record`. Until its
 law is certified, a mechanism is listed under *Mechanisms in preparation* (`PLANNED` in `site_registry.py` and
-`docs/ROADMAP.md`).
+`docs/ROADMAP.md`). A new family of mechanisms (a module such as `regulation`, `heredity` or `decision`) is mounted on
+the command line by its entry in `MODULES` (`fieldbridge/core/modules.py`), and its records reach the page through a
+branch of `site_data.build` and a check of its edges in `site_data.check_edit`.
 
 ## Other contributions
 

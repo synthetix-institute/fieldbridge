@@ -28,6 +28,12 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Kept above the threshold](#kept-above-the-threshold) | L<sub>div</sub>/2 &gt; L<sub>c</sub>: no dip | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Saito, Sugimori and Hyuga, 2007 |
 | [Lost in the dip](#lost-in-the-dip) | ln G = ∫λ dt over a generation &lt; 0 | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Baczynski, Lipowsky and Kierfeld, 2007 |
 | [Threshold moved by division](#threshold-moved-by-division) | the halves differ in a conserved amount that sets L<sub>c</sub> | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Brauns, Halatek and Frey, 2020 |
+| [Synchronizes above a critical coupling](#synchronizes-above-a-critical-coupling) | 2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω] | [Decision 1, §2](tutorial/32_decision_population.md#2-synchronization) | [Decision 1, §5](tutorial/32_decision_population.md#5-running-the-command), [Decision 1, §7](tutorial/32_decision_population.md#7-the-published-populations) | Winfree, 1967; Kuramoto, 1975; Sakaguchi and Kuramoto, 1986; Strogatz and Mirollo, 1991 |
+| [No onset of synchrony](#no-onset-of-synchrony) | b<sub>1</sub> = 0: the dispersion relation has no root inside the band | [Decision 1, §6](tutorial/32_decision_population.md#6-controls) | [Decision 1, §6](tutorial/32_decision_population.md#6-controls) | Kuramoto, 1975; Sakaguchi and Kuramoto, 1986 |
+| [Follows the bias (swept write)](#follows-the-bias-swept-write) | P = Φ(π<sup>1/4</sup> h<sub>s</sub> h / (D<sub>s</sub><sup>1/2</sup>(ar)<sup>1/4</sup>)), D<sub>s</sub> ∝ 1/N | [Decision 1, §3](tutorial/32_decision_population.md#3-the-swept-collective-write) | [Decision 1, §3](tutorial/32_decision_population.md#3-the-swept-collective-write), [Decision 1, §7](tutorial/32_decision_population.md#7-the-published-populations) | Glauber, 1963; Kondepudi and Nelson, 1983; Wong and Wang, 2006; Saito, Sugimori and Hyuga, 2007; Martí et al., 2008; Pais et al., 2013; Wang et al., 2013 |
+| [Set by the sample](#set-by-the-sample) | P = Φ(h / (σ<sub>th</sub><sup>2</sup> + s<sub>q</sub><sup>2</sup>)<sup>1/2</sup>), s<sub>q</sub> ∝ N<sup>−1/2</sup> | [Decision 1, §6](tutorial/32_decision_population.md#6-controls) | [Decision 1, §6](tutorial/32_decision_population.md#6-controls) | Tessone et al., 2006 |
+| [Passage from a one-component seed](#passage-from-a-one-component-seed) | Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 13.09 | [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed) | [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed) | Haake, Haus and Glauber, 1981; Wong and Wang, 2006; Wang et al., 2013 |
+| [Passage from a two-component seed](#passage-from-a-two-component-seed) | Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 4.675 | [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed) | [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed) | Stoner and Wohlfarth, 1948; Brown, 1963; Haake, Haus and Glauber, 1981 |
 | [Linear-stage write (vacuum seed)](#linear-stage-write-vacuum-seed) | ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4 | [Quantum write, §2](tutorial/30_quantum_write.md#2-the-mechanism) | [Quantum write, §3](tutorial/30_quantum_write.md#3-the-worked-example), [Quantum write, §4](tutorial/30_quantum_write.md#4-the-results), [Quantum write, §6](tutorial/30_quantum_write.md#6-measured-oscillators) | Kondepudi and Nelson, 1985; Grimm et al., 2020; Roques-Carmes et al., 2023; Gu et al., 2025; Yamaji et al., 2025 |
 | [Equilibrium write (balance of the wells)](#equilibrium-write-balance-of-the-wells) | dp/dt = Γ(ε<sub>2</sub>) [P<sub>eq</sub>(ε<sub>2</sub>) − p] | [Quantum write, §5](tutorial/30_quantum_write.md#5-the-control-calculation) | [Quantum write, §5](tutorial/30_quantum_write.md#5-the-control-calculation) | Marthaler and Dykman, 2006; Frattini et al., 2024 |
 | [Limit cycle](#limit-cycle) | driven: φ̇ = ν − K sin φ | [Glossary, Retention](tutorial/memory_glossary.md#retention) | [Module 6](tutorial/20_memory_phase.md#1-concepts), [Module 11](tutorial/26_memory_phase_locking.md#1-the-target) | Poincaré, 1881; van der Pol, 1926; Andronov, 1929; Adler, 1946; Winfree, 1967; Lax, 1967; Guckenheimer, 1975 |
@@ -299,6 +305,76 @@ Canonical form: the halves differ in a conserved amount that sets L<sub>c</sub>.
 - **Original publications:**
   - F. Brauns, J. Halatek and E. Frey, Phys. Rev. X 10, 041036 (2020), [doi:10.1103/PhysRevX.10.041036](https://doi.org/10.1103/PhysRevX.10.041036): polarity by mass-conserving reaction and diffusion: the window of densities.
 
+### Synchronizes above a critical coupling
+
+Canonical form: 2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω]. Limit-cycle units with a spread of frequencies, coupled through an observable. Reduced to phases, they lose incoherence at the coupling K<sub>c</sub> set by the density g(ω) and the first harmonic of the coupling function H, and synchrony grows at the rate of the unstable root.
+
+- **Defined:** [Decision 1, §2](tutorial/32_decision_population.md#2-synchronization), the onset of synchrony from the dispersion relation of the reduced population.
+- **Derived:** [Decision 1, §5](tutorial/32_decision_population.md#5-running-the-command), the reduction of a unit to g(ω) and H, and K_c; [Decision 1, §7](tutorial/32_decision_population.md#7-the-published-populations), full units in five fields against the growth rate of the reduction. Code: `decision.oscillators.Oscillators.reduce`, `onset.critical_coupling`, `onset.growth_rate`.
+- **Original publications:**
+  - A. T. Winfree, J. Theor. Biol. 16, 15 (1967), [doi:10.1016/0022-5193(67)90051-3](https://doi.org/10.1016/0022-5193(67)90051-3): the phase response and the synchronization of populations of oscillators.
+  - Y. Kuramoto, in International Symposium on Mathematical Problems in Theoretical Physics, Lecture Notes in Physics 39 (Springer, Berlin, 1975), p. 420, [doi:10.1007/BFb0013365](https://doi.org/10.1007/BFb0013365): the synchronization threshold of a population of coupled phase oscillators.
+  - H. Sakaguchi and Y. Kuramoto, Prog. Theor. Phys. 76, 576 (1986), [doi:10.1143/PTP.76.576](https://doi.org/10.1143/PTP.76.576): the shift of the threshold and of the frequency by a cosine part of the coupling.
+  - S. H. Strogatz and R. E. Mirollo, J. Stat. Phys. 63, 613 (1991), [doi:10.1007/BF01029202](https://doi.org/10.1007/BF01029202): the stability of incoherence and the dispersion relation.
+- **Reviews and textbooks:** Y. Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, Berlin, 1984), [doi:10.1007/978-3-642-69689-3](https://doi.org/10.1007/978-3-642-69689-3); A. Pikovsky, M. Rosenblum and J. Kurths, Synchronization (Cambridge University Press, 2001), [doi:10.1017/CBO9780511755743](https://doi.org/10.1017/CBO9780511755743); S. H. Strogatz, Physica D 143, 1 (2000), [doi:10.1016/S0167-2789(00)00094-4](https://doi.org/10.1016/S0167-2789(00)00094-4).
+
+### No onset of synchrony
+
+Canonical form: b<sub>1</sub> = 0: the dispersion relation has no root inside the band. The first harmonic of the coupling function has no sine part: the coupling only shifts the frequencies, and no coupling makes the incoherent state unstable.
+
+- **Defined:** [Decision 1, §6](tutorial/32_decision_population.md#6-controls), a coupling whose first harmonic has no sine part.
+- **Derived:** [Decision 1, §6](tutorial/32_decision_population.md#6-controls), the overdamped Josephson junction coupled through its supercurrent. Code: `decision.onset.critical_coupling`.
+- **Original publications:**
+  - Y. Kuramoto, in International Symposium on Mathematical Problems in Theoretical Physics, Lecture Notes in Physics 39 (Springer, Berlin, 1975), p. 420, [doi:10.1007/BFb0013365](https://doi.org/10.1007/BFb0013365): the threshold 2/(π g(0) b1), which needs b1 > 0.
+  - H. Sakaguchi and Y. Kuramoto, Prog. Theor. Phys. 76, 576 (1986), [doi:10.1143/PTP.76.576](https://doi.org/10.1143/PTP.76.576): the coupling function with a phase lag.
+- **Reviews and textbooks:** Y. Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, Berlin, 1984), [doi:10.1007/978-3-642-69689-3](https://doi.org/10.1007/978-3-642-69689-3).
+
+### Follows the bias (swept write)
+
+Canonical form: P = Φ(π<sup>1/4</sup> h<sub>s</sub> h / (D<sub>s</sub><sup>1/2</sup>(ar)<sup>1/4</sup>)), D<sub>s</sub> ∝ 1/N. A population swept through its collective pitchfork selects the state favoured by a weak bias with a probability set by the bias, the sweep rate and the noise of the collective mode, which falls as 1/N.
+
+- **Defined:** [Decision 1, §3](tutorial/32_decision_population.md#3-the-swept-collective-write), the swept collective write with a weak bias and noise of order 1/N.
+- **Derived:** [Decision 1, §3](tutorial/32_decision_population.md#3-the-swept-collective-write), the law along the actual passage; the lag of the mean state; [Decision 1, §7](tutorial/32_decision_population.md#7-the-published-populations), five published populations. Code: `decision.collective.Collective.reduce`, `law`, `law_history`, `sweep`.
+- **Original publications:**
+  - R. J. Glauber, J. Math. Phys. 4, 294 (1963), [doi:10.1063/1.1703954](https://doi.org/10.1063/1.1703954): the kinetic Ising model.
+  - D. K. Kondepudi and G. W. Nelson, Phys. Rev. Lett. 50, 1023 (1983), [doi:10.1103/PhysRevLett.50.1023](https://doi.org/10.1103/PhysRevLett.50.1023): the sign selected by a swept pitchfork with a bias.
+  - K.-F. Wong and X.-J. Wang, J. Neurosci. 26, 1314 (2006), [doi:10.1523/JNEUROSCI.3733-05.2006](https://doi.org/10.1523/JNEUROSCI.3733-05.2006): the reduced decision network of two neural pools.
+  - Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), [doi:10.1143/JPSJ.76.044802](https://doi.org/10.1143/JPSJ.76.044802): chiral autocatalysis with recycling.
+  - D. Martí, G. Deco, M. Mattia, G. Gigante and P. Del Giudice, PLoS ONE 3, e2534 (2008), [doi:10.1371/journal.pone.0002534](https://doi.org/10.1371/journal.pone.0002534): finite-size noise in decision networks, of variance proportional to 1/N.
+  - D. Pais, P. M. Hogan, T. Schlegel, N. R. Franks, N. E. Leonard and J. A. R. Marshall, PLoS ONE 8, e73216 (2013), [doi:10.1371/journal.pone.0073216](https://doi.org/10.1371/journal.pone.0073216): value-sensitive choice of a nest site with stop signals.
+  - Z. Wang, A. Marandi, K. Wen, R. L. Byer and Y. Yamamoto, Phys. Rev. A 88, 063853 (2013), [doi:10.1103/PhysRevA.88.063853](https://doi.org/10.1103/PhysRevA.88.063853): the coherent Ising machine of degenerate parametric oscillators.
+
+### Set by the sample
+
+Canonical form: P = Φ(h / (σ<sub>th</sub><sup>2</sup> + s<sub>q</sub><sup>2</sup>)<sup>1/2</sup>), s<sub>q</sub> ∝ N<sup>−1/2</sup>. A finite sample of diverse units is not symmetric: its mean carries a frozen bias. When that bias exceeds the thermal spread, the outcome is set by the composition of the sample, and a slower sweep does not average it out.
+
+- **Defined:** [Decision 1, §6](tutorial/32_decision_population.md#6-controls), the frozen bias of a random sample of diverse units.
+- **Derived:** [Decision 1, §6](tutorial/32_decision_population.md#6-controls), s_q from the reference profile of the infinite population. Code: `decision.units.Units.reduce`, `law`, `sweep`.
+- **Original publications:**
+  - C. J. Tessone, C. R. Mirasso, R. Toral and J. D. Gunton, Phys. Rev. Lett. 97, 194101 (2006), [doi:10.1103/PhysRevLett.97.194101](https://doi.org/10.1103/PhysRevLett.97.194101): globally coupled bistable units with a diversity of their parameters.
+
+### Passage from a one-component seed
+
+Canonical form: Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 13.09. After a step one real eigenvalue leads. The unstable mode grows from a one-component Gaussian seed, and the 10–90% window of passage times is ln 13.09 in the growth exponent Λ = ∫λ dt, whatever the noise; the median moves by 1/2 per factor e in N.
+
+- **Defined:** [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed), the window ln 13.09 of passage times from a one-component seed.
+- **Derived:** [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed), the growth exponent along the mean trajectory after a step. Code: `decision.collective.Collective.step_exponent`, `step_times`, `passage.check`.
+- **Original publications:**
+  - F. Haake, J. W. Haus and R. Glauber, Phys. Rev. A 23, 3255 (1981), [doi:10.1103/PhysRevA.23.3255](https://doi.org/10.1103/PhysRevA.23.3255): passage-time statistics for the decay of unstable states.
+  - K.-F. Wong and X.-J. Wang, J. Neurosci. 26, 1314 (2006), [doi:10.1523/JNEUROSCI.3733-05.2006](https://doi.org/10.1523/JNEUROSCI.3733-05.2006): the decision network switched on by a stimulus.
+  - Z. Wang, A. Marandi, K. Wen, R. L. Byer and Y. Yamamoto, Phys. Rev. A 88, 063853 (2013), [doi:10.1103/PhysRevA.88.063853](https://doi.org/10.1103/PhysRevA.88.063853): the parametric oscillators pumped above threshold.
+
+### Passage from a two-component seed
+
+Canonical form: Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 4.675. A complex pair leads: the mode rotates while it grows from a two-component seed, and the window of passage times is ln 4.675 in the growth exponent.
+
+- **Defined:** [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed), the window ln 4.675 of passage times from a two-component seed.
+- **Derived:** [Decision 1, §4](tutorial/32_decision_population.md#4-passage-from-a-seed), a macrospin whose field is reversed. Code: `decision.passage.leading_dimension`, `q_ratio`.
+- **Original publications:**
+  - E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948), [doi:10.1098/rsta.1948.0007](https://doi.org/10.1098/rsta.1948.0007): the uniaxial single-domain particle.
+  - W. F. Brown, Phys. Rev. 130, 1677 (1963), [doi:10.1103/PhysRev.130.1677](https://doi.org/10.1103/PhysRev.130.1677): thermal fluctuations of a single-domain particle.
+  - F. Haake, J. W. Haus and R. Glauber, Phys. Rev. A 23, 3255 (1981), [doi:10.1103/PhysRevA.23.3255](https://doi.org/10.1103/PhysRevA.23.3255): the passage time of an n-component amplitude.
+
 ### Linear-stage write (vacuum seed)
 
 Canonical form: ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4. A parametric oscillator swept through its threshold with a weak bias chooses one of its two states in the linear stage: the probability of the favoured state is Φ(h I<sub>1</sub>/√(σ<sub>0</sub><sup>2</sup> + 2D I<sub>2</sub>)), the classical write law with the noise fixed by the loss and the temperature and no free parameter.
@@ -505,14 +581,3 @@ Law: ż = (μ + iω)z − |z|<sup>2</sup>z: an amplitude proportional to √μ; 
   - A. I. Neishtadt, Differ. Uravn. 23, 2060 (1987); English translation in Differential Equations 23, 1385 (1987): the delay of the loss of stability under a slow sweep.
   - S. M. Baer, T. Erneux and J. Rinzel, SIAM J. Appl. Math. 49, 55 (1989), [doi:10.1137/0149003](https://doi.org/10.1137/0149003): the delay of a slow passage through a Hopf bifurcation and its dependence on the initial state.
 - **Reviews and textbooks:** Y. A. Kuznetsov, Elements of Applied Bifurcation Theory, 3rd edn (Springer, New York, 2004), [doi:10.1007/978-1-4757-3978-7](https://doi.org/10.1007/978-1-4757-3978-7).
-
-### Synchronization of a population (Kuramoto)
-
-Law: oscillators with a symmetric, unimodal density g of natural frequencies synchronize above the coupling K<sub>c</sub> = 2/(π g(0)) (Kuramoto, 1984).
-
-- **Defined:** [Roadmap](ROADMAP.md#mechanisms-in-preparation), mechanisms in preparation.
-- **Derived:** not yet in FieldBridge.
-- **Original publications:**
-  - A. T. Winfree, J. Theor. Biol. 16, 15 (1967), [doi:10.1016/0022-5193(67)90051-3](https://doi.org/10.1016/0022-5193(67)90051-3): the phase response and the synchronization of populations of oscillators.
-  - Y. Kuramoto, in International Symposium on Mathematical Problems in Theoretical Physics, Lecture Notes in Physics 39 (Springer, Berlin, 1975), p. 420, [doi:10.1007/BFb0013365](https://doi.org/10.1007/BFb0013365): the synchronization threshold of a population of coupled phase oscillators.
-- **Reviews and textbooks:** Y. Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, Berlin, 1984), [doi:10.1007/978-3-642-69689-3](https://doi.org/10.1007/978-3-642-69689-3); S. H. Strogatz, Physica D 143, 1 (2000), [doi:10.1016/S0167-2789(00)00094-4](https://doi.org/10.1016/S0167-2789(00)00094-4).

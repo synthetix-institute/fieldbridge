@@ -58,8 +58,7 @@ def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
     # the map opens on the memory module and hatches its outcome without memory, one state
     assert first["module"] == "memory" and first["absent"] == 1
     # the mechanisms in preparation
-    for name in ("frustrated loops", "retention against rewriting", "onset of oscillation (Hopf)",
-                 "synchronization of a population (Kuramoto)", "What is missing"):
+    for name in ("frustrated loops", "retention against rewriting", "onset of oscillation (Hopf)", "What is missing"):
         assert name in first["planned"], name
 
 
@@ -186,3 +185,14 @@ def test_hysterons_draw_a_loop_and_a_change_of_couplings_breaks_the_return(tmp_p
     assert "major loop" in got[0]["legend"] and "unlike the state at H₁" in got[1]["legend"]
     assert got[1]["reference"] and "Grey, dashed" in got[1]["legend"]   # the ferromagnet's loop, before the change
     assert "Relabeling one sublattice" in got[2]["text"]
+
+
+def test_a_population_that_leaves_its_state_after_a_step(tmp_path):
+    data = sd.build(only=["dec_cim_write", "dec_cim_step"], derive=False, strict=False, log=lambda *a: None)
+    data_file = sd.write(data, tmp_path / "data.js")
+    got = scenario(data_file, [{"do": "start", "node": "dec_cim_write"}, {"do": "walk", "node": "dec_cim_step"}],
+                   tmp_path)
+    assert got[0]["module"] == "decision" and got[0]["mechanism"] == "follows the bias (swept write)"
+    assert "along the actual passage" in got[0]["legend"] and "threshold of the symmetric state" in got[0]["facts"]
+    assert got[1]["node"] == "dec_cim_step" and got[1]["mechanism"] == "passage from a one-component seed"
+    assert "ln 13.09 = 2.5718" in got[1]["facts"] and "pump ramp → pump step" in got[1]["changes"] + got[0]["changes"]

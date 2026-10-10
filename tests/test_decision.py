@@ -214,6 +214,12 @@ def test_cli_card(tmp_path):
     assert "Boundary" in (tmp_path / "diverse_units_random_sample.md").read_text()
 
 
+def test_card_without_an_onset_does_not_simulate():
+    from fieldbridge.decision.card import card
+    res = card(load(EX / "controls/josephson_no_onset.json"), simulate=True)
+    assert res["class"] == "no-onset" and "skipped" in res["simulation"]
+
+
 def test_cli_survey(tmp_path):
     folder = tmp_path / "specs"
     folder.mkdir()

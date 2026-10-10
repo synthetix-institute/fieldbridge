@@ -79,7 +79,9 @@ def markdown(res: Dict) -> str:
     if "simulation" in res:
         sim = res["simulation"]
         lines += ["## Stochastic check", ""]
-        if res["target"] == "synchronization":
+        if "skipped" in sim:
+            lines.append(f"Not run: {sim['skipped']}.")
+        elif res["target"] == "synchronization":
             lines.append(f"{sim['units']} full units at K = {sim['factor']:g} K_c: growth rate of synchrony "
                          f"{sim['mu_measured']:.4g} against {sim['mu_reduction']:.4g} (ratio {sim['ratio']:.3f}, "
                          f"K/kappa {sim['K_over_kappa']:.2g}; the excess is of order K/kappa).")

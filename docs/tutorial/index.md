@@ -1,6 +1,6 @@
 # FieldBridge tutorial
 
-The tutorial has six entry points. Each is a calculation with a physical question, a result to compare with, a
+The tutorial has seven entry points. Each is a calculation with a physical question, a result to compare with, a
 control that must change the prediction, and the test responsible for it.
 
 - **The language of mechanisms.** [Quantum closure](11_quantum_closure.md) asks whether the transverse magnetization
@@ -20,6 +20,10 @@ control that must change the prediction, and the test responsible for it.
 - **Heredity.** [Inheritance through a threshold](31_heredity_threshold.md) asks whether a daughter born below the
   critical size of its parent's order, a reaction volume, a Turing domain, a flowing active stripe, a ferroelectric
   film or a buckled filament, keeps its parent's sign when it grows through the threshold again.
+- **Decision.** [When a population acts as one](32_decision_population.md) asks at which coupling limit-cycle units
+  synchronize, how accurately spins, scouts, molecules, neurons or parametric oscillators swept through their
+  collective threshold follow a weak bias, and with what spread a population leaves a state that a step has made
+  unstable.
 
 Two further parts follow. [Construction from specified equations](#construction-from-specified-equations) derives a
 prediction from equations that are given: an additional drift in a stochastic change of variables, a missing
@@ -79,6 +83,12 @@ reading order.
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Inheritance through a threshold](31_heredity_threshold.md) | Does a daughter born below the critical size of its parent's order keep the parent's sign when it grows through the threshold again, and with what probability? | `heredity predict`, `card`, `survey` |
+
+## Decision
+
+| Module | Chapter | Question | Command |
+| --- | --- | --- | --- |
+| 1 | [When a population acts as one](32_decision_population.md) | At which coupling do limit-cycle units synchronize; with what probability does a population swept through its collective threshold follow a weak bias, for N units and a sweep rate; and with what window of times does it leave a state that a step has made unstable? | `decision predict`, `card`, `survey` |
 
 ## The quantum write: one module
 

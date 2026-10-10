@@ -28,7 +28,7 @@ CLASSES = ("synchronizes", "no-onset", "follows-the-bias", "set-by-the-sample", 
 
 
 def _plain_red(red: Dict) -> Dict:
-    return {k: v for k, v in red.items() if k not in ("g", "support", "v", "w", "y_sym", "x_sym")}
+    return {k: v for k, v in red.items() if k not in ("density", "support", "v", "w", "y_sym", "x_sym")}
 
 
 def predict(pop) -> Dict:

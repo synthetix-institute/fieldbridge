@@ -697,14 +697,6 @@ READING: Dict[str, Dict] = {
                                  "the initial state")],
         "textbooks": ["kuznetsov2004"],
     },
-    "kuramoto": {
-        "defined": ("Roadmap", "mechanisms in preparation", "docs/ROADMAP.md#mechanisms-in-preparation"),
-        "derived": [],
-        "code": "",
-        "sources": [("winfree1967", "the phase response and the synchronization of populations of oscillators"),
-                    ("kuramoto1975", "the synchronization threshold of a population of coupled phase oscillators")],
-        "textbooks": ["kuramoto1984", "strogatz2000"],
-    },
 }
 
 CERTIFIED = ["law-rotation", "law-symmetric-write", "law-threshold-write", "law-phase-locking"]
@@ -896,5 +888,97 @@ READING.update({
         "sources": [("marthaler2006", "switching between the two states of a parametrically modulated oscillator by "
                                       "quantum activation"),
                     ("frattini2024", "a few-photon Kerr parametric oscillator and the quantum regime of the Arrhenius law")],
+    },
+})
+
+
+# decision: populations that synchronize, follow a bias through their collective threshold, or leave an unstable state
+BIB.update({
+    "sakaguchi1986": {"cite": "H. Sakaguchi and Y. Kuramoto, Prog. Theor. Phys. 76, 576 (1986)",
+                      "short": "Sakaguchi and Kuramoto, 1986", "doi": "10.1143/PTP.76.576"},
+    "strogatz1991": {"cite": "S. H. Strogatz and R. E. Mirollo, J. Stat. Phys. 63, 613 (1991)",
+                     "short": "Strogatz and Mirollo, 1991", "doi": "10.1007/BF01029202"},
+    "glauber1963": {"cite": "R. J. Glauber, J. Math. Phys. 4, 294 (1963)", "short": "Glauber, 1963",
+                    "doi": "10.1063/1.1703954"},
+    "pais2013": {"cite": "D. Pais, P. M. Hogan, T. Schlegel, N. R. Franks, N. E. Leonard and J. A. R. Marshall, PLoS ONE "
+                         "8, e73216 (2013)", "short": "Pais et al., 2013", "doi": "10.1371/journal.pone.0073216"},
+    "wong2006": {"cite": "K.-F. Wong and X.-J. Wang, J. Neurosci. 26, 1314 (2006)", "short": "Wong and Wang, 2006",
+                 "doi": "10.1523/JNEUROSCI.3733-05.2006"},
+    "marti2008": {"cite": "D. Martí, G. Deco, M. Mattia, G. Gigante and P. Del Giudice, PLoS ONE 3, e2534 (2008)",
+                  "short": "Martí et al., 2008", "doi": "10.1371/journal.pone.0002534"},
+    "wang2013": {"cite": "Z. Wang, A. Marandi, K. Wen, R. L. Byer and Y. Yamamoto, Phys. Rev. A 88, 063853 (2013)",
+                 "short": "Wang et al., 2013", "doi": "10.1103/PhysRevA.88.063853"},
+    "tessone2006": {"cite": "C. J. Tessone, C. R. Mirasso, R. Toral and J. D. Gunton, Phys. Rev. Lett. 97, 194101 (2006)",
+                    "short": "Tessone et al., 2006", "doi": "10.1103/PhysRevLett.97.194101"},
+    "haake1981": {"cite": "F. Haake, J. W. Haus and R. Glauber, Phys. Rev. A 23, 3255 (1981)",
+                  "short": "Haake, Haus and Glauber, 1981", "doi": "10.1103/PhysRevA.23.3255"},
+})
+D1 = T + "32_decision_population.md"
+READING.update({
+    "synchronizes": {
+        "defined": ("Decision 1, §2", "the onset of synchrony from the dispersion relation of the reduced population",
+                    D1 + "#2-synchronization"),
+        "derived": [("Decision 1, §5", "the reduction of a unit to g(ω) and H, and K_c", D1 + "#5-running-the-command"),
+                    ("Decision 1, §7", "full units in five fields against the growth rate of the reduction",
+                     D1 + "#7-the-published-populations")],
+        "code": "decision.oscillators.Oscillators.reduce, onset.critical_coupling, onset.growth_rate",
+        "sources": [("winfree1967", "the phase response and the synchronization of populations of oscillators"),
+                    ("kuramoto1975", "the synchronization threshold of a population of coupled phase oscillators"),
+                    ("sakaguchi1986", "the shift of the threshold and of the frequency by a cosine part of the coupling"),
+                    ("strogatz1991", "the stability of incoherence and the dispersion relation")],
+        "textbooks": ["kuramoto1984", "pikovsky2001", "strogatz2000"],
+    },
+    "no-onset": {
+        "defined": ("Decision 1, §6", "a coupling whose first harmonic has no sine part", D1 + "#6-controls"),
+        "derived": [("Decision 1, §6", "the overdamped Josephson junction coupled through its supercurrent",
+                     D1 + "#6-controls")],
+        "code": "decision.onset.critical_coupling",
+        "sources": [("kuramoto1975", "the threshold 2/(π g(0) b1), which needs b1 > 0"),
+                    ("sakaguchi1986", "the coupling function with a phase lag")],
+        "textbooks": ["kuramoto1984"],
+    },
+    "follows-the-bias": {
+        "defined": ("Decision 1, §3", "the swept collective write with a weak bias and noise of order 1/N",
+                    D1 + "#3-the-swept-collective-write"),
+        "derived": [("Decision 1, §3", "the law along the actual passage; the lag of the mean state",
+                     D1 + "#3-the-swept-collective-write"),
+                    ("Decision 1, §7", "five published populations", D1 + "#7-the-published-populations")],
+        "code": "decision.collective.Collective.reduce, law, law_history, sweep",
+        "sources": [("kondepudi1983", "the sign selected by a swept pitchfork with a bias"),
+                    ("glauber1963", "the kinetic Ising model"),
+                    ("pais2013", "value-sensitive choice of a nest site with stop signals"),
+                    ("saito2007", "chiral autocatalysis with recycling"),
+                    ("wong2006", "the reduced decision network of two neural pools"),
+                    ("marti2008", "finite-size noise in decision networks, of variance proportional to 1/N"),
+                    ("wang2013", "the coherent Ising machine of degenerate parametric oscillators")],
+        "textbooks": [],
+    },
+    "set-by-the-sample": {
+        "defined": ("Decision 1, §6", "the frozen bias of a random sample of diverse units", D1 + "#6-controls"),
+        "derived": [("Decision 1, §6", "s_q from the reference profile of the infinite population", D1 + "#6-controls")],
+        "code": "decision.units.Units.reduce, law, sweep",
+        "sources": [("tessone2006", "globally coupled bistable units with a diversity of their parameters")],
+        "textbooks": [],
+    },
+    "reflection-seed": {
+        "defined": ("Decision 1, §4", "the window ln 13.09 of passage times from a one-component seed",
+                    D1 + "#4-passage-from-a-seed"),
+        "derived": [("Decision 1, §4", "the growth exponent along the mean trajectory after a step",
+                     D1 + "#4-passage-from-a-seed")],
+        "code": "decision.collective.Collective.step_exponent, step_times; passage.check",
+        "sources": [("haake1981", "passage-time statistics for the decay of unstable states"),
+                    ("wong2006", "the decision network switched on by a stimulus"),
+                    ("wang2013", "the parametric oscillators pumped above threshold")],
+        "textbooks": [],
+    },
+    "rotation-seed": {
+        "defined": ("Decision 1, §4", "the window ln 4.675 of passage times from a two-component seed",
+                    D1 + "#4-passage-from-a-seed"),
+        "derived": [("Decision 1, §4", "a macrospin whose field is reversed", D1 + "#4-passage-from-a-seed")],
+        "code": "decision.passage.leading_dimension, q_ratio",
+        "sources": [("haake1981", "the passage time of an n-component amplitude"),
+                    ("stoner1948", "the uniaxial single-domain particle"),
+                    ("brown1963", "thermal fluctuations of a single-domain particle")],
+        "textbooks": [],
     },
 })

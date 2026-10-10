@@ -165,7 +165,7 @@
       if (slot === 'A') return params(fieldRanges(e), state.params);
       return `<span>${esc(rec.slots[slot])}</span>`;
     }
-    if (fam === 'hysterons' || fam === 'regulation' || fam === 'computation' || fam === 'open' || fam === 'heredity') return `<span>${esc(rec.slots[slot])}</span>`;
+    if (fam === 'hysterons' || fam === 'regulation' || fam === 'computation' || fam === 'open' || fam === 'heredity' || fam === 'decision') return `<span>${esc(rec.slots[slot])}</span>`;
     if (fam === 'stochastic') {
       if (slot === 'A') return params(e.ranges, state.params);
       if (slot === 'Omega') return MML.math('<mi>d</mi><mi>X</mi><mo>=</mo><mi>μ</mi><mi>X</mi><mi>d</mi><mi>t</mi><mo>+</mo><mi>σ</mi><mi>X</mi><mi>d</mi><mi>W</mi>');
@@ -412,6 +412,21 @@
       known('linear gain over a generation', f.lnG === '—' ? 'no dip: the daughters are born above the threshold' : `ln G = ${f.lnG}`);
       known('Λ = a·ramp / (b D_s) (the law needs Λ ≫ 1)', f.Lambda);
       if (f.P_body !== '—') known('probability of keeping the sign', `${f.P_body} from the body's own decay to the threshold; ${f.P_normal_form} from the normal form with a linear ramp`);
+    } else if (rec.family === 'decision') {
+      body = mechanismText(rec);
+      if (f.target === 'synchronization') {
+        known('coupling function of the reduction', `a₁ = ${f.a1}, b₁ = ${f.b1}; Floquet rate of the unit κ = ${f.kappa}`);
+        known('onset of synchrony', f.K_c === 'none' ? 'none: no root of the dispersion relation inside the band' : `K_c = ${f.K_c}, frequency Ω = ${f.Omega}`);
+        if (f.mu !== '—') known('growth rate of synchrony at the first coupling of the protocol', f.mu);
+      } else if (f.target === 'collective-write') {
+        known('threshold of the symmetric state', `at ${f.c_star}; a = ${f.a}, h_s = ${f.h_s}${f.b !== '—' ? ', b = ' + f.b : ''}`);
+        known(`probability of the favoured state at the first condition (z = ${f.z})`, f.P_linear !== '—' ? `${f.P} along the actual passage; ${f.P_linear} from the closed form` : f.P);
+        if (f.Lambda !== '—') known('Λ = a r / (|b| D_s) (the law needs Λ ≫ 1); crossing window (r/a)^½', `${f.Lambda}; ${f.window}`);
+        if (f.s_frozen !== '—') known('frozen bias of a random sample against the thermal spread', `${f.s_frozen} against ${f.sigma_thermal}`);
+      } else {
+        known('leading eigenspace after the step', `d = ${f.d}; rate at the end ${f.rate_end}`);
+        known('10–90% window of passage times, in the growth exponent', f.window_law);
+      }
     } else if (rec.family === 'stochastic') {
       body = `The mean of log X grows at ${f.growth} in the ${f.convention} reading of the noise term.`;
       const mu = state.params.mu, s = state.params.sigma;
@@ -455,6 +470,12 @@
       case 'kept-above-threshold': return 'The daughter is born above the threshold: the order passes to it without a dip.';
       case 'lost-in-the-dip': return 'The dip removes more order than the regrowth restores: without noise the order dies out over the generations.';
       case 'threshold-moved': return 'Division gives the daughters different amounts of a conserved quantity that sets the threshold: the parent\'s order becomes a difference between the daughters and is not passed on.';
+      case 'synchronizes': return 'Reduced to phases, the units lose incoherence at the coupling K_c set by the density of their frequencies and the first harmonic of the coupling function; above it synchrony grows at the rate of the unstable root.';
+      case 'no-onset': return 'The coupling function has no sine part: the coupling only shifts the frequencies, and no coupling makes the incoherent state unstable.';
+      case 'follows-the-bias': return 'Swept through its collective threshold, the population selects the state favoured by a weak bias with a probability set by the bias, the sweep rate and the noise of the collective mode, which falls as 1/N.';
+      case 'set-by-the-sample': return 'A random sample of diverse units carries a frozen bias larger than the thermal spread: the outcome is set by the composition of the sample and hardly depends on the sweep rate.';
+      case 'reflection-seed': return 'After the step one real eigenvalue leads: the unstable mode grows from a one-component Gaussian seed, and the 10–90% window of passage times is ln 13.09 in the growth exponent.';
+      case 'rotation-seed': return 'After the step a complex pair leads: the mode rotates while it grows from a two-component seed, and the window of passage times is ln 4.675 in the growth exponent.';
       case 'integrating': return 'A mode without decay keeps the running sum of the input: no input at a fixed delay can be recovered from it.';
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
@@ -475,6 +496,8 @@
     else if (rec.family === 'regulation') scene = regulationScene(rec);
     else if (rec.family === 'computation') scene = computationScene(rec);
     else if (rec.family === 'heredity') scene = heredityScene(rec);
+    else if (rec.family === 'decision') scene = {kind: 'decision', e: rec.engine, tMax: 1, t: 0, speed: 1 / 6,
+                                                 title: rec.engine.title, legend: rec.engine.legend};
     else if (rec.family === 'open') scene = openScene(rec);
     else scene = stochasticScene(rec);
     $('view-title').textContent = scene.title || titles[rec.family] || '';
@@ -777,6 +800,11 @@
       V.series(side, {t0: 0.5, tMax: n + 0.5, xLabel: 'direction', yLabel: 'log₁₀ relative strength', xTicks: xt,
                       xFormat: v => String(v), yr: [Math.min(-7, Math.floor(Math.min(...lg))) - 0.5, 1.5],
                       levels: [{y: -6, label: 'rank tolerance'}], curves: [{pts: lg.map((v, i) => [i + 1, v]), dots: true}]});
+      return;
+    }
+    if (scene.kind === 'decision') {
+      V.series(main, scene.e.left);
+      V.series(side, scene.e.right);
       return;
     }
     if (scene.kind === 'heredity') {

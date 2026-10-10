@@ -9,7 +9,7 @@
     "eq. (1) of the source without the periodic forcing; the coupling C swept through C* = 1.358 at the diversity sigma = 1 (above sigma_c = 0.757 at C = 1)",
     "an independent thermal noise D = 0.01 on every unit (the source neglects noise)",
     "a uniform bias h (the source's <a> != 0)",
-    "a fresh random sample of the diversity for every population: its mean carries a frozen bias of order N^(-1/2)"
+    "a fresh random sample of the diversity for every population: its mean carries a frozen bias of order N^(-1/2), about 35 times the thermal spread; the biases are 0.8, 17.5 and 35 thermal spreads"
   ],
   "provenance": {
     "source": "C. J. Tessone, C. R. Mirasso, R. Toral and J. D. Gunton, Phys. Rev. Lett. 97, 194101 (2006)",
@@ -53,13 +53,12 @@
       ]
     },
     "sizes": [
-      200,
-      800
+      200
     ],
     "z": [
-      0.4,
       0.8,
-      1.2
+      17.5,
+      35.0
     ],
     "sample": "random"
   },

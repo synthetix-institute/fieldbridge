@@ -34,6 +34,8 @@ FACTS = {
                     "observables", "exact", "degree_2", "noise", "grid"},
     "heredity": {"structure", "L_c", "a", "b", "L_div", "L_birth", "dip", "lnG", "Lambda", "P_body", "P_history",
                  "P_normal_form", "order_at_crossing", "growth", "division", "size"},
+    "decision": {"structure", "target", "K_c", "Omega", "a1", "b1", "kappa", "mu", "c_star", "a", "b", "h_s", "P",
+                 "P_linear", "Lambda", "window", "d", "rate_end", "window_law", "s_frozen", "sigma_thermal", "z"},
     "stochastic": {"convention", "growth", "correction"},
     "open": {"word", "P_exact", "P_law", "difference", "photons", "kappa", "nbar", "two_d", "r", "h", "threshold",
              "truncation", "P_eq", "gap"},
@@ -230,7 +232,7 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     assert [reg.CLASS_ABSENT[k][0] for k in ("single-state", "neutral-cycles", "conserved", "obstructed")] == [
         "no memory", "no memory", "no rotation", "no rotation"]
     assert sorted(data["retention_laws"]["laws"]) == ["1", "2", "3"]
-    assert [q["id"] for q in data["planned"]] == ["frustrated-loops", "retention-rewriting", "hopf-onset", "kuramoto"]
+    assert [q["id"] for q in data["planned"]] == ["frustrated-loops", "retention-rewriting", "hopf-onset"]
     assert all(q["law"] and q["exists"] and q["missing"] for q in data["planned"])
 
 

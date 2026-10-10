@@ -52,6 +52,12 @@ CLASSES = {
     "kept-above-threshold": "kept above the threshold",
     "lost-in-the-dip": "lost in the dip",
     "threshold-moved": "threshold moved by division",
+    "synchronizes": "synchronizes above a critical coupling",
+    "no-onset": "no onset of synchrony",
+    "follows-the-bias": "follows the bias (swept write)",
+    "set-by-the-sample": "set by the sample",
+    "reflection-seed": "passage from a one-component seed",
+    "rotation-seed": "passage from a two-component seed",
     "linear-stage-write": "linear-stage write (vacuum seed)",
     "equilibrium-write": "equilibrium write (balance of the wells)",
     "oscillation": "limit cycle",
@@ -156,6 +162,35 @@ MECHANISMS = {
                         "text": "The order is a redistribution of a conserved amount: division gives the daughters "
                                 "different amounts, which moves their thresholds, and the parent's order is not passed "
                                 "on.", "node": "polarity_brauns2020"},
+    # decision: a population acts as one; it synchronizes, follows a bias through its collective threshold, or leaves an
+    # unstable state from the seed of its own fluctuations
+    "synchronizes": {"canonical": "2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω]",
+                     "text": "Limit-cycle units with a spread of frequencies, coupled through an observable. Reduced to "
+                             "phases, they lose incoherence at the coupling K<sub>c</sub> set by the density g(ω) and the "
+                             "first harmonic of the coupling function H, and synchrony grows at the rate of the unstable "
+                             "root.", "node": "dec_van_der_pol"},
+    "no-onset": {"canonical": "b<sub>1</sub> = 0: the dispersion relation has no root inside the band",
+                 "text": "The first harmonic of the coupling function has no sine part: the coupling only shifts the "
+                         "frequencies, and no coupling makes the incoherent state unstable.", "node": "dec_josephson"},
+    "follows-the-bias": {"canonical": "P = Φ(π<sup>1/4</sup> h<sub>s</sub> h / (D<sub>s</sub><sup>1/2</sup>"
+                                      "(ar)<sup>1/4</sup>)), D<sub>s</sub> ∝ 1/N",
+                         "text": "A population swept through its collective pitchfork selects the state favoured by a "
+                                 "weak bias with a probability set by the bias, the sweep rate and the noise of the "
+                                 "collective mode, which falls as 1/N.", "node": "dec_ising"},
+    "set-by-the-sample": {"canonical": "P = Φ(h / (σ<sub>th</sub><sup>2</sup> + s<sub>q</sub><sup>2</sup>)<sup>1/2</sup>),"
+                                       " s<sub>q</sub> ∝ N<sup>−1/2</sup>",
+                          "text": "A finite sample of diverse units is not symmetric: its mean carries a frozen bias. "
+                                  "When that bias exceeds the thermal spread, the outcome is set by the composition of "
+                                  "the sample, and a slower sweep does not average it out.",
+                          "node": "dec_diverse_random"},
+    "reflection-seed": {"canonical": "Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 13.09",
+                        "text": "After a step one real eigenvalue leads. The unstable mode grows from a one-component "
+                                "Gaussian seed, and the 10–90% window of passage times is ln 13.09 in the growth "
+                                "exponent Λ = ∫λ dt, whatever the noise; the median moves by 1/2 per factor e in N.",
+                        "node": "dec_cim_step"},
+    "rotation-seed": {"canonical": "Λ(τ<sub>90</sub>) − Λ(τ<sub>10</sub>) = ln 4.675",
+                      "text": "A complex pair leads: the mode rotates while it grows from a two-component seed, and the "
+                              "window of passage times is ln 4.675 in the growth exponent.", "node": "dec_macrospin"},
     # the quantum write: a parametric oscillator swept through its threshold with a weak bias chooses one of its two
     # states; in the linear stage the noise of the seed is fixed by the loss and the temperature (the vacuum)
     "linear-stage-write": {"canonical": "ẋ = (ε<sub>2</sub>(t) − κ/2) x + h + √(2D) ξ, 2D = κ(2n̄ + 1)/4",
@@ -195,7 +230,7 @@ START = "pitchfork"
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
              "examples/regulation": "regulation", "examples/computation": "computation", "examples/quantum/open": "open",
-             "examples/heredity": "heredity"}
+             "examples/heredity": "heredity", "examples/decision": "decision"}
 
 Q_CH24 = "docs/tutorial/24_spin_language.md"
 Q_CH11 = "docs/tutorial/11_quantum_closure.md"
@@ -207,6 +242,7 @@ R1 = "docs/tutorial/28_regulation_set_point.md"
 C1 = "docs/tutorial/29_computation_capacity.md"
 QW = "docs/tutorial/30_quantum_write.md"
 H1 = "docs/tutorial/31_heredity_threshold.md"
+D1 = "docs/tutorial/32_decision_population.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -475,6 +511,41 @@ NODES = [
      "spec": "examples/heredity/controls/filament_short_division.json", "tutorial": H1 + "#5-controls"},
     {"id": "polarity_brauns2020", "family": "heredity", "spec": "examples/heredity/polarity_brauns2020.json",
      "tutorial": H1 + "#5-controls"},
+    # -- decision: populations that synchronize, follow a bias through a threshold, or leave an unstable state
+    {"id": "dec_van_der_pol", "family": "decision", "spec": "examples/decision/synchronization/van_der_pol.json",
+     "tutorial": D1 + "#2-synchronization", "universal": True},
+    {"id": "dec_fitzhugh_nagumo", "family": "decision", "spec": "examples/decision/synchronization/fitzhugh_nagumo.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_brusselator", "family": "decision", "spec": "examples/decision/synchronization/brusselator.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_goodwin", "family": "decision", "spec": "examples/decision/synchronization/goodwin.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_predator_prey", "family": "decision", "spec": "examples/decision/synchronization/predator_prey.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_josephson", "family": "decision", "spec": "examples/decision/controls/josephson_no_onset.json",
+     "tutorial": D1 + "#6-controls"},
+    {"id": "dec_ising", "family": "decision", "spec": "examples/decision/write/ising_glauber1963.json",
+     "tutorial": D1 + "#3-the-swept-collective-write", "universal": True},
+    {"id": "dec_honeybees", "family": "decision", "spec": "examples/decision/write/honeybees_pais2013.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_chiral_write", "family": "decision", "spec": "examples/decision/write/chiral_autocatalysis_saito2007.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_wong_wang_write", "family": "decision", "spec": "examples/decision/write/decision_network_wong_wang2006.json",
+     "tutorial": D1 + "#3-the-swept-collective-write"},
+    {"id": "dec_cim_write", "family": "decision", "spec": "examples/decision/write/coherent_ising_machine_wang2013.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_diverse", "family": "decision", "spec": "examples/decision/write/diverse_units_tessone2006.json",
+     "tutorial": D1 + "#6-controls"},
+    {"id": "dec_diverse_random", "family": "decision", "spec": "examples/decision/controls/diverse_units_random_sample.json",
+     "tutorial": D1 + "#6-controls"},
+    {"id": "dec_cim_step", "family": "decision", "spec": "examples/decision/passage/coherent_ising_machine_step.json",
+     "tutorial": D1 + "#4-passage-from-a-seed", "universal": True},
+    {"id": "dec_chiral_step", "family": "decision", "spec": "examples/decision/passage/chiral_autocatalysis_step.json",
+     "tutorial": D1 + "#7-the-published-populations"},
+    {"id": "dec_wong_wang_step", "family": "decision", "spec": "examples/decision/passage/decision_network_step.json",
+     "tutorial": D1 + "#4-passage-from-a-seed"},
+    {"id": "dec_macrospin", "family": "decision", "spec": "examples/decision/passage/macrospin_stoner_wohlfarth.json",
+     "tutorial": D1 + "#4-passage-from-a-seed"},
     # -- the quantum write: a parametric oscillator swept through its threshold with a bias
     {"id": "kpo_27", "family": "open", "spec": "examples/quantum/open/kerr_parametric_oscillator.json",
      "tutorial": QW + "#3-the-worked-example", "universal": True},
@@ -793,6 +864,26 @@ EDGES = [
      "kind": "protocol", "change": "severing at 1.6 → 1.4 L<sub>c</sub>",
      "text": "The filament is severed closer to its critical length. The regrowth above L<sub>c</sub> no longer "
              "restores what the dip removes (ln G = {lnG}), and the buckle is lost without noise."},
+    # decision: the protocol (a sweep or a step) and the sample of the diversity
+    {"id": "dec_sample", "from": "dec_diverse", "to": "dec_diverse_random", "slot": "P", "kind": "protocol",
+     "change": "quantile sample → random sample",
+     "text": "Every population draws its own random sample of the diversity. Its mean carries a frozen bias of spread "
+             "{s_frozen}, against the thermal spread {sigma_thermal}: the outcome is set by the sample, and P = {P} at "
+             "a bias of {z} thermal spreads."},
+    {"id": "dec_chiral_to_step", "from": "dec_chiral_write", "to": "dec_chiral_step", "slot": "P", "kind": "protocol",
+     "change": "sweep → step of the content",
+     "text": "The substrate is added at once instead of supplied slowly. The racemic state is left from the seed of the "
+             "molecular noise, with d = {d} and the window ln 13.09 in the growth exponent (rate {rate_end} at the "
+             "end)."},
+    {"id": "dec_ww_to_step", "from": "dec_wong_wang_write", "to": "dec_wong_wang_step", "slot": "P",
+     "kind": "protocol", "change": "ramp → step of the stimulus to 30 Hz",
+     "text": "The stimulus is switched on at once, as in the source. The spontaneous state becomes a saddle, and the "
+             "pools separate from the seed of the gate noise at the rate {rate_end}/s; the window is ln 13.09 in the "
+             "growth exponent along the relaxing mean state."},
+    {"id": "dec_cim_to_step", "from": "dec_cim_write", "to": "dec_cim_step", "slot": "P", "kind": "protocol",
+     "change": "pump ramp → pump step",
+     "text": "The pump is stepped above the collective threshold. The in-phase mode grows at {rate_end} from the vacuum "
+             "seed, and the window of passage times is {window_law} in the growth exponent."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -974,6 +1065,29 @@ SEQUENCES = [
           "text": "A polarity made of a redistributed conserved protein. Division gives the halves different amounts, "
                   "and neither daughter polarizes again from the parent's order."},
      ]},
+    {"id": "decision", "title": "A population acts as one",
+     "steps": [
+         {"node": "dec_van_der_pol",
+          "text": "Van der Pol units with a 1% spread of frequencies, coupled through their rate of change. The "
+                  "reduction gives a<sub>1</sub> = {a1}, b<sub>1</sub> = {b1}, and the incoherent state loses stability "
+                  "at K<sub>c</sub> = {K_c}."},
+         {"node": "dec_josephson",
+          "text": "Overdamped junctions coupled through the supercurrent: b<sub>1</sub> = {b1}, and no coupling "
+                  "synchronizes them."},
+         {"node": "dec_ising",
+          "text": "Spins swept through the Curie point with a weak field choose its direction with P = {P}; the noise "
+                  "of the magnetization falls as 1/N."},
+         {"node": "dec_wong_wang_write",
+          "text": "Two neural pools with a stimulus ramped through the loss of the spontaneous state. The mean state "
+                  "lags the ramp, so the law along the passage, P = {P}, exceeds the closed form {P_linear}."},
+         {"edge": "dec_ww_to_step"},
+         {"node": "dec_diverse",
+          "text": "Bistable units with a Gaussian diversity, a symmetric sample: the swept write holds, P = {P}."},
+         {"edge": "dec_sample"},
+         {"node": "dec_macrospin",
+          "text": "A macrospin whose field is reversed: the transverse magnetization rotates while it grows from the "
+                  "thermal seed, d = {d}, and the window is {window_law} in the growth exponent."},
+     ]},
     {"id": "turning-points", "title": "Return to a turning point",
      "steps": [
          {"node": "rfim_ferromagnet",
@@ -1071,6 +1185,9 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory",
                "inherited-through-threshold": "inherited", "kept-above-threshold": "kept above",
                "lost-in-the-dip": "lost in the dip", "threshold-moved": "threshold moved",
+               "synchronizes": "synchronizes", "no-onset": "no onset", "follows-the-bias": "follows the bias",
+               "set-by-the-sample": "set by the sample", "reflection-seed": "one-component seed",
+               "rotation-seed": "two-component seed",
                "linear-stage-write": "linear-stage write", "equilibrium-write": "equilibrium write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
                "convention": "convention"}
@@ -1088,6 +1205,8 @@ CLASS_ABSENT = {
     "lost-in-the-dip": ["not inherited", "the order dies out over the generations without noise"],
     "threshold-moved": ["not inherited", "division moves the daughters' thresholds; the parent's order becomes a "
                                          "difference between the daughters"],
+    "no-onset": ["no synchrony", "the coupling only shifts the frequencies: no coupling makes the incoherent state "
+                                 "unstable"],
     "no-return": ["no return point", "a measured subloop does not return to the state at its turning point; a "
                                      "frustrated loop through the drive allows this without forcing it"],
 }
@@ -1123,12 +1242,6 @@ PLANNED = [
      "exists": "FieldBridge locates Hopf bifurcations and reports them where they stop a write, as in the ring of "
                "three repressors",
      "missing": "the reduction to the complex amplitude and a certified law"},
-    {"id": "kuramoto", "name": "synchronization of a population (Kuramoto)", "group": "memory: phase",
-     "law": "oscillators with a symmetric, unimodal density g of natural frequencies synchronize above the coupling "
-            "K<sub>c</sub> = 2/(π g(0)) (Kuramoto, 1984)",
-     "exists": "the phase reduction and the law of locking of one oscillator (Module 11)",
-     "missing": "a carrier for populations of oscillators",
-     "tutorial": "docs/tutorial/26_memory_phase_locking.md"},
 ]
 
 SHORT = {
@@ -1152,6 +1265,13 @@ SHORT = {
     "transfer at 100", "turing_painter1999": "Turing domain", "active_nematic_duclos2018": "active nematic stripe",
     "ferroelectric_film_lgd": "ferroelectric film", "filament_baczynski2007": "filament under load",
     "filament_short_division": "severed at 1.4 L_c", "polarity_brauns2020": "mass-conserving polarity",
+    "dec_van_der_pol": "van der Pol units", "dec_fitzhugh_nagumo": "FitzHugh–Nagumo units",
+    "dec_brusselator": "Brusselator units", "dec_goodwin": "Goodwin clocks", "dec_predator_prey": "predator–prey patches",
+    "dec_josephson": "Josephson junctions", "dec_ising": "mean-field Ising", "dec_honeybees": "honeybee scouts",
+    "dec_chiral_write": "chiral autocatalysis, swept", "dec_wong_wang_write": "two neural pools, ramp",
+    "dec_cim_write": "parametric oscillators, ramp", "dec_diverse": "diverse units", "dec_diverse_random":
+    "diverse units, random sample", "dec_cim_step": "parametric oscillators, step", "dec_chiral_step":
+    "chiral autocatalysis, step", "dec_wong_wang_step": "two neural pools, step", "dec_macrospin": "macrospin",
     "two_spins": "two spins", "two_spins_h0": "two spins, h = 0", "two_spins_z0": "measured Z₀",
     "two_spins_x1": "field on spin 1", "two_spins_both": "field on both spins", "spin1_transverse": "spin 1", "spin1_easy_axis": "spin 1 + DJz²",
     "nv_centre": "NV centre", "spin1_atom": "spin-1 atom", "stoner_wohlfarth": "magnet, 90°",

@@ -157,7 +157,9 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
                                      "docs/tutorial/29_computation_capacity.md#8-a-model-from-your-field"
                                      if fam == "computation" else
                                      "docs/tutorial/31_heredity_threshold.md#8-a-model-from-your-field"
-                                     if fam == "heredity" else "docs/tutorial/21_memory_new_material.md"
+                                     if fam == "heredity" else
+                                     "docs/tutorial/32_decision_population.md#8-a-model-from-your-field"
+                                     if fam == "decision" else "docs/tutorial/21_memory_new_material.md"
                                      if fam != "unitary" else "docs/tutorial/24_spin_language.md#2-writing-a-realization")})
             ids.add(nid)
     return out
@@ -933,6 +935,170 @@ def heredity_slots(spec: Dict, lin) -> Dict[str, str]:
             "A": ", ".join(f"{k} = {_num(b.p[k])}" for k in params[:6]) + (" …" if len(params) > 6 else "") or "—"}
 
 
+DECISION_CLASSES = ("synchronizes", "no-onset", "follows-the-bias", "set-by-the-sample", "reflection-seed",
+                    "rotation-seed")
+DECISION_TEXT = {"synchronizes": "synchronizes above K_c", "no-onset": "no onset of synchrony",
+                 "follows-the-bias": "follows the bias", "set-by-the-sample": "set by the sample",
+                 "reflection-seed": "passage from a one-component seed",
+                 "rotation-seed": "passage from a two-component seed"}
+DECISION_FACTS = ("structure", "target", "K_c", "Omega", "a1", "b1", "kappa", "mu", "c_star", "a", "b", "h_s", "P",
+                  "P_linear", "Lambda", "window", "d", "rate_end", "window_law", "s_frozen", "sigma_thermal", "z")
+
+
+def _pts(xs, ys, keep: int = 200):
+    xs, ys = list(xs), list(ys)
+    step = max(1, len(xs) // keep)
+    return [[float(x), float(y)] for x, y in zip(xs[::step], ys[::step])]
+
+
+def decision_record(node: Dict) -> Dict:
+    """A population that decides: the predictions of ``decision predict`` (the reduction, the law at the protocol's
+    conditions, the class), with two panels of curves for the scene."""
+    from scipy.stats import norm
+    from .decision import spec as dspec
+    from .decision.predict import predict
+    spec = node["spec"]
+    pop = dspec.load(spec)
+    pr = predict(pop)
+    if pr["class"] not in DECISION_CLASSES:
+        raise SiteError(f"{node['id']}: {pr['class']}")
+    red, raw = pr["reduction"], pr["_red"]
+    facts = {k: "—" for k in DECISION_FACTS}
+    facts.update(structure=DECISION_TEXT[pr["class"]], target=pop.target)
+    if pop.target == "synchronization":
+        row = red["rows"][0] if red["rows"] else None
+        facts.update(K_c=_num(red["K_c"]) if red["K_c"] is not None else "none", Omega=_num(red["Omega_c"]) if
+                     red["Omega_c"] is not None else "—", a1=_num(red["a1"]), b1=_num(red["b1"]),
+                     kappa=_num(red["kappa"]) if np.isfinite(red["kappa"]) else "— (no transverse direction)",
+                     mu=_num(row["mu"]) if row else "—")
+        left = {"curves": [{"pts": _pts(red["g_omega"], red["g"])}], "xLabel": "ω", "yLabel": "g(ω)",
+                "marks": [red["Omega_c"]] if red["Omega_c"] is not None else []}
+        right = {"curves": [{"pts": _pts(red["H_phi"], red["H"])}], "xLabel": "φ", "yLabel": "H(φ)", "levels": [0]}
+        title = "Density of natural frequencies, and the coupling function of the reduction"
+        legend = (f"Left: the density g(ω) of the frequencies that the {pop.body.param} spread produces"
+                  + (f"; the incoherent state loses stability at K_c = {_num(red['K_c'])}, where the mode at Ω = "
+                     f"{_num(red['Omega_c'])} turns unstable." if red["K_c"] is not None else
+                     "; no root of the dispersion relation lies inside the band.")
+                  + f" Right: H(φ) = a1 cos φ + b1 sin φ + …, here a1 = {_num(red['a1'])}, b1 = {_num(red['b1'])}.")
+    elif pop.target == "collective-write":
+        rows = pr["rows"]
+        r0 = pop.rates[0]
+        first = [r for r in rows if r["r"] == r0 and r["N"] == pop.sizes[0]]
+        row = rows[0]
+        facts.update(c_star=_num(red["c_star"]), a=_num(red["a"]), h_s=_num(red["h_s"]), P=f"{row['P']:.3f}",
+                     z=_num(row["z"]))
+        if pop.kind == "units":
+            b = pop.body
+            facts.update(s_frozen=_num(row["s_frozen"]) if row["s_frozen"] else "—",
+                         sigma_thermal=_num(row["sigma_thermal"]))
+            N = pop.sizes[0]
+            h = row["h"]
+            rates = np.logspace(np.log10(min(pop.rates) / 10), np.log10(max(pop.rates) * 10), 25)
+            pq = [b.law(raw, h, N, r, sample="quantiles")["P"] for r in rates]
+            pr_ = [b.law(raw, h, N, r, sample="random")["P"] for r in rates]
+            left = {"curves": [{"pts": _pts(np.log10(rates), pq)}, {"pts": _pts(np.log10(rates), pr_), "dash": True}],
+                    "xLabel": "log₁₀ sweep rate", "yLabel": "P", "yr": [0.4, 1.02]}
+            grid = b.centre + b.width * np.linspace(-3, 3, 121)
+            right = {"curves": [{"pts": _pts(grid, b.profile(grid, 0.0, raw["c_star"]))}], "xLabel": b.a,
+                     "yLabel": f"{b.x}*", "levels": [0]}
+            title = "Probability of the favoured state against the sweep rate, and the reference profile of the units"
+            legend = (f"Left: at N = {N:g} and the bias h = {_num(h)}, a symmetric sample (solid) follows the swept "
+                      f"law and gains accuracy as the sweep slows; a random sample (dashed) carries a frozen bias of "
+                      f"spread {_num(row['s_frozen'] or raw['frozen_per_sqrtN'] / np.sqrt(N))} and hardly depends on "
+                      f"the rate. Right: the stationary unit x*(a) at the threshold C* = {_num(red['c_star'])}.")
+        else:
+            facts.update(b=_num(red["b"]), P_linear=f"{row['P_linear']:.3f}", Lambda=_num(row["Lambda"]),
+                         window=_num(row["window"]))
+            zs = [r["z"] for r in first]
+            ratio = np.mean([norm.ppf(r["P"]) / r["z"] for r in first]) if first else 1.0
+            zz = np.linspace(0, 2.0, 41)
+            left = {"curves": [{"pts": _pts(zz, norm.cdf(ratio * zz))}, {"pts": _pts(zz, norm.cdf(zz)), "dash": True}],
+                    "xLabel": "z (bias in units of the spread of the closed form)", "yLabel": "P", "yr": [0.45, 1.02],
+                    "dots": _pts(zs, [r["P"] for r in first])}
+            b = pop.body
+            cs = np.linspace(pop.sweep_from, pop.sweep_to, 61)
+            y = raw["y_sym"]
+            lam = []
+            for c in cs:
+                y = b.steady(y, c)
+                lam.append(float(np.linalg.eigvals(b.jac(y, c)).real.max()))
+            right = {"curves": [{"pts": _pts(cs, lam)}], "xLabel": b.control, "yLabel": "λ", "levels": [0],
+                     "marks": [red["c_star"]]}
+            title = "Probability of the favoured state against the bias, and the critical eigenvalue through the sweep"
+            legend = (f"Left: P against the bias z for the rate {_num(r0)} (solid: along the actual passage; dashed: "
+                      f"the closed form Φ(z)); the dots are the protocol's conditions. Right: the largest eigenvalue at "
+                      f"the symmetric state through the sweep of {b.control}; it crosses zero at {_num(red['c_star'])}.")
+    else:
+        st = pr["_step"]
+        ex = st["exponent"]
+        facts.update(c_star=_num(red["c_star"]), d=str(pr["d"]), rate_end=_num(pr["rate_end"]),
+                     window_law=f"ln {passage_q(pr['d']):.4g} = {pr['window_law']:.4f}")
+        left = {"curves": [{"pts": _pts(ex.t, ex.L)}], "xLabel": "t", "yLabel": "Λ = ∫λ dt", "levels": [0]}
+        right = {"curves": [{"pts": _pts(ex.t, ex.lam)}], "xLabel": "t", "yLabel": "λ", "levels": [0]}
+        title = "Growth exponent of the unstable mode after the step, and its rate"
+        legend = (f"Left: Λ(t) = ∫λ dt along the mean trajectory after the step of {pop.body.control} from "
+                  f"{_num(pop.step_from)} to {_num(pop.step_to)}; the 10–90% window of passage times spans "
+                  f"{pr['window_law']:.3f} in Λ (d = {pr['d']}). Right: the rate λ(t) of the leading "
+                  f"{'mode' if pr['d'] == 1 else 'pair'}, which reaches {_num(pr['rate_end'])}.")
+    return {"id": node["id"], "family": "decision", "name": node["name_html"], "field": spec.get("field", ""),
+            "class": pr["class"], "facts": facts, "question": spec.get("question"),
+            "assumptions": spec.get("assumptions", []),
+            "engine": {"kind": "decision", "left": _series(left), "right": _series(right), "title": title,
+                       "legend": legend},
+            "slots": decision_slots(spec, pop)}
+
+
+def _series(d: Dict) -> Dict:
+    """Panel options of the page's series plot (views.series) from a decision panel: curves (solid, dashed or dots),
+    horizontal levels, a vertical mark drawn as a narrow window, and the range of x."""
+    curves = [{"pts": c["pts"], **({"dash": [5, 4]} if c.get("dash") else {})} for c in d["curves"]]
+    if d.get("dots"):
+        curves.append({"pts": d["dots"], "dots": True})
+    xs = [p[0] for c in curves for p in c["pts"]]
+    x0, x1 = (min(xs), max(xs)) if xs else (0.0, 1.0)
+    out = {"t0": x0, "tMax": x1 if x1 > x0 else x0 + 1.0, "curves": curves, "xLabel": d.get("xLabel", ""),
+           "yLabel": d.get("yLabel", ""), "levels": [{"y": float(y)} for y in d.get("levels", [])]}
+    if d.get("yr"):
+        out["yr"] = d["yr"]
+    marks = [m for m in d.get("marks", []) if m is not None]
+    if marks:
+        half = 0.004 * (x1 - x0)
+        out["window"] = [float(marks[0]) - half, float(marks[0]) + half]
+    return out
+
+
+def passage_q(d: int) -> float:
+    from .decision.passage import q_ratio
+    return q_ratio(d)
+
+
+def decision_slots(spec: Dict, pop) -> Dict[str, str]:
+    b = pop.body
+    params = [k for k in (spec.get("parameters") or {}) if k not in (getattr(b, "control", None),
+                                                                      getattr(b, "bias", None))]
+    if pop.kind == "oscillators":
+        omega = f"the unit {', '.join(b.real.variables)}, coupled through {b.through} on {b.acting_on}"
+        xi = f"limit-cycle units with a Gaussian spread of {b.param}"
+        P = f"coupling K = {', '.join(_num(f) for f in b.factors)} K_c"
+        R = "the amplitude of the mean field at the reference frequency"
+    elif pop.kind == "units":
+        omega = f"each unit: {b.drift_text[0]}"
+        xi = f"N units {b.x} with a Gaussian {b.a} (width {_num(b.width)}), coupled through their mean {b.mean}"
+        P = f"{b.control} swept from {_num(pop.sweep_from)} to {_num(pop.sweep_to)}; {pop.sample} sample"
+        R = f"the sign of the mean {b.mean} at the end"
+    else:
+        omega = f"the mean-field drift of {', '.join(b.variables)}"
+        xi = f"{b.n} collective variables; noise of the {b.noise_kind} falling as 1/{b.size}"
+        P = (f"{b.control} swept from {_num(pop.sweep_from)} to {_num(pop.sweep_to)}" if pop.target ==
+             "collective-write" else f"{b.control} stepped from {_num(pop.step_from)} to {_num(pop.step_to)}")
+        R = ("the sign of the critical coordinate at the end" if pop.target == "collective-write" else
+             f"the first time the unstable mode exceeds {_num(pop.threshold)}")
+    return {"Omega": omega, "Xi": xi,
+            "C": "; ".join(spec.get("assumptions", [])[:1])[:120] or "as in the source", "R": R, "P": P,
+            "A": ", ".join(f"{k} = {_num(spec['parameters'][k])}" for k in params[:6]) + (" …" if len(params) > 6
+                                                                                           else "") or "—"}
+
+
 # ------------------------------------------------------------------------------------------------ edges
 def _numeric_drift(spec: Dict) -> Callable[[np.ndarray, Dict[str, float]], np.ndarray]:
     from .memory import spec as mspec
@@ -956,6 +1122,8 @@ def _same_carrier(a: Dict, b: Dict) -> bool:
     if a["family"] == "hysterons":
         ha, hb = a["spec"]["hysterons"], b["spec"]["hysterons"]
         return ha.get("lattice") == hb.get("lattice") and ha.get("units") == hb.get("units")
+    if a["family"] == "decision":
+        return a["spec"].get("kind") == b["spec"].get("kind") and a["spec"].get("carrier") == b["spec"].get("carrier")
     if a["family"] == "heredity":
         key = {"equations": "carrier", "field": "cells", "chain": "chain"}.get(a["spec"].get("body"))
         return a["spec"].get("body") == b["spec"].get("body") and a["spec"].get(key) == b["spec"].get(key)
@@ -1140,6 +1308,17 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
                 raise fail(f"a change of {slot} keeps the {key} of the computation block")
         if kind not in ("param", "term"):
             raise fail(f"no check for {kind} on a driven realization")
+    if a["family"] == "decision":
+        if kind != "protocol":
+            raise fail(f"no check for {kind} on a population")
+        meta = ("name", "question", "assumptions", "provenance", "expect", "target", "protocol")
+        if {k: v for k, v in a["spec"].items() if k not in meta} != {k: v for k, v in b["spec"].items() if k not in meta}:
+            raise fail("a change of P keeps the population")
+        pa, pb = a["spec"].get("protocol", {}), b["spec"].get("protocol", {})
+        diff = sorted(k for k in set(pa) | set(pb) if pa.get(k) != pb.get(k))
+        if not diff:
+            raise fail("a change of P changes the protocol")
+        return f"the populations are the same; the protocol differs in its {', '.join(diff)}"
     if a["family"] == "heredity":
         la, lb = a["spec"]["lineage"], b["spec"]["lineage"]
         if kind != "protocol":
@@ -1332,6 +1511,8 @@ def build(root: Path = ROOT, law: bool = False, only: Optional[Iterable[str]] = 
             records[nid] = computation_record(node)
         elif fam == "heredity":
             records[nid] = heredity_record(node)
+        elif fam == "decision":
+            records[nid] = decision_record(node)
         else:
             records[nid] = stochastic_record(node)
         rec = records[nid]
