@@ -166,9 +166,9 @@ MECHANISMS = {
     # unstable state from the seed of its own fluctuations
     "synchronizes": {"canonical": "2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω]",
                      "text": "Limit-cycle units with a spread of frequencies, coupled through an observable. Reduced to "
-                             "phases, they lose incoherence at the coupling K<sub>c</sub> set by the density g(ω) and the "
-                             "first harmonic of the coupling function H, and synchrony grows at the rate of the unstable "
-                             "root.", "node": "dec_van_der_pol"},
+                             "phases, they lose incoherence at a critical coupling set by the density g(ω) of their "
+                             "frequencies and the first harmonic of the coupling function H, and synchrony grows at "
+                             "the rate of the unstable root.", "node": "dec_van_der_pol"},
     "no-onset": {"canonical": "b<sub>1</sub> = 0: the dispersion relation has no root inside the band",
                  "text": "The first harmonic of the coupling function has no sine part: the coupling only shifts the "
                          "frequencies, and no coupling makes the incoherent state unstable.", "node": "dec_josephson"},

@@ -317,3 +317,13 @@ def test_a_small_site_builds_and_its_sequences_are_complete(tmp_path):
     html = publish_assets(tmp_path).read_text(encoding="utf-8")
     assert "site/expression.js?v=" in html and "site/data.js?v=" in html
     assert "<select" not in html  # no list of models to choose from
+
+
+def test_class_names_are_plain_text():
+    # the page inserts class names and the labels of absent outcomes as text (textContent, titles): no markup
+    for k, v in reg.CLASSES.items():
+        assert "<" not in v and "&" not in v, k
+    for k, v in reg.CLASS_SHORT.items():
+        assert "<" not in v, k
+    for k, (label, reason) in reg.CLASS_ABSENT.items():
+        assert "<" not in label and "<" not in reason, k

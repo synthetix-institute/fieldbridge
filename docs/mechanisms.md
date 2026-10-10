@@ -307,7 +307,7 @@ Canonical form: the halves differ in a conserved amount that sets L<sub>c</sub>.
 
 ### Synchronizes above a critical coupling
 
-Canonical form: 2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω]. Limit-cycle units with a spread of frequencies, coupled through an observable. Reduced to phases, they lose incoherence at the coupling K<sub>c</sub> set by the density g(ω) and the first harmonic of the coupling function H, and synchrony grows at the rate of the unstable root.
+Canonical form: 2/K<sub>c</sub> = (b<sub>1</sub> − i a<sub>1</sub>) [π g(Ω) − i PV∫g(ω)/(ω − Ω) dω]. Limit-cycle units with a spread of frequencies, coupled through an observable. Reduced to phases, they lose incoherence at a critical coupling set by the density g(ω) of their frequencies and the first harmonic of the coupling function H, and synchrony grows at the rate of the unstable root.
 
 - **Defined:** [Decision 1, §2](tutorial/32_decision_population.md#2-synchronization), the onset of synchrony from the dispersion relation of the reduced population.
 - **Derived:** [Decision 1, §5](tutorial/32_decision_population.md#5-running-the-command), the reduction of a unit to g(ω) and H, and K_c; [Decision 1, §7](tutorial/32_decision_population.md#7-the-published-populations), full units in five fields against the growth rate of the reduction. Code: `decision.oscillators.Oscillators.reduce`, `onset.critical_coupling`, `onset.growth_rate`.
