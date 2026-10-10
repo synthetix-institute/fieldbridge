@@ -327,3 +327,9 @@ def test_class_names_are_plain_text():
         assert "<" not in v, k
     for k, (label, reason) in reg.CLASS_ABSENT.items():
         assert "<" not in label and "<" not in reason, k
+
+
+def test_placeholders_with_capitals_are_filled():
+    # facts such as L_c, P_body and K_c are named with capitals; the texts of edges and sequences refer to them
+    out = sd.fill("born at {L_birth}, below L_c = {L_c}; P = {P}", {"L_birth": 0.75, "L_c": 1.0, "P": "0.787"})
+    assert "{" not in out and "0.787" in out

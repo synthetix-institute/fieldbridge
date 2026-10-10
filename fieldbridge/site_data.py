@@ -75,7 +75,7 @@ def _num(v, spec: str = "") -> str:
     return str(v)
 
 
-PLACEHOLDER = re.compile(r"\{(from\.)?([a-z_0-9]+)(?::([^}]+))?\}")
+PLACEHOLDER = re.compile(r"\{(from\.)?([A-Za-z_0-9]+)(?::([^}]+))?\}")  # facts such as L_c, P_body, K_c
 
 
 def fill(text: str, facts: Dict, facts_from: Optional[Dict] = None, strict: bool = True) -> str:
@@ -1067,6 +1067,14 @@ def _series(d: Dict) -> Dict:
     return out
 
 
+def _clip(text: str, n: int = 140) -> str:
+    """A text cut at a word boundary before n characters, with an ellipsis when it is cut."""
+    text = str(text)
+    if len(text) <= n:
+        return text
+    return text[:n].rsplit(" ", 1)[0].rstrip(",;:") + " …"
+
+
 def passage_q(d: int) -> float:
     from .decision.passage import q_ratio
     return q_ratio(d)
@@ -1088,13 +1096,14 @@ def decision_slots(spec: Dict, pop) -> Dict[str, str]:
         R = f"the sign of the mean {b.mean} at the end"
     else:
         omega = f"the mean-field drift of {', '.join(b.variables)}"
-        xi = f"{b.n} collective variables; noise of the {b.noise_kind} falling as 1/{b.size}"
+        xi = (f"{b.n} collective variable{'s' if b.n > 1 else ''}; noise of the {b.noise_kind} falling as "
+              f"1/{b.size}")
         P = (f"{b.control} swept from {_num(pop.sweep_from)} to {_num(pop.sweep_to)}" if pop.target ==
              "collective-write" else f"{b.control} stepped from {_num(pop.step_from)} to {_num(pop.step_to)}")
         R = ("the sign of the critical coordinate at the end" if pop.target == "collective-write" else
              f"the first time the unstable mode exceeds {_num(pop.threshold)}")
-    return {"Omega": omega, "Xi": xi,
-            "C": "; ".join(spec.get("assumptions", [])[:1])[:120] or "as in the source", "R": R, "P": P,
+    return {"Omega": omega, "Xi": xi, "C": _clip(spec.get("closure") or (spec.get("assumptions") or ["as in the source"])[0]),
+            "R": R, "P": P,
             "A": ", ".join(f"{k} = {_num(spec['parameters'][k])}" for k in params[:6]) + (" …" if len(params) > 6
                                                                                            else "") or "—"}
 
