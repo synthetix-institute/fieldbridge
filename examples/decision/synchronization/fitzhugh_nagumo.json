@@ -1,0 +1,60 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "oscillators",
+  "target": "synchronization",
+  "name": "Population of fitzHugh-Nagumo neuron",
+  "field": "neuroscience",
+  "question": "At which coupling, and how fast, does a population of these units synchronize?",
+  "assumptions": [
+    "the unit of examples/memory/oscillators/fitzhugh_nagumo.json at cur = 0.5",
+    "a Gaussian spread of cur that spreads the frequencies by 1% of their mean",
+    "all-to-all diffusive coupling through v acting on v"
+  ],
+  "provenance": {
+    "source": "FitzHugh, Biophys. J. 1, 445 (1961)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "membrane potential and recovery variable",
+    "variables": [
+      "v",
+      "w"
+    ],
+    "scale": 2.0
+  },
+  "parameters": {
+    "a": 0.7,
+    "b": 0.8,
+    "eps": 0.08,
+    "cur": 0.5
+  },
+  "drift": {
+    "v": "v - v**3/3 - w + cur",
+    "w": "eps*(v + a - b*w)"
+  },
+  "control": {
+    "name": "cur",
+    "range": [
+      0.0,
+      1.0
+    ]
+  },
+  "population": {
+    "heterogeneity": {
+      "parameter": "cur",
+      "density": "gaussian",
+      "centre": 0.5,
+      "spread": 0.01
+    },
+    "coupling": {
+      "through": "v",
+      "acting_on": "v",
+      "factors": [
+        1.5,
+        2.5
+      ]
+    }
+  },
+  "expect": "synchronizes"
+}

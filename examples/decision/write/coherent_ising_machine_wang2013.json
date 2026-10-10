@@ -1,0 +1,77 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "collective-write",
+  "name": "Coherent Ising machine of degenerate parametric oscillators",
+  "field": "photonics",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "all-to-all ferromagnetic coupling xi0/(N - 1), xi0 = 0.6, so the in-phase mode crosses its threshold at p* = 1 - xi0 for every N; m is the mean in-phase amplitude, the transverse modes are damped at xi0",
+    "the vacuum and pump noise (1/As) (c^2 + s^2 + 1/2)^(1/2) of each oscillator, averaged over N",
+    "As = 100 (g = 0.01 of Maruo, Utsunomiya and Yamamoto, Phys. Scr. 91, 083010, 2016)",
+    "the pump ramped at 7.5e-3 (Maruo et al.) and a quarter of it; a uniform injection h as the bias (the source has none)"
+  ],
+  "provenance": {
+    "source": "Z. Wang, A. Marandi, K. Wen, R. L. Byer and Y. Yamamoto, Phys. Rev. A 88, 063853 (2013); normalized truncated-Wigner equations of Y. Haribara, S. Utsunomiya, K. Kawarabayashi and Y. Yamamoto, arXiv:1501.07030, eqs. (3), (4), (8)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "in-phase amplitude of the network",
+    "variables": [
+      "m"
+    ]
+  },
+  "parameters": {
+    "p": 0.4,
+    "h": 0.0,
+    "xi0": 0.6,
+    "As": 100.0,
+    "Npop": 128.0
+  },
+  "drift": {
+    "m": "(-1 + p + xi0 - m**2)*m + h"
+  },
+  "population": {
+    "size": "Npop",
+    "control": {
+      "name": "p",
+      "range": [
+        0.0,
+        0.8
+      ]
+    },
+    "bias": {
+      "name": "h"
+    },
+    "symmetric_state": [
+      0.0
+    ],
+    "noise": {
+      "variance": {
+        "m": "(m**2 + 1/2)/As**2"
+      }
+    }
+  },
+  "protocol": {
+    "sweep": {
+      "from": -0.1,
+      "to": 0.9,
+      "rates": [
+        0.0075,
+        0.001875
+      ]
+    },
+    "sizes": [
+      16,
+      128,
+      1024
+    ],
+    "z": [
+      0.4,
+      0.8,
+      1.2
+    ]
+  },
+  "expect": "follows-the-bias"
+}

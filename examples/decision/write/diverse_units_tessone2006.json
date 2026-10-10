@@ -1,0 +1,65 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "units",
+  "target": "collective-write",
+  "name": "Globally coupled bistable units with Gaussian diversity",
+  "field": "nonlinear dynamics",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "eq. (1) of the source without the periodic forcing; the coupling C swept through C* = 1.358 at the diversity sigma = 1 (above sigma_c = 0.757 at C = 1)",
+    "an independent thermal noise D = 0.01 on every unit (the source neglects noise)",
+    "a uniform bias h (the source's <a> != 0)"
+  ],
+  "provenance": {
+    "source": "C. J. Tessone, C. R. Mirasso, R. Toral and J. D. Gunton, Phys. Rev. Lett. 97, 194101 (2006)",
+    "kind": "published model"
+  },
+  "parameters": {
+    "C": 1.2,
+    "h": 0.0
+  },
+  "population": {
+    "unit": {
+      "variable": "x",
+      "mean": "Xm",
+      "drift": "(1 - C)*x - x**3 + a + C*Xm + h"
+    },
+    "heterogeneity": {
+      "parameter": "a",
+      "density": "gaussian",
+      "centre": 0.0,
+      "width": 1.0
+    },
+    "control": {
+      "name": "C",
+      "range": [
+        1.05,
+        2.0
+      ]
+    },
+    "bias": {
+      "name": "h"
+    },
+    "noise": 0.01
+  },
+  "protocol": {
+    "sweep": {
+      "from": 1.05,
+      "to": 1.958,
+      "rates": [
+        0.02716,
+        0.00679
+      ]
+    },
+    "sizes": [
+      200,
+      800
+    ],
+    "z": [
+      0.4,
+      0.8
+    ],
+    "sample": "quantiles"
+  },
+  "expect": "follows-the-bias"
+}

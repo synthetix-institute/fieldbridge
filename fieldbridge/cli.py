@@ -308,35 +308,9 @@ def build_parser() -> argparse.ArgumentParser:
     mechanisms.add_argument("--out", default="docs/mechanisms.md")
     mechanisms.set_defaults(func=cmd_mechanisms)
 
-    try:  # the memory constructor needs the memory extra; the rest of the program does not
-        from .memory.cli import add_parser as add_memory_parser
-        add_memory_parser(sub)
-    except ImportError:
-        pass
-
-    try:  # the quantum language needs numpy and sympy (the construction extra)
-        from .quantum.cli import add_parser as add_quantum_parser
-        add_quantum_parser(sub)
-    except ImportError:
-        pass
-
-    try:  # the regulation module reads its bodies with the memory parser (the memory extra)
-        from .regulation.cli import add_parser as add_regulation_parser
-        add_regulation_parser(sub)
-    except ImportError:
-        pass
-
-    try:  # the computation module reads its bodies with the memory parser (the memory extra)
-        from .computation.cli import add_parser as add_computation_parser
-        add_computation_parser(sub)
-    except ImportError:
-        pass
-
-    try:  # the heredity module reads its bodies with the memory parser (the memory extra)
-        from .heredity.cli import add_parser as add_heredity_parser
-        add_heredity_parser(sub)
-    except ImportError:
-        pass
+    # the module families (fieldbridge/core/modules.py); a family whose extra is not installed is left out
+    from .core.modules import mount
+    mount(sub)
 
     try:  # the demo calculates with the memory and quantum packages (the memory extra)
         from .demo import add_parser as add_demo_parser

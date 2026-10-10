@@ -1,0 +1,58 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "oscillators",
+  "target": "synchronization",
+  "name": "Population of brusselator",
+  "field": "chemical kinetics",
+  "question": "At which coupling, and how fast, does a population of these units synchronize?",
+  "assumptions": [
+    "the unit of examples/memory/oscillators/brusselator.json at b = 3",
+    "a Gaussian spread of b that spreads the frequencies by 1% of their mean",
+    "all-to-all diffusive coupling through u acting on u"
+  ],
+  "provenance": {
+    "source": "Prigogine and Lefever, J. Chem. Phys. 48, 1695 (1968)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentrations of the two intermediates",
+    "variables": [
+      "u",
+      "v"
+    ],
+    "scale": 4.0
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 3.0
+  },
+  "drift": {
+    "u": "a - (b + 1)*u + u**2*v",
+    "v": "b*u - u**2*v"
+  },
+  "control": {
+    "name": "b",
+    "range": [
+      1.0,
+      4.0
+    ]
+  },
+  "population": {
+    "heterogeneity": {
+      "parameter": "b",
+      "density": "gaussian",
+      "centre": 3.0,
+      "spread": 0.01
+    },
+    "coupling": {
+      "through": "u",
+      "acting_on": "u",
+      "factors": [
+        1.5,
+        2.5
+      ]
+    }
+  },
+  "expect": "synchronizes"
+}

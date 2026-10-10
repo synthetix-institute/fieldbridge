@@ -1,0 +1,69 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "seeded-passage",
+  "name": "Uniaxial macrospin after the field is reversed",
+  "field": "magnetism",
+  "question": "After a step that makes the collective state unstable, how long does the population take to leave it, and with what spread?",
+  "assumptions": [
+    "the transverse components mx, my of a unit magnetization along the easy axis z; mz = (1 - mx^2 - my^2)^(1/2) on the upper hemisphere",
+    "Landau-Lifshitz damping alpha = 0.1; the field h (in units of the anisotropy field) antiparallel to the axis",
+    "Brown's thermal noise: variance alpha / Delta per component per unit time, Delta = KV/kT the thermal stability factor (it plays N)"
+  ],
+  "provenance": {
+    "source": "E. C. Stoner and E. P. Wohlfarth, Phil. Trans. R. Soc. A 240, 599 (1948); W. F. Brown, Phys. Rev. 130, 1677 (1963)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "transverse magnetization",
+    "variables": [
+      "mx",
+      "my"
+    ]
+  },
+  "parameters": {
+    "alpha": 0.1,
+    "hf": 0.0,
+    "Delta": 160.0
+  },
+  "drift": {
+    "mx": "-my*(sqrt(1 - mx**2 - my**2) - hf) - alpha*mx*sqrt(1 - mx**2 - my**2)*(sqrt(1 - mx**2 - my**2) - hf)",
+    "my": "mx*(sqrt(1 - mx**2 - my**2) - hf) - alpha*my*sqrt(1 - mx**2 - my**2)*(sqrt(1 - mx**2 - my**2) - hf)"
+  },
+  "population": {
+    "size": "Delta",
+    "control": {
+      "name": "hf",
+      "range": [
+        0.5,
+        1.5
+      ]
+    },
+    "symmetric_state": [
+      0.0,
+      0.0
+    ],
+    "noise": {
+      "variance": {
+        "mx": "alpha",
+        "my": "alpha"
+      }
+    }
+  },
+  "protocol": {
+    "step": {
+      "from": 0.0,
+      "to": 2.0
+    },
+    "threshold": 0.6,
+    "duration": 300.0,
+    "sizes": [
+      160,
+      640,
+      2560
+    ],
+    "dt": 0.005
+  },
+  "expect": "rotation-seed"
+}

@@ -1,0 +1,82 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "collective-write",
+  "name": "Mean-field Ising model with Glauber dynamics",
+  "field": "statistical physics",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "Curie-Weiss coupling K at temperature 1, swept through K* = 1",
+    "a uniform field h as the bias",
+    "y is the fraction of up spins; each spin flips with the Glauber rate"
+  ],
+  "provenance": {
+    "source": "R. J. Glauber, J. Math. Phys. 4, 294 (1963)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "fraction of up spins",
+    "variables": [
+      "y"
+    ]
+  },
+  "parameters": {
+    "K": 0.5,
+    "h": 0.0,
+    "Npop": 800.0
+  },
+  "population": {
+    "size": "Npop",
+    "control": {
+      "name": "K",
+      "range": [
+        0.5,
+        1.5
+      ]
+    },
+    "bias": {
+      "name": "h"
+    },
+    "symmetric_state": [
+      0.5
+    ],
+    "noise": {
+      "transitions": [
+        {
+          "change": {
+            "y": 1
+          },
+          "rate": "(1 - y)*(1 + tanh(K*(2*y - 1) + h))/2"
+        },
+        {
+          "change": {
+            "y": -1
+          },
+          "rate": "y*(1 - tanh(K*(2*y - 1) + h))/2"
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "sweep": {
+      "from": 0.5,
+      "to": 1.6,
+      "rates": [
+        0.02,
+        0.005
+      ]
+    },
+    "sizes": [
+      200,
+      800,
+      3200
+    ],
+    "z": [
+      0.4,
+      0.8,
+      1.2
+    ]
+  },
+  "expect": "follows-the-bias"
+}

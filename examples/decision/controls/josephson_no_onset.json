@@ -1,0 +1,54 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "oscillators",
+  "target": "synchronization",
+  "name": "Population of overdamped Josephson junctions coupled through the supercurrent",
+  "field": "superconductivity",
+  "question": "Does any coupling through sin(phi) synchronize a population of overdamped junctions?",
+  "assumptions": [
+    "the unit of examples/memory/oscillators/josephson.json at the bias current 1.5",
+    "a Gaussian spread of the current that spreads the frequencies by 1%",
+    "all-to-all coupling through sin(phi) acting on phi: the first harmonic of H has b1 = 0, the in-phase state of a resistively loaded array is neutral (Tsang, Mirollo and Strogatz 1991)"
+  ],
+  "provenance": {
+    "source": "Stewart, Appl. Phys. Lett. 12, 277 (1968); McCumber, J. Appl. Phys. 39, 3113 (1968)",
+    "kind": "control"
+  },
+  "carrier": {
+    "kind": "torus",
+    "name": "phase difference across the junction",
+    "variables": [
+      "phi"
+    ],
+    "period": "2*pi"
+  },
+  "parameters": {
+    "cur": 1.5
+  },
+  "drift": {
+    "phi": "cur - sin(phi)"
+  },
+  "control": {
+    "name": "cur",
+    "range": [
+      0.0,
+      2.0
+    ]
+  },
+  "population": {
+    "heterogeneity": {
+      "parameter": "cur",
+      "density": "gaussian",
+      "centre": 1.5,
+      "spread": 0.01
+    },
+    "coupling": {
+      "through": "sin(phi)",
+      "acting_on": "phi",
+      "factors": [
+        1.5
+      ]
+    }
+  },
+  "expect": "no-onset"
+}

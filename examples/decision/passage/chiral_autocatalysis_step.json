@@ -1,0 +1,92 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "seeded-passage",
+  "name": "Chiral autocatalysis after a step of the substrate",
+  "field": "chemistry",
+  "question": "After a step that makes the collective state unstable, how long does the population take to leave it, and with what spread?",
+  "assumptions": [
+    "the content stepped from 0.5 c* to 1.5 c* by adding substrate",
+    "Om source volumes"
+  ],
+  "provenance": {
+    "source": "Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), eq. (5) with k1 = 0, Section 5 parameters",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentrations of the two enantiomers",
+    "variables": [
+      "r",
+      "s"
+    ]
+  },
+  "parameters": {
+    "k0": 1.0,
+    "k2": 0.004,
+    "lam": 1.0,
+    "c": 40.0,
+    "eps": 0.0,
+    "Om": 64.0
+  },
+  "population": {
+    "size": "Om",
+    "control": {
+      "name": "c",
+      "range": [
+        20.0,
+        80.0
+      ]
+    },
+    "bias": {
+      "name": "eps"
+    },
+    "symmetric_state": [
+      10.0,
+      10.0
+    ],
+    "noise": {
+      "transitions": [
+        {
+          "change": {
+            "r": 1
+          },
+          "rate": "(k0*(1 + eps) + k2*r**2)*(c - r - s)"
+        },
+        {
+          "change": {
+            "s": 1
+          },
+          "rate": "(k0*(1 - eps) + k2*s**2)*(c - r - s)"
+        },
+        {
+          "change": {
+            "r": -1
+          },
+          "rate": "lam*r"
+        },
+        {
+          "change": {
+            "s": -1
+          },
+          "rate": "lam*s"
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "step": {
+      "from": 19.76,
+      "to": 59.29
+    },
+    "threshold": 2.0,
+    "duration": 60.0,
+    "sizes": [
+      256,
+      1024,
+      4096
+    ],
+    "dt": 0.01
+  },
+  "expect": "reflection-seed"
+}

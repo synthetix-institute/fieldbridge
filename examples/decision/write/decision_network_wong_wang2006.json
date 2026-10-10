@@ -1,0 +1,107 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "collective-write",
+  "name": "Decision network of two neural pools",
+  "field": "neuroscience",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "each selective pool is Npop independent two-state NMDA gates that open at gam H(x) and close at 1/tau: the source's mean equations, with the gates' own noise in place of its fitted Ornstein-Uhlenbeck current",
+    "the stimulus to pool 2 with 1 - c' (printed with + c' in the PMC rendering)",
+    "time in s, rates in Hz",
+    "the stimulus mu0 ramped from 0 to 25 Hz (the source switches it on at once); the spontaneous state loses stability at mu0* = 10.7 Hz in a subcritical pitchfork"
+  ],
+  "provenance": {
+    "source": "K.-F. Wong and X.-J. Wang, J. Neurosci. 26, 1314 (2006), Appendix (reduced model without AMPA at recurrent synapses)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "NMDA gating of the two selective pools",
+    "variables": [
+      "S1",
+      "S2"
+    ]
+  },
+  "parameters": {
+    "a": 270.0,
+    "b": 108.0,
+    "d": 0.154,
+    "gam": 0.641,
+    "tau": 0.1,
+    "J11": 0.2609,
+    "J12": 0.0497,
+    "I0": 0.3255,
+    "Jext": 0.00052,
+    "mu0": 10.0,
+    "coh": 0.0,
+    "Npop": 16000.0
+  },
+  "population": {
+    "size": "Npop",
+    "control": {
+      "name": "mu0",
+      "range": [
+        5.0,
+        20.0
+      ]
+    },
+    "bias": {
+      "name": "coh"
+    },
+    "symmetric_state": [
+      0.14,
+      0.14
+    ],
+    "noise": {
+      "transitions": [
+        {
+          "change": {
+            "S1": 1
+          },
+          "rate": "(1 - S1)*gam*(a*(J11*S1 - J12*S2 + I0 + Jext*mu0*(1 + coh)) - b)/(1 - exp(-d*(a*(J11*S1 - J12*S2 + I0 + Jext*mu0*(1 + coh)) - b)))"
+        },
+        {
+          "change": {
+            "S1": -1
+          },
+          "rate": "S1/tau"
+        },
+        {
+          "change": {
+            "S2": 1
+          },
+          "rate": "(1 - S2)*gam*(a*(J11*S2 - J12*S1 + I0 + Jext*mu0*(1 - coh)) - b)/(1 - exp(-d*(a*(J11*S2 - J12*S1 + I0 + Jext*mu0*(1 - coh)) - b)))"
+        },
+        {
+          "change": {
+            "S2": -1
+          },
+          "rate": "S2/tau"
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "sweep": {
+      "from": 0.0,
+      "to": 25.0,
+      "rates": [
+        5.0,
+        1.25
+      ]
+    },
+    "sizes": [
+      4000,
+      16000,
+      64000
+    ],
+    "z": [
+      0.4,
+      0.8,
+      1.2
+    ],
+    "dt": 0.001
+  },
+  "expect": "follows-the-bias"
+}

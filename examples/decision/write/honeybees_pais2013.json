@@ -1,0 +1,97 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "collective-write",
+  "name": "Honeybee nest-site choice with stop signals",
+  "field": "animal behaviour",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "eq. (1) of the source without its sensory noise: gamma_i = rho_i = v_i, alpha_i = 1/v_i, v = 5, v_A = v + dv/2, v_B = v - dv/2 (dv the bias)",
+    "the demographic noise of N scouts in place of the sensory noise",
+    "the stop-signal rate sigma is swept through sigma* = 4v^3/(v^2 - 1)^2"
+  ],
+  "provenance": {
+    "source": "D. Pais et al., PLoS ONE 8, e73216 (2013); T. D. Seeley et al., Science 335, 108 (2012)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "fractions of scouts committed to A and to B",
+    "variables": [
+      "yA",
+      "yB"
+    ]
+  },
+  "parameters": {
+    "v": 5.0,
+    "dv": 0.0,
+    "sigma": 0.5,
+    "Npop": 800.0
+  },
+  "population": {
+    "size": "Npop",
+    "control": {
+      "name": "sigma",
+      "range": [
+        0.3,
+        2.0
+      ]
+    },
+    "bias": {
+      "name": "dv"
+    },
+    "symmetric_state": [
+      0.3,
+      0.3
+    ],
+    "noise": {
+      "transitions": [
+        {
+          "change": {
+            "yA": 1
+          },
+          "rate": "(1 - yA - yB)*((v + dv/2) + (v + dv/2)*yA)"
+        },
+        {
+          "change": {
+            "yB": 1
+          },
+          "rate": "(1 - yA - yB)*((v - dv/2) + (v - dv/2)*yB)"
+        },
+        {
+          "change": {
+            "yA": -1
+          },
+          "rate": "yA*(1/(v + dv/2) + sigma*yB)"
+        },
+        {
+          "change": {
+            "yB": -1
+          },
+          "rate": "yB*(1/(v - dv/2) + sigma*yA)"
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "sweep": {
+      "from": 0.434,
+      "to": 1.389,
+      "rates": [
+        0.01736,
+        0.00434
+      ]
+    },
+    "sizes": [
+      200,
+      800,
+      3200
+    ],
+    "z": [
+      0.4,
+      0.8,
+      1.2
+    ]
+  },
+  "expect": "follows-the-bias"
+}

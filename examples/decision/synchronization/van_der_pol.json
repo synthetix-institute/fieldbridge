@@ -1,0 +1,58 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "oscillators",
+  "target": "synchronization",
+  "name": "Population of van der Pol oscillator",
+  "field": "electronics",
+  "question": "At which coupling, and how fast, does a population of these units synchronize?",
+  "assumptions": [
+    "the unit of examples/memory/oscillators/van_der_pol.json at mu = 1",
+    "a Gaussian spread of mu that spreads the frequencies by 1% of their mean",
+    "all-to-all diffusive coupling through y acting on y"
+  ],
+  "provenance": {
+    "source": "van der Pol, Phil. Mag. 2, 978 (1926)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "voltage and its rate of change",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 2.0
+  },
+  "parameters": {
+    "mu": 1.0,
+    "bias": 0.0
+  },
+  "drift": {
+    "x": "y",
+    "y": "mu*(1 - x**2)*y - x + bias"
+  },
+  "control": {
+    "name": "bias",
+    "range": [
+      -0.5,
+      0.5
+    ]
+  },
+  "population": {
+    "heterogeneity": {
+      "parameter": "mu",
+      "density": "gaussian",
+      "centre": 1.0,
+      "spread": 0.01
+    },
+    "coupling": {
+      "through": "y",
+      "acting_on": "y",
+      "factors": [
+        1.5,
+        2.5
+      ]
+    }
+  },
+  "expect": "synchronizes"
+}

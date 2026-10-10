@@ -1,0 +1,60 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "oscillators",
+  "target": "synchronization",
+  "name": "Population of goodwin clock",
+  "field": "chronobiology",
+  "question": "At which coupling, and how fast, does a population of these units synchronize?",
+  "assumptions": [
+    "the unit of examples/memory/oscillators/goodwin.json at tr = 10",
+    "a Gaussian spread of tr that spreads the frequencies by 0.25% of their mean",
+    "all-to-all diffusive coupling through m acting on m"
+  ],
+  "provenance": {
+    "source": "Goodwin, Adv. Enzyme Regul. 3, 425 (1965)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "mRNA, protein and repressor",
+    "variables": [
+      "m",
+      "p",
+      "r"
+    ],
+    "scale": 3.0
+  },
+  "parameters": {
+    "tr": 10.0,
+    "hill": 10.0
+  },
+  "drift": {
+    "m": "tr/(1 + r**hill) - m",
+    "p": "m - p",
+    "r": "p - r"
+  },
+  "control": {
+    "name": "tr",
+    "range": [
+      2.0,
+      20.0
+    ]
+  },
+  "population": {
+    "heterogeneity": {
+      "parameter": "tr",
+      "density": "gaussian",
+      "centre": 10.0,
+      "spread": 0.0025
+    },
+    "coupling": {
+      "through": "m",
+      "acting_on": "m",
+      "factors": [
+        1.5,
+        2.5
+      ]
+    }
+  },
+  "expect": "synchronizes"
+}

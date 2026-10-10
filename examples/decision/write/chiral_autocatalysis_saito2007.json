@@ -1,0 +1,99 @@
+{
+  "schema": "fieldbridge-decision/1",
+  "kind": "collective",
+  "target": "collective-write",
+  "name": "Chiral autocatalysis with recycling",
+  "field": "chemistry",
+  "question": "How accurately does the population follow a weak bias when it is swept through its collective threshold, for N units and a given sweep rate?",
+  "assumptions": [
+    "the content c (substrate plus both enantiomers per source volume) rises through the racemic threshold c* = 39.53 by a supply of substrate",
+    "a chiral bias of the spontaneous step, k0 (1 +- eps)",
+    "Om source volumes: the counts are Om times the concentrations"
+  ],
+  "provenance": {
+    "source": "Y. Saito, T. Sugimori and H. Hyuga, J. Phys. Soc. Jpn. 76, 044802 (2007), eq. (5) with k1 = 0, Section 5 parameters",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentrations of the two enantiomers",
+    "variables": [
+      "r",
+      "s"
+    ]
+  },
+  "parameters": {
+    "k0": 1.0,
+    "k2": 0.004,
+    "lam": 1.0,
+    "c": 40.0,
+    "eps": 0.0,
+    "Om": 64.0
+  },
+  "population": {
+    "size": "Om",
+    "control": {
+      "name": "c",
+      "range": [
+        20.0,
+        80.0
+      ]
+    },
+    "bias": {
+      "name": "eps"
+    },
+    "symmetric_state": [
+      10.0,
+      10.0
+    ],
+    "noise": {
+      "transitions": [
+        {
+          "change": {
+            "r": 1
+          },
+          "rate": "(k0*(1 + eps) + k2*r**2)*(c - r - s)"
+        },
+        {
+          "change": {
+            "s": 1
+          },
+          "rate": "(k0*(1 - eps) + k2*s**2)*(c - r - s)"
+        },
+        {
+          "change": {
+            "r": -1
+          },
+          "rate": "lam*r"
+        },
+        {
+          "change": {
+            "s": -1
+          },
+          "rate": "lam*s"
+        }
+      ]
+    }
+  },
+  "protocol": {
+    "sweep": {
+      "from": 19.76,
+      "to": 63.25,
+      "rates": [
+        0.79,
+        0.198
+      ]
+    },
+    "sizes": [
+      16,
+      64,
+      256
+    ],
+    "z": [
+      0.4,
+      0.8,
+      1.2
+    ]
+  },
+  "expect": "follows-the-bias"
+}
