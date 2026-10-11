@@ -496,6 +496,30 @@ def test_a_ring_of_five_cells_is_written_into_a_degenerate_pair_found_by_the_car
     assert row["steps"][1]["eliminated_directions"] == 13
 
 
+def test_above_six_variables_a_ring_is_turned_and_reflected_cell_by_cell():
+    """The symmetries of a ring of four cells act on the three variables of every cell together: the group of the
+    square, with or without the reversal of every circulation (x, y -> -x, -y), 16 elements with the identity. Shifts
+    of the list of variables, the candidates tried before, are not among them. The reversal and the turn by one cell
+    both reverse the alternating mode that becomes critical at R = 1, so the derivation starts with S."""
+    from fieldbridge.memory import codiscovery as cd
+    real = ring_of_cells(4)
+    group = predict.symmetries(real, np.random.default_rng(0))
+    elements = {(tuple(g["permutation"]), tuple(g["signs"])) for g in group}
+    assert len(group) == 15 and len(elements) == 15
+    turn = tuple(4 * b + (i + 1) % 4 for b in range(3) for i in range(4))
+    assert (turn, (1,) * 12) in elements
+    assert (tuple(range(12)), (-1,) * 8 + (1,) * 4) in elements
+    assert (tuple(int(i) for i in np.roll(np.arange(12), 1)), (1,) * 12) not in elements
+    J = an.jacobian(real, np.zeros(12), {"R": 1.0})
+    ev, vecs = np.linalg.eig(J)
+    mode = np.real(vecs[:, np.argmin(np.abs(ev))])
+    sym = cd.reversing_symmetry(real, np.random.default_rng(0), mode)
+    assert sym is not None and cd.describe_symmetry(real, sym).startswith("reflection x0 -> -x0")
+    row = cd.derive_symmetric_write(real, np.random.default_rng(1), check_law=False)
+    assert row["status"] == "reached" and row["class"] == "S(reflection) C R(pitchfork) K"
+    assert row["write_point"]["value"] == pytest.approx(1.0, abs=1e-4)
+
+
 def test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle():
     from fieldbridge.memory import codiscovery as cd
     rep = cd.codiscover([load("laser"), load("toggle")], np.random.default_rng(5), n_traj=1000)

@@ -174,7 +174,10 @@ C[R] > R[degenerate critical mode: 2 directions; 13 directions eliminated]
 
 and the card of the same ring, at $R = 1.3$, samples ten stable states, $2N$, not the two of a pitchfork. A
 difference between the cells that splits the pair by more than the resolution leaves one critical direction, and R
-applies again.
+applies again. The web page shows the class with its canonical form, two components related by the symmetry of a
+square, $\dot z = \varepsilon z - |z|^2 z + g \bar z^3$ with $z = x + iy$: four stable states on the axes for
+$0 < g < 1$. Lowering the rate of one component by $d$ splits the pair, and the write becomes the pitchfork along the
+other.
 
 ## 6. Two invariants of the end point
 
@@ -208,11 +211,12 @@ precise test. The constant depends only on the canonical form. A derivation that
 ended on another mechanism, such as a fold, would give an accuracy that does not follow Eq. (3).
 
 The record of the [web page](https://synthetix-institute.github.io/fieldbridge/) uses 25,600 trajectories per
-realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.018. Nine realizations reach
+realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.021. Ten realizations reach
 the target; besides the two toggles, the normal form continued from below its write point simulates the equations of
-the normal form, so they are seven models. Their constants lie between 1.321 and 1.343 (the convection roll gives
-$1.333 \pm 0.014$), with a weighted mean of $1.334 \pm 0.005$ and $\chi^2 = 1.9$ for 7 values: the scatter between
-models is that of the statistical error.
+the normal form, so they are eight models. Their constants lie between 1.306 and 1.343 (the convection roll gives
+$1.333 \pm 0.014$, the two-component normal form with split rates of Section 5 $1.306 \pm 0.021$), with a weighted
+mean of $1.332 \pm 0.005$ and $\chi^2 = 3.4$ for 8 values: the scatter between models is that of the statistical
+error.
 With 400 trajectories the Schlögl reactor gave $1.04 \pm 0.11$; with 25,600 it gives $1.336 \pm 0.016$, so that
 value was a fluctuation. An earlier record drew all the trajectories of a constant from one stream, after the draws
 of the derivation, and counted the replicates as separate models; it gave $\chi^2 = 20$ for 8 values.
@@ -264,7 +268,7 @@ added as a function with the signature of `derive_symmetric_write` in the dictio
 - A derivation that stops names the responsible property: a Hopf bifurcation, a degenerate critical mode, a
   positive cubic term, a fold without a supercritical cusp, or a control that only rescales the drift.
 - Two invariants test that the end points are the same mechanism: the canonical form $-x^3$ with no even part, and
-  the constant of the write law, $1.334 \pm 0.005$ over seven models in the record of the web page, against
+  the constant of the write law, $1.332 \pm 0.005$ over eight models in the record of the web page, against
   $\pi^{1/4} = 1.331$.
 
 ## Reference

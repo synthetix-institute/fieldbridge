@@ -31,8 +31,9 @@ found are listed in [mechanisms](../mechanisms.md).
 | Subcritical pitchfork | $a_2 = 0$, $a_3 > 0$: the selected state is far from the symmetric one. |
 | Fold (saddle-node) | $a_2 \neq 0$: a state appears or disappears at a threshold; writing is one-sided. |
 | Hopf bifurcation | A complex pair of eigenvalues crosses zero; the state starts to oscillate and no stable state is selected. |
+| Degenerate critical mode | Two or more real eigenvalues cross zero together, because a symmetry makes them equal, as for the twisted modes of a ring of an odd number of cells. The critical eigenspace is a plane or larger, the normal form along one direction does not describe the write, and the write chooses one of the states that the symmetry arranges in that eigenspace (four for the symmetry of a square), not one of two. |
 | Cusp | A point in a plane of two parameters where $a_2$ vanishes; a sweep through it gives a symmetric write in a material whose single-parameter write is a fold. |
-| Obstruction | The terms by which a normal form differs from the supercritical pitchfork: $a_2$, a bias $a_0$, or a positive $a_3$. |
+| Obstruction | The terms by which a normal form differs from the supercritical pitchfork: $a_2$, a bias $a_0$, or a positive $a_3$; or a degenerate critical mode, for which no normal form in one coordinate exists. |
 | Swept write | Writing while the control parameter crosses the write point at rate $r$. For a pitchfork its accuracy is $\Phi(\pi^{1/4} h_s / (D_s^{1/2} r^{1/4}))$. |
 
 ## Retention

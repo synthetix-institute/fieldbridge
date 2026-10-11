@@ -113,6 +113,11 @@ def _modify(spec: Dict, d: Dict, family: str) -> None:
             spec["hamiltonian"][int(k)]["coefficient"] = value
         spec["hamiltonian"] = spec["hamiltonian"] + copy.deepcopy(d.get("add_terms", []))
         return
+    if "carrier" in d:  # a canonical form with more components than its base
+        spec["carrier"] = copy.deepcopy(d["carrier"])
+    for key in ("observable", "closure"):
+        if key in d:
+            spec[key] = d[key]
     if "params" in d:
         spec["parameters"].update(d["params"])
     if "drift" in d:
@@ -540,6 +545,8 @@ def _dissipative_class(states, n_unconv, events, scale, lock) -> str:
         return "threshold-write"
     if kind.startswith("subcritical"):
         return "subcritical-write"
+    if kind.startswith("degenerate critical mode"):
+        return "degenerate-write"
     return "field-write"
 
 
@@ -1465,7 +1472,7 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
 
 # ------------------------------------------------------------------------------------------------ build
 # the mechanisms of the memory materials, in the order of the section on memory: the writes, then no memory, then phase
-MEMORY_ORDER = ["symmetric-write", "threshold-write", "subcritical-write", "field-write", "return-point", "no-return",
+MEMORY_ORDER = ["symmetric-write", "threshold-write", "subcritical-write", "degenerate-write", "field-write", "return-point", "no-return",
                 "single-state", "oscillation", "neutral-cycles"]
 # the subloops of a hysteron node: those of ``memory hysterons`` with its default seed and count
 HYSTERON_SEED, HYSTERON_SUBLOOPS = 20260923, 24

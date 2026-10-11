@@ -185,6 +185,22 @@ def test_recorded_law_constants_belong_to_the_current_specifications(nodes):
                 assert law["stderr"] >= 0 and abs(law["constant"] - law["expected"]) < 5 * max(law["stderr"], 0.01)
 
 
+def test_a_degenerate_mode_has_its_canonical_form_one_change_from_the_pitchfork():
+    """Two components with the symmetry of a square: split rates give the pitchfork along the first, reached by the
+    same derivation as the one-component form; equal rates make the critical mode degenerate, and the four states on
+    the axes are written. Both changes are checked."""
+    data = sd.build(only=["pitchfork", "amplitude_split", "amplitude_square"], log=lambda *a: None)
+    nodes = data["nodes"]
+    assert [nodes[n]["class"] for n in ("pitchfork", "amplitude_split", "amplitude_square")] == [
+        "symmetric-write", "symmetric-write", "degenerate-write"]
+    assert nodes["amplitude_split"]["facts"]["states"] == 2 and nodes["amplitude_square"]["facts"]["states"] == 4
+    assert nodes["amplitude_split"]["facts"]["sym_status"] == "reached"
+    assert nodes["amplitude_square"]["facts"]["sym_obstruction"] == "degenerate critical mode: 2 directions"
+    assert {e["id"] for e in data["edges"]} == {"pf_two_components", "amplitude_degenerate"}
+    assert data["mechanisms"]["degenerate-write"]["node"] == "amplitude_square"
+    assert nodes["amplitude_square"]["universal"] and reg.CLASS_SHORT["degenerate-write"] == "degenerate mode"
+
+
 def test_the_canonical_forms_are_the_mechanisms_the_page_names():
     only = ["pitchfork", "pitchfork_below", "pitchfork_bias", "pitchfork_subcritical", "two_spins",
             "rotation_canonical", "rotation_axis"]

@@ -18,6 +18,8 @@
     'threshold-write': '<path d="M3 4 C8 33 16 33 23 17 C28 24 32 22 35 17 C38 12 42 8 45 4"/><circle class="dot" cx="11.6" cy="24.6" r="3.2"/>',
     'subcritical-write': '<path d="M3 4 C6 31 11 31 15 16 C18 24 30 24 33 16 C37 31 42 31 45 4"/><circle class="dot" cx="24" cy="18.6" r="3.2"/><circle class="dot faint" cx="9.2" cy="23.5" r="2.4"/>',
     'field-write': '<path d="M9 5 L15 17 M21 5 L27 17 M33 5 L39 17"/><path d="M6 25 H40"/><path d="M36 21.5 L41 25 L36 28.5"/>',
+    // the critical plane seen from above: four states on the axes, related by the symmetry of a square; one is written
+    'degenerate-write': '<circle class="faint" cx="24" cy="16" r="11.5"/><circle class="dot" cx="35.5" cy="16" r="3.4"/><circle class="dot faint" cx="12.5" cy="16" r="3"/><circle class="dot faint" cx="24" cy="4.5" r="3"/><circle class="dot faint" cx="24" cy="27.5" r="3"/>',
     'oscillation': '<ellipse cx="24" cy="16" rx="17" ry="10.5"/><path d="M25.5 2.8 l4.4 2.7 l-4.4 2.8"/>',
     'neutral-cycles': '<ellipse cx="24" cy="16" rx="19" ry="12.5"/><ellipse cx="24" cy="16" rx="12" ry="7.8"/><ellipse cx="24" cy="16" rx="5" ry="3.2"/>',
     'exponential-loss': AXES + '<path d="M5 6 C11 22 18 26 44 26.5"/>',
@@ -70,7 +72,7 @@
   const WIDE = {
     w: 3244, h: 318, card: {w: 124, h: 92}, col: [76, 240, 414, 578, 742, 916, 1090, 1264, 1428, 1602, 1776, 1950, 2124, 2298, 2472, 2646, 2820, 2994, 3168], row: [78, 222],
     place: {'rotation': [0, 0], 'conserved': [0, 1], 'obstructed': [1, 0],
-            'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'field-write': [4, 1],
+            'symmetric-write': [2, 0], 'single-state': [2, 1], 'threshold-write': [3, 0], 'subcritical-write': [3, 1], 'degenerate-write': [4, 0], 'field-write': [4, 1],
             'return-point': [5, 0], 'no-return': [5, 1],
             'oscillation': [6, 0], 'neutral-cycles': [6, 1], 'exponential-loss': [7, 0], 'power-loss': [7, 1], 'convention': [8, 0.5],
             'perfect-adaptation': [9, 0], 'fine-tuned-adaptation': [9, 1], 'partial-adaptation': [10, 0], 'no-adaptation': [10, 1],
@@ -92,8 +94,8 @@
                {label: 'decision: passage', from: 18, to: 18, module: 'decision'}],
   };
   const NARROW = {
-    w: 360, h: 1834, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
-    place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1],
+    w: 360, h: 1936, card: {w: 150, h: 78}, col: [86, 274], row: [50, 152],
+    place: {'conserved': [0, 0], 'rotation': [1, 0], 'obstructed': [0, 1], 'single-state': [1, 1], 'degenerate-write': [0, 1.5],
             'subcritical-write': [0, 2], 'symmetric-write': [1, 2], 'threshold-write': [0, 3], 'oscillation': [1, 3],
             'field-write': [0, 4], 'neutral-cycles': [1, 4], 'exponential-loss': [0, 5], 'power-loss': [1, 5], 'convention': [0, 6],
             'return-point': [1, 6], 'no-return': [0, 7],
@@ -182,9 +184,19 @@
     // a line along a row that would cross a card of that row is bent around it: above the upper row, below the lower
     const crosses = (a, b) => { const [ca, ra] = view.place[a], [cb, rb] = view.place[b];
       return ra === rb && present.some(k => view.place[k][1] === ra && view.place[k][0] > Math.min(ca, cb) && view.place[k][0] < Math.max(ca, cb)); };
+    // on the narrow map a line from column to column across two rows passes the corners of the middle row; with a card
+    // on one side of that row only, the line is bent toward the empty side
+    const beside = (a, b) => {
+      const [ca, ra] = view.place[a], [cb, rb] = view.place[b];
+      if (layout !== NARROW || ca === cb || Math.abs(ra - rb) !== 2) return 0;
+      const mid = Math.min(ra, rb) + 1, occupied = c => present.some(k => view.place[k][0] === c && view.place[k][1] === mid);
+      if (occupied(0) === occupied(1)) return 0;
+      const p = at(a), q = at(b), ox = -(q.y - p.y) / (Math.hypot(q.x - p.x, q.y - p.y) || 1);
+      return (occupied(0) ? 1 : -1) * Math.sign(ox) * 64;
+    };
     const lines = links(S).filter(l => view.place[l.a] && view.place[l.b]).map(l => {
       const dir = Math.sign(at(l.b).x - at(l.a).x) || 1;
-      const around = crosses(l.a, l.b) ? (view.place[l.a][1] === 0 ? -1 : 1) * dir * 118 : 0;
+      const around = crosses(l.a, l.b) ? (view.place[l.a][1] === 0 ? -1 : 1) * dir * 118 : beside(l.a, l.b);
       const n = l.slots.length, mid = path(l.a, l.b, around), pw = 18 * n + 4;
       // one line for each component, side by side; one label for the pair, with the symbol of each component
       const strokes = l.slots.map((slot, i) => `<path data-slot="${slot}" d="${path(l.a, l.b, around, (i - (n - 1) / 2) * 4).d}"/>`).join('');

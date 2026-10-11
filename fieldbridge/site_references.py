@@ -254,6 +254,14 @@ BIB = {
     "golubitsky1988": {"cite": "M. Golubitsky, I. Stewart and D. G. Schaeffer, Singularities and Groups in Bifurcation "
                                "Theory, Vol. II (Springer, New York, 1988)",
                        "short": "Golubitsky, Stewart and Schaeffer, 1988", "doi": "10.1007/978-1-4612-4574-2"},
+    "golubitsky2002": {"cite": "M. Golubitsky and I. Stewart, The Symmetry Perspective (Birkhäuser, Basel, 2002)",
+                       "short": "Golubitsky and Stewart, 2002", "doi": "10.1007/978-3-0348-8167-8"},
+    "cicogna1981": {"cite": "G. Cicogna, Lett. Nuovo Cimento 31, 600 (1981)", "short": "Cicogna, 1981",
+                    "doi": "10.1007/BF02777979"},
+    "golubitsky1984": {"cite": "M. Golubitsky, J. W. Swift and E. Knobloch, Physica D 10, 249 (1984)",
+                       "short": "Golubitsky, Swift and Knobloch, 1984", "doi": "10.1016/0167-2789(84)90179-9"},
+    "busse1978": {"cite": "F. H. Busse, Rep. Prog. Phys. 41, 1929 (1978)", "short": "Busse, 1978",
+                  "doi": "10.1088/0034-4885/41/12/003"},
     "kuramoto1984": {"cite": "Y. Kuramoto, Chemical Oscillations, Waves, and Turbulence (Springer, Berlin, 1984)",
                      "short": "Kuramoto, 1984", "doi": "10.1007/978-3-642-69689-3"},
     "pikovsky2001": {"cite": "A. Pikovsky, M. Rosenblum and J. Kurths, Synchronization (Cambridge University Press, 2001)",
@@ -355,6 +363,18 @@ READING: Dict[str, Dict] = {
         "sources": [("griffiths1970", "the tricritical point, at which the quartic coefficient changes sign and a "
                                       "continuous transition becomes discontinuous")],
         "textbooks": ["strogatz1994"],
+    },
+    "degenerate-write": {
+        "defined": ("Glossary, Writing", "degenerate critical mode", GLOSSARY + "#writing"),
+        "derived": [("Module 9, §5", "the derivation stops at R when several directions become critical together; "
+                                     "an odd ring of convection cells and the normal form with the symmetry of a square",
+                     T + "23_memory_codiscovery.md#5-where-a-derivation-stops")],
+        "code": "memory.analysis.critical_directions, construct.obstruction, predict.structural_candidates",
+        "sources": [("cicogna1981", "the branches of a symmetric bifurcation along the directions that a subgroup of "
+                                    "the symmetry fixes (the equivariant branching lemma)"),
+                    ("golubitsky1984", "the modes of a convecting layer made degenerate by the symmetry of a square "
+                                       "or hexagonal lattice, and the selection of a pattern among them")],
+        "textbooks": ["busse1978", "golubitsky1988", "golubitsky2002"],
     },
     "field-write": {
         "defined": ("Glossary, Description of a material", "role of the control: scale, bias or shape",

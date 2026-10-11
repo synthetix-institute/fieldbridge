@@ -1,6 +1,60 @@
 {
- "implementation_sha256": "3c0b38dd3a592980142b5ff2245254e71e01ce7722209cdcf77f91340a5ffd74",
+ "implementation_sha256": "3fa3ffc230e2d91c501d8ea3a1d3ae32ba69fb1c5fafc94cd62b212894dfd0c6",
  "nodes": {
+  "amplitude_split": {
+   "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
+   "symmetric-write": {
+    "class": "S(reflection) C R(pitchfork) K L",
+    "constant": 1.306339746966072,
+    "expected": 1.3313353638003897,
+    "signature": [
+     -0.007117934179,
+     0.020689046,
+     -0.03642502279,
+     -0.01650661058,
+     0.03054269821,
+     -0.05684463945,
+     -5.558811648e-06,
+     0.01321606642,
+     -0.0001972468584,
+     -0.01057256385,
+     0.0002406625234,
+     -0.03638973422,
+     0.007106816556,
+     0.005743086851,
+     0.03603052907,
+     -0.004638517112,
+     -0.03006137316,
+     -0.01593482899,
+     0.008985405781,
+     5.935116323e-08,
+     0.008985405781,
+     -4.713001511e-08,
+     0.00898540578,
+     -1.624495639e-07,
+     0.001428571429
+    ],
+    "stderr": 0.020707424512235444,
+    "word": "SCRKL"
+   },
+   "threshold-write": {
+    "class": "S C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187929318960716,
+    "expected": 1.018792971647471,
+    "stderr": 6.957683924557756e-07,
+    "word": "SCRWRKL"
+   }
+  },
+  "amplitude_square": {
+   "spec_sha256": "a301caeb2c687c46ac9ff466d4f35234134c8e0bd2e34c6439573fe83b563910",
+   "threshold-write": {
+    "class": "C R(degenerate critical mode) W R(fold) K L",
+    "constant": 1.0187929179007844,
+    "expected": 1.018792971647471,
+    "stderr": 9.325921719316455e-07,
+    "word": "CRWRKL"
+   }
+  },
   "brusselator": {
    "phase-locking": {
     "class": "R(phase) K(1:1) L",

@@ -37,6 +37,7 @@ CLASSES = {
     "symmetric-write": "symmetric write (supercritical pitchfork)",
     "threshold-write": "one-sided write (fold)",
     "subcritical-write": "write to a distant state (subcritical pitchfork)",
+    "degenerate-write": "write into a degenerate mode",
     "field-write": "write by a uniform field",
     "return-point": "return-point memory",
     "no-return": "return not exact",
@@ -96,6 +97,12 @@ MECHANISMS = {
     "subcritical-write": {"canonical": "ẋ = εx + ax<sup>3</sup> − x<sup>5</sup>, a &gt; 0",
                           "text": "The state loses stability at a subcritical pitchfork and jumps to a distant state.",
                           "node": "pitchfork_subcritical"},
+    # a symmetry makes two or more eigenvalues equal, so that they cross zero together (analysis.critical_directions)
+    "degenerate-write": {"canonical": "ż = εz − |z|<sup>2</sup>z + g z̄<sup>3</sup>, z = x + iy",
+                         "text": "A symmetry makes the critical mode degenerate: two directions lose stability together, "
+                                 "and the write chooses one of the states that the symmetry arranges in the critical "
+                                 "plane, four for the symmetry of a square, not one of two.",
+                         "node": "amplitude_square"},
     "field-write": {"canonical": "g U(q) − h·m(q)",
                     "text": "The control only rescales the energy; a uniform field writes a state, and the barriers "
                             "between states keep it.", "node": "colloid_patch"},
@@ -343,6 +350,22 @@ NODES = [
      "name": "subcritical pitchfork normal form",
      "question": "Where does the state go when x = 0 loses stability at a subcritical pitchfork?",
      "tutorial": "docs/tutorial/18_memory_writing_and_retention.md#11-write-points-and-normal-forms"},
+    # two components related by the symmetry of a square, z = x + iy: with a split d of their rates one component
+    # becomes critical alone (a pitchfork); with d = 0 both do, and the critical mode is degenerate
+    {"id": "amplitude_split", "base": "pitchfork", "universal": True,
+     "carrier": {"kind": "euclid", "name": "two components of the order parameter", "variables": ["x", "y"],
+                 "scale": 2},
+     "drift": {"x": "eps*x - (x**2 + y**2)*x + g*(x**3 - 3*x*y**2)",
+               "y": "(eps - d)*y - (x**2 + y**2)*y + g*(y**3 - 3*x**2*y)"},
+     "potential": "-eps*(x**2 + y**2)/2 + d*y**2/2 + (x**2 + y**2)**2/4 - g*(x**4 - 6*x**2*y**2 + y**4)/4",
+     "params": {"eps": 0.5, "g": 0.3, "d": 1.0}, "observable": "signs of x and y",
+     "name": "two-component normal form with the symmetry of a square, rates split",
+     "question": "Which component is written when the second one relaxes faster?",
+     "tutorial": M9 + "#5-where-a-derivation-stops"},
+    {"id": "amplitude_square", "base": "amplitude_split", "params": {"d": 0.0}, "universal": True,
+     "name": "two-component normal form with the symmetry of a square",
+     "question": "Which states are written when the symmetry of a square makes the critical mode degenerate?",
+     "tutorial": M9 + "#5-where-a-derivation-stops"},
     {"id": "rotation_canonical", "attach": ("two_spins", "qubit", None), "universal": True,
      "name": "rotation on its smallest carrier", "tutorial": Q_CH24 + "#3-detaching-the-rotation-from-the-spins-of-chapter-11"},
     {"id": "rotation_axis", "base": "rotation_canonical", "universal": True, "parent": "rotation_canonical",
@@ -583,6 +606,18 @@ EDGES = [
              "a subcritical pitchfork, at ε = {write_point}. The state does not grow continuously from zero: it "
              "jumps to one of {states_text} distant states, as the magnetization of a particle switched along its "
              "easy axis."},
+    {"id": "pf_two_components", "from": "pitchfork", "to": "amplitude_split", "slot": "Xi", "kind": "codiscovery",
+     "target": "symmetric-write", "change": "x → (x, y) with the symmetry of a square",
+     "text": "The order parameter gets a second component, related to the first by the symmetry of a square and "
+             "relaxing faster by d = 1. The first component still becomes critical alone: the derivation "
+             "({sym_word}) ends in the same canonical form, εx − x<sup>3</sup> + h, at ε = {write_point}, and the "
+             "second component is eliminated."},
+    {"id": "amplitude_degenerate", "from": "amplitude_split", "to": "amplitude_square", "slot": "A", "kind": "param",
+     "change": "d: 1 → 0",
+     "text": "With equal rates the symmetry of the square makes the critical mode degenerate: both components become "
+             "critical together at ε = {write_point}. The reduction to one critical line no longer holds, and the "
+             "derivation stops at R ({sym_obstruction}). The write chooses one of {states_text} stable states on "
+             "the axes, not one of two."},
     {"id": "pf_to_magnet", "from": "pitchfork", "to": "stoner_wohlfarth", "slot": "Xi", "kind": "codiscovery",
      "target": "symmetric-write", "change": "order parameter → magnetization angle",
      "text": "The normal form is written on the angle of a magnetization: a single-domain particle in a field along "
@@ -1185,7 +1220,7 @@ EDGES += [
 
 CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "several frequencies",
                "single-state": "one state", "symmetric-write": "symmetric write", "threshold-write": "one-sided write",
-               "subcritical-write": "distant write", "field-write": "field write", "return-point": "return point",
+               "subcritical-write": "distant write", "degenerate-write": "degenerate mode", "field-write": "field write", "return-point": "return point",
                "no-return": "return not exact", "perfect-adaptation": "perfect adaptation",
                "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
                "no-adaptation": "no adaptation", "linear-memory": "linear memory", "odd-capacity": "odd degrees",
@@ -1289,7 +1324,8 @@ SHORT = {
     "cooper_pair": "Cooper pair", "state_transfer_chain": "transfer chain", "module14_chain": "chain 3, 4",
     "module14_equal": "chain 3, 3", "heteronuclear_spins": "two species", "homonuclear_spins": "one species",
     "pitchfork": "pitchfork", "pitchfork_below": "below ε = 0", "pitchfork_bias": "with bias h",
-    "pitchfork_subcritical": "subcritical form", "rotation_canonical": "canonical rotation",
+    "pitchfork_subcritical": "subcritical form", "amplitude_split": "two components, split",
+    "amplitude_square": "square symmetry", "rotation_canonical": "canonical rotation",
     "rotation_axis": "measured on the axis", "laser": "laser", "convection_roll": "convection roll", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
     "repressor_ring4": "ring of 4", "ring4_activation": "ring 4, activation", "repressilator": "repressilator",
     "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "tubes": "two tubes",

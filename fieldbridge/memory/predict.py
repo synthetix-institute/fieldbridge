@@ -49,32 +49,45 @@ def reciprocal(real: Realization, rng, n: int = 16, tol: float = 1e-6) -> bool:
     return True
 
 
+# above max_dim the symmetries are searched among the automorphisms of the linearization (structural_candidates); the
+# search visits at most SEARCH_NODES partial permutations and returns at most SYMMETRY_LIMIT elements of the group
+SEARCH_NODES = 200000
+SYMMETRY_LIMIT = 512
+
+
 def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: int = 6) -> List[Dict[str, object]]:
     """Linear symmetries g (permutation with signs) with F(g q) = g F(q) on sampled states.
 
     On R^n a variable may change sign; on angles a sign change is the reflection theta -> -theta; on concentrations
-    only permutations are admissible. Above max_dim only cyclic shifts and the reversal are tried."""
+    only permutations are admissible. Up to max_dim variables every permutation is tried, with every sign pattern up
+    to four variables on R^n and with all signs equal otherwise; above max_dim the candidates are the signed
+    automorphisms of the linearization (structural_candidates), so that a ring of cells with several variables each
+    is turned and reflected as a whole."""
     d = real.carrier.dim
     qs = _samples(real, rng, n)
     F = real.F(qs)
     scale = max(1e-12, float(np.abs(F).max()))
-    perms = (list(itertools.permutations(range(d))) if d <= max_dim else
-             [tuple(np.roll(np.arange(d), k)) for k in range(d)] + [tuple(np.arange(d)[::-1])])
-    signs = [np.ones(d)] + ([-np.ones(d)] if real.carrier.kind in ("euclid", "torus") else [])
-    if real.carrier.kind == "euclid" and d <= 4:
-        signs = [np.array(s, float) for s in itertools.product((1, -1), repeat=d)]
+    if d <= max_dim:
+        perms = list(itertools.permutations(range(d)))
+        signs = [np.ones(d)] + ([-np.ones(d)] if real.carrier.kind in ("euclid", "torus") else [])
+        if real.carrier.kind == "euclid" and d <= 4:
+            signs = [np.array(s, float) for s in itertools.product((1, -1), repeat=d)]
+        candidates = [(perm, sgn) for perm in perms for sgn in signs]
+    else:
+        candidates = structural_candidates(real, qs)
     found = []
-    for perm in perms:
-        for sgn in signs:
-            if all(p == i for i, p in enumerate(perm)) and np.all(sgn > 0):
-                continue
-            gq = sgn[None, :] * qs[:, perm]
-            if real.carrier.kind == "torus":
-                gq = real.carrier.wrap(gq)
-            gF = sgn[None, :] * F[:, perm]
-            if np.max(np.abs(real.F(gq) - gF)) <= tol * scale:
-                order = _order(perm, sgn)
-                found.append({"permutation": list(perm), "signs": sgn.astype(int).tolist(), "order": order})
+    for perm, sgn in candidates:
+        if all(p == i for i, p in enumerate(perm)) and np.all(sgn > 0):
+            continue
+        gq = sgn[None, :] * qs[:, perm]
+        if real.carrier.kind == "torus":
+            gq = real.carrier.wrap(gq)
+        gF = sgn[None, :] * F[:, perm]
+        if np.max(np.abs(real.F(gq) - gF)) <= tol * scale:
+            order = _order(perm, sgn)
+            found.append({"permutation": list(perm), "signs": sgn.astype(int).tolist(), "order": order})
+            if d > max_dim and len(found) >= SYMMETRY_LIMIT:
+                break
     if real.carrier.kind == "torus":
         # a uniform shift by half a period: every orientation turned by the same angle
         shifted = real.carrier.wrap(qs + 0.5 * real.carrier.period)
@@ -82,6 +95,132 @@ def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: 
             found.append({"shift": 0.5 * real.carrier.period, "order": 2,
                           "meaning": "every angle turned by half a period; stored states come in partner pairs"})
     return found
+
+
+def _labels(values: np.ndarray, tol: float) -> np.ndarray:
+    """Integer labels of values equal within tol (neighbours in sorted order closer than tol share a label); 0 for
+    values within tol of zero."""
+    flat = values.ravel()
+    order = np.argsort(flat, kind="stable")
+    labels = np.empty(flat.size, int)
+    label, prev = 0, None
+    for i in order:
+        if prev is None or flat[i] - prev > tol:
+            label += 1
+        labels[i] = label
+        prev = flat[i]
+    zero = np.abs(flat) <= tol
+    if zero.any():
+        labels[zero] = 0
+    return labels.reshape(values.shape)
+
+
+def structural_candidates(real: Realization, qs: np.ndarray, tol: float = 1e-6) -> List[Tuple[Tuple[int, ...],
+                                                                                              np.ndarray]]:
+    """Signed permutations g, (g q)_k = s_k q_p(k), that can be symmetries of the drift, found without trying every
+    permutation.
+
+    A symmetry fixes q0 = 0 (on concentrations, where only permutations are admissible, the point with every amount
+    equal), so the Jacobian there obeys J0[k, l] = s_k s_l J0[p(k), p(l)]: p preserves |J0| and its diagonal, and
+    the signs of J0 fix the products s_k s_l on every linear coupling. p also preserves which variable drives which
+    on the sampled states. The permutations are built by backtracking over these relations after a colour
+    refinement of the variables; the signs follow from the couplings, with one free sign for every group of linearly
+    coupled variables. Every candidate must still be verified on the sampled states (symmetries)."""
+    d = real.carrier.dim
+    kind = real.carrier.kind
+    q0 = np.full(d, 0.5 * real.carrier.scale) if kind == "orthant" else np.zeros(d)
+    J0 = an.jacobian(real, q0)
+    Js = np.stack([an.jacobian(real, q) for q in qs[:4]])
+    if not (np.all(np.isfinite(J0)) and np.all(np.isfinite(Js))):
+        return []
+    eps = tol * max(1e-12, float(np.abs(J0).max()))
+    drives = np.any(np.abs(Js) > 1e-9 * max(1e-12, float(np.abs(Js).max())), axis=0)
+    off = ~np.eye(d, dtype=bool)
+    mag = np.where(off, _labels(np.abs(J0), eps), 0)
+    diag = _labels(np.diag(J0), eps)
+    M = mag * 2 + drives  # what must be preserved between every ordered pair of variables
+    # colour refinement: a variable can only map to one of the same colour
+    color = list(diag)
+    for _ in range(d):
+        sig = [(color[i], tuple(sorted((color[j], int(M[i, j]), int(M[j, i])) for j in range(d) if j != i)))
+               for i in range(d)]
+        keys = {s: c for c, s in enumerate(sorted(set(sig)))}
+        new = [keys[s] for s in sig]
+        if len(set(new)) == len(set(color)):
+            color = new
+            break
+        color = new
+    # assign the variables in an order that keeps every new one linked to those already assigned
+    order: List[int] = []
+    linked = (M > 1) | (M.T > 1) | drives | drives.T
+    rest = sorted(range(d), key=lambda i: (sum(c == color[i] for c in color), i))
+    while rest:
+        nxt = next((i for i in rest if any(linked[i, j] for j in order)), rest[0])
+        order.append(nxt)
+        rest.remove(nxt)
+    perms: List[Tuple[int, ...]] = []
+    image = [-1] * d
+    used = [False] * d
+    visited = 0
+
+    def extend(depth: int) -> None:
+        nonlocal visited
+        if len(perms) >= SYMMETRY_LIMIT or visited >= SEARCH_NODES:
+            return
+        if depth == d:
+            perms.append(tuple(image))
+            return
+        k = order[depth]
+        for t in range(d):
+            if used[t] or color[t] != color[k]:
+                continue
+            if any(M[k, l] != M[t, image[l]] or M[l, k] != M[image[l], t] for l in order[:depth]):
+                continue
+            visited += 1
+            image[k], used[t] = t, True
+            extend(depth + 1)
+            image[k], used[t] = -1, False
+
+    extend(0)
+    out: List[Tuple[Tuple[int, ...], np.ndarray]] = []
+    coupled = off & (np.abs(J0) > eps)
+    for p in perms:
+        # s_k s_l from every linear coupling, propagated through the groups of coupled variables
+        sgn, groups, ok = np.zeros(d), [], True
+        for root in range(d):
+            if sgn[root] or not ok:
+                continue
+            sgn[root] = 1.0
+            members, stack = [root], [root]
+            while stack and ok:
+                k = stack.pop()
+                for l in np.flatnonzero(coupled[k] | coupled[:, k]):
+                    pair = J0[k, l] if coupled[k, l] else J0[l, k]
+                    image_pair = J0[p[k], p[l]] if coupled[k, l] else J0[p[l], p[k]]
+                    want = sgn[k] * np.sign(pair) * np.sign(image_pair)
+                    if not sgn[l]:
+                        sgn[l] = want
+                        members.append(l)
+                        stack.append(l)
+                    elif sgn[l] != want:
+                        ok = False
+                        break
+            groups.append(members)
+        if not ok:
+            continue
+        if kind == "orthant":
+            if np.all(sgn > 0):
+                out.append((p, sgn.copy()))
+            continue
+        # every group may be reversed as a whole; with many groups only the reversal of all is tried
+        flips = itertools.product((1, -1), repeat=len(groups)) if len(groups) <= 8 else [(1,) * len(groups),
+                                                                                          (-1,) * len(groups)]
+        for flip in flips:
+            s = sgn.copy()
+            for f, members in zip(flip, groups):
+                s[members] *= f
+            out.append((p, s))
+    return sorted(out, key=lambda c: (c[0], tuple(-c[1])))
 
 
 def _order(perm, sgn) -> int:

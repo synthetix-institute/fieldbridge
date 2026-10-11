@@ -138,8 +138,13 @@ def _field(real: Realization) -> str:
     return str(spec.get("field", "unspecified"))
 
 
-def reversing_symmetry(real: Realization, rng, mode: np.ndarray) -> Optional[Dict[str, object]]:
-    """A linear symmetry g of the drift with g(mode) = -mode: it forbids even terms along the mode."""
+def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e-3) -> Optional[Dict[str, object]]:
+    """A linear symmetry g of the drift with g(mode) = -mode: it forbids even terms along the mode.
+
+    The mode at a located write point is only as accurate as the located state, which the Newton search leaves up to
+    1e-5 from the symmetric state along the slow critical direction; in a ring of four convection cells the unit
+    mode then has components of 2e-6 that the reversal does not reverse. A symmetry that does not reverse the mode
+    maps it a distance of order one away, so the unit mode is compared to within tol."""
     from .predict import symmetries
     mode = np.asarray(mode, float)
     for g in symmetries(real, rng):
@@ -148,7 +153,7 @@ def reversing_symmetry(real: Realization, rng, mode: np.ndarray) -> Optional[Dic
         P = np.eye(mode.size)[list(g["permutation"])] * np.asarray(g["signs"], float)[:, None]
         # the drift is equivariant under q -> sgn * q[perm]; the image of the mode is sgn * mode[perm]
         image = np.asarray(g["signs"], float) * mode[list(g["permutation"])]
-        if np.allclose(image, -mode, atol=1e-6):
+        if np.allclose(image, -mode, atol=tol):
             return {"permutation": g["permutation"], "signs": g["signs"], "order": g["order"],
                     "matrix": P.tolist()}
     return None
