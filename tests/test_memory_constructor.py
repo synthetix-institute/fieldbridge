@@ -434,6 +434,28 @@ def test_eigenvalues_that_cross_zero_together_are_counted(split, dimension):
         assert nf["kind"].startswith("supercritical pitchfork") and ob["realizes_generator"]
 
 
+def test_a_degenerate_pair_in_rotated_coordinates_is_not_a_hopf_point():
+    """In coordinates rotated by 30 degrees the degenerate pair of the square symmetry is not diagonal, and rounding
+    gives it imaginary parts of order 1e-13 while the whole spectrum is critical; the write point is still a degenerate
+    critical mode of two directions, as without the rotation (found by the held-out set of the discovery engine)."""
+    c, s = math.cos(math.pi / 6), math.sin(math.pi / 6)
+    x, y = f"({c}*u - {s}*w)", f"({s}*u + {c}*w)"
+    fx = f"eps*{x} - ({x}**2 + {y}**2)*{x} + g*({x}**3 - 3*{x}*{y}**2)"
+    fy = f"eps*{y} - ({x}**2 + {y}**2)*{y} + g*({y}**3 - 3*{x}**2*{y})"
+    real = spec.load({
+        "schema": "fieldbridge-memory/1", "kind": "equations", "name": "amplitude with square symmetry, rotated",
+        "question": "Which states does a degenerate critical mode store?", "assumptions": ["cubic normal form"],
+        "provenance": {"source": "M. Golubitsky, I. Stewart and D. G. Schaeffer, Singularities and Groups in "
+                                 "Bifurcation Theory, Vol. II (Springer, 1988)"},
+        "carrier": {"kind": "euclid", "variables": ["u", "w"], "scale": 1.0},
+        "parameters": {"eps": 0.5, "g": 0.3},
+        "drift": {"u": f"{c}*({fx}) + {s}*({fy})", "w": f"-{s}*({fx}) + {c}*({fy})"},
+        "control": {"name": "eps", "range": [-0.6, 1.0]}, "noise": 0.01, "dt": 0.05})
+    ev = next(e for e in events(real) if abs(e["v"]) < 1e-3)
+    nf = an.normal_form(real, ev["q"], "eps", ev["v"])
+    assert not nf["hopf"] and nf["kind"].startswith("degenerate critical mode") and nf["critical_dimension"] == 2
+
+
 def test_a_degenerate_critical_mode_stops_the_derivation_at_the_reduction():
     from fieldbridge.memory import codiscovery as cd
     rng = np.random.default_rng(1)

@@ -453,7 +453,13 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         return {"critical_dimension": int(crit.size),
                 "critical_kappa": [[float(-ev[j].real), float(-ev[j].imag)] for j in crit]}
 
-    if abs(lam.imag) > 1e-6 * scale:
+    # over the resolution of the write point the critical eigenvalue moves by |slope| x resolution; a frequency below
+    # that cannot be told from two real eigenvalues crossing together (where a degenerate pair is not diagonal in the
+    # coordinates, rounding gives it imaginary parts of order 1e-13, and when the whole spectrum is critical, 1e-6 of
+    # the largest rate is no bound)
+    ev_next = np.linalg.eigvals(jacobian(real, q, {**over, param: v + dv}))
+    slope_re = float((ev_next[np.argmin(np.abs(ev_next - lam))].real - lam.real) / dv)
+    if abs(lam.imag) > max(1e-6 * scale, abs(slope_re) * WRITE_RESOLUTION * width):
         # a complex pair: two directions are critical at a simple Hopf point
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
                    asymmetry=0.0, bias=0.0, a3=0.0, **critical(0.0))
