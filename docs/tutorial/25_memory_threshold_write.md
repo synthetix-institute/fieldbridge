@@ -57,7 +57,7 @@ The command takes about one minute.
 | two equal tubes | transport networks | SCRWRKL | $h = 0.06396$ | 0.163 | 1.0187929 ± 0.0000009 |
 | two-component normal form, square symmetry | statistical physics | CRWRKL | $h = 0.1062$ | −0.713 | 1.0187929 ± 0.0000009 |
 | caged capillary rotors | soft matter | WRKL | $h = 4.2912$ | −0.019 | 1.0187930 ± 0.0000005 |
-| caged in-plane dipoles | magnetism | WRKL | $h = 0.1776$ | 3.205 | 1.08 ± 0.31 |
+| caged in-plane dipoles | magnetism | WRKL | $h = 0.1776$ | 3.205 | 1.021 ± 0.005 |
 | ring of 3 repressors | synthetic biology | CR | stops: no stable state | — | — |
 | three compartments | compartment models | — | stops: a single stable state | — | — |
 
@@ -74,8 +74,9 @@ differs between the models.
 
 *Figure 1. The threshold write. (a) The derivation in each model; W is the write field. (b) The reduced drift at the
 fold in the canonical coordinate, against $x^2$. (c) The value of $\mu$ at which the state crosses the position of
-the static fold, divided by $r^{2/3}$, against $r^{1/3}$ for sweeps at canonical rates $r = 10^{-3}$ to $10^{-7}$;
-the lines are the fits of Section 3, and the star marks $\lvert a_1'\rvert = 1.01879$.*
+the static fold, divided by $r^{2/3}$, against $r^{1/3}$ for sweeps at canonical rates $r = 10^{-3}$ to $10^{-7}$
+(for the dipoles from $10^{-4}$, Section 3); the lines are the fits of Section 3, and the star marks
+$\lvert a_1'\rvert = 1.01879$.*
 
 Two results deserve a remark. First, with $a = 4.5$ and $k_3 = 5.75$ the Schlögl drift in $y = x - 3/2$ is
 $-y^3 + y + (b - 15/8)$: the reactor is the Landau model in the field $h = 15/8 - b$. The constructor gives the same
@@ -126,6 +127,16 @@ converges, and the fit contains the term
 largest of three numbers: the change when the fourth-order term is left out, the largest change when one rate is
 left out, and $5 \times 10^{-7}$, the accuracy of the canonical scale $a_2 b$ and of the integration.
 
+**The start of each sweep.** A sweep starts on the occupied state at $\mu = -5\,r^{2/3}$, that is $5\,r^{2/3}/(a_2 b)$
+before the fold in the units of the parameter. Where $a_2 b$ is small, the fast sweeps therefore start far from the
+fold, where the branch of the occupied state may already have ended at another fold, or where the root search for
+the start converges on another stable state. The constructor follows the start of the slowest sweep along the
+parameter and checks that its branch ends at the fold; the start of each faster sweep must be the state reached by
+following the previous start. The rates are taken from the slowest up, and the first rate whose start fails this
+check ends the series, so that the fit rests on the slowest rates; the report lists the rates left out and the reason
+(`test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_left_out`,
+`test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates`).
+
 In eleven of the thirteen models the constant lies within $1.2 \times 10^{-6}$ of $\lvert a_1'\rvert$, and the
 weighted mean is $1.0187930 \pm 0.0000002$. Apart from the dipoles (below), the slopes of the corrections range from
 $-0.45$ for the laser to $+0.40$ for the ring of four, as the fifth-order coefficients differed for the symmetric
@@ -134,12 +145,16 @@ the unequal tubes the corrections are large and alternate in sign: the sweep at 
 the sweep at $r = 3 \times 10^{-5}$ 0.32% below it, and the slowest one still 0.1% below. Their constant,
 $1.01877 \pm 0.00029$, lies $2 \times 10^{-5}$ from $\lvert a_1'\rvert$.
 
-For the caged in-plane dipoles the field writes from one sampled stored state to another. The pair drawn in this run
-has a small quadratic coefficient, $a_2 = -0.078$, and a large cubic one, $c_3 = 3.2$, so a canonical rate corresponds
-to a wide range of the field. The fast sweeps then start at a reversed field, away from the branch of the occupied
-state: at $r = 3 \times 10^{-4}$ no stationary state is found at the start, and that rate is left out; at
-$r = 10^{-3}$ the sweep starts on a distant state and crosses at $6.8\,r^{2/3}$. The fit is dominated by this sweep
-and gives $1.08 \pm 0.31$, which does not test the law; the slowest sweeps lie 0.3% above $\lvert a_1'\rvert$.
+For the caged in-plane dipoles the field writes from one sampled stored state to another. For the pair drawn in this
+run the quadratic coefficient is small, $a_2 = -0.078$, and the cubic one large, $c_3 = 3.2$. The occupied state
+exists only between two folds, at the coercive field $h = 0.1776$ and at a reversed field, $h = -0.020$; in
+canonical units this is the window $\mu > -0.012$. The sweeps at $r = 3 \times 10^{-4}$ and $10^{-3}$ would start at
+$\mu = -0.023$ and $-0.050$, beyond its lower end, where the root search finds no stable state
+($r = 3 \times 10^{-4}$) or converges on a distant one ($r = 10^{-3}$), whose sweep crosses at $6.8\,r^{2/3}$. These
+two sweeps are left out. Over the seven slower ones the constant is $1.021 \pm 0.005$, which contains
+$\lvert a_1'\rvert$. Its uncertainty is sixteen times that of the unequal tubes, because the corrections are large:
+the fit begins $1.0206 + 0.56\,r^{1/3} - 40\,r^{2/3}$, and even the slowest sweeps lie 0.3% above
+$\lvert a_1'\rvert$.
 
 The law holds in the limit of small noise. In the variables of Eq. (2) the noise intensity is $a_2^2 D_s/r$, so the
 deterministic delay is observed for sweeps faster than the rate $a_2^2 D_s$ given in the report; slower sweeps
@@ -211,9 +226,11 @@ specification.
   control, or by a write field where a symmetry, a degenerate critical mode or a scale control prevents a threshold
   along the control.
 - The switch lags behind a sweep by $\mu = \lvert a_1'\rvert r^{2/3}$; the constant $\lvert a_1'\rvert = 1.0187930$,
-  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in eleven models and to $2 \times 10^{-5}$ in
-  the unequal tubes, within its uncertainty in each. For the pair of dipole states drawn in the default run the fast
-  sweeps start off the branch of the occupied state, and the fit does not test the law.
+  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in eleven models, to $2 \times 10^{-5}$ in
+  the unequal tubes and to $2 \times 10^{-3}$ in the caged dipoles, within its uncertainty in each.
+- Each sweep starts on the branch of the occupied state. For the pair of dipole states drawn in the default run this
+  branch ends at a second fold, close to the first in canonical units, and the two fastest sweeps, which would start
+  beyond it, are left out.
 - An error of the located fold adds a term $\delta\,r^{-2/3}$ to the measured constant; the fit contains it.
 - The Schlögl reactor with the parameters of the example is exactly the Landau model in a field.
 - A symmetry makes the symmetric write possible and the threshold write impossible along the same parameter; a
@@ -225,6 +242,7 @@ specification.
 | --- | --- | --- |
 | Threshold write: derivation, fold, canonical form | `codiscovery.derive_threshold_write`, `refine_fold`, `canonical_fold` | `test_threshold_write_by_the_control_by_a_field_and_its_obstruction`, `test_a_root_search_for_the_fold_that_stops_early_is_restarted` |
 | Delay of the switch | `codiscovery.fold_delay_law`, `delay_constant` | `test_a_field_writes_the_landau_model_at_the_coercive_field_with_the_airy_delay`, `test_the_delay_constant_is_the_first_zero_of_the_airy_derivative`, `test_the_delay_fit_recovers_the_constant_when_the_fold_is_mislocated`, `test_a_fold_shifted_by_hand_appears_as_the_offset_of_the_delay_law` |
+| Start of each sweep on the branch of the occupied state | `codiscovery.off_branch`, `fold_delay_law` | `test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_left_out`, `test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates` |
 | Report and figure | [`cli.cmd_codiscover`](../../fieldbridge/memory/cli.py), [`visual.codiscovery_figure`](../../fieldbridge/memory/visual.py) | `test_codiscover_command_writes_report_and_figure` |
 
 Sources: R. Haberman, SIAM J. Appl. Math. 37, 69 (1979); P. Jung, G. Gray, R. Roy and P. Mandel, Phys. Rev. Lett.

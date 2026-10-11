@@ -637,6 +637,69 @@ def test_a_fold_shifted_by_hand_appears_as_the_offset_of_the_delay_law():
         delta * slowest["rate"] ** (-2 / 3), rel=0.05)
 
 
+def _quintic_fold(A=0.14, c=1.2):
+    """dx/dt = h - g(x), g' = A (x^2 - 1)(x^2 - c^2). The occupied state, -1 < x < 1, exists for |h| < g(1) and
+    disappears at the fold x = 1, h = g(1); a second stable state, x < -c, exists for h < g(-c). With A = 0.14 the
+    coefficient a2 b of the canonical form is 0.062, small as for a pair of states of the caged dipoles."""
+    from fieldbridge.memory import codiscovery as cd
+    base = json.loads((EX / "pitchfork.json").read_text(encoding="utf-8"))
+    base.pop("potential")
+    base.update(name="quintic fold", parameters={"h": 0.0, "A": A, "c": c},
+                drift={"x": "h - A*(x**5/5 - (1 + c**2)*x**3/3 + c**2*x)"}, control={"name": "h", "range": [-0.3, 0.3]})
+    real = spec.load(base)
+    g1 = A * (1 / 5 - (1 + c ** 2) / 3 + c ** 2)
+    q_f, p_f = cd.refine_fold(real, "h", np.array([0.999]), g1 - 1e-6)
+    canon = cd.canonical_fold(real, "h", q_f, p_f, an.normal_form(real, q_f, "h", p_f))
+    return real, q_f, p_f, canon, g1
+
+
+def test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_left_out(monkeypatch):
+    """The sweeps start at mu = -5 r^(2/3), far from the fold in the parameter where a2 b is small. For the two
+    fastest rates the start lies below h = -g(1), where the branch of the occupied state has ended at its other fold,
+    and the root search converges on the second stable state, on the side of the occupied state. Without the test of
+    the branch these sweeps are used; with it they are left out, and the other sweeps and the fit are those of a run
+    without the two rates."""
+    from fieldbridge.memory import codiscovery as cd
+    real, q_f, p_f, canon, g1 = _quintic_fold()
+    assert p_f == pytest.approx(g1, abs=1e-9) and canon["mu_per_unit_parameter"] == pytest.approx(0.44 * 0.14)
+    beyond = [r for r in cd.DELAY_RATES if p_f - 5 * r ** (2 / 3) / canon["mu_per_unit_parameter"] < -g1]
+    assert beyond == list(cd.DELAY_RATES[:2])
+    law = cd.fold_delay_law(real, "h", q_f, p_f, canon)
+    assert [x["rate"] for x in law["left_out"]] == sorted(beyond)
+    assert [x["reason"] for x in law["left_out"]] == ["the branch of the occupied state ends before the start",
+                                                      "a slower sweep was left out"]
+    alone = cd.fold_delay_law(real, "h", q_f, p_f, canon, rates=cd.DELAY_RATES[2:])
+    assert alone["left_out"] == [] and law["rows"] == alone["rows"] and law["constant"] == alone["constant"]
+    monkeypatch.setattr(cd, "off_branch", lambda *args, **kwargs: None)
+    unchecked = cd.fold_delay_law(real, "h", q_f, p_f, canon)
+    assert [row["rate"] for row in unchecked["rows"]] == list(cd.DELAY_RATES)  # the root search found a stable state
+    assert unchecked["rows"][2:] == law["rows"]
+
+
+def test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates(monkeypatch):
+    """The start of the sweep at r = 3.2e-5 is refused by hand. The faster sweep is left out with it rather than
+    leaving a gap, and the constant is fitted over the five slower sweeps, which are unchanged."""
+    from fieldbridge.memory import codiscovery as cd
+    real, q_f, p_f, canon, _ = _quintic_fold()
+    rates = cd.DELAY_RATES[2:]
+    full = cd.fold_delay_law(real, "h", q_f, p_f, canon, rates=rates)
+    refused = p_f - 5 * rates[1] ** (2 / 3) / canon["mu_per_unit_parameter"]
+    original = cd.off_branch
+
+    def refuse(real_, param, q0, p0, *args, **kwargs):
+        if abs(p0 - refused) < 1e-9:
+            return "refused by the test"
+        return original(real_, param, q0, p0, *args, **kwargs)
+
+    monkeypatch.setattr(cd, "off_branch", refuse)
+    law = cd.fold_delay_law(real, "h", q_f, p_f, canon, rates=rates)
+    assert law["left_out"] == [{"rate": rates[1], "reason": "refused by the test"},
+                               {"rate": rates[0], "reason": "a slower sweep was left out"}]
+    assert law["rows"] == full["rows"][2:]
+    fit = cd.delay_constant([row["rate"] for row in law["rows"]], [row["constant"] for row in law["rows"]])
+    assert law["constant"] == fit["constant"] and law["stderr"] == fit["stderr"]
+
+
 def test_a_root_search_for_the_fold_that_stops_early_is_restarted(monkeypatch):
     """A root search can stop before it converges, and its result can still pass the test of the residual: on one
     machine this displaced the fold of the rotor patch by 9e-9 in canonical units. Here the first search for the

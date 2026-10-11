@@ -95,8 +95,9 @@ TARGET_INFO = {
         "law": "delay of the switch under a sweep mu = r t: the static fold is crossed at mu = |a1'| r^(2/3)",
         "constant_name": "|a1'|", "constant": DELAY_CONSTANT,
         "K": "x = a2 s and mu = a2 b (p - p_f), so that the reduced drift is mu + x^2",
-        "L": "the parameter is swept through the fold without noise at rates r = 1e-3 to 1e-7 (canonical units); "
-             "the delay of the crossing is extrapolated to r = 0"},
+        "L": "the parameter is swept through the fold without noise at rates r = 1e-3 to 1e-7 (canonical units), "
+             "each from a start on the branch of the occupied state; the delay of the crossing is extrapolated to "
+             "r = 0"},
     "phase-locking": {
         "title": "phase locking", "letters": "SCRKL", "canonical": "nu - sin phi", "check": "averaged drift",
         "target": "phase locking (Adler equation, dpsi/dt = Delta omega - K sin phi)",
@@ -478,6 +479,34 @@ def canonical_fold(real: Realization, param: str, q_f: np.ndarray, p_f: float, n
             "mode": vec.tolist(), "left_mode": w.tolist()}
 
 
+def off_branch(real: Realization, param: str, q0: Optional[np.ndarray], p0: float, q_f: np.ndarray, p_f: float,
+               previous: Optional[Tuple[np.ndarray, float]] = None) -> Optional[str]:
+    """Why the start q0 at p0 of a sweep through the fold (q_f, p_f) is not the occupied state, or None if it is. q0 is
+    None where the root search found no stable state on the side of the occupied state.
+
+    Without a previous start, q0 is followed along the parameter toward the fold and through it (analysis.track), and
+    must disappear at the fold, by the test with which locate_writes takes two write points for one: within
+    WRITE_RESOLUTION of the followed range in the parameter, within four merge tolerances in the state. Otherwise the
+    previous start, which passed this test, is followed away from the fold to p0: the branch must reach p0, and q0
+    must be the state it reaches."""
+    if previous is None:
+        if q0 is None:
+            return "no stable state at the start of the slowest sweep"
+        _, ev = an.track(real, param, q0, p0, 2.0 * p_f - p0)
+        if ev is None or abs(ev["v"] - p_f) > an.WRITE_RESOLUTION * 2.0 * abs(p_f - p0) \
+                or real.carrier.distance(np.asarray(ev["q"], float), q_f) > 4 * an._merge_tol(real):
+            return "the branch of the slowest start does not end at the fold"
+        return None
+    branch, ev = an.track(real, param, previous[0], previous[1], p0)
+    if ev is not None:
+        return "the branch of the occupied state ends before the start"
+    if q0 is None:
+        return "the root search found no stable state at the start"
+    if real.carrier.distance(np.asarray(branch[-1]["q"], float), q0) > an._merge_tol(real):
+        return "the root search converged on another state"
+    return None
+
+
 def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, canon: Dict,
                    rates=DELAY_RATES, tau: float = 5.0) -> Dict[str, object]:
     """Sweep the parameter through the fold without noise, p = p_f + r t / (a2 b), and record the time t0 at which the
@@ -486,34 +515,53 @@ def fold_delay_law(real: Realization, param: str, q_f: np.ndarray, p_f: float, c
     shifts every crossing by the same mu and adds delta r^(-2/3) to t0 r^(1/3): a term that grows at slow rates and,
     left out, biases an extrapolation to r = 0. The root search of refine_fold leaves a delta that depends on the
     model and on the rounding of the machine, between 1e-13 and 1e-10 for the rotor patch; at the slowest rate 1e-10
-    adds 5e-6. The constant is therefore fitted with this term (delay_constant). Each sweep starts on the occupied
-    branch at mu = -tau r^(2/3)."""
+    adds 5e-6. The constant is therefore fitted with this term (delay_constant).
+
+    Each sweep starts at mu = -tau r^(2/3), at a state found by a root search from the parabola of the fold, and is
+    used only if that state is the occupied state on the branch that ends at the fold (off_branch). Where a2 b is
+    small, the fast rates start far from the fold in the parameter: for a pair of states of the caged dipoles
+    (a2 = -0.078) the search at r = 1e-3 converged on a stable state 3.9 from the fold, on the side of the occupied
+    state, whose sweep crossed at 6.8 r^(2/3) and dominated the fit. The rates are taken from the slowest up, and the
+    first one that cannot be used ends the series: the fit rests on the slowest rates, and the rates left out are
+    listed with the reason."""
     from scipy.integrate import solve_ivp
     vec, w = np.asarray(canon["mode"], float), np.asarray(canon["left_mode"], float)
     a2, k = canon["a2"], canon["mu_per_unit_parameter"]
-    rows = []
-    for r in rates:
+    found: Dict[int, Dict[str, object]] = {}
+    left_out: List[Dict[str, object]] = []
+    previous = None  # the start of the last sweep used, (state, parameter)
+    for i in sorted(range(len(rates)), key=lambda j: rates[j]):
+        r = rates[i]
+        if left_out:
+            left_out.append({"rate": float(r), "reason": "a slower sweep was left out"})
+            continue
         rho = r / k
         t_start = -tau * r ** (-1 / 3)
         p_start = p_f + rho * t_start
         q0, ok = an.newton(real, _shift(real, q_f, (-sqrt(tau) * r ** (1 / 3) / a2) * vec), {param: p_start})
         s0 = float(w @ real.carrier.diff(q_f, q0))
-        if not ok or a2 * s0 >= 0 or an.n_unstable(an.kappa_spectrum(real, q0, {param: p_start})) > 0:
-            continue  # at this rate the start lies beyond the branch of the occupied state
+        stable = ok and a2 * s0 < 0 and an.n_unstable(an.kappa_spectrum(real, q0, {param: p_start})) == 0
+        reason = off_branch(real, param, q0 if stable else None, p_start, q_f, p_f, previous)
+        if reason is None:
+            def rhs(t, q, rho=rho):
+                return real.F(q, **{param: p_f + rho * t})
 
-        def rhs(t, q, rho=rho):
-            return real.F(q, **{param: p_f + rho * t})
+            def cross(t, q):
+                return float(w @ real.carrier.diff(q_f, q))
 
-        def cross(t, q):
-            return float(w @ real.carrier.diff(q_f, q))
-
-        cross.terminal, cross.direction = True, float(np.sign(a2))
-        sol = solve_ivp(rhs, (t_start, 8.0 * r ** (-1 / 3)), q0, method=DELAY_SOLVER, rtol=1e-12, atol=1e-14,
-                        events=cross)
-        if sol.t_events[0].size:
-            rows.append({"rate": float(r), "parameter_rate": float(rho),
-                         "constant": float(sol.t_events[0][0] * r ** (1 / 3))})
-    out: Dict[str, object] = {"rows": rows, "expected": DELAY_CONSTANT}
+            cross.terminal, cross.direction = True, float(np.sign(a2))
+            sol = solve_ivp(rhs, (t_start, 8.0 * r ** (-1 / 3)), q0, method=DELAY_SOLVER, rtol=1e-12, atol=1e-14,
+                            events=cross)
+            if sol.t_events[0].size:
+                found[i] = {"rate": float(r), "parameter_rate": float(rho),
+                            "constant": float(sol.t_events[0][0] * r ** (1 / 3))}
+                previous = (q0, p_start)
+            else:
+                reason = "the state does not cross the static fold during the sweep"
+        if reason is not None:
+            left_out.append({"rate": float(r), "reason": reason})
+    rows = [found[i] for i in sorted(found)]  # in the order of the rates given, the order in which they are fitted
+    out: Dict[str, object] = {"rows": rows, "left_out": left_out, "expected": DELAY_CONSTANT}
     if len(rows) >= 5:
         out.update(delay_constant([row["rate"] for row in rows], [row["constant"] for row in rows]))
     return out
@@ -650,6 +698,10 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
         law = fold_delay_law(target_real, param, q_f, p_f, canon)
         w = np.asarray(canon["left_mode"], float)
         law["noise_rate"] = float(canon["a2"] ** 2 * real.noise * float(w @ w))
+        if law["left_out"]:
+            first = law["left_out"][0]
+            notes.append(f"{len(law['left_out'])} of {len(law['left_out']) + len(law['rows'])} sweeps were left out, "
+                         f"from r = {first['rate']:.1e} up: {first['reason']}")
         if "constant" in law:
             const = {"constant": law["constant"], "stderr": law["stderr"], "expected": DELAY_CONSTANT}
             word.append("L")
