@@ -362,7 +362,8 @@ NODES = [
      "name": "two-component normal form with the symmetry of a square, rates split",
      "question": "Which component is written when the second one relaxes faster?",
      "tutorial": M9 + "#5-where-a-derivation-stops"},
-    {"id": "amplitude_square", "base": "amplitude_split", "params": {"d": 0.0}, "universal": True,
+    # the equations of amplitude_split with d = 0, in a file of its own so that the gallery has its card
+    {"id": "amplitude_square", "family": "dissipative", "spec": "examples/memory/two_component_square.json", "universal": True,
      "name": "two-component normal form with the symmetry of a square",
      "question": "Which states are written when the symmetry of a square makes the critical mode degenerate?",
      "tutorial": M9 + "#5-where-a-derivation-stops"},

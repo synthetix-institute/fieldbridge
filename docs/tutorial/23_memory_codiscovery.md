@@ -177,7 +177,8 @@ difference between the cells that splits the pair by more than the resolution le
 applies again. The web page shows the class with its canonical form, two components related by the symmetry of a
 square, $\dot z = \varepsilon z - |z|^2 z + g \bar z^3$ with $z = x + iy$: four stable states on the axes for
 $0 < g < 1$. Lowering the rate of one component by $d$ splits the pair, and the write becomes the pitchfork along the
-other.
+other. The form with $d = 0$ is the specification `examples/memory/two_component_square.json`; its card in the gallery
+shows the four states and the two directions that become critical together at $\varepsilon = 0$.
 
 ## 6. Two invariants of the end point
 

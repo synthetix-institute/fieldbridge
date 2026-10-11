@@ -236,6 +236,13 @@
      -0.17843394258122572
     ],
     "half": 0.759835715314666,
+    "critical_dimension": 1,
+    "critical_kappa": [
+     [
+      -1.1945999768087725e-07,
+      -0.0
+     ]
+    ],
     "event": "loses stability",
     "source": "control",
     "obstruction": {
@@ -375,6 +382,13 @@
      1.8207053297185585
     ],
     "half": 2.3944523789575634,
+    "critical_dimension": 1,
+    "critical_kappa": [
+     [
+      0.012493728613710786,
+      -0.0
+     ]
+    ],
     "event": "vanishes",
     "source": "write field",
     "obstruction": {
@@ -2021,6 +2035,6 @@
   "holds": "activation between stored states (Law 3)",
   "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.82, not rewritten"
  },
- "seconds": 15.917181968688965,
+ "seconds": 21.516958951950073,
  "id": "card15"
 }

@@ -337,6 +337,22 @@
    }
   },
   {
+   "file": "examples/memory/two_component_square.json",
+   "name": "two-component normal form with the symmetry of a square",
+   "field": "statistical physics",
+   "question": "Which states are written when the symmetry of a square makes the critical mode degenerate?",
+   "source": "Landau normal form of a symmetry-breaking transition",
+   "contributor": "",
+   "mechanism": "write into a degenerate critical mode (several directions critical together)",
+   "verdict": {
+    "stores": "4 stable state(s)",
+    "writes": "degenerate critical mode at eps = 0; a uniform field removes the stable state at h = 0.163",
+    "constructs": "degenerate critical mode at eps = 0: 2 directions become critical together, and the write chooses a direction in a 2-dimensional critical eigenspace, not one of two states of a pitchfork",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.23, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.25, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.42, not rewritten"
+   }
+  },
+  {
    "file": "examples/memory/oscillators/van_der_pol.json",
    "name": "van der Pol oscillator",
    "field": "electronics",

@@ -3467,6 +3467,17 @@
     "asymmetry": 0.0,
     "bias": 0.0,
     "a3": 0.0,
+    "critical_dimension": 2,
+    "critical_kappa": [
+     [
+      -9.99755834230065e-08,
+      -1.0000000000842617
+     ],
+     [
+      -9.99755834230065e-08,
+      1.0000000000842617
+     ]
+    ],
     "event": "loses stability",
     "source": "control",
     "obstruction": {
@@ -4695,6 +4706,6 @@
   "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
   "lock": "-"
  },
- "seconds": 10.037466049194336,
+ "seconds": 11.588238000869751,
  "id": "card05"
 }

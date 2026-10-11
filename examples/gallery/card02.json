@@ -224,6 +224,13 @@
      -0.0025651566693538283
     ],
     "half": 0.25,
+    "critical_dimension": 1,
+    "critical_kappa": [
+     [
+      -7.881580363910956e-07,
+      -0.0
+     ]
+    ],
     "event": "loses stability",
     "source": "control",
     "obstruction": {
@@ -1662,6 +1669,6 @@
   "holds": "activation between stored states (Law 3)",
   "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.00, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.52, not rewritten"
  },
- "seconds": 11.687406301498413,
+ "seconds": 12.123174905776978,
  "id": "card02"
 }

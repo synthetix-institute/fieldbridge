@@ -3495,6 +3495,17 @@
     "asymmetry": 0.0,
     "bias": 0.0,
     "a3": 0.0,
+    "critical_dimension": 2,
+    "critical_kappa": [
+     [
+      -1.0001333094339371e-07,
+      -0.27550678249039184
+     ],
+     [
+      -1.0001333094339371e-07,
+      0.27550678249039184
+     ]
+    ],
     "event": "loses stability",
     "source": "control",
     "obstruction": {
@@ -3717,6 +3728,6 @@
   "holds": "relaxation to a single state (Law 1)",
   "lock": "-"
  },
- "seconds": 3.637586832046509,
+ "seconds": 3.2557737827301025,
  "id": "card06"
 }
