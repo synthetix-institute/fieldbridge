@@ -2,7 +2,7 @@
 
 **Learning objectives.** After this module you can
 
-1. derive the threshold write, a fold, along the control or by a write field, and read the three classes of its
+1. derive the threshold write, a fold, along the control or by a write field, and read the four classes of its
    derivation;
 2. explain why a symmetry that permits the symmetric write forbids a threshold along the same parameter, and why
    the threshold write is reached in more models;
@@ -22,9 +22,9 @@ $$
 at which the occupied state meets an unstable state and disappears, and the material switches to another stored
 state. A threshold write needs no symmetry, and a symmetry is its obstruction: a symmetry that reverses the critical
 mode forbids the quadratic term. The constructor therefore first follows the control (C, R). If the write point
-along the control is a pitchfork or a Hopf bifurcation, or if the control only rescales the drift, it applies a
-bounded field toward another stored state (W, acting on the protocol $P$) and raises it until the occupied state
-disappears; this value is the coercive field. In the coordinate $x = a_2 s$, with $\mu = a_2 b\,(p - p_f)$ and $b$
+along the control is a pitchfork, a degenerate critical mode or a Hopf bifurcation, or if the control only rescales
+the drift, it applies a bounded field toward another stored state (W, acting on the protocol $P$) and raises it
+until the occupied state disappears; this value is the coercive field. In the coordinate $x = a_2 s$, with $\mu = a_2 b\,(p - p_f)$ and $b$
 the push of the parameter $p$ along the critical mode, the reduced drift is $\mu + x^2$ (K).
 
 The letters S, C and R act as in Module 9. Three letters are new or take another form:
@@ -55,17 +55,20 @@ The command takes about one minute.
 | Stoner–Wohlfarth particle | magnetism | SCRWRKL | $h = 0.1847$ | −0.438 | 1.0187929 ± 0.0000007 |
 | ring of 4 repressors | synthetic biology | SCRWRKL | $h = 1.5988$ | 2.975 | 1.018793 ± 0.000014 |
 | two equal tubes | transport networks | SCRWRKL | $h = 0.06396$ | 0.163 | 1.0187929 ± 0.0000009 |
-| caged capillary rotors | soft matter | WRKL | $h = 1.6335$ | 0.037 | 1.0187929 ± 0.0000005 |
-| caged in-plane dipoles | magnetism | WRKL | $h = 0.02038$ | 0.747 | 1.01887 ± 0.00045 |
+| two-component normal form, square symmetry | statistical physics | CRWRKL | $h = 0.1062$ | −0.713 | 1.0187929 ± 0.0000009 |
+| caged capillary rotors | soft matter | WRKL | $h = 4.2912$ | −0.019 | 1.0187930 ± 0.0000005 |
+| caged in-plane dipoles | magnetism | WRKL | $h = 0.1776$ | 3.205 | 1.08 ± 0.31 |
 | ring of 3 repressors | synthetic biology | CR | stops: no stable state | — | — |
 | three compartments | compartment models | — | stops: a single stable state | — | — |
 
-Twelve models from eight fields reach the target by three classes of derivation: by the control, C R(fold) K L; by a
-field after a symmetric write point, S C R(pitchfork) W R(fold) K L; and by a field where the control only rescales
-the drift, W R(fold) K L. In the second class the symmetry that forces a pitchfork along the control also forbids a
-threshold there. A field toward one of the two states breaks the symmetry, and the occupied state disappears at the
-coercive field; for the Landau model, $\dot x = x - x^3 - h$, this is $h_c = 2/(3\sqrt3) = 0.3849$. The cubic
-coefficient $c_3$ of the canonical form, the leading correction to Eq. (1), differs between the models.
+Thirteen models from eight fields reach the target by four classes of derivation: by the control, C R(fold) K L; by a
+field after a symmetric write point, S C R(pitchfork) W R(fold) K L; by a field after a write point at which two
+directions become critical together (Module 9, Section 5), C R(degenerate critical mode) W R(fold) K L; and by a
+field where the control only rescales the drift, W R(fold) K L. In the second class the symmetry that forces a
+pitchfork along the control also forbids a threshold there. A field toward one of the two states breaks the symmetry,
+and the occupied state disappears at the coercive field; for the Landau model, $\dot x = x - x^3 - h$, this is
+$h_c = 2/(3\sqrt3) = 0.3849$. The cubic coefficient $c_3$ of the canonical form, the leading correction to Eq. (1),
+differs between the models.
 
 ![Derivations of the threshold write and the delay of the switch](figures/memory/m9_threshold.png)
 
@@ -123,17 +126,25 @@ converges, and the fit contains the term
 largest of three numbers: the change when the fourth-order term is left out, the largest change when one rate is
 left out, and $5 \times 10^{-7}$, the accuracy of the canonical scale $a_2 b$ and of the integration.
 
-In ten of the eleven models the constant lies within $1.2 \times 10^{-6}$ of $\lvert a_1'\rvert$, and the weighted
-mean is $1.0187929 \pm 0.0000003$. The slopes of the corrections differ, from $-0.45$ for the laser to $+0.40$ for
-the ring of four, as the fifth-order coefficients did for the symmetric write (Module 9, Section 6). For the unequal
-tubes the corrections are large and alternate in sign: the sweep at $r = 10^{-3}$ lies above the limit, the sweep
-at $r = 3 \times 10^{-5}$ 0.32% below it, and the slowest one still 0.1% below. Their constant,
-$1.01877 \pm 0.00029$, is the least certain and lies $2 \times 10^{-5}$ from $\lvert a_1'\rvert$.
+In eleven of the thirteen models the constant lies within $1.2 \times 10^{-6}$ of $\lvert a_1'\rvert$, and the
+weighted mean is $1.0187930 \pm 0.0000002$. Apart from the dipoles (below), the slopes of the corrections range from
+$-0.45$ for the laser to $+0.40$ for the ring of four, as the fifth-order coefficients differed for the symmetric
+write (Module 9, Section 6). For
+the unequal tubes the corrections are large and alternate in sign: the sweep at $r = 10^{-3}$ lies above the limit,
+the sweep at $r = 3 \times 10^{-5}$ 0.32% below it, and the slowest one still 0.1% below. Their constant,
+$1.01877 \pm 0.00029$, lies $2 \times 10^{-5}$ from $\lvert a_1'\rvert$.
+
+For the caged in-plane dipoles the field writes from one sampled stored state to another. The pair drawn in this run
+has a small quadratic coefficient, $a_2 = -0.078$, and a large cubic one, $c_3 = 3.2$, so a canonical rate corresponds
+to a wide range of the field. The fast sweeps then start at a reversed field, away from the branch of the occupied
+state: at $r = 3 \times 10^{-4}$ no stationary state is found at the start, and that rate is left out; at
+$r = 10^{-3}$ the sweep starts on a distant state and crosses at $6.8\,r^{2/3}$. The fit is dominated by this sweep
+and gives $1.08 \pm 0.31$, which does not test the law; the slowest sweeps lie 0.3% above $\lvert a_1'\rvert$.
 
 The law holds in the limit of small noise. In the variables of Eq. (2) the noise intensity is $a_2^2 D_s/r$, so the
 deterministic delay is observed for sweeps faster than the rate $a_2^2 D_s$ given in the report; slower sweeps
 switch earlier, by activation over the vanishing barrier. At the noise of the specifications this rate is
-$2 \times 10^{-3}$ for the laser and 800 for the capillary rotors, whose switch is therefore always activated.
+$2 \times 10^{-3}$ for the laser and 330 for the capillary rotors, whose switch is therefore always activated.
 
 ## 4. The two write targets compared
 
@@ -148,6 +159,7 @@ $2 \times 10^{-3}$ for the laser and 800 for the capillary rotors, whose switch 
 | toggle, unequal promoters | synthetic biology | C R U R K L | C R K L |
 | two equal tubes | transport networks | stops at R (subcritical) | S C R W R K L |
 | two unequal tubes | transport networks | stops at U | C R K L |
+| two-component normal form | statistical physics | stops at R (degenerate mode) | C R W R K L |
 | capillary rotors, dipoles | soft matter, magnetism | stop at C | W R K L |
 | ring of 3 repressors | synthetic biology | stops at R (Hopf) | stops: no stable state |
 | three compartments | compartment models | stops at C | stops: a single stable state |
@@ -156,7 +168,8 @@ The two targets are complementary. A symmetry makes the symmetric write possible
 along the same parameter; a field that breaks the symmetry restores the threshold. Without a symmetry the write
 along the control is a fold, and the symmetric write needs a second parameter tuned to the cusp, where two folds
 merge into a pitchfork. A fold is the generic way for a state to disappear, whereas a pitchfork requires a symmetry
-or a tuned parameter; the threshold write is therefore reached in eleven models and the symmetric write in seven.
+or a tuned parameter; the threshold write is therefore reached in thirteen of the fifteen models and the symmetric
+write in eight.
 
 ## 5. A model from your field
 
@@ -194,11 +207,13 @@ specification.
 
 ## Summary
 
-- The threshold write, a fold, is reached in twelve models from eight fields by three classes of derivation: by the
-  control, or by a write field where a symmetry or a scale control prevents a threshold along the control.
+- The threshold write, a fold, is reached in thirteen models from eight fields by four classes of derivation: by the
+  control, or by a write field where a symmetry, a degenerate critical mode or a scale control prevents a threshold
+  along the control.
 - The switch lags behind a sweep by $\mu = \lvert a_1'\rvert r^{2/3}$; the constant $\lvert a_1'\rvert = 1.0187930$,
-  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in ten models and to $2 \times 10^{-5}$ in the
-  eleventh, within its uncertainty in each.
+  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in eleven models and to $2 \times 10^{-5}$ in
+  the unequal tubes, within its uncertainty in each. For the pair of dipole states drawn in the default run the fast
+  sweeps start off the branch of the occupied state, and the fit does not test the law.
 - An error of the located fold adds a term $\delta\,r^{-2/3}$ to the measured constant; the fit contains it.
 - The Schlögl reactor with the parameters of the example is exactly the Landau model in a field.
 - A symmetry makes the symmetric write possible and the threshold write impossible along the same parameter; a

@@ -468,7 +468,6 @@ def cmd_gallery(args) -> int:
 
 
 def cmd_codiscover(args) -> int:
-    import numpy as np
     from . import codiscovery, spec
     dirs = [args.examples] if args.examples else codiscovery.TARGET_INFO[args.target].get("examples",
                                                                                          ("examples/memory",))
@@ -479,7 +478,7 @@ def cmd_codiscover(args) -> int:
             reals.append(spec.load(path))
         except spec.SpecError as err:
             skipped.append(f"{path.name}: {err}")
-    rep = codiscovery.codiscover(reals, np.random.default_rng(args.seed), target=args.target,
+    rep = codiscovery.codiscover(reals, args.seed, target=args.target,
                                  check_law=not args.no_law, n_traj=args.trajectories, replicates=args.replicates)
     out = Path(args.out_dir)
     report = {"command": "codiscover", **_provenance(),

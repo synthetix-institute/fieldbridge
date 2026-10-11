@@ -544,7 +544,7 @@ def test_above_six_variables_a_ring_is_turned_and_reflected_cell_by_cell():
 
 def test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle():
     from fieldbridge.memory import codiscovery as cd
-    rep = cd.codiscover([load("laser"), load("toggle")], np.random.default_rng(5), n_traj=1000)
+    rep = cd.codiscover([load("laser"), load("toggle")], 5, n_traj=1000)
     s = rep["summary"]
     assert s["reached"] == 2 and s["fields_reached"] == ["laser physics", "synthetic biology"]
     assert len(s["derivation_classes"]) == 2
@@ -555,8 +555,7 @@ def test_realizations_that_simulate_the_same_equations_count_as_one_model():
     """The unequal toggle, unfolded to equal promoters, is the toggle: its law constant is a replicate of the
     toggle's, not a second model. The laser reduces to the same canonical form by other equations."""
     from fieldbridge.memory import codiscovery as cd
-    rep = cd.codiscover([load(n) for n in ("toggle", "toggle_unequal", "laser")], np.random.default_rng(3),
-                        n_traj=400, replicates=4)
+    rep = cd.codiscover([load(n) for n in ("toggle", "toggle_unequal", "laser")], 3, n_traj=400, replicates=4)
     s = rep["summary"]
     assert s["law_constant_realizations"] == 3 and s["law_constant_dof"] == 2
     assert s["same_equations"] == [[load("toggle").name, load("toggle_unequal").name]]
@@ -772,6 +771,45 @@ def test_codiscover_command_writes_report_and_figure(tmp_path):
     assert report["summary"]["ratios"] == {"1:1": ["van der Pol oscillator"]}
     assert [r["status"] for r in report["rows"]] == ["reached", "obstructed"]
     assert (out3 / "codiscover.png").stat().st_size > 0
+
+
+def test_adding_a_specification_leaves_the_random_streams_of_the_other_derivations_unchanged(tmp_path, monkeypatch):
+    """Each realization draws the stream of its own material. With one stream shared in the order of the files, a
+    specification that sorted first re-drew every later realization, and the law constants of the default run of
+    Module 9 moved although no equation had changed."""
+    import argparse
+    import shutil
+    from fieldbridge.memory import cli, codiscovery as cd
+    # the derivation itself: the runs of the law, spawned from the stream of the material, are the same
+    alone = cd.codiscover([load("pitchfork")], 7, n_traj=64, replicates=2)["rows"][0]
+    behind = cd.codiscover([load("laser"), load("pitchfork")], 7, n_traj=64, replicates=2)["rows"][1]
+    assert alone["law"]["runs"] == behind["law"]["runs"] and alone["law_constant"] == behind["law_constant"]
+    drawn = {}
+
+    def derive(real, rng, check_law=True, n_traj=0, replicates=1):
+        drawn[real.name] = rng.random(4).tolist()
+        return {"name": real.name, "field": "", "status": "obstructed", "obstruction": "no control parameter",
+                "obstruction_short": "no control parameter", "word": "", "route": "", "class": "", "steps": []}
+
+    monkeypatch.setitem(cd.TARGETS, "symmetric-write", derive)
+    folder = tmp_path / "memory"
+    folder.mkdir()
+    for name in ("schlogl.json", "toggle.json"):
+        shutil.copy(EX / name, folder / name)
+
+    def run():
+        drawn.clear()
+        cli.cmd_codiscover(argparse.Namespace(specs=[], examples=str(folder), target="symmetric-write", seed=20260923,
+                                              no_law=True, trajectories=400, replicates=8,
+                                              out_dir=str(tmp_path / "out"), no_figure=True))
+        return dict(drawn)
+
+    before = run()
+    shutil.copy(EX / "laser.json", folder / "a_laser.json")  # sorts before the other two
+    after = run()
+    assert set(after) == set(before) | {"single-mode laser"}
+    assert all(after[name] == before[name] for name in before)
+    assert len({tuple(d) for d in after.values()}) == 3  # different materials draw different streams
 
 
 def test_the_magnet_is_a_single_domain_particle_with_the_astroid():

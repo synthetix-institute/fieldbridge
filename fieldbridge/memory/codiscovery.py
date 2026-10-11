@@ -62,6 +62,7 @@ import numpy as np
 
 from . import analysis as an
 from .construct import along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check
+from .discovery import card_rng
 from .identity import Realization
 
 LAW_CONSTANT = pi ** 0.25
@@ -674,11 +675,16 @@ TARGETS = {"symmetric-write": derive_symmetric_write, "threshold-write": derive_
            "phase-locking": derive_phase_locking}
 
 
-def codiscover(reals: List[Realization], rng, target: str = "symmetric-write", check_law: bool = True,
+def codiscover(reals: List[Realization], seed: int, target: str = "symmetric-write", check_law: bool = True,
                n_traj: int = 400, replicates: int = 1) -> Dict[str, object]:
-    """Derive the target in every realization and compare the ends: derivation classes, fields and invariants."""
+    """Derive the target in every realization and compare the ends: derivation classes, fields and invariants.
+
+    Each realization draws its own random stream, from the seed and its name (discovery.card_rng), and the replicate
+    runs of its law are spawned from that stream: adding or removing a realization leaves the rows of the others
+    unchanged."""
     info = TARGET_INFO[target]
-    rows = [TARGETS[target](r, rng, check_law=check_law, n_traj=n_traj, replicates=replicates) for r in reals]
+    rows = [TARGETS[target](r, card_rng(seed, r.name), check_law=check_law, n_traj=n_traj, replicates=replicates)
+            for r in reals]
     reached = [r for r in rows if r["status"].startswith("reached")]
     classes: Dict[str, List[str]] = {}
     for r in reached:

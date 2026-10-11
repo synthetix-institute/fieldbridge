@@ -67,17 +67,18 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 
 | Realization | Field | Derivation | Result | Write point | Law constant |
 | --- | --- | --- | --- | --- | --- |
-| single-mode laser | laser physics | SCRKL | reached | $P = 1$ | 1.360 ± 0.051 |
-| convection roll | fluid dynamics | SCRKL | reached | $r = 1$ | 1.320 ± 0.058 |
-| pitchfork normal form | statistical physics | SCRKL | reached | $\varepsilon = 0$ | 1.383 ± 0.051 |
-| ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.323 ± 0.068 |
-| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.284 ± 0.050 |
-| Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.314 ± 0.051 |
-| Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.257 ± 0.054 |
-| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.371 ± 0.061 |
+| single-mode laser | laser physics | SCRKL | reached | $P = 1$ | 1.374 ± 0.051 |
+| convection roll | fluid dynamics | SCRKL | reached | $r = 1$ | 1.354 ± 0.063 |
+| pitchfork normal form | statistical physics | SCRKL | reached | $\varepsilon = 0$ | 1.292 ± 0.050 |
+| ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.427 ± 0.052 |
+| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.346 ± 0.061 |
+| Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.340 ± 0.051 |
+| Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.348 ± 0.051 |
+| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.323 ± 0.050 |
 | ring of 3 repressors | synthetic biology | CR | stops at R: Hopf | — | — |
 | two equal tubes | transport networks | SCR | stops at R: subcritical | — | — |
 | two unequal tubes | transport networks | CR | stops at U: no supercritical cusp | — | — |
+| two-component normal form, square symmetry | statistical physics | CR | stops at R: degenerate critical mode | — | — |
 | caged capillary rotors | soft matter | — | stops at C: the control rescales the drift | — | — |
 | caged in-plane dipoles | magnetism | — | stops at C: the control rescales the drift | — | — |
 | three compartments | compartment models | — | stops at C: no control | — | — |
@@ -154,10 +155,11 @@ A derivation that stops is a result: it names the property of the model that dif
 | ring of 3 repressors | R | A complex pair crosses (Hopf). A cyclic symmetry of order 3 cannot reverse a real mode: if $gv = -v$, then $v = g^3 v = -v$. The model stores a phase instead (Module 6). |
 | two equal tubes | R | The exchange symmetry forces a pitchfork, but not the sign of its cubic term. Here $a_3 > 0$, and the written state jumps to a distant branch. |
 | two unequal tubes | U | The write is a fold, and its cusp, at equal lengths, is the subcritical pitchfork of the equal tubes. |
+| two-component normal form, square symmetry | R | Two directions become critical together at $\varepsilon = 0$: a degenerate critical mode (below). |
 | capillary rotors, dipoles | C | The control multiplies the whole drift. It changes the depth of the landscape and not its shape, so a state is written by a field (Module 4). |
 | three compartments | C | There is no control parameter. |
 
-A degenerate critical mode also stops a derivation at R. When a symmetry makes the critical eigenvalue degenerate,
+A degenerate critical mode stops a derivation at R. When a symmetry makes the critical eigenvalue degenerate,
 two or more directions become critical at the same value of the control, and the drift reduced to one coordinate
 does not describe the write: the write chooses a direction in the critical eigenspace, not one of two states. R
 counts the eigenvalues whose real part is zero at the write point to the accuracy of the continuation, that is,
@@ -184,7 +186,7 @@ shows the four states and the two directions that become critical together at $\
 
 **The canonical form.** In the coordinate $x$ the reduced drift at the write point is $\sum_n c_n x^n$. The cubic
 coefficient $c_3 = -1$ by the choice of units, so the check lies in the other coefficients. In every model that
-reaches the target, the even part is below $10^{-9}$ of the cubic term at the edge of the fitted window,
+reaches the target, the even part is at most $2 \times 10^{-9}$ of the cubic term at the edge of the fitted window,
 and $c_3 < 0$. The fifth-order coefficient differs between the models: $c_5 = 1.8$ for the laser (2 from Eq. (2);
 the remainder comes from seventh-order terms within the window), 1.26 for the toggle, 0.76 for the ring, 0.46 for
 the Stoner–Wohlfarth particle (1/2 from the expansion of its energy), −0.07 for the convection roll and 0 for the
@@ -201,15 +203,15 @@ $$
 $$
 
 The trajectories of each realization are split into eight runs on independent random streams, and the error of a
-constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. With 2000
-trajectories per realization and the default seed, the seven models have a weighted mean of $1.326 \pm 0.019$,
-against $\pi^{1/4} = 1.331$, with $\chi^2 = 3.5$ for 7 values. The realizations share one random stream in the order
-of their files, so adding a specification changes the draws of those after it: before the convection roll was added,
-the same command gave $1.394 \pm 0.020$ for six models, three standard errors above the law. Repeated with 16 other
-seeds, the accuracies scatter as their binomial errors predict, and the seeds 11 to 14 gave weighted means of 1.311,
-1.298, 1.375 and 1.317. A run of this size moves by a few standard errors from seed to seed; the record below is the
-precise test. The constant depends only on the canonical form. A derivation that
-ended on another mechanism, such as a fold, would give an accuracy that does not follow Eq. (3).
+constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. Each realization
+draws these streams from its own generator, set by the seed and the name of the material, so adding or removing a
+specification leaves the constants of the other realizations unchanged. With 2000 trajectories per realization and
+the default seed, the seven models have a weighted mean of $1.350 \pm 0.019$, against $\pi^{1/4} = 1.331$, with
+$\chi^2 = 5.0$ for 7 values. The seeds 11 to 14 give weighted means of 1.342, 1.352, 1.310 and 1.323. The accuracies
+scatter between seeds as their binomial errors predict (a test with 16 seeds on three of the models), so one run of
+this size tests the constant to about 0.02; the record below is the precise test. The constant depends only on the
+canonical form. A derivation that ended on another mechanism, such as a fold, would give an accuracy that does not
+follow Eq. (3).
 
 The record of the [web page](https://synthetix-institute.github.io/fieldbridge/) uses 25,600 trajectories per
 realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.021. Ten realizations reach
