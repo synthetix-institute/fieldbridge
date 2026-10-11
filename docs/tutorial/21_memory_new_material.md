@@ -52,7 +52,7 @@ The command computes one card for each example in `examples/memory` and repeats 
 | --- | --- | --- | --- |
 | caged capillary rotors | write by a uniform field | 4 | Law 3, activation |
 | three compartments with an unobserved imbalance | single state: relaxation | 1 | Law 1, relaxation |
-| caged in-plane dipoles | write by a uniform field | 10 (found by sampling) | Law 3, activation |
+| caged in-plane dipoles | write by a uniform field | 11 (found by sampling) | Law 3, activation |
 | pitchfork normal form | symmetric write (supercritical pitchfork) | 2 | Law 3, activation |
 | ring of 3 repressors | limit cycle: phase memory | none | Law 2 along the cycle |
 | ring of 4 repressors | symmetric write (supercritical pitchfork) | 2 | Law 3, activation |

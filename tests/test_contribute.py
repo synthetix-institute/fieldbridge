@@ -1,5 +1,7 @@
 """Contributing a material: the template, the checks a contribution must pass, the catalog and the demo."""
+import argparse
 import json
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -63,6 +65,46 @@ def test_catalog_lists_each_material_with_its_calculated_memory():
     md = contribute.catalog_markdown(result)
     assert "[genetic toggle switch](../examples/memory/toggle.json)" in md
     assert "supercritical pitchfork" in md
+
+
+def test_adding_a_material_leaves_the_random_streams_of_the_other_cards_unchanged(tmp_path, monkeypatch):
+    """Each card draws the stream of its own material. Seeded by position, a specification that sorted first re-drew
+    every later card: the caged in-plane dipoles went from 12 sampled stable states to 11 when one was added."""
+    from fieldbridge.memory import cli, discovery, visual
+    drawn = {}
+
+    def evaluate(real, rng, transfers=None, quick=False):
+        drawn[real.name] = rng.random(4).tolist()
+        return {"name": real.name, "seconds": 0.0, "verdict": {"stores": "", "writes": "", "constructs": ""}}
+
+    monkeypatch.setattr(discovery, "evaluate", evaluate)
+    monkeypatch.setattr(discovery, "mechanism_class", lambda card: "")
+    monkeypatch.setattr(visual, "card_figure", lambda card, path: None)
+    monkeypatch.setattr(visual, "html_report", lambda cards, path, loops=None: None)
+    folder = tmp_path / "memory"
+    folder.mkdir()
+    for name in ("schlogl.json", "toggle.json"):
+        shutil.copy(EX / name, folder / name)
+
+    def gallery():
+        drawn.clear()
+        cli.cmd_gallery(argparse.Namespace(examples=str(folder), out_dir=str(tmp_path / "gallery"), seed=20260923,
+                                           quick=True, subloops=1, no_loops=True))
+        return dict(drawn)
+
+    def catalog():
+        drawn.clear()
+        contribute.catalog([folder], root=tmp_path)
+        return dict(drawn)
+
+    before = gallery(), catalog()
+    shutil.copy(EX / "laser.json", folder / "a_laser.json")  # sorts before the other two
+    after = gallery(), catalog()
+    for b, a in zip(before, after):
+        assert set(a) == set(b) | {"single-mode laser"}
+        assert all(a[name] == b[name] for name in b)
+    assert len({tuple(d) for d in after[0].values()}) == 3  # different materials draw different streams
+    assert before[0] == before[1]  # a row of the catalog is the quick gallery card of its material
 
 
 def test_command_line_new_and_check(tmp_path):

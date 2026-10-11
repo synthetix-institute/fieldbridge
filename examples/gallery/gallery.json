@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "3fa3ffc230e2d91c501d8ea3a1d3ae32ba69fb1c5fafc94cd62b212894dfd0c6",
+  "implementation_sha256": "d002eaa1d5253d571957af9369a81fcae02592aee5f1626e44b8624c95d41645",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -24,7 +24,7 @@
         "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 6.28",
         "constructs": "no bifurcation along the control; writing requires a field",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.05, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 1.2e+03; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 1.00, retention/rewriting time ratio > 602"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.03, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 1.2e+03; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 1.00, retention/rewriting time ratio > 602"
       }
     },
     {
@@ -53,11 +53,11 @@
       "id": "card03",
       "name": "caged in-plane dipoles",
       "verdict": {
-        "stores": "12 stable state(s) (sampled)",
-        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 0.965",
+        "stores": "11 stable state(s) (sampled)",
+        "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 0.599",
         "constructs": "no bifurcation along the control; writing requires a field",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.25, retention/rewriting time ratio 0.133; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.25, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.15, retention/rewriting time ratio 0.0667; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.15, not rewritten"
       }
     },
     {
@@ -68,7 +68,7 @@
         "writes": "supercritical pitchfork at P = 1",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.03, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.05, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.60, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.03, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.40, not rewritten"
       }
     },
     {
@@ -167,7 +167,7 @@
         "writes": "supercritical pitchfork at eps = 0; a uniform field removes the stable state at h = 0.385",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.38, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.95, retention/rewriting time ratio 1.77; field 0.4 x threshold, control swept through the write point: accuracy 0.73, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.38, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.95, retention/rewriting time ratio 1.56; field 0.4 x threshold, control swept through the write point: accuracy 0.72, not rewritten"
       }
     },
     {
@@ -189,7 +189,7 @@
         "writes": "supercritical pitchfork at alpha = 1.01; a uniform field removes the stable state at h = 1.6",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.82, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 57.1; field 0.4 x threshold, control swept through the write point: accuracy 0.75, not rewritten"
       }
     },
     {
@@ -200,7 +200,7 @@
         "writes": "saddle-node (fold) at b = 1.49; saddle-node (fold) at b = 2.26; a uniform field removes the stable state at h = 0.385",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp a = 4.153, b = 2.654 (supercritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.10, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio 14.6"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.12, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 26.7"
       }
     },
     {
@@ -211,7 +211,7 @@
         "writes": "supercritical pitchfork at h = 1; a uniform field removes the stable state at h = 0.185",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.52, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.85, retention/rewriting time ratio 1.5; field 0.4 x threshold, control swept through the write point: accuracy 0.77, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.50, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.93, retention/rewriting time ratio 0.8; field 0.4 x threshold, control swept through the write point: accuracy 0.73, not rewritten"
       }
     },
     {
@@ -222,7 +222,7 @@
         "writes": "supercritical pitchfork at alpha = 2; a uniform field removes the stable state at h = 0.213",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.22, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.98, retention/rewriting time ratio > 12.5; field 0.4 x threshold, control swept through the write point: accuracy 0.87, retention/rewriting time ratio > 5.88"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.17, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 13.3; field 0.4 x threshold, control swept through the write point: accuracy 0.92, retention/rewriting time ratio > 5.56"
       }
     },
     {
@@ -233,7 +233,7 @@
         "writes": "saddle-node (fold) at alpha = 3.27; a uniform field removes the stable state at h = 0.446",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp gamma = 1, alpha = 2 (supercritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio > 25.8; field 0.4 x threshold, control swept through the write point: accuracy 0.28, retention/rewriting time ratio > 129"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.72, retention/rewriting time ratio > 21.5; field 0.4 x threshold, control swept through the write point: accuracy 0.23, retention/rewriting time ratio > 129"
       }
     },
     {
@@ -244,7 +244,7 @@
         "writes": "subcritical pitchfork at mu = 1.38; a uniform field removes the stable state at h = 0.064",
         "constructs": "subcritical pitchfork: symmetric write, but the state jumps to a distant branch; a saturating term is needed for a local write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.48, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.90, retention/rewriting time ratio 0.596; field 0.4 x threshold, control swept through the write point: accuracy 0.78, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.77, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.80, retention/rewriting time ratio 0.596; field 0.4 x threshold, control swept through the write point: accuracy 0.78, not rewritten"
       }
     },
     {
@@ -255,7 +255,7 @@
         "writes": "saddle-node (fold) at mu = 1.21; a uniform field removes the stable state at h = 0.0785",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp L2 = 1, mu = 1.383 (subcritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.48, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.68, retention/rewriting time ratio 3.43; field 0.4 x threshold, control swept through the write point: accuracy 0.38, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.32, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio 1.09; field 0.4 x threshold, control swept through the write point: accuracy 0.53, not rewritten"
       }
     },
     {
@@ -263,10 +263,10 @@
       "name": "two-component normal form with the symmetry of a square",
       "verdict": {
         "stores": "4 stable state(s)",
-        "writes": "degenerate critical mode at eps = 0; a uniform field removes the stable state at h = 0.106",
+        "writes": "degenerate critical mode at eps = 0; a uniform field removes the stable state at h = 0.163",
         "constructs": "degenerate critical mode at eps = 0: 2 directions become critical together, and the write chooses a direction in a 2-dimensional critical eigenspace, not one of two states of a pitchfork",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.37, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.22, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.27, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.27, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.40, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.22, not rewritten"
       }
     },
     {

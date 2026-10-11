@@ -65,7 +65,7 @@ The transfer predicts that an array of dipoles at these positions stores discret
 by a field and retained by activation. It does not predict the numbers: the ratio of the two couplings sets the
 frustration of each loop and therefore the energies and barriers, which must be calculated for the target
 (`memory card examples/memory/dipole_patch.json`). The gallery of Module 7 contains this calculation: sampling finds
-ten stable states of the dipole network, written by a uniform field and retained by activation (Law 3), as the
+eleven stable states of the dipole network, written by a uniform field and retained by activation (Law 3), as the
 transfer predicted.
 
 ## 3. Worked example: from the toggle switch to a chemical reactor

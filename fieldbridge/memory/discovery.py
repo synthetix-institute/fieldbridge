@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import json
 import time
+import zlib
 from pathlib import Path
 from typing import Dict, List, Optional
 
@@ -30,6 +31,12 @@ from .construct import construct
 from .identity import Realization
 from .identity import Realization
 from .transfer import Transfer
+
+
+def card_rng(seed: int, name: str) -> np.random.Generator:
+    """The random stream of one material's card, from the base seed and the material's name. It does not depend on
+    the other materials: adding or removing a specification leaves every other card unchanged."""
+    return np.random.default_rng([seed, zlib.crc32(name.encode())])
 
 
 def _cplx(k: np.ndarray) -> List[List[float]]:
@@ -271,8 +278,7 @@ def run(realizations, out_dir: Path, seed: int = 20260923, transfers: Optional[D
     out_dir.mkdir(parents=True, exist_ok=True)
     cards = []
     for i, real in enumerate(realizations):
-        rng = np.random.default_rng(seed + 101 * i)
-        card = evaluate(real, rng, (transfers or {}).get(real.name), quick=quick)
+        card = evaluate(real, card_rng(seed, real.name), (transfers or {}).get(real.name), quick=quick)
         card["id"] = f"card{i:02d}"
         cards.append(card)
         (out_dir / f"{card['id']}.json").write_text(json.dumps(card, indent=1, default=float), encoding="utf-8")

@@ -204,7 +204,8 @@ def specifications(paths: Iterable[Union[str, Path]]) -> List[Path]:
 
 
 def catalog(paths: Iterable[Union[str, Path]], seed: int = 20260923, root: Union[str, Path] = ".") -> Dict:
-    """One row per material, with the calculated memory from a quick card."""
+    """One row per material, with the calculated memory from a quick card; each card draws the stream of its material
+    (discovery.card_rng), so a row is the quick gallery card of that material."""
     from . import discovery
     rows, skipped = [], []
     for f in specifications(paths):
@@ -214,7 +215,7 @@ def catalog(paths: Iterable[Union[str, Path]], seed: int = 20260923, root: Union
         except fspec.SpecError as err:
             skipped.append({"file": str(f), "error": str(err)})
             continue
-        card = discovery.evaluate(real, np.random.default_rng(seed), quick=True)
+        card = discovery.evaluate(real, discovery.card_rng(seed, real.name), quick=True)
         prov = raw.get("provenance")
         rows.append({"file": str(Path(f).resolve().relative_to(Path(root).resolve())) if root else str(f),
                      "name": real.name, "field": raw.get("field", ""), "question": raw.get("question", ""),
