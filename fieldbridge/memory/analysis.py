@@ -464,11 +464,26 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
                    asymmetry=0.0, bias=0.0, a3=0.0, **critical(0.0))
         return out
-    vec = np.real(R[:, i])
-    vec /= np.linalg.norm(vec)
-    evl, L = np.linalg.eig(J.T)
-    w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
-    w = w / np.dot(w, vec)
+    if lam.imag != 0.0:
+        # a pair below the resolution crosses as two real directions. Its eigenvectors from eig are complex with an
+        # arbitrary phase, and their real parts alone depend on that phase (with NumPy 2 the left and right real parts
+        # came out orthogonal). The plane of the pair is real, spanned by the real and imaginary parts of its right
+        # eigenvector, and the plane of its left eigenvector is dual to it: the reduction is taken along one direction
+        # of the first, with the left vector of the second that is one on it and zero on the other direction.
+        r, ell = R[:, i], np.linalg.inv(R)[i]
+        P = sorted([np.real(r), np.imag(r)], key=np.linalg.norm, reverse=True)
+        vec = P[0] / np.linalg.norm(P[0])
+        vec2 = P[1] - np.dot(P[1], vec) * vec
+        Lp = [np.real(ell), np.imag(ell)]
+        M = np.array([[np.dot(Lp[0], vec), np.dot(Lp[1], vec)], [np.dot(Lp[0], vec2), np.dot(Lp[1], vec2)]])
+        a, b = np.linalg.solve(M, [1.0, 0.0])
+        w = a * Lp[0] + b * Lp[1]
+    else:
+        vec = np.real(R[:, i])
+        vec /= np.linalg.norm(vec)
+        evl, L = np.linalg.eig(J.T)
+        w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
+        w = w / np.dot(w, vec)
     half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
     if real.carrier.kind == "orthant":
         nz = np.abs(vec) > 1e-9
