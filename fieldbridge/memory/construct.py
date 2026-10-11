@@ -6,10 +6,12 @@
                   direction reduced onto the slow manifold, ds/dt = a0 + a1 s + a2 s^2 + a3 s^3.
   3  obstruction  Delta, the difference between that drift and the pitchfork generator eps s - s^3 + h:
                   a quadratic term (a one-sided write), a bias carried by the control, a positive cubic (no
-                  saturation near the write point), or a rotating crossing (Hopf). -Delta is what the material
-                  must add. When the realization names further material parameters, the point at which the
-                  quadratic term vanishes (a cusp) is solved for, together with the direction of a sweep through
-                  it that carries no bias; the normal form along that sweep is then recomputed.
+                  saturation near the write point), a rotating crossing (Hopf), or several directions that become
+                  critical together (a degenerate critical mode, as in a ring that its symmetry makes degenerate,
+                  where the critical eigenspace is not a line). -Delta is what the material must add. When the
+                  realization names further material parameters, the point at which the quadratic term vanishes
+                  (a cusp) is solved for, together with the direction of a sweep through it that carries no bias;
+                  the normal form along that sweep is then recomputed.
 
 For a write point that realizes the generator, the swept-write law of the source,
 P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})) (Kondepudi and Nelson), is transferred with h_s and D_s projected on
@@ -37,6 +39,17 @@ def obstruction(nf: Dict) -> Dict[str, object]:
                 "required": ["The critical eigenvalues cross as a complex pair: the unwritten state starts to oscillate "
                              "and no state is chosen. A memory needs the loop of couplings to compose to a map with a "
                              "fixed point (a positive loop), or reciprocal couplings."]}
+    k = int(nf.get("critical_dimension", 1))
+    if k > 1:
+        # the coefficients along one direction of the critical eigenspace do not decide the write
+        return {"hopf": False, "degenerate": True, "asymmetric": False, "biased": False, "subcritical": False,
+                "realizes_generator": False, "terms": {"degenerate critical mode": k},
+                "required": [f"{k} directions become critical together, as the twisted modes of a ring of an odd number "
+                             f"of cells do by the symmetry of the ring: the write chooses a direction in a "
+                             f"{k}-dimensional critical eigenspace, not one of two states, and the drift reduced to one "
+                             f"coordinate does not describe it. A pitchfork of one component needs the degeneracy "
+                             f"lifted, by a difference between the elements that splits the critical eigenvalues by "
+                             f"more than the resolution of the continuation."]}
     asym, biased = nf["asymmetry"] > TOL, nf["bias"] > TOL
     sub = (not asym) and nf["a3"] > 0
     terms, req = {}, []
@@ -341,12 +354,15 @@ def same_equations(signatures: List[Optional[List[float]]], rtol: float = 1e-4) 
 
 def construct(real: Realization, rng, states: Optional[List[np.ndarray]] = None, n_scan: int = 7,
               max_dim: int = 12, check_write: bool = True) -> Dict[str, object]:
+    """Write points along the control and along a write field, with their normal forms and obstructions. The search
+    along the control is the continuation C of codiscovery (the same scan and starts) at every dimension of the
+    carrier, so that a card and a derivation find the same write points; max_dim limits only the write field."""
     out: Dict[str, object] = {"events": []}
     scale = an.is_scale_control(real, rng)
     if scale:
         out["control_role"] = (f"{real.control} multiplies the whole drift: it changes no state, only the depth of "
                                "the landscape against the noise (an inverse temperature)")
-    if real.control and real.carrier.dim <= max_dim and not scale:
+    if real.control and not scale:
         values = np.linspace(*real.control_range, n_scan)
         for ev in an.locate_writes(real, rng, real.control, values, n_starts=24 if real.carrier.dim <= 4 else 12):
             nf = an.normal_form(real, ev["q"], real.control, ev["v"])

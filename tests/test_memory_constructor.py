@@ -402,6 +402,100 @@ def test_models_from_different_fields_reach_the_symmetric_write_by_different_der
     assert "subcritical" in rows["tubes"]["obstruction"]
 
 
+def square_amplitude(split):
+    """The amplitude equation of a mode that the symmetry of a square (D4) makes degenerate,
+    dz/dt = eps z - |z|^2 z + g zbar^3 with z = x + i y; the eigenvalue along y is lowered by an imposed split."""
+    return spec.load({
+        "schema": "fieldbridge-memory/1", "kind": "equations", "name": f"amplitude with square symmetry, split {split:g}",
+        "question": "Which states does a degenerate critical mode store?", "assumptions": ["cubic normal form"],
+        "provenance": {"source": "M. Golubitsky, I. Stewart and D. G. Schaeffer, Singularities and Groups in "
+                                 "Bifurcation Theory, Vol. II (Springer, 1988)"},
+        "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 1.0},
+        "parameters": {"eps": 0.5, "g": 0.3, "d": split},
+        "drift": {"x": "eps*x - (x**2 + y**2)*x + g*(x**3 - 3*x*y**2)",
+                  "y": "(eps - d)*y - (x**2 + y**2)*y + g*(y**3 - 3*x**2*y)"},
+        "control": {"name": "eps", "range": [-0.6, 1.0]}, "noise": 0.01, "dt": 0.05})
+
+
+@pytest.mark.parametrize("split, dimension", [(0.0, 2), (1e-4, 2), (0.05, 1)])
+def test_eigenvalues_that_cross_zero_together_are_counted(split, dimension):
+    """The continuation does not separate write points closer than 2e-3 of the range of the control (3.2e-3 here,
+    where the critical eigenvalue grows at rate 1). Two eigenvalues split by less cross together, and the critical
+    eigenspace is a plane; a larger split leaves one critical direction and the pitchfork along x."""
+    real = square_amplitude(split)
+    ev = next(e for e in events(real) if abs(e["v"]) < 1e-3)
+    nf = an.normal_form(real, ev["q"], "eps", ev["v"])
+    ob = construct.obstruction(nf)
+    assert nf["critical_dimension"] == dimension
+    if dimension == 2:
+        assert nf["kind"].startswith("degenerate critical mode") and ob["degenerate"]
+        assert not ob["realizes_generator"] and not (ob["asymmetric"] or ob["biased"] or ob["subcritical"])
+    else:
+        assert nf["kind"].startswith("supercritical pitchfork") and ob["realizes_generator"]
+
+
+def test_a_degenerate_critical_mode_stops_the_derivation_at_the_reduction():
+    from fieldbridge.memory import codiscovery as cd
+    rng = np.random.default_rng(1)
+    square = cd.derive_symmetric_write(square_amplitude(0.0), rng, check_law=False)
+    split = cd.derive_symmetric_write(square_amplitude(0.05), rng, check_law=False)
+    assert square["status"] == "obstructed" and square["word"] == "CR"
+    assert square["obstruction_short"] == "degenerate critical mode: 2 directions"
+    reduction = square["steps"][-1]
+    assert reduction["letter"] == "R" and reduction["critical_dimension"] == 2
+    assert reduction["eliminated_directions"] == 0
+    assert square["route"].endswith("R[degenerate critical mode: 2 directions]")
+    assert split["status"] == "reached" and split["class"] == "S(reflection) C R(pitchfork) K"
+    assert "critical_dimension" not in split["steps"][2] and split["steps"][2]["eliminated_directions"] == 1
+
+
+def test_the_card_names_a_degenerate_critical_mode_and_its_four_states():
+    """The square symmetry leaves four stable states on the axes (0 < g < 1), not the two of a pitchfork; the
+    structural prediction of a pitchfork concerns a single reversed mode and is not tested at this write point."""
+    from fieldbridge.memory import discovery
+    real = square_amplitude(0.0)
+    card = discovery.evaluate(real, np.random.default_rng(1), quick=True)
+    assert card["states"]["count"] == 4
+    assert discovery.mechanism_class(card).startswith("write into a degenerate critical mode")
+    assert card["verdict"]["constructs"].startswith("degenerate critical mode at eps = 0: 2 directions")
+    comparison = predict.compare(predict.predict(real, np.random.default_rng(0)), card)
+    assert comparison["all_consistent"] and comparison["write"]["tested_write_points"] == 0
+
+
+def ring_of_cells(n, c=0.2):
+    """A ring of n convection cells (three modes each) sharing heat-conducting walls. Wall i, between cells i and
+    i + 1, adds -c (y_i + y_(i+1)) to both, so a mode y_j ~ cos(q j) is damped by c (2 + 2 cos q): an odd ring has no
+    alternating mode, and its critical mode is the degenerate pair q = pi (n -+ 1)/n, at R = 1 + 2c (1 - cos(pi/n))."""
+    drift = {}
+    for i in range(n):
+        left, right = (i - 1) % n, (i + 1) % n
+        drift[f"x{i}"] = f"p*(y{i} - x{i})"
+        drift[f"y{i}"] = f"R*x{i} - x{i}*z{i} - y{i} - c*(2*y{i} + y{left} + y{right})"
+        drift[f"z{i}"] = f"x{i}*y{i} - z{i} - eta*(2*z{i} - z{left} - z{right})"
+    return spec.load({
+        "schema": "fieldbridge-memory/1", "kind": "equations", "name": f"ring of {n} convection cells",
+        "question": "Which states does a ring of convection cells store?", "assumptions": ["three modes per cell"],
+        "provenance": {"source": "B. Saltzman, J. Atmos. Sci. 19, 329 (1962); E. N. Lorenz, J. Atmos. Sci. 20, "
+                                 "130 (1963); walls conducting heat between neighbouring cells"},
+        "carrier": {"kind": "euclid", "variables": [f"{a}{i}" for a in "xyz" for i in range(n)], "scale": 1.0},
+        "parameters": {"R": 1.3, "p": 10.0, "c": c, "eta": 0.2}, "drift": drift,
+        "control": {"name": "R", "range": [0.5, 2.0]}, "noise": 0.001, "dt": 0.002})
+
+
+def test_a_ring_of_five_cells_is_written_into_a_degenerate_pair_found_by_the_card_and_the_derivation():
+    """Fifteen variables: the card searches the control as the continuation C does, above twelve as below."""
+    from fieldbridge.memory import codiscovery as cd
+    real = ring_of_cells(5)
+    row = cd.derive_symmetric_write(real, np.random.default_rng(1), check_law=False)
+    card = construct.construct(real, np.random.default_rng(1), check_write=False)
+    (ev,) = [e for e in card["events"] if e["source"] == "control"]
+    assert ev["value"] == pytest.approx(1 + 0.4 * (1 - math.cos(math.pi / 5)), abs=1e-4)
+    assert ev["critical_dimension"] == 2 and ev["obstruction"]["degenerate"]
+    assert [w["value"] for w in row["steps"][0]["write_points"]] == pytest.approx([ev["value"]], abs=1e-9)
+    assert row["status"] == "obstructed" and row["obstruction_short"] == "degenerate critical mode: 2 directions"
+    assert row["steps"][1]["eliminated_directions"] == 13
+
+
 def test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle():
     from fieldbridge.memory import codiscovery as cd
     rep = cd.codiscover([load("laser"), load("toggle")], np.random.default_rng(5), n_traj=1000)

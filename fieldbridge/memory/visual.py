@@ -241,6 +241,8 @@ def panel_normal_form(ax, card):
     ax.set_xlabel(f"coordinate s along the unstable direction ({e['param']} = {e['value']:.4g})")
     ax.set_ylabel("ds/dt")
     lines = [e["kind"].split(":")[0], f"a2 = {e['a2']:.3g},  a3 = {e['a3']:.3g},  bias {e['bias']:.2f}"]
+    if e.get("critical_dimension", 1) > 1:
+        lines.append(f"{e['critical_dimension']} critical directions; the drift is drawn along one of them")
     c = e.get("cancellation")
     if c:
         nf = c["normal_form_along_sweep"]
@@ -546,6 +548,8 @@ def _tile_note(st: Dict, key: str) -> str:
         return str(st.get("control", "")) + (f" = {st['value']:.3g}" if "value" in st else "")
     if L == "R" and key == "phase-locking":
         return "neutral" if "neutral" in str(st.get("kind", "")) else "phase"
+    if L == "R" and st.get("critical_dimension"):
+        return f"{st['critical_dimension']} critical"
     if L == "R":
         kind = str(st.get("kind", ""))
         return ("fold" if "fold" in kind else "Hopf" if "Hopf" in kind else "transcrit." if "transcritical" in kind

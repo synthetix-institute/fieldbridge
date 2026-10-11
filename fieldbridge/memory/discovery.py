@@ -190,6 +190,8 @@ def mechanism_class(card: Dict) -> str:
         return "one-sided write (fold); symmetric at a cusp"
     if obs and all(o.get("subcritical") and not o.get("asymmetric") and not o.get("biased") for o in obs):
         return "symmetric write to a distant state (subcritical pitchfork)"
+    if any(o.get("degenerate") for o in obs):
+        return "write into a degenerate critical mode (several directions critical together)"
     if ctrl:
         return "asymmetric write"
     return "write by a uniform field"
@@ -237,6 +239,11 @@ def verdict(card: Dict) -> Dict[str, str]:
                       and not e["obstruction"].get("biased") for e in ctrl):
         constructs = ("subcritical pitchfork: symmetric write, but the state jumps to a distant branch; "
                       "a saturating term is needed for a local write")
+    elif ctrl and all(e["obstruction"].get("degenerate") for e in ctrl):
+        constructs = "; ".join(
+            f"degenerate critical mode at {e['param']} = {shown(e['value']):.3g}: {e['critical_dimension']} directions "
+            f"become critical together, and the write chooses a direction in a {e['critical_dimension']}-dimensional "
+            f"critical eigenspace, not one of two states of a pitchfork" for e in ctrl)
     elif ctrl:
         constructs = ("differs from the pitchfork normal form by: "
                       + "; ".join(sorted({k for e in ctrl for k in e["obstruction"]["terms"]})))

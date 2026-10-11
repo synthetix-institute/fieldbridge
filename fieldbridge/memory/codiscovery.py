@@ -22,7 +22,9 @@ Transformations (the letters of a derivation word):
   C  continuation  a stable state is followed along the control to the write point, where kappa reaches zero
   W  write field   a bounded field toward another stored state is raised until the occupied state disappears
   R  reduction     the drift is reduced to the critical direction on the slow manifold, a0 + a1 s + a2 s^2 + a3 s^3;
-                   the other directions are eliminated adiabatically
+                   the other directions are eliminated adiabatically. When several directions become critical together
+                   (a degenerate critical mode, analysis.critical_directions) the critical eigenspace is not a line and
+                   the derivation stops at R with that obstruction
   U  unfolding     a one-sided write (fold) is made symmetric by tuning a second material parameter to the cusp; the
                    control is replaced by the sweep through the cusp that carries no bias (followed by R again)
   K  canonical     the critical coordinate is rescaled: x = |a3|^(1/2) s gives eps x - x^3 + h, and x = a2 s gives
@@ -175,9 +177,9 @@ def route_string(steps: List[Dict[str, object]]) -> str:
         elif L == "C":
             parts.append(f"C[{st['control']}" + (f" = {st['value']:.4g}" if "value" in st else "") + "]")
         elif L == "R":
-            k = st.get("eliminated_directions")
-            parts.append(f"R[{st.get('kind', '')}" + (f"; {k} direction{'s' if k > 1 else ''} eliminated" if k else "")
-                         + "]")
+            k, d = st.get("eliminated_directions"), st.get("critical_dimension", 1)
+            parts.append(f"R[{st.get('kind', '')}" + (f": {d} directions" if d > 1 else "")
+                         + (f"; {k} direction{'s' if k > 1 else ''} eliminated" if k else "") + "]")
         elif L == "U":
             parts.append(f"U[{st['second']} to the cusp]")
         elif L == "W":
@@ -244,6 +246,23 @@ def _short(reason: str) -> str:
     return next((short for key, short in SHORT_OBSTRUCTIONS if key in reason), "other terms in the reduced drift")
 
 
+def _reduction(real: Realization, nf: Dict) -> Dict[str, int]:
+    """The directions an R step eliminates: all but the critical eigenspace, a line where one real eigenvalue crosses
+    zero and a plane where a complex pair does (Hopf). A larger eigenspace, a degenerate critical mode, is reported
+    with its dimension."""
+    generic = 2 if nf.get("hopf") else 1
+    k = max(int(nf.get("critical_dimension", generic)), generic)
+    return {"eliminated_directions": real.carrier.dim - k, **({"critical_dimension": k} if k > generic else {})}
+
+
+def _degenerate(nf: Dict) -> Tuple[str, str]:
+    """The obstruction of a degenerate critical mode and its short form."""
+    k = int(nf["critical_dimension"])
+    return (f"degenerate critical mode: {k} directions become critical together at the write point; the critical "
+            f"eigenspace is {k}-dimensional, so the drift reduced to one critical line, a pitchfork of one component, "
+            f"does not describe the write", f"degenerate critical mode: {k} directions")
+
+
 def law_constant(law: Dict) -> Dict[str, float]:
     """The constant of the swept-write law inferred from a measured accuracy: Phi^-1(P) D_s^(1/2) r^(1/4) / h_s."""
     if not law or "measured" not in law:
@@ -293,8 +312,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
     target_real, target_nf = real, pick
     if pick is not None:
         steps.append({"letter": "R", "value": float(pick["value"]), "a0": pick["a0"], "a2": pick["a2"],
-                      "a3": pick["a3"], "eliminated_directions": real.carrier.dim - 1,
-                      "kind": pick["kind"].split(":")[0]})
+                      "a3": pick["a3"], **_reduction(real, pick), "kind": pick["kind"].split(":")[0]})
         sym = reversing_symmetry(real, rng, np.asarray(pick["mode"]))
         if sym is not None:
             word.insert(0, "S")
@@ -303,10 +321,11 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
     else:
         first = nfs[0]
         steps.append({"letter": "R", "value": float(first["value"]), "kind": first["kind"].split(":")[0],
-                      "eliminated_directions": real.carrier.dim - 1,
+                      **_reduction(real, first),
                       **({"a2": first["a2"], "a3": first["a3"]} if not first.get("hopf") else
                          {"omega": first.get("omega")})})
-        if not first.get("hopf") and "mode" in first:
+        # the mode of a degenerate critical eigenspace is one direction of it, chosen by the eigensolver
+        if not first.get("hopf") and "mode" in first and not first["obstruction"].get("degenerate"):
             sym = reversing_symmetry(real, rng, np.asarray(first["mode"]))
             if sym is not None:
                 word.insert(0, "S")
@@ -327,8 +346,11 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                     break
         if unfolded is None:
             ob = nfs[0]["obstruction"]
+            short = None
             if nfs[0].get("hopf"):
                 reason = "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write"
+            elif ob.get("degenerate"):
+                reason, short = _degenerate(nfs[0])
             elif ob.get("subcritical"):
                 reason = "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)"
             elif fold is not None:
@@ -336,7 +358,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                           "sweep")
             else:
                 reason = "the reduced drift differs from the pitchfork: " + ", ".join(ob.get("terms", {}))
-            out.update(obstruction=reason, obstruction_short=_short(reason))
+            out.update(obstruction=reason, obstruction_short=short or _short(reason))
             return {**out, "word": "".join(word), "route": route_string(steps), "class": derivation_class(steps),
                     "steps": steps}
         path = along_path(real, {real.control: unfolded["control"], unfolded["second"]: unfolded["value"]},
@@ -570,11 +592,12 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
             pick = next(((ev, nf) for ev, nf in found if _is_fold(nf)), None)
             ev, nf = pick if pick is not None else found[0]
             steps.append({"letter": "R", "value": float(nf["value"]), "kind": nf["kind"].split(":")[0],
-                          "eliminated_directions": real.carrier.dim - 1})
+                          **_reduction(real, nf)})
             if pick is not None:
                 fold, route = (real, real.control, ev, nf), "control"
             else:
-                sym = None if nf.get("hopf") or "mode" not in nf else reversing_symmetry(real, rng, np.asarray(nf["mode"]))
+                sym = (None if nf.get("hopf") or "mode" not in nf or nf["obstruction"].get("degenerate") else
+                       reversing_symmetry(real, rng, np.asarray(nf["mode"])))
                 if sym is not None:
                     word.insert(0, "S")
                     steps.insert(0, {"letter": "S", "meaning": describe_symmetry(real, sym),
@@ -605,7 +628,7 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
                     "class": derivation_class(steps, coarse=True), "steps": steps, "notes": notes}
         word.append("R")
         steps.append({"letter": "R", "value": float(ev["v"]), "kind": nf["kind"].split(":")[0],
-                      "eliminated_directions": real.carrier.dim - 1})
+                      **_reduction(real, nf)})
         fold, route = (rw, an.WRITE_FIELD, ev, nf), "field"
     target_real, param, ev, nf = fold
     refined = refine_fold(target_real, param, ev["q"], ev["v"])

@@ -309,8 +309,10 @@ def compare(pred: Dict[str, object], card: Dict[str, object]) -> Dict[str, objec
     elif "write" in P and ev:
         text = P["write"]["prediction"]
         if text.startswith("a symmetric state that loses stability"):
-            # the prediction is conditional: it concerns write points at a symmetric state along a reversed mode
-            tested = [e for e in ev if not e.get("hopf") and _reversed_at(pred, e)]
+            # the prediction is conditional: it concerns write points at a symmetric state along a reversed mode; a
+            # degenerate critical eigenspace has no single mode to reverse
+            tested = [e for e in ev if not e.get("hopf") and e.get("critical_dimension", 1) == 1
+                      and _reversed_at(pred, e)]
             ok = all(e["kind"].startswith(PITCHFORKS) for e in tested)
             out["write"] = {"predicted": text, "calculated": sorted(kinds), "tested_write_points": len(tested),
                             "consistent": bool(ok)}

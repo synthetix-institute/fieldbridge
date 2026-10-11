@@ -46,7 +46,7 @@ seventh, W, and the forms of K and L for the threshold write are given in
 | --- | --- | --- | --- | --- |
 | S | symmetry | $\Xi$, $\Omega$ | a permutation with signs $g$ that leaves the drift unchanged, $F(gq) = gF(q)$, and reverses the critical mode, $gv = -v$; it forbids even terms along $v$ | (not required; without S the target can still be reached through U) |
 | C | continuation | $A$ | the value of the control at which the relaxation rate $\kappa$ of a stable state reaches zero | there is no control, or the control only rescales the drift |
-| R | reduction | $\Xi$, $\Omega$ | the drift on the slow manifold along $v$, $a_0 + a_1 s + a_2 s^2 + a_3 s^3$; the other directions are eliminated | a complex pair crosses (Hopf), or $a_3 > 0$ (subcritical) |
+| R | reduction | $\Xi$, $\Omega$ | the drift on the slow manifold along $v$, $a_0 + a_1 s + a_2 s^2 + a_3 s^3$; the other directions are eliminated | a complex pair crosses (Hopf), two or more directions become critical together (a degenerate critical mode), or $a_3 > 0$ (subcritical) |
 | U | unfolding | $A$, $P$ | a second material parameter is set to the cusp, where $a_2 = 0$; the protocol sweeps through the cusp without a bias; R is applied again | no material parameter reaches a cusp with $a_3 < 0$ |
 | K | canonical form | $\Xi$ | the coordinate is rescaled, $x = \lvert a_3\rvert^{1/2} s$, so that $\dot x = \varepsilon x - x^3 + h$ | — |
 | L | write law | $P$, $R$ | a swept write of the full model is simulated, and the constant of the write law is estimated | — |
@@ -157,6 +157,25 @@ A derivation that stops is a result: it names the property of the model that dif
 | capillary rotors, dipoles | C | The control multiplies the whole drift. It changes the depth of the landscape and not its shape, so a state is written by a field (Module 4). |
 | three compartments | C | There is no control parameter. |
 
+A degenerate critical mode also stops a derivation at R. When a symmetry makes the critical eigenvalue degenerate,
+two or more directions become critical at the same value of the control, and the drift reduced to one coordinate
+does not describe the write: the write chooses a direction in the critical eigenspace, not one of two states. R
+counts the eigenvalues whose real part is zero at the write point to the accuracy of the continuation, that is,
+within the residual of the critical eigenvalue where the continuation stopped plus its change over the resolution of
+the continuation, $2 \times 10^{-3}$ of the scanned range. An example is a ring of an odd number $N$ of convection
+cells that share heat-conducting walls. A wall between cells $i$ and $i + 1$ adds $-c\,(y_i + y_{i+1})$ to both,
+so a mode $y_j \propto \cos qj$ is damped by $c\,(2 + 2\cos q)$. An odd ring has no alternating mode, and its
+critical mode is the pair $q = \pi (N \pm 1)/N$, which the symmetry of the ring makes degenerate. It becomes
+unstable at $R = 1 + 2c\,(1 - \cos(\pi/N))$. For $N = 5$ the derivation reads
+
+```text
+C[R] > R[degenerate critical mode: 2 directions; 13 directions eliminated]
+```
+
+and the card of the same ring, at $R = 1.3$, samples ten stable states, $2N$, not the two of a pitchfork. A
+difference between the cells that splits the pair by more than the resolution leaves one critical direction, and R
+applies again.
+
 ## 6. Two invariants of the end point
 
 **The canonical form.** In the coordinate $x$ the reduced drift at the write point is $\sum_n c_n x^n$. The cubic
@@ -242,8 +261,8 @@ added as a function with the signature of `derive_symmetric_write` in the dictio
 - A derivation of a mechanism is a word of transformations, each acting on named components of the realization.
 - The constructor derives the symmetric write in models from six fields by four classes of derivation: by a
   reflection, an exchange, a cyclic permutation, or an unfolding to a cusp.
-- A derivation that stops names the responsible property: a Hopf bifurcation, a positive cubic term, a fold
-  without a supercritical cusp, or a control that only rescales the drift.
+- A derivation that stops names the responsible property: a Hopf bifurcation, a degenerate critical mode, a
+  positive cubic term, a fold without a supercritical cusp, or a control that only rescales the drift.
 - Two invariants test that the end points are the same mechanism: the canonical form $-x^3$ with no even part, and
   the constant of the write law, $1.334 \pm 0.005$ over seven models in the record of the web page, against
   $\pi^{1/4} = 1.331$.
@@ -254,6 +273,7 @@ added as a function with the signature of `derive_symmetric_write` in the dictio
 | --- | --- | --- |
 | Derivation, classes, obstructions | [`codiscovery.derive_symmetric_write`](../../fieldbridge/memory/codiscovery.py), `derivation_class` | `test_models_from_different_fields_reach_the_symmetric_write_by_different_derivations` |
 | Canonical form | `codiscovery.canonical_form` | the same test |
+| Degenerate critical mode | [`analysis.critical_directions`](../../fieldbridge/memory/analysis.py), `construct.obstruction` | `test_eigenvalues_that_cross_zero_together_are_counted`, `test_a_ring_of_five_cells_is_written_into_a_degenerate_pair_found_by_the_card_and_the_derivation` |
 | Constant of the write law | `codiscovery.law_constant`, [`construct.swept_write_check`](../../fieldbridge/memory/construct.py) | `test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle` |
 | Report and figure | [`cli.cmd_codiscover`](../../fieldbridge/memory/cli.py), [`visual.codiscovery_figure`](../../fieldbridge/memory/visual.py) | `test_codiscover_command_writes_report_and_figure` |
 

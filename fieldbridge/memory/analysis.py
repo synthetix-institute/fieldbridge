@@ -11,7 +11,8 @@
   fixed_points       zeros of the drift (Newton from random starts), stable and unstable, with kappa spectra
   track              continuation of a stable state along a parameter until it loses stability or vanishes
   locate_writes      parameter values at which stored states lose stability or appear (write points)
-  normal_form        drift along the critical direction at a write point, reduced onto the slow manifold
+  normal_form        drift along the critical direction at a write point, reduced onto the slow manifold, and the
+                     number of directions that become critical there together
   with_write_field   the realization plus a bounded write toward a target, with the field WRITE_FIELD as parameter
   memory_kernel      for a linear realization with an observed block, K(t) = B e^{Dt} C (Mori-Zwanzig)
 """
@@ -28,6 +29,9 @@ P_STAR = 0.9
 # the parameter of the added write field; reserved in specifications (spec.RESERVED), so that it cannot replace a
 # parameter of the material such as an applied field h
 WRITE_FIELD = "h_write"
+# resolution of the continuation in units of the scanned range: locate_writes takes write points closer than this for
+# one, and normal_form counts every eigenvalue that crosses zero within it of a write point as critical there
+WRITE_RESOLUTION = 2e-3
 
 
 def base_length(real: Realization) -> float:
@@ -360,7 +364,7 @@ def locate_writes(real: Realization, rng, param: Optional[str] = None, values: O
                         events.append(ev)
     out: List[Dict[str, object]] = []
     for ev in sorted(events, key=lambda e: e["v"]):
-        if not any(abs(ev["v"] - e["v"]) < 2e-3 * width
+        if not any(abs(ev["v"] - e["v"]) < WRITE_RESOLUTION * width
                    and real.carrier.distance(_canon(real, np.array(ev["q"])), _canon(real, np.array(e["q"])))
                    < 4 * _merge_tol(real) for e in out):
             out.append(ev)
@@ -400,11 +404,28 @@ def _slow_manifold_drift(real, q, vec, w, s, over):
     return f, trans / max(total, 1e-300)
 
 
+def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float,
+                        scale: float) -> np.ndarray:
+    """Indices of the eigenvalues ev (among cand, the directions outside the declared null modes) whose real part is
+    zero at a write point to the accuracy of the continuation. The continuation stops where the critical eigenvalue
+    lam is still |Re lam| from zero, and it does not separate write points closer than its resolution in the
+    parameter, over which lam moves by |slope| x resolution; below 1e-7 of the largest rate the Jacobian itself is
+    not accurate. An eigenvalue within that distance of zero crosses at the same write point."""
+    tol = abs(lam.real) + max(abs(slope) * resolution, 1e-7 * scale)
+    return cand[np.abs(ev.real[cand]) <= tol]
+
+
 def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: Optional[Dict] = None,
                 npts: int = 41) -> Dict[str, object]:
     """Reduce the drift at a write point to one coordinate s along the critical direction:
     ds/dt = a0 + a1 s + a2 s^2 + a3 s^3 (on the slow manifold), with the unfolding in the parameter
-    (bias = the part of dF/dparam along the critical direction, kappa slope = d(a1)/dparam)."""
+    (bias = the part of dF/dparam along the critical direction, kappa slope = d(a1)/dparam).
+
+    The reduction holds when one real eigenvalue crosses zero (a complex pair at a Hopf point). critical_dimension
+    counts the eigenvalues that cross together (critical_directions); when a symmetry makes the critical mode
+    degenerate, as the twisted modes of a ring of an odd number of cells, it exceeds one, the critical eigenspace is
+    not a line, and the kind is a degenerate critical mode. The coefficients along one direction of that eigenspace
+    are kept as a diagnostic."""
     q = np.asarray(q, float)
     over = {**(extra or {}), param: v}
     n = q.size
@@ -426,9 +447,16 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     dF = (real.F(q, **{**over, param: v + dv}) - real.F(q, **{**over, param: v - dv})) / (2 * dv)
     out: Dict[str, object] = {"param": param, "value": float(v), "state": q.tolist(),
                               "kappa_critical": [float(-lam.real), float(-lam.imag)]}
+
+    def critical(slope: float) -> Dict[str, object]:
+        crit = critical_directions(ev, cand, lam, slope, WRITE_RESOLUTION * width, scale)
+        return {"critical_dimension": int(crit.size),
+                "critical_kappa": [[float(-ev[j].real), float(-ev[j].imag)] for j in crit]}
+
     if abs(lam.imag) > 1e-6 * scale:
+        # a complex pair: two directions are critical at a simple Hopf point
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
-                   asymmetry=0.0, bias=0.0, a3=0.0)
+                   asymmetry=0.0, bias=0.0, a3=0.0, **critical(0.0))
         return out
     vec = np.real(R[:, i])
     vec /= np.linalg.norm(vec)
@@ -467,7 +495,12 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     bias = abs(bias_along) / (abs(bias_along) + abs(growth) * half + 1e-300)
     quad, cub = abs(a2) * half ** 2, abs(a3) * half ** 3
     asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * half else 0.0
-    if cub + quad <= 1e-6 * scale * half:
+    crit = critical(growth)
+    k = crit["critical_dimension"]
+    if k > 1:
+        kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
+                f"{k}-dimensional, not a line")
+    elif cub + quad <= 1e-6 * scale * half:
         kind = "degenerate: the drift vanishes along the critical direction (a line of states)"
     elif bias > 0.1 and asym > 0.1:
         kind = "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold"
@@ -482,7 +515,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     out.update(hopf=False, kind=kind, mode=vec.tolist(), left_mode=w.tolist(), a0=a0, a1=a1, a2=a2, a3=a3,
                bias_along_mode=bias_along, bias=bias, kappa_slope=-growth, kappa_slope_partial=-growth_partial,
                asymmetry=asym,
-               transverse_residual=transverse, cubic_misfit=misfit, s=s.tolist(), f=f.tolist(), half=half)
+               transverse_residual=transverse, cubic_misfit=misfit, s=s.tolist(), f=f.tolist(), half=half, **crit)
     return out
 
 
