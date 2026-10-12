@@ -174,6 +174,14 @@ quadratic term is non-zero, so a state written by the threshold field leaves sta
 | Field $1.5\times$ threshold at $\lambda = 0.6$ | accuracy 1.00; rewriting time 0.37; ratio of retention to rewriting time $> 800$ | Above the threshold the field removes the barrier; the ratio is a lower bound because the retention time is censored |
 | Field $0.4\times$ threshold while $\lambda$ rises from 0.05 to 0.6 | accuracy 1.00 | The weak field acts while the barriers are low |
 
+The uniform field of this card has the same strength at every site and pulls each rod toward its own angle in
+state 2; the writing field of the companion Letter has the same form. The patch is a reduced example of twelve rods
+with four stable states, and its retention is the time spent in one of them. The Letter measures retention in large
+caged monolayers, which have many compromise states, by the overlap between two descendants of one prepared state.
+For 576 rods at $\lambda = 0.6$ that overlap falls below one half within a few rotational diffusion times, and it
+stays above one half for more than 100 of them only from $\lambda = 0.9$ upward. The retention of the patch at
+$\lambda = 0.6$ therefore does not carry over to a monolayer at the same coupling.
+
 ## 3. Interpretation
 
 At a fixed coupling a weak field fails for the same reason that the stored state is retained: both require an
