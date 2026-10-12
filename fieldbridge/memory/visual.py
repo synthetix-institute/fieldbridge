@@ -204,8 +204,12 @@ def panel_bifurcation(ax, card):
         ax2.set_ylabel("smallest relaxation rate kappa", color=BLUE, fontsize=7.5)
         ax2.tick_params(labelsize=7, colors=BLUE)
         if "h_c" in wf:
+            # at a fold the state disappears; at a transcritical point or a pitchfork it remains an equilibrium and
+            # loses stability (a rod at 90 degrees to its target feels no torque from the field)
+            ev = next((e for e in card["construct"]["events"] if e.get("source") == "write field"), {})
+            lost = "ceases to exist" if ev.get("kind", "").startswith("saddle-node") else "loses stability"
             ax.axvline(wf["h_c"], color=ORANGE, ls=":", lw=1.0)
-            ax.annotate(f"state 1 ceases to exist\nat h = {wf['h_c']:.3g}", xy=(wf["h_c"], ax.get_ylim()[1]),
+            ax.annotate(f"state 1 {lost}\nat h = {wf['h_c']:.3g}", xy=(wf["h_c"], ax.get_ylim()[1]),
                         xytext=(-4, -4), textcoords="offset points", ha="right", va="top", color=ORANGE,
                         fontsize=6.8)
         ax.set_xlabel("uniform field h toward state 2")

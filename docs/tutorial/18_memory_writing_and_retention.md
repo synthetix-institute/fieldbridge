@@ -158,17 +158,20 @@ python3 -B -m fieldbridge memory card examples/memory/colloid_patch.json --quick
 
 *(a) Two of the four stable states, shown as rod orientations at the twelve sites (grey lines: bonds). (b) Stable
 state 1 under a uniform field toward state 2: its overlap with state 2 (black) and its smallest relaxation rate
-$\kappa$ (blue, dashed) against the field. State 1 ceases to exist at $h = 6.28$. (c) Fraction of trajectories in
-state 2 during three writing protocols and after the field is removed (dotted line); dashed: fraction retained in
-state 1 without a field. (d) Drift along the unstable direction at the threshold field, with its cubic fit. The
-quadratic term is non-zero, so a state written by the threshold field leaves state 1 on one side only.*
+$\kappa$ (blue, dashed) against the field. State 1 does not move: each rod is at 90° to its angle in state 2,
+where the field exerts no torque. It remains an equilibrium and loses stability at $h = 6.28$, where $\kappa$
+reaches zero. (c) Fraction of trajectories in state 2 during three writing protocols and after the field is removed
+(dotted line); dashed: fraction retained in state 1 without a field. (d) Drift along the unstable direction at the
+threshold field, with its cubic fit. The point is transcritical: state 1 exchanges stability with another
+equilibrium. The quadratic term is non-zero, so a state written by the threshold field leaves state 1 on one side
+only.*
 
 | Quantity (key in `card.json`) | Value | Interpretation |
 | --- | --- | --- |
 | Role of the control (`structure.control_role`) | $\lambda$ multiplies the whole drift | $\lambda$ changes no state, only the depth of the landscape relative to $k_BT$; it acts as an inverse temperature |
 | Stable states (`card.states.count`) | 4 | Two pairs; turning every rod by $\pi/2$ maps a state onto its partner (`structure.symmetries`) |
 | Write point along $\lambda$ | none | A control that only scales the landscape cannot create or remove a state |
-| Threshold field (`card.threshold`) | $h = 6.28$ | A uniform field toward state 2 removes state 1 |
+| Threshold field (`card.threshold`) | $h = 6.28$ | A uniform field toward state 2 destabilizes state 1, which remains an equilibrium |
 | Retention (`card.loss_law`, `card.hold`) | Law 3; no loss within 300 time units | Activation over the barrier between stored states; the retention time exceeds the simulated interval |
 | Field $0.4\times$ threshold at $\lambda = 0.6$ | accuracy 0.05 | Below the threshold the field must wait for an activated crossing |
 | Field $1.5\times$ threshold at $\lambda = 0.6$ | accuracy 1.00; rewriting time 0.37; ratio of retention to rewriting time $> 800$ | Above the threshold the field removes the barrier; the ratio is a lower bound because the retention time is censored |

@@ -484,6 +484,26 @@ def test_the_card_names_a_degenerate_critical_mode_and_its_four_states():
     assert comparison["all_consistent"] and comparison["write"]["tested_write_points"] == 0
 
 
+def test_the_card_figure_says_whether_the_field_removes_the_state_or_destabilizes_it():
+    """At a fold the stored state disappears. At a transcritical point it remains an equilibrium and loses stability,
+    as for the capillary rotors, each at 90 degrees to its target angle, where the field exerts no torque."""
+    import matplotlib
+    matplotlib.use("Agg")
+    import matplotlib.pyplot as plt
+    from fieldbridge.memory import visual
+    branch = [{"h": h, "kappa_min": 1.0 - h, "overlap": -1.0} for h in (0.0, 0.5, 0.99)]
+    labels = {}
+    for kind in ("saddle-node (fold): a state appears or vanishes", "transcritical: two states exchange stability"):
+        card = {"construct": {"events": [{"source": "write field", "kind": kind, "value": 1.0}],
+                              "write_field": {"branch": branch, "h_c": 1.0}}}
+        fig, ax = plt.subplots()
+        visual.panel_bifurcation(ax, card)
+        labels[kind.split(":")[0]] = [t.get_text() for t in ax.texts]
+        plt.close(fig)
+    assert labels == {"saddle-node (fold)": ["state 1 ceases to exist\nat h = 1"],
+                      "transcritical": ["state 1 loses stability\nat h = 1"]}
+
+
 def ring_of_cells(n, c=0.2):
     """A ring of n convection cells (three modes each) sharing heat-conducting walls. Wall i, between cells i and
     i + 1, adds -c (y_i + y_(i+1)) to both, so a mode y_j ~ cos(q j) is damped by c (2 + 2 cos q): an odd ring has no
