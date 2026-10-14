@@ -14,6 +14,16 @@
   const I = () => window.FieldBridgeInstrument;
   const seq = {current: null, index: -1};
 
+  function revealSection(fragment) {
+    const aliases = {gallery: 'memory', studio: 'instrument'};
+    const hash = (typeof fragment === 'string' ? fragment : location.hash).slice(1), id = aliases[hash] || hash;
+    const target = id && $(id);
+    if (!target) return;
+    if (target.tagName === 'DETAILS') target.open = true;
+    const parent = target.closest && target.closest('details');
+    if (parent) parent.open = true;
+  }
+
   // ---------------------------------------------------------------------------------------- the expression
   function definitions() {
     $('definitions').innerHTML = Object.entries(S.slots).map(([k, s]) =>
@@ -34,6 +44,9 @@
 
   // ---------------------------------------------------------------------------------------- sequences
   function sequences() {
+    $('sequence-start').addEventListener('click', () => begin('canonical'));
+    $('constructor-undo').addEventListener('click', () => { leave(); I().undo(); });
+    $('constructor-reset').addEventListener('click', () => { leave(); I().start(S.start); });
     $('sequence-picker').innerHTML = S.sequences.map(s => `<button type="button" data-seq="${s.id}" aria-pressed="false">${esc(s.title)}</button>`).join('');
     document.querySelectorAll('[data-seq]').forEach(b => b.addEventListener('click', () => begin(b.dataset.seq)));
     $('sequence-next').addEventListener('click', () => {
@@ -279,11 +292,18 @@
   }
 
   document.addEventListener('DOMContentLoaded', () => {
+    window.addEventListener('hashchange', revealSection);
+    document.addEventListener('click', event => {
+      const link = event.target.closest && event.target.closest('a[href^="#"]');
+      if (link) revealSection(link.getAttribute('href'));
+    });
+    $('expression').addEventListener('toggle', () => { if ($('expression').open) window.FieldBridgeMechanisms.draw(); });
     definitions(); sequences(); realizations(); memory(); planned();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);
     collapse();
+    revealSection();
   });
   window.FieldBridgeSite = {leaveSequence: leave, begin};
 })();

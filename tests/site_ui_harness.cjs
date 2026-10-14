@@ -36,7 +36,7 @@ const document = {
 const timers = [];
 const context = {
   document, console, Math, JSON, Number, String, Array, Object, Set, Map, Float64Array, Promise, Proxy, URLSearchParams, Error,
-  location: {search: ''}, history: {replaceState: noop},
+  location: {search: '', hash: ''}, history: {replaceState: noop}, addEventListener: noop,
   matchMedia: () => ({matches: false, addEventListener: noop}),
   requestAnimationFrame: () => 0, cancelAnimationFrame: noop, setTimeout: fn => { timers.push(fn); return timers.length; },
   clearTimeout: noop, getComputedStyle: () => ({getPropertyValue: () => '#000', fontFamily: 'sans-serif'}),
@@ -72,6 +72,8 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'edge') I.applyEdge(I.byId[step.edge], !!step.reverse);
   if (step.do === 'walk') I.walkTo(step.node);
   if (step.do === 'undo') I.undo();
+  if (step.do === 'toolbar-undo') element('constructor-undo').click();
+  if (step.do === 'reset') element('constructor-reset').click();
   if (step.do === 'module') context.FieldBridgeMechanisms.module(step.key);
   if (step.do === 'sequence') context.FieldBridgeSite.begin(step.id);
   if (step.do === 'next') element('sequence-next').click();

@@ -1225,7 +1225,12 @@ def classical_limit(q_spec: Dict, d_spec: Dict, j: Optional[float] = None) -> fl
 
 
 def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> str:
-    """Raise SiteError unless the edge changes only the component it names; return how it was checked."""
+    """Check the correspondence declared by an edge and return its meaning.
+
+    Component edits compare the relevant specification entries or expressions.
+    A codiscovery compares independently obtained canonical targets; it does
+    not establish equality of the complete generators or unchanged clauses.
+    """
     a, b = nodes[edge["from"]], nodes[edge["to"]]
     kind, slot = edge["kind"], edge["slot"]
     expected = {"param": "A", "term": "Omega", "observable": "R", "attach": "Xi", "codiscovery": "Xi",

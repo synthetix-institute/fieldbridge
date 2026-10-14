@@ -90,6 +90,18 @@ def test_one_change_of_the_normal_form_gives_another_mechanism(data_file, tmp_pa
     assert got[4]["mechanism"] == "write to a distant state (subcritical pitchfork)"
 
 
+def test_visible_constructor_controls_restore_the_model(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "edge", "edge": "pf_below"},
+                               {"do": "toolbar-undo"},
+                               {"do": "edge", "edge": "pf_bias"},
+                               {"do": "reset"}], tmp_path)
+    assert got[0]["lead"] == "one stable state"
+    assert got[1]["node"] == "pitchfork" and got[1]["lead"] == "2 stable states"
+    assert got[3]["path"] == ["pitchfork"]
+    assert "Calculated in the browser" in got[3]["facts"]
+    assert "Stored Python calculation" in got[3]["facts"]
+
+
 def test_a_change_is_drawn_against_the_realization_it_came_from(data_file, tmp_path):
     got = scenario(data_file, [{"do": "look"}, {"do": "edge", "edge": "pf_bias"}, {"do": "undo"},
                                {"do": "param", "name": "eps", "value": 0.3},

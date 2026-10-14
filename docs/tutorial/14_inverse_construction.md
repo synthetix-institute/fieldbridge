@@ -41,11 +41,11 @@ that solve the commutation equations. Those are calculated.
 Let $X_j,Y_j,Z_j$ be Pauli operators on spin $j$. On an open chain of $N$
 spins, the exchange Hamiltonian and the unknown Ising interaction are
 
-$$
+```math
 H_0=\sum_{j=0}^{N-2}J_j A_j,\qquad
 A_j=X_jX_{j+1}+Y_jY_{j+1},\qquad
-Q=\sum_{i<j}q_{ij}Z_iZ_j.
-$$
+Q=\sum_{i=0}^{N-2}\sum_{j=i+1}^{N-1}q_{ij}Z_iZ_j.
+```
 
 The search chooses interactions for which exchange and Ising evolution can
 be applied separately, exactly: $[H_0,Q]=0$. Since the exchange energies $J_j$
@@ -102,11 +102,11 @@ mixed spin contributes the average of two opposite phases,
 $\cos(2\lambda t/\hbar)$. Taking the trace leaves the hopping return
 amplitude multiplied by these $N-1$ phase averages:
 
-$$
+```math
 \langle X_0(t)\rangle
 =\mathrm{Re}\,[e^{-iht/\hbar}]_{00}
   \cos^{N-1}(2\lambda t/\hbar).
-$$
+```
 
 This response formula is an explicit analytic construction encoded in the
 example, not a formula invented by the nullspace solver. The separate

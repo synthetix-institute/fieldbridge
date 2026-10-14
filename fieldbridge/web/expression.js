@@ -122,7 +122,7 @@
     $('m-canonical').innerHTML = mech.canonical ? 'canonical form: ' + mech.canonical : '';
     $('m-where').innerHTML = rec.universal ? 'Written without a field.' : `Realized in ${esc(rec.field)}: ${rec.name}.`;
     $('m-refs').innerHTML = M.reading ? M.reading(mech) : '';
-    $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span>`;
+    $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span><a class="result-jump" href="#result">Response ↓</a>`;
     $('slots').innerHTML = SLOTS.map(slot => `<li class="slot" data-slot="${slot}" id="slot-${slot}">
         <button class="slot-symbol" type="button" data-light="${slot}" aria-label="${S.slots[slot].name}">${S.slots[slot].symbol}</button>
         <span class="slot-name">${S.slots[slot].name}</span>
@@ -230,8 +230,9 @@
     const where = target.universal ? 'canonical form' : esc(target.field);
     const what = same ? (target.universal ? 'same mechanism, canonical form' : `same mechanism in ${where}`)
       : esc(S.classes_short[target.class] || target.class);
+    const proof = e.kind === 'codiscovery' ? 'Shared canonical form' : 'Specified component change';
     return `<button type="button" class="change${reverse ? ' back' : ''}${same ? ' same' : ''}" data-edge="${e.id}"${reverse ? ' data-reverse="1"' : ''} data-to-class="${target.class}">
-        <span class="change-what">${reverse ? inverse(e.change) : e.change}</span>
+        <span class="change-what" title="${esc(e.check || proof)}">${reverse ? inverse(e.change) : e.change}<small class="change-proof">${proof}</small></span>
         <span class="change-to">${M.glyph(target.class, 'small')}<span><b>${what}</b><small>${esc(target.short || target.id)}${same || target.universal ? '' : ' · ' + where}</small></span></span></button>`;
   }
   function edits(rec, slot) {
@@ -437,7 +438,12 @@
     const via = state.message, msg = via && (via.text || (via.edge && !via.reverse ? via.edge.text : null));
     text.innerHTML = (msg ? `<span>${msg}</span> ` : '') + (body && (!msg || changed) ? `<span class="muted">${body}</span>` : '')
       + (changed ? `<p class="note">Recalculated in the browser for the values you set; derivation words and law constants are FieldBridge's for the values listed in the specification.</p>` : '');
-    $('facts').innerHTML = facts.map(([k, v, isLive]) => `<dt>${esc(k)}</dt><dd class="${isLive ? 'live' : ''}">${v}</dd>`).join('');
+    const group = (isLive, title) => {
+      const rows = facts.filter(row => row[2] === isLive);
+      return rows.length ? `<dt class="fact-heading">${title}</dt><dd class="fact-heading">${isLive ? 'Current parameters' : 'Recorded example parameters'}</dd>`
+        + rows.map(([k, v]) => `<dt>${esc(k)}</dt><dd class="${isLive ? 'live' : ''}">${v}</dd>`).join('') : '';
+    };
+    $('facts').innerHTML = group(true, 'Calculated in the browser') + group(false, 'Stored Python calculation');
     const word = rec.family === 'unitary' ? f.word : [f.sym_word, f.thr_word, f.lock_word].filter(w => w && w !== '—')[0];
     const letters = LETTERS[rec.family === 'unitary' ? 'unitary' : 'dissipative'];
     // through the closure of the observable (letter O) the frame of K rotates without being an algebra

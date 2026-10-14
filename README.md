@@ -33,34 +33,42 @@ The calculations need no API key, GPU, cluster or archive download.
 
 ## Demonstration
 
-The [web page](https://synthetix-institute.github.io/fieldbridge/) starts from a mechanism written without any field:
-the pitchfork normal form dx/dt = εx − x<sup>3</sup>, the canonical form of every symmetric write, as a realization
-I<sub>real</sub> = ((Ω, Ξ); C, R, P; A). Each component can be changed by one verified step. Lowering ε below zero (A)
-leaves a single state; a constant bias (A) turns the write into a fold; a destabilizing cubic term (Ω) turns it into a
-subcritical pitchfork and a jump to a distant state. A change of the carrier (Ξ) keeps the mechanism and places it in a
-field: the angle of a magnetization (a Stoner–Wohlfarth particle), two repressor concentrations (a genetic toggle
-switch) or the field of a laser. From the magnet, the closed quantum closure (C) turns the anisotropy into an obstruction
-of the spin rotation; without the anisotropy (Ω) the spin rotates, and the same rotation on the two spins of
-[Chapter 11](docs/tutorial/11_quantum_closure.md) gives a rotating or a conserved signal depending on the observable
-(R). Under the expression, a map of thirty-six mechanisms in six modules, each with its drawing and shown one module
-at a time or all together, shows which component joins which mechanisms, and the selected mechanism is shown beside
-the expression. After a change the realization it came from is
-drawn dashed in every plot, so that a change of mechanism is seen against what it replaced. A table lists the
-realizations of each mechanism by field. Beside the selected mechanism the page names the section of the tutorial
-that defines it, the section that derives it and the publications in which it was first found;
-[docs/mechanisms.md](docs/mechanisms.md) lists them, with their DOIs, for every mechanism, law of retention and
-certified law, and for the mechanisms in preparation, such as the onset of oscillation (Hopf, 1942).
+The [web page](https://synthetix-institute.github.io/fieldbridge/) opens on the
+constructor and its editable equation, dx/dt = εx − x<sup>3</sup>. At ε = 1,
+two stable states are separated by an unstable state. Lowering ε below zero
+leaves one stable state. The controls change the equation, preparation,
+measurement or parameters, and the plots calculate the resulting motion.
+The dashed curve retains the previous realization where the two can be
+compared.
 
-Every realization on the page is a specification in `examples/` or one change of one, and every change is checked to
-alter only the component it names ([site_data.py](fieldbridge/site_data.py), the realizations and changes in
-[site_registry.py](fieldbridge/site_registry.py)). The mechanisms, derivation words and law constants shown are
-calculated by FieldBridge; the dynamics are recalculated in the browser for the values the visitor sets, by engines
-that [the tests](tests/test_site_engines.py) compare with the Python calculations.
+Start with **Follow a construction**, which follows the normal form through
+several changes and explains each result. **Choose a material** opens the
+gallery of magnets, genetic switches, lasers and other model systems.
+Selecting one puts its equations and parameters in the constructor.
+Undo and reset are beside the construction button. The mechanism language,
+map, other sequences and catalogues open separately, so they need not all be
+read before making a calculation.
+
+Every displayed realization is a specification in `examples/` or a stated
+modification of one. The comparisons have different meanings: a component
+edit checks a particular change of the supplied equations, an encoding
+checks its specified correspondence, and a cross-field comparison checks
+that both reductions reach the same canonical form. A shared canonical law
+is not a claim that two complete physical models are identical.
+These checks are implemented in [site_data.py](fieldbridge/site_data.py).
+
+The result panel separates calculations for the **current browser parameters**
+from **stored Python calculations** for the published example parameters.
+The browser engines are compared with Python in
+[the engine tests](tests/test_site_engines.py). Each mechanism links to its
+derivation and original publications; each realization links to its input
+and relevant tutorial section. The full source list is in
+[docs/mechanisms.md](docs/mechanisms.md).
 
 | Section of the page | Content |
 | --- | --- |
-| Expression and map of mechanisms | The realization expression, the selected mechanism with its drawing, its definition, derivation and original publications, the map of mechanisms with the single-component changes between them, and the chain of changes made |
-| Changing one component of a mechanism | The expression of the current realization with the verified changes of each component, each named by the mechanism it reaches; the dynamics, drawn against the realization before the change, and the calculated consequences |
+| Mechanism constructor | Editable components, parameters, current response, undo and reset; derivation, input and source links |
+| Mechanism language and map | Expandable notation, definitions, map and recorded chain of changes |
 | Guided sequences | From the pitchfork normal form to other mechanisms; from a spin rotation to a stored magnetization; one rotation on six carriers; writing and retention in magnets, genes and lasers; phase locking in eight oscillators; conservation and the law of loss |
 | One mechanism in many fields | The canonical forms and law constants of the four targets, one curve or point per realization |
 | Realizations by mechanism and field | Every realization in the row of its mechanism and the group of its field, with its source; a selected realization opens in the instrument |
