@@ -10,9 +10,9 @@ as data or with more than 12 variables). Over one interval with the input held, 
 H (e^{J t_j} s_{t-1} + Gamma_j u_t) + H_u u_t. The impulse responses of the m V measured signals are
 g_0 = [H Gamma_j + H_u]_j and g_k = [H e^{J t_j} Phi^{k-1} Gamma]_j.
 
-- The fading class from the spectral radius of Phi over the modes that the input reaches and the observables see:
-  below 1 fading memory, 1 integrating (no fading memory), above 1 unstable. Conserved amounts that the input cannot
-  change are not among them.
+- The local linear-response class from the spectral radius of Phi over the modes that the input reaches and the
+  observables see: below 1 decaying, 1 integrating, above 1 unstable. This does not test forgetting across nonlinear
+  basins or across different preparations of input-inaccessible modes.
 - n_lin, the rank of [g_0, g_1, ...] at a relative tolerance of 1e-6 (the accuracy of the integration), with the
   singular values: the linear capacity at small amplitude, at most min(m V, n_O) (Gonon, Grigoryeva and Ortega 2020).
 - The degree-1 profile at small amplitude, C(k) = g_k^T (sum_j g_j g_j^T)^+ g_k, summing to n_lin; for one mode
@@ -115,7 +115,8 @@ def linear(body: Body, K: int = 400, tol: float = 1e-6) -> Dict:
         rates = -np.log(np.abs(lam[live]) + 1e-300) / dt
     else:
         rates = -mu[live].real
-    return {"class": cls, "spectral_radius": rho, "slowest_rate": float(np.min(rates)),
+    return {"class": cls, "analysis_scope": "equilibrium_linear_response",
+            "spectral_radius": rho, "slowest_rate": float(np.min(rates)),
             "modes_reached_and_seen": int(live.sum()), "modes": len(lam), "n_lin": n_lin,
             "singular_values": (sv / sv[0]).tolist() if sv.size and sv[0] > 0 else [],
             "profile_degree_1": profile.tolist(), "total_degree_1": float(profile.sum()), "signals": body.m * V,
@@ -159,6 +160,9 @@ def predict(body: Body) -> Dict:
     out = linear(body)
     out["odd"] = odd(body)
     out["linear"] = is_linear(body)
+    out["global_fading_status"] = "not_established"
+    out["structure_scope"] = "local_response_and_sampled_symmetry"
+    out["symmetry_check"] = "sampled_points_about_selected_equilibrium"
     if out["class"] != "fading":
         out["structure"] = "integrating"
     elif out["linear"]:

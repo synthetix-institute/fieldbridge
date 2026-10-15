@@ -487,7 +487,7 @@ READING: Dict[str, Dict] = {
     "nonlinear-capacity": {
         "defined": ("Computation 1, §2", "with fading memory the capacities of all degrees sum to the number of "
                                          "independent measured signals", C1 + "#2-the-measure"),
-        "derived": [("Computation 1, §4", "exact capacities of every degree and delay for one or two state variables",
+        "derived": [("Computation 1, §4", "grid/quadrature capacities over specified degrees and delays for one or two state variables",
                      C1 + "#4-running-the-command"),
                     ("Computation 1, §7", "published bodies from six fields", C1 + "#7-the-published-bodies")],
         "code": "computation.exact.ExactCapacities, card.card, ipc.capacities",

@@ -67,6 +67,8 @@ def test_pdf_sparse_builder_exports_typed_mechanism_kg(tmp_path):
         )
     )
     assert records[0]["references"][0].startswith("txt:")
+    assert records[0]["substrate_evidence_scope"] == "source_chunk"
+    assert "coordinate_domain" in records[0]["substrates"]
     assert all(
         "cellular, tissue" not in value
         for record in records

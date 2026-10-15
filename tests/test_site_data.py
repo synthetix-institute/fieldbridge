@@ -334,7 +334,15 @@ def test_a_small_site_builds_and_its_sequences_are_complete(tmp_path):
     from fieldbridge.web_demo import publish_assets
     html = publish_assets(tmp_path).read_text(encoding="utf-8")
     assert "site/expression.js?v=" in html and "site/data.js?v=" in html
-    assert "<select" not in html  # no list of models to choose from
+    assert 'id="material-mechanism"' in html
+    assert 'id="material-field"' in html
+    assert 'id="material-search"' in html
+
+
+def test_computation_record_labels_linearization_separately_from_global_memory():
+    record = sd.build(only=["comp_one_mode"], log=lambda *a: None)["nodes"]["comp_one_mode"]
+    assert record["facts"]["memory_scope"] == "equilibrium_linear_response"
+    assert record["facts"]["global_fading_status"] == "not_established"
 
 
 def test_class_names_are_plain_text():

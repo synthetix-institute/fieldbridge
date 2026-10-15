@@ -4,12 +4,14 @@ The card holds:
 - the predictions (``predict.predict``): the class, the slowest rate of the modes that the input reaches and the
   observables see, the rank n_lin of the linear response with its singular values, the degree-1 profile at small
   amplitude, and the symmetry (odd, linear);
-- for a body with one or two state variables, the exact capacities of every degree and delay (``exact``);
+- for a body with one or two state variables, numerical grid/quadrature capacities over the requested degrees and
+  delays (the historical ``exact`` API);
 - on request, capacities estimated from a simulation of the full body (``ipc``), at each amplitude and at a stated
   measurement noise.
 
 Classes (literature names): linear memory (Jaeger 2002), odd degrees only (Dambre et al. 2012), nonlinear capacity
-(Dambre et al. 2012), and no fading memory (integrating; the echo state property of Jaeger 2001 fails).
+(Dambre et al. 2012), and an integrating linear response. The spectral classification is local to the selected
+equilibrium; global forgetting of arbitrary preparations requires a separate argument.
 """
 from __future__ import annotations
 
@@ -41,11 +43,11 @@ def simulate(body: Body, delays: Dict[int, int], streams: int = 16, length: Opti
 
 
 def exact(body: Body, delays: Dict[int, int], noise: float = 0.0) -> Optional[Dict]:
-    """Exact capacities for one or two state variables (None otherwise)."""
+    """Grid/quadrature estimates for one or two state variables (None otherwise)."""
     if body.n > 2 or body.law == "gaussian":
         return None
     from .predict import linear
-    if linear(body)["class"] != "fading":          # no stationary distribution without fading memory
+    if linear(body)["class"] != "fading":          # solver policy, not a test of stationary uniqueness
         return None
     from .exact import ExactCapacities
     ex = ExactCapacities(body, box=body.exact_box, noise=noise)
@@ -72,7 +74,10 @@ def card(body: Body, delays: Optional[Dict[int, int]] = None, amplitudes: Option
         ex = exact(b, delays, noise)
         if ex is not None:
             run["exact"] = {"by_degree": ex["by_degree"], "total": ex["total"], "outside": ex["outside"],
-                            "profile_degree_1": ex["profile_degree_1"], "grid": ex["grid"]}
+                            "profile_degree_1": ex["profile_degree_1"], "grid": ex["grid"],
+                            **{key: ex[key] for key in ("method", "analytic_exact", "Q", "state_box",
+                               "stationary_initialization", "stationary_uniqueness", "stationary_residual",
+                               "iterations", "error_sources")}}
         if simulate_runs:
             t0 = time.time()
             res = simulate(b, delays, streams, length, noise, seed)

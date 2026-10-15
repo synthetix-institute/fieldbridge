@@ -24,7 +24,7 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Linear memory](#linear-memory) | C(k) = (1 − a²) a<sup>2k</sup>; Σ<sub>k</sub> C(k) = n<sub>lin</sub> | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure) | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure), [Computation 1, §6](tutorial/29_computation_capacity.md#6-measurement-noise) | Jaeger, 2002; Dambre et al., 2012; Gonon, Grigoryeva and Ortega, 2020; Ballarin, Grigoryeva and Ortega, 2024 |
 | [Odd degrees only](#odd-degrees-only) | F(−x, −u) = −F(x, u): C = 0 at every even degree | [Computation 1, §3](tutorial/29_computation_capacity.md#3-the-prediction-from-structure) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Dambre et al., 2012; Herteux and Räth, 2020; Kubota, Takahashi and Nakajima, 2021 |
 | [Nonlinear capacity](#nonlinear-capacity) | C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent measured signals | [Computation 1, §2](tutorial/29_computation_capacity.md#2-the-measure) | [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies) | Hodgkin and Huxley, 1952; Boyd and Chua, 1985; Huang and Ferrell, 1996; Hauser et al., 2011; Dambre et al., 2012; Grigoryeva et al., 2015; Torrejon et al., 2017; Furuta et al., 2018; Hülser et al., 2023; Köster, Yanchuk and Lüdge, 2024 |
-| [No fading memory](#no-fading-memory) | κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub> | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Boyd and Chua, 1985; Jaeger, 2001 |
+| [Non-decaying linear response](#non-decaying-linear-response) | κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub> | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | [Computation 1, §5](tutorial/29_computation_capacity.md#5-controls) | Boyd and Chua, 1985; Jaeger, 2001 |
 | [Inherited through a threshold](#inherited-through-a-threshold) | P = Φ(φ<sub>c</sub>/σ<sub>c</sub>), σ<sub>c</sub><sup>2</sup> = 2D<sub>s</sub>(π/ar)<sup>1/2</sup>Φ(aμ<sub>0</sub>(2/ar)<sup>1/2</sup>) | [Heredity 1, §2](tutorial/31_heredity_threshold.md#2-the-law) | [Heredity 1, §4](tutorial/31_heredity_threshold.md#4-running-the-command), [Heredity 1, §6](tutorial/31_heredity_threshold.md#6-lineages), [Heredity 1, §7](tutorial/31_heredity_threshold.md#7-the-published-bodies) | Kretschmer and Binder, 1979; Kondepudi and Nelson, 1983; Tilley and Zeks, 1984; van den Broeck and Mandel, 1987; Lythe, 1996; Painter, Maini and Othmer, 1999; Voituriez, Joanny and Prost, 2005; Saito, Sugimori and Hyuga, 2007; Baczynski, Lipowsky and Kierfeld, 2007; Hallatschek, Frey and Kroy, 2007; Duclos et al., 2018 |
 | [Kept above the threshold](#kept-above-the-threshold) | L<sub>div</sub>/2 &gt; L<sub>c</sub>: no dip | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Saito, Sugimori and Hyuga, 2007 |
 | [Lost in the dip](#lost-in-the-dip) | ln G = ∫λ dt over a generation &lt; 0 | [Heredity 1, §3](tutorial/31_heredity_threshold.md#3-the-prediction-from-structure) | [Heredity 1, §5](tutorial/31_heredity_threshold.md#5-controls) | Baczynski, Lipowsky and Kierfeld, 2007 |
@@ -248,7 +248,7 @@ Canonical form: F(−x, −u) = −F(x, u): C = 0 at every even degree. A body o
 Canonical form: C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number of independent measured signals. Nonlinear terms move capacity to products of past inputs; with fading memory the capacities of all degrees together equal the number of independent measured signals.
 
 - **Defined:** [Computation 1, §2](tutorial/29_computation_capacity.md#2-the-measure), with fading memory the capacities of all degrees sum to the number of independent measured signals.
-- **Derived:** [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), exact capacities of every degree and delay for one or two state variables; [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies), published bodies from six fields. Code: `computation.exact.ExactCapacities`, `card.card`, `ipc.capacities`.
+- **Derived:** [Computation 1, §4](tutorial/29_computation_capacity.md#4-running-the-command), grid/quadrature capacities over specified degrees and delays for one or two state variables; [Computation 1, §7](tutorial/29_computation_capacity.md#7-the-published-bodies), published bodies from six fields. Code: `computation.exact.ExactCapacities`, `card.card`, `ipc.capacities`.
 - **Original publications:**
   - A. L. Hodgkin and A. F. Huxley, J. Physiol. 117, 500 (1952), [doi:10.1113/jphysiol.1952.sp004764](https://doi.org/10.1113/jphysiol.1952.sp004764): the membrane of the squid giant axon.
   - S. Boyd and L. O. Chua, IEEE Trans. Circuits Syst. 32, 1150 (1985), [doi:10.1109/TCS.1985.1085649](https://doi.org/10.1109/TCS.1985.1085649): fading memory and the approximation of time-invariant filters by Volterra series.
@@ -261,7 +261,7 @@ Canonical form: C > 0 at even degrees; Σ<sub>degrees, delays</sub> C = number o
   - T. Hülser, F. Köster, L. Jaurigue and K. Lüdge, Nanophotonics 12, 937 (2023), [doi:10.1515/nanoph-2022-0415](https://doi.org/10.1515/nanoph-2022-0415): the error on a named task from the capacity profile.
   - F. Köster, S. Yanchuk and K. Lüdge, IEEE Trans. Neural Netw. Learn. Syst. 35, 7712 (2024), [doi:10.1109/TNNLS.2022.3220532](https://doi.org/10.1109/TNNLS.2022.3220532): the linear capacity at every delay from the linearization of a delay system.
 
-### No fading memory
+### Non-decaying linear response
 
 Canonical form: κ = 0: x<sub>t</sub> = Σ<sub>k</sub> u<sub>t−k</sub>. A mode without decay keeps the running sum of the input; its correlation with the input at any fixed delay vanishes as the sum grows.
 
@@ -486,7 +486,7 @@ Relaxation in a curved minimum (κ &gt; 0): the information about the write decr
 
 ### Law 2
 
-Diffusion along a direction with κ = 0, such as the phase of a limit cycle: the information decreases as 1/t.
+Diffusion along an unwrapped direction with κ = 0: information decreases as 1/t; for an angle modulo 2π, diffusion erases harmonics exponentially.
 
 - **Defined:** [Module 4, §1.3](tutorial/18_memory_writing_and_retention.md#13-retention), the three laws of retention.
 - **Derived:** [Module 8, §2](tutorial/22_memory_time.md#2-one-expression-for-the-three-regimes-of-kappa), Laws 1 and 2 from one expression; [Module 6](tutorial/20_memory_phase.md#1-concepts), the phase of a limit cycle. Code: `memory.regimes.gaussian_information`, `memory.phase.hold`.

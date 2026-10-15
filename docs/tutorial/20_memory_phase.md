@@ -23,7 +23,15 @@ $$
 \langle \delta\phi^2 \rangle = 2 D_\phi\, t ,
 $$
 
-so a written phase shift is lost by [Law 2](18_memory_writing_and_retention.md#13-retention), as $1/t$, and not exponentially.
+Here $\delta\phi$ is an **unwrapped timing error**: successive crossings are counted, so a full extra cycle remains
+distinguishable. For a finite-variance written offset observed through additive phase diffusion, the late-time
+information decreases as $1/t$, as in [Law 2](18_memory_writing_and_retention.md#13-retention).
+
+Measuring only the current angle modulo $2\pi$ gives a different loss law. In the rotating frame, diffusion on
+the circle obeys $\partial_t p=D_\phi\partial_\phi^2p$, so its $n$-th Fourier harmonic decays as
+$e^{-n^2D_\phi t}$. For a uniformly distributed written phase and a measurement of the full current angle,
+the mutual information consequently behaves as $I(t)\sim e^{-2D_\phi t}$. Cycle counting, rather than the
+existence of a zero mode alone, determines which information law applies.
 
 A phase can be written in two ways:
 
@@ -49,6 +57,8 @@ python3 -B -m fieldbridge memory phase examples/memory/repressilator.json --out-
 
 The command finds the limit cycle, applies a kick at 24 phases of the cycle, follows an ensemble with a written
 shift and an unwritten ensemble under noise, and measures the writing time for five frequency-changing writes.
+The hold calculation compares the $k$-th upward crossing with $k$ reference periods; it retains cycle counts.
+Its retention time uses the stated criterion that the unwrapped phase spread reaches the written separation.
 
 ![Phase memory of the repressilator](figures/memory/m6_phase.png)
 
@@ -83,9 +93,10 @@ Module 1.
 
 Chemical oscillators such as the Belousov–Zhabotinsky reaction, self-oscillating gels and circadian clocks retain
 the timing of a stimulus in their phase; a light pulse, for example, shifts a circadian clock, and the shift
-persists over many periods. The analysis above applies to any realization whose only attractor is a limit cycle:
-information is retained in the phase, lost by phase diffusion as $1/t$, and the ratio of retention to writing
-time grows linearly with the strength of a frequency-changing write.
+persists over many periods. In the weak-noise limit-cycle regime, a timing measurement that retains cycle counts
+has the unwrapped diffusion law above. A measurement of the angle alone loses its harmonics exponentially.
+For a small frequency-changing write, $T_h/T_w$ grows linearly with its strength when $D_\phi$ and the target
+separation are held fixed.
 
 ## 5. Exercises
 
@@ -106,7 +117,8 @@ time grows linearly with the strength of a frequency-changing write.
 ## Summary
 
 - The phase of a limit cycle is a zero mode created by the time-translation symmetry of an autonomous system.
-- A written phase shift is retained without a restoring force and lost by phase diffusion (Law 2).
+- A written phase shift spreads by phase diffusion. Cycle-counted timing has the unwrapped Law 2; an angle
+  modulo $2\pi$ loses information exponentially at long times.
 - For a frequency-changing write, the ratio of retention to writing time grows linearly with the strength of the
   write (measured slope 0.95).
 - A realization that settles to stable states has no phase memory; the command refuses it.

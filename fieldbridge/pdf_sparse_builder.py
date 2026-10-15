@@ -1149,6 +1149,8 @@ def mechanism_record_from_chunk(field_id: str, chunk: Chunk, rank: int) -> Dict[
         "keywords": top_terms([chunk.text], 24),
         "routes": chunk.routes,
         "fibers": chunk.fibers,
+        "substrates": chunk.substrate_scores,
+        "substrate_evidence_scope": "source_chunk",
         "source": "document_sparse_attention",
     }
 

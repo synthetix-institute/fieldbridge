@@ -1,13 +1,14 @@
 """Memory in the phase of an oscillator.
 
 A realization without a stable state can still remember. On a limit cycle, time-translation symmetry makes the
-phase a flat direction: a pulse shifts the phase, the shift persists because nothing restores it, and noise loses
-it by phase diffusion, Law 2. A bounded write that shifts the phase at a rate proportional to its strength then
+phase a flat direction: a pulse shifts the phase, and noise spreads it by phase diffusion. With cycle counts retained,
+the unwrapped timing error follows the flat-direction diffusion law. A bounded write that shifts the phase at a rate proportional to its strength then
 obeys the flat-direction form of the relation between retention and writing times: their ratio grows linearly with
 the write strength.
 
 Phases are read from the times at which the first coordinate crosses a section upward (its mean over the cycle).
-The k-th crossing of a trajectory, compared with k periods of the unperturbed cycle, gives its phase lag.
+The k-th crossing of a trajectory, compared with k periods of the unperturbed cycle, gives its unwrapped phase lag.
+An instantaneous angle modulo 2 pi is a different observable: its harmonics decay exponentially under diffusion.
 """
 from __future__ import annotations
 
@@ -107,8 +108,11 @@ def response_curve(real: Realization, cycle: Dict, rng, kick: Sequence[float], n
 
 def hold(real: Realization, cycle: Dict, rng, shift: float, D: float, n_traj: int = 300, n_periods: int = 60,
          phase_of_write: float = 0.0) -> Dict[str, object]:
-    """Two ensembles, one written (phase advanced by `shift`) and one not, under noise D: the mean lag stays,
-    its variance grows linearly (Law 2), and the separation d' = shift / std decays as t^{-1/2}."""
+    """Cycle-counted crossing times of written and unwritten ensembles under noise D.
+
+    In the weak-noise phase-diffusion regime, unwrapped lag variance grows linearly and d' decays as t^{-1/2}.
+    The measurement retains the crossing index; it is not an instantaneous angle modulo 2 pi.
+    """
     dt = an.safe_dt(real)
     T = cycle["period"]
     q = np.repeat(np.asarray(cycle["state"], float)[None], n_traj, axis=0)
@@ -127,7 +131,8 @@ def hold(real: Realization, cycle: Dict, rng, shift: float, D: float, n_traj: in
     var = 0.5 * (np.var(lag_a, 0) + np.var(lag_b, 0))
     t = ka * T
     slope = float(np.polyfit(t, var, 1)[0])
-    return {"time": t.tolist(), "separation": sep.tolist(), "variance": var.tolist(),
+    return {"phase_observable": "cycle_counted_crossing_time", "phase_topology": "unwrapped",
+            "time": t.tolist(), "separation": sep.tolist(), "variance": var.tolist(),
             "phase_diffusion": slope / 2.0, "d_prime": (sep / np.sqrt(np.maximum(var, 1e-300))).tolist()}
 
 
@@ -159,5 +164,6 @@ def lock(real: Realization, cycle: Dict, rng, strengths: Sequence[float], target
     hs = np.array([o["h"] for o in out])
     rs = np.array([o["ratio"] for o in out])
     slope = float(np.polyfit(np.log(hs), np.log(rs), 1)[0])
-    return {"target_shift": target, "phase_diffusion": Dphi, "T_hold": T_hold, "writes": out,
+    return {"target_shift": target, "phase_diffusion": Dphi, "T_hold": T_hold,
+            "retention_criterion": "unwrapped_phase_variance_equals_squared_shift", "writes": out,
             "log_log_slope": slope}

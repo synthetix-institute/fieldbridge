@@ -1,4 +1,6 @@
-"""Exact capacities of a body with one or two state variables, computed from its equations without simulation.
+"""Grid/quadrature capacities of a body with one or two state variables.
+
+``ExactCapacities`` is the historical API name; its results are numerical estimates.
 
 Driven by independent inputs, the state after each interval is a Markov chain, x_t = M(x_{t-1}, u_t), with M the
 interval map (the flow over one interval with the input held, or the map itself). For a target
@@ -11,7 +13,8 @@ with w_j = Pn_d at a delay j of the target and 1 elsewhere, pi the stationary di
 expectations over u by Gauss-Legendre quadrature (uniform inputs). The state lives on a grid (linear interpolation in
 one dimension, bilinear in two); pi is the fixed point of the transfer operator of the same discretization. The
 capacity is c^T Sigma^{-1} c with Sigma the covariance of the signals under pi. No expansion in the amplitude and no
-sampling noise: the error is that of the grid and the quadrature.
+sampling noise in this recursion: errors arise from the state box, grid, quadrature, interval integration and
+stationary iteration. The selected stationary distribution need not be unique.
 
     ExactCapacities(body, N=2001 (one variable) or 161 (two), Q=24, box=None, noise=0).capacity(target)
 
@@ -79,9 +82,12 @@ class ExactCapacities:
         for self.iterations in range(1, 100001):
             new = self.transfer @ pi
             new /= new.sum()
-            if np.abs(new - pi).sum() < 1e-14:
+            self.stationary_residual = float(np.abs(new - pi).sum())
+            if self.stationary_residual < 1e-14:
                 break
             pi = new
+        else:
+            raise RuntimeError("stationary grid iteration did not converge in 100000 steps")
         self.pi = new
         # the probability, under the stationary distribution, that one interval leaves the grid (clipped back)
         self.outside = float(self.pi @ (out_mask @ self.wq))
@@ -154,4 +160,9 @@ class ExactCapacities:
                 functions.append((target, C))
             by_degree[D] = total
         return {"by_degree": by_degree, "total": float(sum(by_degree.values())), "functions": functions,
-                "grid": self.N, "Q": self.Q, "outside": self.outside, "iterations": self.iterations}
+                "grid": self.N, "Q": self.Q, "outside": self.outside, "iterations": self.iterations,
+                "method": "state_grid_quadrature", "analytic_exact": False,
+                "state_box": self.box.tolist(), "stationary_initialization": "uniform_on_grid",
+                "stationary_uniqueness": "not_established", "stationary_residual": self.stationary_residual,
+                "error_sources": ["finite_state_box", "grid_interpolation", "input_quadrature",
+                                  "interval_integration", "stationary_iteration", "finite_delay_degree_range"]}

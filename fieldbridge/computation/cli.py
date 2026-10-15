@@ -20,7 +20,7 @@ BOUNDARY = ("Calculated statements about a supplied model driven by independent 
             "with experiment and with the literature.")
 HERE = Path(__file__).resolve().parent
 CLASS_TEXT = {"linear-memory": "linear memory only", "odd-capacity": "odd degrees only",
-              "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory"}
+              "nonlinear-capacity": "nonlinear capacity", "integrating": "non-decaying linear response"}
 
 
 def _plain(x):
@@ -46,21 +46,25 @@ def markdown(res: Dict) -> str:
              f"Input `{res['input']}`, {res['law']} with amplitude {res['amplitude']:g} around {res['offset']:g}, held "
              f"for {res['hold']:g}; measured: {', '.join(res['observables'])}"
              + (f", {res['virtual_nodes']} times per interval" if res["virtual_nodes"] > 1 else "") + ".", "",
-             f"## Class: {CLASS_TEXT[res['class']]}", "",
-             f"- Memory: {pr['class']}; slowest rate {pr['slowest_rate']:.4g} per unit time, over the "
+             f"## Local response: {CLASS_TEXT[res['class']]}", "",
+             f"- Equilibrium linearization: {pr['class']}; slowest rate {pr['slowest_rate']:.4g} per unit time, over the "
              f"{pr['modes_reached_and_seen']} of {pr['modes']} modes that the input reaches and the observables see.",
+             "- Global forgetting of initial preparations: not established by the linearization.",
              f"- Rank of the linear response n_lin = {pr['n_lin']} of {pr['signals']} measured signals (relative "
              f"singular values {', '.join(f'{v:.2g}' for v in pr['singular_values'][:8])}).",
              f"- Degree-1 profile at small amplitude, delays 0-9: "
              f"{', '.join(f'{v:.3f}' for v in pr['profile_degree_1'][:10])}.",
-             f"- Odd about the steady state: {'yes (even degrees vanish)' if pr['odd'] else 'no'}; linear: "
+             f"- Sampled symmetry about the steady state: {'odd' if pr['odd'] else 'not odd'}; sampled affine test: "
              f"{'yes (degree 1 only)' if pr['linear'] else 'no'}.", ""]
     for run in res["runs"]:
         lines.append(f"## Amplitude {run['amplitude']:g}" + (f", measurement noise {res['noise']:g}" if res["noise"] else ""))
         lines.append("")
         if "exact" in run:
-            lines.append(f"- Exact (grid {run['exact']['grid']}): {_degrees(run['exact']['by_degree'])}; total "
+            lines.append(f"- Numerical grid/quadrature (grid {run['exact']['grid']}): {_degrees(run['exact']['by_degree'])}; total "
                          f"{run['exact']['total']:.4g}.")
+            lines.append(f"- Stationary iteration residual {run['exact']['stationary_residual']:.3g}; "
+                         f"probability clipped outside the state box {run['exact']['outside']:.3g}. "
+                         "Stationary uniqueness is not established; refine the box, grid, quadrature and time step.")
         if "simulated" in run:
             s = run["simulated"]
             lines.append(f"- Simulated (T = {s['T']}, rank {s['rank']}, threshold {s['threshold']:.2g}): "
@@ -79,9 +83,9 @@ def cmd_predict(args) -> int:
     from .predict import predict
     body = cspec.load(args.spec)
     pr = predict(body)
-    print(f"{body.name}: {CLASS_TEXT[pr['structure']]}; memory {pr['class']}, slowest rate {pr['slowest_rate']:.4g}; "
+    print(f"{body.name}: {CLASS_TEXT[pr['structure']]}; equilibrium linearization {pr['class']}, slowest rate {pr['slowest_rate']:.4g}; "
           f"n_lin {pr['n_lin']} of {pr['signals']} signals; modes reached and seen {pr['modes_reached_and_seen']} of "
-          f"{pr['modes']}; odd {pr['odd']}; linear {pr['linear']}")
+          f"{pr['modes']}; odd {pr['odd']}; linear {pr['linear']}; global fading not established")
     return 0
 
 
@@ -113,6 +117,7 @@ def cmd_survey(args) -> int:
         ex = res["runs"][0].get("exact")
         rows.append({"path": str(path), "name": res["name"], "field": res["field"], "class": res["class"],
                      "expect": res.get("expect"), "memory": pr["class"], "slowest_rate": pr["slowest_rate"],
+                     "analysis_scope": pr["analysis_scope"], "global_fading_status": pr["global_fading_status"],
                      "modes": f"{pr['modes_reached_and_seen']} of {pr['modes']}", "n_lin": pr["n_lin"],
                      "signals": pr["signals"], "odd": pr["odd"], "linear": pr["linear"],
                      "exact": ex["by_degree"] if ex else None})
@@ -137,14 +142,14 @@ def _cap(v: float) -> str:
 
 def survey_table(rows: List[Dict]) -> str:
     """The markdown table of a survey: one row per specification."""
-    md = ["| Body | Field | Class | Memory, slowest rate | Modes reached and seen | n_lin / signals | Odd | Exact capacity by degree |",
+    md = ["| Body | Field | Local response | Linearized decay, slowest rate | Modes reached and seen | n_lin / signals | Sampled odd symmetry | Numerical capacity by degree |",
           "| --- | --- | --- | --- | --- | --- | --- | --- |"]
     for r in rows:
         exact = "—" if not r["exact"] else ", ".join(f"{k}: {_cap(v)}" for k, v in sorted(r["exact"].items(), key=lambda kv: int(kv[0])))
-        memory = "fading, " + f"{r['slowest_rate']:.3g}" if r["memory"] == "fading" else "none (integrating)"
+        memory = "decaying, " + f"{r['slowest_rate']:.3g}" if r["memory"] == "fading" else r["memory"]
         md.append(f"| {r['name']} | {r['field'] or '—'} | {CLASS_TEXT[r['class']]} | {memory} | {r['modes']} | "
                   f"{r['n_lin']} / {r['signals']} | {'yes' if r['odd'] else 'no'} | {exact} |")
-    return "\n".join(md) + "\n"
+    return "\n".join(md) + "\n\nRates describe the selected equilibrium; global forgetting is not established.\n"
 
 
 def add_parser(sub) -> None:
@@ -153,7 +158,7 @@ def add_parser(sub) -> None:
     a = s.add_parser("predict", help="the predictions from the equations alone (fast)")
     a.add_argument("spec")
     a.set_defaults(func=cmd_predict)
-    a = s.add_parser("card", help="predictions, exact capacities (one or two variables) and, on request, simulated ones")
+    a = s.add_parser("card", help="local predictions, grid/quadrature capacities (one or two variables) and optional simulations")
     a.add_argument("spec")
     a.add_argument("--delays", default="1:40,2:8,3:5", help="degree:largest delay, comma separated")
     a.add_argument("--amplitudes", default=None)
@@ -164,7 +169,7 @@ def add_parser(sub) -> None:
     a.add_argument("--seed", type=int, default=1)
     a.add_argument("--out-dir", default=None)
     a.set_defaults(func=cmd_card)
-    a = s.add_parser("survey", help="predictions and exact capacities of every specification in a folder")
+    a = s.add_parser("survey", help="local predictions and numerical capacities of every specification in a folder")
     a.add_argument("folder")
     a.add_argument("--delays", default="1:40,2:8,3:5")
     a.add_argument("--out-dir", default=None)

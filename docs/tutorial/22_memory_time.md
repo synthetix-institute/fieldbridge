@@ -18,7 +18,7 @@ Time enters a realization $I_{\mathrm{real}} = ((\Omega,\Xi);\,C,\,R,\,P;\,A)$ i
 | --- | --- | --- | --- |
 | Order of the evolution | the closure $C$ | Information about a write can only decrease; the loss laws | 4, 8 |
 | Order of the operations of a protocol | the protocol $P$ | Operations that do not commute leave a result that depends on their order | — |
-| A phase coordinate | a limit cycle of $\Omega$ | Information stored in the phase is retained along a zero mode ([Law 2](18_memory_writing_and_retention.md#13-retention)) | 6 |
+| A phase coordinate | a limit cycle of $\Omega$ | Cycle-counted timing follows Law 2; an angle modulo $2\pi$ loses its harmonics exponentially | 6 |
 
 The direction of the first role does not come from the equations of motion. A magnetic field breaks
 time-reversal symmetry, and a closed system in a magnetic field still conserves information. Information about a
@@ -48,6 +48,10 @@ $$
 | $\kappa > 0$ | $I \approx \tfrac12 (\kappa s_0^2/D)\, e^{-2\kappa t}$ | Law 1, relaxation |
 | $\kappa = 0$ | $I = \tfrac12 \ln\bigl(1 + s_0^2/(2Dt)\bigr) \approx s_0^2/(4Dt)$ | Law 2, diffusion |
 | $\kappa < 0$ | $I \to \tfrac12 \ln(1 + W)$, $W = \lvert\kappa\rvert s_0^2/D$ | no further loss |
+
+Equation (1) describes a coordinate on the real line. For an angular coordinate measured modulo $2\pi$,
+the diffusion equation has discrete Fourier modes with decay rates $n^2D$; a uniformly written phase has
+$I(t)\sim e^{-2Dt}$ at long times. Retaining cycle counts restores the unwrapped observable of Module 6.
 
 For $\kappa < 0$ the expansion outruns the noise. Only the noise that acts during the first $1/\lvert\kappa\rvert$,
 while the state is near the unstable point, competes with the write; what survives it is retained. $W$ is the same

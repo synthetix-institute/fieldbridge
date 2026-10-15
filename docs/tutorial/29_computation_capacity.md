@@ -4,8 +4,8 @@
 
 1. describe a body driven by an input, and the observables measured on it, in a specification of schema
    `fieldbridge-computation/1` (or `fieldbridge-springs/1` for a network of springs and masses);
-2. state from the equations alone whether the body has fading memory, how many independent functions of the input
-   history a linear combination of its observables can reproduce, and which degrees are excluded by symmetry;
+2. calculate the decay and rank of the local linear response, distinguish it from global fading memory, and
+   determine which degrees an exact symmetry excludes;
 3. run `computation predict`, `computation card` and `computation survey`, and read the class, the profile and the
    capacities by degree;
 4. state a capacity together with the measurement noise and the amplitude at which it holds.
@@ -48,7 +48,7 @@ restricted parser) and a block `computation`:
 | `virtual_nodes` | measurement times per interval (default 1) |
 | `washout`, `length`, `substeps` | intervals discarded and used; Runge–Kutta steps per interval |
 | `solver`, `form` | `rk4` or `stiff`; `flow` (a rate) or `map` (the next state) |
-| `initial`, `exact_box`, `expect` | a starting state, the range of the state for the exact capacities, the expected class |
+| `initial`, `exact_box`, `expect` | a starting state, the finite box for grid/quadrature capacities, the expected local-response class |
 
 In the language of the realization: $\Xi$ is the set of states, $\Omega$ the drift, $C$ the closure, $R$ the
 observables, $P$ the input law and its hold, and $A$ the parameters.
@@ -58,9 +58,9 @@ observables, $P$ the input law and its hold, and $A$ the parameters.
 `computation predict` linearizes the body at its steady state and reads four things from the equations, without a
 simulation:
 
-1. **Fading memory.** Over one interval the deviation obeys $s_t = \Phi s_{t-1} + \Gamma u_t$. The class is decided
+1. **Local linear decay.** Over one interval the linearized deviation obeys $s_t = \Phi s_{t-1} + \Gamma u_t$. Its class is decided
    by the largest $|\lambda(\Phi)|$ over the modes that the input reaches and the observables see: below 1 the
-   memory fades; equal to 1 a mode keeps the running sum of the input (class *no fading memory*). Conserved amounts
+   linear response decays; equal to 1 a mode keeps the running sum of the input. Conserved amounts
    that the input cannot change are not among these modes.
 2. **Rank.** The impulse responses of the measured signals, $g_k$, span $n_\mathrm{lin}$ directions: the linear
    capacity at small amplitude, at most the number of measured signals and the number of modes reached and seen
@@ -70,7 +70,15 @@ simulation:
 4. **Symmetry.** If the drift and the observables are odd about the steady state and the input law is symmetric,
    every even degree has zero capacity. If they are affine, only degree 1 has capacity.
 
-These decide the class of the card: *linear memory*, *odd degrees only*, *nonlinear capacity* or *no fading memory*.
+The card uses these results to organize local response into *linear memory*, *odd degrees only*, *nonlinear
+capacity* or *non-decaying linear response*. The symmetry and affine tests sample points around the selected
+equilibrium; an exact degree exclusion requires the corresponding identity and a preparation invariant under it.
+
+Global fading memory requires two admissible initial states driven by the same input history to lose their
+observable difference. For example, $\dot x=x-x^3+u$ has decay rate 2 near $x=\pm1$ at $u=0$, yet for
+$|u|\le0.01$ the regions $x\ge1/2$ and $x\le-1/2$ are both forward invariant. Preparations in opposite
+wells remain distinguishable under the same input. The local decay rate therefore cannot establish forgetting
+across wells. The report records this distinction in `analysis_scope` and `global_fading_status`.
 
 ```bash
 python -m fieldbridge computation predict examples/computation/benchmarks/one_mode_map.json
@@ -88,10 +96,14 @@ at every amplitude. Computed on a grid of the state they approach these values a
 ## 4. Running the command
 
 `computation card` adds capacities to the predictions. For a body with one or two state variables they are computed
-exactly from the equations: driven by independent inputs, the state after each interval is a Markov chain, and the
+numerically by grid interpolation and input quadrature: driven by independent inputs, the state after each interval is a Markov chain, and the
 covariance of a signal with a target follows by a backward recursion of conditional expectations over the delays, on
 a grid of the state, with the stationary distribution of the discretized transfer operator. There is no expansion in
-the amplitude and no sampling noise. With `--simulate` the card also estimates the capacities from a simulation of
+the amplitude and no Monte Carlo sampling in this recursion. Accuracy depends on the finite state box, grid,
+quadrature, interval integration and stationary iteration, as well as the degree and delay cutoff. The reported
+stationary distribution is selected by uniform initialization on the grid; convergence alone does not establish
+uniqueness across basins. The JSON key `exact` and class `ExactCapacities` retain their historical names.
+With `--simulate` the card also estimates the capacities from a simulation of
 the full body (the estimator of Dambre et al., 2012, with their threshold: twice the $\chi^2$ quantile).
 
 ```bash
@@ -99,7 +111,7 @@ python -m fieldbridge computation card examples/computation/chemotaxis_methylati
 ```
 
 The chemotaxis model of Tu, Shimizu and Berg (2008) is driven by $u = \ln([L]/[L]_0)$ around 158 μM with amplitude
-1.151, held for $0.05/F(0)$, and measured through the kinase activity and the methylation level. Its memory fades at
+1.151, held for $0.05/F(0)$, and measured through the kinase activity and the methylation level. Its equilibrium linear response decays at
 the rate 24 $F(0)$ of the steep band of the methylation rate; it is not odd. From the equations: degree 1 holds 1.731,
 degree 2 0.162 and degree 3 0.031, against 1.743, 0.161 and 0.029 estimated from a simulation of 95 000 intervals
 (`--simulate --length 6000`).
@@ -111,7 +123,7 @@ python -m fieldbridge computation card examples/computation/hodgkin_huxley1952.j
 ```
 
 The membrane of Hodgkin and Huxley (1952), driven by a current held for 1 ms and measured through its potential,
-fades at 0.12 per ms over its four modes. Its predicted profile returns at delays of 5–8 ms (0.024, 0.034, 0.032):
+has an equilibrium linear decay rate of 0.12 per ms over its four modes. Its predicted profile returns at delays of 5–8 ms (0.024, 0.034, 0.032):
 the damped subthreshold oscillation of the membrane. Below threshold (1 μA/cm²) all of the capacity is linear: 1.009
 at degree 1 and nothing above. At 4 μA/cm² the membrane fires, and only 0.316 of the capacity lies within degree 3
 and delay 8 (0.211, 0.093, 0.012); the spikes spread the rest over higher degrees and longer delays.
@@ -163,11 +175,11 @@ value is approached only for a resistance measured to better than $10^{-5}$.
 python -m fieldbridge computation survey examples/computation
 ```
 
-The survey gives the predictions of every specification in a folder, and the exact capacities of those with one or
+The survey gives the local-response predictions of every specification in a folder, and numerical capacities of those with one or
 two state variables (without measurement noise, delays up to 40, 8 and 5 for degrees 1, 2 and 3, on a grid of 2001
 points for one variable and 161 × 161 for two):
 
-| Body | Field | Class | Memory, slowest rate | Modes reached and seen | n_lin / signals | Odd | Exact capacity by degree |
+| Body | Field | Local response | Linearized decay, slowest rate | Modes reached and seen | n_lin / signals | Sampled odd symmetry | Numerical capacity by degree |
 | --- | --- | --- | --- | --- | --- | --- | --- |
 | Three linear stages in a chain | — | linear memory only | fading, 0.5 | 3 of 3 | 3 / 3 | yes | — |
 | Damped oscillator with a cubic restoring force (Duffing) | — | odd degrees only | fading, 0.25 | 2 of 2 | 2 / 2 | yes | 1: 1.9, 2: 0, 3: 0.0435 |
@@ -183,6 +195,7 @@ points for one variable and 161 × 161 for two):
 | Random network of 30 masses and 78 nonlinear springs (Hauser et al. 2011 construction) | soft robotics and morphological computation | nonlinear capacity | fading, 0.0492 | 112 of 112 | 30 / 78 | no | — |
 | Macrospin magnetic tunnel junction with a perpendicular reference layer, reduced to m_z | spintronics | nonlinear capacity | fading, 0.158 | 1 of 1 | 2 / 50 | no | 1: 3.07, 2: 3.05, 3: 2.16 |
 
+All decay rates in this table refer to the selected equilibrium and input-reachable, observable modes.
 The junction values hold without measurement noise and therefore include directions that no measurement resolves
 (Section 6).
 
@@ -211,10 +224,10 @@ measurement, and with `--simulate` for a body of more than two variables. A spec
 
 - The capacity of measured signals for a function of the input history is the fraction of its variance that a
   linear combination reproduces (Dambre et al., 2012).
-- From the equations: fading memory over the modes reached and seen, the rank of the linear response, the degree-1
-  profile, and the degrees excluded by symmetry.
-- For one or two state variables, the capacities of every degree and delay follow exactly from the equations through
-  the driven Markov chain; for larger bodies, from a simulation.
+- The equilibrium linearization gives a local decay rate, response rank and degree-1 profile. Global forgetting
+  requires a separate comparison across admissible preparations; degree exclusions require an exact symmetry.
+- For one or two state variables, grid/quadrature calculations estimate capacities over the requested degrees and
+  delays through the driven Markov chain; for larger bodies, the module estimates them from a simulation.
 - A capacity is stated at an amplitude and a measurement noise: without noise it counts directions no measurement
   resolves.
 

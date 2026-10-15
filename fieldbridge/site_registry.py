@@ -48,7 +48,7 @@ CLASSES = {
     "linear-memory": "linear memory",
     "odd-capacity": "odd degrees only",
     "nonlinear-capacity": "nonlinear capacity",
-    "integrating": "no fading memory",
+    "integrating": "non-decaying linear response",
     "inherited-through-threshold": "inherited through a threshold",
     "kept-above-threshold": "kept above the threshold",
     "lost-in-the-dip": "lost in the dip",
@@ -1225,7 +1225,7 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "no-return": "return not exact", "perfect-adaptation": "perfect adaptation",
                "fine-tuned-adaptation": "fine-tuned", "partial-adaptation": "partial adaptation",
                "no-adaptation": "no adaptation", "linear-memory": "linear memory", "odd-capacity": "odd degrees",
-               "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory",
+               "nonlinear-capacity": "nonlinear capacity", "integrating": "non-decaying linear response",
                "inherited-through-threshold": "inherited", "kept-above-threshold": "kept above",
                "lost-in-the-dip": "lost in the dip", "threshold-moved": "threshold moved",
                "synchronizes": "synchronizes", "no-onset": "no onset", "follows-the-bias": "follows the bias",
@@ -1258,7 +1258,7 @@ CLASS_ABSENT = {
 M4_RETENTION = "docs/tutorial/18_memory_writing_and_retention.md#13-retention"
 RETENTION_LAWS = {
     "1": "relaxation in a curved minimum (κ &gt; 0): the information about the write decreases as e<sup>−2κt</sup>",
-    "2": "diffusion along a direction with κ = 0, such as the phase of a limit cycle: the information decreases as 1/t",
+    "2": "diffusion along an unwrapped direction with κ = 0: information decreases as 1/t; for an angle modulo 2π, diffusion erases harmonics exponentially",
     "3": "activation over a barrier ΔV between stored states, at the Kramers rate, proportional to "
          "e<sup>−ΔV/k<sub>B</sub>T</sup>",
 }

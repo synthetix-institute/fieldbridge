@@ -24,7 +24,7 @@ The block ``computation``:
                    magnitude)
     form           "flow" (default: the drift is a rate) or "map" (the drift gives the next state, x_t = F(x_{t-1}, u_t))
     initial        a state from which the steady state at the offset is found
-    exact_box      the range of each state variable for the exact capacities (default: from a driven run)
+    exact_box      finite state box for grid/quadrature capacities (default: from a driven run)
     expect         the class that a closed form or the source gives (benchmarks and controls)
 """
 from __future__ import annotations

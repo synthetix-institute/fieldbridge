@@ -787,18 +787,17 @@ def regulation_slots(spec: Dict, real, step: Dict) -> Dict[str, str]:
             "A": ", ".join(f"{k} = {_num(real.params[k])}" for k in params[:6]) + (" …" if len(params) > 6 else "")}
 
 
-# exact capacities on the page: at a measurement noise of one part in a thousand (without noise the capacity counts
+# Numerical grid/quadrature capacities: at a measurement noise of one part in a thousand (without noise the capacity counts
 # directions of the signals far below any measurement), on the module's grid for one variable and a coarse grid for two
 COMPUTATION_NOISE = 1e-3
 COMPUTATION_DELAYS = {1: 20, 2: 5, 3: 3}
 COMPUTATION_CLASSES = ("linear-memory", "odd-capacity", "nonlinear-capacity", "integrating")
 COMPUTATION_TEXT = {"linear-memory": "linear memory", "odd-capacity": "odd degrees only",
-                    "nonlinear-capacity": "nonlinear capacity", "integrating": "no fading memory"}
+                    "nonlinear-capacity": "nonlinear capacity", "integrating": "non-decaying linear response"}
 
 
 def computation_record(node: Dict) -> Dict:
-    """A driven body: the predictions of ``computation predict`` and, for one or two state variables, the exact
-    capacities of every degree and delay at a stated measurement noise."""
+    """A driven body: local response and numerical capacities at stated noise, degrees and delays."""
     from .computation import spec as cspec
     from .computation.exact import ExactCapacities
     from .computation.predict import predict
@@ -814,6 +813,7 @@ def computation_record(node: Dict) -> Dict:
         profile_exact = [ex.capacity(((k, 1),)) for k in range(COMPUTATION_DELAYS[1] + 1)]
     by = exact["by_degree"] if exact else {}
     facts = {"structure": COMPUTATION_TEXT[pr["structure"]], "memory": pr["class"],
+             "memory_scope": pr["analysis_scope"], "global_fading_status": pr["global_fading_status"],
              "rate": _num(pr["slowest_rate"]) if np.isfinite(pr["slowest_rate"]) else "—",
              "modes": f"{pr['modes_reached_and_seen']} of {pr['modes']}", "n_lin": str(pr["n_lin"]),
              "signals": str(pr["signals"]), "odd": "yes" if pr["odd"] else "no",

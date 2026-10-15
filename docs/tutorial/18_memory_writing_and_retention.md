@@ -114,7 +114,7 @@ write is lost:
 | Form of the landscape at the stored state | Law | Information about the write |
 | --- | --- | --- |
 | a curved minimum, $\kappa > 0$ | Law 1, relaxation | decreases as $e^{-2\kappa t}$ |
-| a direction with $\kappa = 0$ (a zero mode) | Law 2, diffusion | decreases as $1/t$ |
+| an unbounded or cycle-counted direction with $\kappa = 0$ | Law 2, diffusion | decreases as $1/t$ |
 | two or more minima separated by a barrier $\Delta V$ | Law 3, activation | lost at the Kramers rate, proportional to $e^{-\Delta V/k_BT}$ |
 
 Laws 1 and 2 are the loss for the two signs $\kappa > 0$ and $\kappa = 0$ of the curvature along the written
@@ -125,6 +125,8 @@ mode relaxing at its own rate $\kappa(k)$ (Module 8, Section 3).
 
 The card names the law (`loss_law`) and gives the retention time at the noise of the realization (`hold`).
 Module 8 derives Laws 1 and 2 from one expression.
+For a phase measured modulo $2\pi$, diffusion instead erases Fourier harmonics exponentially; Module 6
+distinguishes this angular measurement from cycle-counted timing.
 
 ### 1.4 Relation between retention and writing times
 
@@ -246,7 +248,7 @@ from those of the full run within their sampling error.)
 1. The argument is proportional to $r^{-1/4}$; doubling it requires a sweep sixteen times slower, provided that
    $\Gamma = D_s |a_3| / r$, which grows sixteen-fold, stays small.
 2. Along a zero mode the energy does not change, so there is no restoring force and no barrier. The stored
-   coordinate diffuses and the information decreases as $1/t$ (Law 2).
+   unwrapped coordinate diffuses and the information decreases as $1/t$ (Law 2).
 3. Both times double and the ratio is unchanged: the viscosity changes the mobility, not the landscape.
 4. No loss was observed in the simulated 300 time units. The retention time is therefore censored, and the ratio
    is at least $300/0.37 \approx 800$.

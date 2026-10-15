@@ -76,7 +76,7 @@ reading order.
 
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
-| 1 | [Which functions of an input history a body represents](29_computation_capacity.md) | Does the body have fading memory, how many functions of the input history do its observables reproduce, which degrees does symmetry exclude, and what changes with the measurement noise? | `computation predict`, `card`, `survey` |
+| 1 | [Which functions of an input history a body represents](29_computation_capacity.md) | How do local decay, symmetry, observable choice and measurement noise determine capacity, and what further argument establishes global forgetting? | `computation predict`, `card`, `survey` |
 
 ## Heredity
 

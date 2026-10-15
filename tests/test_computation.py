@@ -132,9 +132,39 @@ def test_the_card_of_a_one_variable_body_has_exact_capacities():
     res = card(load(EX / "benchmarks" / "one_mode_map.json"), delays={1: 20, 2: 4})
     assert res["class"] == "linear-memory"
     assert res["runs"][0]["exact"]["by_degree"][1] == pytest.approx(1.0, abs=1e-3)
+    ex = res["runs"][0]["exact"]
+    assert ex["method"] == "state_grid_quadrature" and ex["analytic_exact"] is False
+    assert ex["stationary_residual"] < 1e-14
+    assert "grid_interpolation" in ex["error_sources"]
 
 
 def test_the_command_predicts_a_class():
     out = subprocess.run([sys.executable, "-m", "fieldbridge", "computation", "predict",
                           str(EX / "benchmarks" / "running_sum.json")], capture_output=True, text=True, cwd=ROOT)
-    assert out.returncode == 0 and "no fading memory" in out.stdout
+    assert out.returncode == 0 and "equilibrium linearization integrating" in out.stdout
+    assert "global fading not established" in out.stdout
+
+
+def test_local_decay_does_not_certify_forgetting_the_initial_well():
+    spec = {
+        "schema": "fieldbridge-computation/1", "kind": "equations", "name": "bistable counterexample",
+        "question": "Does the same input erase the initial well?",
+        "assumptions": ["deterministic overdamped dynamics", "bounded held input"],
+        "provenance": {"source": "analytic counterexample"},
+        "carrier": {"kind": "euclid", "variables": ["x"]},
+        "parameters": {"u": 0.0}, "drift": {"x": "x - x**3 + u"}, "noise": 0.0,
+        "computation": {"input": "u", "law": "uniform", "amplitude": 0.01, "hold": 1.0,
+                        "observables": ["x"], "initial": [1.0], "substeps": 20},
+    }
+    body = load(spec)
+    pr = predict(body)
+    assert pr["class"] == "fading" and pr["spectral_radius"] == pytest.approx(np.exp(-2))
+    assert pr["analysis_scope"] == "equilibrium_linear_response"
+    assert pr["global_fading_status"] == "not_established"
+    # At +/-1/2 the drift points into the corresponding half-line for every allowed input.
+    assert 0.5 - 0.5**3 - body.amplitude > 0
+    assert -0.5 - (-0.5)**3 + body.amplitude < 0
+    states = np.array([[-1.0], [1.0]])
+    for u in np.random.default_rng(713).uniform(-body.amplitude, body.amplitude, 100):
+        states = body.interval(states, np.repeat(u, 2))
+    assert states[0, 0] < -0.5 and states[1, 0] > 0.5

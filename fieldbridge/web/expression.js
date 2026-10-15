@@ -399,12 +399,13 @@
       if (f.calibration !== '—') known('calibration |∫ dφ/dt dt / Δφ − 1|', f.calibration);
     } else if (rec.family === 'computation') {
       body = mechanismText(rec);
-      known('memory', f.memory === 'fading' ? `fading, slowest rate ${f.rate}` : 'no fading memory (a mode without decay)');
+      known('equilibrium linear response', f.memory === 'fading' ? `decaying, slowest rate ${f.rate}` : f.memory);
+      known('forgetting across initial preparations', 'requires a separate global calculation');
       known('modes that the input reaches and the observables see', f.modes);
       known('rank of the linear response', `${f.n_lin} of ${f.signals} measured signals`);
       known('linear capacity at delays 0–4 (small amplitude)', f.profile);
       known('odd about the steady state', f.odd === 'yes' ? 'yes: no capacity at even degrees' : 'no');
-      if (f.exact !== '—') known(`from the equations on a grid of ${f.grid}, measurement noise ${f.noise}`, f.exact);
+      if (f.exact !== '—') known(`numerical grid/quadrature, ${f.grid}, measurement noise ${f.noise}`, f.exact);
       known('input', f.input);
     } else if (rec.family === 'heredity') {
       body = mechanismText(rec);

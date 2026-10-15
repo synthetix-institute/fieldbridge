@@ -246,10 +246,12 @@ def test_an_oscillator_remembers_a_pulse_in_its_phase():
     cyc = phase.limit_cycle(real, rng)
     assert cyc["period"] == pytest.approx(5.93, abs=0.05)
     h = phase.hold(real, cyc, rng, shift=np.pi / 2, D=0.005, n_traj=120, n_periods=20)
+    assert h["phase_observable"] == "cycle_counted_crossing_time" and h["phase_topology"] == "unwrapped"
     sep, var, t = np.array(h["separation"]), np.array(h["variance"]), np.array(h["time"])
     assert abs(sep[-1] - sep[4]) < 0.1 and abs(sep[-1] - np.pi / 2) < 0.15  # the written shift persists
     assert np.std(var[4:] / t[4:]) / np.mean(var[4:] / t[4:]) < 0.2  # variance linear in time: Law 2
     L = phase.lock(real, cyc, rng, strengths=[0.01, 0.03, 0.1], target=np.pi / 2, D=0.005, n_traj=80)
+    assert L["retention_criterion"] == "unwrapped_phase_variance_equals_squared_shift"
     assert 0.85 < L["log_log_slope"] < 1.1  # flat-direction lock: ratio linear in the write strength
 
 
