@@ -44,6 +44,50 @@ def test_the_page_opens_on_a_mechanism_written_without_a_field(data_file, tmp_pa
         assert name in first["changes"], name
 
 
+def test_material_choices_start_with_realizations_of_the_current_mechanism(data_file, tmp_path):
+    before, opened = scenario(data_file, [{"do": "look"}, {"do": "choose-material"}], tmp_path)
+    assert before["chooser"]["hidden"]
+    chooser = opened["chooser"]
+    assert not chooser["hidden"] and chooser["expanded"] == "true"
+    assert chooser["mechanism"] == "symmetric-write"
+    assert 'data-material-id="stoner_wohlfarth"' in chooser["options"]
+    assert 'data-material-id="pitchfork"' not in chooser["options"]
+    assert 'data-material-id="two_spins"' not in chooser["options"]
+    assert "Source equations" in chooser["options"] and "Derivation" in chooser["options"]
+
+
+def test_material_choices_include_spins_and_search_all_mechanisms(data_file, tmp_path):
+    opened, all_rows, spins, empty = scenario(data_file, [
+        {"do": "choose-material"}, {"do": "material-filter", "key": "mechanism", "value": ""},
+        {"do": "material-filter", "key": "search", "value": "spins"},
+        {"do": "material-filter", "key": "search", "value": "no such material"}], tmp_path)
+    assert 'data-material-id="two_spins"' not in opened["chooser"]["options"]
+    assert 'data-material-id="two_spins"' in all_rows["chooser"]["options"]
+    assert 'data-material-id="two_spins"' in spins["chooser"]["options"]
+    assert 'data-material-id="stoner_wohlfarth"' not in spins["chooser"]["options"]
+    assert empty["chooser"]["count"] == "0 model realizations"
+    assert "No stored realization matches" in empty["chooser"]["options"]
+
+
+def test_choosing_a_material_loads_it_directly_and_leaves_the_guide(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "sequence", "id": "canonical"}, {"do": "choose-material"},
+                               {"do": "material-select", "node": "two_spins"}], tmp_path)[-1]
+    assert got["node"] == "two_spins" and got["path"] == ["two_spins"]
+    assert got["chooser"]["hidden"] and got["chooser"]["expanded"] == "false"
+
+
+def test_material_field_filter_and_keyboard_close(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "choose-material"},
+        {"do": "material-filter", "key": "mechanism", "value": ""},
+        {"do": "material-filter", "key": "field", "value": "magnetism"},
+        {"do": "material-escape"}, {"do": "choose-material"}, {"do": "material-close"}], tmp_path)
+    assert 'data-material-id="stoner_wohlfarth"' in got[2]["chooser"]["options"]
+    assert 'data-material-id="two_spins"' not in got[2]["chooser"]["options"]
+    assert got[3]["chooser"]["hidden"] and not got[4]["chooser"]["hidden"]
+    assert got[4]["chooser"]["mechanism"] == "symmetric-write"
+    assert got[5]["chooser"]["hidden"]
+
+
 def test_the_page_names_the_memory_materials_it_contains(data_file, tmp_path):
     first = scenario(data_file, [{"do": "look"}], tmp_path)[0]
     memory = first["memory"]

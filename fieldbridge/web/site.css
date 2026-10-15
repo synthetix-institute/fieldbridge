@@ -57,7 +57,7 @@ code, pre, .mono { font-family: var(--mono); font-size: .88em; }
 pre { background: var(--panel-2); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; overflow-x: auto; line-height: 1.55; margin: 12px 0; }
 math { font-size: 1.04em; }
 button { font: inherit; color: inherit; cursor: pointer; }
-button:focus-visible, a:focus-visible, input:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible, summary:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .primary { background: var(--accent); color: var(--panel); border: 0; border-radius: 8px; padding: 6px 14px; font-weight: 600; }
 .plain { background: none; border: 0; color: var(--accent); padding: 4px 6px; }
 button:disabled { opacity: .45; cursor: default; }
@@ -76,6 +76,25 @@ section { padding: 44px 0 20px; }
 .constructor-start { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; margin-bottom: 14px; }
 .constructor-start > span { color: var(--muted); }
 .constructor-tutorial { font-size: 14px; }
+.material-chooser { padding: 16px 0 20px; margin-bottom: 18px; border-block: 1px solid var(--rule); }
+.material-chooser .section-head { margin-bottom: 12px; }
+.material-filters { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr) minmax(0, 1fr); gap: 12px; margin-bottom: 12px; }
+.material-filters > div { display: grid; gap: 4px; min-width: 0; font-size: 13px; color: var(--muted); }
+.material-filters select, .material-filters input { width: 100%; min-width: 0; min-height: 40px; padding: 7px 10px; font: inherit; font-size: 14px; color: var(--ink); background: var(--panel); border: 1px solid var(--rule-strong); border-radius: 4px; }
+.material-options { list-style: none; padding: 0; margin: 8px 0 0; max-height: 340px; overflow-y: auto; overscroll-behavior: contain; }
+.material-options li { display: flex; align-items: center; gap: 12px; border-top: 1px solid var(--rule); padding: 4px 0; }
+.realization-pick { flex: 1; min-width: 0; display: grid; gap: 2px; text-align: left; background: none; border: 0; border-radius: 4px; padding: 9px 8px; }
+.realization-pick:hover { background: var(--panel-2); }
+.realization-pick b { font-weight: 600; overflow-wrap: anywhere; }
+.realization-pick span, .realization-links { font-size: 13px; color: var(--muted); }
+.realization-links { flex: none; display: flex; flex-wrap: wrap; gap: 6px 12px; padding-right: 8px; }
+.material-options .material-empty { padding: 16px 8px; color: var(--muted); }
+@media (max-width: 640px) {
+  .material-filters { grid-template-columns: minmax(0, 1fr); }
+  .material-options li { align-items: stretch; flex-direction: column; gap: 0; }
+  .realization-links { padding: 0 8px 10px; }
+  .material-options { max-height: 360px; }
+}
 .sequence-options { margin-bottom: 14px; color: var(--muted); }
 .sequence-options summary, .language-map > summary { cursor: pointer; }
 .sequence-options[open] .sequence-picker { margin-top: 10px; }

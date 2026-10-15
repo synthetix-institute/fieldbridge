@@ -28,3 +28,13 @@ def test_constructor_precedes_the_expandable_map_and_catalogues():
     for section in ("expression", "memory", "planned", "codiscovery", "realizations", "contribute"):
         assert f'<details id="{section}"' in html
     assert "Tutorial and calculations" in html
+
+
+def test_choose_material_opens_an_inline_list_not_the_memory_chapter():
+    html = (ROOT / "fieldbridge/web/index.html").read_text()
+    assert 'id="material-choose"' in html
+    assert 'aria-controls="material-chooser"' in html
+    assert '<a href="#memory">Choose a material</a>' not in html
+    assert html.index('id="material-options"') < html.index('class="instrument"')
+    for control in ("material-mechanism", "material-field", "material-search"):
+        assert f'id="{control}"' in html

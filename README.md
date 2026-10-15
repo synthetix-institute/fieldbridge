@@ -42,9 +42,12 @@ The dashed curve retains the previous realization where the two can be
 compared.
 
 Start with **Follow a construction**, which follows the normal form through
-several changes and explains each result. **Choose a material** opens the
-gallery of magnets, genetic switches, lasers and other model systems.
-Selecting one puts its equations and parameters in the constructor.
+several changes and explains each result. **Choose a material** opens a list
+inside the constructor, initially filtered to the current mechanism. The
+mechanism and field filters include magnets, genetic switches, lasers, spins
+and the other stored model systems. Selecting one loads its equations and
+parameters directly; each entry also links to its source specification and
+derivation. The memory gallery remains a separate chapter.
 Undo and reset are beside the construction button. The mechanism language,
 map, other sequences and catalogues open separately, so they need not all be
 read before making a calculation.

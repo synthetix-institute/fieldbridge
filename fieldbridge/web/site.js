@@ -176,6 +176,59 @@
   // ---------------------------------------------------------------------------------------- realizations
   const matrix = {field: '', query: '', selected: null};
   const searchable = r => strip(`${r.name} ${r.short} ${r.field} ${r.source || ''} ${S.classes[r.class] || ''}`).toLowerCase();
+  const material = {mechanism: '', field: '', query: ''};
+  function materialChooser() {
+    const rows = Object.values(S.nodes).filter(r => !r.universal);
+    const fields = [...new Set(rows.map(r => r.field))].sort((a, b) => a.localeCompare(b));
+    $('material-mechanism').innerHTML = '<option value="">All mechanisms</option>'
+      + Object.entries(S.classes).map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('');
+    $('material-field').innerHTML = '<option value="">All fields</option>'
+      + fields.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+    const close = () => {
+      $('material-chooser').hidden = true;
+      $('material-choose').setAttribute('aria-expanded', 'false');
+    };
+    const render = () => {
+      const visible = rows.filter(r => (!material.mechanism || r.class === material.mechanism)
+        && (!material.field || r.field === material.field) && (!material.query || searchable(r).includes(material.query)))
+        .sort((a, b) => strip(a.name).localeCompare(strip(b.name)));
+      $('material-count').textContent = `${visible.length} model realization${visible.length === 1 ? '' : 's'}`;
+      $('material-options').innerHTML = visible.length ? visible.map(r => {
+        const source = r.spec || r.base_spec;
+        return `<li><button type="button" class="realization-pick" data-material-id="${esc(r.id)}">
+          <b>${esc(strip(r.name))}</b><span>${esc(r.field)} · ${esc(S.classes[r.class] || r.class)}</span></button>
+          <span class="realization-links">${source ? `<a href="${repo(source)}" target="_blank" rel="noopener">Source equations ↗</a>` : ''}${r.tutorial ? `<a href="${repo(r.tutorial)}" target="_blank" rel="noopener">Derivation ↗</a>` : ''}</span></li>`;
+      }).join('') : '<li class="material-empty">No stored realization matches these filters.</li>';
+    };
+    $('material-choose').addEventListener('click', () => {
+      if (!$('material-chooser').hidden) { close(); return; }
+      material.mechanism = S.nodes[I().state.node].class;
+      material.field = ''; material.query = '';
+      $('material-mechanism').value = material.mechanism;
+      $('material-field').value = ''; $('material-search').value = '';
+      render();
+      $('material-chooser').hidden = false;
+      $('material-choose').setAttribute('aria-expanded', 'true');
+    });
+    $('material-close').addEventListener('click', () => { close(); $('material-choose').focus(); });
+    $('material-chooser').addEventListener('keydown', event => {
+      if (event.key === 'Escape') { close(); $('material-choose').focus(); }
+    });
+    for (const key of ['mechanism', 'field']) $('material-' + key).addEventListener('change', event => {
+      material[key] = event.target.value; render();
+    });
+    $('material-search').addEventListener('input', event => { material.query = event.target.value.trim().toLowerCase(); render(); });
+    $('material-options').addEventListener('click', event => {
+      const button = event.target.closest('[data-material-id]');
+      if (!button) return;
+      leave();
+      I().start(button.dataset.materialId);
+      close();
+      $('r-name').focus({preventScroll: true});
+      $('instrument').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+    });
+    close();
+  }
   function realizations() {
     const M = window.FieldBridgeMechanisms, all = Object.values(S.nodes);
     const fields = [...new Set(all.filter(r => !r.universal).map(r => r.field))].sort((a, b) => a.localeCompare(b));
@@ -298,7 +351,7 @@
       if (link) revealSection(link.getAttribute('href'));
     });
     $('expression').addEventListener('toggle', () => { if ($('expression').open) window.FieldBridgeMechanisms.draw(); });
-    definitions(); sequences(); realizations(); memory(); planned();
+    definitions(); sequences(); materialChooser(); realizations(); memory(); planned();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);

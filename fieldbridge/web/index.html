@@ -46,7 +46,20 @@
         <button type="button" id="sequence-start" class="primary">Follow a construction</button>
         <button type="button" id="constructor-undo" class="icon" aria-label="Undo the last change" title="Undo the last change">↶</button>
         <button type="button" id="constructor-reset" class="icon" aria-label="Reset the constructor" title="Reset the constructor">↺</button>
-        <a href="#memory">Choose a material</a>
+        <button type="button" id="material-choose" class="plain" aria-expanded="false" aria-controls="material-chooser">Choose a material</button>
+      </div>
+      <div id="material-chooser" class="material-chooser" hidden aria-labelledby="material-chooser-title">
+        <div class="section-head">
+          <h2 id="material-chooser-title">Materials and model systems</h2>
+          <button type="button" id="material-close" class="icon" aria-label="Close material choices" title="Close material choices">&#215;</button>
+        </div>
+        <div class="material-filters">
+          <div><label for="material-mechanism">Mechanism</label><select id="material-mechanism"></select></div>
+          <div><label for="material-field">Field</label><select id="material-field"></select></div>
+          <div><label for="material-search">Material or model</label><input type="search" id="material-search" placeholder="Name or source"></div>
+        </div>
+        <p id="material-count" class="muted" role="status"></p>
+        <ul id="material-options" class="material-options" aria-label="Available material realizations"></ul>
       </div>
       <details class="sequence-options">
         <summary>Other construction sequences</summary>
@@ -67,7 +80,7 @@
           <div class="realization-head">
             <div>
               <p class="card-label">Realization</p>
-              <h3 id="r-name"></h3>
+              <h3 id="r-name" tabindex="-1"></h3>
               <p class="realization-meta"><span id="r-field"></span><span id="r-source"></span></p>
             </div>
             <span class="class-badge" id="r-class"></span>

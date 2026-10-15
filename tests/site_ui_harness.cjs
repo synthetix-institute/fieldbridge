@@ -19,9 +19,11 @@ function element(id) {
     classList: {add: noop, remove: noop, toggle: noop, contains: () => false},
     setAttribute(k, v) { this.attributes[k] = v; }, getAttribute(k) { return this.attributes[k]; },
     addEventListener(type, fn) { (listeners[type] ||= []).push(fn); }, removeEventListener: noop,
-    querySelector: () => element(), querySelectorAll: () => [], scrollIntoView: noop, setPointerCapture: noop,
+    querySelector: () => element(), querySelectorAll: () => [], scrollIntoView: noop, setPointerCapture: noop, focus: noop,
     getBoundingClientRect: () => ({width: 400, height: 400, left: 0, top: 0, right: 400, bottom: 400}),
-    getContext: () => ctx2d, appendChild: noop, click() { (listeners.click || []).forEach(f => f({})); },
+    getContext: () => ctx2d, appendChild: noop,
+    dispatch(type, event = {}) { (listeners[type] || []).forEach(f => f(event)); },
+    click() { this.dispatch('click'); },
   };
   el.parentElement = el;
   if (id) elements.set(id, el);
@@ -65,6 +67,9 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          cards: (element('mechanisms').innerHTML.match(/class="mech( absent)?"/g) || []).length,
                          module: context.FieldBridgeMechanisms.module(),
                          planned: text('planned-grid'),
+                         chooser: {hidden: element('material-chooser').hidden, expanded: element('material-choose').attributes['aria-expanded'],
+                           options: element('material-options').innerHTML, count: element('material-count').textContent,
+                           mechanism: element('material-mechanism').value},
                          selected: element('now-name').textContent + ' | ' + text('now-where')});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
@@ -74,6 +79,11 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'undo') I.undo();
   if (step.do === 'toolbar-undo') element('constructor-undo').click();
   if (step.do === 'reset') element('constructor-reset').click();
+  if (step.do === 'choose-material') element('material-choose').click();
+  if (step.do === 'material-filter') element('material-' + step.key).dispatch(step.key === 'search' ? 'input' : 'change', {target: {value: step.value}});
+  if (step.do === 'material-select') element('material-options').dispatch('click', {target: {closest: () => ({dataset: {materialId: step.node}})}});
+  if (step.do === 'material-escape') element('material-chooser').dispatch('keydown', {key: 'Escape'});
+  if (step.do === 'material-close') element('material-close').click();
   if (step.do === 'module') context.FieldBridgeMechanisms.module(step.key);
   if (step.do === 'sequence') context.FieldBridgeSite.begin(step.id);
   if (step.do === 'next') element('sequence-next').click();
