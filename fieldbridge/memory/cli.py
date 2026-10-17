@@ -453,6 +453,28 @@ def cmd_counterpart(args) -> int:
     return 0
 
 
+def cmd_order(args) -> int:
+    """The order of writes measured against the uncoupled reference: the holonomy rule as a measurement."""
+    from . import order as od
+    spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    net = od.from_spec(spec)
+    r = od.construct(net, exact_up_to=args.exact_up_to)
+    report = {"command": "order", **_provenance(spec), "elements": net.n, "writes": [w.name for w in net.writes], **r}
+    net_m, ref_m = r["network"], r["uncoupled_reference"]
+    rows = "\n".join(f"| {o} | {s or 'not certified'} | {ref_m['states'].get(o) or 'not certified'} |" for o, s in net_m["states"].items())
+    md = (f"# Order of writes\n\n{spec.get('question', '')}\n\n- rule: {r['rule']}\n"
+          f"- commutation index H = {r['index']['H']} ({'exact' if r['index']['exact'] else 'bound'}); "
+          f"assignment that makes the writes commute: {r['index']['assignment']}\n"
+          f"- density class {r['density_class']}, couplings {r['couplings']}; typical record in the census: "
+          f"{r['typical_record_in_census']}\n\n{r['statement']}\n\n"
+          "| Order | Final state of the network | Final state of the uncoupled reference |\n| --- | --- | --- |\n"
+          + rows + f"\n\n{BOUNDARY}\n")
+    _write(Path(args.out_dir), "order", report, md)
+    print(json.dumps({"out_dir": args.out_dir, "H": r["index"]["H"], "distinct": net_m["distinct"], "split": net_m["split"],
+                      "reference_distinct": ref_m["distinct"], "gain": r["gain"]}, indent=2))
+    return 0
+
+
 def cmd_predictions(args) -> int:
     """What rule R8 predicts for every hysteron specification in a directory, measured where the enumeration is
     feasible: the frustration index with the drive, whether the network is balanced, the gain over the ferromagnetic
@@ -464,6 +486,26 @@ def cmd_predictions(args) -> int:
     for path in sorted(Path(args.directory).rglob("*.json")):
         try:
             spec = json.loads(path.read_text(encoding="utf-8"))
+            if spec.get("kind") == "order":
+                from . import order as od
+                net = od.from_spec(spec)
+                idx = od.commutation_index(net, exact_up_to=args.exact_up_to)
+                typ = od.CENSUS.get("attractive" if all(s > 0 for s in net.signs) else "antiferromagnetic", {}).get(od.density_class(net))
+                row = {"spec": path.name, "name": net.name, "elements": net.n, "rule": "holonomy", "H": idx["H"], "H_exact": idx["exact"],
+                       "commuting": idx["H"] == 0, "prediction": "the writes commute: no order is recorded" if idx["H"] == 0 else
+                       "the writes fail to commute: a record of the order is possible (necessary, not sufficient)",
+                       "typical_record_in_census": typ, "source": spec.get("provenance", {}).get("source", "")}
+                measured = ""
+                if net.n <= args.enumerate_up_to:
+                    r = od.construct(net, exact_up_to=args.exact_up_to)
+                    row.update(distinct=r["network"]["distinct"], split=r["network"]["split"],
+                               reference_distinct=r["uncoupled_reference"]["distinct"], gain=r["gain"])
+                    measured = (f"distinct {r['network']['distinct']}, split {r['network']['split']}, reference "
+                                f"{r['uncoupled_reference']['distinct']}, gain {r['gain']:.2f} bits")
+                rows.append(row)
+                lines.append(f"| {path.name} | {net.n} | order: H = {idx['H']} | {'yes' if idx['H'] == 0 else 'no'} (commute) | "
+                             f"{'' if typ is None else f'{100 * typ:.0f} % record'} | {measured} |")
+                continue
             if spec.get("kind") != "hysterons":
                 continue
             model = hy.from_spec(spec)
@@ -493,7 +535,7 @@ def cmd_predictions(args) -> int:
         rows.append(row)
         lines.append(f"| {path.name} | {model.n} | {degree:.1f} | {fr['F']}{'' if fr['exact'] else ' (bound)'} | "
                      f"{'yes' if fr['F'] == 0 else 'no'} | {typ['gain']:.2f} | {measured} |")
-    md = ("# Predictions of rule R8 for the hysteron specifications\n\n"
+    md = ("# Predictions of the rules for the specifications of a directory\n\n"
           "F counts the unsatisfiable edges of the network with the drive as a node. F = 0: the return to every turning "
           "point is exact. F > 0: states beyond return-point memory are possible (the rule is sufficient, not necessary; "
           "the one-dimensional antiferromagnetic chain of Deutsch, Dhar and Narayan keeps return-point memory with F > 0). "
@@ -504,7 +546,8 @@ def cmd_predictions(args) -> int:
           "| --- | --- | --- | --- | --- | --- | --- |\n" + "\n".join(lines) + f"\n\n{BOUNDARY}\n")
     _write(Path(args.out_dir), "predictions", {"command": "predictions", "rule": "R8", **_provenance(), "rows": rows}, md)
     print(json.dumps({"out_dir": args.out_dir, "specifications": len(rows),
-                      "balanced": sum(r["balanced"] for r in rows), "measured": sum("gain" in r for r in rows)}, indent=2))
+                      "balanced": sum(bool(r.get("balanced")) for r in rows), "commuting": sum(bool(r.get("commuting")) for r in rows),
+                      "measured": sum("gain" in r for r in rows)}, indent=2))
     return 0
 
 
@@ -698,6 +741,12 @@ def add_parser(sub) -> None:
     p.add_argument("--no-return-test", action="store_true", help="Skip the exhaustive return test.")
     p.set_defaults(func=cmd_counterpart)
 
+    p = msub.add_parser("order", help="The order of writes in a bistable network measured against its uncoupled "
+                                      "reference: the holonomy rule as a measurement.")
+    common(p, spec_arg=False)
+    p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
+    p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
+    p.set_defaults(func=cmd_order)
     p = msub.add_parser("predictions", help="What rule R8 predicts for every hysteron specification in a directory: "
                                            "frustration index with the drive, balance, the typical gain of the "
                                            "sequence-memory ensemble, and the measured gain and return test where the "

@@ -45,8 +45,8 @@ as a_k (F - F0_k), with a = 0.11 to 0.17 bit per unsatisfiable edge and F0/N = 0
 typical value is reported beside the measured one as a comparison, never as a prediction for a network outside that
 ensemble.
 
-RULES lists the structural rules with a counterpart construction: R8 is implemented here; the others name the
-construction that would turn them into a measurement and are not implemented.
+RULES lists the structural rules with a counterpart construction: R8 is implemented here, the order of writes in
+fieldbridge.memory.order; the others name the construction that would turn them into a measurement.
 """
 from __future__ import annotations
 
@@ -182,19 +182,21 @@ RULES = {
            "construction": "ferromagnetic reference (unique): every coupling positive, every element driven upward; "
                            "balanced counterpart (one of the minimizers): the F unsatisfiable edges reversed",
            "excess": "gain C - C_ref in bits, deep memory, failures of the exact return test",
-           "implemented": True},
+           "implemented": True, "module": "fieldbridge.memory.counterpart", "command": "memory counterpart"},
     "holonomy": {"rule": "the order of two writes is recorded only where their operations fail to commute",
                  "precondition": "a realization with two write operations A and B and a field-free relaxation",
                  "construction": "the commuting counterpart: the same writes applied to disjoint supports or with a "
                                  "relaxation between them, so that AB = BA; excess = states distinguished by the order",
                  "excess": "number of final states that differ between orders with the same last write",
-                 "implemented": False},
+                 "implemented": True, "module": "fieldbridge.memory.order", "command": "memory order"},
     "write point": {"rule": "a write needs a point along the control where the stable state loses stability",
                     "precondition": "a realization with a control that is swept",
-                    "construction": "the counterpart without the write point: the control held below the fold or the "
-                                    "bifurcation removed by the smallest change of one parameter",
-                    "excess": "probability of selecting the written state against the counterpart's",
-                    "implemented": False},
+                    "construction": "the counterpart without the write point: the control's range cut so that it ends "
+                                    "short of the write point (write_point_counterpart); the derivation of the "
+                                    "symmetric write on the counterpart must then report no write point",
+                    "excess": "the selection probability of the written state, the law constant of `codiscover` on "
+                              "the realization, against one half on the counterpart",
+                    "implemented": "construction", "module": "fieldbridge.memory.counterpart"},
     "closure": {"rule": "an observable returns to itself under a sequence of operations only when the algebra it "
                         "generates closes",
                 "precondition": "a quantum or classical realization with named operations",
@@ -454,3 +456,46 @@ def statement(result: Dict[str, object]) -> str:
                      f"excursions, the reference {rf['return']['failed']} of {rf['return']['tested']}"
                      + (f", the balanced counterpart {bal['return']['failed']} of {bal['return']['tested']}" if "return" in bal else "") + ".")
     return " ".join(parts)
+
+
+
+# ------------------------------------------------------------------------------------------------ the write point
+def write_point_counterpart(spec: Dict, value: float, margin: float = 0.02) -> Dict:
+    """The specification with its control held short of the write point at `value`: the range is cut on the side of
+    the write point by a margin of the range's span, keeping the larger remaining part. Everything else is kept."""
+    import copy
+    out = copy.deepcopy(spec)
+    ctrl = out.get("control")
+    if not isinstance(ctrl, dict) or "range" not in ctrl:
+        raise ValueError("the specification has no control with a range")
+    lo, hi = float(ctrl["range"][0]), float(ctrl["range"][1])
+    if not lo <= value <= hi:
+        raise ValueError(f"the write point {value} is not inside the control's range [{lo}, {hi}]")
+    d = margin * (hi - lo)
+    below, above = (lo, value - d), (value + d, hi)
+    ctrl["range"] = list(below if (below[1] - below[0]) >= (above[1] - above[0]) else above)
+    out["name"] = f"{spec.get('name', 'realization')} (control held short of the write point)"
+    return out
+
+
+def write_point_check(spec: Dict, rng: Optional[np.random.Generator] = None) -> Dict[str, object]:
+    """Locate the write points of a specification along its control, build the counterpart for the first one, and
+    verify that the derivation of the symmetric write finds none on the counterpart."""
+    from . import codiscovery as cd
+    from . import spec as sp
+    rng = rng if rng is not None else np.random.default_rng(0)
+    real = sp.load(spec)
+    r = cd.derive_symmetric_write(real, rng, check_law=False)
+    points = next((st.get("write_points", []) for st in r.get("steps", []) if st.get("letter") == "C"), [])
+    out: Dict[str, object] = {"rule": RULES["write point"]["rule"], "write_points": points, "status": r.get("status"),
+                              "obstruction": r.get("obstruction")}
+    if not points:
+        out["counterpart"] = None
+        return out
+    cp_spec = write_point_counterpart(spec, float(points[0]["value"]))
+    rc = cd.derive_symmetric_write(sp.load(cp_spec), rng, check_law=False)
+    out["counterpart"] = {"control_range": cp_spec["control"]["range"], "status": rc.get("status"),
+                          "obstruction": rc.get("obstruction"),
+                          "write_points": next((st.get("write_points", []) for st in rc.get("steps", []) if st.get("letter") == "C"), [])}
+    out["verified"] = bool(not out["counterpart"]["write_points"])
+    return out

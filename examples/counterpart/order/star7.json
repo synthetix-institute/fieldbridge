@@ -1,0 +1,11 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "order",
+  "name": "star of seven, attractive couplings",
+  "question": "Does a tree record the order of three writes with attractive couplings?",
+  "provenance": {"source": "composition census (2026-10-10): trees record the order most often", "kind": "authored example"},
+  "field": "statistical physics",
+  "assumptions": ["double well of depth 0.65", "Laplacian coupling 0.13", "writes on six of seven nodes"],
+  "order": {"units": 7, "graph": "star", "couplings": "attractive", "coupling": 0.13, "well": 0.65,
+            "writes": {"A": {"k": 6}, "B": {"k": 6}, "C": {"k": 6}}}
+}

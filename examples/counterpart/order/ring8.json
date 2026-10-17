@@ -1,0 +1,45 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "order",
+  "name": "ring of eight bistable coordinates",
+  "question": "Does a ring of eight coupled bistable coordinates record the order of three writes?",
+  "provenance": {
+    "source": "the ring of the memory manuscript and the control of the composition census (2026-10-10)",
+    "kind": "authored example"
+  },
+  "field": "statistical physics",
+  "assumptions": [
+    "double well of depth 0.65",
+    "Laplacian coupling 0.13",
+    "writes on five of eight nodes",
+    "response times from 0.08 to 40 in geometric steps",
+    "certified field-free relaxation"
+  ],
+  "order": {
+    "units": 8,
+    "graph": "ring",
+    "couplings": "attractive",
+    "coupling": 0.13,
+    "well": 0.65,
+    "writes": {
+      "A": {
+        "k": 5,
+        "amplitude": 1.0,
+        "sign": 1.0,
+        "frequency": 0.02
+      },
+      "B": {
+        "k": 5,
+        "amplitude": 1.0,
+        "sign": -1.0,
+        "frequency": 1.5
+      },
+      "C": {
+        "k": 5,
+        "amplitude": 1.0,
+        "sign": 1.0,
+        "frequency": 0.1732
+      }
+    }
+  }
+}

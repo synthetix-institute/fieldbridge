@@ -180,7 +180,8 @@ def test_a_balanced_network_has_zero_gain_over_its_reference_up_to_a_relabeling(
 
 
 def test_the_rules_registry_names_the_implemented_rule():
-    assert cp.RULES["R8"]["implemented"] and not cp.RULES["holonomy"]["implemented"]
+    assert cp.RULES["R8"]["implemented"] and cp.RULES["holonomy"]["implemented"]
+    assert cp.RULES["write point"]["implemented"] == "construction" and not cp.RULES["closure"]["implemented"]
 
 
 def test_predictions_command_writes_a_report(tmp_path):
@@ -192,3 +193,12 @@ def test_predictions_command_writes_a_report(tmp_path):
     report = json.loads((out / "predictions.json").read_text(encoding="utf-8"))
     assert report["rule"] == "R8" and report["rows"]
     assert any("gain" in r for r in report["rows"])
+
+
+def test_the_write_point_counterpart_holds_the_control_short_of_the_point():
+    spec = json.loads((ROOT / "examples" / "memory" / "pitchfork.json").read_text(encoding="utf-8"))
+    r = cp.write_point_check(spec, np.random.default_rng(0))
+    assert r["write_points"], r
+    assert r["counterpart"] is not None and r["verified"], r
+    lo, hi = r["counterpart"]["control_range"]
+    assert not (lo <= r["write_points"][0]["value"] <= hi)
