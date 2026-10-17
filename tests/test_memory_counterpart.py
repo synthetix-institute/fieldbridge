@@ -181,7 +181,8 @@ def test_a_balanced_network_has_zero_gain_over_its_reference_up_to_a_relabeling(
 
 def test_the_rules_registry_names_the_implemented_rule():
     assert cp.RULES["R8"]["implemented"] and cp.RULES["holonomy"]["implemented"]
-    assert cp.RULES["write point"]["implemented"] == "construction" and not cp.RULES["closure"]["implemented"]
+    assert cp.RULES["write point"]["implemented"] == "construction" and cp.RULES["closure"]["implemented"]
+    assert cp.RULES["closure"]["command"] == "quantum closure"
 
 
 def test_predictions_command_writes_a_report(tmp_path):

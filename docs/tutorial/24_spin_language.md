@@ -298,6 +298,32 @@ with $\sin^2\theta = 0.821$.
 the rotation, rescaled by its own angle, against the rotation angle. (c) The dimension of the algebra: the second
 model reaches the rotation with an algebra of dimension 6, and the third does not with the same dimension.*
 
+### 6.1 The closure rule as a construction
+
+The rule of this section can be measured the way the constructor measures every rule (`docs/constructor.md`). Its
+index is the smallest number of Hamiltonian terms, as the specification writes them, whose removal leaves a closure
+of two or three operators with a rotation frame. Its reference is the Hamiltonian without those terms, the closed
+counterpart, which rotates with one frequency. Its excess is read from the exact signal of a top eigenstate of the
+observable: the spread of the signal's lines, the weighted standard deviation of its Bohr frequencies, which the
+counterpart's single line lacks, and the shift of their weighted mean from the counterpart's frequency. The rule
+itself is checked on the same signal: every line must lie in the closure spectrum. For a realization of index 0 the
+excess is the amplitude offset of the signal from $\sin^2\theta$.
+
+```bash
+python3 -B -m fieldbridge quantum closure examples/quantum/two_spins.json examples/quantum/controls/*.json \
+  --out-dir build/tut/q_closure_rule
+```
+
+The model of Section 3 and the field on the second spin have index 0, one line and no spread. The field on both
+spins has index 1: removing either field term leaves a rotation at 2.236, and the two lines of the signal, at 2.000
+and 2.828, spread over 0.39, a fraction 0.175 of that frequency; when the removed term is scaled by $\lambda$ the
+spread falls as $\lambda^{1.0}$, a splitting at first order. The weighted observable has index 0 and one line, with
+the amplitude offset 0.10 of the previous paragraph: the rule's necessary direction fails, and the construction says
+so without a derivation. Every line of every signal lies in the closure spectrum. The same command over
+`examples/quantum` finds the nitrogen-vacancy centre at index 1 (the anisotropy $D J_z^2$ splits the Larmor line into
+three), the interacting Bose–Josephson junction at index 1 (the interaction spreads the Josephson line over ten) and
+two nuclear spins of different species at index 2.
+
 ## 7. Obstructions
 
 A derivation stops at O when the closure of the observable has more than three operators, or when the prepared
