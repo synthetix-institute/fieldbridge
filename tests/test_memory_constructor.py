@@ -675,12 +675,22 @@ def _quintic_fold(A=0.14, c=1.2):
     return real, q_f, p_f, canon, g1
 
 
+def _assert_same_sweeps(rows, other):
+    """The sweeps of two runs of fold_delay_law at the same rates. The crossings come from separate integrations, whose
+    rounding differs between NumPy builds and, under NumPy 2.5, between two runs of the same sweep (by 1e-15): they are
+    compared within DELAY_FLOOR, the accuracy of the delay constant. A sweep from another start crosses 0.1 away."""
+    from fieldbridge.memory import codiscovery as cd
+    assert [(row["rate"], row["parameter_rate"]) for row in rows] == \
+        [(row["rate"], row["parameter_rate"]) for row in other]
+    assert [row["constant"] for row in rows] == pytest.approx([row["constant"] for row in other], abs=cd.DELAY_FLOOR)
+
+
 def test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_left_out(monkeypatch):
     """The sweeps start at mu = -5 r^(2/3), far from the fold in the parameter where a2 b is small. For the two
     fastest rates the start lies below h = -g(1), where the branch of the occupied state has ended at its other fold,
     and the root search converges on the second stable state, on the side of the occupied state. Without the test of
     the branch these sweeps are used; with it they are left out, and the other sweeps and the fit are those of a run
-    without the two rates."""
+    without the two rates, within the accuracy of the delay constant."""
     from fieldbridge.memory import codiscovery as cd
     real, q_f, p_f, canon, g1 = _quintic_fold()
     assert p_f == pytest.approx(g1, abs=1e-9) and canon["mu_per_unit_parameter"] == pytest.approx(0.44 * 0.14)
@@ -691,11 +701,13 @@ def test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_lef
     assert [x["reason"] for x in law["left_out"]] == ["the branch of the occupied state ends before the start",
                                                       "a slower sweep was left out"]
     alone = cd.fold_delay_law(real, "h", q_f, p_f, canon, rates=cd.DELAY_RATES[2:])
-    assert alone["left_out"] == [] and law["rows"] == alone["rows"] and law["constant"] == alone["constant"]
+    assert alone["left_out"] == []
+    _assert_same_sweeps(law["rows"], alone["rows"])
+    assert law["constant"] == pytest.approx(alone["constant"], abs=cd.DELAY_FLOOR)
     monkeypatch.setattr(cd, "off_branch", lambda *args, **kwargs: None)
     unchecked = cd.fold_delay_law(real, "h", q_f, p_f, canon)
     assert [row["rate"] for row in unchecked["rows"]] == list(cd.DELAY_RATES)  # the root search found a stable state
-    assert unchecked["rows"][2:] == law["rows"]
+    _assert_same_sweeps(unchecked["rows"][2:], law["rows"])
 
 
 def test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates(monkeypatch):
