@@ -1,0 +1,11 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "order",
+  "name": "complete graph of six, attractive couplings",
+  "question": "Does a dense cooperative network record the order of three writes?",
+  "provenance": {"source": "composition census (2026-10-10): dense attractive graphs record the order in 16 % of cases", "kind": "authored example"},
+  "field": "statistical physics",
+  "assumptions": ["double well of depth 0.65", "Laplacian coupling 0.13", "writes on five of six nodes"],
+  "order": {"units": 6, "graph": "complete", "couplings": "attractive", "coupling": 0.13, "well": 0.65,
+            "writes": {"A": {"k": 5}, "B": {"k": 5}, "C": {"k": 5}}}
+}

@@ -167,6 +167,31 @@ guarantees, while the material fails in 65 of 425 and reaches four times as many
 loss of 2.63 bits. The gain is a number an experiment can compare, with the same elements wired as the counterpart as
 the control.
 
+The balanced counterpart depends on which minimizing relabeling is taken: different minimizers reverse different
+edges, and on random networks of up to 16 elements the counts of two minimizers' counterparts differ in about one
+case in five, by up to 1.5 bit. The report therefore also measures the material against its ferromagnetic reference,
+the same graph, magnitudes, fields and half-widths with every coupling positive and every element driven upward.
+The reference is unique and balanced, and the identities $C = C_{\mathrm{ref}} + \text{gain}$ and
+$C_{\mathrm{ref}} = C_0 + \text{loss}$ define the gain and the loss that the report quotes first. Beside the measured
+gain the report prints the typical gain of a random network of the same size, mean degree and frustration index in
+the ensemble of the sequence-memory study (random graphs, thresholds spread over 0.7, couplings of 0.3 to 0.9):
+about 0.11 to 0.17 bit per unsatisfiable edge above a threshold that grows with the degree. That number is a
+comparison for networks that resemble the ensemble, not a prediction for a lattice or a designed network.
+
+```bash
+python3 -B -m fieldbridge memory predictions examples/memory/hysterons --out-dir out/memory_predictions
+```
+
+lists, for every specification of kind `hysterons` in a directory, the frustration index with the drive, whether the
+network is balanced, the typical gain of the ensemble, and, up to `--enumerate-up-to` elements, the measured gain,
+deep memory and return test. The rule is sufficient and not necessary: in the one-dimensional antiferromagnetic
+chain of Deutsch, Dhar and Narayan every negative coupling closes an unsatisfiable triangle with the drive, yet three
+of four random chains of 12 elements return in every excursion (one fails 13 % of them), and all hold more states than
+their reference without any deep memory, because a chain has no avalanches to lock. The gain over the reference
+therefore has two sources, the absence of locking and the states beyond return-point memory, and the return test
+tells them apart. `examples/counterpart/platforms_R8.md` lists the published platforms with the measurements that
+would test the rule's consequence on each.
+
 The same construction applies to any rule that decides a property from structure: the counterpart is the smallest
 change of one layer that makes the rule hold, everything else is kept, and the consequence of the violation is
 measured against it. The return to a turning point is the first rule for which FieldBridge builds it.

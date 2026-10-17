@@ -29,6 +29,24 @@ The transition graph is enumerated exactly (avalanches relaxed least stable elem
 quickly with the number of elements, so the enumeration stops at max_states and the result says so. The frustration
 index is exact up to exact_up_to elements (2^n relabelings) and above that is the best of local searches, an upper
 bound.
+
+The balanced counterpart depends on which minimizing relabeling is used: different minimizers reverse different edges
+and give counterparts with different counts (on random networks of up to 16 elements, 41 % have several minimizers
+and in 22 % the count differs, by up to 1.5 bit). The ferromagnetic reference removes this freedom: the same graph,
+magnitudes, fields and half-widths with every coupling positive and every element driven upward. It is balanced, has
+return-point memory, and is unique. Measured against it,
+
+    loss = C_ref - C_0      the cooperative network's locking below its uncoupled elements
+    gain = C - C_ref        the change of the count caused by the signs of the couplings and of the drive
+
+and the ensemble law of the sequence-memory study (random graphs, thresholds of width 0.7 and half-widths 0.05 to
+0.8, magnitudes 0.3 to 0.9) gives the typical gain of a network of N elements, mean degree k and frustration index F
+as a_k (F - F0_k), with a = 0.11 to 0.17 bit per unsatisfiable edge and F0/N = 0.03, 0.2, 0.55 at k = 3, 6, 10. That
+typical value is reported beside the measured one as a comparison, never as a prediction for a network outside that
+ensemble.
+
+RULES lists the structural rules with a counterpart construction: R8 is implemented here, the order of writes in
+fieldbridge.memory.order; the others name the construction that would turn them into a measurement.
 """
 from __future__ import annotations
 
@@ -133,6 +151,59 @@ def balanced_counterpart(model: Hysterons, relabeling) -> Hysterons:
 def uncoupled(model: Hysterons) -> Hysterons:
     """The same elements, fields, half-widths and drive with every coupling removed (independent hysterons)."""
     return replace(model, name=f"{model.name} (uncoupled)", bonds=[])
+
+
+def reference(model: Hysterons) -> Hysterons:
+    """The ferromagnetic reference: every coupling at its magnitude with a positive sign and every driven element
+    driven upward. Unique; balanced with the drive; return-point memory by no-passing."""
+    bonds = [(i, j, abs(J)) for i, j, J in model.bonds]
+    eta = np.where(model.eta != 0, np.abs(model.eta), 0.0)
+    return replace(model, name=f"{model.name} (ferromagnetic reference)", bonds=bonds, eta=eta)
+
+
+# the ensemble law of the sequence-memory study: slope a and threshold F0/N of the gain against F, by mean degree
+ENSEMBLE_LAW = {3: {"a": 0.12, "F0_over_N": 0.03}, 6: {"a": 0.165, "F0_over_N": 0.20}, 10: {"a": 0.14, "F0_over_N": 0.55}}
+
+
+def expected_gain(F: int, n: int, degree: float) -> Dict[str, float]:
+    """Typical gain a_k (F - F0_k) in the ensemble of the sequence-memory study, for the nearest tabulated degree.
+    A comparison value for networks that resemble that ensemble (random graphs, thresholds spread over about 0.7,
+    couplings of the order of half the spread); the number says nothing about a lattice or a designed network."""
+    k = min(ENSEMBLE_LAW, key=lambda kk: abs(kk - degree))
+    law = ENSEMBLE_LAW[k]
+    return {"degree_used": k, "a": law["a"], "F0": law["F0_over_N"] * n,
+            "gain": max(0.0, law["a"] * (F - law["F0_over_N"] * n))}
+
+
+RULES = {
+    "R8": {"rule": "return to a turning point: guaranteed when the network of couplings with the drive is balanced",
+           "precondition": "a network of hysterons under a scalar drive, with the sign of every coupling and of every "
+                           "element's drive",
+           "construction": "ferromagnetic reference (unique): every coupling positive, every element driven upward; "
+                           "balanced counterpart (one of the minimizers): the F unsatisfiable edges reversed",
+           "excess": "gain C - C_ref in bits, deep memory, failures of the exact return test",
+           "implemented": True, "module": "fieldbridge.memory.counterpart", "command": "memory counterpart"},
+    "holonomy": {"rule": "the order of two writes is recorded only where their operations fail to commute",
+                 "precondition": "a realization with two write operations A and B and a field-free relaxation",
+                 "construction": "the commuting counterpart: the same writes applied to disjoint supports or with a "
+                                 "relaxation between them, so that AB = BA; excess = states distinguished by the order",
+                 "excess": "number of final states that differ between orders with the same last write",
+                 "implemented": True, "module": "fieldbridge.memory.order", "command": "memory order"},
+    "write point": {"rule": "a write needs a point along the control where the stable state loses stability",
+                    "precondition": "a realization with a control that is swept",
+                    "construction": "the counterpart without the write point: the control's range cut so that it ends "
+                                    "short of the write point (write_point_counterpart); the derivation of the "
+                                    "symmetric write on the counterpart must then report no write point",
+                    "excess": "the selection probability of the written state, the law constant of `codiscover` on "
+                              "the realization, against one half on the counterpart",
+                    "implemented": "construction", "module": "fieldbridge.memory.counterpart"},
+    "closure": {"rule": "an observable returns to itself under a sequence of operations only when the algebra it "
+                        "generates closes",
+                "precondition": "a quantum or classical realization with named operations",
+                "construction": "the closed counterpart: the generators restricted to the closed subalgebra",
+                "excess": "the part of the observable's motion outside the closed subalgebra",
+                "implemented": False},
+}
 
 
 # ------------------------------------------------------------------------------------------------ transition graph
@@ -329,17 +400,29 @@ def construct(model: Hysterons, rng: Optional[np.random.Generator] = None, max_s
     check = predict(cp)
     if not check["guaranteed"]:
         raise RuntimeError("the counterpart is not balanced: reversing the unsatisfied edges must balance the network")
+    ref = reference(model)
+    if not predict(ref)["guaranteed"]:
+        raise RuntimeError("the ferromagnetic reference is not balanced")
     net, bal = measure(model, max_states, return_test), measure(cp, max_states, return_test)
+    rf = measure(ref, max_states, return_test)
     free = measure(uncoupled(model), max_states, return_test=False)
+    degree = 2.0 * len(model.undirected()) / max(model.n, 1)
     out: Dict[str, object] = {
-        "rule": "return to a turning point (R8): guaranteed when the network of couplings with the drive is balanced",
+        "rule": RULES["R8"]["rule"],
         "frustration": fr, "counterpart": {"name": cp.name, "reversed_couplings": fr["unsatisfied_couplings"],
-                                           "reversed_drive": fr["unsatisfied_drive"]},
-        "network": net, "balanced": bal, "uncoupled": free}
+                                           "reversed_drive": fr["unsatisfied_drive"],
+                                           "unique": False, "note": "depends on the minimizing relabeling"},
+        "reference": {"name": ref.name, "unique": True},
+        "network": net, "balanced": bal, "ferromagnetic_reference": rf, "uncoupled": free,
+        "mean_degree": degree}
+    if all("C" in x for x in (net, rf, free)):
+        out["gain"] = net["C"] - rf["C"]
+        out["loss"] = rf["C"] - free["C"]
+        out["deep_gain"] = net["deep"] - rf["deep"]
+        out["typical_in_ensemble"] = expected_gain(fr["F"], model.n, degree)
     if all("C" in x for x in (net, bal, free)):
-        out["gain"] = net["C"] - bal["C"]
-        out["loss"] = bal["C"] - free["C"]
-        out["deep_gain"] = net["deep"] - bal["deep"]
+        out["gain_over_balanced_counterpart"] = net["C"] - bal["C"]
+        out["loss_of_balanced_counterpart"] = bal["C"] - free["C"]
     out["statement"] = statement(out)
     return out
 
@@ -355,15 +438,64 @@ def statement(result: Dict[str, object]) -> str:
     parts = [f"Reversing {F} unsatisfiable edges ({len(fr['unsatisfied_couplings'])} couplings, "
              f"{len(fr['unsatisfied_drive'])} actions of the drive; {index}) gives the balanced counterpart, whose "
              "return to every turning point is guaranteed."]
-    net, bal = result["network"], result["balanced"]
+    net, bal, rf = result["network"], result["balanced"], result.get("ferromagnetic_reference", {})
     if "gain" in result:
-        parts.append(f"The material reaches {net['count']} states ({net['C']:.2f} bits), its counterpart "
-                     f"{bal['count']} ({bal['C']:.2f} bits): a gain of {result['gain']:.2f} bits from the "
-                     f"unsatisfiable edges, against a loss of {-result['loss']:.2f} bits of the counterpart below its "
-                     "uncoupled elements.")
+        typ = result.get("typical_in_ensemble", {})
+        parts.append(f"The material reaches {net['count']} states ({net['C']:.2f} bits), its ferromagnetic reference "
+                     f"{rf['count']} ({rf['C']:.2f} bits): a gain of {result['gain']:.2f} bits from the signs, against "
+                     f"a loss of {-result['loss']:.2f} bits of the reference below its uncoupled elements"
+                     + (f"; the typical gain of a random network of this size, degree and index in the sequence-memory "
+                        f"ensemble is {typ['gain']:.2f} bits" if typ else "") + ".")
+        if "gain_over_balanced_counterpart" in result:
+            parts.append(f"Against the balanced counterpart (one minimizer) the gain is "
+                         f"{result['gain_over_balanced_counterpart']:.2f} bits.")
     else:
         parts.append("The enumeration of states stopped before the end; the gain is not measured.")
-    if "return" in net and "return" in bal:
+    if "return" in net and "return" in rf:
         parts.append(f"Return test: the material fails {net['return']['failed']} of {net['return']['tested']} "
-                     f"excursions, the counterpart {bal['return']['failed']} of {bal['return']['tested']}.")
+                     f"excursions, the reference {rf['return']['failed']} of {rf['return']['tested']}"
+                     + (f", the balanced counterpart {bal['return']['failed']} of {bal['return']['tested']}" if "return" in bal else "") + ".")
     return " ".join(parts)
+
+
+
+# ------------------------------------------------------------------------------------------------ the write point
+def write_point_counterpart(spec: Dict, value: float, margin: float = 0.02) -> Dict:
+    """The specification with its control held short of the write point at `value`: the range is cut on the side of
+    the write point by a margin of the range's span, keeping the larger remaining part. Everything else is kept."""
+    import copy
+    out = copy.deepcopy(spec)
+    ctrl = out.get("control")
+    if not isinstance(ctrl, dict) or "range" not in ctrl:
+        raise ValueError("the specification has no control with a range")
+    lo, hi = float(ctrl["range"][0]), float(ctrl["range"][1])
+    if not lo <= value <= hi:
+        raise ValueError(f"the write point {value} is not inside the control's range [{lo}, {hi}]")
+    d = margin * (hi - lo)
+    below, above = (lo, value - d), (value + d, hi)
+    ctrl["range"] = list(below if (below[1] - below[0]) >= (above[1] - above[0]) else above)
+    out["name"] = f"{spec.get('name', 'realization')} (control held short of the write point)"
+    return out
+
+
+def write_point_check(spec: Dict, rng: Optional[np.random.Generator] = None) -> Dict[str, object]:
+    """Locate the write points of a specification along its control, build the counterpart for the first one, and
+    verify that the derivation of the symmetric write finds none on the counterpart."""
+    from . import codiscovery as cd
+    from . import spec as sp
+    rng = rng if rng is not None else np.random.default_rng(0)
+    real = sp.load(spec)
+    r = cd.derive_symmetric_write(real, rng, check_law=False)
+    points = next((st.get("write_points", []) for st in r.get("steps", []) if st.get("letter") == "C"), [])
+    out: Dict[str, object] = {"rule": RULES["write point"]["rule"], "write_points": points, "status": r.get("status"),
+                              "obstruction": r.get("obstruction")}
+    if not points:
+        out["counterpart"] = None
+        return out
+    cp_spec = write_point_counterpart(spec, float(points[0]["value"]))
+    rc = cd.derive_symmetric_write(sp.load(cp_spec), rng, check_law=False)
+    out["counterpart"] = {"control_range": cp_spec["control"]["range"], "status": rc.get("status"),
+                          "obstruction": rc.get("obstruction"),
+                          "write_points": next((st.get("write_points", []) for st in rc.get("steps", []) if st.get("letter") == "C"), [])}
+    out["verified"] = bool(not out["counterpart"]["write_points"])
+    return out

@@ -141,3 +141,64 @@ def test_command_line_writes_a_report_with_provenance(tmp_path):
     assert report["command"] == "counterpart" and report["novelty_established"] is False
     assert report["balanced"]["return"]["failed"] == 0 and "gain" in report
     assert "Balanced counterpart" in (out / "counterpart.md").read_text(encoding="utf-8")
+
+
+# ------------------------------------------------------------------------------------------------ the reference
+def test_the_ferromagnetic_reference_is_unique_balanced_and_returns():
+    rng = np.random.default_rng(5)
+    m = random_network(rng, n=8)
+    ref = cp.reference(m)
+    assert all(J > 0 for _, _, J in ref.bonds) and (ref.eta > 0).all()
+    assert cp.frustration(ref)["F"] == 0
+    r = cp.measure(ref, return_test=True)
+    assert r["return"]["failed"] == 0
+
+
+def test_the_construction_reports_both_references_and_the_identities_hold():
+    rng = np.random.default_rng(11)
+    m = random_network(rng, n=8)
+    r = cp.construct(m, rng)
+    assert r["reference"]["unique"] and not r["counterpart"]["unique"]
+    assert abs(r["network"]["C"] - (r["ferromagnetic_reference"]["C"] + r["gain"])) < 1e-12
+    assert abs(r["ferromagnetic_reference"]["C"] - (r["uncoupled"]["C"] + r["loss"])) < 1e-12
+    assert r["ferromagnetic_reference"]["return"]["failed"] == 0
+    assert "typical_in_ensemble" in r and r["typical_in_ensemble"]["gain"] >= 0.0
+
+
+def test_a_balanced_network_has_zero_gain_over_its_reference_up_to_a_relabeling():
+    # a ferromagnet with a staggered drive relabeled on one sublattice is balanced; its states equal the reference's
+    rng = np.random.default_rng(3)
+    n = 8
+    J = np.zeros((n, n))
+    for i in range(n - 1):
+        J[i, i + 1] = J[i + 1, i] = -0.5          # antiferromagnetic chain ...
+    eta = np.array([1.0 if i % 2 == 0 else -1.0 for i in range(n)])   # ... with a staggered drive: balanced
+    m = make(J, rng.normal(0, 0.7, n), rng.uniform(0.1, 0.8, n), eta)
+    assert cp.frustration(m)["F"] == 0
+    r = cp.construct(m, rng)
+    assert r["network"]["count"] == r["balanced"]["count"]
+
+
+def test_the_rules_registry_names_the_implemented_rule():
+    assert cp.RULES["R8"]["implemented"] and cp.RULES["holonomy"]["implemented"]
+    assert cp.RULES["write point"]["implemented"] == "construction" and not cp.RULES["closure"]["implemented"]
+
+
+def test_predictions_command_writes_a_report(tmp_path):
+    out = tmp_path / "pred"
+    cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "predictions", str(EX), "--out-dir", str(out),
+           "--enumerate-up-to", "12"]
+    res = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    assert res.returncode == 0, res.stderr
+    report = json.loads((out / "predictions.json").read_text(encoding="utf-8"))
+    assert report["rule"] == "R8" and report["rows"]
+    assert any("gain" in r for r in report["rows"])
+
+
+def test_the_write_point_counterpart_holds_the_control_short_of_the_point():
+    spec = json.loads((ROOT / "examples" / "memory" / "pitchfork.json").read_text(encoding="utf-8"))
+    r = cp.write_point_check(spec, np.random.default_rng(0))
+    assert r["write_points"], r
+    assert r["counterpart"] is not None and r["verified"], r
+    lo, hi = r["counterpart"]["control_range"]
+    assert not (lo <= r["write_points"][0]["value"] <= hi)

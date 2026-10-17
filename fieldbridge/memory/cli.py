@@ -443,13 +443,111 @@ def cmd_counterpart(args) -> int:
           f"{fr['unsatisfied_drive']}\n\n{r['statement']}\n\n"
           "| Material | States | Bits | Deep memory (bits) | Most reversals needed | Return test: failed excursions |\n"
           "| --- | --- | --- | --- | --- | --- |\n"
-          + "\n".join([row("network", r["network"]), row("balanced counterpart", r["balanced"]),
-                       row("uncoupled elements", r["uncoupled"])])
+          + "\n".join([row("network", r["network"]), row("ferromagnetic reference (unique)", r["ferromagnetic_reference"]),
+                       row("balanced counterpart (one minimizer)", r["balanced"]), row("uncoupled elements", r["uncoupled"])])
           + f"\n\n{BOUNDARY}\n")
     _write(Path(args.out_dir), "counterpart", report, md)
     summary = {"out_dir": args.out_dir, "F": fr["F"], "F_exact": fr["exact"]}
-    summary.update({k: r[k] for k in ("gain", "loss") if k in r})
+    summary.update({k: r[k] for k in ("gain", "loss", "typical_in_ensemble") if k in r})
     print(json.dumps(summary, indent=2))
+    return 0
+
+
+def cmd_order(args) -> int:
+    """The order of writes measured against the uncoupled reference: the holonomy rule as a measurement."""
+    from . import order as od
+    spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    net = od.from_spec(spec)
+    r = od.construct(net, exact_up_to=args.exact_up_to)
+    report = {"command": "order", **_provenance(spec), "elements": net.n, "writes": [w.name for w in net.writes], **r}
+    net_m, ref_m = r["network"], r["uncoupled_reference"]
+    rows = "\n".join(f"| {o} | {s or 'not certified'} | {ref_m['states'].get(o) or 'not certified'} |" for o, s in net_m["states"].items())
+    md = (f"# Order of writes\n\n{spec.get('question', '')}\n\n- rule: {r['rule']}\n"
+          f"- commutation index H = {r['index']['H']} ({'exact' if r['index']['exact'] else 'bound'}); "
+          f"assignment that makes the writes commute: {r['index']['assignment']}\n"
+          f"- density class {r['density_class']}, couplings {r['couplings']}; typical record in the census: "
+          f"{r['typical_record_in_census']}\n\n{r['statement']}\n\n"
+          "| Order | Final state of the network | Final state of the uncoupled reference |\n| --- | --- | --- |\n"
+          + rows + f"\n\n{BOUNDARY}\n")
+    _write(Path(args.out_dir), "order", report, md)
+    print(json.dumps({"out_dir": args.out_dir, "H": r["index"]["H"], "distinct": net_m["distinct"], "split": net_m["split"],
+                      "reference_distinct": ref_m["distinct"], "gain": r["gain"]}, indent=2))
+    return 0
+
+
+def cmd_predictions(args) -> int:
+    """What rule R8 predicts for every hysteron specification in a directory, measured where the enumeration is
+    feasible: the frustration index with the drive, whether the network is balanced, the gain over the ferromagnetic
+    reference and the return test, and the typical gain of the sequence-memory ensemble for comparison."""
+    import numpy as np
+    from . import counterpart as cp
+    from . import hysterons as hy
+    rows, lines = [], []
+    for path in sorted(Path(args.directory).rglob("*.json")):
+        try:
+            spec = json.loads(path.read_text(encoding="utf-8"))
+            if spec.get("kind") == "order":
+                from . import order as od
+                net = od.from_spec(spec)
+                idx = od.commutation_index(net, exact_up_to=args.exact_up_to)
+                typ = od.CENSUS.get("attractive" if all(s > 0 for s in net.signs) else "antiferromagnetic", {}).get(od.density_class(net))
+                row = {"spec": path.name, "name": net.name, "elements": net.n, "rule": "holonomy", "H": idx["H"], "H_exact": idx["exact"],
+                       "commuting": idx["H"] == 0, "prediction": "the writes commute: no order is recorded" if idx["H"] == 0 else
+                       "the writes fail to commute: a record of the order is possible (necessary, not sufficient)",
+                       "typical_record_in_census": typ, "source": spec.get("provenance", {}).get("source", "")}
+                measured = ""
+                if net.n <= args.enumerate_up_to:
+                    r = od.construct(net, exact_up_to=args.exact_up_to)
+                    row.update(distinct=r["network"]["distinct"], split=r["network"]["split"],
+                               reference_distinct=r["uncoupled_reference"]["distinct"], gain=r["gain"])
+                    measured = (f"distinct {r['network']['distinct']}, split {r['network']['split']}, reference "
+                                f"{r['uncoupled_reference']['distinct']}, gain {r['gain']:.2f} bits")
+                rows.append(row)
+                lines.append(f"| {path.name} | {net.n} | order: H = {idx['H']} | {'yes' if idx['H'] == 0 else 'no'} (commute) | "
+                             f"{'' if typ is None else f'{100 * typ:.0f} % record'} | {measured} |")
+                continue
+            if spec.get("kind") != "hysterons":
+                continue
+            model = hy.from_spec(spec)
+        except Exception as e:  # noqa: BLE001
+            lines.append(f"| {path.name} | | | | | | not read: {type(e).__name__} |")
+            continue
+        fr = cp.frustration(model, np.random.default_rng(args.seed), exact_up_to=args.exact_up_to)
+        degree = 2.0 * len(model.undirected()) / max(model.n, 1)
+        typ = cp.expected_gain(fr["F"], model.n, degree)
+        row = {"spec": path.name, "name": model.name, "elements": model.n, "mean_degree": degree, "F": fr["F"],
+               "F_exact": fr["exact"], "balanced": fr["F"] == 0,
+               "prediction": "return to every turning point is exact" if fr["F"] == 0 else
+                             "states beyond return-point memory are possible; the rule is sufficient, not necessary",
+               "typical_gain_in_ensemble": typ["gain"], "source": spec.get("provenance", {}).get("source", "")}
+        measured = ""
+        if model.n <= args.enumerate_up_to:
+            r = cp.construct(model, np.random.default_rng(args.seed), max_states=args.max_states, exact_up_to=args.exact_up_to)
+            if "gain" in r:
+                row.update(gain=r["gain"], loss=r["loss"], deep_gain=r["deep_gain"],
+                           return_failed=r["network"]["return"]["failed"], return_tested=r["network"]["return"]["tested"],
+                           reference_return_failed=r["ferromagnetic_reference"]["return"]["failed"])
+                measured = (f"gain {r['gain']:.2f} bits, deep {r['deep_gain']:.2f}, return failures "
+                            f"{r['network']['return']['failed']}/{r['network']['return']['tested']} "
+                            f"(reference {r['ferromagnetic_reference']['return']['failed']})")
+            else:
+                measured = "enumeration stopped"
+        rows.append(row)
+        lines.append(f"| {path.name} | {model.n} | {degree:.1f} | {fr['F']}{'' if fr['exact'] else ' (bound)'} | "
+                     f"{'yes' if fr['F'] == 0 else 'no'} | {typ['gain']:.2f} | {measured} |")
+    md = ("# Predictions of the rules for the specifications of a directory\n\n"
+          "F counts the unsatisfiable edges of the network with the drive as a node. F = 0: the return to every turning "
+          "point is exact. F > 0: states beyond return-point memory are possible (the rule is sufficient, not necessary; "
+          "the one-dimensional antiferromagnetic chain of Deutsch, Dhar and Narayan keeps return-point memory with F > 0). "
+          "The typical gain is a_k (F - F0_k) of the sequence-memory ensemble, a comparison value for random networks "
+          "of similar thresholds and couplings only. Measured columns need the enumeration, feasible up to "
+          f"{args.enumerate_up_to} elements here.\n\n"
+          "| Specification | Elements | Mean degree | F | Balanced | Typical gain (bits) | Measured |\n"
+          "| --- | --- | --- | --- | --- | --- | --- |\n" + "\n".join(lines) + f"\n\n{BOUNDARY}\n")
+    _write(Path(args.out_dir), "predictions", {"command": "predictions", "rule": "R8", **_provenance(), "rows": rows}, md)
+    print(json.dumps({"out_dir": args.out_dir, "specifications": len(rows),
+                      "balanced": sum(bool(r.get("balanced")) for r in rows), "commuting": sum(bool(r.get("commuting")) for r in rows),
+                      "measured": sum("gain" in r for r in rows)}, indent=2))
     return 0
 
 
@@ -642,6 +740,24 @@ def add_parser(sub) -> None:
                    help="Elements up to which the frustration index is exact; above, an upper bound by local search.")
     p.add_argument("--no-return-test", action="store_true", help="Skip the exhaustive return test.")
     p.set_defaults(func=cmd_counterpart)
+
+    p = msub.add_parser("order", help="The order of writes in a bistable network measured against its uncoupled "
+                                      "reference: the holonomy rule as a measurement.")
+    common(p, spec_arg=False)
+    p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
+    p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
+    p.set_defaults(func=cmd_order)
+    p = msub.add_parser("predictions", help="What rule R8 predicts for every hysteron specification in a directory: "
+                                           "frustration index with the drive, balance, the typical gain of the "
+                                           "sequence-memory ensemble, and the measured gain and return test where the "
+                                           "enumeration is feasible.")
+    p.add_argument("directory", help="Directory searched for specifications of kind hysterons (e.g. examples/memory/hysterons).")
+    p.add_argument("--out-dir", default="out/memory_predictions")
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--exact-up-to", type=int, default=16, help="Elements up to which the frustration index is exact.")
+    p.add_argument("--enumerate-up-to", type=int, default=16, help="Elements up to which the states are enumerated.")
+    p.add_argument("--max-states", type=int, default=20000)
+    p.set_defaults(func=cmd_predictions)
     p = msub.add_parser("gallery", help="Evaluate every example specification and write an HTML gallery with figures.")
     common(p, spec_arg=False)
     p.add_argument("--examples", default="examples/memory",
