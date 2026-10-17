@@ -344,6 +344,38 @@ def cmd_regimes(args) -> int:
     return 0
 
 
+def cmd_noise_ratio(args) -> int:
+    import numpy as np
+    from . import noise_ratio as nr, spec
+    if args.law or not args.spec:
+        md = nr.law_markdown() + f"\n{BOUNDARY}\n"
+        report = {"command": "noise-ratio", **_provenance(), "law": {
+            "gammas": list(nr.GAMMAS), "continuous": list(nr.CONTINUOUS), "first_order": list(nr.FIRST_ORDER),
+            "early_gammas": list(nr.EARLY_GAMMAS), "early": list(nr.EARLY)}}
+        _write(Path(args.out_dir), "noise_ratio", report, md)
+        print(md)
+        return 0
+    real = spec.load(args.spec)
+    if not real.control:
+        raise SystemExit("the specification declares no control parameter to sweep")
+    rng = np.random.default_rng(args.seed)
+    nf = nr.symmetric_point(real, rng)
+    if nf is None:
+        report = {"command": "noise-ratio", **_provenance(real.spec),
+                  "refused": "no symmetric critical point (continuous or first-order pitchfork) along the control; "
+                             "a fold may be unfolded to a cusp first (memory design)"}
+        _write(Path(args.out_dir), "noise_ratio", report, f"# Write law across the noise ratio\n\n{report['refused']}\n")
+        print(json.dumps({"out_dir": args.out_dir, "refused": report["refused"]}, indent=2))
+        return 1
+    gammas = [float(g) for g in args.gammas.split(",")]
+    rep = nr.sweeps(real, nf, rng, gammas=gammas, q=args.q, n_traj=args.trajectories)
+    report = {"command": "noise-ratio", **_provenance(real.spec), **rep}
+    _write(Path(args.out_dir), "noise_ratio", report, nr.markdown(rep) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "first_order": rep["first_order"],
+                      "constants": {f"{r['gamma']:g}": round(r["constant"], 4) for r in rep["rows"]}}, indent=2))
+    return 0
+
+
 def cmd_field(args) -> int:
     import numpy as np
     from . import fields
@@ -717,6 +749,18 @@ def add_parser(sub) -> None:
     p.add_argument("--noise", type=float, default=0.02)
     p.add_argument("--n", type=int, default=20000, help="Trajectories per regime.")
     p.set_defaults(func=cmd_regimes)
+    p = msub.add_parser("noise-ratio", help="The swept-write law across the noise ratio Gamma = D|a3|/r: pi^(1/4) "
+                                            "for weak noise, an activated law for strong noise; continuous and "
+                                            "first-order switches.")
+    p.add_argument("spec", nargs="?", default=None, help="fieldbridge-memory/1 specification (JSON).")
+    p.add_argument("--out-dir", required=True, help="Directory for the report and its provenance.")
+    p.add_argument("--seed", type=int, default=20260923)
+    p.add_argument("--law", action="store_true", help="Print the law c(Gamma) without a specification.")
+    p.add_argument("--gammas", default="0.05,1,10", help="Noise ratios, comma separated.")
+    p.add_argument("--q", type=float, default=5e-4,
+                   help="D_s|a3|, small enough that the choice is made near the bifurcation (default 5e-4).")
+    p.add_argument("--trajectories", type=int, default=400, help="Sweeps per side of the bias.")
+    p.set_defaults(func=cmd_noise_ratio)
     p = msub.add_parser("field", help="Memory in a field: conservation and dimension set the law of loss.")
     common(p, spec_arg=False)
     p.add_argument("spec", help="Field specification (examples/memory/fields/*.json).")

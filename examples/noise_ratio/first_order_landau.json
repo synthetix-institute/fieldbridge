@@ -1,0 +1,34 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Does a symmetric order parameter at a first-order transition choose its sign as a weak field dictates?",
+  "provenance": {
+    "source": "Landau expansion with a negative quartic and a positive sixth-order term (first-order transition of a symmetric order parameter); L. D. Landau and E. M. Lifshitz, Statistical Physics, Part 1",
+    "kind": "authored example"
+  },
+  "field": "statistical physics",
+  "kind": "equations",
+  "name": "Landau model of a first-order transition",
+  "carrier": {
+    "kind": "euclid",
+    "name": "order parameter",
+    "variables": ["x"],
+    "scale": 1
+  },
+  "parameters": {
+    "eps": 0.0,
+    "b": 1.0
+  },
+  "drift": {
+    "x": "eps*x + b*x**3 - x**5"
+  },
+  "control": {
+    "name": "eps",
+    "range": [-0.6, 0.6]
+  },
+  "material": ["b"],
+  "noise": 0.01,
+  "dt": 0.01,
+  "closure": "relaxational dynamics of a uniform order parameter in the free energy -eps x^2/2 - b x^4/4 + x^6/6",
+  "observable": "sign of the order parameter",
+  "assumptions": ["uniform order parameter", "overdamped relaxation", "additive Gaussian noise"]
+}
