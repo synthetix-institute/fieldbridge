@@ -73,8 +73,8 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.427 ± 0.052 |
 | genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.346 ± 0.061 |
 | Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.340 ± 0.051 |
-| Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.348 ± 0.051 |
-| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.323 ± 0.050 |
+| Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.265 ± 0.053 |
+| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.227 ± 0.050 |
 | ring of 3 repressors | synthetic biology | CR | stops at R: Hopf | — | — |
 | two equal tubes | transport networks | SCR | stops at R: subcritical | — | — |
 | two unequal tubes | transport networks | CR | stops at U: no supercritical cusp | — | — |
@@ -202,12 +202,24 @@ $$
 \pi^{1/4} \approx \frac{\Phi^{-1}(P)\, D_s^{1/2}\, r^{1/4}}{h_s}  \qquad (3)
 $$
 
+A sweep can itself favour one state, whatever the bias: a straight sweep through a cusp does, because the quadratic
+term that vanishes at the cusp grows along the sweep. Such an offset would be folded into a constant measured with
+one sign of the bias. Where the derivation has a reversing symmetry (S), the symmetry maps the test with the bias
+toward $-$mode onto the test toward $+$mode, so the write has no offset and one sign is tested. Otherwise (the two
+models reached by unfolding) half of the trajectories are biased toward each state. The constants $k_\pm$ that
+Eq. (3) gives for the two signs are slope $\pm$ offset: the law constant is the slope $(k_+ + k_-)/2$, and the
+offset $(k_+ - k_-)/2$ is reported separately and flagged when it exceeds two standard errors.
+
 The trajectories of each realization are split into eight runs on independent random streams, and the error of a
 constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. Each realization
 draws these streams from its own generator, set by the seed and the name of the material, so adding or removing a
 specification leaves the constants of the other realizations unchanged. With 2000 trajectories per realization and
-the default seed, the seven models have a weighted mean of $1.350 \pm 0.019$, against $\pi^{1/4} = 1.331$, with
-$\chi^2 = 5.0$ for 7 values. The seeds 11 to 14 give weighted means of 1.342, 1.352, 1.310 and 1.323. The accuracies
+the default seed, the seven models have a weighted mean of $1.326 \pm 0.019$, against $\pi^{1/4} = 1.331$, with
+$\chi^2 = 8.7$ for 7 values. The seeds 11 to 14 give weighted means of 1.331, 1.348, 1.290 and 1.324. The offsets
+of the two unfolded models are $+0.027 \pm 0.053$ (Schlögl reactor) and $+0.011 \pm 0.050$ (toggle with unequal
+promoters), and lie between $-0.029$ and $+0.062$ with errors of 0.05 to 0.06 for the seeds 11 to 14: neither sweep
+offsets the write at this precision. For the toggle none is expected: its sweep keeps the promoters equal, so it
+simulates the equations of the genetic toggle switch and has its exchange symmetry. The accuracies
 scatter between seeds as their binomial errors predict (a test with 16 seeds on three of the models), so one run of
 this size tests the constant to about 0.02; the record below is the precise test. The constant depends only on the
 canonical form. A derivation that ended on another mechanism, such as a fold, would give an accuracy that does not
@@ -218,9 +230,10 @@ realization in eight runs of 3200, for which the error of one constant is 0.014 
 the target; besides the two toggles, the normal form continued from below its write point simulates the equations of
 the normal form, so they are eight models. Their constants lie between 1.306 and 1.343 (the convection roll gives
 $1.333 \pm 0.014$, the two-component normal form with split rates of Section 5 $1.306 \pm 0.021$), with a weighted
-mean of $1.332 \pm 0.005$ and $\chi^2 = 3.4$ for 8 values: the scatter between models is that of the statistical
-error.
-With 400 trajectories the Schlögl reactor gave $1.04 \pm 0.11$; with 25,600 it gives $1.336 \pm 0.016$, so that
+mean of $1.331 \pm 0.005$ and $\chi^2 = 3.6$ for 8 values: the scatter between models is that of the statistical
+error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl reactor) and $+0.006 \pm 0.014$
+(toggle with unequal promoters).
+With 400 trajectories the Schlögl reactor gave $1.04 \pm 0.11$; with 25,600 it gives $1.322 \pm 0.015$, so that
 value was a fluctuation. An earlier record drew all the trajectories of a constant from one stream, after the draws
 of the derivation, and counted the replicates as separate models; it gave $\chi^2 = 20$ for 8 values.
 

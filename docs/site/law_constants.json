@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "348aff4b3fa4562d2c9b476d984637bb3d11f2112a89cbeea4381ac176fcfb70",
+ "implementation_sha256": "32e0a185b4afd7b3b7a61f28d9c723af5c3aebdfd0a24b1cb256507601763cd7",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -404,8 +404,10 @@
    "spec_sha256": "da82c36d398aa2ae7f0a98b4273a7e73ba52727176e176f0719b1d55981cf7d2",
    "symmetric-write": {
     "class": "C R(fold) U R(pitchfork) K L",
-    "constant": 1.3357548614397294,
+    "constant": 1.321874061273398,
     "expected": 1.3313353638003897,
+    "offset": -0.004611826362394433,
+    "offset_stderr": 0.015449211663687538,
     "signature": [
      -0.01074784998,
      0.01113693819,
@@ -421,7 +423,7 @@
      0.00751772984,
      0.001
     ],
-    "stderr": 0.01559177526565945,
+    "stderr": 0.015449211663687538,
     "word": "CRURKL"
    },
    "threshold-write": {
@@ -522,8 +524,10 @@
    "spec_sha256": "b7b73704f2f5a71aa255f10866bd46ca0bf7465c6b7e0ad4880a0260123daeab",
    "symmetric-write": {
     "class": "C R(fold) U R(pitchfork) K L",
-    "constant": 1.345292280732838,
+    "constant": 1.3424140964209088,
     "expected": 1.3313353638003897,
+    "offset": 0.006216711798443297,
+    "offset_stderr": 0.014315595617299521,
     "signature": [
      -1.160029385,
      -1.101683866,
@@ -551,7 +555,7 @@
      -0.01587804881,
      0.008921875882
     ],
-    "stderr": 0.01422141871095398,
+    "stderr": 0.014315595617299521,
     "word": "CRURKL"
    },
    "threshold-write": {
