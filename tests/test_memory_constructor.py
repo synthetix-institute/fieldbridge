@@ -922,3 +922,20 @@ def test_a_parameter_named_h_is_not_replaced_by_the_write_field():
     changed["parameters"][an.WRITE_FIELD] = 0.1
     with pytest.raises(spec.SpecError):
         spec.load(changed)
+
+
+def test_codiscovery_markdown_without_reached_realization(tmp_path):
+    """With no realization reached, the report and its figure name the obstruction instead of failing on absent
+    invariants."""
+    pytest.importorskip("matplotlib")
+    from fieldbridge.memory import codiscovery
+    from fieldbridge.memory.visual import codiscovery_figure
+    real = spec.load(EX / "oscillators" / "van_der_pol.json")
+    for target in ("symmetric-write", "threshold-write"):
+        rep = codiscovery.codiscover([real], 0, target=target, check_law=False)
+        assert rep["summary"]["reached"] == 0
+        md = codiscovery.markdown(rep)
+        assert "No realization reaches the target" in md
+        assert rep["rows"][0]["obstruction"] in md
+        codiscovery_figure(rep, tmp_path / f"{target}.png")
+        assert (tmp_path / f"{target}.png").exists()

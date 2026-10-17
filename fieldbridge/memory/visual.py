@@ -713,7 +713,7 @@ def codiscovery_figure(report: Dict, path: Path):
         b.set_ylabel("g = |a3|^(1/2) ds/dt at the write point")
         b.set_xlabel("x = |a3|^(1/2) s (canonical coordinate)")
         note = (f"even part <= {s['even_part_max']:.0e} of the cubic term\ndeviations at large |x|: fifth-order terms, "
-                f"specific to each realization")
+                f"specific to each realization") if s["reached"] else ""
     else:
         xm = 1.0
         xx = np.linspace(-xm, xm, 200)
@@ -723,7 +723,7 @@ def codiscovery_figure(report: Dict, path: Path):
         b.set_xlim(-xm, xm)
         b.set_ylim(-0.25, 1.6)
         note = (f"linear part <= {s['linear_part_max']:.0e} of the slowest transverse rate\ndeviations at large |x|: "
-                f"cubic terms, specific to each realization")
+                f"cubic terms, specific to each realization") if s["reached"] else ""
     for r in reached:
         cf = r["canonical"]
         x, g = np.asarray(cf["x"]), np.asarray(cf["g"])

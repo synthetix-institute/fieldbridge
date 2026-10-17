@@ -832,7 +832,9 @@ def markdown(report: Dict[str, object]) -> str:
             note = f" ({'; '.join(r['notes'])})" if r.get("notes") else ""
             lines.append(f"- {r['name']} ({r['field']}): {r.get('route') or 'no derivation'}; {r['obstruction']}{note}")
     lines += ["", "## Invariants", ""]
-    if key == "symmetric-write":
+    if not s["reached"]:
+        lines.append("- No realization reaches the target: there is no canonical form or law constant to compare.")
+    elif key == "symmetric-write":
         lines.append(f"- Canonical form at the write point: cubic sign {', '.join(str(v) for v in s['cubic_signs'])} "
                      f"in every reached realization; largest even part {_sci(s['even_part_max'])} of the cubic term "
                      f"at the edge of the window.")
