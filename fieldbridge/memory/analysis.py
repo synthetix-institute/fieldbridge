@@ -194,12 +194,18 @@ def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters:
 def fixed_points(real: Realization, rng, n_starts: int = 40, over: Optional[Dict] = None, seeds=None):
     """Zeros of the drift by damped Newton from random starts (and from given seeds, such as stored states),
     stable and unstable alike."""
-    over = over or {}
-    found: List[np.ndarray] = []
-    tol = _merge_tol(real)
     starts = real.carrier.sample(rng, n_starts)
     if seeds is not None and len(seeds):
         starts = np.concatenate([np.atleast_2d(np.asarray(seeds, float)), starts])
+    return zeros_from(real, starts, over)
+
+
+def zeros_from(real: Realization, starts: np.ndarray, over: Optional[Dict] = None):
+    """Zeros of the drift by damped Newton from the given starts; zeros closer than the merge tolerance of stored
+    states are one."""
+    over = over or {}
+    found: List[np.ndarray] = []
+    tol = _merge_tol(real)
     for q in starts:
         q, ok = newton(real, q, over)
         if ok and not any(real.carrier.distance(_canon(real, q), _canon(real, s)) < tol for s in found):
@@ -341,34 +347,114 @@ def _bisect_loss(real, param, q, va, vb, nu, scale, iters: int = 40):
 def locate_writes(real: Realization, rng, param: Optional[str] = None, values: Optional[Sequence[float]] = None,
                   n_starts: int = 24) -> List[Dict[str, object]]:
     """Every value of the parameter at which a stable state loses stability or appears (tracked forward
-    and backward between neighbouring scan values)."""
+    and backward between neighbouring scan values).
+
+    The stable states at a scan value are found by Newton from n_starts random starts, drawn once for each interval
+    and direction in the order of the scan, and each is followed to the neighbouring scan value. The starts cover the
+    carrier scale, and Newton from them need not reach a state beyond it: on the driven Kerr resonator of bifurcation
+    readout (scale 1) the high-amplitude branch (n = 19 photons at its fold) is reached from none of them where it
+    coexists with the low-amplitude branch, and above the low-amplitude fold, where it is the only state, Newton
+    converges from none. The scan therefore continues every branch it holds. A state followed to a scan value without
+    an event is followed on into the next interval, and a state found from the starts of one interval is also
+    followed into the other interval at its scan value. At a scan value where no stable state is held after that and
+    Newton converged from none of the starts, the starts are relaxed along the flow (relax), and the states they
+    settle in are followed in both directions. Where Newton reaches an unstable state, as the focus inside a limit
+    cycle, the starts are not relaxed: on a limit cycle the relaxation does not settle and runs to its end. Neither
+    step draws random numbers, so the generator is left in the state in which the random starts leave it. The write
+    points the two steps add are appended to those found from the random starts, which are kept where both give the
+    same write point."""
     param = param or real.control
     if values is None:
         values = np.linspace(*real.control_range, 7)
     values = np.asarray(values, float)
     width = float(abs(values[-1] - values[0]))
     lo, hi = float(np.min(values)), float(np.max(values))
+    last, tol = len(values) - 1, _merge_tol(real)
+    # held[j, d]: the states at values[j] whose branch has been followed toward values[j + d]
+    held: Dict[tuple, List[np.ndarray]] = {(j, d): [] for j in range(last + 1) for d in (1, -1)}
+
+    def stable(q: np.ndarray, k: np.ndarray) -> bool:
+        # a state on the boundary of an orthant (a species or a tube absent) sits where the drift
+        # need not be smooth; its continuation is not attempted
+        on_edge = real.carrier.kind == "orthant" and float(np.min(np.abs(q))) < 1e-6 * real.carrier.scale
+        return n_unstable(k) == 0 and not on_edge
+
+    def follow(j: int, d: int, q: np.ndarray):
+        """The event on the branch of q from values[j] toward values[j + d], or None and the state reached there."""
+        v0, v1 = values[j], values[j + d]
+        # each interval is tracked slightly past its end, so that an event exactly at a scan value (where the
+        # state found there is already marginal) is still located
+        v_end = float(np.clip(v1 + np.sign(v1 - v0) * 1e-2 * abs(v1 - v0), lo, hi))
+        held[j, d].append(_canon(real, q))
+        branch, ev = track(real, param, q, v0, v_end)
+        return ev, (None if ev is not None else np.asarray(branch[-1]["q"], float))
+
+    def reach(j: int, d: int, end: np.ndarray, queue: list) -> None:
+        """A branch followed in direction d without an event, at the scan value values[j] it has reached."""
+        q, ok = newton(real, end, {param: values[j]})
+        if ok:
+            held[j, -d].append(_canon(real, q))
+            if 0 <= j + d <= last:
+                queue.append((j, d, q))
+
+    def run(queue: list) -> None:
+        while queue:
+            j, d, q = queue.pop(0)
+            c = _canon(real, q)
+            if any(real.carrier.distance(c, s) < tol for s in held[j, d]) \
+                    or not stable(q, kappa_spectrum(real, q, {param: values[j]})):
+                continue
+            ev, end = follow(j, d, q)
+            if ev is not None:
+                added.append(ev)
+            else:
+                reach(j + d, d, end, queue)
+
     events: List[Dict[str, object]] = []
-    for a, b in zip(values[:-1], values[1:]):
-        for v0, v1 in ((a, b), (b, a)):
-            # each interval is tracked slightly past its end, so that an event exactly at a scan value (where the
-            # state found there is already marginal) is still located
-            v_end = float(np.clip(v1 + np.sign(v1 - v0) * 1e-2 * abs(b - a), lo, hi))
-            for q, k in fixed_points(real, rng, n_starts, {param: v0}):
-                # a state on the boundary of an orthant (a species or a tube absent) sits where the drift
-                # need not be smooth; its continuation is not attempted
-                on_edge = real.carrier.kind == "orthant" and float(np.min(np.abs(q))) < 1e-6 * real.carrier.scale
-                if n_unstable(k) == 0 and not on_edge:
-                    _, ev = track(real, param, q, v0, v_end)
+    added: List[Dict[str, object]] = []
+    starts_at: Dict[int, List[np.ndarray]] = {j: [] for j in range(last + 1)}
+    zero_at = [False] * (last + 1)
+    reached, found = [], []
+    for i in range(last):
+        for j, d in ((i, 1), (i + 1, -1)):
+            starts_at[j].append(real.carrier.sample(rng, n_starts))
+            zeros = zeros_from(real, starts_at[j][-1], {param: values[j]})
+            zero_at[j] = zero_at[j] or bool(zeros)
+            for q, k in zeros:
+                if stable(q, k):
+                    ev, end = follow(j, d, q)
+                    found.append((j, d, q))
                     if ev is not None:
                         events.append(ev)
+                    else:
+                        reached.append((j + d, d, end))
+    # the continuation of the branches held: a state reached at values[j] moving in direction d has its branch toward
+    # values[j - d] followed already and goes on toward values[j + d]; a state found from the starts toward
+    # values[j + d] goes toward values[j - d] too
+    queue: list = []
+    for j, d, end in reached:
+        reach(j, d, end, queue)
+    queue += [(j, -d, q) for j, d, q in found if 0 <= j - d <= last]
+    run(queue)
+    for j in range(last + 1):
+        if held[j, 1] or held[j, -1] or zero_at[j] or not starts_at[j]:
+            continue
+        over = {param: values[j]}
+        with np.errstate(over="ignore", invalid="ignore"):
+            q, speed = relax(real, np.concatenate(starts_at[j]), over)
+        for qi in q[speed < 1e-4]:
+            qn, ok = newton(real, qi, over)
+            if ok:
+                queue += [(j, d, qn) for d in (1, -1) if 0 <= j + d <= last]
+        run(queue)
     out: List[Dict[str, object]] = []
-    for ev in sorted(events, key=lambda e: e["v"]):
-        if not any(abs(ev["v"] - e["v"]) < WRITE_RESOLUTION * width
-                   and real.carrier.distance(_canon(real, np.array(ev["q"])), _canon(real, np.array(e["q"])))
-                   < 4 * _merge_tol(real) for e in out):
-            out.append(ev)
-    return out
+    for group in (events, added):
+        for ev in sorted(group, key=lambda e: e["v"]):
+            if not any(abs(ev["v"] - e["v"]) < WRITE_RESOLUTION * width
+                       and real.carrier.distance(_canon(real, np.array(ev["q"])), _canon(real, np.array(e["q"])))
+                       < 4 * tol for e in out):
+                out.append(ev)
+    return sorted(out, key=lambda e: e["v"])
 
 
 def _slow_manifold_drift(real, q, vec, w, s, over):
