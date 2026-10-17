@@ -94,6 +94,7 @@ $$
 where $\Phi$ is the standard normal distribution function. The choice is made within a time of order $r^{-1/2}$
 around the write point, where the dynamics is linear. The law requires that the barrier behind the choice grows
 faster than the noise can act: $\Gamma = D_s |a_3| / r$ must be small (below about 0.4 for the toggle switch).
+[Module 13](33_memory_noise_ratio.md) gives the write law at larger $\Gamma$.
 The card compares this prediction with a simulation (`write_law`).
 
 <details><summary>Derivation</summary>

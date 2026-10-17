@@ -1,0 +1,36 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Does a laser with a saturable absorber, whose threshold is first order, choose the sign of its field as a weak bias dictates?",
+  "provenance": {
+    "source": "Salomaa and Stenholm, Phys. Rev. A 8, 2695 (1973); Scott, Sargent and Cantrell, Opt. Commun. 15, 13 (1975): laser with a saturable absorber, first-order threshold",
+    "kind": "authored example"
+  },
+  "field": "laser physics",
+  "kind": "equations",
+  "name": "laser with a saturable absorber",
+  "carrier": {
+    "kind": "euclid",
+    "name": "field amplitude",
+    "variables": ["amp"],
+    "scale": 1
+  },
+  "parameters": {
+    "G": 1.6,
+    "absorb": 0.5,
+    "sat": 4.0,
+    "kappa": 1.0
+  },
+  "drift": {
+    "amp": "0.5*(G/(1 + amp**2) - absorb/(1 + sat*amp**2) - kappa)*amp"
+  },
+  "control": {
+    "name": "G",
+    "range": [1.0, 2.0]
+  },
+  "material": ["sat"],
+  "noise": 0.005,
+  "dt": 0.01,
+  "closure": "one cavity mode with a real amplitude; gain and absorption follow the intensity adiabatically (class A); the absorber saturates s times more easily than the gain",
+  "observable": "sign of the field amplitude",
+  "assumptions": ["real field amplitude", "adiabatic gain and absorber", "additive Gaussian noise"]
+}
