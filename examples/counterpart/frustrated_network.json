@@ -1,0 +1,128 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "hysterons",
+  "id": "frustrated_network",
+  "name": "ten interacting hysterons with competing couplings",
+  "field": "mechanical metamaterials and disordered solids",
+  "question": "How many distinguishable states does a frustrated network of hysterons gain over its balanced counterpart, and does the counterpart restore the return to every turning point?",
+  "assumptions": [
+    "Ten bistable elements with loops of their own, coupled pairwise and reciprocally",
+    "A random graph of mean degree 4; coupling magnitudes 0.6 times a uniform factor between 0.5 and 1.5, with a fraction 0.75 of the couplings negative (competing)",
+    "Fields Gaussian with width 0.7, half-widths uniform between 0.05 and 0.8, rounded to three decimals",
+    "A uniform drive changing slowly; avalanches relaxed least stable element first"
+  ],
+  "provenance": {
+    "source": "interacting hysterons: M. van Hecke, Phys. Rev. E 104, 054608 (2021); balance of a signed graph: F. Harary, Michigan Math. J. 2, 143 (1953); network drawn with seed 1"
+  },
+  "hysterons": {
+    "units": 10,
+    "couplings": [
+      [
+        0,
+        1,
+        0.804
+      ],
+      [
+        0,
+        7,
+        -0.422
+      ],
+      [
+        0,
+        8,
+        -0.47
+      ],
+      [
+        1,
+        6,
+        -0.658
+      ],
+      [
+        1,
+        9,
+        -0.6
+      ],
+      [
+        2,
+        3,
+        -0.38
+      ],
+      [
+        2,
+        8,
+        -0.615
+      ],
+      [
+        3,
+        4,
+        -0.375
+      ],
+      [
+        3,
+        5,
+        -0.74
+      ],
+      [
+        4,
+        5,
+        -0.485
+      ],
+      [
+        4,
+        6,
+        -0.537
+      ],
+      [
+        6,
+        7,
+        0.457
+      ],
+      [
+        6,
+        8,
+        -0.809
+      ],
+      [
+        6,
+        9,
+        -0.663
+      ],
+      [
+        7,
+        8,
+        -0.377
+      ],
+      [
+        8,
+        9,
+        -0.451
+      ]
+    ],
+    "fields": [
+      0.242,
+      0.575,
+      0.231,
+      -0.912,
+      0.634,
+      0.312,
+      -0.376,
+      0.407,
+      0.255,
+      0.206
+    ],
+    "half_widths": [
+      0.615,
+      0.454,
+      0.297,
+      0.641,
+      0.277,
+      0.39,
+      0.151,
+      0.352,
+      0.203,
+      0.247
+    ],
+    "drive": "uniform",
+    "seed": 0
+  }
+}

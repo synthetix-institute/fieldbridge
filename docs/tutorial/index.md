@@ -127,7 +127,7 @@ field is added (`memory new`, `memory check`).
 | 9 | [One mechanism from different fields](23_memory_codiscovery.md) | How do models from different fields reach the same mechanism, a symmetric write, where does a derivation stop, and which invariants show that the end points agree? | `memory codiscover` |
 | 10 | [The threshold write](25_memory_threshold_write.md) | How is a state lost at a fold, by the control or by a field, and by how much does the switch lag behind a sweep? | `memory codiscover --target threshold-write` |
 | 11 | [Phase locking](26_memory_phase_locking.md) | At which ratio and over which range does a periodic drive fix the phase of an oscillator? | `memory codiscover --target phase-locking` |
-| 12 | [Return to a turning point](27_memory_return_point.md) | When do interacting hysterons return exactly to their state at a turning point of a slow drive? | `memory hysterons` |
+| 12 | [Return to a turning point](27_memory_return_point.md) | When do interacting hysterons return exactly to their state at a turning point of a slow drive, and how many states does a frustrated network gain over its balanced counterpart? | `memory hysterons`, `memory counterpart` |
 
 Modules 1–4 form the core and should be read in order. Modules 5, 6 and 8 each build on Module 4 and can be read in
 any order. Module 7 draws on all of them. Module 9 builds on Modules 4 and 5, Module 10 on Module 9, Module 11 on

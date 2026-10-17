@@ -7,7 +7,9 @@
    couplings and of the drive alone;
 3. run `memory hysterons` and read the prediction against subloops of the dynamics;
 4. explain why the frustration of the couplings does not decide the return, and why the structural condition is
-   sufficient and not necessary.
+   sufficient and not necessary;
+5. build the balanced counterpart of a frustrated network with `memory counterpart` and measure the network's states
+   against it.
 
 **Prerequisites.** Modules [3](17_memory_predictions.md) and [4](18_memory_writing_and_retention.md). **Time.** About
 30 minutes.
@@ -124,7 +126,52 @@ drive is frustrated and the standard argument does not apply, and the command re
 failed. Chains whose couplings or drive have mixed signs can fail (Exercise 4). The command therefore reports what the dynamics
 does next to what the structure guarantees, and it never turns a frustrated loop into a predicted failure.
 
-## 7. A model from your field
+## 7. The balanced counterpart
+
+A frustrated loop through the drive says only that the return is no longer guaranteed. A counterpart turns this into
+a measurement. Reverse the smallest set of signs, couplings or actions of the drive, that makes the network with the
+drive balanced; their number is the frustration index $F$ of the network that counts the drive as an element. Keep
+everything else: the graph, the magnitudes of the couplings, the fields, the half-widths and the strength of the
+drive. By Section 3 this counterpart returns to every turning point. Measured against it, the states of the material
+separate into two parts,
+
+$$
+C - C_0 = \underbrace{(C_{\mathrm{bal}} - C_0)}_{\text{loss}} + \underbrace{(C - C_{\mathrm{bal}})}_{\text{gain}} , \qquad (2)
+$$
+
+where $C$ is $\log_2$ of the number of states that some history of the drive reaches from negative saturation,
+$C_{\mathrm{bal}}$ the same for the counterpart and $C_0$ for the uncoupled elements. The loss is the locking of the
+balanced network below its elements; the gain counts the states that exist only because some couplings cannot be
+satisfied. States that need three or more reversals of the drive are reported separately as deep memory.
+
+```bash
+python3 -B -m fieldbridge memory counterpart examples/counterpart/frustrated_network.json --out-dir out/counterpart
+```
+
+The command computes $F$ over all $2^n$ relabelings up to 16 elements (above that, the best of local searches, an
+upper bound), builds the counterpart, and enumerates the transition graph of each material: its stable states and the
+avalanche that leads from each state when the drive leaves the interval on which it is stable. The return is then
+tested from every reachable state, not from a sample: every state on a rising or falling branch is a turning point,
+and every excursion that does not pass the previous turning point is followed back. The number of states grows
+quickly with the number of elements; above `--max-states` the enumeration stops and the report says so. For the
+example, ten hysterons with competing couplings:
+
+| Material | States | Bits | Return test: failed excursions |
+| --- | --- | --- | --- |
+| network ($F = 8$) | 20 | 4.32 | 65 of 425 |
+| balanced counterpart | 5 | 2.32 | 0 of 7 |
+| uncoupled elements | 31 | 4.95 | not tested |
+
+The counterpart reverses six couplings and the drive on two elements. It returns in every excursion, as the structure
+guarantees, while the material fails in 65 of 425 and reaches four times as many states: a gain of 2.00 bits against a
+loss of 2.63 bits. The gain is a number an experiment can compare, with the same elements wired as the counterpart as
+the control.
+
+The same construction applies to any rule that decides a property from structure: the counterpart is the smallest
+change of one layer that makes the rule hold, everything else is kept, and the consequence of the violation is
+measured against it. The return to a turning point is the first rule for which FieldBridge builds it.
+
+## 8. A model from your field
 
 A specification of kind `hysterons` has the usual fields (`schema`, `kind`, `id`, `name`, `field`, `question`,
 `assumptions`, `provenance`) and a `hysterons` object:
@@ -142,7 +189,7 @@ A specification of kind `hysterons` has the usual fields (`schema`, `kind`, `id`
 Write first the question that the model answers, then the assumptions that make the elements hysterons: which
 barriers are large compared with the thermal energy, and on which time scale the drive is slow.
 
-## 8. Exercises
+## 9. Exercises
 
 1. Reverse the response of one element of the ferromagnet to the drive, with its couplings unchanged. How many loops
    through the drive become frustrated on the square lattice? Then reverse its four couplings as well. What does
@@ -154,6 +201,9 @@ barriers are large compared with the thermal energy, and on which time scale the
 4. Copy the chain example, give it 512 elements, positive couplings (`"negative_fraction": 0`) and a drive of random
    sign (`"drive": "random"`), and run `memory hysterons` with its default seed. How many subloops fail, and how does
    this differ from the antiferromagnetic chain?
+5. Run `memory counterpart` on the example with `--exact-up-to 0`, so that the frustration index comes from local
+   search. Does the bound agree with the exact index? Why can a local search never report fewer unsatisfiable edges
+   than the index?
 
 <details>
 <summary>Answers</summary>
@@ -169,6 +219,9 @@ barriers are large compared with the thermal energy, and on which time scale the
 4. 4 of 96. About half of the couplings (240 of 512) close a frustrated loop through the drive, where in the
    antiferromagnetic chain every one does, yet here some subloops fail: the exact return of the antiferromagnetic
    chain is a property of that chain, not of chains in general.
+5. Yes, both give $F = 8$ for this network. Every relabeling that a search visits leaves some number of unsatisfiable
+   edges, and the index is the minimum of that number over all relabelings, so no search can report less; it can
+   report more when it stops in a local minimum, which is why the report marks the value as an upper bound.
 
 </details>
 
@@ -182,6 +235,9 @@ barriers are large compared with the thermal energy, and on which time scale the
   in a uniform field and returns in a staggered one.
 - The condition is sufficient and not necessary: antiferromagnetic chains return although every loop through the
   drive is frustrated.
+- The balanced counterpart reverses the fewest signs that make the extended network balanced and keeps everything
+  else; it returns to every turning point, and the states of the material are measured against it as a loss and a
+  gain.
 
 ## Reference
 
@@ -192,6 +248,9 @@ barriers are large compared with the thermal energy, and on which time scale the
 | Dynamics and subloops | `hysterons.Run`, `subloops`, `check` | `test_a_frustrated_loop_through_the_drive_can_break_the_return_and_need_not` |
 | Card and figure | `hysterons.card`, [`visual.hysteron_figure`](../../fieldbridge/memory/visual.py) | `test_the_card_of_a_material_draws_its_loop_its_excursion_and_the_signs_with_the_drive` |
 | Report | [`cli.cmd_hysterons`](../../fieldbridge/memory/cli.py) | `test_command_line_writes_a_report_with_provenance` |
+| Frustration index and counterpart | [`counterpart.frustration`](../../fieldbridge/memory/counterpart.py), `balanced_counterpart` | `test_the_counterpart_keeps_magnitudes_fields_and_thresholds_and_is_balanced`, `test_local_search_never_undercuts_the_exact_index` |
+| States, deep memory and exhaustive return | `counterpart.reachable`, `reversals`, `exact_return`, `measure` | `test_the_enumeration_reproduces_the_preisach_counts`, `test_the_dynamics_of_run_stays_inside_the_enumerated_states` |
+| Loss and gain against the counterpart | `counterpart.construct`, [`cli.cmd_counterpart`](../../fieldbridge/memory/cli.py) | `test_the_counterpart_returns_to_every_turning_point_and_the_parts_add_up`, `test_the_example_gains_states_over_a_counterpart_that_restores_the_return` |
 
 Sources: F. Preisach, Z. Phys. 94, 277 (1935); F. Harary, Michigan Math. J. 2, 143 (1953); I. D. Mayergoyz,
 *Mathematical Models of Hysteresis* (Springer, 1991); A. A. Middleton, Phys. Rev. Lett. 68, 670 (1992);

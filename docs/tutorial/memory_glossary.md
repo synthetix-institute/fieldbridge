@@ -67,6 +67,8 @@ found are listed in [mechanisms](../mechanisms.md).
 | Return-point memory | After an excursion of a slow drive that stays inside a turning point $H_1$, the configuration at $H_1$ is recovered exactly: the excursion is erased and the turning points that enclose it are retained. |
 | No passing | A configuration that lies above another at every element stays above it under the same history of the drive. It holds for cooperative couplings and a drive that pushes every element the same way, and it implies return-point memory. |
 | Loop through the drive | A loop of the network that counts the drive as an element joined to every driven element with the sign $\eta_i$; a coupling $ij$ closes one with the sign $\eta_i J_{ij} \eta_j$. If none is frustrated, a relabeling makes the couplings cooperative and the drive uniform, and the return to a turning point is exact. |
+| Frustration index | The smallest number of edges, couplings or actions of the drive, whose signs must be reversed to make the network with the drive balanced ([Module 12](27_memory_return_point.md)). |
+| Counterpart | The material obtained by the smallest change of one layer that makes a structural rule hold, with everything else kept; the consequence of violating the rule is measured against it. The balanced counterpart of a hysteron network reverses the unsatisfiable edges and returns to every turning point ([Module 12, §7](27_memory_return_point.md#7-the-balanced-counterpart)). |
 
 ## Derivations across fields
 

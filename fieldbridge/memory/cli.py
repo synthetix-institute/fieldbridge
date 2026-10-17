@@ -8,6 +8,7 @@
   regimes                      information about a write for kappa > 0, = 0 and < 0
   field    SPEC                memory in a field: conservation and dimension set the law of loss
   hysterons SPEC               return to a turning point of a slow drive: signs of couplings and drive against subloops
+  counterpart SPEC             the balanced counterpart of a hysteron network and the states measured against it
   gallery                      every example: cards, figures and an HTML gallery (index.html)
   loops                        loops of genes, spins and rotors: holonomy against simulation
   networks                     random networks of genes, spins and rotors: structure against simulation
@@ -413,6 +414,45 @@ def cmd_hysterons(args) -> int:
     return 0
 
 
+def cmd_counterpart(args) -> int:
+    import numpy as np
+    from . import counterpart as cp
+    from . import hysterons as hy
+    spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    model = hy.from_spec(spec)
+    r = cp.construct(model, np.random.default_rng(args.seed), max_states=args.max_states,
+                     exact_up_to=args.exact_up_to, return_test=not args.no_return_test)
+    report = {"command": "counterpart", **_provenance(spec), "elements": model.n, **r}
+
+    def row(name, m):
+        if m.get("censored"):
+            return f"| {name} | more than {m['max_states']} | | | | |"
+        if m.get("cycle"):
+            return f"| {name} | an avalanche did not end | | | | |"
+        ret = m.get("return")
+        test = f"{ret['failed']} of {ret['tested']}" if ret else "not tested"
+        return f"| {name} | {m['count']} | {m['C']:.2f} | {m['deep']:.2f} | {m['max_reversals']} | {test} |"
+
+    fr = r["frustration"]
+    md = (f"# Balanced counterpart\n\n{spec.get('question', '')}\n\n"
+          f"- rule: {r['rule']}\n"
+          f"- frustration index of the network with the drive: {fr['F']} "
+          f"({'exact' if fr['exact'] else 'upper bound from local search'}); edges: {fr['edges_couplings']} "
+          f"couplings, {fr['edges_drive']} actions of the drive\n"
+          f"- reversed in the counterpart: couplings {fr['unsatisfied_couplings']}, drive on elements "
+          f"{fr['unsatisfied_drive']}\n\n{r['statement']}\n\n"
+          "| Material | States | Bits | Deep memory (bits) | Most reversals needed | Return test: failed excursions |\n"
+          "| --- | --- | --- | --- | --- | --- |\n"
+          + "\n".join([row("network", r["network"]), row("balanced counterpart", r["balanced"]),
+                       row("uncoupled elements", r["uncoupled"])])
+          + f"\n\n{BOUNDARY}\n")
+    _write(Path(args.out_dir), "counterpart", report, md)
+    summary = {"out_dir": args.out_dir, "F": fr["F"], "F_exact": fr["exact"]}
+    summary.update({k: r[k] for k in ("gain", "loss") if k in r})
+    print(json.dumps(summary, indent=2))
+    return 0
+
+
 def cmd_gallery(args) -> int:
     import numpy as np
     from . import compose, discovery, spec
@@ -591,6 +631,17 @@ def add_parser(sub) -> None:
     p.add_argument("--subloops", type=int, default=24, help="Subloops for each order of relaxation, simple and nested.")
     p.add_argument("--no-figure", action="store_true", help="Skip the figure hysterons.png.")
     p.set_defaults(func=cmd_hysterons)
+    p = msub.add_parser("counterpart", help="The balanced counterpart of a hysteron network: the smallest reversal of "
+                                            "signs that guarantees the return to every turning point, and the "
+                                            "states of the network measured against it.")
+    common(p, spec_arg=False)
+    p.add_argument("spec", help="Specification of kind hysterons (examples/counterpart/*.json).")
+    p.add_argument("--max-states", type=int, default=20000,
+                   help="States of a transition graph before its enumeration stops (the result then says so).")
+    p.add_argument("--exact-up-to", type=int, default=16,
+                   help="Elements up to which the frustration index is exact; above, an upper bound by local search.")
+    p.add_argument("--no-return-test", action="store_true", help="Skip the exhaustive return test.")
+    p.set_defaults(func=cmd_counterpart)
     p = msub.add_parser("gallery", help="Evaluate every example specification and write an HTML gallery with figures.")
     common(p, spec_arg=False)
     p.add_argument("--examples", default="examples/memory",
