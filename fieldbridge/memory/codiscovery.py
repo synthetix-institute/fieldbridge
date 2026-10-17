@@ -63,7 +63,8 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from . import analysis as an
-from .construct import along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check
+from .construct import (along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check,
+                        sweep_normal_form)
 from .discovery import card_rng
 from .identity import Realization
 
@@ -412,7 +413,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                     "steps": steps}
         path = along_path(real, {real.control: unfolded["control"], unfolded["second"]: unfolded["value"]},
                           unfolded["direction"])
-        nf_path = an.normal_form(path, np.asarray(unfolded["state"]), "t", 0.0)
+        nf_path = sweep_normal_form(path, np.asarray(unfolded["state"]))
         nf_path["obstruction"] = obstruction(nf_path)
         word += ["U", "R"]
         steps.append({"letter": "U", "second": unfolded["second"], "cusp": {unfolded["second"]: unfolded["value"],
@@ -420,7 +421,9 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                       "sweep_direction": unfolded["direction"]})
         steps.append({"letter": "R", "value": 0.0, "a0": nf_path["a0"], "a2": nf_path["a2"], "a3": nf_path["a3"],
                       "kind": nf_path["kind"].split(":")[0], "along": "the sweep through the cusp",
-                      "eliminated_directions": real.carrier.dim - 1})
+                      "eliminated_directions": real.carrier.dim - 1,
+                      **({"window": nf_path["half"], "window_halvings": nf_path["window_halvings"]}
+                         if "window_halvings" in nf_path else {})})
         target_real, target_nf = path, nf_path
         out["status"] = "reached after unfolding"
     canon = canonical_form(target_nf)
