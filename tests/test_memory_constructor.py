@@ -983,6 +983,47 @@ def test_vanishing_cubic_is_an_obstruction():
     assert detuned["kind"].startswith("supercritical pitchfork") and detuned["a3"] < 0
 
 
+# the driven Kerr resonator of Josephson bifurcation readout (Siddiqi et al., PRL 93, 207002 (2004)): mean field and
+# vacuum noise of the loss; the dispersive shift of the qubit enters only through the detuning Delta
+JBA = {
+    "schema": "fieldbridge-memory/1", "question": "Is the one-sided write of a driven Kerr resonator unfolded at its cusp?",
+    "provenance": {"source": "Siddiqi et al., PRL 93, 207002 (2004)", "kind": "authored test"},
+    "assumptions": ["single mode, rotating frame of the drive"], "field": "superconducting quantum circuits",
+    "kind": "equations", "name": "driven Kerr resonator (Josephson bifurcation readout)",
+    "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 1},
+    "parameters": {"U": 0.1, "Delta": 2.0, "kappa": 1.0, "F": 3.0},
+    "drift": {"x": "(U*(x**2 + y**2) - Delta)*y - 0.5*kappa*x", "y": "-(U*(x**2 + y**2) - Delta)*x - F - 0.5*kappa*y"},
+    "control": {"name": "F", "range": [0.0, 8.0]}, "noise": 0.125, "dt": 0.005, "material": ["Delta"]}
+
+
+def test_the_kerr_resonator_of_bifurcation_readout_is_unfolded_at_its_cusp():
+    """The two folds of the drive F meet at the cusp Delta/kappa = sqrt(3)/2, with n = kappa/(sqrt(3) U) photons and
+    F^2 = kappa^3/(3 sqrt(3) U). The quadratic coefficient vanishes there, but the quartic term of the reduced drift is
+    0.6 s times the cubic one: a cubic fitted over the default window takes it up as a quadratic coefficient and reads
+    the sweep through the cusp as one-sided (asymmetry 0.12). On half the window that coefficient falls by four and the
+    sweep is a supercritical pitchfork, so the detuning unfolds the write."""
+    from fieldbridge.memory import codiscovery
+    real = spec.load(JBA)
+    U, kappa = JBA["parameters"]["U"], JBA["parameters"]["kappa"]
+    delta_c, f_c = math.sqrt(3) / 2 * kappa, (kappa ** 3 / (3 * math.sqrt(3) * U)) ** 0.5
+    nf = _write_point(real, 3.688)
+    assert nf["kind"].startswith("saddle-node")
+    c = construct.cancel_asymmetry(real, nf, "Delta")
+    q = np.asarray(c["state"])
+    assert c["success"] and c["value"] == pytest.approx(delta_c, abs=1e-8) and c["control"] == pytest.approx(f_c, abs=1e-8)
+    assert float(q @ q) == pytest.approx(kappa / (math.sqrt(3) * U), rel=1e-8)
+    path = construct.along_path(real, {"F": c["control"], "Delta": c["value"]}, c["direction"])
+    wide, narrow = an.normal_form(path, q, "t", 0.0), construct.sweep_normal_form(path, q)
+    assert wide["asymmetry"] > construct.TOL and narrow["window_halvings"] == 1
+    assert narrow["a2"] == pytest.approx(wide["a2"] / 4, rel=0.02)
+    assert c["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
+    row = codiscovery.derive_symmetric_write(real, np.random.default_rng(1), check_law=False)
+    assert row["status"] == "reached after unfolding" and row["word"] == "CRURK"
+    assert row["class"] == "C R(fold) U R(pitchfork) K"
+    (u,) = (st for st in row["steps"] if st["letter"] == "U")
+    assert u["cusp"]["Delta"] == pytest.approx(delta_c, abs=1e-8) and u["cusp"]["F"] == pytest.approx(f_c, abs=1e-8)
+
+
 def _second_order_bias(b):
     return {"schema": "fieldbridge-memory/1", "question": "Does a sweep that biases the write at second order offset it?",
             "provenance": {"source": "pitchfork normal form with a bias b eps^2", "kind": "authored test"},

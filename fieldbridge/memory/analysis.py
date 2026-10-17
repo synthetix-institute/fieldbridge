@@ -443,7 +443,7 @@ def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: f
 
 
 def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: Optional[Dict] = None,
-                npts: int = 41) -> Dict[str, object]:
+                npts: int = 41, half: Optional[float] = None) -> Dict[str, object]:
     """Reduce the drift at a write point to one coordinate s along the critical direction:
     ds/dt = a0 + a1 s + a2 s^2 + a3 s^3 (on the slow manifold), with the unfolding in the parameter
     (bias = the part of dF/dparam along the critical direction, kappa slope = d(a1)/dparam).
@@ -452,7 +452,10 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     counts the eigenvalues that cross together (critical_directions); when a symmetry makes the critical mode
     degenerate, as the twisted modes of a ring of an odd number of cells, it exceeds one, the critical eigenspace is
     not a line, and the kind is a degenerate critical mode. The coefficients along one direction of that eigenspace
-    are kept as a diagnostic."""
+    are kept as a diagnostic.
+
+    The drift is sampled over s in [-half, half], by default a quarter of the base length (an eighth of the period on
+    a torus), and the window is halved further where the cubic does not fit."""
     q = np.asarray(q, float)
     over = {**(extra or {}), param: v}
     n = q.size
@@ -511,7 +514,8 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         evl, L = np.linalg.eig(J.T)
         w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
         w = w / np.dot(w, vec)
-    half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
+    if half is None:
+        half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
     if real.carrier.kind == "orthant":
         nz = np.abs(vec) > 1e-9
         room = np.abs(q)[nz] / np.abs(vec)[nz]
