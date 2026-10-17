@@ -939,3 +939,97 @@ def test_codiscovery_markdown_without_reached_realization(tmp_path):
         assert rep["rows"][0]["obstruction"] in md
         codiscovery_figure(rep, tmp_path / f"{target}.png")
         assert (tmp_path / f"{target}.png").exists()
+
+
+# the Kerr parametric oscillator of a Kerr-cat qubit at zero detuning (Puri et al., npj Quantum Inf. 3, 18 (2017)):
+# mean field and vacuum noise of the loss
+KPO = {
+    "schema": "fieldbridge-memory/1", "question": "Does a Kerr parametric oscillator at zero detuning write as a pitchfork?",
+    "provenance": {"source": "Puri et al., npj Quantum Inf. 3, 18 (2017)", "kind": "authored test"},
+    "assumptions": ["single mode, rotating frame of the pump"], "field": "superconducting quantum circuits",
+    "kind": "equations", "name": "Kerr parametric oscillator at zero detuning",
+    "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 1},
+    "parameters": {"K": 5.0, "Delta": 0.0, "kappa": 1.0, "p": 6.0},
+    "drift": {"x": "(K*(x**2 + y**2) + p + Delta)*y - 0.5*kappa*x",
+              "y": "-(K*(x**2 + y**2) - p + Delta)*x - 0.5*kappa*y"},
+    "control": {"name": "p", "range": [0.0, 12.0]}, "noise": 0.125, "dt": 0.005, "material": ["Delta"]}
+
+
+def _write_point(real, value):
+    ev = min(an.locate_writes(real, np.random.default_rng(0), n_starts=24), key=lambda e: abs(e["v"] - value))
+    return an.normal_form(real, ev["q"], real.control, ev["v"])
+
+
+def test_vanishing_cubic_is_an_obstruction():
+    """At zero detuning the Kerr term only rotates the amplitude: the reduced drift at the threshold p = kappa/2 has
+    no cubic term and saturates at fifth order, -K^2/kappa s^5 (the amplitude grows as (p - p_c)^(1/4)). The
+    symmetric write is obstructed and no law constant is reported; a detuning restores a negative cubic term."""
+    from fieldbridge.memory import codiscovery
+    real = spec.load(KPO)
+    nf = _write_point(real, 0.5)
+    assert nf["value"] == pytest.approx(0.5, abs=1e-4)
+    assert nf["kind"].startswith("degenerate cubic")
+    assert nf["leading_term"]["order"] == 5
+    assert nf["leading_term"]["coefficient"] == pytest.approx(-25.0, rel=1e-3)
+    ob = construct.obstruction(nf)
+    assert ob["degenerate_cubic"] and not ob["realizes_generator"]
+    assert construct.swept_write_check(real, nf, np.random.default_rng(0)) == {}
+    row = codiscovery.derive_symmetric_write(real, np.random.default_rng(0), n_traj=40)
+    assert row["status"] == "obstructed" and not row.get("law_constant")
+    assert row["class"] == "S(reflection) C R(degenerate cubic)"
+    assert row["obstruction_short"] == "vanishing cubic: leading term of order 5"
+    detuned = _write_point(spec.load(dict(KPO, parameters=dict(KPO["parameters"], Delta=1.0))), 1.118)
+    assert detuned["value"] == pytest.approx(math.sqrt(1.25), abs=1e-4)
+    assert detuned["kind"].startswith("supercritical pitchfork") and detuned["a3"] < 0
+
+
+def _second_order_bias(b):
+    return {"schema": "fieldbridge-memory/1", "question": "Does a sweep that biases the write at second order offset it?",
+            "provenance": {"source": "pitchfork normal form with a bias b eps^2", "kind": "authored test"},
+            "assumptions": ["one variable"], "field": "test", "kind": "equations",
+            "name": f"pitchfork with a bias of second order in the sweep (b = {b})",
+            "carrier": {"kind": "euclid", "variables": ["x"], "scale": 1}, "parameters": {"eps": -0.5, "b": b},
+            "drift": {"x": "eps*x - x**3 + b*eps**2"}, "control": {"name": "eps", "range": [-1.0, 1.0]},
+            "noise": 0.01, "dt": 0.01}
+
+
+def test_swept_write_law_separates_the_offset_from_the_slope():
+    """A bias b eps^2 vanishes with its derivative at the write point eps = 0, which therefore realizes the generator;
+    along the sweep it favours the sign of b whatever the bias of the test, as a straight sweep through a cusp does.
+    Without a reversing symmetry the law is tested with the bias toward both states: the constants of the two signs
+    are slope + offset and slope - offset, the slope is pi^(1/4) and the offset has the sign of b. With b = 0 the
+    reflection x -> -x forbids an offset and one sign is tested."""
+    from fieldbridge.memory import codiscovery
+    sym = codiscovery.derive_symmetric_write(spec.load(_second_order_bias(0.0)), np.random.default_rng(3), n_traj=800,
+                                             replicates=4)
+    assert sym["word"] == "SCRKL" and "offset" not in sym["law_constant"] and "by_sign" not in sym["law"]
+    for b in (0.3, -0.3):
+        row = codiscovery.derive_symmetric_write(spec.load(_second_order_bias(b)), np.random.default_rng(3),
+                                                 n_traj=800, replicates=4)
+        c = row["law_constant"]
+        assert row["word"] == "CRKL" and [s["sign"] for s in row["law"]["by_sign"]] == [1, -1]
+        assert c["offset_resolved"] and np.sign(c["offset"]) == np.sign(b) and abs(c["offset"]) > 0.5
+        assert abs(c["constant"] - codiscovery.LAW_CONSTANT) < 4 * c["stderr"]
+        k_plus, k_minus = (s["constant"] for s in c["by_sign"])
+        assert c["constant"] == pytest.approx((k_plus + k_minus) / 2) and c["offset"] == pytest.approx((k_plus - k_minus) / 2)
+        assert any("offset" in note for note in row["notes"])
+
+
+def test_law_constant_of_both_signs_and_of_a_saturated_test():
+    """The slope and the offset from the accuracies of the two signs, and no constant where every trajectory of a
+    test ended on one side (the accuracy then only bounds the constant)."""
+    from statistics import NormalDist
+    from fieldbridge.memory import codiscovery
+    nd = NormalDist()
+    law = {"rate": 0.02, "D_along_mode": 1e-3, "h_along_mode": 0.01, "measured": 0.75, "stderr": 0.01,
+           "by_sign": [{"sign": 1, "measured": 0.9, "stderr": 0.01}, {"sign": -1, "measured": 0.6, "stderr": 0.01}]}
+    scale = math.sqrt(1e-3) * 0.02 ** 0.25 / 0.01
+    k = [nd.inv_cdf(p) * scale for p in (0.9, 0.6)]
+    e = [0.01 / nd.pdf(nd.inv_cdf(p)) * scale for p in (0.9, 0.6)]
+    c = codiscovery.law_constant(law)
+    assert c["constant"] == pytest.approx((k[0] + k[1]) / 2) and c["offset"] == pytest.approx((k[0] - k[1]) / 2)
+    assert c["stderr"] == pytest.approx(math.hypot(*e) / 2) and c["offset_resolved"]
+    assert codiscovery.law_constant(dict(law, by_sign=[law["by_sign"][0], dict(law["by_sign"][1], measured=1.0)])) == {}
+    single = {k_: v for k_, v in law.items() if k_ != "by_sign"}
+    assert codiscovery.law_constant(dict(single, measured=0.0, stderr=0.0)) == {}
+    assert codiscovery.law_constant(single)["constant"] == pytest.approx(nd.inv_cdf(0.75) * scale)

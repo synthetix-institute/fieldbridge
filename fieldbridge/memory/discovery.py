@@ -199,6 +199,8 @@ def mechanism_class(card: Dict) -> str:
         return "symmetric write to a distant state (subcritical pitchfork)"
     if any(o.get("degenerate") for o in obs):
         return "write into a degenerate critical mode (several directions critical together)"
+    if any(o.get("degenerate_cubic") for o in obs):
+        return "symmetric write without a cubic term (the leading term along the critical direction is of higher order)"
     if ctrl:
         return "asymmetric write"
     return "write by a uniform field"

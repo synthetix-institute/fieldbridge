@@ -523,7 +523,8 @@ def _row_summary(row: Dict) -> Dict:
     if const.get("constant") is not None:
         out["law"] = {"constant": float(const["constant"]), "stderr": float(const["stderr"]),
                       "expected": float(const.get("expected", float("nan"))),
-                      **({"signature": const["signature"]} if const.get("signature") else {})}
+                      **({"signature": const["signature"]} if const.get("signature") else {}),
+                      **({k: float(const[k]) for k in ("offset", "offset_stderr")} if "offset" in const else {})}
     if row.get("write_point"):
         out["write_point"] = {"param": row["write_point"]["param"], "value": float(row["write_point"]["value"])}
     return out
@@ -1464,7 +1465,8 @@ def _merge_laws(rec: Dict, record: Dict) -> Optional[str]:
         if target not in PREFIX or target not in rec["rows"]:
             continue
         row = rec["rows"][target]
-        row["law"] = {k: law[k] for k in ("constant", "stderr", "expected", "signature") if k in law}
+        row["law"] = {k: law[k] for k in ("constant", "stderr", "expected", "signature", "offset", "offset_stderr")
+                      if k in law}
         if law.get("word"):
             row["word"], row["class"] = law["word"], law.get("class", row.get("class"))
             rec["facts"][f"{PREFIX[target]}_word"] = law["word"]

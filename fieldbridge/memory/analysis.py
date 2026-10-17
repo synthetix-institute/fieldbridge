@@ -404,6 +404,33 @@ def _slow_manifold_drift(real, q, vec, w, s, over):
     return f, trans / max(total, 1e-300)
 
 
+def leading_order(real, q, vec, w, over, half: float, rate: float, scale: float,
+                  levels: int = 8) -> Optional[Dict[str, float]]:
+    """The leading nonlinear term c s^n of the drift on the slow manifold where its quadratic and cubic coefficients
+    are not resolved at the write point. The drift less its linear part, rate s, is split into its odd and even parts
+    at the amplitudes half 2^-k; the larger part is resolved where it exceeds 1e-6 of the largest rate per unit s (the
+    floor of the degenerate kind of normal_form), and n is the slope of its logarithm between the two smallest
+    resolved amplitudes, rounded to an integer within 0.25. None where no two amplitudes resolve it (the drift
+    vanishes along the critical direction, a line of states) or the slope is not near an integer."""
+    amps = half * 2.0 ** -np.arange(levels)
+    f, _ = _slow_manifold_drift(real, q, vec, w, np.concatenate([amps, -amps]), over)
+    if not np.all(np.isfinite(f)):
+        return None
+    fp, fm = f[:levels], f[levels:]
+    odd, even = 0.5 * (fp - fm) - rate * amps, 0.5 * (fp + fm)
+    part = odd if np.max(np.abs(odd)) >= np.max(np.abs(even)) else even
+    resolved = np.abs(part) > 1e-6 * scale * amps
+    # the two smallest resolved amplitudes, adjacent so that their ratio is 2
+    k = next((j for j in range(levels - 1, 0, -1) if resolved[j] and resolved[j - 1]), None)
+    if k is None:
+        return None
+    slope = float(np.log2(abs(part[k - 1]) / abs(part[k])))
+    n = int(round(slope))
+    if n < 2 or abs(slope - n) > 0.25:
+        return None
+    return {"order": n, "coefficient": float(part[k] / amps[k] ** n), "slope": slope, "amplitude": float(amps[k])}
+
+
 def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float,
                         scale: float) -> np.ndarray:
     """Indices of the eigenvalues ev (among cand, the directions outside the declared null modes) whose real part is
@@ -490,6 +517,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         room = np.abs(q)[nz] / np.abs(vec)[nz]
         if room.size and np.min(room) > 1e-9:
             half = min(half, 0.5 * float(np.min(room)))
+    half0 = half
     for _ in range(8):
         s = np.linspace(-1.0, 1.0, npts) * half
         f, transverse = _slow_manifold_drift(real, q, vec, w, s, over)
@@ -522,7 +550,15 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
                 f"{k}-dimensional, not a line")
     elif cub + quad <= 1e-6 * scale * half:
-        kind = "degenerate: the drift vanishes along the critical direction (a line of states)"
+        # the cubic fit is resolved only on a window where the linear part dominates: the order of the leading term is
+        # read from larger amplitudes (a Kerr parametric oscillator at zero detuning saturates at fifth order)
+        lead = leading_order(real, q, vec, w, over, half0, float(lam.real), scale)
+        if lead is None:
+            kind = "degenerate: the drift vanishes along the critical direction (a line of states)"
+        else:
+            out["leading_term"] = lead
+            kind = (f"degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along "
+                    f"the critical direction is of order {lead['order']}")
     elif bias > 0.1 and asym > 0.1:
         kind = "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold"
     elif asym > 0.1:

@@ -30,7 +30,9 @@ Transformations (the letters of a derivation word):
   K  canonical     the critical coordinate is rescaled: x = |a3|^(1/2) s gives eps x - x^3 + h, and x = a2 s gives
                    mu + x^2 with mu = a2 b (p - p_f), b the push of the parameter p along the critical mode
   L  law           the law of the canonical form is tested by simulating the realization itself: for the symmetric
-                   write the accuracy of a swept write, P = Phi(pi^(1/4) h_s / (D_s^(1/2) r^(1/4))); for the threshold
+                   write the accuracy of a swept write, P = Phi(pi^(1/4) h_s / (D_s^(1/2) r^(1/4))), with the bias
+                   toward both states where the derivation has no reversing symmetry, so that an offset of the write
+                   is reported apart from the constant; for the threshold
                    write the delay of the switch under a sweep mu = r t, which crosses the static fold at
                    mu = |a1'| r^(2/3), with a1' = -1.01879 the first zero of the derivative of the Airy function; for
                    phase locking the relaxation rate inside and the slip frequency outside the locking range, which
@@ -270,17 +272,55 @@ def _degenerate(nf: Dict) -> Tuple[str, str]:
             f"does not describe the write", f"degenerate critical mode: {k} directions")
 
 
+def _vanishing_cubic(nf: Dict) -> Tuple[str, str]:
+    """The obstruction of a reduced drift whose quadratic and cubic terms vanish at the write point, and its short
+    form."""
+    lead = nf.get("leading_term")
+    if lead is None:
+        return ("the drift vanishes along the critical direction: the write point is a line of states and no state is "
+                "chosen", "a line of states: the drift vanishes along the critical direction")
+    n = int(lead["order"])
+    return (f"vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the "
+            f"leading term is {lead['coefficient']:.3g} s^{n}, so the canonical form is not the pitchfork and the "
+            f"swept-write test, whose noise is set by D_s |a3| / r, is not defined",
+            f"vanishing cubic: leading term of order {n}")
+
+
+OFFSET_RESOLVED = 2.0  # an offset of the write is reported as resolved beyond this many standard errors
+
+
 def law_constant(law: Dict) -> Dict[str, float]:
-    """The constant of the swept-write law inferred from a measured accuracy: Phi^-1(P) D_s^(1/2) r^(1/4) / h_s."""
+    """The constant of the swept-write law inferred from a measured accuracy: Phi^-1(P) D_s^(1/2) r^(1/4) / h_s.
+
+    With the bias toward both states (swept_write_check with signs (1, -1)), the constants k+ and k- inferred from
+    the two accuracies are slope + offset and slope - offset: the slope (k+ + k-)/2 is the response to the bias and is
+    the law constant, and the offset (k+ - k-)/2, in the same units, is the part of the write that does not depend on
+    the bias. The offset is resolved when it exceeds OFFSET_RESOLVED standard errors. Where every trajectory of a test
+    ends on one side the accuracy bounds the constant but does not measure it, and nothing is returned."""
     if not law or "measured" not in law:
         return {}
-    p, se = float(law["measured"]), float(law.get("stderr", 0.0))
-    p_c = min(max(p, 1e-4), 1 - 1e-4)
+    rows = law.get("by_sign") or [{"sign": 1, "measured": law["measured"], "stderr": law.get("stderr", 0.0)}]
     nd = NormalDist()
-    z = nd.inv_cdf(p_c)
     scale = sqrt(law["D_along_mode"]) * law["rate"] ** 0.25 / law["h_along_mode"]
-    dz = se / max(nd.pdf(z), 1e-12)
-    out = {"constant": float(z * scale), "stderr": float(dz * scale), "expected": LAW_CONSTANT}
+    ks, es = [], []
+    for row in rows:
+        p, se = float(row["measured"]), float(row.get("stderr", 0.0))
+        if p <= 0.0 or p >= 1.0:
+            return {}
+        p_c = min(max(p, 1e-4), 1 - 1e-4)
+        z = nd.inv_cdf(p_c)
+        dz = se / max(nd.pdf(z), 1e-12)
+        ks.append(float(z * scale))
+        es.append(float(dz * scale))
+    if len(rows) == 1:
+        out = {"constant": ks[0], "stderr": es[0], "expected": LAW_CONSTANT}
+    else:
+        e = float(sqrt(es[0] ** 2 + es[1] ** 2) / 2)
+        offset = 0.5 * (ks[0] - ks[1])
+        out = {"constant": 0.5 * (ks[0] + ks[1]), "stderr": e, "expected": LAW_CONSTANT, "offset": offset,
+               "offset_stderr": e, "offset_resolved": bool(abs(offset) > OFFSET_RESOLVED * e),
+               "by_sign": [{"sign": int(row["sign"]), "constant": k, "stderr": se}
+                           for row, k, se in zip(rows, ks, es)]}
     for k in ("replicates", "signature"):
         if k in law:
             out[k] = law[k]
@@ -358,6 +398,8 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                 reason = "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write"
             elif ob.get("degenerate"):
                 reason, short = _degenerate(nfs[0])
+            elif ob.get("degenerate_cubic"):
+                reason, short = _vanishing_cubic(nfs[0])
             elif ob.get("subcritical"):
                 reason = "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)"
             elif fold is not None:
@@ -387,20 +429,32 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                   "cubic_sign": canon.get("cubic_sign"),
                   "even_part": canon.get("even_part"), "linear_part": canon.get("linear_part"),
                   "quintic": canon.get("quintic")})
-    law, const = {}, {}
+    law, const, notes = {}, {}, []
     if check_law:
-        law = swept_write_check(target_real, target_nf, rng, n_traj=n_traj, replicates=replicates)
+        # a reversing symmetry of the simulated realization maps the test with the bias toward -mode onto the test
+        # toward +mode, so that the write has no offset and one sign measures the constant. Without it (no S, or a
+        # sweep through a cusp, which is not the realization in which S was found) both signs are tested.
+        signs = (1,) if "S" in word and target_real is real else (1, -1)
+        law = swept_write_check(target_real, target_nf, rng, n_traj=n_traj, replicates=replicates, signs=signs)
         const = law_constant(law)
-        if law:
+        if law and not const:
+            notes.append("the law was not measured: in a test every trajectory ended on one side")
+        elif law:
             word.append("L")
             steps.append({"letter": "L", "predicted": law["predicted"], "measured": law["measured"],
-                          "stderr": law["stderr"], "gamma": law["gamma"],
-                          **{f"law_{k}": v for k, v in const.items() if k != "signature"}})
+                          "stderr": law["stderr"], "gamma": law["gamma"], "signs": list(signs),
+                          **{f"law_{k}": v for k, v in const.items() if k not in ("signature", "by_sign")}})
+            if const.get("offset_resolved"):
+                k_plus, k_minus = (b["constant"] for b in const["by_sign"])
+                notes.append(f"the write has an offset of {const['offset']:+.3f} ± {const['offset_stderr']:.3f} in "
+                             f"units of the law constant: a bias toward +mode gives {k_plus:.3f} and toward -mode "
+                             f"{k_minus:.3f}; the law constant is their mean")
     if out["status"] == "obstructed":
         out["status"] = "reached"
     return {**out, "word": "".join(word), "route": route_string(steps), "class": derivation_class(steps),
             "steps": steps, "canonical": canon, "law": law, "law_constant": const,
-            "write_point": {"param": target_nf["param"], "value": float(target_nf["value"])}}
+            "write_point": {"param": target_nf["param"], "value": float(target_nf["value"])},
+            **({"notes": notes} if notes else {})}
 
 
 # ------------------------------------------------------------------------------------------------ threshold write
@@ -749,7 +803,10 @@ def codiscover(reals: List[Realization], seed: int, target: str = "symmetric-wri
     if target == "symmetric-write":
         summary.update(even_part_max=max((c.get("even_part", np.nan) for c in canon), default=None),
                        cubic_signs=sorted({c.get("cubic_sign") for c in canon}),
-                       trajectories_per_realization=n_traj if check_law else 0)
+                       trajectories_per_realization=n_traj if check_law else 0,
+                       law_offsets={r["name"]: {k: r["law_constant"][k] for k in ("offset", "offset_stderr",
+                                                                                   "offset_resolved")}
+                                    for r in reached if "offset" in (r.get("law_constant") or {})})
         floor = 1e-9
     elif target == "threshold-write":
         summary.update(linear_part_max=max((c["linear_part"] for c in canon), default=None),
@@ -846,6 +903,13 @@ def markdown(report: Dict[str, object]) -> str:
                          + (f" ({same} simulate the same equations and count as one model)" if same else "")
                          + f"; pi^(1/4) = {s['law_constant_expected']:.3f}; chi^2 = {s['law_constant_chi2']:.1f} for "
                          f"{s['law_constant_dof']} values.")
+        if s.get("law_offsets"):
+            lines.append("- Offset of the write, half the difference of the constants for a bias toward +mode and toward "
+                         "-mode, where no reversing symmetry of the simulated realization forbids it (the law constant "
+                         "is then their mean): " + "; ".join(
+                             f"{name} {o['offset']:+.3f} ± {o['offset_stderr']:.3f}"
+                             + (" (resolved)" if o["offset_resolved"] else "") for name, o in s["law_offsets"].items())
+                         + ".")
     elif key == "phase-locking":
         lines.append("- Locking ratios: " + "; ".join(f"{k} in {', '.join(v)}" for k, v in s["ratios"].items())
                      + ". A ratio above 1:1 comes from a symmetry that maps the cycle onto itself a fraction of a "

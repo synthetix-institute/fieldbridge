@@ -6,7 +6,8 @@
                   direction reduced onto the slow manifold, ds/dt = a0 + a1 s + a2 s^2 + a3 s^3.
   3  obstruction  Delta, the difference between that drift and the pitchfork generator eps s - s^3 + h:
                   a quadratic term (a one-sided write), a bias carried by the control, a positive cubic (no
-                  saturation near the write point), a rotating crossing (Hopf), or several directions that become
+                  saturation near the write point), a vanishing cubic (saturation at a higher order, as in a Kerr
+                  parametric oscillator at zero detuning), a rotating crossing (Hopf), or several directions that become
                   critical together (a degenerate critical mode, as in a ring that its symmetry makes degenerate,
                   where the critical eigenspace is not a line). -Delta is what the material must add. When the
                   realization names further material parameters, the point at which the quadratic term vanishes
@@ -15,13 +16,15 @@
 
 For a write point that realizes the generator, the swept-write law of the source,
 P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})) (Kondepudi and Nelson), is transferred with h_s and D_s projected on
-the critical direction and r the rate at which the sweep drives a1, and checked by simulating the target.
+the critical direction and r the rate at which the sweep drives a1, and checked by simulating the target. Where no
+symmetry forbids it, a sweep can itself favour one state (a straight sweep through a cusp does); the test is then run
+with the bias toward each state, and the response to the bias (the law constant) is separated from that offset.
 """
 from __future__ import annotations
 
 from dataclasses import replace
 from math import erf, sqrt
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Sequence
 
 import numpy as np
 
@@ -50,6 +53,26 @@ def obstruction(nf: Dict) -> Dict[str, object]:
                              f"coordinate does not describe it. A pitchfork of one component needs the degeneracy "
                              f"lifted, by a difference between the elements that splits the critical eigenvalues by "
                              f"more than the resolution of the continuation."]}
+    kind = str(nf.get("kind", ""))
+    if kind.startswith("degenerate:") or kind.startswith("degenerate cubic"):
+        # neither the quadratic nor the cubic term is resolved: the cubic does not describe the write
+        lead = nf.get("leading_term")
+        base = {"hopf": False, "degenerate_cubic": True, "asymmetric": False, "biased": False, "subcritical": False,
+                "realizes_generator": False}
+        if lead is None:
+            return {**base, "terms": {"vanishing drift along the critical direction": 0.0},
+                    "required": ["The drift vanishes along the critical direction to the resolution of the reduction: "
+                                 "the write point is a line of states and no state is chosen. A term that restores "
+                                 "along that direction is required."]}
+        n, c = int(lead["order"]), float(lead["coefficient"])
+        grows = (f"saturates at order {n}, with an amplitude that grows as eps^(1/{n - 1})" if c < 0 and n % 2 else
+                 f"does not saturate at order {n}, and the state leaves the write point")
+        return {**base, "terms": {f"vanishing cubic (leading term of order {n})": c},
+                "required": [f"The quadratic and cubic terms of the reduced drift vanish at the write point and the "
+                             f"leading term is {c:.3g} s^{n}: the write {grows}. Its canonical form is not the pitchfork "
+                             f"eps s - s^3 + h, and the swept-write test, which sets the noise by Gamma = D_s |a3| / r, "
+                             f"is not defined. A parameter that makes the cubic coefficient negative restores the "
+                             f"pitchfork."]}
     asym, biased = nf["asymmetry"] > TOL, nf["bias"] > TOL
     sub = (not asym) and nf["a3"] > 0
     terms, req = {}, []
@@ -262,18 +285,30 @@ def _phi(x: float) -> float:
 
 
 def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, rate: float = 0.02,
-                      gamma: float = 0.05, n_traj: int = 400, replicates: int = 1) -> Dict[str, float]:
+                      gamma: float = 0.05, n_traj: int = 400, replicates: int = 1,
+                      signs: Sequence[int] = (1,)) -> Dict[str, float]:
     """Transfer the swept-write law of the pitchfork to the target and test it. The control is swept through its
     critical value so that the linear coefficient of the critical mode grows at `rate`; a bias of fixed size
     along the critical direction is chosen so that the transferred law, P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})),
     predicts target_p. It is tested at a noise set by Gamma = D_s |a3| / r (the noise relative to the growth of
     the barrier behind the choice) and at the material's own noise.
 
+    signs are the directions of the bias along the critical mode, +1 toward +mode and -1 toward -mode; the accuracy
+    for each is the fraction of trajectories that end on the side of its bias. With one sign an offset of the write
+    that does not depend on the bias (a sweep that itself favours one state) is part of the measured accuracy; with
+    (1, -1) the trajectories are divided between the signs, which are reported under by_sign, and law_constant
+    separates the response to the bias from the offset. measured and stderr are then the mean over the signs.
+
     With replicates > 1 the trajectories of the test are split into that many runs, each on its own random stream
     spawned from rng, and the standard error of the accuracy is the larger of the scatter of the runs and the
-    binomial error. `signature` is the drift along the sweep at fixed probe states, with the bias and the noise: two
-    realizations with the same signature simulate the same equations."""
+    binomial error. `signature` is the drift along the sweep at fixed probe states, with the bias toward +mode and
+    the noise: two realizations with the same signature simulate the same equations."""
     from statistics import NormalDist
+    signs = tuple(int(sg) for sg in signs)
+    if signs[0] != 1 or len(set(signs)) != len(signs) or not set(signs) <= {1, -1}:
+        raise ValueError("signs must be (1,) or (1, -1)")
+    if not obstruction(nf)["realizes_generator"]:
+        return {}
     vc = nf["value"]
     qc, vec = np.asarray(nf["state"], float), np.asarray(nf["mode"], float)
     w = np.asarray(nf["left_mode"], float)
@@ -283,55 +318,81 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
     # the law assumes a bias of fixed size along the critical direction: on R^n or R_+^n the write points at a
     # distant target along that direction, so that its direction does not turn while the state moves
     far = 0.5 * nf["half"] if real.carrier.kind == "torus" else 1e3 * an.base_length(real)
-    target = qc + far * vec if real.carrier.kind != "torus" else real.carrier.wrap(qc + far * vec)
-    h_per = float(w @ real.write_force(qc, target, 1.0))
-    if abs(h_per) < 1e-12:
+    targets = {sg: qc + sg * far * vec if real.carrier.kind != "torus" else real.carrier.wrap(qc + sg * far * vec)
+               for sg in signs}
+    h_per = {sg: float(w @ real.write_force(qc, targets[sg], 1.0)) for sg in signs}
+    if min(abs(v) for v in h_per.values()) < 1e-12:
         return {}
+    target = targets[1]
     rv = rate / g
     t_half = 4.0 / sqrt(rate)
     dv = np.sign(-nf["kappa_slope"]) * rv
     path = lambda t: vc - dv * t_half + dv * t
     z = NormalDist().inv_cdf(target_p)
 
-    def run(D, gen, n):
+    def run(sg, D, gen, n):
         D_s = D * float(w @ w)
         h_s = z * sqrt(D_s) * rate ** 0.25 / np.pi ** 0.25
+        strength = h_s / h_per[1] if sg > 0 else -h_s / h_per[sg]
         q = np.repeat(qc[None], n, axis=0)
-        q, _, _ = an.integrate(real, q, 2 * t_half, D, gen, over={}, write=(target, h_s / h_per), control_path=path)
-        m = float(np.mean((real.carrier.diff(np.repeat(qc[None], n, axis=0), q) @ w) > 0))
-        return {"D": float(D), "D_along_mode": D_s, "gamma": D_s * a3 / rate, "h": float(h_s / h_per),
+        q, _, _ = an.integrate(real, q, 2 * t_half, D, gen, over={}, write=(targets[sg], strength), control_path=path)
+        s = real.carrier.diff(np.repeat(qc[None], n, axis=0), q) @ w
+        m = float(np.mean(s > 0 if sg > 0 else s < 0))
+        return {"D": float(D), "D_along_mode": D_s, "gamma": D_s * a3 / rate, "h": float(strength),
                 "h_along_mode": float(h_s), "measured": m, "stderr": float(sqrt(m * (1 - m) / n))}
 
     D_law = gamma * rate / (a3 * float(w @ w))
-    extra: Dict[str, object] = {}
+    n_sign = max(1, n_traj // len(signs))
+    inside: Dict[int, Dict] = {}
+    extra: Dict[int, Dict] = {sg: {} for sg in signs}
     if replicates > 1:
         # independent streams, not consecutive stretches of one stream: a stretch shifted by a few draws assigns
-        # nearly the same noise to the trajectories in another order and repeats the count
-        seeds = np.random.SeedSequence(int(rng.integers(2 ** 63))).spawn(replicates)
-        n_each = max(1, n_traj // replicates)
-        parts = [run(D_law, np.random.default_rng(s), n_each) for s in seeds]
-        ms = np.array([p["measured"] for p in parts])
-        m = float(ms.mean())
-        se_binomial = sqrt(m * (1 - m) / (n_each * replicates))
-        se_runs = float(ms.std(ddof=1) / sqrt(replicates))
-        inside = dict(parts[0], measured=m, stderr=max(se_binomial, se_runs))
-        extra = {"replicates": replicates, "trajectories_per_run": n_each, "runs": [float(v) for v in ms],
-                 "stderr_binomial": se_binomial, "stderr_runs": se_runs}
+        # nearly the same noise to the trajectories in another order and repeats the count. The streams of the
+        # bias toward +mode are the first `replicates` children, as with one sign.
+        seeds = np.random.SeedSequence(int(rng.integers(2 ** 63))).spawn(replicates * len(signs))
+        n_each = max(1, n_sign // replicates)
+        for i, sg in enumerate(signs):
+            parts = [run(sg, D_law, np.random.default_rng(s), n_each)
+                     for s in seeds[i * replicates:(i + 1) * replicates]]
+            ms = np.array([p["measured"] for p in parts])
+            m = float(ms.mean())
+            se_binomial = sqrt(m * (1 - m) / (n_each * replicates))
+            se_runs = float(ms.std(ddof=1) / sqrt(replicates))
+            inside[sg] = dict(parts[0], measured=m, stderr=max(se_binomial, se_runs))
+            extra[sg] = {"replicates": replicates, "trajectories_per_run": n_each, "runs": [float(v) for v in ms],
+                         "stderr_binomial": se_binomial, "stderr_runs": se_runs}
     else:
-        inside = run(D_law, rng, n_traj)
-    own = run(real.noise, rng, n_traj)
-    # the equations simulated: drift at three probe states at the start, middle and end of the sweep, the bias and
-    # the noise of the test
+        for sg in signs:
+            inside[sg] = run(sg, D_law, rng, n_sign)
+    own = {sg: run(sg, real.noise, rng, n_sign) for sg in signs}
+    # the equations simulated: drift at three probe states at the start, middle and end of the sweep, the bias toward
+    # +mode and the noise of the test
     probes = real.carrier.wrap(qc[None] + 0.05 * an.base_length(real)
                                * np.random.default_rng(0).standard_normal((3, qc.size)))
     signature = np.concatenate([np.asarray(real.F(probes, **{real.control: path(t)}), float).ravel()
                                 for t in (0.0, t_half, 2 * t_half)]
-                               + [inside["h"] * np.asarray(real.write_force(probes, target, 1.0), float).ravel(),
+                               + [inside[1]["h"] * np.asarray(real.write_force(probes, target, 1.0), float).ravel(),
                                   [D_law]])
-    return {"rate": rate, "sweep_rate_control": float(rv), "predicted": float(target_p),
-            "measured": inside["measured"], "stderr": inside["stderr"], "gamma": inside["gamma"],
-            "h_along_mode": inside["h_along_mode"], "D_along_mode": inside["D_along_mode"],
-            "at_material_noise": own, "signature": [float(f"{v:.10g}") for v in signature], **extra}
+    first = inside[1]
+    out = {"rate": rate, "sweep_rate_control": float(rv), "predicted": float(target_p),
+           "measured": first["measured"], "stderr": first["stderr"], "gamma": first["gamma"],
+           "h_along_mode": first["h_along_mode"], "D_along_mode": first["D_along_mode"],
+           "at_material_noise": own[1], "signature": [float(f"{v:.10g}") for v in signature], **extra[1]}
+    if len(signs) > 1:
+        mean = lambda key, rows: float(np.mean([r[key] for r in rows]))
+        rows = [inside[sg] for sg in signs]
+        out.update(measured=mean("measured", rows),
+                   stderr=float(sqrt(sum(r["stderr"] ** 2 for r in rows)) / len(rows)),
+                   at_material_noise={**{k: v for k, v in own[1].items() if k != "h"},
+                                      "measured": mean("measured", list(own.values())),
+                                      "stderr": float(sqrt(sum(r["stderr"] ** 2 for r in own.values())) / len(own))},
+                   by_sign=[{"sign": sg, "measured": inside[sg]["measured"], "stderr": inside[sg]["stderr"],
+                             "h": inside[sg]["h"], "at_material_noise": {k: own[sg][k] for k in ("measured", "stderr")},
+                             **extra[sg]} for sg in signs],
+                   trajectories_per_sign=n_sign)
+        for k in ("runs", "stderr_binomial", "stderr_runs"):
+            out.pop(k, None)
+    return out
 
 
 def same_equations(signatures: List[Optional[List[float]]], rtol: float = 1e-4) -> List[int]:
