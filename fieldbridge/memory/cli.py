@@ -298,6 +298,22 @@ def _md_complete(spec_question: str, rep: Dict) -> str:
     return "\n".join(lines) + f"\n{BOUNDARY}\n"
 
 
+def cmd_audit(args) -> int:
+    """The specific ways the symmetric-write law of a specification could be wrong, each settled by its own test."""
+    import numpy as np
+    from . import audit, spec
+    real = spec.load(args.spec)
+    res = audit.audit_symmetric_write(real, np.random.default_rng(args.seed), n_traj=args.trajectories,
+                                      replicates=args.replicates, checks=args.checks)
+    report = {"command": "audit", **_provenance(real.spec), "question": real.spec.get("question"),
+              "settings": {"trajectories": args.trajectories, "replicates": args.replicates, "checks": args.checks},
+              **json.loads(json.dumps(res, default=lambda o: o.tolist() if hasattr(o, "tolist") else str(o)))}
+    _write(Path(args.out_dir), "audit", report, audit.markdown(real.spec.get("name", ""), res) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "verdict": res["verdict"],
+                      "checks": {x["check"]: x["status"] for x in res.get("ledger", [])}}, indent=2))
+    return 0
+
+
 def cmd_complete(args) -> int:
     import numpy as np
     from . import completion, spec
@@ -1166,6 +1182,14 @@ def add_parser(sub) -> None:
     common(p)
     p.add_argument("--free", required=True, help="Material parameter to tune.")
     p.set_defaults(func=cmd_design)
+    p = msub.add_parser("audit", help="Audit the symmetric-write law: each specific way it could be wrong (window of the "
+                                      "fit, one sign of the bias, the element's own noise, time step, few quanta, "
+                                      "published sign) settled by its own test.")
+    common(p)
+    p.add_argument("--trajectories", type=int, default=4000, help="Trajectories of each law measurement.")
+    p.add_argument("--replicates", type=int, default=4, help="Independent runs into which they are split.")
+    p.add_argument("--checks", nargs="+", default=None, help="Only these checks (by name).")
+    p.set_defaults(func=cmd_audit)
     p = msub.add_parser("complete", help="The law at an obstruction: keep what the obstruction names and derive the "
                                          "write law of the completed model from the sweep, with its certificate.")
     common(p)

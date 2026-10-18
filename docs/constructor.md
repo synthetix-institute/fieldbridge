@@ -99,6 +99,28 @@ The first set run this way is the thirty-one elements of quantum-computing hardw
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
 
+## Audit of a derived law
+
+`memory audit SPEC` derives the symmetric write of a specification with its law and then asks, for each assumption
+that the derivation does not test, what error would follow if the assumption failed, and runs the one test that
+decides it. Six checks are implemented: the class of the reduced equation read on half the window of the fit; the law
+measured with the bias toward either state, so that an offset of the write separates from the response; the noise
+ratio at the element's own noise, where the constant is c(Γ) of the noise-ratio law rather than π^(1/4); the law
+measured again with half the time step; for a semiclassical description of a quantum element, the number of quanta
+that separate the written states from the unwritten one (below ten the description is not reliable); and the signs of
+the control and of a second parameter at the write point against their published values. Each check ends as
+confirmed, qualified (the law holds under a stated condition, such as a range of sweep rates), refuted, not applicable
+or not testable. The verdict is "ready for review" when no error is confirmed: the law then goes to a person or to the
+literature, and the audit does not certify it.
+
+```bash
+python3 -B -m fieldbridge memory audit examples/memory/pitchfork.json --out-dir out/audit_pitchfork
+```
+
+On the canonical pitchfork the audit finds no error and one condition (π^(1/4) applies at its own noise for sweeps
+faster than 0.08); on the cusp of a driven Kerr resonator it confirms the offset of a straight sweep and that the
+written states are a few quanta apart; on a model written only at a negative rate it confirms the sign error.
+
 ## Changes of a specification and the closure of their pairs
 
 `memory changes SPEC` changes one part of a drift specification at a time and lets the write rules judge the result
