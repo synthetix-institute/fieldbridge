@@ -856,6 +856,8 @@ def cmd_predictions(args) -> int:
     for path in sorted(root.rglob("*.json") if args.recursive else root.glob("*.json")):
         try:
             spec = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(spec, dict) or "schema" not in spec:
+                continue   # not a specification (a survey or an index kept beside the models)
             if spec.get("kind") == "order":
                 from . import order as od
                 net = od.from_spec(spec)
