@@ -1,0 +1,49 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "driven single-ion Duffing oscillator (octupole anharmonicity)",
+ "field": "quantum computing hardware",
+ "question": "Does a sweep of the drive frequency remove a branch of the driven ion (threshold write), and with which law?",
+ "assumptions": [
+  "x'' + 2 mu x' + omega0^2 x + alpha x^3 = k cos(omega t) (Akerman 2010 eq. 1), rotating-wave amplitude equations",
+  "drive k = 3 mu^{3/2}/sqrt(a) units above the bistability threshold (about 2 for these values)"
+ ],
+ "provenance": {
+  "source": "Akerman, N., Kotler, S., Glickman, Y., Dallal, Y., Keselman, A., Ozeri, R., 'A single-ion nonlinear mechanical oscillator', Phys. Rev. A 82, 061402 (2010), arXiv:1003.1577 (full text)",
+  "kind": "classical image of census entry 47: Driven single-ion Duffing oscillator"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 10
+ },
+ "parameters": {
+  "a": 0.05,
+  "mu": 0.5,
+  "k": 3.0,
+  "Delta": 0.0
+ },
+ "drift": {
+  "x": "(a*(x**2 + y**2) - Delta)*y - mu*x",
+  "y": "-(a*(x**2 + y**2) - Delta)*x - k - mu*y"
+ },
+ "noise": 0.01,
+ "control": {
+  "name": "Delta",
+  "range": [
+   -2.0,
+   12.0
+  ]
+ },
+ "material": [
+  "k"
+ ],
+ "observable": "branch of the driven motion",
+ "closure": "laser cooling (damping mu)",
+ "census_entry": 47,
+ "carrier_file": "ion_duffing"
+}

@@ -1,0 +1,57 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the three Kerr parametric oscillators on an antiferromagnetic triangle carry, and with which laws?",
+  "provenance": {
+    "source": "Goto, Sci. Rep. 6, 21686 (2016); frustrated Ising triangle",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "three Kerr parametric oscillators on an antiferromagnetic triangle",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures of three modes",
+    "variables": [
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "x3",
+      "y3"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "K": 5.0,
+    "Delta": 0.5,
+    "kappa": 1.0,
+    "J": -0.5,
+    "p": 6.0
+  },
+  "drift": {
+    "x1": "(K*(x1**2 + y1**2) + p + Delta)*y1 - 0.5*kappa*x1 - J*(y2 + y3)",
+    "x2": "(K*(x2**2 + y2**2) + p + Delta)*y2 - 0.5*kappa*x2 - J*(y3 + y1)",
+    "x3": "(K*(x3**2 + y3**2) + p + Delta)*y3 - 0.5*kappa*x3 - J*(y1 + y2)",
+    "y1": "-(K*(x1**2 + y1**2) - p + Delta)*x1 - 0.5*kappa*y1 + J*(x2 + x3)",
+    "y2": "-(K*(x2**2 + y2**2) - p + Delta)*x2 - 0.5*kappa*y2 + J*(x3 + x1)",
+    "y3": "-(K*(x3**2 + y3**2) - p + Delta)*x3 - 0.5*kappa*y3 + J*(x1 + x2)"
+  },
+  "control": {
+    "name": "p",
+    "range": [
+      0.0,
+      12.0
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "loss kappa = 1 into a zero-temperature bath; the vacuum noise of the loss enters as D = kappa/8 per quadrature (truncated Wigner)",
+  "observable": "signs of x1, x2, x3 (Ising configuration of a frustrated triangle)",
+  "assumptions": [
+    "all-to-all beam-splitter coupling -J with J < 0 (antiferromagnetic)",
+    "identical modes"
+  ],
+  "material": [
+    "J"
+  ]
+}

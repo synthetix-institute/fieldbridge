@@ -1,0 +1,47 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "persistent-current flux qubit, double well tilted by the loop flux",
+ "field": "quantum computing hardware",
+ "question": "Does sweeping the loop flux remove one well of the flux qubit (threshold write), and with which law?",
+ "assumptions": [
+  "barrier fixed in fabrication (beta = 1.6); the loop flux eps tilts the double well"
+ ],
+ "provenance": {
+  "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Chiorescu, I., Nakamura, Y., Harmans, C. J. P. M., Mooij, J. E., 'Coherent quantum dynamics of a superconducting flux qubit', Science 299, 1869 (2003), arXiv:cond-mat/0305461 (full text)",
+  "kind": "classical image of census entry 2: Persistent-current (three-junction) flux qubit and capacitively shunted flux qubit"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "th, v",
+  "variables": [
+   "th",
+   "v"
+  ],
+  "scale": 3
+ },
+ "parameters": {
+  "beta": 1.6,
+  "gam": 0.5,
+  "eps": 0.0
+ },
+ "drift": {
+  "th": "v",
+  "v": "-gam*v - (th - eps) + beta*sin(th)"
+ },
+ "noise": 0.0009,
+ "control": {
+  "name": "eps",
+  "range": [
+   -1.5,
+   1.5
+  ]
+ },
+ "material": [
+  "beta"
+ ],
+ "observable": "sign of the persistent current",
+ "closure": "thermal bath",
+ "census_entry": 2,
+ "carrier_file": "flux_qubit_tilt"
+}

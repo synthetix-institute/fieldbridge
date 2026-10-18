@@ -1,0 +1,48 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "coherent Ising machine, three DOPOs on an antiferromagnetic triangle",
+ "field": "quantum computing hardware",
+ "question": "Which configuration does the pump ramp write on a frustrated triangle?",
+ "assumptions": [
+  "Yamamoto 2017 eq. 12 with antiferromagnetic couplings"
+ ],
+ "provenance": {
+  "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); McMahon, P. L. et al., 'A fully programmable 100-spin coherent Ising machine with all-to-all connections', Science 354, 614 (2016) (abstract only); Inagaki, T. et al., 'A coherent Ising machine for 2000-node optimization problems', Science 354, 603 (2016) (abstract only)",
+  "kind": "classical image of census entry 57: Measurement-feedback coherent Ising machine"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x1, x2, x3",
+  "variables": [
+   "x1",
+   "x2",
+   "x3"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "a": 0.0,
+  "e": 0.2
+ },
+ "drift": {
+  "x1": "a*x1 - x1**3 - e*(x2 + x3)",
+  "x2": "a*x2 - x2**3 - e*(x1 + x3)",
+  "x3": "a*x3 - x3**3 - e*(x1 + x2)"
+ },
+ "noise": 0.002,
+ "control": {
+  "name": "a",
+  "range": [
+   -1.0,
+   1.0
+  ]
+ },
+ "material": [
+  "e"
+ ],
+ "observable": "signs of the DOPO amplitudes",
+ "closure": "loss and pump depletion",
+ "census_entry": 57,
+ "carrier_file": "cim_triangle"
+}

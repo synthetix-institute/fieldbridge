@@ -1,0 +1,43 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the degenerate optical parametric oscillator with pump depletion (coherent Ising machine node) carry, and with which laws?",
+  "provenance": {
+    "source": "Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "quantum optics",
+  "kind": "equations",
+  "name": "degenerate optical parametric oscillator with pump depletion (coherent Ising machine node)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "signal amplitude s and pump amplitude q (real quadratures)",
+    "variables": [
+      "s",
+      "q"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "kp": 5.0,
+    "Ep": 1.0
+  },
+  "drift": {
+    "s": "-0.5*s + q*s",
+    "q": "-0.5*kp*q + Ep - 0.5*s**2"
+  },
+  "control": {
+    "name": "Ep",
+    "range": [
+      0.0,
+      3.0
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "signal loss 1 and pump loss kp; vacuum noise on the signal",
+  "observable": "sign of the signal amplitude",
+  "assumptions": [
+    "two coupled modes, real amplitudes",
+    "chi = 1"
+  ]
+}

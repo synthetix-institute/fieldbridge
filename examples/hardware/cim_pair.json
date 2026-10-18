@@ -1,0 +1,46 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "coherent Ising machine, two coupled DOPOs (ferromagnetic)",
+ "field": "quantum computing hardware",
+ "question": "Does ramping the pump write the configuration chosen by a weak Zeeman field?",
+ "assumptions": [
+  "x_j' = alpha x_j - x_j^3 + eps sum omega_jl x_l (Yamamoto 2017 eq. 12)"
+ ],
+ "provenance": {
+  "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); Marandi, A., Wang, Z., Takata, K., Byer, R. L., Yamamoto, Y., 'Network of time-multiplexed optical parametric oscillators as a coherent Ising machine', Nat. Photonics 8, 937 (2014), DOI 10.1038/nphoton.2014.249, arXiv:1407.2871 (ar5iv full text through a summarising fetch)",
+  "kind": "classical image of census entry 56: Coherent Ising machine with optical (delay-line) coupling"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x1, x2",
+  "variables": [
+   "x1",
+   "x2"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "a": 0.0,
+  "e": 0.2
+ },
+ "drift": {
+  "x1": "a*x1 - x1**3 + e*x2",
+  "x2": "a*x2 - x2**3 + e*x1"
+ },
+ "noise": 0.002,
+ "control": {
+  "name": "a",
+  "range": [
+   -1.0,
+   1.0
+  ]
+ },
+ "material": [
+  "e"
+ ],
+ "observable": "signs of the DOPO amplitudes",
+ "closure": "loss and pump depletion",
+ "census_entry": 56,
+ "carrier_file": "cim_pair"
+}

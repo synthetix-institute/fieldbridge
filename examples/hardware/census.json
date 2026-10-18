@@ -1,0 +1,481 @@
+{
+ "carriers": [
+  {
+   "carrier": "rfsquid_annealer",
+   "census_entry": 3,
+   "name": "rf-SQUID annealer qubit (CCJJ), classical phase particle"
+  },
+  {
+   "carrier": "rfsquid_pair",
+   "census_entry": 3,
+   "name": "two inductively coupled rf-SQUID annealer qubits (antiferromagnetic)"
+  },
+  {
+   "carrier": "rfsquid_triangle",
+   "census_entry": 3,
+   "name": "three rf-SQUID annealer qubits on an antiferromagnetic triangle"
+  },
+  {
+   "carrier": "qfp_latch",
+   "census_entry": 15,
+   "name": "quantum flux parametron (QFP) latch"
+  },
+  {
+   "carrier": "phase_qubit_rfsquid",
+   "census_entry": 13,
+   "name": "flux-biased rf-SQUID phase qubit (and Josephson photomultiplier)"
+  },
+  {
+   "carrier": "flux_qubit_tilt",
+   "census_entry": 2,
+   "name": "persistent-current flux qubit, double well tilted by the loop flux"
+  },
+  {
+   "carrier": "fluxonium",
+   "census_entry": 1,
+   "name": "fluxonium (superinductance and junction), classical phase particle"
+  },
+  {
+   "carrier": "bright_state_readout",
+   "census_entry": 11,
+   "name": "driven Jaynes-Cummings readout (bright-state, punch-out)"
+  },
+  {
+   "carrier": "pplo_readout",
+   "census_entry": 23,
+   "name": "Josephson parametric phase-locked oscillator readout (Lin 2014)"
+  },
+  {
+   "carrier": "po_amplitude_readout",
+   "census_entry": 24,
+   "name": "Josephson parametric oscillator readout, amplitude encoded (Krantz 2016)"
+  },
+  {
+   "carrier": "snail_po",
+   "census_entry": 20,
+   "name": "SNAIL parametric oscillator (three-wave mixing, small Kerr)"
+  },
+  {
+   "carrier": "jpc_nondegenerate",
+   "census_entry": 26,
+   "name": "non-degenerate parametric oscillator (Josephson parametric converter above threshold)"
+  },
+  {
+   "carrier": "transmon_driven",
+   "census_entry": 0,
+   "name": "driven transmon (Duffing image)"
+  },
+  {
+   "carrier": "ion_phonon_laser",
+   "census_entry": 46,
+   "name": "trapped-ion phonon laser (Van der Pol image) with injection"
+  },
+  {
+   "carrier": "ion_duffing",
+   "census_entry": 47,
+   "name": "driven single-ion Duffing oscillator (octupole anharmonicity)"
+  },
+  {
+   "carrier": "rydberg_bistability",
+   "census_entry": 50,
+   "name": "driven-dissipative Rydberg ensemble (mean-field optical bistability)"
+  },
+  {
+   "carrier": "optomech_bistable",
+   "census_entry": 58,
+   "name": "cavity optomechanical element, static bistability"
+  },
+  {
+   "carrier": "optomech_selfosc",
+   "census_entry": 58,
+   "name": "cavity optomechanical element, self-sustained oscillation"
+  },
+  {
+   "carrier": "nuclear_bath",
+   "census_entry": 37,
+   "name": "dynamically polarised nuclear-spin bath (Overhauser feedback, rate equation)"
+  },
+  {
+   "carrier": "cim_pair",
+   "census_entry": 56,
+   "name": "coherent Ising machine, two coupled DOPOs (ferromagnetic)"
+  },
+  {
+   "carrier": "cim_triangle",
+   "census_entry": 57,
+   "name": "coherent Ising machine, three DOPOs on an antiferromagnetic triangle"
+  },
+  {
+   "carrier": "magnon_kerr",
+   "census_entry": null,
+   "name": "cavity magnon polariton with magnon Kerr nonlinearity (YIG sphere in a microwave cavity)"
+  },
+  {
+   "carrier": "spin_ensemble_cavity",
+   "census_entry": null,
+   "name": "spin ensemble strongly coupled to a microwave cavity (driven Tavis-Cummings, absorptive bistability)"
+  }
+ ],
+ "census": [
+  {
+   "entry": 0,
+   "name": "Transmon (fixed-frequency and flux-tunable SQUID transmon)",
+   "classical_write": "partly",
+   "status": "carrier: transmon_driven"
+  },
+  {
+   "entry": 1,
+   "name": "Fluxonium",
+   "classical_write": "partly",
+   "status": "carrier: fluxonium"
+  },
+  {
+   "entry": 2,
+   "name": "Persistent-current (three-junction) flux qubit and capacitively shunted flux qubit",
+   "classical_write": "partly",
+   "status": "carrier: flux_qubit_tilt"
+  },
+  {
+   "entry": 3,
+   "name": "rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit",
+   "classical_write": "yes",
+   "status": "carrier: rfsquid_annealer, rfsquid_pair, rfsquid_triangle"
+  },
+  {
+   "entry": 4,
+   "name": "Cooper-pair box (charge qubit, including the quantronium)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 5,
+   "name": "0-pi qubit",
+   "classical_write": "partly",
+   "status": "0-pi qubit: no swept control in operation"
+  },
+  {
+   "entry": 6,
+   "name": "Gatemon (gate-tunable transmon with a semiconductor weak link)",
+   "classical_write": "partly",
+   "status": "gatemon: transmon Hamiltonian (transmon_driven carrier)"
+  },
+  {
+   "entry": 7,
+   "name": "Flux-tunable transmon coupler",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 8,
+   "name": "gmon inductive tunable coupler",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 9,
+   "name": "rf-SQUID / CJJ inductive coupler in annealing processors",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 10,
+   "name": "Dispersive readout resonator (linear regime, n << n_crit)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 11,
+   "name": "Readout resonator at high power: bright-state (punch-out) readout and Jaynes-Cummings bistability",
+   "classical_write": "yes",
+   "status": "carrier: bright_state_readout"
+  },
+  {
+   "entry": 12,
+   "name": "Driven transmon-resonator beyond the dispersive limit: transmon ionization and measurement-induced state transitions",
+   "classical_write": "partly",
+   "status": "transmon ionization: the classical image of the driven transmon-resonator is chaotic (Cohen 2023); no fixed-point write"
+  },
+  {
+   "entry": 13,
+   "name": "Phase qubit (current-biased Josephson junction / flux-biased rf-SQUID) with tunnelling measurement",
+   "classical_write": "yes",
+   "status": "carrier: phase_qubit_rfsquid"
+  },
+  {
+   "entry": 14,
+   "name": "Hysteretic dc-SQUID switching-current readout (flux-qubit readout)",
+   "classical_write": "yes",
+   "status": "dc-SQUID switching readout: the voltage state is a running (periodic) solution, outside the fixed-point write"
+  },
+  {
+   "entry": 15,
+   "name": "Quantum flux parametron (QFP) latch in annealing processors",
+   "classical_write": "yes",
+   "status": "carrier: qfp_latch"
+  },
+  {
+   "entry": 16,
+   "name": "Josephson photomultiplier (JPM) microwave photon counter for qubit readout",
+   "classical_write": "yes",
+   "status": "Josephson photomultiplier: same classical image as the flux-biased rf-SQUID phase qubit (phase_qubit_rfsquid)"
+  },
+  {
+   "entry": 17,
+   "name": "Josephson bifurcation amplifier (JBA) and cavity bifurcation amplifier (CBA/CJBA): latching qubit readout",
+   "classical_write": "yes",
+   "status": "JBA: jba_readout carrier"
+  },
+  {
+   "entry": 18,
+   "name": "Current-pumped (four-wave-mixing) Josephson parametric amplifier",
+   "classical_write": "partly",
+   "status": "current-pumped JPA: operated below threshold (parametric_amplifier carrier)"
+  },
+  {
+   "entry": 19,
+   "name": "Flux-pumped (three-wave-mixing) Josephson parametric amplifier",
+   "classical_write": "partly",
+   "status": "flux-pumped JPA: operated below threshold (parametric_amplifier carrier)"
+  },
+  {
+   "entry": 20,
+   "name": "SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)",
+   "classical_write": "partly",
+   "status": "carrier: snail_po"
+  },
+  {
+   "entry": 21,
+   "name": "Josephson travelling-wave parametric amplifier (JTWPA)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 22,
+   "name": "Kinetic-inductance travelling-wave parametric amplifier (KI-TWPA)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 23,
+   "name": "Josephson parametric phase-locked oscillator (PPLO) readout, phase-encoded",
+   "classical_write": "yes",
+   "status": "carrier: pplo_readout"
+  },
+  {
+   "entry": 24,
+   "name": "Josephson parametric oscillator readout, amplitude-encoded (qubit coupled directly to the JPO)",
+   "classical_write": "yes",
+   "status": "carrier: po_amplitude_readout"
+  },
+  {
+   "entry": 25,
+   "name": "Kerr parametric oscillator (KPO, parametron) as an annealing and Ising element",
+   "classical_write": "yes",
+   "status": "KPO annealer: kerr_cat_kpo, kpo_pair, kpo_triangle carriers"
+  },
+  {
+   "entry": 26,
+   "name": "Josephson parametric converter (JPC) on a Josephson ring modulator: phase-preserving amplifier",
+   "classical_write": "partly",
+   "status": "carrier: jpc_nondegenerate"
+  },
+  {
+   "entry": 27,
+   "name": "Impedance-matched (strongly coupled) Josephson parametric amplifier (IMPA)",
+   "classical_write": "partly",
+   "status": "impedance-matched JPA: operated below threshold (parametric_amplifier carrier)"
+  },
+  {
+   "entry": 28,
+   "name": "Kerr-cat qubit (Kerr parametric oscillator with a two-photon squeezing drive)",
+   "classical_write": "yes",
+   "status": "Kerr cat: kerr_cat_kpo carrier"
+  },
+  {
+   "entry": 29,
+   "name": "Dissipative cat qubit (engineered two-photon loss through a buffer mode)",
+   "classical_write": "yes",
+   "status": "dissipative cat: dissipative_cat carrier"
+  },
+  {
+   "entry": 30,
+   "name": "Squeezed cat qubit",
+   "classical_write": "partly",
+   "status": "squeezed cat: the dissipative cat in the squeezed frame (dissipative_cat carrier); no ramp in the sources"
+  },
+  {
+   "entry": 31,
+   "name": "GKP (grid-state) qubit in a storage cavity",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 32,
+   "name": "Binomial-code qubit in a storage cavity",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 33,
+   "name": "Dual-rail qubit (cavity dual rail and transmon dual rail, erasure qubits)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 34,
+   "name": "Storage-cavity memory and four-component cat code with a dispersive transmon",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 35,
+   "name": "Single-electron spin qubit in a gate-defined quantum dot (Loss-DiVincenzo), with Elzerman energy-selective readout",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 36,
+   "name": "Singlet-triplet (S-T0) qubit in a double quantum dot, with Pauli-spin-blockade readout",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 37,
+   "name": "Dynamically polarised nuclear-spin bath in GaAs dots (Overhauser-field feedback)",
+   "classical_write": "yes",
+   "status": "carrier: nuclear_bath"
+  },
+  {
+   "entry": 38,
+   "name": "Exchange-only qubit (three quantum dots)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 39,
+   "name": "Charge sensors for spin readout: quantum point contact, single-electron transistor/sensor dot, rf reflectometry and gate-based dispersive sensing",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 40,
+   "name": "Latching (enhanced) spin-to-charge readout in double and triple dots",
+   "classical_write": "partly",
+   "status": "latching spin readout: a rate model between charge configurations, no mean-field bistability"
+  },
+  {
+   "entry": 41,
+   "name": "Donor spin qubits in silicon (31P electron and nuclear spins) with SET readout",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 42,
+   "name": "NV centre in diamond: ground-state spin qubit with optical initialisation and fluorescence readout",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 43,
+   "name": "Trapped-ion qubit (hyperfine, Zeeman, optical, fine-structure) with optical pumping and fluorescence readout",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 44,
+   "name": "Trapped-ion motional modes as a bosonic bus and the Molmer-Sorensen / geometric-phase gate",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 45,
+   "name": "Parametric amplification of trapped-ion motion",
+   "classical_write": "partly",
+   "status": "parametric amplification of ion motion: linear, no threshold (parametric_amplifier carrier)"
+  },
+  {
+   "entry": 46,
+   "name": "Trapped-ion phonon laser and its injection locking",
+   "classical_write": "yes",
+   "status": "carrier: ion_phonon_laser"
+  },
+  {
+   "entry": 47,
+   "name": "Driven single-ion Duffing oscillator",
+   "classical_write": "yes",
+   "status": "carrier: ion_duffing"
+  },
+  {
+   "entry": 48,
+   "name": "Rydberg atom array under adiabatic detuning sweeps across ordering transitions",
+   "classical_write": "partly",
+   "status": "Rydberg array under adiabatic sweeps: closed many-body Hamiltonian; the sources give no mean-field image"
+  },
+  {
+   "entry": 49,
+   "name": "Rydberg-blockade gate between neutral-atom hyperfine qubits",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 50,
+   "name": "Driven-dissipative Rydberg ensemble (optical bistability of a Rydberg gas)",
+   "classical_write": "yes",
+   "status": "carrier: rydberg_bistability"
+  },
+  {
+   "entry": 51,
+   "name": "Photonic qubits: heralded single-photon sources (SPDC/SFWM) and quantum-dot sources",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 52,
+   "name": "Linear-optical gates with measurement-induced nonlinearity (KLM-type)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 53,
+   "name": "Superconducting nanowire single-photon detector (SNSPD)",
+   "classical_write": "yes",
+   "status": "SNSPD: the census sources give no equations for the electrothermal latch (Kerman 2009 abstract only)"
+  },
+  {
+   "entry": 54,
+   "name": "Continuous-variable photonic cluster states and optical GKP states (squeezed light from OPOs below threshold)",
+   "classical_write": "no",
+   "status": "no classical write"
+  },
+  {
+   "entry": 55,
+   "name": "Degenerate optical parametric oscillator (DOPO) above threshold",
+   "classical_write": "yes",
+   "status": "DOPO above threshold: cim_dopo carrier (pump depletion)"
+  },
+  {
+   "entry": 56,
+   "name": "Coherent Ising machine with optical (delay-line) coupling",
+   "classical_write": "yes",
+   "status": "carrier: cim_pair"
+  },
+  {
+   "entry": 57,
+   "name": "Measurement-feedback coherent Ising machine",
+   "classical_write": "yes",
+   "status": "carrier: cim_triangle"
+  },
+  {
+   "entry": 58,
+   "name": "Cavity optomechanical element: static radiation-pressure bistability and self-sustained oscillation",
+   "classical_write": "yes",
+   "status": "carrier: optomech_bistable, optomech_selfosc"
+  },
+  {
+   "entry": 59,
+   "name": "Optomechanical transducer (linearised beam-splitter / two-mode-squeezing coupling)",
+   "classical_write": "no",
+   "status": "no classical write"
+  }
+ ]
+}

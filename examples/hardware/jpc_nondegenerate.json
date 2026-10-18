@@ -1,0 +1,55 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "non-degenerate parametric oscillator (Josephson parametric converter above threshold)",
+ "field": "quantum computing hardware",
+ "question": "Above the threshold of the non-degenerate parametric process, is a state written, or does the phase stay free?",
+ "assumptions": [
+  "a' = -ka a/2 + chi c b*, b' = -kb b/2 + chi c a*, c' = -kc c/2 + E - chi a b (three-wave mixing g3 a b c^dag + h.c., Roy and Devoret eq. 97, resonant frame)"
+ ],
+ "provenance": {
+  "source": "Bergeal, N., Schackert, F., Metcalfe, M., Vijay, R., Manucharyan, V. E., Frunzio, L., Prober, D. E., Schoelkopf, R. J., Girvin, S. M., Devoret, M. H., 'Phase-preserving amplification near the quantum limit with a Josephson ring modulator', Nature 465, 64 (2010), arXiv:0912.3407 (main text; DOI 10.1038/nature09035, volume and page checked against Crossref); Roy, A., Devoret, M., 'Introduction to quantum-limited parametric amplification of quantum signals with Josephson circuits', C. R. Physique 17, 740 (2016), arXiv:1605.00539 (full text, Secs. 4-5)",
+  "kind": "classical image of census entry 26: Josephson parametric converter (JPC) on a Josephson ring modulator: phase-preserving amplifier"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "ax, ay, bx, by, cx, cy",
+  "variables": [
+   "ax",
+   "ay",
+   "bx",
+   "by",
+   "cx",
+   "cy"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "ka": 1.0,
+  "kb": 1.0,
+  "kc": 4.0,
+  "chi": 1.0,
+  "Ein": 0.5
+ },
+ "drift": {
+  "ax": "-0.5*ka*ax + chi*(cx*bx + cy*by)",
+  "ay": "-0.5*ka*ay + chi*(cy*bx - cx*by)",
+  "bx": "-0.5*kb*bx + chi*(cx*ax + cy*ay)",
+  "by": "-0.5*kb*by + chi*(cy*ax - cx*ay)",
+  "cx": "-0.5*kc*cx + Ein - chi*(ax*bx - ay*by)",
+  "cy": "-0.5*kc*cy - chi*(ax*by + ay*bx)"
+ },
+ "noise": 0.125,
+ "control": {
+  "name": "Ein",
+  "range": [
+   0.0,
+   3.0
+  ]
+ },
+ "material": [],
+ "observable": "phases of the signal and idler",
+ "closure": "losses ka, kb, kc",
+ "census_entry": 26,
+ "carrier_file": "jpc_nondegenerate"
+}

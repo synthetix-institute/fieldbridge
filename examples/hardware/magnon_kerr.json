@@ -1,0 +1,57 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "cavity magnon polariton with magnon Kerr nonlinearity (YIG sphere in a microwave cavity)",
+ "field": "quantum computing hardware (cavity magnonics)",
+ "question": "Does the drive power cross a fold of the magnon-Kerr bistability (threshold write), and can a second parameter unfold it into a symmetric write?",
+ "assumptions": [
+  "H = Delta_c a^dag a + Delta_m b^dag b + g(a^dag b + a b^dag) + K b^dag b b^dag b + i eps (b^dag - b) (Wang et al., Phys. Rev. Lett. 120, 057202 (2018), driven magnon mode); units of the cavity loss",
+  "cavity detuned (Dc = 10) so that it does not add damping to the magnon mode; with a resonant cavity the added damping g^2/(kc/2) removes the bistability",
+  "mean field, vacuum noise kappa/8; class found in the corpus census (245 quantum-computing abstracts on magnon elements), not in the review census"
+ ],
+ "provenance": {
+  "source": "Wang, Zhang, Shen, Zhang, Tang, You, Phys. Rev. Lett. 120, 057202 (2018)",
+  "kind": "classical image of a corpus-census class"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "ax, ay, bx, by",
+  "variables": [
+   "ax",
+   "ay",
+   "bx",
+   "by"
+  ],
+  "scale": 10
+ },
+ "parameters": {
+  "kc": 1.0,
+  "km": 0.5,
+  "Dc": 10.0,
+  "Dm": -3.0,
+  "g": 2.0,
+  "K": 0.1,
+  "eps": 2.0
+ },
+ "drift": {
+  "ax": "-0.5*kc*ax + Dc*ay + g*by",
+  "ay": "-0.5*kc*ay - Dc*ax - g*bx",
+  "bx": "-0.5*km*bx + (Dm + 2*K*(bx**2 + by**2))*by + g*ay + eps",
+  "by": "-0.5*km*by - (Dm + 2*K*(bx**2 + by**2))*bx - g*ax"
+ },
+ "noise": 0.125,
+ "control": {
+  "name": "eps",
+  "range": [
+   0.0,
+   10.0
+  ]
+ },
+ "material": [
+  "Dm"
+ ],
+ "observable": "magnon amplitude (low or high branch)",
+ "closure": "cavity loss kc, magnon damping km",
+ "census_entry": null,
+ "carrier_file": "magnon_kerr"
+}

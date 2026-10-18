@@ -1,0 +1,48 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser) carry, and with which laws?",
+  "provenance": {
+    "source": "Lee & Sadeghpour, PRL 111, 234101 (2013); Walter, Nunnenkamp & Bruder, PRL 112, 094102 (2014)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "quantum optics and trapped ions",
+  "kind": "equations",
+  "name": "self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures of the oscillator",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "g1": 4.0,
+    "g2": 0.2,
+    "Delta": 0.3,
+    "F": 0.2
+  },
+  "drift": {
+    "x": "0.5*g1*x - g2*(x**2 + y**2)*x + Delta*y",
+    "y": "0.5*g1*y - g2*(x**2 + y**2)*y - Delta*x - F"
+  },
+  "control": {
+    "name": "F",
+    "range": [
+      0.0,
+      2.0
+    ]
+  },
+  "noise": 0.5,
+  "dt": 0.005,
+  "closure": "gain g1 D[a\u2020] and two-quantum loss g2 D[a^2]; noise of the gain approximated as additive, D ~ g1/8",
+  "observable": "phase of the oscillation relative to the injected tone",
+  "assumptions": [
+    "mean field of the quantum van der Pol oscillator",
+    "frame of the injected tone, detuning Delta"
+  ],
+  "material": [
+    "Delta"
+  ]
+}

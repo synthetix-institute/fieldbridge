@@ -1,0 +1,44 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "dynamically polarised nuclear-spin bath (Overhauser feedback, rate equation)",
+ "field": "quantum computing hardware",
+ "question": "Does sweeping the ESR detuning lock the Overhauser field and lose it at a fold (threshold write)?",
+ "assumptions": [
+  "dx/dt = Gamma_p(x) - x/tau_n with resonant pumping (Vink 2009 as summarised in the census; the Lorentzian form is authored: the census records no equation numbers)"
+ ],
+ "provenance": {
+  "source": "Vink, I. T., Nowack, K. C., Koppens, F. H. L., Danon, J., Nazarov, Yu. V., Vandersypen, L. M. K., 'Locking electron spins into magnetic resonance by electron-nuclear feedback', Nat. Phys. 5, 764 (2009), arXiv:0902.2659 (full text); Gullans, M., Krich, J. J., Taylor, J. M., Bluhm, H., Halperin, B. I., Marcus, C. M., Stopa, M., Yacoby, A., Lukin, M. D., 'Dynamic nuclear polarization in double quantum dots', Phys. Rev. Lett. 104, 226807 (2010), arXiv:1003.4508 (abstract only); Bluhm, H., Foletti, S., Mahalu, D., Umansky, V., Yacoby, A., 'Enhancing the coherence of a spin qubit by operating it as a feedback loop that controls its nuclear spin bath', Phys. Rev. Lett. 105, 216803 (2010), arXiv:1003.4031 (abstract only); Burkard, G., Ladd, T. D., Pan, A., Nichol, J. M., Petta, J. R., 'Semiconductor spin qubits', Rev. Mod. Phys. 95, 025003 (2023), arXiv:2112.08863 (full text of the arXiv HTML and ar5iv renderings, read through summarising fetches in 100k-character windows; eqs. 1, 2, 4, 5, 22 and the Pauli-blockade window quoted verbatim in this session; equation numbers are those of the arXiv rendering)",
+  "kind": "classical image of census entry 37: Dynamically polarised nuclear-spin bath in GaAs dots (Overhauser-field feedback)"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x",
+  "variables": [
+   "x"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "p": 6.0,
+  "d": 0.0
+ },
+ "drift": {
+  "x": "p/(1 + (d - x)**2) - x"
+ },
+ "noise": 0.001,
+ "control": {
+  "name": "d",
+  "range": [
+   -2.0,
+   12.0
+  ]
+ },
+ "material": [
+  "p"
+ ],
+ "observable": "nuclear polarisation (Overhauser field)",
+ "closure": "nuclear relaxation",
+ "census_entry": 37,
+ "carrier_file": "nuclear_bath"
+}

@@ -1,0 +1,44 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the parametric amplifier below threshold carry, and with which laws?",
+  "provenance": {
+    "source": "Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "parametric amplifier below threshold",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures of the mode",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "p": 0.3,
+    "kappa": 1.0,
+    "K": 0.01
+  },
+  "drift": {
+    "x": "(p + K*(x**2 + y**2))*y - 0.5*kappa*x",
+    "y": "(p - K*(x**2 + y**2))*x - 0.5*kappa*y"
+  },
+  "control": {
+    "name": "p",
+    "range": [
+      0.0,
+      0.45
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "loss kappa = 1 into a zero-temperature bath; the vacuum noise of the loss enters as D = kappa/8 per quadrature (truncated Wigner)",
+  "observable": "amplified quadrature x",
+  "assumptions": [
+    "below threshold p < kappa/2",
+    "weak Kerr"
+  ]
+}

@@ -12,6 +12,7 @@
   gallery                      every example: cards, figures and an HTML gallery (index.html)
   loops                        loops of genes, spins and rotors: holonomy against simulation
   networks                     random networks of genes, spins and rotors: structure against simulation
+  changes  SPEC                changes of a model and pairs of changes, judged by the symmetric and threshold writes
   codiscover [SPEC ...]        one mechanism (--target symmetric-write, threshold-write or phase-locking) derived in
                                realizations from different fields: derivations, obstructions, invariants (default:
                                every example)
@@ -324,6 +325,34 @@ def cmd_complete(args) -> int:
          "certified": [L.get("certified") for L in ([e["law"]] if "law" in e else
                                                      [u.get("law", {}) for u in e.get("unfoldings", [])])]}
         for e in rep["write_points"]]}, indent=2))
+    return 0
+
+
+def cmd_changes(args) -> int:
+    import sys
+    from . import changes, spec
+    real = spec.load(args.spec)
+    res = changes.changes(real.spec, budget=args.budget, seed=args.seed, pairs=args.pairs, first=args.first,
+                          kinds=tuple(args.kinds), only=args.only,
+                          progress=(lambda m: print(m, file=sys.stderr, flush=True)) if args.verbose else None)
+    out = Path(args.out_dir)
+    if args.save:
+        d = out / "changed"
+        d.mkdir(parents=True, exist_ok=True)
+        rows = [r for r in res["singles"] if r["step"]] + [p for p in res.get("pairs", []) if not p["closes"]]
+        for i, r in enumerate(rows):
+            (d / f"change_{i:03d}.json").write_text(json.dumps(r["spec"], indent=2) + "\n", encoding="utf-8")
+    for r in res["singles"]:
+        r.pop("spec", None)
+    for p in res.get("pairs", []):
+        p.pop("spec", None)
+    report = {"command": "changes", **_provenance(real.spec), "question": real.spec.get("question"),
+              "settings": {"budget": args.budget, "pairs": args.pairs, "first": args.first, "kinds": args.kinds,
+                           "only": args.only}, **res}
+    _write(out, "changes", report, changes.markdown(real.spec.get("name", ""), res) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "steps": res["steps"],
+                      "reached": sorted({t for r in res["singles"] for t in r["reaches"]}),
+                      "pairs": len(res.get("pairs", [])), "open": res.get("open")}, indent=2))
     return 0
 
 
@@ -820,6 +849,20 @@ def add_parser(sub) -> None:
     p.add_argument("--trajectories", type=int, default=2000, help="Trajectories of the certificate per bias.")
     p.add_argument("--no-certificate", action="store_true", help="Derive the law without the full simulation.")
     p.set_defaults(func=cmd_complete)
+    p = msub.add_parser("changes", help="Changes of a model (remove a term, make another parameter the control, extend "
+                                        "the range of the control) and pairs of changes, each judged by the symmetric "
+                                        "and threshold writes; open pairs do what neither change does alone.")
+    common(p)
+    p.add_argument("--pairs", action="store_true", help="Also judge pairs of changes and their closure.")
+    p.add_argument("--first", type=int, default=8, help="First changes of the pairs (steps first).")
+    p.add_argument("--only", nargs="+", default=None,
+                   help="Restrict the first changes of the pairs to those whose description contains one of these.")
+    p.add_argument("--kinds", nargs="+", default=["remove", "control", "range"], choices=["remove", "control", "range"],
+                   help="Kinds of change.")
+    p.add_argument("--budget", type=int, default=60, help="Time limit of each derivation in seconds.")
+    p.add_argument("--save", action="store_true", help="Write the changed specifications of steps and open pairs.")
+    p.add_argument("--verbose", action="store_true", help="Report each change as it is judged.")
+    p.set_defaults(func=cmd_changes)
     p = msub.add_parser("phase", help="Memory in the phase of an oscillating realization: phase response, retention, writing.")
     common(p)
     p.add_argument("--kick", type=float, default=2.0, help="Kick on the first coordinate for the response curve.")

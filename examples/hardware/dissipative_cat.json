@@ -1,0 +1,44 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the dissipative cat qubit (two-photon loss) carry, and with which laws?",
+  "provenance": {
+    "source": "Mirrahimi et al., New J. Phys. 16, 045014 (2014); Lescanne et al., Nat. Phys. 16, 509 (2020)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "dissipative cat qubit (two-photon loss)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures x, y of the mode amplitude",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "kappa2": 1.0,
+    "kappa1": 0.05,
+    "A": 3.0
+  },
+  "drift": {
+    "x": "-kappa2*x*((x**2 + y**2) - A) - 0.5*kappa1*x",
+    "y": "-kappa2*y*((x**2 + y**2) + A) - 0.5*kappa1*y"
+  },
+  "control": {
+    "name": "A",
+    "range": [
+      0.0,
+      6.0
+    ]
+  },
+  "noise": 0.1,
+  "dt": 0.005,
+  "closure": "engineered two-photon loss kappa2 D[a^2 - A] and single-photon loss kappa1; noise of both channels approximated as additive, D ~ (kappa1 + kappa2 A)/8 at A ~ 3",
+  "observable": "sign of the quadrature x",
+  "assumptions": [
+    "mean field of the two-photon dissipation",
+    "additive noise approximation"
+  ]
+}

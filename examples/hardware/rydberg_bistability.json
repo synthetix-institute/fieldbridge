@@ -1,0 +1,51 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "driven-dissipative Rydberg ensemble (mean-field optical bistability)",
+ "field": "quantum computing hardware",
+ "question": "Does a detuning sweep of the Rydberg ensemble cross a fold of its mean-field bistability (threshold write)?",
+ "assumptions": [
+  "Bloch equations with Delta -> Delta + V rho_rr (Carr 2013 eqs. 1a,b; Marcuzzi 2014 eqs. 3-5), V/Gam = -11 (Carr)"
+ ],
+ "provenance": {
+  "source": "Carr, C., Ritter, R., Wade, C. G., Adams, C. S., Weatherill, K. J., 'Nonequilibrium phase transition in a dilute Rydberg ensemble', Phys. Rev. Lett. 111, 113901 (2013), arXiv:1302.6621 (full text of arXiv v3; the arXiv abstract page lists the title 'Cooperative non-equilibrium phase transition in a dilute Rydberg ensemble'; journal title checked against Crossref); Marcuzzi, M., Levi, E., Diehl, S., Garrahan, J. P., Lesanovsky, I., 'Universal nonequilibrium properties of dissipative Rydberg gases', Phys. Rev. Lett. 113, 210401 (2014), arXiv:1406.1015 (full text); Saffman, M., Walker, T. G., Molmer, K., 'Quantum information with Rydberg atoms', Rev. Mod. Phys. 82, 2313 (2010), arXiv:0909.4777 (full text)",
+  "kind": "classical image of census entry 50: Driven-dissipative Rydberg ensemble (optical bistability of a Rydberg gas)"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "u, v, w",
+  "variables": [
+   "u",
+   "v",
+   "w"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "Gam": 1.0,
+  "K": 0.0,
+  "Om": 1.5,
+  "V": -11.0,
+  "Delta": 0.0
+ },
+ "drift": {
+  "u": "-(0.5*Gam + K)*u - (Delta + V*0.5*(1 + w))*v",
+  "v": "-(0.5*Gam + K)*v + (Delta + V*0.5*(1 + w))*u - 2*Om*w",
+  "w": "-Gam*(w + 1) + 2*Om*v"
+ },
+ "noise": 0.001,
+ "control": {
+  "name": "Delta",
+  "range": [
+   -15.0,
+   5.0
+  ]
+ },
+ "material": [
+  "Om"
+ ],
+ "observable": "Rydberg population",
+ "closure": "decay Gam, dephasing K",
+ "census_entry": 50,
+ "carrier_file": "rydberg_bistability"
+}

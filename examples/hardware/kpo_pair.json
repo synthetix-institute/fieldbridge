@@ -1,0 +1,53 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the two coupled Kerr parametric oscillators (two cat qubits or a two-spin annealer) carry, and with which laws?",
+  "provenance": {
+    "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., Nat. Commun. 8, 15785 (2017)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "two coupled Kerr parametric oscillators (two cat qubits or a two-spin annealer)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures of two modes",
+    "variables": [
+      "x1",
+      "y1",
+      "x2",
+      "y2"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "K": 5.0,
+    "Delta": 0.5,
+    "kappa": 1.0,
+    "J": 0.5,
+    "p": 6.0
+  },
+  "drift": {
+    "x1": "(K*(x1**2 + y1**2) + p + Delta)*y1 - 0.5*kappa*x1 - J*y2",
+    "y1": "-(K*(x1**2 + y1**2) - p + Delta)*x1 - 0.5*kappa*y1 + J*x2",
+    "x2": "(K*(x2**2 + y2**2) + p + Delta)*y2 - 0.5*kappa*x2 - J*y1",
+    "y2": "-(K*(x2**2 + y2**2) - p + Delta)*x2 - 0.5*kappa*y2 + J*x1"
+  },
+  "control": {
+    "name": "p",
+    "range": [
+      0.0,
+      12.0
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "loss kappa = 1 into a zero-temperature bath; the vacuum noise of the loss enters as D = kappa/8 per quadrature (truncated Wigner)",
+  "observable": "signs of x1 and x2 (Ising configuration)",
+  "assumptions": [
+    "beam-splitter coupling -J (a1\u2020a2 + a2\u2020a1)",
+    "identical modes"
+  ],
+  "material": [
+    "J"
+  ]
+}
