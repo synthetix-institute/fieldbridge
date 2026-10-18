@@ -54,9 +54,6 @@ LINEAR_FRACTION = 0.2       # the largest size of the mapped deviation (3 sigma)
 DEVIATION_SIGMA = 4.0       # law and certificate differ when a probability differs by more than this many errors ...
 DEVIATION_FLOOR = 0.02      # ... and by more than this absolute amount (the law has its own sampling and time-step
                             # error; near-certain outcomes have binomial errors far below it)
-CUSP_ASYMMETRY_KEPT = 0.5   # a sweep through a found cusp is refused only when the cancellation leaves more
-                            # than this fraction of the asymmetry measured at the fold (on the seven cusps of
-                            # the quantum-computing elements it leaves 0.04 to 0.30)
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -555,21 +552,21 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
                     if c.get("success"):
                         path = construct.along_path(real, {real.control: c["control"], second: c["value"]},
                                                     c["direction"])
-                        nfp = an.normal_form(path, np.asarray(c["state"]), "t", 0.0)
-                        before, after = float(nf.get("asymmetry", 1.0)), float(nfp.get("asymmetry", 0.0))
+                        # the sweep is read on a window narrowed until the quartic term of the drift no longer appears
+                        # as a quadratic one (construct.sweep_normal_form): on the default window the cusp of a driven
+                        # Kerr oscillator reads as transcritical
+                        nfp = construct.sweep_normal_form(path, np.asarray(c["state"]))
                         u.update(cusp={real.control: c["control"], second: c["value"]}, direction=c["direction"],
-                                 kind_along_sweep=nfp["kind"], asymmetry_at_fold=before, asymmetry_along_sweep=after)
-                        if "pitchfork" not in str(nfp["kind"]).lower() and after > CUSP_ASYMMETRY_KEPT * before:
-                            # the second parameter has not cancelled the asymmetry along the sweep: the path does not
-                            # cross a symmetric point (a transcritical point or a fold), and the linear-stage law does
-                            # not apply. A cusp located numerically always keeps a small quadratic term, which the
-                            # classification on its fixed window may still call transcritical; where the cancellation
-                            # has removed most of the asymmetry, the law is derived and the residue appears as the
-                            # intrinsic offset of the sweep
+                                 kind_along_sweep=nfp["kind"], asymmetry_at_fold=float(nf.get("asymmetry", 0.0)),
+                                 asymmetry_along_sweep=float(nfp.get("asymmetry", 0.0)),
+                                 window_halvings=int(nfp.get("window_halvings", 0)))
+                        if "pitchfork" not in str(nfp["kind"]).lower():
+                            # the path through the cusp does not cross a symmetric point: the second parameter has
+                            # not cancelled the asymmetry along the sweep (a transcritical point, two states exchanging
+                            # stability, or a fold), and the linear-stage law does not apply
                             u["law"] = {"status": f"no law: the sweep through the cusp found along {second} is "
                                                   f"{str(nfp['kind']).split(':')[0]}, not a pitchfork; the asymmetry is "
-                                                  f"not cancelled on the path ({before:.3f} at the fold, {after:.3f} "
-                                                  "along the sweep)"}
+                                                  "not cancelled on the path"}
                         else:
                             # the one-coordinate law needs a saturating cubic along the sweep; a subcritical sweep
                             # through the cusp keeps the linear-stage law

@@ -96,3 +96,22 @@ def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     rep = completion.complete(real, np.random.default_rng(3), floors=(1.0,), n_samples=400, n_traj=300)
     L = next(e["law"] for e in rep["write_points"] if "law" in e and e["law"].get("status") == "derived")
     assert L["write_class"] == "linear-stage write" and "hold" not in L
+
+
+def test_the_sweep_through_the_kerr_cusp_reads_as_a_pitchfork_on_the_narrowed_window():
+    """At the cusp of a driven Kerr resonator the quartic term of the drift appears as a quadratic one on the default
+    window, which reads as transcritical and would refuse the law; the completion reads the sweep on the narrowed
+    window of construct.sweep_normal_form, where it is a pitchfork."""
+    import json
+    from pathlib import Path
+    from fieldbridge.memory import analysis as an, construct, spec as mspec
+    root = Path(__file__).resolve().parents[1]
+    real = mspec.load(json.loads((root / "examples/quantum/semiclassical/jba_resonator.json").read_text()))
+    ev = an.locate_writes(real, np.random.default_rng(0), n_starts=24)[0]
+    nf = an.normal_form(real, ev["q"], real.control, ev["v"])
+    c = construct.cancel_asymmetry(real, nf, "chi")
+    assert c.get("success")
+    path = construct.along_path(real, {real.control: c["control"], "chi": c["value"]}, c["direction"])
+    assert "transcritical" in an.normal_form(path, np.asarray(c["state"]), "t", 0.0)["kind"]
+    narrowed = construct.sweep_normal_form(path, np.asarray(c["state"]))
+    assert "pitchfork" in narrowed["kind"] and narrowed["window_halvings"] >= 1

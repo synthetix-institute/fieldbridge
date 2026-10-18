@@ -89,9 +89,8 @@ specification: it keeps what the obstruction names (a second parameter that canc
 the next order, the distant branch) and derives the law of the completed model with its certificate. Where the
 certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
 choice between shallow written states) from a failure in the nonlinear stage. A sweep through a cusp found by the
-second parameter is refused only when the cancellation leaves more than half of the asymmetry measured at the fold: a
-cusp located numerically always keeps a small quadratic term, which appears as the intrinsic offset of the sweep. The
-report lists, per specification,
+second parameter is read on a window narrowed until the quartic term of the drift no longer appears as a quadratic one,
+and its law is refused when the sweep is not a pitchfork. The report lists, per specification,
 the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
 the specifications in parallel processes.
 
