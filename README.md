@@ -19,6 +19,42 @@ FieldBridge automates this cross-field translation:
 
 The calculations require no API key, GPU, cluster, or archive download; every derivation step is checked by symbolic or numerical calculation.
 
+## Why models from different fields reach the same equation
+
+Near a point where a state loses stability, one mode relaxes more and more slowly while all other modes stay fast.
+The fast modes follow the slow one, so the model reduces to the amplitude of that mode (centre-manifold reduction),
+and a change of variables removes the higher terms that do not alter the motion near the critical point (normal
+form). What remains depends on the number of directions that lose stability, on how a symmetry acts on them and on
+whether the instability oscillates. It does not depend on the material. The mechanisms of FieldBridge are these forms:
+
+| Directions that lose stability | Symmetry | Reduced form | Mechanism |
+| --- | --- | --- | --- |
+| one | none | ẋ = μ + x<sup>2</sup> | [One-sided write (fold)](docs/mechanisms.md#one-sided-write-fold) |
+| one | x → −x | ẋ = εx − x<sup>3</sup> + h | [Symmetric write](docs/mechanisms.md#symmetric-write-supercritical-pitchfork) |
+| one, cubic term of the other sign | x → −x | ẋ = εx + ax<sup>3</sup> − x<sup>5</sup> | [Write to a distant state](docs/mechanisms.md#write-to-a-distant-state-subcritical-pitchfork) |
+| two, related by a symmetry | that of a square | ż = εz − \|z\|<sup>2</sup>z + g z̄<sup>3</sup> | [Write into a degenerate mode](docs/mechanisms.md#write-into-a-degenerate-mode) |
+| the phase of a limit cycle, which is neutral | shift in time | φ̇ = ν − K sin φ under a weak drive | [Limit cycle](docs/mechanisms.md#limit-cycle) |
+
+The reduction has the structure of a renormalization-group argument. After rescaling x ∝ ε<sup>1/2</sup>,
+t ∝ ε<sup>−1</sup> and h ∝ ε<sup>3/2</sup>, the control and the bias are relevant, while the higher powers and the
+fast modes are irrelevant. Noise is relevant too: in a swept write it enters only through the ratio
+Γ = D|a<sub>3</sub>|/r of the noise to the sweep rate ([Module 13](docs/tutorial/33_memory_noise_ratio.md)). The
+symmetric write is Landau's equation for one order parameter, with noise. A single mode has no spatial fluctuations
+that could change its exponents, so this mean-field form holds near the critical point. In an extended system a band
+of modes softens together, the amplitude becomes a field, and fluctuations can change the exponents or even the order
+of the transition.
+
+The forms are local: they hold while the control is small compared with the relaxation rates of the eliminated modes.
+That is enough to decide which state is written, because a weak bias acts only where the landscape is flat. The
+barrier that keeps the written state belongs to the full equations, and the memory card computes it from them. A
+first-order transition is local only where the occupied state loses stability, at a fold or a subcritical pitchfork;
+where the jump lands is decided by the full equations. Several order parameters enter in two ways. If they lose
+stability together, they are kept together and their symmetry fixes the form. If one of them stays stable, it is
+eliminated, and its coupling to the critical mode shifts the cubic coefficient, whose sign decides between the
+symmetric write and the write to a distant state. When a reduction stops at a second critical direction, a cubic term
+of the wrong sign, a fold that no symmetry makes two-sided or an oscillatory pair, FieldBridge reports the obstruction
+([Module 9, §5](docs/tutorial/23_memory_codiscovery.md#5-where-a-derivation-stops)).
+
 ## Installation
 
 Python 3.10 or newer. From a clone of the repository:
