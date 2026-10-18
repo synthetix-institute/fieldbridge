@@ -554,11 +554,19 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
                                                     c["direction"])
                         nfp = an.normal_form(path, np.asarray(c["state"]), "t", 0.0)
                         u.update(cusp={real.control: c["control"], second: c["value"]}, direction=c["direction"],
-                                 kind_along_sweep=nfp["kind"],
-                                 # the one-coordinate law needs a saturating cubic along the sweep; a subcritical
-                                 # sweep through the cusp keeps the linear-stage law
-                                 law=law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
-                                            reduce_one=float(nfp.get("a3", 0.0)) < 0))
+                                 kind_along_sweep=nfp["kind"])
+                        if "pitchfork" not in str(nfp["kind"]).lower():
+                            # the path through the cusp does not cross a symmetric point: the second parameter has
+                            # not cancelled the asymmetry along the sweep (a transcritical point, two states exchanging
+                            # stability, or a fold), and the linear-stage law does not apply
+                            u["law"] = {"status": f"no law: the sweep through the cusp found along {second} is "
+                                                  f"{str(nfp['kind']).split(':')[0]}, not a pitchfork; the asymmetry is "
+                                                  "not cancelled on the path"}
+                        else:
+                            # the one-coordinate law needs a saturating cubic along the sweep; a subcritical sweep
+                            # through the cusp keeps the linear-stage law
+                            u["law"] = law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
+                                              reduce_one=float(nfp.get("a3", 0.0)) < 0)
                     entry["unfoldings"].append(u)
             else:
                 entry["law"] = {"status": "phase: derived by the phase-locking target (memory codiscover --target "
