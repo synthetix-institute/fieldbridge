@@ -90,7 +90,8 @@ the next order, the distant branch) and derives the law of the completed model w
 certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
 choice between shallow written states) from a failure in the nonlinear stage. A sweep through a cusp found by the
 second parameter is read on a window narrowed until the quartic term of the drift no longer appears as a quadratic one,
-and its law is refused when the sweep is not a pitchfork. The report lists, per specification,
+and its law is refused when the sweep is not a pitchfork; with `--curvature`, `memory complete` also finds the curvature
+of the sweep at which its intrinsic offset vanishes (tutorial Module 15). The report lists, per specification,
 the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
 the specifications in parallel processes.
 

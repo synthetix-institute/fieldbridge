@@ -101,6 +101,23 @@ of their own: −2.3 for the dynamically polarised nuclear-spin bath, where the 
 Rydberg ensemble. For the optomechanical and magnonic elements the reduced law fails, and only the full dynamics give
 the write.
 
+**The curvature of the sweep that cancels the offset.** `memory complete --curvature` curves the sweep through the
+cusp, p = cusp + t d + c2 t² n with n normal to the sweep direction d in the plane of the two parameters, reads the
+offset from the full dynamics at five curvatures, places its zero between the curvatures that bracket it, and refines
+it by secant steps until the offset is below 0.1 or three standard errors:
+
+```bash
+python3 -m fieldbridge memory complete examples/quantum/semiclassical/jba_resonator.json --curvature --out-dir results/jba_curvature
+```
+
+For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.125, −0.122, −0.103, −0.070 and −0.024
+for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2, with the response staying at 1.33 to 1.37. The curvature has a
+part that does not depend on the noise, the curvature of the line on which the two written states are mirror images,
+and a part that grows with the noise ratio, which compensates the drift that the quadratic term of the reduced
+equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.085 and
+0.074 in the coordinates of their own second parameters. For the magnon element and the nuclear-spin bath the offset
+does not pass through zero cleanly near the curvatures tried; their equations near the cusp differ from the Kerr form.
+
 **Frustrated triangles write into a critical plane.** Three coherent-Ising-machine nodes, three Kerr parametric
 oscillators or three rf-SQUID annealer qubits on an antiferromagnetic triangle have two directions that lose
 stability together. The law of the plane, the linear-stage write applied in both directions and read as the sector
