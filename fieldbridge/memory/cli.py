@@ -256,6 +256,77 @@ def cmd_design(args) -> int:
     return 0
 
 
+COMPLETION_NAMES = {"none": "no obstruction (the law is derived as a control)",
+                    "critical space": "keep every critical direction",
+                    "leading order": "keep the leading term of higher order",
+                    "second parameter": "keep a second parameter and sweep through the cusp",
+                    "distant branch": "keep the distant branch to which the state jumps",
+                    "phase": "keep the phase (phase-locking target)"}
+
+
+def _md_complete(spec_question: str, rep: Dict) -> str:
+    lines = ["# The law at an obstruction", "", spec_question, ""]
+    for i, e in enumerate(rep["write_points"], 1):
+        wp = e["write_point"]
+        lines += [f"## Write point {i}", "", f"- kind: {e['kind']}",
+                  f"- obstruction: " + ("; ".join(f"{k} = {v:.3g}" for k, v in e["obstruction"].items()) or "none"),
+                  f"- completion: {COMPLETION_NAMES.get(e['completion'], e['completion'])}"]
+        laws = [("", e["law"])] if "law" in e else [(f" (second parameter {u['second']})", u.get("law"))
+                                                      for u in e.get("unfoldings", []) if u.get("law")]
+        for tag, L in laws:
+            lines.append(f"- law{tag}: {L.get('status')}")
+            if L.get("status") != "derived":
+                continue
+            lines.append(f"  - critical directions {L['critical_dimension']}, noise {L['noise']:.3g} ({L['noise_rule']}), "
+                         f"rate {L['rate']}")
+            for src, rows in (L.get("one_direction") or {}).items():
+                for x in rows:
+                    lines.append(f"  - {src}: bias {x['bias_floors']} floors, response constant "
+                                 f"{x['response_constant']:.3f} (pi^1/4 = 1.331 for the pitchfork), offset {x['offset']:.3f}")
+            if L["critical_dimension"] > 1:
+                lines.append(f"  - stable states at the end of the sweep: {len(L['stable_states'])}; probabilities by bias "
+                             "direction in the critical space (law / certificate):")
+                for r in L["rows"]:
+                    lines.append(f"    - {[round(d, 2) for d in r['direction']]} ({r['bias_floors']} floors): "
+                                 f"{[round(p, 3) for p in r['law']]} / {[round(p, 3) for p in r.get('certificate', [])]}")
+            if "certified" in L:
+                lines.append("  - certificate: " + ("the law agrees with the full stochastic dynamics" if L["certified"]
+                                                     else L.get("obstruction_in_nonlinear_stage", "not certified")))
+        lines.append("")
+    return "\n".join(lines) + f"\n{BOUNDARY}\n"
+
+
+def cmd_complete(args) -> int:
+    import numpy as np
+    from . import completion, spec
+    real = spec.load(args.spec)
+    rep = completion.complete(real, np.random.default_rng(args.seed), rate=args.rate, noise=args.noise,
+                              floors=tuple(args.floors), n_samples=args.samples, n_traj=args.trajectories,
+                              certify=not args.no_certificate, gamma=args.gamma)
+
+    def clean(o):
+        if isinstance(o, dict):
+            return {k: clean(v) for k, v in o.items() if k != "final"}
+        if isinstance(o, list):
+            return [clean(v) for v in o]
+        if isinstance(o, (np.floating, np.integer)):
+            return o.item()
+        if isinstance(o, np.ndarray):
+            return o.tolist()
+        return o
+    rep = clean(rep)
+    report = {"command": "complete", **_provenance(real.spec), "question": real.spec.get("question"),
+              "settings": {"rate": args.rate, "gamma": args.gamma, "noise": args.noise, "floors": args.floors,
+                           "samples": args.samples, "trajectories": args.trajectories}, **rep}
+    _write(Path(args.out_dir), "complete", report, _md_complete(real.spec.get("question", ""), rep))
+    print(json.dumps({"out_dir": args.out_dir, "write_points": [
+        {"completion": e["completion"],
+         "certified": [L.get("certified") for L in ([e["law"]] if "law" in e else
+                                                     [u.get("law", {}) for u in e.get("unfoldings", [])])]}
+        for e in rep["write_points"]]}, indent=2))
+    return 0
+
+
 def cmd_loops(args) -> int:
     import numpy as np
     from . import compose
@@ -736,6 +807,19 @@ def add_parser(sub) -> None:
     common(p)
     p.add_argument("--free", required=True, help="Material parameter to tune.")
     p.set_defaults(func=cmd_design)
+    p = msub.add_parser("complete", help="The law at an obstruction: keep what the obstruction names and derive the "
+                                         "write law of the completed model from the sweep, with its certificate.")
+    common(p)
+    p.add_argument("--rate", type=float, default=0.02, help="Rate at which the sweep drives the critical rate.")
+    p.add_argument("--gamma", type=float, default=0.05,
+                   help="Noise against the growth of the barrier, Gamma = D_s |a3| / rate (when --noise is not given).")
+    p.add_argument("--noise", type=float, default=None, help="Noise intensity D (overrides --gamma).")
+    p.add_argument("--floors", type=float, nargs="+", default=[0.5, 1.0, 2.0],
+                   help="Bias strengths in units of the noise floor sqrt(D_s) rate^(1/4) / pi^(1/4).")
+    p.add_argument("--samples", type=int, default=4000, help="Samples of the linear-stage Gaussian.")
+    p.add_argument("--trajectories", type=int, default=2000, help="Trajectories of the certificate per bias.")
+    p.add_argument("--no-certificate", action="store_true", help="Derive the law without the full simulation.")
+    p.set_defaults(func=cmd_complete)
     p = msub.add_parser("phase", help="Memory in the phase of an oscillating realization: phase response, retention, writing.")
     common(p)
     p.add_argument("--kick", type=float, default=2.0, help="Kick on the first coordinate for the response curve.")

@@ -114,7 +114,57 @@ tube irrespective of a weak bias. At equal lengths the write is symmetric but su
 $\mu = 1.383$ the state moves to a distant branch, and at the operating value $\mu = 2$ each stable state carries
 the whole flow in one tube. A graded write would require a saturating term in the adaptation law.
 
-## 5. Exercises
+## 5. The law at an obstruction
+
+The cancellation above returns a model to the known pitchfork. An obstruction can also be used the other way: it
+names what the one-coordinate reduction left out, and keeping that part gives a completed model whose write law is
+derived rather than looked up.
+
+| Obstruction | Completion (what is kept) |
+| --- | --- |
+| $k$ critical directions | the whole critical space |
+| vanishing cubic | the leading term of higher order |
+| positive cubic (subcritical) | the distant branch to which the state jumps |
+| fold (one-sided write) | a second parameter and the sweep through the cusp |
+| Hopf pair | the phase (Module 6) |
+| marginal direction at every written state | the family of written states (a phase) |
+
+```bash
+python3 -B -m fieldbridge memory complete examples/memory/tubes.json --out-dir build/complete_tubes
+python3 -B -m fieldbridge memory complete examples/memory/two_component_square.json --out-dir build/complete_square
+python3 -B -m fieldbridge memory complete examples/memory/schlogl.json --out-dir build/complete_schlogl
+```
+
+The law is derived from the sweep itself.
+
+- **Linear stage.** The drift is linearized about the unwritten branch, which is followed through the crossing. The
+  exact Gaussian moments of the deviation (bias, noise, and the lag behind a moving branch) give the statistics of the
+  choice.
+- **Outcome map.** The full drift carries samples of that Gaussian to the stable states at the end of the sweep.
+
+Where a sweep through a cusp moves the branch, the one-coordinate equation along the moving branch replaces the
+linear stage. Its coefficients $a_1(t), a_2(t), a_3(t)$ are recomputed along the sweep.
+
+**The certificate.** Every law is compared with the full stochastic dynamics. A disagreement beyond the statistical
+error and 0.02 is reported as an obstruction in the nonlinear stage: the choice is not complete when the linear
+stage ends.
+
+**Results.** In one direction the law is reported as a response constant ($\pi^{1/4} = 1.331$ for the pitchfork) and
+an offset in probit units. The settings are a noise ratio $\Gamma = 0.05$, a bias of one noise floor, and 4,000
+trajectories of the certificate.
+
+| Realization | Obstruction | Law: response, offset | Certificate: response, offset |
+| --- | --- | --- | --- |
+| Two equal tubes | positive cubic | 1.36, −0.01 | 1.35, +0.02 |
+| Schlögl reactor, lower write point | fold | 1.34, +0.01 | 1.34, +0.02 |
+| Toggle, unequal promoters | fold | 1.36, +0.01 | 1.32, +0.01 |
+| Two-component square model | two critical directions | four-state table | largest deviation 0.020 over 8 bias directions |
+
+The subcritical tubes, which stop the derivation of Section 4, have a write law: the choice is made in the linear
+stage, and the positive cubic only decides where the state jumps. For the square model the law gives the
+probabilities of all four written states for a bias in any direction of the critical plane.
+
+## 6. Exercises
 
 1. Why is the signature kept in the transfer from rods to dipoles although the ratio of the two couplings changes
    from about 1.25 to 3?
@@ -138,12 +188,15 @@ the whole flow in one tube. A graded write would require a saturating term in th
   the new carrier; each difference is a prediction to test.
 - A one-sided write (a fold) becomes symmetric at a cusp, which requires one additional tuned parameter.
 - The design command locates the cusp and the direction of a sweep through it without a bias.
+- The complete command keeps what an obstruction names and derives the write law of the completed model, with a
+  certificate from the full dynamics.
 
 ## Reference
 
 | Result | Function | Test |
 | --- | --- | --- |
 | Transfer | [`cli.cmd_attach`](../../fieldbridge/memory/cli.py) | `test_attaching_the_colloid_memory_to_dipoles_keeps_its_class` |
+| Law at an obstruction | [`completion.complete`](../../fieldbridge/memory/completion.py), [`cli.cmd_complete`](../../fieldbridge/memory/cli.py) | `test_a_subcritical_write_point_gets_a_certified_law`, `test_two_critical_directions_give_a_law_over_all_written_states`, `test_the_rung_derives_the_swept_pitchfork_law_where_nothing_obstructs` |
 | Cusp and sweep direction | [`construct.cancel_asymmetry`](../../fieldbridge/memory/construct.py), [`cli.cmd_design`](../../fieldbridge/memory/cli.py) | `test_schlogl_cusp_removes_the_one_sided_write`, `test_unequal_tubes_are_cancelled_only_by_equal_lengths`, `test_equal_promoters_remove_the_toggles_one_sided_write` |
 
 [Previous: Module 4](18_memory_writing_and_retention.md) · [Next: Module 6, memory in the phase of an oscillator](20_memory_phase.md) · [Tutorial index](index.md) · [Glossary](memory_glossary.md)
