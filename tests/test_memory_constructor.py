@@ -1024,6 +1024,32 @@ def test_the_kerr_resonator_of_bifurcation_readout_is_unfolded_at_its_cusp():
     assert u["cusp"]["Delta"] == pytest.approx(delta_c, abs=1e-8) and u["cusp"]["F"] == pytest.approx(f_c, abs=1e-8)
 
 
+def test_the_scan_follows_the_high_branch_of_the_kerr_resonator_to_its_fold():
+    """The steady states of the driven Kerr resonator satisfy n((U n - Delta)^2 + kappa^2/4) = F^2, and its two folds
+    of the drive F lie where d(F^2)/dn = 0, at n = (2 Delta -+ sqrt(Delta^2 - 3 kappa^2/4))/(3 U) photons. The
+    high-amplitude branch (n = 19.3 at its fold, amplitude 4.4) lies beyond the carrier scale 1: Newton from starts in
+    [-1, 1]^2 reaches only the low branch where the two coexist, and none converges where the low branch has vanished.
+    The starts relax onto the high branch there, and the scan follows it back to its fold. Neither the continuation nor
+    the relaxation draws random numbers: the generator ends where the twelve draws of starts leave it."""
+    real = spec.load(JBA)
+    U, delta, kappa = (JBA["parameters"][k] for k in ("U", "Delta", "kappa"))
+    root = math.sqrt(delta ** 2 - 0.75 * kappa ** 2)
+    folds = sorted((math.sqrt(n * ((U * n - delta) ** 2 + kappa ** 2 / 4)), n)
+                   for n in ((2 * delta + s * root) / (3 * U) for s in (1, -1)))
+    assert all(float(q @ q) < folds[1][1] for q, _ in an.fixed_points(real, np.random.default_rng(0), 24, {"F": 8 / 3}))
+    assert not an.fixed_points(real, np.random.default_rng(0), 24, {"F": 4.0})
+    rng, ref = np.random.default_rng(0), np.random.default_rng(0)
+    events = an.locate_writes(real, rng, n_starts=24)
+    for _ in range(12):
+        real.carrier.sample(ref, 24)
+    assert rng.random() == ref.random()
+    assert [e["type"] for e in events] == ["vanishes", "vanishes"]
+    for ev, (f, n) in zip(events, folds):
+        q = np.asarray(ev["q"])
+        assert ev["v"] == pytest.approx(f, abs=1e-4) and float(q @ q) == pytest.approx(n, rel=1e-2)
+        assert an.normal_form(real, q, "F", ev["v"])["kind"].startswith("saddle-node")
+
+
 def _second_order_bias(b):
     return {"schema": "fieldbridge-memory/1", "question": "Does a sweep that biases the write at second order offset it?",
             "provenance": {"source": "pitchfork normal form with a bias b eps^2", "kind": "authored test"},
