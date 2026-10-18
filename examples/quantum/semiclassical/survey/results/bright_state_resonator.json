@@ -1,0 +1,549 @@
+{
+ "model": "bright_state_resonator",
+ "name": "driven Jaynes-Cummings resonator at high power (bright state, punch-out)",
+ "provenance": {
+  "source": "Reed, M. D., DiCarlo, L., Johnson, B. R., Sun, L., Schuster, D. I., Frunzio, L., Schoelkopf, R. J., 'High-fidelity readout in circuit quantum electrodynamics using the Jaynes-Cummings nonlinearity', Phys. Rev. Lett. 105, 173601 (2010), arXiv:1004.4323 (full text); Bishop, L. S., Ginossar, E., Girvin, S. M., 'Response of the strongly driven Jaynes-Cummings oscillator', Phys. Rev. Lett. 105, 100505 (2010), arXiv:1005.0377 (full text); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal)",
+  "kind": "classical image of census entry 11: Measurement resonator at high power: bright-state (punch-out) measurement and Jaynes-Cummings bistability"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+   "obstruction_short": "fold; no cusp with a supercritical sweep",
+   "class": "C R(fold)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(fold) K",
+   "word": "CRK",
+   "law_constant": {}
+  },
+  "phase-locking": {
+   "status": "not derived",
+   "obstruction": "time limit of 1800 s",
+   "obstruction_short": null,
+   "class": null,
+   "word": null,
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 4.8,
+  "threshold-write": 3.8,
+  "phase-locking": 1800.0,
+  "completion": 5.6,
+  "changes": 589.6
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "xi": 6.574086481770778,
+     "state": [
+      6.472756164800198,
+      -5.433575863038577,
+      -0.38572985502514895,
+      -0.3236378082400099,
+      -0.1489508239435562
+     ]
+    },
+    "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+    "obstruction": {
+     "quadratic a2": -0.002729189204950222,
+     "bias per unit control": 0.08970519626432454
+    },
+    "completion": "second parameter",
+    "unfoldings": [
+     {
+      "second": "dq",
+      "success": false
+     },
+     {
+      "second": "dc",
+      "success": false
+     }
+    ]
+   },
+   {
+    "write_point": {
+     "xi": 7.30461580546883,
+     "state": [
+      3.6688101211247535,
+      -0.9892500412047638,
+      -0.6809990784866449,
+      -0.18344050605623766,
+      -0.4640150320394393
+     ]
+    },
+    "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+    "obstruction": {
+     "quadratic a2": 0.010208726591273493,
+     "bias per unit control": 0.049334701795147776
+    },
+    "completion": "second parameter",
+    "unfoldings": [
+     {
+      "second": "dq",
+      "success": false
+     },
+     {
+      "second": "dc",
+      "success": false
+     }
+    ]
+   }
+  ]
+ },
+ "changes": {
+  "name": "driven Jaynes-Cummings resonator at high power (bright state, punch-out)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+    "seconds": 4.9,
+    "class": "one-sided write"
+   },
+   "threshold-write": {
+    "status": "reached",
+    "obstruction": "",
+    "seconds": 3.9,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = g over [5, 80]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.9,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 57.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = dc over [-1, 1]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.9,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = dq over [25, 400]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.6,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 32.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.6,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = gq over [0.0125, 0.2]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of xi below: [-250, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 7.2,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.2,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     },
+     "threshold-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "not derived"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ dc*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 4.6,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 3.8,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*g*sy' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 3.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     },
+     "threshold-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "not derived"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- dc*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 4.8,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 3.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*g*sx' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 2.7,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 19.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- xi' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*gq*sx' from dsx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 4.2,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 3.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*gq*sy' from dsy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 5.0,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-gq*(sz + 1)' from dsz/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 3.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 18.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "one-sided write",
+      "no write point"
+     ]
+    },
+    "step": true
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "range",
+    "what": "range of xi wider: [-250, 275]",
+    "why": "unbounded: states at amplitude 20 are still growing at t = 0.185 for xi = 275"
+   },
+   {
+    "kind": "range",
+    "what": "range of xi above: [25, 275]",
+    "why": "unbounded: states at amplitude 20 are still growing at t = 0.185 for xi = 275"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- dq*sy' from dsx/dt",
+    "why": "unbounded: a state at amplitude 20 runs away for xi = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 2*g*y*sz' from dsx/dt",
+    "why": "unbounded: a state at amplitude 20 runs away for xi = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ dq*sx' from dsy/dt",
+    "why": "unbounded: a state at amplitude 20 runs away for xi = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 2*g*x*sz' from dsy/dt",
+    "why": "unbounded: a state at amplitude 20 runs away for xi = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ 2*g*(x*sy + y*sx)' from dsz/dt",
+    "why": "unbounded: a state at amplitude 20 runs away for xi = 0"
+   }
+  ],
+  "steps": 11
+ }
+}

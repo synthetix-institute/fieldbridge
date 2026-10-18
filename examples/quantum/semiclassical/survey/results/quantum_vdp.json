@@ -1,0 +1,328 @@
+{
+ "model": "quantum_vdp",
+ "name": "self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser)",
+ "provenance": {
+  "source": "Lee & Sadeghpour, PRL 111, 234101 (2013); Walter, Nunnenkamp & Bruder, PRL 112, 094102 (2014)",
+  "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "no write point along the control",
+   "obstruction_short": "no write point along the control",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+   "obstruction_short": "no stable state: the realization oscillates",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "R(phase) K(1:1) L",
+   "word": "RKL",
+   "law_constant": {
+    "constant": 0.9999796077952579,
+    "stderr": 0.00017548751623330805,
+    "expected": 1.0
+   }
+  }
+ },
+ "seconds": {
+  "symmetric-write": 0.5,
+  "threshold-write": 5.2,
+  "phase-locking": 36.8,
+  "completion": 0.5,
+  "changes": 96.2
+ },
+ "completion": {
+  "write_points": []
+ },
+ "changes": {
+  "name": "self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "no write point along the control",
+    "seconds": 0.4,
+    "class": "no write point"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+    "seconds": 5.0,
+    "class": "oscillation"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = g1 over [1, 16]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 5.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = g2 over [0.05, 0.8]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 5.5,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = Delta over [0.075, 1.2]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 5.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F wider: [-20, 22]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 7.2,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "symmetric-write",
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of F above: [2, 22]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 7.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 11.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F below: [-20, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.9,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 7.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "symmetric-write",
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '0.5*g1*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.6,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.2,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ Delta*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '0.5*g1*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- Delta*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.5,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "threshold-write": [
+      "oscillation",
+      "single stable state"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- F' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 5.0,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '- g2*(x**2 + y**2)*x' from dx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for F = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- g2*(x**2 + y**2)*y' from dy/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for F = 0"
+   }
+  ],
+  "steps": 6
+ }
+}

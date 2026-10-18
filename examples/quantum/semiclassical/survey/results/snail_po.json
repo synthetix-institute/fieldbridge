@@ -1,0 +1,563 @@
+{
+ "model": "snail_po",
+ "name": "SNAIL parametric oscillator (three-wave mixing, small Kerr)",
+ "provenance": {
+  "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
+  "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "S(reflection) C R(pitchfork) K L",
+   "word": "SCRKL",
+   "law_constant": {
+    "constant": 1.1687596504390578,
+    "stderr": 0.12911760059116215,
+    "expected": 1.3313353638003897,
+    "replicates": 8,
+    "signature": [
+     -0.004477361616,
+     0.0008004340823,
+     -0.01495114573,
+     -0.0153680193,
+     0.01704359927,
+     0.001620866624,
+     -0.001273347888,
+     -0.002248971855,
+     -0.01749534742,
+     -0.03090055091,
+     0.008273630544,
+     0.01461275794,
+     0.001930665841,
+     -0.005298377792,
+     -0.0200395491,
+     -0.04643308251,
+     -0.0004963381857,
+     0.02760464925,
+     0.04778901418,
+     -0.08440492466,
+     0.04778663114,
+     -0.08440627386,
+     0.04779041655,
+     -0.08440413064,
+     0.1224007696
+    ]
+   }
+  },
+  "threshold-write": {
+   "status": "reached by a write field",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "S C R(pitchfork) W R(fold) K L",
+   "word": "SCRWRKL",
+   "law_constant": {
+    "constant": 1.015668905877428,
+    "stderr": 0.004052326545400886,
+    "expected": 1.018792971647471
+   }
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of g in [0, 1.5] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 6.5,
+  "threshold-write": 5.1,
+  "phase-locking": 0.9,
+  "completion": 61.3,
+  "changes": 30.2
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "g": 0.29154763761691155,
+     "state": [
+      1.1933451155975678e-22,
+      -1.834049920890544e-22
+     ]
+    },
+    "kind": "supercritical pitchfork: symmetric write; a small bias chooses the state",
+    "obstruction": {},
+    "completion": "none",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 1,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.12240076957926872,
+     "noise_rule": "Gamma = 0.05",
+     "noise_along_critical": 0.1664650290021043,
+     "bias_floor": 0.11524750607036156,
+     "stable_states": [
+      [
+       -1.9352074070365584,
+       7.787598962385801
+      ],
+      [
+       1.9352074070365584,
+       -7.787598962385801
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       6.438488160731019
+      ],
+      [
+       -6.438488160731019
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.686125,
+        0.313875
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        119.09547591017576
+       ],
+       "law": [
+        0.686125,
+        0.313875
+       ],
+       "certificate": [
+        0.69475,
+        0.30525
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.1845325120632622,
+       "deviation": 0.008624999999999994
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.304375,
+        0.695625
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -119.09547591017576
+       ],
+       "law": [
+        0.304375,
+        0.695625
+       ],
+       "certificate": [
+        0.299,
+        0.701
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.7425297541730135,
+       "deviation": 0.005375000000000019
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.838375,
+        0.161625
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        238.19095182035153
+       ],
+       "law": [
+        0.838375,
+        0.161625
+       ],
+       "certificate": [
+        0.835,
+        0.165
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.5750671542523011,
+       "deviation": 0.003375000000000017
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.151625,
+        0.848375
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -238.19095182035153
+       ],
+       "law": [
+        0.151625,
+        0.848375
+       ],
+       "certificate": [
+        0.157,
+        0.843
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.934425863893844,
+       "deviation": 0.005375000000000019
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.974625,
+        0.025375
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        476.38190364070306
+       ],
+       "law": [
+        0.974625,
+        0.025375
+       ],
+       "certificate": [
+        0.973,
+        0.027
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.6340814655365679,
+       "deviation": 0.001624999999999998
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.023375,
+        0.976625
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207511737,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -476.38190364070306
+       ],
+       "law": [
+        0.023375,
+        0.976625
+       ],
+       "certificate": [
+        0.0235,
+        0.9765
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.05218791588430479,
+       "deviation": 0.0001250000000000001
+      }
+     ],
+     "one_direction": {
+      "law": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.686125,
+        "P_toward_minus": 0.695625,
+        "response_constant": 1.327014824622639,
+        "offset": -0.013481197240724552
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.838375,
+        "P_toward_minus": 0.848375,
+        "response_constant": 1.3428448417077592,
+        "offset": -0.02084382253199435
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.974625,
+        "P_toward_minus": 0.976625,
+        "response_constant": 1.3120795183920795,
+        "offset": -0.01748521548706483
+       }
+      ],
+      "certificate": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.69475,
+        "P_toward_minus": 0.701,
+        "response_constant": 1.3801137088058157,
+        "offset": -0.008959460964358512
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.835,
+        "P_toward_minus": 0.843,
+        "response_constant": 1.3186731369048055,
+        "offset": -0.016375200869606643
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.973,
+        "P_toward_minus": 0.9765,
+        "response_constant": 1.302424343782911,
+        "offset": -0.029731815432758824
+       }
+      ]
+     },
+     "certified": true
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "SNAIL parametric oscillator (three-wave mixing, small Kerr)",
+  "base": {
+   "symmetric-write": {
+    "status": "reached",
+    "obstruction": "",
+    "seconds": 0.4,
+    "class": "reached"
+   },
+   "threshold-write": {
+    "status": "reached by a write field",
+    "obstruction": "",
+    "seconds": 3.3,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.5,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = D over [-1.2, -0.075]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.5,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = K over [0.0025, 0.04]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 4.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 1.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- (D + 2*g)*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 1.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ (D - 2*g)*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- K*(x**2 + y**2)*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "range",
+    "what": "range of g wider: [-15, 16.5]",
+    "why": "unbounded: a state at amplitude 4 runs away for g = -15"
+   },
+   {
+    "kind": "range",
+    "what": "range of g above: [1.5, 16.5]",
+    "why": "unbounded: a state at amplitude 4 runs away for g = 16.5"
+   },
+   {
+    "kind": "range",
+    "what": "range of g below: [-15, 0]",
+    "why": "unbounded: a state at amplitude 4 runs away for g = -15"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ K*(x**2 + y**2)*y' from dx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for g = 1.5"
+   }
+  ],
+  "steps": 0
+ }
+}

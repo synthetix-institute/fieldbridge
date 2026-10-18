@@ -1,0 +1,551 @@
+{
+ "model": "kerr_cat_kpo",
+ "name": "Kerr parametric oscillator (Kerr-cat qubit)",
+ "provenance": {
+  "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., npj Quantum Inf. 3, 18 (2017); Grimm et al., Nature 584, 205 (2020)",
+  "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test, whose noise is set by D_s |a3| / r, is not defined",
+   "obstruction_short": "vanishing cubic: leading term of order 5",
+   "class": "S(reflection) C R(degenerate cubic)",
+   "word": "SCR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "reached by a write field",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "S C R(degenerate cubic) W R(fold) K",
+   "word": "SCRWRK",
+   "law_constant": {}
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of p in [0, 12] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 1.4,
+  "threshold-write": 5.3,
+  "phase-locking": 5.2,
+  "completion": 234.4,
+  "changes": 62.2
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "p": 0.5000000999999569,
+     "state": [
+      -2.7067916250786622e-20,
+      -3.3789448674642635e-20
+     ]
+    },
+    "kind": "degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along the critical direction is of order 5",
+    "obstruction": {
+     "vanishing cubic (leading term of order 5)": -25.00007200627001
+    },
+    "completion": "leading order",
+    "leading_term": {
+     "order": 5,
+     "coefficient": -25.00007200627001,
+     "slope": 5.000064495921114,
+     "amplitude": 0.015625
+    },
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 1,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.125,
+     "noise_rule": "material noise",
+     "noise_along_critical": 0.12500000000000006,
+     "bias_floor": 0.09986769753046187,
+     "stable_states": [
+      [
+       -0.4209754709791995,
+       -0.10488755146218288
+      ],
+      [
+       0.4209754709791995,
+       0.10488755146218288
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       0.3718413091424376
+      ],
+      [
+       -0.3718413091424376
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.687,
+        0.313
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        131.07882531556947
+       ],
+       "law": [
+        0.687,
+        0.313
+       ],
+       "certificate": [
+        0.5275013095861708,
+        0.47249869041382925
+       ],
+       "certificate_diverged": 0.0455,
+       "deviation_sigma": 20.205753084553976,
+       "deviation": 0.15949869041382925
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.304,
+        0.696
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -131.07882531556947
+       ],
+       "law": [
+        0.304,
+        0.696
+       ],
+       "certificate": [
+        0.49163617354939887,
+        0.5083638264506012
+       ],
+       "certificate_diverged": 0.0435,
+       "deviation_sigma": 23.73762849134215,
+       "deviation": 0.18763617354939888
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.839375,
+        0.160625
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        262.15765063113895
+       ],
+       "law": [
+        0.839375,
+        0.160625
+       ],
+       "certificate": [
+        0.5175668589407446,
+        0.4824331410592554
+       ],
+       "certificate_diverged": 0.0465,
+       "deviation_sigma": 40.731014312432585,
+       "deviation": 0.32180814105925537
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.1505,
+        0.8495
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -262.15765063113895
+       ],
+       "law": [
+        0.1505,
+        0.8495
+       ],
+       "certificate": [
+        0.49302080589939423,
+        0.5069791941006058
+       ],
+       "certificate_diverged": 0.05075,
+       "deviation_sigma": 43.33005705169151,
+       "deviation": 0.34252080589939427
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.974875,
+        0.025125
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        524.3153012622779
+       ],
+       "law": [
+        0.974875,
+        0.025125
+       ],
+       "certificate": [
+        0.5423147904033746,
+        0.45768520959662534
+       ],
+       "certificate_diverged": 0.05175,
+       "deviation_sigma": 54.912017356507455,
+       "deviation": 0.43256020959662544
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.02325,
+        0.97675
+       ],
+       "t_star": 50.64749999999018,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.28750000000142,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.000583170821285,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -524.3153012622779
+       ],
+       "law": [
+        0.02325,
+        0.97675
+       ],
+       "certificate": [
+        0.46897093479968577,
+        0.5310290652003142
+       ],
+       "certificate_diverged": 0.04525,
+       "deviation_sigma": 56.48861392346151,
+       "deviation": 0.4457209347996858
+      }
+     ],
+     "one_direction": {
+      "law": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.687,
+        "P_toward_minus": 0.696,
+        "response_constant": 1.3317280758927195,
+        "offset": -0.012782922572643712
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.839375,
+        "P_toward_minus": 0.8495,
+        "response_constant": 1.348765033739097,
+        "offset": -0.021199435712056625
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.974875,
+        "P_toward_minus": 0.97675,
+        "response_constant": 1.314246301057516,
+        "offset": -0.016498244109839355
+       }
+      ],
+      "certificate": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.5275013095861708,
+        "P_toward_minus": 0.5083638264506012,
+        "response_constant": 0.11976265485803056,
+        "offset": 0.024011854770708642
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.5175668589407446,
+        "P_toward_minus": 0.5069791941006058,
+        "response_constant": 0.04096716122566731,
+        "offset": 0.013276343570234949
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.5423147904033746,
+        "P_toward_minus": 0.5310290652003142,
+        "response_constant": 0.06128271047550046,
+        "offset": 0.014205100302873926
+       }
+      ]
+     },
+     "certified": false,
+     "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.446 (56.5 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play)"
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "Kerr parametric oscillator (Kerr-cat qubit)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test,",
+    "seconds": 1.3,
+    "class": "vanishing cubic"
+   },
+   "threshold-write": {
+    "status": "reached by a write field",
+    "obstruction": "",
+    "seconds": 3.6,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = K over [1.25, 20]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.2,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "vanishing cubic",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = Delta over [-1, 1]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "vanishing cubic",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "vanishing cubic",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p wider: [-120, 132]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test,",
+      "seconds": 1.4,
+      "class": "vanishing cubic"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of p above: [12, 132]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "vanishing cubic",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p below: [-120, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test,",
+      "seconds": 0.6,
+      "class": "vanishing cubic"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.8,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.2,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 5.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "vanishing cubic",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -50 s^5, so the canonical form is not the pitchfork and the swept-write test,",
+      "seconds": 1.6,
+      "class": "vanishing cubic"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 6.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '(K*(x**2 + y**2) + p + Delta)*y' from dx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for p = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-(K*(x**2 + y**2) - p + Delta)*x' from dy/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for p = 0"
+   }
+  ],
+  "steps": 5
+ }
+}

@@ -89,13 +89,15 @@ def main() -> int:
         for t in EXPECTED:
             c = derivation_cell(t, r["derivations"][t])
             cells.append(c)
+            stopped = str(r["derivations"][t].get("status") or "").startswith("not derived")
             tally[f"{NAMES[t]}: " + ("known law" if c.startswith("known law") else "reached" if c.startswith(("reached", "law differs"))
+                                     else "not derived within the time limit" if stopped
                                      else "stops at an obstruction")] += 1
         rows = list(law_rows(r["completion"]))
         for x in rows:
             tally["law at an obstruction: " + ("certified" if x["status"].startswith("derived") and x.get("certified")
                                               else "not certified" if x["status"].startswith("derived")
-                                              else x["status"].split(":")[0][:40])] += 1
+                                              else x["status"].split(":")[0].split(" (")[0])] += 1
             if x["completion"] == "second parameter" and "certificate" in x:
                 offsets.append((m, x))
             if "states" in x:

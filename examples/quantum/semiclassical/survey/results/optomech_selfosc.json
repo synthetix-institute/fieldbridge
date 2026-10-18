@@ -1,0 +1,447 @@
+{
+ "model": "optomech_selfosc",
+ "name": "cavity optomechanical element, self-sustained oscillation",
+ "provenance": {
+  "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
+  "kind": "classical image of census entry 58: Cavity optomechanical element: static radiation-pressure bistability and self-sustained oscillation"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+   "obstruction_short": "Hopf: an oscillation, not a write",
+   "class": "C R(Hopf)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+   "obstruction_short": "no stable state: the realization oscillates",
+   "class": "C R(Hopf)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(phase) K(1:1) L",
+   "word": "CRKL",
+   "law_constant": {
+    "constant": 0.9998962274183316,
+    "stderr": 0.005216070847990029,
+    "expected": 1.0
+   }
+  }
+ },
+ "seconds": {
+  "symmetric-write": 1.1,
+  "threshold-write": 15.6,
+  "phase-locking": 532.8,
+  "completion": 1.1,
+  "changes": 395.8
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "Ein": 33.32726396965478,
+     "state": [
+      3.828325114972837,
+      15.508679187821794,
+      0.025517520333670867,
+      6.600300586371053e-28
+     ]
+    },
+    "kind": "Hopf: the unwritten state starts to oscillate",
+    "obstruction": {
+     "rotation frequency": 2.0080004074566
+    },
+    "completion": "phase",
+    "law": {
+     "status": "phase: derived by the phase-locking target (memory codiscover --target phase-locking)"
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "cavity optomechanical element, self-sustained oscillation",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+    "seconds": 1.1,
+    "class": "oscillation"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+    "seconds": 14.8,
+    "class": "oscillation"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 14.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = Dl over [0.5, 8]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 13.4,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = Om over [0.5, 8]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 14.0,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = Gm over [0.025, 0.4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.1,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = g0 over [0.0025, 0.04]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 1.3,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.9,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein wider: [-800, 880]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.2,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein above: [80, 880]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.2,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.9,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein below: [-800, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 1.2,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*ar' from dar/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 1.0,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 14.9,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ Ein' from dar/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.1,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 15.5,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ],
+     "threshold-write": [
+      "oscillation",
+      "single stable state"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*ai' from dai/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 1.1,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 14.8,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-Om**2*X' from dV/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     },
+     "threshold-write": {
+      "status": "not derived",
+      "obstruction": "time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "not derived"
+     ],
+     "threshold-write": [
+      "oscillation",
+      "not derived"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- Gm*V' from dV/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 1.0,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 15.0,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ 2*g0**2*Om*(ar**2 + ai**2)' from dV/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 14.3,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "oscillation",
+      "no write point"
+     ]
+    },
+    "step": true
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '- (Dl + X)*ai' from dar/dt",
+    "why": "unbounded: a state at amplitude 800 runs away for Ein = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ (Dl + X)*ar' from dai/dt",
+    "why": "unbounded: a state at amplitude 800 runs away for Ein = 0"
+   }
+  ],
+  "steps": 9
+ }
+}

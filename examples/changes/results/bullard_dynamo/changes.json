@@ -1,0 +1,2290 @@
+{
+  "command": "changes",
+  "implementation_sha256": "b8bbc45034c0274ae910490fe05a9cc168d97f52692cdd8520b7d7e27fd8b4d5",
+  "versions": {
+    "python": "3.9.13",
+    "numpy": "1.24.4",
+    "scipy": "1.13.1",
+    "sympy": "1.14.0",
+    "matplotlib": "3.9.4"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Does the disk dynamo become a switch between the two polarities of its field when another parameter is the control?",
+  "input_sha256": "ec86c99b3538109c3d307b106c7d32190b871bdf62fe8f34145040582341af0e",
+  "assumptions": [
+    "The modified Bullard disk-dynamo model neglects additional magnetic-feedback effects beyond the terms explicitly present in the three source equations.",
+    "The parameters q, m, g, and f are treated as constants.",
+    "The linear stability discussion uses the equilibrium Z = Z0 and x = y = 0."
+  ],
+  "provenance": {
+    "source": "N. Leprovost, B. Dubrulle and F. Plunian, Intermittency in the homopolar disk-dynamo, Magnetohydrodynamics 42, 131 (2006), arXiv:nlin/0506050",
+    "kind": "equations of the source paper, as extracted from its LaTeX"
+  },
+  "settings": {
+    "budget": 60,
+    "pairs": true,
+    "first": 8,
+    "kinds": [
+      "remove",
+      "control",
+      "range"
+    ],
+    "only": null
+  },
+  "name": "modified Bullard disk dynamo",
+  "base": {
+    "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.7,
+      "class": "no write point"
+    },
+    "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 5.3,
+      "class": "reached"
+    }
+  },
+  "singles": [
+    {
+      "kind": "control",
+      "what": "control = q over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "control",
+      "what": "control = m over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "control",
+      "what": "control = g over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.4,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = f over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "range",
+      "what": "range of Z0 wider: [-19, 23]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.5,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "range",
+      "what": "range of Z0 above: [3, 23]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.8,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "range",
+      "what": "range of Z0 below: [-19, 1]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'x * Z' from dy/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.8,
+          "class": "single stable state"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove '+ m * x' from dy/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- (m + 1) * y' from dy/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- f * Z' from dZ/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.6,
+          "class": "one-sided write"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    }
+  ],
+  "rejected": [],
+  "steps": 2,
+  "pairs": [
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = Z0 over [0.275, 4.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of g above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 2.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "a combination of known outcomes"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.7,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = Z0 over [0.275, 4.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of f above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.4,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "a combination of known outcomes"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.7,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = Z0 over [0.275, 4.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of q above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 7.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.7,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = Z0 over [0.275, 4.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of m above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 7.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.3,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.6,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.8,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.8,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.0,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.6,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.6,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "remove",
+        "remove '+ m * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- (m + 1) * y' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- f * Z' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+          "seconds": 4.8,
+          "class": "one-sided write"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "control",
+        "control = q over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "control",
+        "control = m over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "control",
+        "control = g over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 1.1,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "control",
+        "control = f over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "range",
+        "range of Z0 wider: [-19, 23]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "range",
+        "range of Z0 above: [3, 23]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "range",
+        "range of Z0 below: [-19, 1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'm * x' from dy/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.6,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'x * Z' from dy/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'g * (1 - (m + 1) * x * y + m * x ** 2)' from dZ/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 0.5,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    }
+  ],
+  "open": 0
+}

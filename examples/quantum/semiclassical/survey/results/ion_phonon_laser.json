@@ -1,0 +1,678 @@
+{
+ "model": "ion_phonon_laser",
+ "name": "trapped-ion phonon laser (Van der Pol image) with injection",
+ "provenance": {
+  "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
+  "kind": "classical image of census entry 46: Trapped-ion phonon laser and its injection locking"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "reached after unfolding",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(fold) U R(pitchfork) K L",
+   "word": "CRURKL",
+   "law_constant": {
+    "constant": 0.2156080583786224,
+    "stderr": 0.29889648476386066,
+    "expected": 1.3313353638003897,
+    "offset": -3.464371806273999,
+    "offset_stderr": 0.29889648476386066,
+    "offset_resolved": true,
+    "by_sign": [
+     {
+      "sign": 1,
+      "constant": -3.2487637478953766,
+      "stderr": 0.4277640888314122
+     },
+     {
+      "sign": -1,
+      "constant": 3.6799798646526214,
+      "stderr": 0.41758151147171596
+     }
+    ],
+    "replicates": 8,
+    "signature": [
+     0.4077119815,
+     -0.002093697156,
+     0.4087096694,
+     -0.01052661154,
+     0.466959762,
+     0.008309859444,
+     -0.01177114928,
+     -4.051471621e-05,
+     -0.01464376762,
+     -6.846935171e-05,
+     0.03941448047,
+     -0.0004376551018,
+     -0.4312542801,
+     0.002012667723,
+     -0.4379972046,
+     0.01038967284,
+     -0.388130801,
+     -0.009185169648,
+     0.02043972922,
+     0.01180112471,
+     0.02043969847,
+     0.01180117795,
+     0.02044017661,
+     0.01180034978,
+     0.002464109685
+    ]
+   }
+  },
+  "threshold-write": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(fold) K L",
+   "word": "CRKL",
+   "law_constant": {
+    "constant": 1.0187940583373163,
+    "stderr": 5.1207101000150246e-05,
+    "expected": 1.018792971647471
+   }
+  },
+  "phase-locking": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "R(phase) K(1:1) L",
+   "word": "RKL",
+   "law_constant": {
+    "constant": 0.9999499849719871,
+    "stderr": 0.00034372052787623453,
+    "expected": 1.0
+   }
+  }
+ },
+ "seconds": {
+  "symmetric-write": 16.0,
+  "threshold-write": 4.7,
+  "phase-locking": 25.4,
+  "completion": 186.0,
+  "changes": 111.0
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "F": 0.9374072379279821,
+     "state": [
+      -3.045897987263914,
+      0.48989269099112315
+     ]
+    },
+    "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+    "obstruction": {
+     "quadratic a2": -0.04682990601545865,
+     "bias per unit control": 1.0537157111731024
+    },
+    "completion": "second parameter",
+    "unfoldings": [
+     {
+      "second": "Delta",
+      "success": true,
+      "cusp": {
+       "F": 1.721325931793725,
+       "Delta": 0.5773502692549121
+      },
+      "direction": {
+       "F": -0.9128709291227376,
+       "Delta": -0.4082482905813445
+      },
+      "kind_along_sweep": "transcritical: two states exchange stability; the write is one-sided",
+      "law": {
+       "status": "derived",
+       "law_kind": "reduced (one coordinate along the moving branch)",
+       "critical_dimension": 1,
+       "rate": 0.02,
+       "sweep_end": 29.46278254943948,
+       "noise": 0.0023547729208138876,
+       "noise_rule": "Gamma = 0.05",
+       "noise_along_critical": 0.009419091703988216,
+       "bias_floor": 0.02741413476183144,
+       "stable_states": [
+        [
+         -2.6347585236480726,
+         0.980196650398868
+        ],
+        [
+         -1.8039222721424812,
+         1.4685293667237311
+        ]
+       ],
+       "stable_critical_coordinates": [
+        [
+         0.6215955981698051
+        ],
+        [
+         -0.3550698355548058
+        ]
+       ],
+       "rows": [
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          0.103875,
+          0.896125
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          0.4180764445567643
+         ],
+         "reduced_law": [
+          0.760875,
+          0.239125
+         ],
+         "law": [
+          0.760875,
+          0.239125
+         ],
+         "certificate": [
+          0.86325,
+          0.13675
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 18.844818084798582,
+         "deviation": 0.102375
+        },
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.067125,
+          0.932875
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          0.18349642570909996
+         ],
+         "reduced_law": [
+          0.594375,
+          0.405625
+         ],
+         "law": [
+          0.594375,
+          0.405625
+         ],
+         "certificate": [
+          0.685,
+          0.315
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 12.338928640876189,
+         "deviation": 0.09062500000000007
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          0.128,
+          0.872
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          0.5354041639267922
+         ],
+         "reduced_law": [
+          0.824625,
+          0.175375
+         ],
+         "law": [
+          0.824625,
+          0.175375
+         ],
+         "certificate": [
+          0.9215,
+          0.0785
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 22.78028814049238,
+         "deviation": 0.096875
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.05,
+          0.95
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          0.06624412623146321
+         ],
+         "reduced_law": [
+          0.486625,
+          0.513375
+         ],
+         "law": [
+          0.486625,
+          0.513375
+         ],
+         "certificate": [
+          0.594,
+          0.406
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 13.828559199224744,
+         "deviation": 0.107375
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          0.197,
+          0.803
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          0.7700596026668469
+         ],
+         "reduced_law": [
+          0.918125,
+          0.081875
+         ],
+         "law": [
+          0.918125,
+          0.081875
+         ],
+         "certificate": [
+          0.98075,
+          0.01925
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 28.82592213771819,
+         "deviation": 0.06262500000000004
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.011375,
+          0.988625
+         ],
+         "t_star": 29.464999999998422,
+         "t_cross": 28.284271247461902,
+         "t_map": 29.464999999998422,
+         "linear_stage_ended_by": "end of the sweep",
+         "growth": 0.013819414150260017,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          -0.16826047272381053
+         ],
+         "reduced_law": [
+          0.324875,
+          0.675125
+         ],
+         "law": [
+          0.324875,
+          0.675125
+         ],
+         "certificate": [
+          0.4015,
+          0.5985
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 9.886114383957475,
+         "deviation": 0.076625
+        }
+       ],
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.760875,
+          "P_toward_minus": 0.405625,
+          "response_constant": 0.6261353564747925,
+          "offset": 0.47396689023681154
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.824625,
+          "P_toward_minus": 0.513375,
+          "response_constant": 0.643479619652032,
+          "offset": 0.44980154343555656
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.918125,
+          "P_toward_minus": 0.675125,
+          "response_constant": 0.6146372845618767,
+          "offset": 0.46923000783913055
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.86325,
+          "P_toward_minus": 0.315,
+          "response_constant": 0.8165227900034355,
+          "offset": 0.7883824121894124
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.9215,
+          "P_toward_minus": 0.406,
+          "response_constant": 0.7837484479830282,
+          "offset": 0.8265401751325551
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.98075,
+          "P_toward_minus": 0.5985,
+          "response_constant": 0.7718276349637955,
+          "offset": 0.9100124684309757
+         }
+        ]
+       },
+       "certified": false,
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.107 (28.8 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play)"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "changes": {
+  "name": "trapped-ion phonon laser (Van der Pol image) with injection",
+  "base": {
+   "symmetric-write": {
+    "status": "reached after unfolding",
+    "obstruction": "",
+    "seconds": 3.5,
+    "class": "reached"
+   },
+   "threshold-write": {
+    "status": "reached",
+    "obstruction": "",
+    "seconds": 3.0,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = g1 over [0.5, 8]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 2.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = g2 over [0.025, 0.4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.7,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 3.0,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = Delta over [0.075, 1.2]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 2.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F wider: [-20, 22]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 7.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F above: [2, 22]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 7.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 9.9,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F below: [-20, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 7.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '0.5*g1*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 6.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 6.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ Delta*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 4.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '0.5*g1*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 6.1,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 6.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- Delta*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 3.7,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 4.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- F' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 2.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '- g2*(x**2 + y**2)*x' from dx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for F = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- g2*(x**2 + y**2)*y' from dy/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for F = 0"
+   }
+  ],
+  "steps": 0
+ }
+}

@@ -1,0 +1,597 @@
+{
+ "model": "pplo_oscillator",
+ "name": "Josephson parametric phase-locked oscillator for qubit measurement (Lin 2014)",
+ "provenance": {
+  "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
+  "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) measurement, phase-encoded"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+   "obstruction_short": "a line of states: the drift vanishes along the critical direction",
+   "class": "S(reflection) C R(degenerate)",
+   "word": "SCR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "a single stable state: there is no second state to switch to",
+   "obstruction_short": "a single stable state: nothing to switch to",
+   "class": "S C R(degenerate)",
+   "word": "SCR",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of p in [0, 3] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 1.0,
+  "threshold-write": 1.3,
+  "phase-locking": 0.6,
+  "completion": 63.4,
+  "changes": 27.4
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "p": 1.0,
+     "state": [
+      0.0011853556574165833,
+      0.0011853558105768588
+     ]
+    },
+    "kind": "degenerate: the drift vanishes along the critical direction (a line of states)",
+    "obstruction": {
+     "vanishing drift along the critical direction": 0.0
+    },
+    "completion": "leading order",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 1,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.125,
+     "noise_rule": "material noise",
+     "noise_along_critical": 0.1250000000000091,
+     "bias_floor": 0.09986769753046548,
+     "stable_states": [
+      [
+       -1.5139214620608261,
+       -6.076257134713222
+      ],
+      [
+       1.5139214620608263,
+       6.076257134713223
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       5.368742884775381
+      ],
+      [
+       -5.365390192464872
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.6875,
+        0.3125
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        130.907850384022
+       ],
+       "law": [
+        0.6875,
+        0.3125
+       ],
+       "certificate": [
+        0.69025,
+        0.30975
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.37614372776821725,
+       "deviation": 0.00275000000000003
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.3035,
+        0.6965
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -130.90785170867053
+       ],
+       "law": [
+        0.3035,
+        0.6965
+       ],
+       "certificate": [
+        0.30475,
+        0.69525
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.17175035870148575,
+       "deviation": 0.0012500000000000289
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.83975,
+        0.16025
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        261.8157014303681
+       ],
+       "law": [
+        0.83975,
+        0.16025
+       ],
+       "certificate": [
+        0.835,
+        0.165
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.8093537726513882,
+       "deviation": 0.004750000000000032
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.15,
+        0.85
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -261.81570275501645
+       ],
+       "law": [
+        0.15,
+        0.85
+       ],
+       "certificate": [
+        0.15725,
+        0.84275
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.2595728607309815,
+       "deviation": 0.0072500000000000064
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.97525,
+        0.02475
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        523.6314035230596
+       ],
+       "law": [
+        0.97525,
+        0.02475
+       ],
+       "certificate": [
+        0.9785,
+        0.0215
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.4171431167157587,
+       "deviation": 0.003250000000000086
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.02325,
+        0.97675
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001139972559726,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -523.631404847707
+       ],
+       "law": [
+        0.02325,
+        0.97675
+       ],
+       "certificate": [
+        0.0255,
+        0.9745
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.9027167519108213,
+       "deviation": 0.0022499999999999985
+      }
+     ],
+     "one_direction": {
+      "law": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.6875,
+        "P_toward_minus": 0.6965,
+        "response_constant": 1.3355115879200274,
+        "offset": -0.012792023193165858
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.83975,
+        "P_toward_minus": 0.85,
+        "response_constant": 1.3512150689246374,
+        "offset": -0.021501235158536358
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.97525,
+        "P_toward_minus": 0.97675,
+        "response_constant": 1.3163863752382354,
+        "offset": -0.013283315341462876
+       }
+      ],
+      "certificate": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.69025,
+        "P_toward_minus": 0.69525,
+        "response_constant": 1.3411158938768142,
+        "offset": -0.007114101264607431
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.835,
+        "P_toward_minus": 0.84275,
+        "response_constant": 1.3179809892851475,
+        "offset": -0.01585531111194094
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.9785,
+        "P_toward_minus": 0.9745,
+        "response_constant": 1.3230776777943685,
+        "offset": 0.036115108729554146
+       }
+      ]
+     },
+     "certified": true
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "Josephson parametric phase-locked oscillator for qubit measurement (Lin 2014)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+    "seconds": 1.0,
+    "class": "unclassified"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "a single stable state: there is no second state to switch to",
+    "seconds": 1.3,
+    "class": "single stable state"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = gnl over [0.0005, 0.008]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p wider: [-30, 33]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p above: [3, 33]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p below: [-30, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.4,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*qx' from dqx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.7,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.1,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ 0.5*kappa*p*qy' from dqx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*qy' from dqy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ 0.5*kappa*p*qx' from dqy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "unclassified",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ 12*gnl*(qx**2 + qy**2)*qx' from dqy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.6,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.9,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '- 12*gnl*(qx**2 + qy**2)*qy' from dqx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for p = 3"
+   }
+  ],
+  "steps": 9
+ }
+}

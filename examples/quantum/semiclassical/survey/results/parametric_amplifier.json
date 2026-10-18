@@ -1,0 +1,283 @@
+{
+ "model": "parametric_amplifier",
+ "name": "parametric amplifier below threshold",
+ "provenance": {
+  "source": "Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008)",
+  "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "no write point along the control",
+   "obstruction_short": "no write point along the control",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "a single stable state: there is no second state to switch to",
+   "obstruction_short": "a single stable state: nothing to switch to",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of p in [0, 0.45] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 0.5,
+  "threshold-write": 1.2,
+  "phase-locking": 0.4,
+  "completion": 0.5,
+  "changes": 26.1
+ },
+ "completion": {
+  "write_points": []
+ },
+ "changes": {
+  "name": "parametric amplifier below threshold",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "no write point along the control",
+    "seconds": 0.5,
+    "class": "no write point"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "a single stable state: there is no second state to switch to",
+    "seconds": 1.2,
+    "class": "single stable state"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.5,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "no write point",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = K over [0.0025, 0.04]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of p wider: [-4.5, 4.95]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.5,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "no write point",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p above: [0.45, 4.95]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.4,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.2,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "no write point",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of p below: [-4.5, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 0.4,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.2,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "no write point",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '(p + K*(x**2 + y**2))*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '(p - K*(x**2 + y**2))*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.7,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 1.2,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "threshold-write"
+    ],
+    "changed": {
+     "symmetric-write": [
+      "no write point",
+      "unclassified"
+     ]
+    },
+    "step": true
+   }
+  ],
+  "rejected": [],
+  "steps": 6
+ }
+}

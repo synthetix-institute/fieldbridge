@@ -1,0 +1,2991 @@
+{
+  "command": "changes",
+  "implementation_sha256": "b8bbc45034c0274ae910490fe05a9cc168d97f52692cdd8520b7d7e27fd8b4d5",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Which changes turn the epidemic model with higher-order infection into a symmetric switch?",
+  "input_sha256": "8e517076d0d63bc5f4f677603ad50f6c6d8c367e1fc500630e1099c256527cd3",
+  "assumptions": [
+    "SIS epidemic dynamics with recovery and no explicit susceptible replenishment term",
+    "Topological homogeneity within each population",
+    "Symmetric coupling between the two populations",
+    "Pairwise interactions both within and between populations",
+    "Three-body interactions within each population",
+    "Individual-based mean-field product closure"
+  ],
+  "provenance": {
+    "source": "I. Z. Kiss, C. Bick and P. L. Simon, Decoding how higher-order network interactions shape complex contagion dynamics, J. Math. Biol. 91, 29 (2025), doi:10.1007/s00285-025-02247-4, arXiv:2410.15330",
+    "kind": "equations of the source paper, as extracted from its LaTeX"
+  },
+  "settings": {
+    "budget": 60,
+    "pairs": true,
+    "first": 6,
+    "kinds": [
+      "remove",
+      "control",
+      "range"
+    ],
+    "only": null
+  },
+  "name": "two symmetric populations with pairwise and three-body infection",
+  "base": {
+    "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 3.5,
+      "class": "no write point"
+    },
+    "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.8,
+      "class": "reached"
+    }
+  },
+  "singles": [
+    {
+      "kind": "control",
+      "what": "control = beta over [0.9625, 15.4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.3,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "control",
+      "what": "control = gamma over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.5,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "control",
+      "what": "control = d_1 over [1, 16]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 35.8,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "no write point",
+          "one-sided write"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = d_2 over [0.75, 12]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 10.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.4,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = d_3 over [0.75, 12]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 14.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = d_4 over [1, 16]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 31.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = h_1 over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 4.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "control",
+      "what": "control = h_2 over [0.25, 4]",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "range",
+      "what": "range of tau wider: [-1, 1.1]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.8,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "range",
+      "what": "range of tau above: [0.1, 1.1]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.5,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "range",
+      "what": "range of tau below: [-1, 0]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 2.7,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.6,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "no write point",
+          "one-sided write"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove '-gamma*y_1' from dy_1/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 6.0,
+          "class": "single stable state"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.2,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "remove",
+      "what": "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 2.7,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "no write point",
+          "one-sided write"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove '-gamma*y_2' from dy_2/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.7,
+          "class": "single stable state"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    }
+  ],
+  "rejected": [],
+  "steps": 8,
+  "pairs": [
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 16.2,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 9.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 12.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 32.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.7,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_1 wider: [-149, 166]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_1 above: [16, 166]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 25.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 8.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_1 below: [-149, 1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 7.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 6.0,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 23.5,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 7.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 41.6,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 14.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 7.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 44.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.7,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_2 wider: [-111.8, 124.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 46.7,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_2 above: [12, 124.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_2 below: [-111.8, 0.75]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 45.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 7.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 9.2,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 6.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 6.0,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 17.6,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 7.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 40.2,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 12.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 34.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 6.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_3 wider: [-111.8, 124.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 56.4,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 7.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_3 above: [12, 124.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "range",
+        "range of d_3 below: [-111.8, 0.75]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 8.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 8.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 6.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 6.5,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 18.3,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 34.8,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 12.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 12.3,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 7.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_4 wider: [-149, 166]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 6.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_4 above: [16, 166]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 39.1,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "range",
+        "range of d_4 below: [-149, 1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.4,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 4.7,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 13.9,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 27.7,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 8.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 11.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 27.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 4.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of h_1 above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.6,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 5.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.5,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = tau over [0.0075, 0.12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 16.3,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = beta over [0.9625, 15.4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = gamma over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_1 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 30.4,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_2 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 8.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_3 over [0.75, 12]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 10.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = d_4 over [1, 16]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 27.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "control",
+        "control = h_1 over [0.25, 4]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "range",
+        "range of h_2 above: [4, 41.5]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_1)*(d_1*y_1+d_2*y_2)' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_1*(1-y_1)*y_1**2' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_1' from dy_1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 5.3,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove 'tau*(1-y_2)*(d_3*y_1+d_4*y_2)' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '+beta*h_2*(1-y_2)*y_2**2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 1.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = h_2 over [0.25, 4]"
+      ],
+      "second": [
+        "remove",
+        "remove '-gamma*y_2' from dy_2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 4.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "a single stable state: there is no second state to switch to",
+          "seconds": 4.9,
+          "class": "single stable state"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    }
+  ],
+  "open": 0
+}

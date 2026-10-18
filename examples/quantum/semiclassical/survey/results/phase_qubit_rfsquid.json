@@ -1,0 +1,3186 @@
+{
+ "model": "phase_qubit_rfsquid",
+ "name": "flux-biased rf-SQUID phase qubit (and Josephson photomultiplier)",
+ "provenance": {
+  "source": "Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Martinis, J. M., 'Superconducting phase qubits', Quantum Inf. Process. 8, 81 (2009) (full text, author manuscript from the UCSB group web page)",
+  "kind": "classical image of census entry 13: Phase qubit (current-biased Josephson junction / flux-biased rf-SQUID) with tunnelling measurement"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+   "obstruction_short": "degenerate critical mode: 2 directions",
+   "class": "C R(degenerate critical mode)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "reached by a write field",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(degenerate critical mode) W R(fold) K L",
+   "word": "CRWRKL",
+   "law_constant": {
+    "constant": 1.0187924780757054,
+    "stderr": 5e-07,
+    "expected": 1.018792971647471
+   }
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of phe in [0, 8] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 3.5,
+  "threshold-write": 7.8,
+  "phase-locking": 2.3,
+  "completion": 685.4,
+  "changes": 145.8
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "phe": 0.945533355077108,
+     "state": [
+      10.895822573124272,
+      -1.433869263365281e-26
+     ]
+    },
+    "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+    "obstruction": {
+     "degenerate critical mode": 2
+    },
+    "completion": "critical space",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 2,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.016826757568013988,
+     "noise_rule": "Gamma = 0.05",
+     "noise_along_critical": 0.016826757568013995,
+     "bias_floor": 0.03664124734761515,
+     "stable_states": [
+      [
+       0.0899901391219796,
+       -2.1743030764973882e-23
+      ],
+      [
+       5.783159478021859,
+       8.380298229267983e-22
+      ],
+      [
+       10.98842161913683,
+       5.890907936723927e-25
+      ],
+      [
+       -5.568104779956684,
+       3.628920012816615e-26
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       10.753201603348725,
+       -1.0652088384323457
+      ],
+      [
+       5.087761385105471,
+       -0.5039920755843925
+      ],
+      [
+       -0.09214803358578354,
+       0.009128155821906063
+      ],
+      [
+       16.383738235055578,
+       -1.6229680627496363
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.003562397231798749,
+        0.018164752728480296
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.009574501968196748,
+        0.012821408642886365
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.01707193738369671,
+        4.449746794041006e-05
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.014545951874087373,
+        -0.012673260335556477
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.003485994018556498,
+        -0.01789205844612672
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.009637078557436929,
+        -0.012562969998600465
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.017145717926152118,
+        0.00020235953210086537
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.014633559042062486,
+        0.012934372957570795
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.007085377885662112,
+        0.03619315269745815
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.019188420514328754,
+        0.02550646452627032
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.034183291345328756,
+        -4.735782362165876e-05
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.029131320326110002,
+        -0.025482873430615425
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.007011404615048297,
+        -0.035920469651755826
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.019234740536938622,
+        -0.02526229275670339
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.03425201927436894,
+        0.0002683663046993195
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.029227701506189706,
+        0.025732393155639178
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.014131339193389065,
+        0.07224995263541364
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.03841625760659279,
+        0.05087657629303822
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.06840599926859282,
+        -0.00023106840674555137
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.058302057230155316,
+        -0.051102099620733206
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.014062225808032097,
+        -0.07197729206301423
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.03843006449594203,
+        -0.0506609382729093
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.06846462197080266,
+        0.0004003798498962525
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.05841598643444412,
+        0.051328433551775854
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
+      }
+     ],
+     "certified": true
+    }
+   },
+   {
+    "write_point": {
+     "phe": 5.3376478004455565,
+     "state": [
+      -4.613225200245387,
+      4.591728967839536e-27
+     ]
+    },
+    "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+    "obstruction": {
+     "degenerate critical mode": 2
+    },
+    "completion": "critical space",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 2,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.03408059407601928,
+     "noise_rule": "Gamma = 0.05",
+     "noise_along_critical": 0.034080594076019294,
+     "bias_floor": 0.0521463132313737,
+     "stable_states": [
+      [
+       6.193491920203301,
+       1.5542114677698123e-23
+      ],
+      [
+       0.5003585490906663,
+       -2.6972395235144396e-22
+      ],
+      [
+       -4.70166477095941,
+       -2.2776085617156625e-28
+      ],
+      [
+       11.85167040029227,
+       -2.801187402712131e-27
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       -10.754021956450304,
+       1.0659018161085905
+      ],
+      [
+       -5.088649152521184,
+       0.5043694717359614
+      ],
+      [
+       0.08800832618057397,
+       -0.008723083799571792
+      ],
+      [
+       -16.38461031461629,
+       1.6239864453787765
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.004980787222560966,
+        0.02553097525188621
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.997,
+        0.00275,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.469309488208703,
+       "deviation": 0.0030000000000000027
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.013695229992813862,
+        0.017946811935995885
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9955,
+        0.00425,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.2522189675114666,
+       "deviation": 0.0044999999999999485
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.024381144355487258,
+        -0.0002201258257024199
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99675,
+        0.003,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.611424616438867,
+       "deviation": 0.003249999999999975
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.0208060392285238,
+        -0.01833956173192066
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99625,
+        0.0035,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.88026567795212,
+       "deviation": 0.003750000000000031
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.005050224927854261,
+        -0.02578303340726818
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99775,
+        0.00225,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.0033807060122775,
+       "deviation": 0.00225
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.013645470317598322,
+        -0.018178579606982385
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.995,
+        0.00475,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.483358396622205,
+       "deviation": 0.0050000000000000044
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.02431543751685354,
+        4.840589800425826e-06
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99525,
+        0.00475,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.369288355497286,
+       "deviation": 0.004750000000000032
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.020720654357647954,
+        0.018103986034532452
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.996,
+        0.00375,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.0080240802810145,
+       "deviation": 0.0040000000000000036
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.009998023498735992,
+        0.05118798759182411
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9945,
+        0.0055,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.703367855111134,
+       "deviation": 0.0055
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.027354010932013693,
+        0.03601966096004359
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99775,
+        0.002,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.00338070601226,
+       "deviation": 0.0022499999999999742
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.04872583965736061,
+        -0.00031421456335309784
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.0005,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.04157562940343362,
+        -0.03655308637578942
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9985,
+        0.00125,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.451328929434033,
+       "deviation": 0.0014999999999999458
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.01006400080209468,
+        -0.05144002972648455
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99625,
+        0.0035,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.88026567795212,
+       "deviation": 0.003750000000000031
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.027327389688810724,
+        -0.03623112212591299
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99725,
+        0.00275,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.3211945767895905,
+       "deviation": 0.00275000000000003
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.0486673240873211,
+        0.0001357182676526153
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99375,
+        0.00625,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 5.015698625755191,
+       "deviation": 0.00625
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.04147775776890973,
+        0.03633400915711675
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9955,
+        0.0045,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.2522189675114905,
+       "deviation": 0.0045
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.020032496051085886,
+        0.1025020122717003
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99675,
+        0.00325,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.611424616438881,
+       "deviation": 0.00325
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.05467157281041337,
+        0.07216535900813885
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99725,
+        0.0025,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.3211945767895905,
+       "deviation": 0.00275000000000003
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.09741523026110745,
+        -0.000502392038654131
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9975,
+        0.001,
+        0.0,
+        0.0015
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.166237934306484,
+       "deviation": 0.0024999999999999467
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.08311480975325314,
+        -0.07298013566352707
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9985,
+        0.001,
+        0.0,
+        0.0005
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.451328929434033,
+       "deviation": 0.0014999999999999458
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.020091552550575254,
+        -0.10275402236491739
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.996,
+        0.004,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 4.0080240802810145,
+       "deviation": 0.0040000000000000036
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.05469122843123531,
+        -0.07233620716377444
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9915,
+        0.0085,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 5.855892550180003,
+       "deviation": 0.0085
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.09737109722825592,
+        0.0003974736233569951
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9895,
+        0.0105,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 6.515034891401571,
+       "deviation": 0.0105
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.08299196459143328,
+        0.07279405540228549
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.988,
+        0.01175,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 6.970150353573232,
+       "deviation": 0.01200000000000001
+      }
+     ],
+     "certified": true
+    }
+   },
+   {
+    "write_point": {
+     "phe": 7.228722181345026,
+     "state": [
+      17.1795303416137,
+      -2.9297191486848864e-25
+     ]
+    },
+    "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+    "obstruction": {
+     "degenerate critical mode": 2
+    },
+    "completion": "critical space",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 2,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.030460374166483315,
+     "noise_rule": "Gamma = 0.05",
+     "noise_along_critical": 0.030460374166483322,
+     "bias_floor": 0.04929894751788875,
+     "stable_states": [
+      [
+       6.372911448735189,
+       2.679662281853077e-23
+      ],
+      [
+       12.066048792924141,
+       3.480942950951129e-23
+      ],
+      [
+       17.268436588863796,
+       -2.825100719889364e-27
+      ],
+      [
+       0.7147421868615097,
+       4.5743386026183785e-26
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       10.753930897387239,
+       -1.0658246338581705
+      ],
+      [
+       5.0885506155778515,
+       -0.504327454627286
+      ],
+      [
+       -0.08847278216719848,
+       0.00876855835875588
+      ],
+      [
+       16.38451358481857,
+       -1.6238730152828365
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.004776777420006495,
+        0.024383257940420677
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9985,
+        0.00125,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.451328929434033,
+       "deviation": 0.0014999999999999458
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.01289808980988238,
+        0.01719403587052101
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99825,
+        0.0015,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.648069386379728,
+       "deviation": 0.0017500000000000293
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.02298544812431236,
+        3.475957831050331e-06
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.998,
+        0.002,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.831259801595089,
+       "deviation": 0.0020000000000000018
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.01958694242769949,
+        -0.017107420325772206
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99875,
+        0.00125,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.2374668315480895,
+       "deviation": 0.00125
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.004706503882157547,
+        -0.024128890585963632
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99825,
+        0.00175,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.648069386379728,
+       "deviation": 0.0017500000000000293
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.012949759862548139,
+        -0.016958850813962204
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.00075,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.02305219434372076,
+        0.000216126651276188
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.999,
+        0.001,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.0010007506255483,
+       "deviation": 0.0010000000000000009
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.019672292134336737,
+        0.01734620521111975
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9985,
+        0.0015,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.4513289294340774,
+       "deviation": 0.0015
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.009516782461244367,
+        0.04863932463217662
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.999,
+        0.001,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.0010007506255483,
+       "deviation": 0.0010000000000000009
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.025832951998533325,
+        0.03426088049237739
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.00075,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.04600766862739342,
+        -0.00012023933300242887
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99675,
+        0.00325,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.611424616438881,
+       "deviation": 0.00325
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.03921065723416777,
+        -0.03434203190020907
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99775,
+        0.00225,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.0033807060122775,
+       "deviation": 0.00225
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.009449780143083682,
+        -0.0483849724205919
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9985,
+        0.0015,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.4513289294340774,
+       "deviation": 0.0015
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.0258627473463277,
+        -0.03404489287658901
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99875,
+        0.00125,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.2374668315480895,
+       "deviation": 0.00125
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.04606761630867284,
+        0.0003050620538877554
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.0005,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.039307811889904995,
+        0.034565219173574954
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.0005,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0,
+        0.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.01899679254372025,
+        0.09715145801568877
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99825,
+        0.0015,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.648069386379728,
+       "deviation": 0.0017500000000000293
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865476,
+        0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.051702676375835505,
+        0.06839456973609005
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99625,
+        0.00375,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.88026567795212,
+       "deviation": 0.003750000000000031
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        6.123233995736766e-17,
+        1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.09205210963355548,
+        -0.0003676699146697004
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.9965,
+        0.0035,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.7482225257257946,
+       "deviation": 0.0035
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865475,
+        0.7071067811865476
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.07845808684710404,
+        -0.06881125504908278
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99725,
+        0.00275,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 3.3211945767895905,
+       "deviation": 0.00275000000000003
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0,
+        1.2246467991473532e-16
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        -0.018936332664935905,
+        -0.09689713608984835
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99825,
+        0.00175,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.648069386379728,
+       "deviation": 0.0017500000000000293
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -0.7071067811865477,
+        -0.7071067811865475
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.05168872231388675,
+        -0.06821697700184261
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.999,
+        0.0005,
+        0.0,
+        0.0005
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.0010007506255483,
+       "deviation": 0.0010000000000000009
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.8369701987210297e-16,
+        -1.0
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.09209846023857707,
+        0.00048293285911104114
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.0005,
+        0.0,
+        0.00025
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        0.7071067811865474,
+        -0.7071067811865477
+       ],
+       "linear_stage_law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "t_star": 56.57000000001049,
+       "t_cross": 28.284271247461902,
+       "t_map": 56.57000000001049,
+       "linear_stage_ended_by": "end of the sweep",
+       "growth": 0.0,
+       "linear_size_before_crossing": true,
+       "mean_critical": [
+        0.0785788514010412,
+        0.06900324709848525
+       ],
+       "law": [
+        1.0,
+        0.0,
+        0.0,
+        0.0
+       ],
+       "certificate": [
+        0.99925,
+        0.00075,
+        0.0,
+        0.0
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.7327006922047121,
+       "deviation": 0.0007500000000000284
+      }
+     ],
+     "certified": true
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "flux-biased rf-SQUID phase qubit (and Josephson photomultiplier)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+    "seconds": 3.2,
+    "class": "several critical directions"
+   },
+   "threshold-write": {
+    "status": "reached by a write field",
+    "obstruction": "",
+    "seconds": 5.2,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = ell over [0.025, 0.4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 4.6,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 6.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = gam over [0.05, 0.8]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 2.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 4.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of phe wider: [-80, 88]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 19.5,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 21.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of phe above: [8, 88]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 15.9,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 17.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of phe below: [-80, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 13.8,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 16.0,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-gam*v' from dv/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+      "seconds": 2.9,
+      "class": "oscillation"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 4.7,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- ell*(ph - phe)' from dv/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 2.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- sin(ph)' from dv/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.2,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "no write point"
+     ]
+    },
+    "step": true
+   }
+  ],
+  "rejected": [],
+  "steps": 4
+ }
+}

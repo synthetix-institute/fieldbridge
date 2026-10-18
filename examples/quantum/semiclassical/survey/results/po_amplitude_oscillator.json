@@ -1,0 +1,593 @@
+{
+ "model": "po_amplitude_oscillator",
+ "name": "Josephson parametric oscillator for qubit measurement, amplitude encoded (Krantz 2016)",
+ "provenance": {
+  "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
+  "kind": "classical image of census entry 24: Josephson parametric oscillator measurement, amplitude-encoded (qubit coupled directly to the JPO)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+   "obstruction_short": "subcritical: jump to a distant branch",
+   "class": "S(reflection) C R(subcritical pitchfork)",
+   "word": "SCR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "a single stable state: there is no second state to switch to",
+   "obstruction_short": "a single stable state: nothing to switch to",
+   "class": "S C R(pitchfork)",
+   "word": "SCR",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of eps in [0, 8] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 0.5,
+  "threshold-write": 0.6,
+  "phase-locking": 1.8,
+  "completion": 63.5,
+  "changes": 24.7
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "eps": 5.432826170603978,
+     "state": [
+      -8.503231628459726e-11,
+      -7.97363925262104e-12
+     ]
+    },
+    "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
+    "obstruction": {
+     "cubic a3 > 0": 0.10678551179624633
+    },
+    "completion": "distant branch",
+    "law": {
+     "status": "derived",
+     "law_kind": "linear stage and outcome map",
+     "critical_dimension": 1,
+     "rate": 0.02,
+     "sweep_end": 56.568542494923804,
+     "noise": 0.00031727520571289827,
+     "noise_rule": "Gamma = 0.05",
+     "noise_along_critical": 0.009364566252283968,
+     "bias_floor": 0.027334671813125776,
+     "stable_states": [
+      [
+       -2.1057430912802526,
+       -23.127057359941034
+      ],
+      [
+       2.105743091280253,
+       23.127057359941034
+      ]
+     ],
+     "stable_critical_coordinates": [
+      [
+       126.16481768459268
+      ],
+      [
+       -126.16481768476434
+      ]
+     ],
+     "rows": [
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.687,
+        0.313
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        20.905703250388285
+       ],
+       "law": [
+        0.687,
+        0.313
+       ],
+       "certificate": [
+        0.68825,
+        0.31175
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.17067254618076283,
+       "deviation": 0.0012499999999999734
+      },
+      {
+       "bias_floors": 0.5,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.304,
+        0.696
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        -20.905703250388285
+       ],
+       "law": [
+        0.304,
+        0.696
+       ],
+       "certificate": [
+        0.3215,
+        0.6785
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.369750533556785,
+       "deviation": 0.017500000000000016
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.839375,
+        0.160625
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        41.81140650077657
+       ],
+       "law": [
+        0.839375,
+        0.160625
+       ],
+       "certificate": [
+        0.84225,
+        0.15775
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.4988415855035791,
+       "deviation": 0.002875000000000072
+      },
+      {
+       "bias_floors": 1.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.1505,
+        0.8495
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        -41.81140650077657
+       ],
+       "law": [
+        0.1505,
+        0.8495
+       ],
+       "certificate": [
+        0.161,
+        0.839
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 1.8068636306365498,
+       "deviation": 0.010500000000000065
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        1.0
+       ],
+       "linear_stage_law": [
+        0.974875,
+        0.025125
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        83.62281300155314
+       ],
+       "law": [
+        0.974875,
+        0.025125
+       ],
+       "certificate": [
+        0.977,
+        0.023
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 0.8965566376192204,
+       "deviation": 0.002125000000000002
+      },
+      {
+       "bias_floors": 2.0,
+       "direction": [
+        -1.0
+       ],
+       "linear_stage_law": [
+        0.02325,
+        0.97675
+       ],
+       "t_star": 50.65000000000746,
+       "t_cross": 28.284271247461902,
+       "t_map": 38.290000000001136,
+       "linear_stage_ended_by": "growth",
+       "growth": 5.001142207541669,
+       "linear_size_before_crossing": false,
+       "mean_critical": [
+        -83.62281300155314
+       ],
+       "law": [
+        0.02325,
+        0.97675
+       ],
+       "certificate": [
+        0.01875,
+        0.98125
+       ],
+       "certificate_diverged": 0.0,
+       "deviation_sigma": 2.0982249094652934,
+       "deviation": 0.0045000000000000005
+      }
+     ],
+     "one_direction": {
+      "law": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.687,
+        "P_toward_minus": 0.696,
+        "response_constant": 1.3317280758927195,
+        "offset": -0.012782922572643712
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.839375,
+        "P_toward_minus": 0.8495,
+        "response_constant": 1.348765033739097,
+        "offset": -0.021199435712056625
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.974875,
+        "P_toward_minus": 0.97675,
+        "response_constant": 1.314246301057516,
+        "offset": -0.016498244109839355
+       }
+      ],
+      "certificate": [
+       {
+        "bias_floors": 0.5,
+        "P_toward_plus": 0.68825,
+        "P_toward_minus": 0.6785,
+        "response_constant": 1.2706323321269124,
+        "offset": 0.013693807784856932
+       },
+       {
+        "bias_floors": 1.0,
+        "P_toward_plus": 0.84225,
+        "P_toward_minus": 0.839,
+        "response_constant": 1.3274109133176812,
+        "offset": 0.006695950780875204
+       },
+       {
+        "bias_floors": 2.0,
+        "P_toward_plus": 0.977,
+        "P_toward_minus": 0.98125,
+        "response_constant": 1.3565214872289977,
+        "offset": -0.04244257117872485
+       }
+      ]
+     },
+     "certified": true
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "Josephson parametric oscillator for qubit measurement, amplitude encoded (Krantz 2016)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+    "seconds": 0.5,
+    "class": "distant branch"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "a single stable state: there is no second state to switch to",
+    "seconds": 0.6,
+    "class": "single stable state"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = delta over [-21.36, -1.335]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.5,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = chi over [-1, 1]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "distant branch",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = alpha over [0.005, 0.08]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "distant branch",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove 'eps*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.5,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- (delta + chi)*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.5,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.5,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove 'eps*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "distant branch",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ (delta + chi)*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.4,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 2.6,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ alpha*(x**2 + y**2)*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.5,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.5,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "range",
+    "what": "range of eps wider: [-80, 88]",
+    "why": "unbounded: a state at amplitude 4 runs away for eps = -80"
+   },
+   {
+    "kind": "range",
+    "what": "range of eps above: [8, 88]",
+    "why": "unbounded: a state at amplitude 4 runs away for eps = 88"
+   },
+   {
+    "kind": "range",
+    "what": "range of eps below: [-80, 0]",
+    "why": "unbounded: a state at amplitude 4 runs away for eps = -80"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- alpha*(x**2 + y**2)*y' from dx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for eps = 8"
+   }
+  ],
+  "steps": 5
+ }
+}

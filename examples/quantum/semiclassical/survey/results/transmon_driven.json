@@ -1,0 +1,947 @@
+{
+ "model": "transmon_driven",
+ "name": "driven transmon (Duffing image)",
+ "provenance": {
+  "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
+  "kind": "classical image of census entry 0: Transmon (fixed-frequency and flux-tunable SQUID transmon)"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "reached after unfolding",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(fold) U R(pitchfork) K L",
+   "word": "CRURKL",
+   "law_constant": {
+    "constant": 1.542493187195494,
+    "stderr": 0.1504709294176932,
+    "expected": 1.3313353638003897,
+    "offset": 1.3237139125332549,
+    "offset_stderr": 0.1504709294176932,
+    "offset_resolved": true,
+    "by_sign": [
+     {
+      "sign": 1,
+      "constant": 2.866207099728749,
+      "stderr": 0.26603709488084376
+     },
+     {
+      "sign": -1,
+      "constant": 0.21877927466223945,
+      "stderr": 0.14067788222268116
+     }
+    ],
+    "replicates": 8,
+    "signature": [
+     0.4689532228,
+     0.01841800468,
+     0.3459414159,
+     0.07812224282,
+     0.4603121664,
+     -0.08411293516,
+     -0.006363599683,
+     -6.049013091e-05,
+     -0.09454292751,
+     -0.01600028805,
+     0.05755412321,
+     -0.005385930333,
+     -0.4816804222,
+     -0.01853898494,
+     -0.5350272709,
+     -0.1101228189,
+     -0.34520392,
+     0.0733410745,
+     -0.003489342541,
+     0.006043688676,
+     -0.003489513042,
+     0.006043590233,
+     -0.003489244045,
+     0.006043745542,
+     0.000646296515
+    ]
+   }
+  },
+  "threshold-write": {
+   "status": "reached",
+   "obstruction": null,
+   "obstruction_short": null,
+   "class": "C R(fold) K L",
+   "word": "CRKL",
+   "law_constant": {
+    "constant": 1.0187920437991431,
+    "stderr": 2.715258781149643e-06,
+    "expected": 1.018792971647471
+   }
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of F in [0, 6] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 17.9,
+  "threshold-write": 4.2,
+  "phase-locking": 1.3,
+  "completion": 407.6,
+  "changes": 139.0
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "F": 0.6102150678634644,
+     "state": [
+      -0.09920611415694403,
+      -1.212311883966566
+     ]
+    },
+    "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+    "obstruction": {
+     "quadratic a2": -1.4065072543490513,
+     "bias per unit control": 6.03423948251422
+    },
+    "completion": "second parameter",
+    "unfoldings": [
+     {
+      "second": "Delta",
+      "success": true,
+      "cusp": {
+       "F": 0.3102016196991318,
+       "Delta": -0.8660254037786015
+      },
+      "direction": {
+       "F": 0.2594436906062386,
+       "Delta": -0.9657582365191686
+      },
+      "kind_along_sweep": "transcritical: two states exchange stability; the write is one-sided",
+      "law": {
+       "status": "derived",
+       "law_kind": "reduced (one coordinate along the moving branch)",
+       "critical_dimension": 1,
+       "rate": 0.02,
+       "sweep_end": 56.568542494923804,
+       "noise": 0.0006003585425430462,
+       "noise_rule": "Gamma = 0.05",
+       "noise_along_critical": 0.0008004780567091237,
+       "bias_floor": 0.007991802567066395,
+       "stable_states": [
+        [
+         -0.32383462507190924,
+         -0.10019603655769692
+        ],
+        [
+         0.4608725054423742,
+         -0.9145952145727888
+        ]
+       ],
+       "stable_critical_coordinates": [
+        [
+         0.4215885485464408
+        ],
+        [
+         -0.5187986207544313
+        ]
+       ],
+       "rows": [
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          1.0,
+          0.0
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          89.6111428408681
+         ],
+         "reduced_law": [
+          0.933,
+          0.067
+         ],
+         "law": [
+          0.933,
+          0.067
+         ],
+         "certificate": [
+          0.91075,
+          0.08925
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 4.935785850293153,
+         "deviation": 0.022250000000000103
+        },
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.986375,
+          0.013625
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          32.483204358176934
+         ],
+         "reduced_law": [
+          0.69375,
+          0.30625
+         ],
+         "law": [
+          0.69375,
+          0.30625
+         ],
+         "certificate": [
+          0.62275,
+          0.37725
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 9.264390489225434,
+         "deviation": 0.07099999999999995
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          1.0,
+          0.0
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          118.17765740968309
+         ],
+         "reduced_law": [
+          0.979,
+          0.021
+         ],
+         "law": [
+          0.979,
+          0.021
+         ],
+         "certificate": [
+          0.96675,
+          0.03325
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 4.321287577724944,
+         "deviation": 0.01225
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.93275,
+          0.06725
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          3.9217804443018895
+         ],
+         "reduced_law": [
+          0.504625,
+          0.495375
+         ],
+         "law": [
+          0.504625,
+          0.495375
+         ],
+         "certificate": [
+          0.42625,
+          0.57375
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 10.02337558864369,
+         "deviation": 0.07837499999999997
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          1.0,
+          0.0
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          175.3106865473145
+         ],
+         "reduced_law": [
+          0.99925,
+          0.00075
+         ],
+         "law": [
+          0.99925,
+          0.00075
+         ],
+         "certificate": [
+          0.99825,
+          0.00175
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 1.513182506502689,
+         "deviation": 0.0010000000000000009
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.814875,
+          0.185125
+         ],
+         "t_star": 53.178575029722175,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.71762797378016,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000583263563219,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          -53.201067383448546
+         ],
+         "reduced_law": [
+          0.15525,
+          0.84475
+         ],
+         "law": [
+          0.15525,
+          0.84475
+         ],
+         "certificate": [
+          0.11775,
+          0.88225
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 7.358426766213255,
+         "deviation": 0.037500000000000006
+        }
+       ],
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.933,
+          "P_toward_minus": 0.30625,
+          "response_constant": 1.3206912855793105,
+          "offset": 1.0025105874045435
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.979,
+          "P_toward_minus": 0.495375,
+          "response_constant": 1.3459312818483906,
+          "offset": 1.0225567823622803
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.99925,
+          "P_toward_minus": 0.84475,
+          "response_constant": 1.3941933535128872,
+          "offset": 1.080255043961522
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.91075,
+          "P_toward_minus": 0.37725,
+          "response_constant": 1.3748388629102748,
+          "offset": 0.8290496074774407
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.96675,
+          "P_toward_minus": 0.57375,
+          "response_constant": 1.345293057748908,
+          "offset": 0.8245544193956534
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.99825,
+          "P_toward_minus": 0.88225,
+          "response_constant": 1.3667281450599764,
+          "offset": 0.8668591001745435
+         }
+        ]
+       },
+       "certified": false,
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.078 (10.0 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play)"
+      }
+     }
+    ]
+   },
+   {
+    "write_point": {
+     "F": 1.4586436015367499,
+     "state": [
+      -0.6993835695522524,
+      -0.17860306352849967
+     ]
+    },
+    "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+    "obstruction": {
+     "quadratic a2": 8.577008188675087,
+     "bias per unit control": 2.0962242790106256
+    },
+    "completion": "second parameter",
+    "unfoldings": [
+     {
+      "second": "Delta",
+      "success": true,
+      "cusp": {
+       "F": 0.31020161970263677,
+       "Delta": -0.8660254037916486
+      },
+      "direction": {
+       "F": 0.2594436906059012,
+       "Delta": -0.9657582365192592
+      },
+      "kind_along_sweep": "transcritical: two states exchange stability; the write is one-sided",
+      "law": {
+       "status": "derived",
+       "law_kind": "reduced (one coordinate along the moving branch)",
+       "critical_dimension": 1,
+       "rate": 0.02,
+       "sweep_end": 56.568542494923804,
+       "noise": 0.0006003585425647344,
+       "noise_rule": "Gamma = 0.05",
+       "noise_along_critical": 0.000800478056758886,
+       "bias_floor": 0.007991802567314804,
+       "stable_states": [
+        [
+         -0.32383461789355233,
+         -0.10019601430310031
+        ],
+        [
+         0.46087264455888527,
+         -0.9145952462175808
+        ]
+       ],
+       "stable_critical_coordinates": [
+        [
+         0.4215885742594805
+        ],
+        [
+         -0.5187986572975759
+        ]
+       ],
+       "rows": [
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          0.999875,
+          0.000125
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          89.61131135216928
+         ],
+         "reduced_law": [
+          0.931875,
+          0.068125
+         ],
+         "law": [
+          0.931875,
+          0.068125
+         ],
+         "certificate": [
+          0.90975,
+          0.09025
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 4.883471276250615,
+         "deviation": 0.02212500000000006
+        },
+        {
+         "bias_floors": 0.5,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.988625,
+          0.011375
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          32.48327835953482
+         ],
+         "reduced_law": [
+          0.6895,
+          0.3105
+         ],
+         "law": [
+          0.6895,
+          0.3105
+         ],
+         "certificate": [
+          0.63675,
+          0.36325
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 6.936895805995342,
+         "deviation": 0.05275000000000002
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          0.999875,
+          0.000125
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          118.17787318066999
+         ],
+         "reduced_law": [
+          0.979375,
+          0.020625
+         ],
+         "law": [
+          0.979375,
+          0.020625
+         ],
+         "certificate": [
+          0.96825,
+          0.03175
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 4.012955997502646,
+         "deviation": 0.011125
+        },
+        {
+         "bias_floors": 1.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.93325,
+          0.06675
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          3.921807195399814
+         ],
+         "reduced_law": [
+          0.491625,
+          0.508375
+         ],
+         "law": [
+          0.491625,
+          0.508375
+         ],
+         "certificate": [
+          0.42925,
+          0.57075
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 7.970075625511608,
+         "deviation": 0.06237499999999996
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          1.0
+         ],
+         "linear_stage_law": [
+          1.0,
+          0.0
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          175.31099683766934
+         ],
+         "reduced_law": [
+          0.9985,
+          0.0015
+         ],
+         "law": [
+          0.9985,
+          0.0015
+         ],
+         "certificate": [
+          0.99825,
+          0.00175
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 0.37829562662579547,
+         "deviation": 0.0002500000000000835
+        },
+        {
+         "bias_floors": 2.0,
+         "direction": [
+          -1.0
+         ],
+         "linear_stage_law": [
+          0.817875,
+          0.182125
+         ],
+         "t_star": 53.17857502928324,
+         "t_cross": 28.284271247461902,
+         "t_map": 38.7176279734682,
+         "linear_stage_ended_by": "growth",
+         "growth": 5.000584457485828,
+         "linear_size_before_crossing": true,
+         "mean_critical": [
+          -53.201135132870085
+         ],
+         "reduced_law": [
+          0.153625,
+          0.846375
+         ],
+         "law": [
+          0.153625,
+          0.846375
+         ],
+         "certificate": [
+          0.11,
+          0.89
+         ],
+         "certificate_diverged": 0.0,
+         "deviation_sigma": 8.818081120493261,
+         "deviation": 0.043625000000000025
+        }
+       ],
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.931875,
+          "P_toward_minus": 0.3105,
+          "response_constant": 1.3253023328625058,
+          "offset": 0.9921678032216907
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.979375,
+          "P_toward_minus": 0.508375,
+          "response_constant": 1.3726086740032595,
+          "offset": 1.0100068836004634
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.9985,
+          "P_toward_minus": 0.846375,
+          "response_constant": 1.3275900824761662,
+          "offset": 0.973364278289458
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 0.5,
+          "P_toward_plus": 0.90975,
+          "P_toward_minus": 0.36325,
+          "response_constant": 1.317265872895477,
+          "offset": 0.8445010990277485
+         },
+         {
+          "bias_floors": 1.0,
+          "P_toward_plus": 0.96825,
+          "P_toward_minus": 0.57075,
+          "response_constant": 1.353940240812722,
+          "offset": 0.8386951722899524
+         },
+         {
+          "bias_floors": 2.0,
+          "P_toward_plus": 0.99825,
+          "P_toward_minus": 0.89,
+          "response_constant": 1.3801141816287141,
+          "offset": 0.8467499121627022
+         }
+        ]
+       },
+       "certified": false,
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.062 (8.8 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play)"
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "changes": {
+  "name": "driven transmon (Duffing image)",
+  "base": {
+   "symmetric-write": {
+    "status": "reached after unfolding",
+    "obstruction": "",
+    "seconds": 4.8,
+    "class": "reached"
+   },
+   "threshold-write": {
+    "status": "reached",
+    "obstruction": "",
+    "seconds": 3.6,
+    "class": "reached"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = K over [-8, -0.5]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 6.1,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 5.2,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = Delta over [-12, -0.75]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.0,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 5.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 9.6,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 5.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F wider: [-60, 66]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 1.7,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 5.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F above: [6, 66]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 4.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F below: [-60, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 5.9,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 9.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 3.9,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 7.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- F' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 6.7,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 9.4,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*y' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 3.7,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 6.1,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '(K*(x**2 + y**2) - Delta)*y' from dx/dt",
+    "why": "unbounded: a state at amplitude 12 runs away for F = 0"
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-(K*(x**2 + y**2) - Delta)*x' from dy/dt",
+    "why": "unbounded: a state at amplitude 12 runs away for F = 0"
+   }
+  ],
+  "steps": 0
+ }
+}

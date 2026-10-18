@@ -1,0 +1,2184 @@
+{
+  "command": "changes",
+  "implementation_sha256": "b8bbc45034c0274ae910490fe05a9cc168d97f52692cdd8520b7d7e27fd8b4d5",
+  "versions": {
+    "python": "3.9.13",
+    "numpy": "1.24.4",
+    "scipy": "1.13.1",
+    "sympy": "1.14.0",
+    "matplotlib": "3.9.4"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Which configuration does the pump ramp write on a frustrated triangle?",
+  "input_sha256": "7b0ad1a47d7edb075c11cc9de69300b588b2b3b3cf97e249baf9570fa2065a82",
+  "assumptions": [
+    "Yamamoto 2017 eq. 12 with antiferromagnetic couplings"
+  ],
+  "provenance": {
+    "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); McMahon, P. L. et al., 'A fully programmable 100-spin coherent Ising machine with all-to-all connections', Science 354, 614 (2016) (abstract only); Inagaki, T. et al., 'A coherent Ising machine for 2000-node optimization problems', Science 354, 603 (2016) (abstract only)",
+    "kind": "classical image of census entry 57: Measurement-feedback coherent Ising machine"
+  },
+  "settings": {
+    "budget": 60,
+    "pairs": true,
+    "first": 8,
+    "kinds": [
+      "remove",
+      "control",
+      "range"
+    ],
+    "only": null
+  },
+  "name": "coherent Ising machine, three DOPOs on an antiferromagnetic triangle",
+  "base": {
+    "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 2.1,
+      "class": "several critical directions"
+    },
+    "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 5.4,
+      "class": "reached"
+    }
+  },
+  "singles": [
+    {
+      "kind": "control",
+      "what": "control = e over [0.05, 0.8]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "several critical directions",
+          "no write point"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "range",
+      "what": "range of a wider: [-21, 21]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 3.7,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 7.0,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {},
+      "step": false
+    },
+    {
+      "kind": "range",
+      "what": "range of a above: [1, 21]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "several critical directions",
+          "no write point"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "range",
+      "what": "range of a below: [-21, -1]",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "several critical directions",
+          "no write point"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'a*x1' from dx1/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 4.4,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- e*(x2 + x3)' from dx1/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'a*x2' from dx2/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 3.9,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "reaches": [],
+      "changed": {
+        "symmetric-write": [
+          "several critical directions",
+          "one-sided write"
+        ]
+      },
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- e*(x1 + x3)' from dx2/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.6,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove 'a*x3' from dx3/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- e*(x1 + x2)' from dx3/dt",
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "reaches": [
+        "symmetric-write"
+      ],
+      "changed": {},
+      "step": true
+    }
+  ],
+  "rejected": [
+    {
+      "kind": "remove",
+      "what": "remove '- x1**3' from dx1/dt",
+      "why": "unbounded: a state at amplitude 4 runs away for a = 1"
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- x2**3' from dx2/dt",
+      "why": "unbounded: a state at amplitude 4 runs away for a = 1"
+    },
+    {
+      "kind": "remove",
+      "what": "remove '- x3**3' from dx3/dt",
+      "why": "unbounded: a state at amplitude 4 runs away for a = 1"
+    }
+  ],
+  "steps": 9,
+  "pairs": [
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "control",
+        "control = a over [-1, 1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 2.1,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "range",
+        "range of e wider: [-7.45, 8.3]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 2.3,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "range",
+        "range of e above: [0.8, 8.3]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "range",
+        "range of e below: [-7.45, 0.05]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 0.9,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.0,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.7,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.4,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.3,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- x1**3' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 3.0,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- x2**3' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 3.2,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- x3**3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 3.4,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a wider: [-21, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached after unfolding",
+          "obstruction": "",
+          "seconds": 5.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.2,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 3.1,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a wider: [-21, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.9,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 2.9,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 5.5,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 2.8,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 5.3,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.5,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.7,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a wider: [-21, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 5.4,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.9,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.5,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.7,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a wider: [-21, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 1.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 3.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.8,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 0.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.1,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+          "seconds": 2.8,
+          "class": "several critical directions"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 5.3,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.0,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.9,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.0,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "not derived",
+          "obstruction": "ValueError: cannot convert float NaN to integer",
+          "seconds": 2.9,
+          "class": "unclassified"
+        },
+        "threshold-write": {
+          "status": "obstructed",
+          "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+          "seconds": 5.6,
+          "class": "oscillation"
+        }
+      },
+      "closes": false,
+      "why": "a reason for stopping that no single change produces (threshold-write: oscillation)"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "control",
+        "control = e over [0.05, 0.8]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 2.6,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "range",
+        "range of a wider: [-21, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+          "seconds": 5.0,
+          "class": "one-sided write"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "range",
+        "range of a above: [1, 21]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "range",
+        "range of a below: [-21, -1]"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "obstructed",
+          "obstruction": "no write point along the control",
+          "seconds": 1.4,
+          "class": "no write point"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.6,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x1' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.5,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x2 + x3)' from dx1/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 4.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "remove",
+        "remove 'a*x2' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.8,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x3)' from dx2/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 2.2,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 5.3,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    },
+    {
+      "first": [
+        "remove",
+        "remove 'a*x3' from dx3/dt"
+      ],
+      "second": [
+        "remove",
+        "remove '- e*(x1 + x2)' from dx3/dt"
+      ],
+      "judged": {
+        "symmetric-write": {
+          "status": "reached",
+          "obstruction": "",
+          "seconds": 3.1,
+          "class": "reached"
+        },
+        "threshold-write": {
+          "status": "reached by a write field",
+          "obstruction": "",
+          "seconds": 6.2,
+          "class": "reached"
+        }
+      },
+      "closes": true,
+      "why": "equals a known outcome"
+    }
+  ],
+  "open": 7
+}

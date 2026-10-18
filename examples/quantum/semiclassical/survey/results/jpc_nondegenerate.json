@@ -1,0 +1,638 @@
+{
+ "model": "jpc_nondegenerate",
+ "name": "non-degenerate parametric oscillator (Josephson parametric converter above threshold)",
+ "provenance": {
+  "source": "Bergeal, N., Schackert, F., Metcalfe, M., Vijay, R., Manucharyan, V. E., Frunzio, L., Prober, D. E., Schoelkopf, R. J., Girvin, S. M., Devoret, M. H., 'Phase-preserving amplification near the quantum limit with a Josephson ring modulator', Nature 465, 64 (2010), arXiv:0912.3407 (main text; DOI 10.1038/nature09035, volume and page checked against Crossref); Roy, A., Devoret, M., 'Introduction to quantum-limited parametric amplification of quantum signals with Josephson circuits', C. R. Physique 17, 740 (2016), arXiv:1605.00539 (full text, Secs. 4-5)",
+  "kind": "classical image of census entry 26: Josephson parametric converter (JPC) on a Josephson ring modulator: phase-preserving amplifier"
+ },
+ "derivations": {
+  "symmetric-write": {
+   "status": "obstructed",
+   "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+   "obstruction_short": "degenerate critical mode: 2 directions",
+   "class": "C R(degenerate critical mode)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "threshold-write": {
+   "status": "obstructed",
+   "obstruction": "a single stable state: there is no second state to switch to",
+   "obstruction_short": "a single stable state: nothing to switch to",
+   "class": "C R(degenerate critical mode)",
+   "word": "CR",
+   "law_constant": null
+  },
+  "phase-locking": {
+   "status": "obstructed",
+   "obstruction": "no oscillation: at 11 values of Ein in [0, 3] every start settles on a stable state or does not become periodic",
+   "obstruction_short": "no oscillation in the control range",
+   "class": "",
+   "word": "",
+   "law_constant": null
+  }
+ },
+ "seconds": {
+  "symmetric-write": 15.3,
+  "threshold-write": 15.6,
+  "phase-locking": 0.5,
+  "completion": 31.6,
+  "changes": 482.6
+ },
+ "completion": {
+  "write_points": [
+   {
+    "write_point": {
+     "Ein": 1.0,
+     "state": [
+      -3.624197855496078e-08,
+      -3.707895980998297e-06,
+      -3.624197855496136e-08,
+      3.7078959809982956e-06,
+      0.4999999999957512,
+      3.8071957045033434e-22
+     ]
+    },
+    "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+    "obstruction": {
+     "degenerate critical mode": 2
+    },
+    "completion": "critical space",
+    "law": {
+     "status": "continuous family of written states (a marginal direction at every one): the write sets a phase on the family, not a choice between states; its law is that of a phase (Adler)",
+     "stable_states": [
+      [
+       -1.532818382442469,
+       1.563082106554976,
+       -1.532818382442469,
+       -1.563082106554976,
+       0.5,
+       3.4618521931594586e-19
+      ],
+      [
+       1.5328184484066798,
+       -1.5630820418679328,
+       1.5328184484066798,
+       1.5630820418679328,
+       0.5,
+       -1.9566624449745317e-18
+      ],
+      [
+       -1.5630820543669197,
+       -1.5328184356609154,
+       -1.5630820543669197,
+       1.5328184356609154,
+       0.5,
+       -4.4389324083678145e-18
+      ],
+      [
+       1.5630820667003282,
+       1.5328184230839987,
+       1.5630820667003282,
+       -1.5328184230839987,
+       0.49999999999999994,
+       -1.7043696698088675e-18
+      ],
+      [
+       -0.7951190061769348,
+       -2.0397410696954084,
+       -0.7951190061769297,
+       2.03974106969541,
+       0.5000000000000011,
+       -3.1696064339344443e-15
+      ],
+      [
+       2.0000762333192457,
+       0.8901982511201565,
+       2.0000762333192457,
+       -0.8901982511201563,
+       0.5,
+       3.224763866192162e-17
+      ],
+      [
+       -1.9692540326658114,
+       -0.9564499047076903,
+       -1.9692540326658114,
+       0.9564499047076903,
+       0.5,
+       2.7907535311599805e-18
+      ],
+      [
+       2.1061028662273915,
+       -0.5975688933120561,
+       2.106102866227461,
+       0.5975688933119349,
+       0.5000000000005155,
+       1.5504051965384286e-13
+      ]
+     ],
+     "completion_needed": "phase"
+    }
+   }
+  ]
+ },
+ "changes": {
+  "name": "non-degenerate parametric oscillator (Josephson parametric converter above threshold)",
+  "base": {
+   "symmetric-write": {
+    "status": "obstructed",
+    "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+    "seconds": 17.9,
+    "class": "several critical directions"
+   },
+   "threshold-write": {
+    "status": "obstructed",
+    "obstruction": "a single stable state: there is no second state to switch to",
+    "seconds": 18.4,
+    "class": "single stable state"
+   }
+  },
+  "singles": [
+   {
+    "kind": "control",
+    "what": "control = ka over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 1.2,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.4,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = kb over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 1.0,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.5,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = kc over [1, 16]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 5.6,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 6.2,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "control",
+    "what": "control = chi over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 2.4,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 3.0,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein wider: [-30, 33]",
+    "judged": {
+     "symmetric-write": {
+      "status": "not derived",
+      "obstruction": "ValueError: cannot convert float NaN to integer",
+      "seconds": 55.8,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 57.6,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein above: [3, 33]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 22.2,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 22.9,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "range",
+    "what": "range of Ein below: [-30, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+      "seconds": 42.0,
+      "class": "one-sided write"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 35.1,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "one-sided write"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*ka*ax' from dax/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 3.8,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 8.0,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ],
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ chi*(cx*bx + cy*by)' from dax/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 1.9,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 2.4,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*ka*ay' from day/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 4.0,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 8.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ],
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ chi*(cy*bx - cx*by)' from day/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 2.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 3.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kb*bx' from dbx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 5.4,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 9.5,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ],
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ chi*(cx*ax + cy*ay)' from dbx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 2.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 3.4,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kb*by' from dby/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+      "seconds": 4.2,
+      "class": "unclassified"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 8.3,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "unclassified"
+     ],
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ chi*(cy*ax - cx*ay)' from dby/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 2.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 3.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kc*cx' from dcx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 6 directions become critical together at the write point; the critical eigenspace is 6-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 12.9,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+      "seconds": 17.1,
+      "class": "oscillation"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "threshold-write": [
+      "single stable state",
+      "oscillation"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ Ein' from dcx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "several critical directions",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kc*cy' from dcy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 10.7,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
+      "seconds": 23.9,
+      "class": "one-sided write"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "threshold-write": [
+      "single stable state",
+      "one-sided write"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- chi*(ax*by + ay*bx)' from dcy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
+      "seconds": 17.5,
+      "class": "several critical directions"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 18.0,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   }
+  ],
+  "rejected": [
+   {
+    "kind": "remove",
+    "what": "remove '- chi*(ax*bx - ay*by)' from dcx/dt",
+    "why": "unbounded: a state at amplitude 4 runs away for Ein = 3"
+   }
+  ],
+  "steps": 15
+ }
+}

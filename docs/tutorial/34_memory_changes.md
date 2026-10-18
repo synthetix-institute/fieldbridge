@@ -18,15 +18,21 @@ Applied to a published model, each change gives a new model whose mechanism the 
 decide, so a change is a derivation step that needs no target chosen in advance. This module asks which mechanisms
 such changes reveal, and when two changes together do something that neither does alone.
 
-## 2. Three changes and how they are judged
+## 2. The changes and how they are judged
 
-`memory changes` applies three kinds of change to an equation specification:
+`memory changes` applies three kinds of change to an equation specification, and a fourth when a second
+specification is given as a donor:
 
 | Change | What it does |
 | --- | --- |
 | remove | drops one additive term of one equation |
 | control | makes another parameter the control, swept from a quarter to four times its value |
 | range | extends the range of the control by ten times its width below it, above it, or on both sides |
+| add | adds to one equation a term of the donor's equation in the same position, written in the model's own variables, with the donor's parameters set to one and a new coefficient (`--donor`) |
+
+The reports of the runs in this module are saved in
+[examples/changes/results](../../examples/changes/results), one folder per model, with the pairs of changes formed
+from the first eight changes (six for the epidemic model).
 
 A changed model whose trajectories run away from large starts is discarded: the change removed the saturation, and
 there is no stable state to write. Every other changed model is judged by the symmetric-write and threshold-write
@@ -157,9 +163,9 @@ the coupling of a frustrated triangle keeps its two critical directions equivale
 parameter that was changed, and `--save` writes the changed specification, so that every other command of the
 memory modules can be run on it.
 
-The changes are limited to three kinds, judged by two writes. A change that adds a term, replaces a closure or moves
-the model to another carrier is not implemented, and the derivations run under a time limit (`--budget`, 60 s by
-default), so a slow derivation decides nothing. An open pair is a statement about this set of changes and these two
+The changes are limited to four kinds, the fourth only with a donor, and they are judged by two writes. A change
+that replaces a closure or moves the model to another carrier is not implemented. Each derivation runs in a child
+process under a wall-clock limit (`--budget`, 60 s by default), so a slow derivation decides nothing. An open pair is a statement about this set of changes and these two
 derivations; whether its mechanism is new to physics is decided by the literature, not by the program.
 
 ## 7. Exercises

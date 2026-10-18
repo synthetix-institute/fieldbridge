@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import multiprocessing as mp
 import sys
 import time
 from pathlib import Path
@@ -27,6 +28,7 @@ from fieldbridge.memory import changes, codiscovery, completion, spec  # noqa: E
 
 SEED = 20260923
 TARGETS = ("symmetric-write", "threshold-write", "phase-locking")
+KEYS = ("status", "obstruction", "obstruction_short", "class", "word", "law_constant")
 
 
 def clean(o):
@@ -41,19 +43,51 @@ def clean(o):
     return o
 
 
+def _derive(path: str, target: str, trajectories: int, replicates: int, conn) -> None:
+    """Child process: one derivation with its law, sent back through the pipe."""
+    real = spec.load(Path(path))
+    rep = codiscovery.codiscover([real], SEED, target=target, check_law=True, n_traj=trajectories,
+                                 replicates=replicates)
+    row = rep["rows"][0]
+    conn.send(clean({k: row.get(k) for k in KEYS}))
+    conn.close()
+
+
+def derive_limited(path: Path, target: str, trajectories: int, replicates: int, limit: int) -> dict:
+    """One derivation with its law in a child process, stopped after `limit` seconds of wall-clock time (no limit
+    when `limit` is 0). No alarm signal is used: a signal raised inside a solver's callback ends the interpreter."""
+    ctx = mp.get_context("spawn")
+    recv, send = ctx.Pipe(duplex=False)
+    proc = ctx.Process(target=_derive, args=(str(path), target, trajectories, replicates, send))
+    proc.start()
+    send.close()
+    if recv.poll(limit if limit > 0 else None):
+        try:
+            row = recv.recv()
+        except EOFError:   # the child ended without a result
+            proc.join()
+            row = {"status": "not derived", "obstruction": f"the derivation process ended with code {proc.exitcode}"}
+    else:
+        proc.terminate()
+        row = {"status": "not derived", "obstruction": f"stopped at the time limit of {limit} s"}
+    proc.join(10)
+    if proc.is_alive():
+        proc.kill()
+    return row
+
+
 def survey(path: Path, trajectories: int = 400, replicates: int = 8, samples: int = 8000, certificate: int = 4000,
-           budget: int = 60, save=None) -> dict:
+           budget: int = 60, save=None, derive_budget: int = 1800) -> dict:
     """The three derivations, the laws at the obstructions and the single changes of one model; `save` is called
-    with the partial result after each stage."""
+    with the partial result after each stage. Each derivation with its law runs in a child process that is stopped
+    after `derive_budget` seconds and is then recorded as not derived."""
     real = spec.load(path)
     out = {"model": path.stem, "name": real.spec.get("name"), "provenance": real.spec.get("provenance"),
            "derivations": {}, "seconds": {}}
     for t in TARGETS:
         t0 = time.time()
-        rep = codiscovery.codiscover([real], SEED, target=t, check_law=True, n_traj=trajectories, replicates=replicates)
-        row = rep["rows"][0]
-        out["derivations"][t] = {k: row.get(k) for k in ("status", "obstruction", "obstruction_short", "class", "word",
-                                                         "law_constant")}
+        row = derive_limited(path, t, trajectories, replicates, derive_budget)
+        out["derivations"][t] = {k: row.get(k) for k in KEYS}
         out["seconds"][t] = round(time.time() - t0, 1)
         if save:
             save(clean(out))
@@ -78,6 +112,8 @@ def main() -> int:
     ap.add_argument("--samples", type=int, default=8000, help="Samples of the linear stage of a law at an obstruction.")
     ap.add_argument("--certificate", type=int, default=4000, help="Trajectories of its certificate per bias.")
     ap.add_argument("--budget", type=int, default=60, help="Time limit of a derivation after a change, in seconds.")
+    ap.add_argument("--derive-budget", type=int, default=1800,
+                    help="Wall-clock seconds of each of the three derivations with its law (0: no limit).")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
     target = args.out / f"{args.spec.stem}.json"
@@ -86,7 +122,8 @@ def main() -> int:
     def save(r):
         partial.write_text(json.dumps(r, indent=1, default=float) + "\n", encoding="utf-8")
 
-    res = survey(args.spec, args.trajectories, args.replicates, args.samples, args.certificate, args.budget, save)
+    res = survey(args.spec, args.trajectories, args.replicates, args.samples, args.certificate, args.budget, save,
+                 args.derive_budget)
     target.write_text(json.dumps(res, indent=1, default=float) + "\n", encoding="utf-8")
     if partial.exists():
         partial.unlink()
