@@ -15,10 +15,10 @@ from fieldbridge.memory import spec as mspec
 ROOT = Path(__file__).resolve().parents[1]
 FOLDER = ROOT / "examples" / "quantum" / "semiclassical"
 CARRIERS = [
-    "bright_state_readout", "cim_dopo", "cim_pair", "cim_triangle", "dissipative_cat", "flux_qubit_tilt", "fluxonium",
-    "ion_duffing", "ion_phonon_laser", "jba_readout", "jpc_nondegenerate", "kerr_cat_kpo", "kpo_pair", "kpo_triangle",
+    "bright_state_resonator", "cim_dopo", "cim_pair", "cim_triangle", "dissipative_cat", "flux_qubit_tilt", "fluxonium",
+    "ion_duffing", "ion_phonon_laser", "jba_resonator", "jpc_nondegenerate", "kerr_cat_kpo", "kpo_pair", "kpo_triangle",
     "magnon_kerr", "nuclear_bath", "optomech_bistable", "optomech_selfosc", "parametric_amplifier",
-    "phase_qubit_rfsquid", "po_amplitude_readout", "pplo_readout", "qfp_latch", "quantum_vdp", "rfsquid_annealer",
+    "phase_qubit_rfsquid", "po_amplitude_oscillator", "pplo_oscillator", "qfp_latch", "quantum_vdp", "rfsquid_annealer",
     "rfsquid_pair", "rfsquid_triangle", "rydberg_bistability", "snail_po", "spin_ensemble_cavity", "transmon_driven",
 ]
 

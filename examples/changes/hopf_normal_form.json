@@ -1,0 +1,43 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "Hopf normal form of an oscillator",
+ "field": "nonlinear dynamics",
+ "question": "Which mechanisms does the normal form of a Hopf bifurcation reach when its terms are changed?",
+ "carrier": {
+  "kind": "euclid",
+  "name": "real and imaginary parts of the oscillator",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 1.0
+ },
+ "parameters": {
+  "mu": -0.1,
+  "omega": 1.0
+ },
+ "drift": {
+  "x": "-x**3 * omega - x * y**2 * omega + mu * omega * x - omega * y",
+  "y": "-y**3 * omega - x**2 * y * omega + mu * omega * y + omega * x"
+ },
+ "control": {
+  "name": "mu",
+  "range": [
+   -0.5,
+   0.5
+  ]
+ },
+ "noise": 0.01,
+ "dt": 0.01,
+ "closure": "free evolution on R^2; no explicit boundary conditions, conservation laws, or reservoirs assumed.",
+ "observable": "oscillatory behavior and bifurcation diagrams as functions of mu.",
+ "assumptions": [
+  "The system follows the Hopf normal form with a smooth vector field.",
+  "Variables x, y represent the real and imaginary parts of the complex amplitude z."
+ ],
+ "provenance": {
+  "source": "A. Pinto, Coupled oscillators as a model of olfactory network: importance in pattern recognition and classification tasks, arXiv:1905.06307 (2019): the normal form of a single oscillator",
+  "kind": "equations of the source paper, as extracted from its LaTeX"
+ }
+}

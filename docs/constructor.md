@@ -88,7 +88,10 @@ law is checked. Where the symmetric write is obstructed, the completion rung of 
 specification: it keeps what the obstruction names (a second parameter that cancels a bias, the full critical space,
 the next order, the distant branch) and derives the law of the completed model with its certificate. Where the
 certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
-choice between shallow written states) from a failure in the nonlinear stage. The report lists, per specification,
+choice between shallow written states) from a failure in the nonlinear stage. A sweep through a cusp found by the
+second parameter is refused only when the cancellation leaves more than half of the asymmetry measured at the fold: a
+cusp located numerically always keeps a small quadratic term, which appears as the intrinsic offset of the sweep. The
+report lists, per specification,
 the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
 the specifications in parallel processes.
 
@@ -96,35 +99,36 @@ The first set run this way is the thirty-one elements of quantum-computing hardw
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
 
-## Typed moves on a specification and the closure of their compositions
+## Changes of a specification and the closure of their pairs
 
-`memory moves SPEC` changes one slot of a drift specification at a time and lets the write rules judge the result.
-The moves are the transition types of the literature on the slots of the nested language: a parameter declared as the
-control and swept over a range around its value (the protocol), the control's range widened or shifted by a decade,
-one additive term of one equation dropped (the operator apparatus), or one term added from a donor specification
-(`--donor`) in the specification's own variables with a new coefficient. A candidate is kept only when the modified
-realization is bounded: short integrations from large amplitude, with the control at both ends of its range, must not
-run away or still be growing at the end. The test rejects a loss rate made negative and a saturating term dropped, and
-keeps a widened detuning; it integrates because a static radial test fails both ways (a Kerr oscillator above threshold
-has outward radial drift and is bounded by its rotation; a frustrated triangle without one cubic has an inward
-direction-averaged drift and runs away along one axis).
+`memory changes SPEC` changes one part of a drift specification at a time and lets the write rules judge the result
+([tutorial Module 14](tutorial/34_memory_changes.md)). Four kinds of change are applied: one additive term of one
+equation removed; another parameter made the control and swept from a quarter to four times its value; the range of
+the control extended by ten times its width below it, above it or on both sides; and, with `--donor`, one term of a
+donor specification added to the equation in the same position, in the specification's own variables, with the
+donor's parameters set to one and a new coefficient. A changed specification is kept only when its states stay
+bounded: short integrations from large amplitude, with the control at both ends of its range, must not run away or
+still be growing at the end. The test rejects a loss rate made negative and a saturating term removed, and keeps a
+widened detuning; it integrates because a static radial test fails both ways (a Kerr oscillator above threshold has
+an outward radial drift and is bounded by its rotation; a frustrated triangle without one cubic term has an inward
+drift on average over directions and runs away along one axis).
 
-Each kept candidate is derived for the symmetric and the threshold write, every derivation in a child process under a
-wall-clock limit. A step is a move that reaches a target the specification does not, or changes the class of an
-obstruction (what a completion would have to keep: a second parameter, the critical space, the next order, the distant
-branch, the phase). At `--depth 2` the steps are composed with a second move and the composition is tested for
-closure: it closes when its outcome equals the outcome of a single step or combines obstruction classes the single
-steps show, and is open when it reaches a target no single step reaches or lands in a new class; `--depth 3` tries a
-third move on the open compositions. The report lists the steps, the rejected moves with their reason, and the open
-compositions. On the quantum-computing elements the open compositions were of three kinds: a second control the
-specification did not declare (the detuning of a Kerr oscillator, swept past the parametric threshold), a lifted
-degeneracy (unequal losses on a frustrated triangle), and modifications without a physical realization, which the
-boundedness test now rejects. The first two are known physics found by the engine; the engine does not decide what is
-new.
+Each kept specification is derived for the symmetric and the threshold write, every derivation in a child process of
+its own under a wall-clock limit (`--budget`), so that an exception inside a solver's callback costs one derivation
+and not the run. A change is a step when it reaches a write the specification does not reach, or changes the class of
+the reason why a derivation stops (a one-sided write, several critical directions, a vanishing cubic term, a distant
+branch, an oscillation). With `--pairs`, the first changes are combined with every change of the changed
+specification, and a pair is tested for closure: it closes when its outcome equals the outcome of the specification or
+of a single change, or combines classes that single changes produce, and it is open when it reaches a write that no
+single change reaches or a class that no single change produces. On the quantum-computing elements the open pairs
+were of three kinds: a second control that the specification did not declare (the detuning of a Kerr oscillator,
+swept past the parametric threshold), a lifted degeneracy (unequal losses on a frustrated triangle), and changes
+without a physical realization, which the boundedness test now rejects. The first two are known physics; the changes
+locate where a mechanism appears and do not decide whether it is new.
 
 ```bash
-python3 -B -m fieldbridge memory moves examples/quantum/semiclassical/kpo_pair.json --depth 2 --out-dir out/moves_kpo
-python3 -B -m fieldbridge memory moves examples/memory/pitchfork.json --donor examples/memory/laser.json --out-dir out/moves_pitchfork
+python3 -B -m fieldbridge memory changes examples/quantum/semiclassical/kpo_pair.json --pairs --out-dir out/changes_kpo
+python3 -B -m fieldbridge memory changes examples/memory/pitchfork.json --donor examples/memory/laser.json --out-dir out/changes_pitchfork
 ```
 
 ## The frequencies of an observable (the closure rule)

@@ -1,0 +1,49 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "modified Bullard disk dynamo",
+ "field": "magnetohydrodynamics",
+ "question": "Does the disk dynamo become a switch between the two polarities of its field when another parameter is the control?",
+ "carrier": {
+  "kind": "euclid",
+  "name": "magnetic flux components x and y and disk angular velocity Z",
+  "variables": [
+   "x",
+   "y",
+   "Z"
+  ],
+  "scale": 1.0
+ },
+ "parameters": {
+  "q": 1.0,
+  "m": 1.0,
+  "g": 1.0,
+  "f": 1.0,
+  "Z0": 1.1
+ },
+ "drift": {
+  "x": "q * (y - x)",
+  "y": "x * Z + m * x - (m + 1) * y",
+  "Z": "g * (1 - (m + 1) * x * y + m * x ** 2) - f * Z"
+ },
+ "control": {
+  "name": "Z0",
+  "range": [
+   1.0,
+   3.0
+  ]
+ },
+ "noise": 0.01,
+ "dt": 0.01,
+ "closure": "The variables are coupled through the three explicit dynamo equations; x and y are the magnetic-flux components, Z is the disk angular velocity, and the externally applied torque is represented by the g-dependent term.",
+ "observable": "The paper analyzes the magnetic-flux components and the disk angular velocity, including the onset of dynamo instability around the zero-flux state x = y = 0 with Z = Z0.",
+ "assumptions": [
+  "The modified Bullard disk-dynamo model neglects additional magnetic-feedback effects beyond the terms explicitly present in the three source equations.",
+  "The parameters q, m, g, and f are treated as constants.",
+  "The linear stability discussion uses the equilibrium Z = Z0 and x = y = 0."
+ ],
+ "provenance": {
+  "source": "N. Leprovost, B. Dubrulle and F. Plunian, Intermittency in the homopolar disk-dynamo, Magnetohydrodynamics 42, 131 (2006), arXiv:nlin/0506050",
+  "kind": "equations of the source paper, as extracted from its LaTeX"
+ }
+}

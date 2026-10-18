@@ -1,7 +1,7 @@
 {
  "schema": "fieldbridge-memory/1",
  "kind": "equations",
- "name": "driven Jaynes-Cummings readout (bright-state, punch-out)",
+ "name": "driven Jaynes-Cummings resonator at high power (bright state, punch-out)",
  "field": "quantum computing hardware",
  "question": "Does the drive strength cross a qubit-dependent threshold of the Jaynes-Cummings bistability (threshold write), and with which law?",
  "assumptions": [
@@ -10,7 +10,7 @@
  ],
  "provenance": {
   "source": "Reed, M. D., DiCarlo, L., Johnson, B. R., Sun, L., Schuster, D. I., Frunzio, L., Schoelkopf, R. J., 'High-fidelity readout in circuit quantum electrodynamics using the Jaynes-Cummings nonlinearity', Phys. Rev. Lett. 105, 173601 (2010), arXiv:1004.4323 (full text); Bishop, L. S., Ginossar, E., Girvin, S. M., 'Response of the strongly driven Jaynes-Cummings oscillator', Phys. Rev. Lett. 105, 100505 (2010), arXiv:1005.0377 (full text); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal)",
-  "kind": "classical image of census entry 11: Readout resonator at high power: bright-state (punch-out) readout and Jaynes-Cummings bistability"
+  "kind": "classical image of census entry 11: Measurement resonator at high power: bright-state (punch-out) measurement and Jaynes-Cummings bistability"
  },
  "carrier": {
   "kind": "euclid",
@@ -54,5 +54,5 @@
  "observable": "cavity amplitude (dim or bright)",
  "closure": "cavity loss kappa, qubit decay gq",
  "census_entry": 11,
- "carrier_file": "bright_state_readout"
+ "carrier_file": "bright_state_resonator"
 }

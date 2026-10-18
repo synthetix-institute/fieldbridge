@@ -1,7 +1,7 @@
 {
  "schema": "fieldbridge-memory/1",
  "kind": "equations",
- "name": "Josephson parametric phase-locked oscillator readout (Lin 2014)",
+ "name": "Josephson parametric phase-locked oscillator for qubit measurement (Lin 2014)",
  "field": "quantum computing hardware",
  "question": "Does pulsing the flux pump through the parametric threshold write the phase chosen by the qubit-set locking signal, and with which law?",
  "assumptions": [
@@ -11,7 +11,7 @@
  ],
  "provenance": {
   "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
-  "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) readout, phase-encoded"
+  "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) measurement, phase-encoded"
  },
  "carrier": {
   "kind": "euclid",
@@ -43,5 +43,5 @@
  "observable": "phase (0 or pi) of the oscillation",
  "closure": "signal and internal loss kappa",
  "census_entry": 23,
- "carrier_file": "pplo_readout"
+ "carrier_file": "pplo_oscillator"
 }

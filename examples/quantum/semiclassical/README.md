@@ -46,7 +46,7 @@ The report of the whole folder is kept under [docs/predictions](../../../docs/pr
 
 | File | Element | Variables | Control | Source |
 | --- | --- | --- | --- | --- |
-| `bright_state_readout.json` | driven Jaynes-Cummings readout (bright-state, punch-out) | x, y, sx, sy, sz | xi | Reed, M. D., DiCarlo, L., Johnson, B. R., Sun, L., Schuster, D. I., Frunzio, L., Schoelkopf, R. J., 'High-f... |
+| `bright_state_resonator.json` | driven Jaynes-Cummings resonator at high power (bright state, punch-out) | x, y, sx, sy, sz | xi | Reed, M. D., DiCarlo, L., Johnson, B. R., Sun, L., Schuster, D. I., Frunzio, L., Schoelkopf, R. J., 'High-f... |
 | `cim_dopo.json` | degenerate optical parametric oscillator with pump depletion (coherent Ising machine node) | s, q | Ep | Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014) |
 | `cim_pair.json` | coherent Ising machine, two coupled DOPOs (ferromagnetic) | x1, x2 | a | Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coher... |
 | `cim_triangle.json` | coherent Ising machine, three DOPOs on an antiferromagnetic triangle | x1, x2, x3 | a | Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coher... |
@@ -55,7 +55,7 @@ The report of the whole folder is kept under [docs/predictions](../../../docs/pr
 | `fluxonium.json` | fluxonium (superinductance and junction), classical phase particle | ph, v | phe | Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's g... |
 | `ion_duffing.json` | driven single-ion Duffing oscillator (octupole anharmonicity) | x, y | Delta | Akerman, N., Kotler, S., Glickman, Y., Dallal, Y., Keselman, A., Ozeri, R., 'A single-ion nonlinear mechani... |
 | `ion_phonon_laser.json` | trapped-ion phonon laser (Van der Pol image) with injection | x, y | F | Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (20... |
-| `jba_readout.json` | driven Kerr resonator (Josephson bifurcation readout) | x, y | F | Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009) |
+| `jba_resonator.json` | driven Kerr resonator of a Josephson bifurcation amplifier | x, y | F | Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009) |
 | `jpc_nondegenerate.json` | non-degenerate parametric oscillator (Josephson parametric converter above threshold) | ax, ay, bx, by, cx, cy | Ein | Bergeal, N., Schackert, F., Metcalfe, M., Vijay, R., Manucharyan, V. E., Frunzio, L., Prober, D. E., Schoel... |
 | `kerr_cat_kpo.json` | Kerr parametric oscillator (Kerr-cat qubit) | x, y | p | Goto, Sci. Rep. 6, 21686 (2016); Puri et al., npj Quantum Inf. 3, 18 (2017); Grimm et al., Nature 584, 205... |
 | `kpo_pair.json` | two coupled Kerr parametric oscillators (two cat qubits or a two-spin annealer) | x1, y1, x2, y2 | p | Goto, Sci. Rep. 6, 21686 (2016); Puri et al., Nat. Commun. 8, 15785 (2017) |
@@ -66,8 +66,8 @@ The report of the whole folder is kept under [docs/predictions](../../../docs/pr
 | `optomech_selfosc.json` | cavity optomechanical element, self-sustained oscillation | ar, ai, X, V | Ein | Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014)... |
 | `parametric_amplifier.json` | parametric amplifier below threshold | x, y | p | Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008) |
 | `phase_qubit_rfsquid.json` | flux-biased rf-SQUID phase qubit (and Josephson photomultiplier) | ph, v | phe | Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80... |
-| `po_amplitude_readout.json` | Josephson parametric oscillator readout, amplitude encoded (Krantz 2016) | x, y | eps | Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing... |
-| `pplo_readout.json` | Josephson parametric phase-locked oscillator readout (Lin 2014) | qx, qy | p | Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson pa... |
+| `po_amplitude_oscillator.json` | Josephson parametric oscillator for qubit measurement, amplitude encoded (Krantz 2016) | x, y | eps | Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing... |
+| `pplo_oscillator.json` | Josephson parametric phase-locked oscillator for qubit measurement (Lin 2014) | qx, qy | p | Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson pa... |
 | `qfp_latch.json` | quantum flux parametron (QFP) latch | th, v | f | Berkley, A. J., Johnson, M. W., Bunyk, P., Harris, R., Johansson, J., Lanting, T., Ladizinsky, E., Tolkache... |
 | `quantum_vdp.json` | self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser) | x, y | F | Lee & Sadeghpour, PRL 111, 234101 (2013); Walter, Nunnenkamp & Bruder, PRL 112, 094102 (2014) |
 | `rfsquid_annealer.json` | rf-SQUID annealer qubit (CCJJ), classical phase particle | th, v | beta | Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 13451... |

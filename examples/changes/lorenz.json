@@ -1,0 +1,48 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "Lorenz model of convection in the chaotic range",
+ "field": "atmospheric convection",
+ "question": "What does the Lorenz model write when the range of its Rayleigh parameter is extended?",
+ "carrier": {
+  "kind": "euclid",
+  "name": "Lorenz state variables",
+  "variables": [
+   "x",
+   "y",
+   "z"
+  ],
+  "scale": 10.0
+ },
+ "parameters": {
+  "sigma": 10.0,
+  "r": 60.0,
+  "b": 2.6666666667
+ },
+ "drift": {
+  "x": "sigma*(y-x)",
+  "y": "r*x-y-x*z",
+  "z": "x*y-b*z"
+ },
+ "control": {
+  "name": "r",
+  "range": [
+   24.74,
+   60.0
+  ]
+ },
+ "noise": 0.01,
+ "dt": 0.01,
+ "closure": "No external forcing, boundary conditions, reservoirs, or conservation laws are specified; the equations are self-contained for the three state variables.",
+ "observable": "Chaotic trajectory, steady states, and Lyapunov exponents, including the numerically reported values for the selected parameter set.",
+ "assumptions": [
+  "The state variables are real-valued.",
+  "The parameter values used for the principal chaotic example are sigma=10, b=8/3, and r=60.",
+  "For the fixed-point analysis, nontrivial equilibria are x=y=±sqrt(b*(r-1)) and z=r-1.",
+  "The paper assumes the Lorenz trajectories are bounded."
+ ],
+ "provenance": {
+  "source": "E. M. Shahverdiev, A simple method of chaos control, arXiv:chao-dyn/9807023 (1998), with the Rayleigh parameter r from 24.74 to 60; E. N. Lorenz, Deterministic nonperiodic flow, J. Atmos. Sci. 20, 130 (1963), doi:10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2",
+  "kind": "equations of the source paper, as extracted from its LaTeX"
+ }
+}

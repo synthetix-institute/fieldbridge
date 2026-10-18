@@ -1,0 +1,54 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "two symmetric populations with pairwise and three-body infection",
+ "field": "epidemiology",
+ "question": "Which changes turn the epidemic model with higher-order infection into a symmetric switch?",
+ "carrier": {
+  "kind": "orthant",
+  "name": "infection probabilities in populations 1 and 2",
+  "variables": [
+   "y_1",
+   "y_2"
+  ],
+  "scale": 0.5
+ },
+ "parameters": {
+  "tau": 0.03,
+  "beta": 3.85,
+  "gamma": 1.0,
+  "d_1": 4.0,
+  "d_2": 3.0,
+  "d_3": 3.0,
+  "d_4": 4.0,
+  "h_1": 1.0,
+  "h_2": 1.0
+ },
+ "drift": {
+  "y_1": "tau*(1-y_1)*(d_1*y_1+d_2*y_2)+beta*h_1*(1-y_1)*y_1**2-gamma*y_1",
+  "y_2": "tau*(1-y_2)*(d_3*y_1+d_4*y_2)+beta*h_2*(1-y_2)*y_2**2-gamma*y_2"
+ },
+ "control": {
+  "name": "tau",
+  "range": [
+   0.0,
+   0.1
+  ]
+ },
+ "noise": 0.01,
+ "dt": 0.01,
+ "closure": "An individual-based mean-field closure replaces joint infection probabilities by products of node-level infection probabilities; within each population nodes are topologically equivalent, and the populations use the symmetric constraints d_1=d_4, d_2=d_3, and h_1=h_2. The physical state space is restricted by 0<=y_1<=1 and 0<=y_2<=1.",
+ "observable": "The paper plots the phase portrait, equilibrium branches, basin boundaries, and time evolution of the two infection probabilities, including four coexisting stable endemic states.",
+ "assumptions": [
+  "SIS epidemic dynamics with recovery and no explicit susceptible replenishment term",
+  "Topological homogeneity within each population",
+  "Symmetric coupling between the two populations",
+  "Pairwise interactions both within and between populations",
+  "Three-body interactions within each population",
+  "Individual-based mean-field product closure"
+ ],
+ "provenance": {
+  "source": "I. Z. Kiss, C. Bick and P. L. Simon, Decoding how higher-order network interactions shape complex contagion dynamics, J. Math. Biol. 91, 29 (2025), doi:10.1007/s00285-025-02247-4, arXiv:2410.15330",
+  "kind": "equations of the source paper, as extracted from its LaTeX"
+ }
+}
