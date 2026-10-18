@@ -79,7 +79,8 @@ none on the counterpart. The excess is the selection probability of the written 
 
 ## The write rules over a directory of drift specifications
 
-`memory predictions DIRECTORY` applies the rules to every specification it finds. For hysteron networks it is rule
+`memory predictions DIRECTORY` applies the rules to every specification of the directory (its subfolders with
+`--recursive`). For hysteron networks it is rule
 R8, for bistable networks of kind `order` the holonomy of the writes, and for drift equations and networks (kind
 `equations` or `network`) the three write targets of `memory codiscover`: the symmetric write, the threshold write
 and phase locking, each derived under a time budget (`--budget`, 120 s by default), with the law constant where the
@@ -92,6 +93,37 @@ parallel processes.
 The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
+
+## Typed moves on a specification and the closure of their compositions
+
+`memory moves SPEC` changes one slot of a drift specification at a time and lets the write rules judge the result.
+The moves are the transition types of the literature on the slots of the nested language: a parameter declared as the
+control and swept over a range around its value (the protocol), the control's range widened or shifted by a decade,
+one additive term of one equation dropped (the operator apparatus), or one term added from a donor specification
+(`--donor`) in the specification's own variables with a new coefficient. A candidate is kept only when the modified
+realization is bounded: short integrations from large amplitude, with the control at both ends of its range, must not
+run away or still be growing at the end. The test rejects a loss rate made negative and a saturating term dropped, and
+keeps a widened detuning; it integrates because a static radial test fails both ways (a Kerr oscillator above threshold
+has outward radial drift and is bounded by its rotation; a frustrated triangle without one cubic has an inward
+direction-averaged drift and runs away along one axis).
+
+Each kept candidate is derived for the symmetric and the threshold write, every derivation in a child process under a
+wall-clock limit. A step is a move that reaches a target the specification does not, or changes the class of an
+obstruction (what a completion would have to keep: a second parameter, the critical space, the next order, the distant
+branch, the phase). At `--depth 2` the steps are composed with a second move and the composition is tested for
+closure: it closes when its outcome equals the outcome of a single step or combines obstruction classes the single
+steps show, and is open when it reaches a target no single step reaches or lands in a new class; `--depth 3` tries a
+third move on the open compositions. The report lists the steps, the rejected moves with their reason, and the open
+compositions. On the quantum-computing elements the open compositions were of three kinds: a second control the
+specification did not declare (the detuning of a Kerr oscillator, swept past the parametric threshold), a lifted
+degeneracy (unequal losses on a frustrated triangle), and modifications without a physical realization, which the
+boundedness test now rejects. The first two are known physics found by the engine; the engine does not decide what is
+new.
+
+```bash
+python3 -B -m fieldbridge memory moves examples/quantum/semiclassical/kpo_pair.json --depth 2 --out-dir out/moves_kpo
+python3 -B -m fieldbridge memory moves examples/memory/pitchfork.json --donor examples/memory/laser.json --out-dir out/moves_pitchfork
+```
 
 ## The frequencies of an observable (the closure rule)
 

@@ -19,6 +19,7 @@
 Contributing a material (CONTRIBUTING.md):
   new NAME                     a template specification that loads and runs, with placeholders to replace
   check SPEC [SPEC ...]        required and recommended checks, the structural predictions and a quick card
+  moves SPEC                   typed moves on the specification, judged by the write targets; compositions at depth 2, 3
   catalog                      the table of materials in docs/materials.md, calculated from the specifications
 
 Every command writes <name>.json and <name>.md to --out-dir with the question, the input hash, the hashes of the
@@ -777,6 +778,28 @@ def _completion_cell(c: Dict) -> str:
     return "; ".join(parts) if parts else "no write point along the control"
 
 
+def cmd_moves(args) -> int:
+    """Typed moves on a drift specification: which single moves reach a write target the specification does not, or
+    change an obstruction class; at depth 2 and 3, which compositions of moves close on the single steps and which
+    stay open."""
+    from . import moves as mv
+    spec_d = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    donor = json.loads(Path(args.donor).read_text(encoding="utf-8")) if args.donor else None
+    rep = mv.run(spec_d, donor, depth=args.depth, seed=args.seed, budget=args.budget, max_candidates=args.max_candidates,
+                 singles=args.singles, seconds=args.seconds, isolate=not args.no_isolate,
+                 log=(print if args.verbose else None))
+    report = {"command": "moves", **_provenance(spec_d), "input": {"spec": args.spec, "donor": args.donor,
+              "depth": args.depth, "budget": args.budget, "max_candidates": args.max_candidates, "singles": args.singles,
+              "seconds": args.seconds, "isolated": not args.no_isolate, "seed": args.seed}, **rep}
+    _write(Path(args.out_dir), "moves", report, mv.markdown(rep) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "candidates": rep["candidates"], "rejected": len(rep["rejected"]),
+                      "judged": len(rep["judged"]), "steps": len(rep["steps"]),
+                      "steps_reaching": [[s["move"], s["what"], s["reaches"]] for s in rep["steps"] if s["reaches"]],
+                      "compositions": len(rep.get("compositions", [])), "open": rep.get("open", 0),
+                      **({"stopped": rep["stopped"]} if rep.get("stopped") else {})}, indent=2))
+    return 0
+
+
 def cmd_predictions(args) -> int:
     """What the rules predict for every specification in a directory. Hysteron networks: rule R8 (the frustration
     index with the drive, balance, the gain over the ferromagnetic reference and the return test where the
@@ -788,7 +811,8 @@ def cmd_predictions(args) -> int:
     from . import counterpart as cp
     from . import hysterons as hy
     rows, lines, drift_paths, skipped = [], [], [], 0
-    for path in sorted(Path(args.directory).rglob("*.json")):
+    root = Path(args.directory)
+    for path in sorted(root.rglob("*.json") if args.recursive else root.glob("*.json")):
         try:
             spec = json.loads(path.read_text(encoding="utf-8"))
             if spec.get("kind") == "order":
@@ -1151,14 +1175,32 @@ def add_parser(sub) -> None:
     p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
     p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
     p.set_defaults(func=cmd_order)
+    p = msub.add_parser("moves", help="Typed moves on a drift specification (a parameter made the control, its range "
+                                      "changed, a term dropped, a term added from a donor), each kept when bounded and "
+                                      "judged by the write targets; compositions of moves and their closure at depth 2 "
+                                      "and 3.")
+    common(p)
+    p.add_argument("--donor", default=None, help="A second specification whose terms the add move takes.")
+    p.add_argument("--depth", type=int, default=1, choices=[1, 2, 3], help="1: single moves; 2: compositions of two; "
+                   "3: a third move on the open compositions.")
+    p.add_argument("--budget", type=int, default=120, help="Wall-clock seconds per derivation in its child process.")
+    p.add_argument("--max-candidates", type=int, default=60, help="Single moves judged, in the order enumerated.")
+    p.add_argument("--singles", type=int, default=8, help="First moves of the compositions: the steps, then other "
+                   "candidates up to this many.")
+    p.add_argument("--seconds", type=float, default=1500.0, help="Time limit of the whole run.")
+    p.add_argument("--no-isolate", action="store_true", help="Derive in this process (no time limit; a crash in a "
+                   "numerical routine ends the run).")
+    p.add_argument("--verbose", action="store_true", help="Print every judged move.")
+    p.set_defaults(func=cmd_moves)
     p = msub.add_parser("predictions", help="What the rules predict for every specification in a directory: for "
                                            "hysterons rule R8 (frustration index with the drive, balance, the typical "
                                            "gain of the sequence-memory ensemble, the measured gain and return test "
                                            "where the enumeration is feasible); for bistable networks the holonomy of "
                                            "the writes; for drift equations and networks the three write targets under "
                                            "a time budget and the completion rung at an obstructed symmetric write.")
-    p.add_argument("directory", help="Directory searched for specifications (e.g. examples/memory/hysterons, "
-                                      "examples/counterpart, examples/quantum/semiclassical).")
+    p.add_argument("directory", help="Directory of specifications (e.g. examples/memory/hysterons, examples/counterpart, "
+                                      "examples/quantum/semiclassical); its subfolders only with --recursive.")
+    p.add_argument("--recursive", action="store_true", help="Include the specifications of the subfolders.")
     p.add_argument("--out-dir", default="out/memory_predictions")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--exact-up-to", type=int, default=16, help="Elements up to which the frustration index is exact.")
