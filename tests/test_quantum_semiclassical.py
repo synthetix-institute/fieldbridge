@@ -24,7 +24,8 @@ CARRIERS = [
 
 
 def test_the_folder_holds_the_thirty_one_elements_of_the_census():
-    assert sorted(p.stem for p in FOLDER.glob("*.json")) == CARRIERS
+    specs = [p for p in FOLDER.glob("*.json") if "schema" in json.loads(p.read_text(encoding="utf-8"))]
+    assert sorted(p.stem for p in specs) == CARRIERS   # census.json is the survey, not a specification
     readme = (FOLDER / "README.md").read_text(encoding="utf-8")
     assert all(f"`{name}.json`" in readme for name in CARRIERS)
 

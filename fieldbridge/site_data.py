@@ -154,6 +154,8 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
             if rel in named:
                 continue
             spec = json.loads(path.read_text(encoding="utf-8"))
+            if not isinstance(spec, dict) or "schema" not in spec:
+                continue   # not a specification (a survey or an index kept beside the models)
             fam = "field" if spec.get("kind") == "field" else family
             nid = path.stem if path.stem not in ids else f"{path.stem}_{Path(folder).name}"
             out.append({"id": nid, "family": fam, "spec": rel, "auto": True,
