@@ -57,6 +57,8 @@ DEVIATION_FLOOR = 0.02      # ... and by more than this absolute amount (the law
 CURVATURES = (-0.15, -0.1, -0.05, 0.0, 0.05)  # curvatures of the sweep through a cusp tried by
                             # zero_offset_curvature (on the cusp of a driven Kerr resonator its offset
                             # is close to linear in the curvature over this range)
+CURVATURE_REFINEMENTS = 3       # secant steps after the first check of the zero-offset curvature
+CURVATURE_TOLERANCE = 0.1       # an offset below this (or three standard errors) counts as cancelled
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -565,7 +567,7 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
         return row
 
     rows = [offset_at(c) for c in curvatures]
-    ok = [r for r in rows if r.get("status") == "measured"]
+    ok = sorted((r for r in rows if r.get("status") == "measured"), key=lambda r: r["curvature"])
     out: Dict[str, object] = {"second": second, "rate": rate, "noise_ratio": gamma, "rows": rows,
                               "curvature_units": "the sweep parameter t of p = cusp + t d + c2 t^2 n, with d the "
                                                  "direction of cancel_asymmetry and n normal to it"}
@@ -573,21 +575,44 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
         out["status"] = "fewer than two curvatures with a measured offset"
         return out
     x = np.array([r["curvature"] for r in ok]); y = np.array([r["offset"] for r in ok])
-    w = 1.0 / np.maximum(np.array([r["offset_error"] for r in ok]), 1e-3)
-    slope, intercept = np.polyfit(x, y, 1, w=w)
-    out.update(offset_slope=float(slope), offset_straight=float(intercept))
-    if abs(slope) < 1e-9:
-        out["status"] = "the offset does not depend on the curvature"
-        return out
-    c_star = -intercept / slope
-    span = float(np.max(x) - np.min(x))
-    if not (np.min(x) - span <= c_star <= np.max(x) + span):
-        out.update(status="the zero lies far outside the curvatures tried", zero_offset_curvature=float(c_star))
-        return out
-    check = offset_at(float(c_star))
-    out.update(status="found", zero_offset_curvature=float(c_star), check=check)
-    if check.get("status") == "measured":
-        out["cancelled"] = bool(abs(check["offset"]) <= max(3 * check["offset_error"], 0.1))
+    out.update(offset_straight=float(np.interp(0.0, x, y)) if x[0] <= 0.0 <= x[-1] else None)
+    # the zero: between two curvatures that bracket it, or from the two curvatures with the smallest offsets (the
+    # offset is close to linear near its zero but need not be over the whole range)
+    pair = next(((a, b) for a, b in zip(ok, ok[1:]) if a["offset"] * b["offset"] <= 0), None)
+    if pair is None:
+        a, b = sorted(ok, key=lambda r: abs(r["offset"]))[:2]
+    else:
+        a, b = pair
+
+    def secant(a, b):
+        da, db = a["offset"], b["offset"]
+        return None if da == db else a["curvature"] - da * (b["curvature"] - a["curvature"]) / (db - da)
+
+    span = float(x[-1] - x[0])
+    lo, hi = float(x[0]) - 2 * span, float(x[-1]) + 2 * span
+    c_star = secant(a, b)
+    checks = []
+    for _ in range(1 + CURVATURE_REFINEMENTS):
+        if c_star is None or not (lo <= c_star <= hi):
+            out.update(status="the zero lies outside the curvatures that can be reached from those tried",
+                       zero_offset_curvature=None if c_star is None else float(c_star), checks=checks)
+            return out
+        check = offset_at(float(c_star))
+        checks.append(check)
+        if check.get("status") != "measured":
+            break
+        if abs(check["offset"]) <= max(3 * check["offset_error"], CURVATURE_TOLERANCE):
+            break
+        # replace the end of the pair that has the sign of the check, and take a secant step again
+        if a["offset"] * check["offset"] > 0:
+            a = check
+        else:
+            b = check
+        c_star = secant(a, b)
+    last = checks[-1] if checks else {}
+    out.update(status="found", zero_offset_curvature=float(last.get("curvature", c_star)), check=last, checks=checks)
+    if last.get("status") == "measured":
+        out["cancelled"] = bool(abs(last["offset"]) <= max(3 * last["offset_error"], CURVATURE_TOLERANCE))
     return out
 
 
