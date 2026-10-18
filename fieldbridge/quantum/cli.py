@@ -10,6 +10,10 @@
   write [SPEC ...]                   derive the quantum write on open carriers: a parametric oscillator swept
                                      through its threshold with a bias, the Gaussian-stage law with the vacuum seed,
                                      and the equilibrium write where the law fails (default: examples/quantum/open)
+  closure [SPEC ...]                 the closure rule as a construction: the index (Hamiltonian terms removed until
+                                     the observable's closure rotates), the closed counterpart, the excess of the
+                                     signal over it (spread and shift of its lines) and the check that every line
+                                     lies in the closure spectrum (default: examples/quantum)
 
 Every command writes <name>.json and <name>.md to --out-dir, with the input hashes and the hash of the implementation.
 """
@@ -205,6 +209,30 @@ def cmd_write(args) -> int:
     return 0
 
 
+def cmd_closure(args) -> int:
+    from . import closure as qc
+    from . import language as ql
+    paths = [Path(p) for p in args.specs] or sorted(Path(args.examples).glob("*.json"))
+    rows, skipped, specs = [], [], []
+    for p in paths:
+        try:
+            real = ql.load(p)
+        except ql.SpecError as err:
+            skipped.append(f"{p.name}: {err}")
+            continue
+        specs.append(real.spec)
+        rows.append({"spec": p.name, **qc.construct(real, max_removed=args.max_removed)})
+    out = Path(args.out_dir)
+    report = {"command": "quantum closure", **_provenance(specs), "rule": qc.RULE, "rows": rows, "skipped": skipped}
+    _write(out, "closure", report, qc.markdown(rows) + f"\n{BOUNDARY}\n")
+    indices = [r["index"] for r in rows]
+    print(json.dumps({"out_dir": args.out_dir, "realizations": len(rows), "rotating": sum(i == 0 for i in indices),
+                      "index_one": sum(i == 1 for i in indices), "index_above_one": sum(i is not None and i > 1 for i in indices),
+                      "no_index": sum(i is None for i in indices), "rule_holds": sum(bool(r["rule_holds"]) for r in rows),
+                      "skipped": len(skipped)}, indent=2))
+    return 0
+
+
 def add_parser(sub) -> None:
     import numpy  # noqa: F401  (the quantum language needs numpy and sympy: pip install -e '.[construction]')
     import sympy  # noqa: F401
@@ -235,3 +263,9 @@ def add_parser(sub) -> None:
     p.add_argument("--out-dir", required=True)
     p.add_argument("--no-law", action="store_true", help="Stop after the canonical form; do not evolve the density operator.")
     p.set_defaults(func=cmd_write)
+    p = qsub.add_parser("closure", help="The closure rule as a construction: index, closed counterpart, excess, check.")
+    p.add_argument("specs", nargs="*", help="Specifications fieldbridge-quantum/1 (default: every file in --examples).")
+    p.add_argument("--examples", default="examples/quantum")
+    p.add_argument("--out-dir", required=True)
+    p.add_argument("--max-removed", type=int, default=None, help="Largest number of terms removed in the search for the index.")
+    p.set_defaults(func=cmd_closure)

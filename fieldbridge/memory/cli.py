@@ -781,8 +781,9 @@ def cmd_predictions(args) -> int:
     """What the rules predict for every specification in a directory. Hysteron networks: rule R8 (the frustration
     index with the drive, balance, the gain over the ferromagnetic reference and the return test where the
     enumeration is feasible, the typical gain of the sequence-memory ensemble for comparison). Bistable networks of
-    kind order: the holonomy index of the writes. Drift equations and networks: the three write targets, each under a
-    time budget, and the completion rung where the symmetric write is obstructed."""
+    kind order: the holonomy index of the writes. Quantum realizations: the closure rule. Drift equations and
+    networks: the three write targets, each in a child process under a time limit, and the completion rung where
+    the symmetric write is obstructed."""
     import numpy as np
     from . import counterpart as cp
     from . import hysterons as hy
@@ -810,6 +811,25 @@ def cmd_predictions(args) -> int:
                 lines.append(f"| {path.name} | {net.n} | order: H = {idx['H']} | {'yes' if idx['H'] == 0 else 'no'} (commute) | "
                              f"{'' if typ is None else f'{100 * typ:.0f} % record'} | {measured} |")
                 continue
+            if spec.get("schema") == "fieldbridge-quantum/1":
+                from ..quantum import closure as qc
+                from ..quantum import language as ql
+                r = qc.construct(ql.load(spec))
+                e = r.get("excess") or {}
+                row = {"spec": path.name, "name": r["name"], "elements": r["sector_dimension"], "rule": "closure",
+                       "closure_dimension": r["closure"]["dimension"], "closure_frequencies": len(r["closure"]["frequencies"]),
+                       "index": r["index"], "rotating": r["index"] == 0, "rule_holds": r["rule_holds"],
+                       "prediction": "the observable rotates with one frequency" if r["index"] == 0 else
+                                     "the signal has several frequencies, all in the closure spectrum; removing "
+                                     f"{r['index']} term(s) leaves one rotation" if r["index"] else r.get("obstruction", ""),
+                       "relative_spread": e.get("relative_spread"), "mean_shift": e.get("mean_shift"),
+                       "source": spec.get("provenance", {}).get("reference", "")}
+                rows.append(row)
+                measured = (f"{e['lines']} lines, relative spread {e['relative_spread']:.3f}, mean shift {e['mean_shift']:+.3g}"
+                            if e else r.get("obstruction", ""))
+                lines.append(f"| {path.name} | {r['sector_dimension']} | closure: {r['closure']['dimension']} operators, "
+                             f"{len(r['closure']['frequencies'])} frequencies | index {'' if r['index'] is None else r['index']} | "
+                             f"{'yes' if r['index'] == 0 else 'no'} (rotates) | {'holds' if r['rule_holds'] else 'violated'} | {measured} |")
             if spec.get("kind") in ("equations", "network") and spec.get("schema") == "fieldbridge-memory/1":
                 drift_paths.append(path)
                 continue
@@ -869,7 +889,10 @@ def cmd_predictions(args) -> int:
                            f"{_completion_cell(r.get('completion', {}))} |")
     md = "# Predictions of the rules for the specifications of a directory\n\n"
     if lines:
-        md += ("## Hysteron networks and the order of writes\n\n"
+        md += ("## Hysteron networks, the order of writes and the closure of quantum observables\n\n"
+               "Quantum realizations (schema fieldbridge-quantum/1) are read with the closure rule: the closure of the "
+               "observable, the index (Hamiltonian terms removed until it rotates), whether every line of the signal lies in "
+               "the closure spectrum, and the spread of the lines (`quantum closure`). "
                "F counts the unsatisfiable edges of the network with the drive as a node. F = 0: the return to every turning "
                "point is exact. F > 0: states beyond return-point memory are possible (the rule is sufficient, not necessary; "
                "the one-dimensional antiferromagnetic chain of Deutsch, Dhar and Narayan keeps return-point memory with F > 0). "
@@ -894,13 +917,14 @@ def cmd_predictions(args) -> int:
     md += f"{BOUNDARY}\n"
     all_rows = rows + drift_rows
     _write(Path(args.out_dir), "predictions",
-           {"command": "predictions", "rule": "R8", "rules": ["R8", "holonomy", "write point"], **_provenance(),
+           {"command": "predictions", "rule": "R8", "rules": ["R8", "holonomy", "closure", "write point"], **_provenance(),
             "settings": {**settings, "isolated": not args.no_isolate, "workers": args.workers, "exact_up_to": args.exact_up_to, "enumerate_up_to": args.enumerate_up_to}, "rows": all_rows}, md)
     reached = {t: sum(str(r.get("targets", {}).get(t, {}).get("status", "")).startswith("reached") for r in drift_rows) for t in WRITE_TARGETS}
     completed = sum(1 for r in drift_rows for e in r.get("completion", {}).get("write_points", [])
                     if (e.get("law") or {}).get("certified") or any((u.get("law") or {}).get("certified") for u in e.get("unfoldings", [])))
     print(json.dumps({"out_dir": args.out_dir, "specifications": len(all_rows),
                       "balanced": sum(bool(r.get("balanced")) for r in rows), "commuting": sum(bool(r.get("commuting")) for r in rows),
+                      "rotating": sum(bool(r.get("rotating")) for r in rows),
                       "measured": sum("gain" in r for r in rows), "drift": len(drift_rows), "reached": reached,
                       "completions_certified": completed, "skipped": skipped}, indent=2))
     return 0

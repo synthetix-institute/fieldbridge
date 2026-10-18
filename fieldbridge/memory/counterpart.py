@@ -197,12 +197,19 @@ RULES = {
                     "excess": "the selection probability of the written state, the law constant of `codiscover` on "
                               "the realization, against one half on the counterpart",
                     "implemented": "construction", "module": "fieldbridge.memory.counterpart"},
-    "closure": {"rule": "an observable returns to itself under a sequence of operations only when the algebra it "
-                        "generates closes",
-                "precondition": "a quantum or classical realization with named operations",
-                "construction": "the closed counterpart: the generators restricted to the closed subalgebra",
-                "excess": "the part of the observable's motion outside the closed subalgebra",
-                "implemented": False},
+    "closure": {
+        "rule": "the expectation of an observable moves with the frequencies of the closure of the observable under "
+                "the Hamiltonian and with no other (sufficient, not necessary: a closure frequency can be silent)",
+        "precondition": "a quantum realization: a Hamiltonian written as terms, an observable, a prepared state",
+        "index": "the smallest number of Hamiltonian terms whose removal leaves a closure of two or three operators "
+                 "with a rotation frame",
+        "construction": "the closed counterpart: the Hamiltonian without those terms, which rotates with one frequency",
+        "excess": "the spread of the signal's lines about the counterpart's frequency and the shift of their mean, "
+                  "from a top eigenstate of the observable; for index 0 the amplitude offset of the prepared state",
+        "implemented": True,
+        "module": "fieldbridge.quantum.closure",
+        "command": "quantum closure",
+    },
 }
 
 

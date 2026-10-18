@@ -17,7 +17,7 @@ steps, the same for every rule.
 4. **Law and prediction.** Measure the excess over an ensemble to get the typical value as a function of the
    index, then name the published systems in which the index is not zero and the excess has not been measured.
 
-Two rules are implemented this way.
+Three rules are implemented this way, and the write point as a construction.
 
 ## Return to a turning point (rule R8)
 
@@ -93,13 +93,38 @@ The first set run this way is the thirty-one elements of quantum-computing hardw
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
 
-## A rule with its construction named and not yet built
+## The frequencies of an observable (the closure rule)
 
-- **Closure.** An observable returns to itself under a sequence of operations only when the algebra it generates
-  closes. Reference: the generators restricted to the closed subalgebra. Excess: the part of the observable's motion
-  outside the closed subalgebra.
+Under a Hamiltonian the expectation of an observable moves inside the closure of the observable, the smallest space
+of operators that contains it and is invariant under the commutator with the Hamiltonian (tutorial Module 24, §6).
+The generator of that closure has pairs of eigenvalues ±iω, and these ω are the only frequencies the signal can show
+from any prepared state. The rule is sufficient and not necessary: a frequency of the closure appears with the
+amplitude the prepared state gives it, which can be zero. Index: the smallest number of terms of the Hamiltonian, as
+the specification writes them, whose removal leaves a closure of two or three operators with a rotation frame.
+Reference: the Hamiltonian without those terms, the closed counterpart, which rotates with one frequency and follows
+the Rabi law. Excess, from a top eigenstate of the observable: the spread of the signal's lines, the weighted
+standard deviation of its Bohr frequencies, which the counterpart's single line lacks; the shift of their weighted
+mean from the counterpart's frequency; the weight outside the line that continues the counterpart's rotation; and
+the closure frequencies the prepared state leaves silent. For a realization of index 0 the excess is the amplitude
+offset of the signal from sin²θ, zero when the prepared state lies along the observable in the closure. Comparison:
+with the removed terms scaled by λ the spread falls as λ^p; p = 1 when the terms split the frequency at first order.
 
-`fieldbridge.memory.counterpart.RULES` lists all four with their constructions and their status.
+```bash
+python3 -B -m fieldbridge quantum closure --out-dir out/closure
+python3 -B -m fieldbridge memory predictions examples/quantum --out-dir out/quantum_predictions
+```
+
+Over the thirteen quantum examples and controls every line of every signal lies in the closure spectrum. Eight
+realizations rotate (index 0). The nitrogen-vacancy centre has a closure of seven operators with three frequencies;
+removing the anisotropy D J_z² leaves a rotation at the Larmor rate, and the signal's three lines spread over 6.5
+times that rate, falling as λ^0.9 when the anisotropy is scaled down. The Bose–Josephson junction with interaction
+has a closure of 21 operators and ten frequencies; removing the interaction leaves the Josephson rotation, and the
+ten lines spread over 0.31 of its frequency. The exchange chain of Module 14 and the control with a field on both
+spins have index 1 with two lines each; two nuclear spins of different species need both Zeeman terms removed
+(index 2). The control with a weighted observable has index 0 and one line, with an amplitude offset of 0.10: the
+rule's necessary direction fails there, as the language reports.
+
+`fieldbridge.memory.counterpart.RULES` lists the four rules with their indices, constructions, excesses and commands.
 
 ## What the constructor does not do
 
