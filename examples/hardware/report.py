@@ -53,7 +53,7 @@ def law_rows(comp: dict):
 def law_text(r: dict) -> str:
     head = r["completion"] + (f" ({r['second']})" if r.get("second") else "")
     if not r["status"].startswith("derived"):
-        return f"{head}: {r['status']}"
+        return f"{head}: {r['status'].split(':')[0].split(' (')[0]}"
     cert = "certified" if r.get("certified") else "not certified"
     if "states" in r:
         return f"{head}: {r['states']} states, largest deviation {r['deviation']}, {cert}"
