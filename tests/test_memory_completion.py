@@ -115,3 +115,31 @@ def test_the_sweep_through_the_kerr_cusp_reads_as_a_pitchfork_on_the_narrowed_wi
     assert "transcritical" in an.normal_form(path, np.asarray(c["state"]), "t", 0.0)["kind"]
     narrowed = construct.sweep_normal_form(path, np.asarray(c["state"]))
     assert "pitchfork" in narrowed["kind"] and narrowed["window_halvings"] >= 1
+
+
+def test_the_curved_sweep_moves_the_parameters_along_a_parabola():
+    """along_curved_path: at sweep parameter t the two parameters sit at origin + t d + c2 t^2 n, with n the direction
+    d turned by a right angle in their plane."""
+    import json
+    from pathlib import Path
+    from fieldbridge.memory import construct, spec as mspec
+    root = Path(__file__).resolve().parents[1]
+    real = mspec.load(json.loads((root / "examples/quantum/semiclassical/jba_resonator.json").read_text()))
+    seen = {}
+    base = real.drift
+
+    def spy(q, p):
+        seen.update(F=p["F"], chi=p["chi"])
+        return base(q, p)
+
+    from dataclasses import replace
+    real = replace(real, drift=spy)
+    origin, d = {"F": 2.0, "chi": 0.3}, {"F": 0.6, "chi": 0.8}
+    path = construct.along_curved_path(real, origin, d, 0.5)
+    t = 0.4
+    path.drift(np.zeros((1, 2)), {**path.params, "t": t})
+    assert abs(seen["F"] - (2.0 + t * 0.6 + 0.5 * t * t * (-0.8))) < 1e-12
+    assert abs(seen["chi"] - (0.3 + t * 0.8 + 0.5 * t * t * 0.6)) < 1e-12
+    straight = construct.along_curved_path(real, origin, d, 0.0)
+    straight.drift(np.zeros((1, 2)), {**straight.params, "t": t})
+    assert abs(seen["F"] - (2.0 + t * 0.6)) < 1e-12

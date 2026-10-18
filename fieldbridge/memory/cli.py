@@ -304,7 +304,7 @@ def cmd_complete(args) -> int:
     real = spec.load(args.spec)
     rep = completion.complete(real, np.random.default_rng(args.seed), rate=args.rate, noise=args.noise,
                               floors=tuple(args.floors), n_samples=args.samples, n_traj=args.trajectories,
-                              certify=not args.no_certificate, gamma=args.gamma)
+                              certify=not args.no_certificate, gamma=args.gamma, curvature=args.curvature)
 
     def clean(o):
         if isinstance(o, dict):
@@ -319,7 +319,8 @@ def cmd_complete(args) -> int:
     rep = clean(rep)
     report = {"command": "complete", **_provenance(real.spec), "question": real.spec.get("question"),
               "settings": {"rate": args.rate, "gamma": args.gamma, "noise": args.noise, "floors": args.floors,
-                           "samples": args.samples, "trajectories": args.trajectories}, **rep}
+                           "samples": args.samples, "trajectories": args.trajectories,
+                           "curvature": args.curvature}, **rep}
     _write(Path(args.out_dir), "complete", report, _md_complete(real.spec.get("question", ""), rep))
     print(json.dumps({"out_dir": args.out_dir, "write_points": [
         {"completion": e["completion"],
@@ -1159,6 +1160,8 @@ def add_parser(sub) -> None:
     p.add_argument("--samples", type=int, default=4000, help="Samples of the linear-stage Gaussian.")
     p.add_argument("--trajectories", type=int, default=2000, help="Trajectories of the certificate per bias.")
     p.add_argument("--no-certificate", action="store_true", help="Derive the law without the full simulation.")
+    p.add_argument("--curvature", action="store_true", help="At a cusp, find the curvature of the sweep that cancels "
+                   "its intrinsic offset (five curved sweeps and a check, each with the full dynamics).")
     p.set_defaults(func=cmd_complete)
     p = msub.add_parser("changes", help="Changes of a model (remove a term, make another parameter the control, extend "
                                         "the range of the control, add a term of a donor model) and pairs of changes, each judged by the symmetric "
