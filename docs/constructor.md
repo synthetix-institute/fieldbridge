@@ -108,10 +108,12 @@ measured with the bias toward either state, so that an offset of the write separ
 ratio at the element's own noise, where the constant is c(Γ) of the noise-ratio law rather than π^(1/4); the law
 measured again with half the time step; for a semiclassical description of a quantum element, the number of quanta
 that separate the written states from the unwritten one (below ten the description is not reliable); and the signs of
-the control and of a second parameter at the write point against their published values. Each check ends as
-confirmed, qualified (the law holds under a stated condition, such as a range of sweep rates), refuted, not applicable
-or not testable. The verdict is "ready for review" when no error is confirmed: the law then goes to a person or to the
-literature, and the audit does not certify it.
+the control and of a second parameter at the write point against their published values; a parameter defined modulo
+2π, such as an external flux phase that a shift of the loop's phase compensates, is compared at its value nearest the
+published one. Each check ends as confirmed, qualified (the law holds under a stated condition, such as a range of
+sweep rates), refuted, not applicable or not testable. The verdict is "ready for review" when no error is confirmed and
+the law was measured: the law then goes to a person or to the literature, and the audit does not certify it. A write
+whose law was not measured is "not testable".
 
 ```bash
 python3 -B -m fieldbridge memory audit examples/memory/pitchfork.json --out-dir out/audit_pitchfork

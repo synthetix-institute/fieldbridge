@@ -210,12 +210,32 @@ def check_few_quanta(real, target, nf, rng, base) -> Dict:
                  note="the noise of the description is taken as the vacuum noise, D = kappa/8 per quadrature")
 
 
+def periodic_partner(real, name: str, period: float = 2.0 * np.pi, points: int = 6) -> Optional[int]:
+    """The variable whose shift by `period` compensates a shift of the parameter `name` by the same amount, so that
+    the parameter is defined modulo the period (an external flux phase with the phase of the loop); None if there is
+    none. Tested at random states, with a relative tolerance."""
+    rng = np.random.default_rng(0)
+    qs = real.carrier.sample(rng, points)
+    shifted = {name: float(real.params[name]) + period}
+    for k in range(real.carrier.dim):
+        dq = np.zeros(real.carrier.dim)
+        dq[k] = period
+        a = real.F(qs)
+        b = real.F(qs + dq, **shifted)
+        if np.all(np.isfinite(a)) and np.allclose(a, b, rtol=1e-9, atol=1e-9 * max(1.0, float(np.abs(a).max()))):
+            return k
+    return None
+
+
 def check_published_sign(real, target, nf, rng, base) -> Dict:
     """The write must occur at values of the control, and of a second parameter that unfolds a cusp, of the same sign
-    as their published values: a rate, a mass or a loss made negative has no physical meaning."""
+    as their published values: a rate, a mass or a loss made negative has no physical meaning. A parameter defined
+    modulo 2 pi (a shift by 2 pi is compensated by a shift of a variable) is compared at its value nearest the
+    published one."""
     error = "the write occurs at a value of a parameter that the published model does not allow"
     assumption = "the control, and the second parameter at a cusp, keep the signs of their published values"
-    test = "compare the signs of the parameters at the write point with the signs of their published values"
+    test = ("compare the signs of the parameters at the write point with the signs of their published values, a "
+            "parameter defined modulo 2 pi at its value nearest the published one")
     published = dict((getattr(real, "spec", {}) or {}).get("parameters") or {})
     at_write = {real.control: float(nf.get("_control_at_write", nf["value"]))}
     if nf.get("_second"):
@@ -223,9 +243,18 @@ def check_published_sign(real, target, nf, rng, base) -> Dict:
     pairs = {k: (float(published[k]), v) for k, v in at_write.items() if k in published and float(published[k]) != 0.0}
     if not pairs:
         return _item(error, assumption, test, NOT_APPLICABLE)
-    opposite = {k: pv for k, pv in pairs.items() if pv[0] * pv[1] < 0}
-    return _item(error, assumption, test, CONFIRMED if opposite else REFUTED,
-                 **{f"{k} (published, at the write)": [pv[0], pv[1]] for k, pv in pairs.items()})
+    evidence, opposite = {}, []
+    for k, (pub, at) in pairs.items():
+        row = [pub, at]
+        if pub * at < 0 and k in real.params and periodic_partner(real, k) is not None:
+            at = at + 2.0 * np.pi * round((pub - at) / (2.0 * np.pi))
+            row.append(at)
+            evidence[f"{k} (published, at the write, equivalent value modulo 2 pi)"] = row
+        else:
+            evidence[f"{k} (published, at the write)"] = row
+        if pub * at < 0:
+            opposite.append(k)
+    return _item(error, assumption, test, CONFIRMED if opposite else REFUTED, **evidence)
 
 
 CHECKS: Dict[str, Callable] = {"window": check_window, "one sign": check_one_sign, "own noise": check_own_noise,
@@ -260,13 +289,20 @@ def audit_symmetric_write(real: Realization, rng, n_traj: int = 4000, replicates
         except (ValueError, np.linalg.LinAlgError) as e:
             item = _item(name, "", "", NOT_TESTABLE, note=f"{type(e).__name__}: {str(e)[:120]}")
         ledger.append({"check": name, **item})
-    confirmed = [x for x in ledger if x["status"] == CONFIRMED]
-    qualified = [x for x in ledger if x["status"] == QUALIFIED]
-    out.update(measured_on=where, ledger=ledger,
-               verdict="ready for review" if not confirmed else
-               "errors found: " + "; ".join(x["error"] for x in confirmed),
-               qualifications=[x["error"] for x in qualified])
+    out.update(measured_on=where, ledger=ledger, verdict=verdict(ledger, out["law_constant"]),
+               qualifications=[x["error"] for x in ledger if x["status"] == QUALIFIED])
     return out
+
+
+def verdict(ledger: List[Dict[str, object]], law_constant: Dict[str, object]) -> str:
+    """Errors found, if any check confirms one; otherwise ready for review, but only if the law was measured: a write
+    whose law was not measured cannot be reviewed, whatever the other checks say."""
+    confirmed = [x for x in ledger if x["status"] == CONFIRMED]
+    if confirmed:
+        return "errors found: " + "; ".join(x["error"] for x in confirmed)
+    if (law_constant or {}).get("constant") is None:
+        return "not testable: the law of the write was not measured"
+    return "ready for review"
 
 
 def markdown(name: str, res: Dict[str, object]) -> str:
