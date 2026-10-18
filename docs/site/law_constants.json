@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "178e8460948082beca411fd8b13ab6bdf6beb73cce7b63095b25282c3863b3f8",
+ "implementation_sha256": "48e7d6f021c5043d0afcf2a05488e0f663df4c4850c1d2b5ba0ee49b62c6e9e1",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -480,14 +480,14 @@
     "word": "CRKL"
    }
   },
-  "jba_readout": {
-   "spec_sha256": "e8719d01a25a8aa01fb5adaf475b04d81476300ca62560468b1836f9642170f5",
+  "jba_resonator": {
+   "spec_sha256": "7eb12dc1703e581dac905b0d6dad20063530f051eea0a44935c9dacadfe44308",
    "symmetric-write": {
     "class": "C R(fold) U R(pitchfork) K L",
-    "constant": 1.3140934552930066,
+    "constant": 1.323095004444572,
     "expected": 1.3313353638003897,
-    "offset": -1.2387889375721874,
-    "offset_stderr": 0.016990596875175314,
+    "offset": -1.2332110036144568,
+    "offset_stderr": 0.01958002744667977,
     "signature": [
      -2.055508504,
      -0.006196431166,
@@ -515,7 +515,7 @@
      -0.02700039634,
      0.01289884086
     ],
-    "stderr": 0.016990596875175314,
+    "stderr": 0.01958002744667977,
     "word": "CRURKL"
    },
    "threshold-write": {
