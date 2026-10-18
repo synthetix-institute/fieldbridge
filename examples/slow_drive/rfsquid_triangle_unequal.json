@@ -1,0 +1,64 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "rfsquid_triangle_unequal",
+  "name": "three rf-SQUID annealer qubits with unequal antiferromagnetic couplings under a slow flux sweep",
+  "field": "superconducting circuits",
+  "question": "Does a frustrated triangle of rf-SQUID loops with unequal couplings return to its state at a turning point of a slow sweep of the flux bias?",
+  "assumptions": [
+    "phase theta_i of loop i relative to half a flux quantum, time in units of 1/omega_LC, damping 1/Q = 0.5, as in the census model rfsquid_triangle",
+    "unequal barrier parameters beta_i, couplings J_ij > 0 (antiferromagnetic, mutual inductance) and flux offsets d_i of the loops, as fabrication and programmed couplers give; the values are an illustration, not those of a measured device",
+    "the flux bias eps is swept slowly compared with the relaxation of the loops, without noise"
+  ],
+  "provenance": {
+    "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+    "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "th1, v1, th2, v2, th3, v3",
+    "variables": [
+      "th1",
+      "v1",
+      "th2",
+      "v2",
+      "th3",
+      "v3"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "gam": 0.5,
+    "eps": 0.0,
+    "b1": 1.851,
+    "b2": 1.465,
+    "b3": 1.393,
+    "J12": 0.049,
+    "J13": 0.153,
+    "J23": 0.261,
+    "d1": 0.144,
+    "d2": -0.141,
+    "d3": -0.128
+  },
+  "drift": {
+    "th1": "v1",
+    "v1": "-gam*v1 - (th1 - eps - d1) + b1*sin(th1) - J12*th2 - J13*th3",
+    "th2": "v2",
+    "v2": "-gam*v2 - (th2 - eps - d2) + b2*sin(th2) - J12*th1 - J23*th3",
+    "th3": "v3",
+    "v3": "-gam*v3 - (th3 - eps - d3) + b3*sin(th3) - J13*th1 - J23*th2"
+  },
+  "noise": 0.0009,
+  "slow_drive": {
+    "parameter": "eps",
+    "range": [
+      -2.0,
+      2.0
+    ],
+    "elements": [
+      "th1",
+      "th2",
+      "th3"
+    ]
+  }
+}

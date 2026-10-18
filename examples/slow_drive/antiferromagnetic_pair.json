@@ -1,0 +1,48 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "antiferromagnetic_pair",
+  "name": "two bistable coordinates with an antiferromagnetic coupling",
+  "field": "hysteresis",
+  "question": "Under a slow uniform drive, which states do two coupled bistable coordinates reach, does every excursion return to its turning point, and which hysterons do they reduce to?",
+  "assumptions": [
+    "each coordinate relaxes in its own quartic potential x - x^3, much faster than the drive changes",
+    "a linear antiferromagnetic coupling J < 0 and the same drive H on both coordinates",
+    "fields +a and -a of opposite sign separate the thresholds of the two elements; with a = 0 the elements are identical and their switching is a choice that noise makes",
+    "no noise: the quasi-static dynamics of the equations"
+  ],
+  "provenance": {
+    "source": "the double-well (quartic) element of the random-field Ising model in its soft-spin form: J. P. Sethna et al., Phys. Rev. Lett. 70, 3347 (1993); K. Dahmen and J. P. Sethna, Phys. Rev. B 53, 14872 (1996)",
+    "kind": "textbook model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "x1, x2",
+    "variables": [
+      "x1",
+      "x2"
+    ],
+    "scale": 1.0
+  },
+  "parameters": {
+    "J": -0.1,
+    "H": 0.0,
+    "a": 0.05
+  },
+  "drift": {
+    "x1": "x1 - x1**3 + J*x2 + H + a",
+    "x2": "x2 - x2**3 + J*x1 + H - a"
+  },
+  "noise": 0.01,
+  "slow_drive": {
+    "parameter": "H",
+    "range": [
+      -1.5,
+      1.5
+    ],
+    "elements": [
+      "x1",
+      "x2"
+    ]
+  }
+}

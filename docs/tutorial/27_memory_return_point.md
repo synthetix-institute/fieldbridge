@@ -9,7 +9,9 @@
 4. explain why the frustration of the couplings does not decide the return, and why the structural condition is
    sufficient and not necessary;
 5. build the balanced counterpart of a frustrated network with `memory counterpart` and measure the network's states
-   against it.
+   against it;
+6. follow a material given by equations under a slow drive, test its return on its own transition graph and reduce it
+   to hysterons.
 
 **Prerequisites.** Modules [3](17_memory_predictions.md) and [4](18_memory_writing_and_retention.md). **Time.** About
 30 minutes.
@@ -196,7 +198,74 @@ The same construction applies to any rule that decides a property from structure
 change of one layer that makes the rule hold, everything else is kept, and the consequence of the violation is
 measured against it. The return to a turning point is the first rule for which FieldBridge builds it.
 
-## 8. A model from your field
+## 8. Materials given by equations
+
+A material is often known by its equations of motion rather than by its thresholds: coupled flux loops,
+magnetic grains, bistable chemical reactors. `memory hysterons` also accepts such a material: a specification of kind
+`equations` (Module [2](16_memory_specification.md)) with a block `slow_drive`.
+
+| Key | Meaning |
+| --- | --- |
+| `parameter` | the declared parameter through which the slow drive acts |
+| `range` | `[low, high]`: a range of the drive with a single stable state at each end |
+| `elements` | one expression per element whose sign is its state; for coupled bistable units, a coordinate of each unit |
+
+The command follows the equations under a quasi-static drive, without noise. Each stable equilibrium is continued
+in the drive until it disappears; past that point the state relaxes along the drift to another equilibrium. The
+states that some history reaches from the low end of the range, with the intervals of the drive on which they exist
+and the transitions at their ends, form the transition graph. The exhaustive return test of §7 runs on this graph.
+Its result is a statement about the equations, with no model of elements in between.
+
+The elements are needed only for the reduction to hysterons. At the end of a state's interval, the element whose
+sign changes first during the relaxation is the one that lost stability. The drive at that point gives one linear
+condition on the fields, half-widths and couplings of a hysteron model. The command finds every stable state on a
+grid of the drive, reached or not, and solves the conditions of all of them by least squares. The signs of the
+reduced couplings and of the drive then decide whether the return is guaranteed (§3). The reduced model is also
+measured, and its states and its return are compared with those of the equations.
+
+```bash
+python3 -B -m fieldbridge memory hysterons examples/slow_drive/antiferromagnetic_pair.json --out-dir out/slow_drive
+```
+
+The example has two bistable coordinates, $\dot x_i = x_i - x_i^3 + J x_j + H \pm a$, with $J = -0.1$ and
+$a = 0.05$. They switch one at a time, through the states $--$, $+-$ and $++$. The state $-+$ exists but no
+history of the drive reaches it. Both excursions return. The reduced model has the coupling $-0.100$, the
+fields $\pm 0.053$ and the half-widths $0.406$, in units of the drive, and the same three states. Its network has a
+frustrated loop through the drive, which allows a failure; here none occurs. With $J = +0.1$, one avalanche switches
+both coordinates, and the reduced coupling $+0.092$ is balanced with the drive.
+
+The construction stops with its reason wherever the quasi-static dynamics is not that of hysterons:
+- the range does not saturate the material;
+- after a loss of stability the state oscillates or escapes;
+- the drive does not decide the transition.
+
+The last case occurs for identical elements. With $a = 0$, the symmetric state $--$ of the antiferromagnetic pair loses
+stability through a pitchfork in the antisymmetric direction, so noise chooses which coordinate switches. A spread
+of the elements' parameters lifts the degeneracy, as fabrication does in devices.
+
+**A frustrated triangle of flux qubits** (`examples/slow_drive/rfsquid_triangle_unequal.json`). Three rf-SQUID loops of an annealing processor (Harris et al., 2010) are
+coupled antiferromagnetically through their mutual inductance, and the flux bias $\varepsilon$ is swept slowly. Take
+barrier parameters $\beta = (1.85, 1.46, 1.39)$, couplings $J_{12}, J_{13}, J_{23} = 0.05, 0.15, 0.26$ and flux
+offsets $(0.14, -0.14, -0.13)$. The equations then reach six states. Two of nine excursions do not return to their
+turning point. Rising from full negative flux, the triangle reaches $+-+$. The drive turns at $\varepsilon = 1.03$,
+falls past $-0.37$ and rises again; the third loop switches back down, and on the way up the second loop switches
+first. The triangle returns as $++-$: the excursion has changed which loop of the frustrated triangle is left
+down. A direct integration of the equations under a slow ramp gives the same sequence of states.
+
+**When the reduced model is wrong.** In the second example, `rfsquid_triangle_close_thresholds.json`, the equations
+reach six states and every excursion returns. The hysteron model fitted to the same equations has the same six states,
+but one transition is wrong.
+- The first loop switches first only at folds where the other two loops have the same sign. Those folds fix only the
+  sum of its two couplings; the report marks both as "not determined", and the fit takes them equal.
+- In state $--+$ the two couplings act with opposite signs, so their unknown difference moves the first loop's
+  threshold. The reduced model puts it 0.006 below that of the second loop.
+- The equations switch the second loop there, the reduced model the first. Two of the reduced model's excursions then
+  fail to return.
+
+A coupling that the folds do not determine leaves the structural rule undecided, and the command says so. The return
+is then decided on the transition graph of the equations, as here.
+
+## 9. A model from your field
 
 A specification of kind `hysterons` has the usual fields (`schema`, `kind`, `id`, `name`, `field`, `question`,
 `assumptions`, `provenance`) and a `hysterons` object:
@@ -214,7 +283,7 @@ A specification of kind `hysterons` has the usual fields (`schema`, `kind`, `id`
 Write first the question that the model answers, then the assumptions that make the elements hysterons: which
 barriers are large compared with the thermal energy, and on which time scale the drive is slow.
 
-## 9. Exercises
+## 10. Exercises
 
 1. Reverse the response of one element of the ferromagnet to the drive, with its couplings unchanged. How many loops
    through the drive become frustrated on the square lattice? Then reverse its four couplings as well. What does
@@ -260,6 +329,7 @@ barriers are large compared with the thermal energy, and on which time scale the
   in a uniform field and returns in a staggered one.
 - The condition is sufficient and not necessary: antiferromagnetic chains return although every loop through the
   drive is frustrated.
+- A material given by equations is followed under the slow drive itself. The return is decided on its transition graph, and its reduction to hysterons gives the signs for the structural rule. Where the folds do not determine a coupling, the reduction can get a transition wrong, and the return is decided on the equations.
 - The balanced counterpart reverses the fewest signs that make the extended network balanced and keeps everything
   else; it returns to every turning point, and the states of the material are measured against it as a loss and a
   gain.
@@ -275,6 +345,7 @@ barriers are large compared with the thermal energy, and on which time scale the
 | Report | [`cli.cmd_hysterons`](../../fieldbridge/memory/cli.py) | `test_command_line_writes_a_report_with_provenance` |
 | Frustration index and counterpart | [`counterpart.frustration`](../../fieldbridge/memory/counterpart.py), `balanced_counterpart` | `test_the_counterpart_keeps_magnitudes_fields_and_thresholds_and_is_balanced`, `test_local_search_never_undercuts_the_exact_index` |
 | States, deep memory and exhaustive return | `counterpart.reachable`, `reversals`, `exact_return`, `measure` | `test_the_enumeration_reproduces_the_preisach_counts`, `test_the_dynamics_of_run_stays_inside_the_enumerated_states` |
+| Materials given by equations: transition graph, return and reduction | [`slow_drive.EquationGraph`](../../fieldbridge/memory/slow_drive.py), `transition_graph`, `survey`, `reduce`, `check` | `test_cooperative_pair_reduces_to_a_balanced_network`, `test_antiferromagnetic_pair_has_a_frustrated_loop_through_the_drive`, `test_identical_antiferromagnetic_elements_are_a_choice_the_drive_does_not_make` |
 | Loss and gain against the counterpart | `counterpart.construct`, [`cli.cmd_counterpart`](../../fieldbridge/memory/cli.py) | `test_the_counterpart_returns_to_every_turning_point_and_the_parts_add_up`, `test_the_example_gains_states_over_a_counterpart_that_restores_the_return` |
 
 Sources: F. Preisach, Z. Phys. 94, 277 (1935); F. Harary, Michigan Math. J. 2, 143 (1953); I. D. Mayergoyz,

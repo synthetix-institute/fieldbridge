@@ -521,6 +521,8 @@ def cmd_hysterons(args) -> int:
     import numpy as np
     from . import hysterons as hy
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    if spec.get("kind") == "equations":
+        return _hysterons_from_equations(args, spec)
     model = hy.from_spec(spec)
     c = hy.card(model, np.random.default_rng(args.seed), count=args.subloops)
     r = c["check"]
@@ -546,6 +548,20 @@ def cmd_hysterons(args) -> int:
     _write(Path(args.out_dir), "hysterons", report, md)
     print(json.dumps({"out_dir": args.out_dir, "guaranteed": pred["guaranteed"], "failed": r["failed"],
                       "total": r["total"], "verdict": r["verdict"]}, indent=2))
+    return 0
+
+
+def _hysterons_from_equations(args, spec: Dict) -> int:
+    """memory hysterons on a material given by equations: its transition graph under the slow drive of the block
+    slow_drive, the exact return test on it, and the reduction to hysterons (fieldbridge.memory.slow_drive)."""
+    from . import slow_drive as sd
+    from .spec import load
+    real = load(spec)
+    r = sd.check(spec, real, seed=args.seed)
+    report = {"command": "hysterons", "from": "equations", **_provenance(spec), **r}
+    _write(Path(args.out_dir), "hysterons", report, sd.markdown(spec, r) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "states": r["count"], "return": r["return"],
+                      "guaranteed": r["prediction"]["guaranteed"], "verdict": r["verdict"]}, indent=2))
     return 0
 
 
@@ -1215,7 +1231,8 @@ def add_parser(sub) -> None:
     p = msub.add_parser("hysterons", help="Return to a turning point: interacting hysterons under a slow drive, "
                                           "the structural prediction against subloops.")
     common(p, spec_arg=False)
-    p.add_argument("spec", help="Specification of kind hysterons (examples/memory/hysterons/*.json).")
+    p.add_argument("spec", help="Specification of kind hysterons (examples/memory/hysterons/*.json), or of kind "
+                                "equations with a block slow_drive (examples/slow_drive/*.json).")
     p.add_argument("--subloops", type=int, default=24, help="Subloops for each order of relaxation, simple and nested.")
     p.add_argument("--no-figure", action="store_true", help="Skip the figure hysterons.png.")
     p.set_defaults(func=cmd_hysterons)
