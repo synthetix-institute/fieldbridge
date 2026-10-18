@@ -16,7 +16,11 @@ nothing about them: couplers kept monostable by design, travelling-wave amplifie
 codewords have zero mean field, spin and ion qubits whose operations are rotations and whose pumping has one fixed
 point, and linear optics. The exact Lindblad evolution of
 the Kerr parametric oscillator is in `../open/`; the equations here are its classical image and the images of its
-relatives.
+relatives. The Kerr terms are written as the literature writes the mean field, with the rotation rate 2K r²; the
+truncated-Wigner image of the Hamiltonian term −K a†a†aa rotates at 2K(r² − 1), a shift that is negligible for
+K ≪ κ and comparable to the other rates for the Kerr-cat elements (K ≳ κ), where a classical image is in any case
+a poor guide to the write: below about ten stored photons the exact evolution keeps far more of a bias than either
+classical image does.
 
 ## Running the rules
 
