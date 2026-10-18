@@ -1,7 +1,7 @@
-"""Collect the hardware survey (survey.py) into examples/quantum/semiclassical/REPORT.md: the coverage of the census, the three
+"""Collect the hardware survey (survey.py) into examples/quantum/semiclassical/survey/REPORT.md: the coverage of the census, the three
 derivations of every model, the laws at their obstructions and the single changes that reach a write.
 
-    python3 -B examples/quantum/semiclassical/report.py [--results examples/quantum/semiclassical/results]
+    python3 -B examples/quantum/semiclassical/survey/report.py [--results examples/quantum/semiclassical/survey/results]
 """
 from __future__ import annotations
 
@@ -73,7 +73,7 @@ def main() -> int:
            if not p.name.endswith(".partial.json")}
     cov = Counter(e["classical_write"] for e in census["census"])
     lines = ["# Mechanisms of quantum-computing hardware", "",
-             "Written by `python3 -B examples/quantum/semiclassical/report.py` from the results of `survey.py`.", "",
+             "Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py`.", "",
              f"The census lists {len(census['census'])} hardware elements described in reviews of superconducting, "
              f"semiconductor, trapped-ion, neutral-atom, photonic and optomechanical platforms: {cov['yes']} have a "
              f"classical write, {cov['partly']} have one in part and {cov['no']} have none (gates, codes and linear "

@@ -5,7 +5,7 @@ Each model is the classical image of an element of quantum-computing hardware: t
 the vacuum noise of its loss channels, with published parameters (the source is in its provenance). One process per
 model; the results are written to OUT/<model>.json and collected by report.py.
 
-    python3 -B examples/quantum/semiclassical/survey.py examples/quantum/semiclassical/kerr_cat_kpo.json --out examples/quantum/semiclassical/results
+    python3 -B examples/quantum/semiclassical/survey/survey.py examples/quantum/semiclassical/kerr_cat_kpo.json --out examples/quantum/semiclassical/survey/results
 
 The full survey of the 31 models takes about two hours on 16 cores; the laws at the obstructions take most of it.
 """
@@ -19,7 +19,7 @@ from pathlib import Path
 
 import numpy as np
 
-ROOT = Path(__file__).resolve().parents[3]
+ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
@@ -72,7 +72,7 @@ def survey(path: Path, trajectories: int = 400, replicates: int = 8, samples: in
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__.split("\n\n")[0])
     ap.add_argument("spec", type=Path)
-    ap.add_argument("--out", type=Path, default=ROOT / "examples/quantum/semiclassical/results")
+    ap.add_argument("--out", type=Path, default=ROOT / "examples/quantum/semiclassical/survey/results")
     ap.add_argument("--trajectories", type=int, default=400, help="Trajectories per replicate of a law constant.")
     ap.add_argument("--replicates", type=int, default=8)
     ap.add_argument("--samples", type=int, default=8000, help="Samples of the linear stage of a law at an obstruction.")
