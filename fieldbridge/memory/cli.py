@@ -598,8 +598,24 @@ def _jsonable(o):
 def _law_summary(law) -> Dict:
     if not isinstance(law, dict):
         return {"status": str(law)[:160]}
-    return {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
-                                "obstruction_in_nonlinear_stage") if k in law}
+    out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
+                               "obstruction_in_nonlinear_stage") if k in law}
+    od = law.get("one_direction")
+    if isinstance(od, dict):   # response constant and offset of a one-dimensional write, law and certificate
+        out["one_direction"] = {src: [{k: r[k] for k in ("bias_floors", "response_constant", "offset") if k in r}
+                                      for r in rows] for src, rows in od.items() if isinstance(rows, list)}
+    return out
+
+
+def _one_direction_text(law: Dict) -> str:
+    od = law.get("one_direction") or {}
+    parts = []
+    for src in ("law", "certificate"):
+        rows = od.get(src) or []
+        if rows:
+            r = max(rows, key=lambda x: x.get("bias_floors", 0))
+            parts.append(f"{src}: response {r['response_constant']:.2f}, offset {r['offset']:+.2f}")
+    return "; ".join(parts)
 
 
 def _completion_summary(entry: Dict) -> Dict:
@@ -761,16 +777,19 @@ def _completion_cell(c: Dict) -> str:
         if "law" in e:
             L = e["law"]
             cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+            od = _one_direction_text(L)
             parts.append(f"{kind}: {L.get('status', '')}{cert}"
-                         + (" (nonlinear stage)" if L.get("obstruction_in_nonlinear_stage") else ""))
+                         + (" (nonlinear stage)" if L.get("obstruction_in_nonlinear_stage") else "")
+                         + (f"; {od}" if od else ""))
         elif "unfoldings" in e:
             done = [u for u in e["unfoldings"] if u.get("success")]
             if done:
                 u = done[0]
                 L = u.get("law", {})
                 cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+                od = _one_direction_text(L)
                 parts.append(f"{kind}: cusp unfolded along {u['second']} ({u.get('kind_along_sweep', '')} along the "
-                             f"sweep); law {L.get('status', '')}{cert}")
+                             f"sweep); law {L.get('status', '')}{cert}" + (f"; {od}" if od else ""))
             else:
                 parts.append(f"{kind}: no material parameter cancels the asymmetry")
         else:
