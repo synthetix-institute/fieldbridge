@@ -1,0 +1,49 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "driven transmon (Duffing image)",
+ "field": "quantum computing hardware",
+ "question": "Does the strongly driven transmon (Duffing truncation) show a threshold write under its drive amplitude?",
+ "assumptions": [
+  "H = omega_q b^dag b - (E_C/2) b^dag2 b^2 (Blais eq. 25) driven at detuning Delta, in units of the decay",
+  "valid only while the Duffing truncation holds (a few excitations); vacuum noise kappa/8"
+ ],
+ "provenance": {
+  "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
+  "kind": "classical image of census entry 0: Transmon (fixed-frequency and flux-tunable SQUID transmon)"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 3
+ },
+ "parameters": {
+  "K": -2.0,
+  "Delta": -3.0,
+  "kappa": 1.0,
+  "F": 1.0
+ },
+ "drift": {
+  "x": "(K*(x**2 + y**2) - Delta)*y - 0.5*kappa*x",
+  "y": "-(K*(x**2 + y**2) - Delta)*x - F - 0.5*kappa*y"
+ },
+ "noise": 0.125,
+ "control": {
+  "name": "F",
+  "range": [
+   0.0,
+   6.0
+  ]
+ },
+ "material": [
+  "Delta"
+ ],
+ "observable": "amplitude of the driven transmon",
+ "closure": "decay kappa",
+ "census_entry": 0,
+ "carrier_file": "transmon_driven"
+}

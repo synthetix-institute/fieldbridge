@@ -1,0 +1,48 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "trapped-ion phonon laser (Van der Pol image) with injection",
+ "field": "quantum computing hardware",
+ "question": "Does the phonon laser lock to a weak injected force (Adler law)?",
+ "assumptions": [
+  "v'' + [k(v) - g(v)] v' + omega^2 v = chi' (Knuenz eq. 3.15), rotating-frame amplitude equations; injection F"
+ ],
+ "provenance": {
+  "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
+  "kind": "classical image of census entry 46: Trapped-ion phonon laser and its injection locking"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "g1": 2.0,
+  "g2": 0.1,
+  "Delta": 0.3,
+  "F": 0.2
+ },
+ "drift": {
+  "x": "0.5*g1*x - g2*(x**2 + y**2)*x + Delta*y",
+  "y": "0.5*g1*y - g2*(x**2 + y**2)*y - Delta*x - F"
+ },
+ "noise": 0.05,
+ "control": {
+  "name": "F",
+  "range": [
+   0.0,
+   2.0
+  ]
+ },
+ "material": [
+  "Delta"
+ ],
+ "observable": "phase of the oscillation",
+ "closure": "cooling and gain beams",
+ "census_entry": 46,
+ "carrier_file": "ion_phonon_laser"
+}

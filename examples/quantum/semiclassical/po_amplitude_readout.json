@@ -1,0 +1,51 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "Josephson parametric oscillator readout, amplitude encoded (Krantz 2016)",
+ "field": "quantum computing hardware",
+ "question": "Does switching on the pump cross the qubit-shifted parametric threshold (threshold write), and with which law?",
+ "assumptions": [
+  "i A' + eps A* + delta A + alpha |A|^2 A + i Gamma A = 0 (Krantz eq. 1), Gamma = 1; alpha = 27 kHz/1.32 MHz",
+  "qubit dispersive shift chi = +-2.75 Gamma enters as delta + chi",
+  "noise Gamma/4 (vacuum, both ports)"
+ ],
+ "provenance": {
+  "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
+  "kind": "classical image of census entry 24: Josephson parametric oscillator readout, amplitude-encoded (qubit coupled directly to the JPO)"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "eps": 3.56,
+  "delta": -5.34,
+  "chi": 0.0,
+  "alpha": 0.02
+ },
+ "drift": {
+  "x": "eps*y - (delta + chi)*y - alpha*(x**2 + y**2)*y - x",
+  "y": "eps*x + (delta + chi)*x + alpha*(x**2 + y**2)*x - y"
+ },
+ "noise": 0.25,
+ "control": {
+  "name": "eps",
+  "range": [
+   0.0,
+   8.0
+  ]
+ },
+ "material": [
+  "chi",
+  "delta"
+ ],
+ "observable": "oscillating or quiet",
+ "closure": "damping Gamma = 1",
+ "census_entry": 24,
+ "carrier_file": "po_amplitude_readout"
+}

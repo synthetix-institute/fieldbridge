@@ -578,14 +578,215 @@ def cmd_order(args) -> int:
     return 0
 
 
+WRITE_TARGETS = ("symmetric-write", "threshold-write", "phase-locking")
+
+
+def _jsonable(o):
+    import numpy as np
+    if isinstance(o, dict):
+        return {str(k): _jsonable(v) for k, v in o.items() if k != "final"}
+    if isinstance(o, (list, tuple)):
+        return [_jsonable(v) for v in o]
+    if isinstance(o, (np.floating, np.integer, np.bool_)):
+        return o.item()
+    if isinstance(o, np.ndarray):
+        return o.tolist()
+    return o
+
+
+def _law_summary(law) -> Dict:
+    if not isinstance(law, dict):
+        return {"status": str(law)[:160]}
+    return {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
+                                "obstruction_in_nonlinear_stage") if k in law}
+
+
+def _completion_summary(entry: Dict) -> Dict:
+    out = {"completion": entry.get("completion"), "kind": entry.get("kind"), "write_point": entry.get("write_point")}
+    if "law" in entry:
+        out["law"] = _law_summary(entry["law"])
+    if "unfoldings" in entry:
+        out["unfoldings"] = [{"second": u.get("second"), "success": u.get("success"),
+                              **({"cusp": u["cusp"], "kind_along_sweep": u.get("kind_along_sweep")} if u.get("success") else {}),
+                              **({"law": _law_summary(u["law"])} if "law" in u else {})} for u in entry["unfoldings"]]
+    return out
+
+
+def _timed(fn, *args, **kwargs):
+    """fn(*args, **kwargs) with the seconds it took and the exception, if any, as a note. No alarm interrupts it: an
+    exception raised inside a solver's callback ends the interpreter, so time limits are wall-clock limits on the child
+    process that runs a specification (see _predict_drift_isolated)."""
+    import time
+    t0 = time.time()
+    try:
+        return fn(*args, **kwargs), time.time() - t0, ""
+    except Exception as e:  # noqa: BLE001
+        return None, time.time() - t0, f"{type(e).__name__}: {str(e)[:120]}"
+
+
+def _predict_drift(path: str, settings: Dict, progress: "Path | None" = None, only: "str | None" = None) -> Dict:
+    """The write rules on one specification of kind equations or network: the three targets, and, where the symmetric
+    write is obstructed, the completion rung (the law of the model that keeps what the obstruction names). With `only`,
+    one write target or "completion" alone (the completion then runs whatever the symmetric write's status: the parent
+    process that asks for it has decided). The row so far is written to `progress` after every step."""
+    import numpy as np
+    from . import codiscovery as cd
+    from . import spec as mspec
+    p = Path(path)
+    spec = json.loads(p.read_text(encoding="utf-8"))
+    row = {"spec": p.name, "name": spec.get("name", p.stem), "field": spec.get("field", ""), "kind": spec.get("kind"),
+           "rule": "write point", "source": spec.get("provenance", {}).get("source", ""), "targets": {}}
+
+    def save():
+        if progress is not None:
+            progress.write_text(json.dumps(_jsonable(row)), encoding="utf-8")
+
+    try:
+        real = mspec.load(spec)
+    except Exception as e:  # noqa: BLE001
+        row["not_read"] = f"{type(e).__name__}: {str(e)[:120]}"
+        save()
+        return row
+    for target in (WRITE_TARGETS if only is None else [t for t in WRITE_TARGETS if t == only]):
+        res, secs, note = _timed(cd.TARGETS[target], real, np.random.default_rng(settings["seed"]),
+                                 check_law=settings["law"], n_traj=settings["trajectories"])
+        if not isinstance(res, dict):
+            row["targets"][target] = {"status": "not derived", "note": note or "no result", "seconds": round(secs, 1)}
+        else:
+            keep = {k: res[k] for k in ("status", "obstruction", "obstruction_short", "word", "class") if k in res}
+            const = res.get("law_constant") or {}
+            if const.get("constant") is not None:
+                keep["law_constant"] = {k: const[k] for k in ("constant", "stderr", "expected") if k in const}
+            keep["seconds"] = round(secs, 1)
+            row["targets"][target] = keep
+        save()
+    sw = row["targets"].get("symmetric-write", {})
+    if only == "completion" or (only is None and settings["complete"]
+                                and str(sw.get("status", "")).startswith("obstructed")):
+        from . import completion as cm
+        row["completion"] = {"status": "running"}
+        save()
+        res, secs, note = _timed(cm.complete, real, np.random.default_rng(settings["seed"]),
+                                 n_samples=settings["samples"], n_traj=settings["trajectories_completion"])
+        row["completion"] = {"seconds": round(secs, 1), **({"note": note} if note else {}),
+                             "write_points": [_completion_summary(e) for e in (res or {}).get("write_points", [])]}
+        save()
+    return _jsonable(row)
+
+
+def _child_step(path: Path, settings: Dict, step: str, limit: int) -> "tuple[Dict | None, str]":
+    """One step (a write target or the completion) of one specification in a child process with a wall-clock limit.
+    Returns (the child's row or None, why it has none)."""
+    import shutil
+    import subprocess
+    import sys
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp) / "spec"
+        d.mkdir()
+        shutil.copy(path, d / path.name)
+        out = Path(tmp) / "out"
+        cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "predictions", str(d), "--out-dir", str(out),
+               "--no-isolate", "--only-step", step, "--seed", str(settings["seed"]),
+               "--trajectories", str(settings["trajectories"]), "--samples", str(settings["samples"]),
+               "--trajectories-completion", str(settings["trajectories_completion"])]
+        if not settings["law"]:
+            cmd.append("--no-law")
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=limit if limit > 0 else None)
+        except subprocess.TimeoutExpired:
+            return None, f"stopped at the time limit of {limit} s"
+        except OSError as e:  # the interpreter could not be started
+            return None, f"the derivation process could not start: {e}"
+        report = out / "predictions.json"
+        if res.returncode == 0 and report.exists():
+            rows = json.loads(report.read_text(encoding="utf-8")).get("rows", [])
+            if rows:
+                return rows[0], ""
+        tail = [ln for ln in (res.stderr or "").strip().splitlines() if ln.strip()]
+        return None, (f"the derivation process ended with code {res.returncode}" + (f": {tail[-1][:160]}" if tail else ""))
+
+
+def _predict_drift_isolated(path: str, settings: Dict) -> Dict:
+    """_predict_drift with every step in a child process of its own under a wall-clock limit: `budget` seconds for
+    each write target, `completion_budget` for the completion rung. A step that runs over is stopped and reported as
+    such; a crash inside a numerical routine costs that step and not the run."""
+    p = Path(path)
+    spec = json.loads(p.read_text(encoding="utf-8"))
+    row = {"spec": p.name, "name": spec.get("name", p.stem), "field": spec.get("field", ""), "kind": spec.get("kind"),
+           "rule": "write point", "source": spec.get("provenance", {}).get("source", ""), "targets": {}}
+    for target in WRITE_TARGETS:
+        child, why = _child_step(p, settings, target, settings["budget"])
+        if child is not None and child.get("not_read"):
+            row["not_read"] = child["not_read"]
+            return row
+        if child is not None and target in child.get("targets", {}):
+            row["targets"][target] = child["targets"][target]
+        else:
+            row["targets"][target] = {"status": "not derived", "note": why or "no result"}
+    sw = row["targets"].get("symmetric-write", {})
+    if settings["complete"] and str(sw.get("status", "")).startswith("obstructed"):
+        child, why = _child_step(p, settings, "completion", settings["completion_budget"])
+        if child is not None and "completion" in child:
+            row["completion"] = child["completion"]
+        else:
+            row["completion"] = {"note": why or "no result", "write_points": []}
+    if not any("seconds" in t for t in row["targets"].values()):
+        row["failed"] = next((t.get("note", "") for t in row["targets"].values() if t.get("note")), "no step was derived")
+    return row
+
+
+def _drift_cell(t: Dict) -> str:
+    st = str(t.get("status", ""))
+    if st.startswith("reached"):
+        const = t.get("law_constant") or {}
+        if const.get("constant") is not None:
+            return (f"{st}; law constant {const['constant']:.3f} ± {const.get('stderr', 0.0):.3f}"
+                    + (f" (expected {const['expected']:.3f})" if const.get("expected") is not None else ""))
+        return st
+    if st == "not derived":
+        return f"not derived ({t.get('note', '')})"
+    return f"{st}: {t.get('obstruction_short') or str(t.get('obstruction', ''))[:90]}"
+
+
+def _completion_cell(c: Dict) -> str:
+    if not c:
+        return ""
+    if c.get("note") and not c.get("write_points"):
+        return f"not run ({c['note']})"
+    parts = []
+    for e in c.get("write_points", []):
+        kind = e.get("completion", "")
+        if "law" in e:
+            L = e["law"]
+            cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+            parts.append(f"{kind}: {L.get('status', '')}{cert}"
+                         + (" (nonlinear stage)" if L.get("obstruction_in_nonlinear_stage") else ""))
+        elif "unfoldings" in e:
+            done = [u for u in e["unfoldings"] if u.get("success")]
+            if done:
+                u = done[0]
+                L = u.get("law", {})
+                cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+                parts.append(f"{kind}: cusp unfolded along {u['second']} ({u.get('kind_along_sweep', '')} along the "
+                             f"sweep); law {L.get('status', '')}{cert}")
+            else:
+                parts.append(f"{kind}: no material parameter cancels the asymmetry")
+        else:
+            parts.append(kind)
+    return "; ".join(parts) if parts else "no write point along the control"
+
+
 def cmd_predictions(args) -> int:
-    """What rule R8 predicts for every hysteron specification in a directory, measured where the enumeration is
-    feasible: the frustration index with the drive, whether the network is balanced, the gain over the ferromagnetic
-    reference and the return test, and the typical gain of the sequence-memory ensemble for comparison."""
+    """What the rules predict for every specification in a directory. Hysteron networks: rule R8 (the frustration
+    index with the drive, balance, the gain over the ferromagnetic reference and the return test where the
+    enumeration is feasible, the typical gain of the sequence-memory ensemble for comparison). Bistable networks of
+    kind order: the holonomy index of the writes. Drift equations and networks: the three write targets, each under a
+    time budget, and the completion rung where the symmetric write is obstructed."""
     import numpy as np
     from . import counterpart as cp
     from . import hysterons as hy
-    rows, lines = [], []
+    rows, lines, drift_paths, skipped = [], [], [], 0
     for path in sorted(Path(args.directory).rglob("*.json")):
         try:
             spec = json.loads(path.read_text(encoding="utf-8"))
@@ -609,7 +810,11 @@ def cmd_predictions(args) -> int:
                 lines.append(f"| {path.name} | {net.n} | order: H = {idx['H']} | {'yes' if idx['H'] == 0 else 'no'} (commute) | "
                              f"{'' if typ is None else f'{100 * typ:.0f} % record'} | {measured} |")
                 continue
+            if spec.get("kind") in ("equations", "network") and spec.get("schema") == "fieldbridge-memory/1":
+                drift_paths.append(path)
+                continue
             if spec.get("kind") != "hysterons":
+                skipped += 1
                 continue
             model = hy.from_spec(spec)
         except Exception as e:  # noqa: BLE001
@@ -638,19 +843,66 @@ def cmd_predictions(args) -> int:
         rows.append(row)
         lines.append(f"| {path.name} | {model.n} | {degree:.1f} | {fr['F']}{'' if fr['exact'] else ' (bound)'} | "
                      f"{'yes' if fr['F'] == 0 else 'no'} | {typ['gain']:.2f} | {measured} |")
-    md = ("# Predictions of the rules for the specifications of a directory\n\n"
-          "F counts the unsatisfiable edges of the network with the drive as a node. F = 0: the return to every turning "
-          "point is exact. F > 0: states beyond return-point memory are possible (the rule is sufficient, not necessary; "
-          "the one-dimensional antiferromagnetic chain of Deutsch, Dhar and Narayan keeps return-point memory with F > 0). "
-          "The typical gain is a_k (F - F0_k) of the sequence-memory ensemble, a comparison value for random networks "
-          "of similar thresholds and couplings only. Measured columns need the enumeration, feasible up to "
-          f"{args.enumerate_up_to} elements here.\n\n"
-          "| Specification | Elements | Mean degree | F | Balanced | Typical gain (bits) | Measured |\n"
-          "| --- | --- | --- | --- | --- | --- | --- |\n" + "\n".join(lines) + f"\n\n{BOUNDARY}\n")
-    _write(Path(args.out_dir), "predictions", {"command": "predictions", "rule": "R8", **_provenance(), "rows": rows}, md)
-    print(json.dumps({"out_dir": args.out_dir, "specifications": len(rows),
+    # drift equations and networks: the write targets and the completion rung, one process per worker
+    settings = {"seed": args.seed, "budget": args.budget, "law": not args.no_law, "trajectories": args.trajectories,
+                "complete": not args.no_complete, "completion_budget": args.completion_budget, "samples": args.samples,
+                "trajectories_completion": args.trajectories_completion}
+    drift_rows = []
+    if drift_paths:
+        if args.no_isolate:
+            progress = Path(args.progress_file) if args.progress_file else None
+            drift_rows = [_predict_drift(str(p), settings, progress, args.only_step) for p in drift_paths]
+        else:
+            import concurrent.futures as cf
+            with cf.ThreadPoolExecutor(max_workers=max(1, args.workers)) as pool:
+                drift_rows = list(pool.map(_predict_drift_isolated, [str(p) for p in drift_paths],
+                                           [settings] * len(drift_paths)))
+    drift_lines = []
+    for r in drift_rows:
+        if r.get("not_read") or r.get("failed"):
+            what = f"not read: {r['not_read']}" if r.get("not_read") else r["failed"]
+            drift_lines.append(f"| {r['spec']} | {r['field']} | {what} | | | |")
+            continue
+        t = r["targets"]
+        drift_lines.append(f"| {r['spec']} | {r['field']} | {_drift_cell(t.get('symmetric-write', {}))} | "
+                           f"{_drift_cell(t.get('threshold-write', {}))} | {_drift_cell(t.get('phase-locking', {}))} | "
+                           f"{_completion_cell(r.get('completion', {}))} |")
+    md = "# Predictions of the rules for the specifications of a directory\n\n"
+    if lines:
+        md += ("## Hysteron networks and the order of writes\n\n"
+               "F counts the unsatisfiable edges of the network with the drive as a node. F = 0: the return to every turning "
+               "point is exact. F > 0: states beyond return-point memory are possible (the rule is sufficient, not necessary; "
+               "the one-dimensional antiferromagnetic chain of Deutsch, Dhar and Narayan keeps return-point memory with F > 0). "
+               "The typical gain is a_k (F - F0_k) of the sequence-memory ensemble, a comparison value for random networks "
+               "of similar thresholds and couplings only. Measured columns need the enumeration, feasible up to "
+               f"{args.enumerate_up_to} elements here.\n\n"
+               "| Specification | Elements | Mean degree | F | Balanced | Typical gain (bits) | Measured |\n"
+               "| --- | --- | --- | --- | --- | --- | --- |\n" + "\n".join(lines) + "\n\n")
+    if drift_lines:
+        md += ("## Drift equations and networks: the write targets\n\n"
+               "Each target is derived from the specification as `memory codiscover` derives it: reached (the model's write "
+               "point carries the mechanism, with the law constant where the law was checked), or obstructed, with what "
+               "obstructs it. Where the symmetric write is obstructed, the completion rung (`memory complete`) keeps what the "
+               "obstruction names and derives the law of the completed model; its certificate is the full simulation. "
+               f"Time limits: {args.budget} s per write target, {args.completion_budget} s for the completion"
+               f"{' (not applied: the specifications ran in this process)' if args.no_isolate else ''}"
+               f"{'; the law constants were not checked' if args.no_law else ''}.\n\n"
+               "| Specification | Field | Symmetric write | Threshold write | Phase locking | Completion at the obstruction |\n"
+               "| --- | --- | --- | --- | --- | --- |\n" + "\n".join(drift_lines) + "\n\n")
+    if skipped:
+        md += f"{skipped} specification(s) of other kinds were skipped (fields have their own command).\n\n"
+    md += f"{BOUNDARY}\n"
+    all_rows = rows + drift_rows
+    _write(Path(args.out_dir), "predictions",
+           {"command": "predictions", "rule": "R8", "rules": ["R8", "holonomy", "write point"], **_provenance(),
+            "settings": {**settings, "isolated": not args.no_isolate, "workers": args.workers, "exact_up_to": args.exact_up_to, "enumerate_up_to": args.enumerate_up_to}, "rows": all_rows}, md)
+    reached = {t: sum(str(r.get("targets", {}).get(t, {}).get("status", "")).startswith("reached") for r in drift_rows) for t in WRITE_TARGETS}
+    completed = sum(1 for r in drift_rows for e in r.get("completion", {}).get("write_points", [])
+                    if (e.get("law") or {}).get("certified") or any((u.get("law") or {}).get("certified") for u in e.get("unfoldings", [])))
+    print(json.dumps({"out_dir": args.out_dir, "specifications": len(all_rows),
                       "balanced": sum(bool(r.get("balanced")) for r in rows), "commuting": sum(bool(r.get("commuting")) for r in rows),
-                      "measured": sum("gain" in r for r in rows)}, indent=2))
+                      "measured": sum("gain" in r for r in rows), "drift": len(drift_rows), "reached": reached,
+                      "completions_certified": completed, "skipped": skipped}, indent=2))
     return 0
 
 
@@ -875,16 +1127,34 @@ def add_parser(sub) -> None:
     p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
     p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
     p.set_defaults(func=cmd_order)
-    p = msub.add_parser("predictions", help="What rule R8 predicts for every hysteron specification in a directory: "
-                                           "frustration index with the drive, balance, the typical gain of the "
-                                           "sequence-memory ensemble, and the measured gain and return test where the "
-                                           "enumeration is feasible.")
-    p.add_argument("directory", help="Directory searched for specifications of kind hysterons (e.g. examples/memory/hysterons).")
+    p = msub.add_parser("predictions", help="What the rules predict for every specification in a directory: for "
+                                           "hysterons rule R8 (frustration index with the drive, balance, the typical "
+                                           "gain of the sequence-memory ensemble, the measured gain and return test "
+                                           "where the enumeration is feasible); for bistable networks the holonomy of "
+                                           "the writes; for drift equations and networks the three write targets under "
+                                           "a time budget and the completion rung at an obstructed symmetric write.")
+    p.add_argument("directory", help="Directory searched for specifications (e.g. examples/memory/hysterons, "
+                                      "examples/counterpart, examples/quantum/semiclassical).")
     p.add_argument("--out-dir", default="out/memory_predictions")
     p.add_argument("--seed", type=int, default=0)
     p.add_argument("--exact-up-to", type=int, default=16, help="Elements up to which the frustration index is exact.")
     p.add_argument("--enumerate-up-to", type=int, default=16, help="Elements up to which the states are enumerated.")
     p.add_argument("--max-states", type=int, default=20000)
+    p.add_argument("--budget", type=int, default=300, help="Wall-clock seconds allowed to the child process that "
+                   "derives one write target of one drift specification (0: no limit).")
+    p.add_argument("--completion-budget", type=int, default=900, help="Wall-clock seconds allowed to the child "
+                   "process that runs the completion rung on one specification.")
+    p.add_argument("--no-law", action="store_true", help="Derive the write targets without checking their law constants.")
+    p.add_argument("--trajectories", type=int, default=400, help="Trajectories of the law check per target.")
+    p.add_argument("--no-complete", action="store_true", help="Skip the completion rung at an obstructed symmetric write.")
+    p.add_argument("--samples", type=int, default=4000, help="Samples of the completion's linear-stage Gaussian.")
+    p.add_argument("--trajectories-completion", type=int, default=2000, help="Trajectories of the completion's certificate per bias.")
+    p.add_argument("--workers", type=int, default=1, help="Child processes over the drift specifications.")
+    p.add_argument("--no-isolate", action="store_true", help="Derive the drift specifications in this process instead "
+                   "of one child process each (no time limit applies then, and a crash in a numerical routine ends "
+                   "the run).")
+    p.add_argument("--progress-file", default=None, help=argparse.SUPPRESS)
+    p.add_argument("--only-step", default=None, choices=list(WRITE_TARGETS) + ["completion"], help=argparse.SUPPRESS)
     p.set_defaults(func=cmd_predictions)
     p = msub.add_parser("gallery", help="Evaluate every example specification and write an HTML gallery with figures.")
     common(p, spec_arg=False)

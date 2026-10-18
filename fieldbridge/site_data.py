@@ -164,7 +164,10 @@ def auto_nodes(root: Path = ROOT) -> List[Dict]:
                                      "docs/tutorial/31_heredity_threshold.md#8-a-model-from-your-field"
                                      if fam == "heredity" else
                                      "docs/tutorial/32_decision_population.md#8-a-model-from-your-field"
-                                     if fam == "decision" else "docs/tutorial/21_memory_new_material.md"
+                                     if fam == "decision" else
+                                     "docs/tutorial/19_memory_transfer_and_design.md#5-the-law-at-an-obstruction"
+                                     if folder == "examples/quantum/semiclassical" else
+                                     "docs/tutorial/21_memory_new_material.md"
                                      if fam != "unitary" else "docs/tutorial/24_spin_language.md#2-writing-a-realization")})
             ids.add(nid)
     return out

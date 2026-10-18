@@ -77,6 +77,22 @@ none on the counterpart. The excess is the selection probability of the written 
 `codiscover` measures on the realization, against one half on the counterpart; that measurement uses the existing
 `memory codiscover` command on both specifications.
 
+## The write rules over a directory of drift specifications
+
+`memory predictions DIRECTORY` applies the rules to every specification it finds. For hysteron networks it is rule
+R8, for bistable networks of kind `order` the holonomy of the writes, and for drift equations and networks (kind
+`equations` or `network`) the three write targets of `memory codiscover`: the symmetric write, the threshold write
+and phase locking, each derived under a time budget (`--budget`, 120 s by default), with the law constant where the
+law is checked. Where the symmetric write is obstructed, the completion rung of `memory complete` runs on the same
+specification: it keeps what the obstruction names (a second parameter that cancels a bias, the full critical space,
+the next order, the distant branch) and derives the law of the completed model with its certificate. The report lists,
+per specification, the status of each target and the completion with its law; `--workers` runs the specifications in
+parallel processes.
+
+The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
+equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
+[docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
+
 ## A rule with its construction named and not yet built
 
 - **Closure.** An observable returns to itself under a sequence of operations only when the algebra it generates

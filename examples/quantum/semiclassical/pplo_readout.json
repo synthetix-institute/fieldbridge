@@ -1,0 +1,47 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "Josephson parametric phase-locked oscillator readout (Lin 2014)",
+ "field": "quantum computing hardware",
+ "question": "Does pulsing the flux pump through the parametric threshold write the phase chosen by the qubit-set locking signal, and with which law?",
+ "assumptions": [
+  "dq/dt = -kappa q/2 + dg/dq (Lin eqs. 2-3) with g of eq. 4; pump p = sqrt(P/P0), threshold at p = 1",
+  "Kerr gamma scaled so that the oscillating state holds ~100 photons; locking signal applied as the write field",
+  "vacuum noise kappa/8"
+ ],
+ "provenance": {
+  "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
+  "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) readout, phase-encoded"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "qx, qy",
+  "variables": [
+   "qx",
+   "qy"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "kappa": 1.0,
+  "gnl": 0.002,
+  "p": 0.5
+ },
+ "drift": {
+  "qx": "-0.5*kappa*qx + 0.5*kappa*p*qy - 12*gnl*(qx**2 + qy**2)*qy",
+  "qy": "-0.5*kappa*qy + 0.5*kappa*p*qx + 12*gnl*(qx**2 + qy**2)*qx"
+ },
+ "noise": 0.125,
+ "control": {
+  "name": "p",
+  "range": [
+   0.0,
+   3.0
+  ]
+ },
+ "material": [],
+ "observable": "phase (0 or pi) of the oscillation",
+ "closure": "signal and internal loss kappa",
+ "census_entry": 23,
+ "carrier_file": "pplo_readout"
+}

@@ -1,0 +1,60 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "three rf-SQUID annealer qubits on an antiferromagnetic triangle",
+ "field": "quantum computing hardware",
+ "question": "Does raising the barrier of the rf-SQUID annealer (beta through 1) write the persistent-current state chosen by a weak flux bias, and with which law?",
+ "assumptions": [
+  "phase relative to half flux, theta = phi - pi; time in units of 1/omega_LC; damping 1/Q = 0.5 (the census gives no Q; annealer qubits are treated as a damped classical latch)",
+  "beta = beta_eff set by the CCJJ flux (census: beta_eff ~ 2.43 at full anneal)",
+  "noise D = gam kT/U_q with T = 53 mK and U_q/k_B ~ 30 K (L_q = 265 pH): D ~ 9e-4",
+  "inductive coupling as J theta_i theta_j (mean-field flux coupling); J > 0 antiferromagnetic"
+ ],
+ "provenance": {
+  "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+  "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "th1, v1, th2, v2, th3, v3",
+  "variables": [
+   "th1",
+   "v1",
+   "th2",
+   "v2",
+   "th3",
+   "v3"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "beta": 1.5,
+  "gam": 0.5,
+  "eps": 0.0,
+  "J": 0.05
+ },
+ "drift": {
+  "th1": "v1",
+  "v1": "-gam*v1 - (th1 - eps) + beta*sin(th1) - J*(th2 + th3)",
+  "th2": "v2",
+  "v2": "-gam*v2 - (th2 - eps) + beta*sin(th2) - J*(th1 + th3)",
+  "th3": "v3",
+  "v3": "-gam*v3 - (th3 - eps) + beta*sin(th3) - J*(th1 + th2)"
+ },
+ "noise": 0.0009,
+ "control": {
+  "name": "beta",
+  "range": [
+   0.5,
+   2.5
+  ]
+ },
+ "material": [
+  "eps",
+  "J"
+ ],
+ "observable": "sign of the phase (persistent-current direction) of each qubit",
+ "closure": "thermal bath (RCSJ damping)",
+ "census_entry": 3,
+ "carrier_file": "rfsquid_triangle"
+}

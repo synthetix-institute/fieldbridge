@@ -1,0 +1,49 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "quantum flux parametron (QFP) latch",
+ "field": "quantum computing hardware",
+ "question": "Does ramping the latch flux of the QFP (barrier from zero) write the state chosen by the qubit flux, and with which law?",
+ "assumptions": [
+  "U = -(Phi0 Ic/2pi) cos(pi f) cos(phi) + (Phi - Phi_x)^2/2L (Berkley 2010 eq. 3) with phi = th; for f in (1/2, 1] the symmetric double well is at zero main-loop flux",
+  "overdamped latch (damping 2); D = gam kT/U with T = 47 mK, U/k_B ~ 121 K (L = 65 pH)"
+ ],
+ "provenance": {
+  "source": "Berkley, A. J., Johnson, M. W., Bunyk, P., Harris, R., Johansson, J., Lanting, T., Ladizinsky, E., Tolkacheva, E., Amin, M. H. S., Rose, G., 'A scalable readout system for a superconducting adiabatic quantum optimization system', Supercond. Sci. Technol. 23, 105014 (2010), arXiv:0905.0891 (full text of the ar5iv rendering, read through a summarising fetch; equations and values as returned); Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text)",
+  "kind": "classical image of census entry 15: Quantum flux parametron (QFP) latch in annealing processors"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "th, v",
+  "variables": [
+   "th",
+   "v"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "bq": 2.37,
+  "gam": 2.0,
+  "eps": 0.0,
+  "f": 0.5
+ },
+ "drift": {
+  "th": "v",
+  "v": "-gam*v - (th - eps) - bq*cos(3.141592653589793*f)*sin(th)"
+ },
+ "noise": 0.00078,
+ "control": {
+  "name": "f",
+  "range": [
+   0.5,
+   1.0
+  ]
+ },
+ "material": [
+  "eps"
+ ],
+ "observable": "sign of the QFP loop flux",
+ "closure": "thermal bath (effective T = 47 mK)",
+ "census_entry": 15,
+ "carrier_file": "qfp_latch"
+}

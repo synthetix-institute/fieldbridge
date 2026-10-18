@@ -164,6 +164,11 @@ The subcritical tubes, which stop the derivation of Section 4, have a write law:
 stage, and the positive cubic only decides where the state jumps. For the square model the law gives the
 probabilities of all four written states for a bias in any direction of the critical plane.
 
+The same rung runs over a whole folder through `memory predictions`, which derives the three write targets of every
+drift specification and completes the obstructed symmetric writes. The thirty-one elements of quantum-computing
+hardware in `examples/quantum/semiclassical` are run this way; their report is kept in
+[docs/predictions/quantum_semiclassical.md](../predictions/quantum_semiclassical.md).
+
 ## 6. Exercises
 
 1. Why is the signature kept in the transfer from rods to dipoles although the ratio of the two couplings changes

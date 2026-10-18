@@ -1,0 +1,49 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the Kerr parametric oscillator (Kerr-cat qubit) carry, and with which laws?",
+  "provenance": {
+    "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., npj Quantum Inf. 3, 18 (2017); Grimm et al., Nature 584, 205 (2020)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "Kerr parametric oscillator (Kerr-cat qubit)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures x, y of the mode amplitude alpha = x + i y",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "K": 5.0,
+    "Delta": 0.0,
+    "kappa": 1.0,
+    "p": 6.0
+  },
+  "drift": {
+    "x": "(K*(x**2 + y**2) + p + Delta)*y - 0.5*kappa*x",
+    "y": "-(K*(x**2 + y**2) - p + Delta)*x - 0.5*kappa*y"
+  },
+  "control": {
+    "name": "p",
+    "range": [
+      0.0,
+      12.0
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "loss kappa = 1 into a zero-temperature bath; the vacuum noise of the loss enters as D = kappa/8 per quadrature (truncated Wigner)",
+  "observable": "sign of the quadrature x (which of the two cat states)",
+  "assumptions": [
+    "single mode, rotating frame of the pump",
+    "H = (K/2) a\u2020\u00b2a\u00b2 - (p/2)(a\u2020\u00b2 + a\u00b2) + Delta a\u2020a",
+    "Kerr and loss as in Grimm et al., Nature 584, 205 (2020), scaled to kappa = 1"
+  ],
+  "material": [
+    "Delta"
+  ]
+}

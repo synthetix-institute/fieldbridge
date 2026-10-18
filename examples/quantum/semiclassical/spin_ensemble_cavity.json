@@ -1,0 +1,59 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "spin ensemble strongly coupled to a microwave cavity (driven Tavis-Cummings, absorptive bistability)",
+ "field": "quantum computing hardware (hybrid spin-ensemble memories)",
+ "question": "Does the drive cross a fold of the ensemble-cavity bistability (threshold write), and how is it unfolded?",
+ "assumptions": [
+  "Maxwell-Bloch mean field of a cavity coupled to N spins with collective coupling gN, spin dephasing gp and relaxation ge, cavity drive eta (Angerer et al., Sci. Adv. 3, e1701626 (2017), NV ensemble); units of the cavity loss",
+  "class found in the corpus census (144 quantum-computing abstracts on spin ensembles), not in the review census"
+ ],
+ "provenance": {
+  "source": "Angerer et al., Sci. Adv. 3, e1701626 (2017)",
+  "kind": "classical image of a corpus-census class"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y, sx, sy, sz",
+  "variables": [
+   "x",
+   "y",
+   "sx",
+   "sy",
+   "sz"
+  ],
+  "scale": 10
+ },
+ "parameters": {
+  "kappa": 1.0,
+  "gN": 6.0,
+  "gp": 1.0,
+  "ge": 0.05,
+  "dc": 0.0,
+  "ds": 0.0,
+  "eta": 5.0
+ },
+ "drift": {
+  "x": "-0.5*kappa*x + dc*y - 0.5*gN*sy",
+  "y": "-0.5*kappa*y - dc*x - 0.5*gN*sx - eta",
+  "sx": "-gp*sx - ds*sy - 2*gN*y*sz",
+  "sy": "-gp*sy + ds*sx - 2*gN*x*sz",
+  "sz": "-ge*(sz + 1) + 2*gN*(x*sy + y*sx)"
+ },
+ "noise": 0.05,
+ "control": {
+  "name": "eta",
+  "range": [
+   0.0,
+   60.0
+  ]
+ },
+ "material": [
+  "dc",
+  "ds"
+ ],
+ "observable": "cavity transmission (low or high)",
+ "closure": "cavity loss, spin dephasing and relaxation",
+ "census_entry": null,
+ "carrier_file": "spin_ensemble_cavity"
+}

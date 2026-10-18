@@ -1,0 +1,49 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "SNAIL parametric oscillator (three-wave mixing, small Kerr)",
+ "field": "quantum computing hardware",
+ "question": "Does raising the SNAIL pump through the parametric threshold write a phase chosen by a weak tone, and with which law?",
+ "assumptions": [
+  "H_eff = -Delta b^dag b + g (b^2 + b^dag2) + (K/2) b^dag2 b^2 (Sivak 2019 eq. 2), kappa = 1, Kerr near the Kerr-free point K = 0.01",
+  "vacuum noise kappa/8"
+ ],
+ "provenance": {
+  "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
+  "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "x, y",
+  "variables": [
+   "x",
+   "y"
+  ],
+  "scale": 1
+ },
+ "parameters": {
+  "kappa": 1.0,
+  "D": -0.3,
+  "K": 0.01,
+  "g": 0.3
+ },
+ "drift": {
+  "x": "-0.5*kappa*x - (D + 2*g)*y + K*(x**2 + y**2)*y",
+  "y": "-0.5*kappa*y + (D - 2*g)*x - K*(x**2 + y**2)*x"
+ },
+ "noise": 0.125,
+ "control": {
+  "name": "g",
+  "range": [
+   0.0,
+   1.5
+  ]
+ },
+ "material": [
+  "D"
+ ],
+ "observable": "phase of the oscillation",
+ "closure": "loss kappa",
+ "census_entry": 20,
+ "carrier_file": "snail_po"
+}

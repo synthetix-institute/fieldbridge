@@ -1,0 +1,50 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which mechanisms of writing, holding and switching does the driven Kerr resonator (Josephson bifurcation readout) carry, and with which laws?",
+  "provenance": {
+    "source": "Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009)",
+    "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
+  },
+  "field": "superconducting quantum circuits",
+  "kind": "equations",
+  "name": "driven Kerr resonator (Josephson bifurcation readout)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "quadratures x, y of the resonator amplitude",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "U": 0.1,
+    "Delta": 2.0,
+    "chi": 0.0,
+    "kappa": 1.0,
+    "F": 3.0
+  },
+  "drift": {
+    "x": "(U*(x**2 + y**2) - Delta - chi)*y - 0.5*kappa*x",
+    "y": "-(U*(x**2 + y**2) - Delta - chi)*x - F - 0.5*kappa*y"
+  },
+  "control": {
+    "name": "F",
+    "range": [
+      0.0,
+      8.0
+    ]
+  },
+  "noise": 0.125,
+  "dt": 0.005,
+  "closure": "loss kappa = 1 into a zero-temperature bath; the vacuum noise of the loss enters as D = kappa/8 per quadrature (truncated Wigner)",
+  "observable": "photon number of the resonator (low or high branch); the qubit's dispersive shift chi changes the detuning",
+  "assumptions": [
+    "single mode, rotating frame of the drive",
+    "H = -(Delta + chi) a\u2020a + (U/2) a\u2020\u00b2a\u00b2 + F (a + a\u2020)",
+    "qubit enters only through chi = +-chi0"
+  ],
+  "material": [
+    "chi"
+  ]
+}

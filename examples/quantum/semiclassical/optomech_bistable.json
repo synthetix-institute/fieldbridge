@@ -1,0 +1,54 @@
+{
+ "schema": "fieldbridge-memory/1",
+ "kind": "equations",
+ "name": "cavity optomechanical element, static bistability",
+ "field": "quantum computing hardware",
+ "question": "Which write does the radiation-pressure coupling give under a laser-power sweep: a threshold write (static bistability) or a self-oscillation (phase memory)?",
+ "assumptions": [
+  "alpha' = -(kappa/2) alpha + i(Delta + G x) alpha + E, m x'' = -m Om^2 x - m Gm x' + hbar G |alpha|^2 (Aspelmeyer eqs. 39-40) with X = G x in units of kappa"
+ ],
+ "provenance": {
+  "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
+  "kind": "classical image of census entry 58: Cavity optomechanical element: static radiation-pressure bistability and self-sustained oscillation"
+ },
+ "carrier": {
+  "kind": "euclid",
+  "name": "ar, ai, X, V",
+  "variables": [
+   "ar",
+   "ai",
+   "X",
+   "V"
+  ],
+  "scale": 200
+ },
+ "parameters": {
+  "kappa": 1.0,
+  "Dl": -2.0,
+  "Om": 2.0,
+  "Gm": 0.1,
+  "g0": 0.01,
+  "Ein": 10.0
+ },
+ "drift": {
+  "ar": "-0.5*kappa*ar - (Dl + X)*ai + Ein",
+  "ai": "-0.5*kappa*ai + (Dl + X)*ar",
+  "X": "V",
+  "V": "-Om**2*X - Gm*V + 2*g0**2*Om*(ar**2 + ai**2)"
+ },
+ "noise": 0.01,
+ "control": {
+  "name": "Ein",
+  "range": [
+   0.0,
+   400.0
+  ]
+ },
+ "material": [
+  "Dl"
+ ],
+ "observable": "cavity amplitude and mechanical displacement",
+ "closure": "cavity loss kappa, mechanical damping Gm",
+ "census_entry": 58,
+ "carrier_file": "optomech_bistable"
+}
