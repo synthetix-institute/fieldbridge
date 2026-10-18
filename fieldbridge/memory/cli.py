@@ -599,7 +599,9 @@ def _law_summary(law) -> Dict:
     if not isinstance(law, dict):
         return {"status": str(law)[:160]}
     out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
-                               "obstruction_in_nonlinear_stage") if k in law}
+                               "obstruction_in_nonlinear_stage", "write_class") if k in law}
+    if isinstance(law.get("hold"), dict):
+        out["hold"] = {k: law["hold"].get(k) for k in ("hold_time", "switching_fraction")}
     od = law.get("one_direction")
     if isinstance(od, dict):   # response constant and offset of a one-dimensional write, law and certificate
         out["one_direction"] = {src: [{k: r[k] for k in ("bias_floors", "response_constant", "offset") if k in r}
@@ -766,6 +768,19 @@ def _drift_cell(t: Dict) -> str:
     return f"{st}: {t.get('obstruction_short') or str(t.get('obstruction', ''))[:90]}"
 
 
+def _class_text(L: Dict) -> str:
+    """The class a failed certificate leaves: the equilibrium write (the choice exchanged with the noise during a hold)
+    or the nonlinear stage."""
+    wc = L.get("write_class")
+    if wc == "equilibrium write":
+        h = L.get("hold") or {}
+        return (f" (equilibrium write: {100 * h.get('switching_fraction', 0):.0f} % change state during a hold of "
+                f"{h.get('hold_time', 0):.3g})")
+    if wc == "nonlinear stage" or (L.get("obstruction_in_nonlinear_stage") and wc is None):
+        return " (nonlinear stage)"
+    return ""
+
+
 def _completion_cell(c: Dict) -> str:
     if not c:
         return ""
@@ -778,9 +793,7 @@ def _completion_cell(c: Dict) -> str:
             L = e["law"]
             cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
             od = _one_direction_text(L)
-            parts.append(f"{kind}: {L.get('status', '')}{cert}"
-                         + (" (nonlinear stage)" if L.get("obstruction_in_nonlinear_stage") else "")
-                         + (f"; {od}" if od else ""))
+            parts.append(f"{kind}: {L.get('status', '')}{cert}{_class_text(L)}" + (f"; {od}" if od else ""))
         elif "unfoldings" in e:
             done = [u for u in e["unfoldings"] if u.get("success")]
             if done:
@@ -789,7 +802,7 @@ def _completion_cell(c: Dict) -> str:
                 cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
                 od = _one_direction_text(L)
                 parts.append(f"{kind}: cusp unfolded along {u['second']} ({u.get('kind_along_sweep', '')} along the "
-                             f"sweep); law {L.get('status', '')}{cert}" + (f"; {od}" if od else ""))
+                             f"sweep); law {L.get('status', '')}{cert}{_class_text(L)}" + (f"; {od}" if od else ""))
             else:
                 parts.append(f"{kind}: no material parameter cancels the asymmetry")
         else:

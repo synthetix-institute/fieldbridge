@@ -86,9 +86,11 @@ R8, for bistable networks of kind `order` the holonomy of the writes, and for dr
 and phase locking, each derived under a time budget (`--budget`, 120 s by default), with the law constant where the
 law is checked. Where the symmetric write is obstructed, the completion rung of `memory complete` runs on the same
 specification: it keeps what the obstruction names (a second parameter that cancels a bias, the full critical space,
-the next order, the distant branch) and derives the law of the completed model with its certificate. The report lists,
-per specification, the status of each target and the completion with its law; `--workers` runs the specifications in
-parallel processes.
+the next order, the distant branch) and derives the law of the completed model with its certificate. Where the
+certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
+choice between shallow written states) from a failure in the nonlinear stage. The report lists, per specification,
+the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
+the specifications in parallel processes.
 
 The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in

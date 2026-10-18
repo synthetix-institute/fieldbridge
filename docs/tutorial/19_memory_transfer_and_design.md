@@ -164,6 +164,16 @@ The subcritical tubes, which stop the derivation of Section 4, have a write law:
 stage, and the positive cubic only decides where the state jumps. For the square model the law gives the
 probabilities of all four written states for a bias in any direction of the critical plane.
 
+**When the certificate fails.** A law that the full dynamics does not follow can fail for two reasons, and the rung
+tells them apart by continuing the certificate's final states at the end value of the control for as long as the sweep
+took. If more than a tenth of the trajectories change state during that hold, the written states do not retain the
+choice: the noise exchanges it, and the full dynamics gives the steady-state selection under the bias. This is the
+equilibrium write of Module 30, here on a classical carrier; the Kerr parametric oscillator of
+`examples/quantum/semiclassical` at the vacuum noise κ/8 is one, since the sweep ends with a fifth of a photon in each
+well. If the states retain the choice, the deviation belongs to the nonlinear stage proper (noise while the state is
+still small, or a further mode), and the report says so. The class is reported as `write_class`: linear-stage write,
+equilibrium write, or nonlinear stage.
+
 The same rung runs over a whole folder through `memory predictions`, which derives the three write targets of every
 drift specification and completes the obstructed symmetric writes. The thirty-one elements of quantum-computing
 hardware in `examples/quantum/semiclassical` are run this way; their report is kept in

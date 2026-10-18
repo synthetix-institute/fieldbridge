@@ -339,6 +339,36 @@ def _probs(labels: np.ndarray, m: int) -> List[float]:
     return [float(np.sum(labels[ok] == j)) / n for j in range(m)]
 
 
+def hold_check(real: Realization, sweep: "Sweep", finals: List[np.ndarray], targets, strengths, D: float, rng,
+               stable: List[np.ndarray], hold: float) -> Dict[str, object]:
+    """Continue the certificate's final states at the end value of the control, with the same noise and bias, for
+    `hold` time units. The fraction of trajectories that change state says whether the written states retain the choice
+    made during the sweep (a write, and the deviation from the law belongs to the nonlinear stage) or exchange it with
+    the noise (an equilibrium write: the full dynamics gives the steady-state selection under the bias, as the few-photon
+    oscillator does on the open quantum carrier)."""
+    over = sweep.over(sweep.T)
+    dt0 = an.safe_dt(real)
+    switched, after = [], []
+    for qf, target, h in zip(finals, targets, strengths):
+        ok = np.all(np.isfinite(qf), axis=1)
+        if not np.any(ok):
+            switched.append(0.0)
+            after.append([float("nan")] * len(stable))
+            continue
+        q = qf[ok]
+        lab0 = assign(real, q, stable)
+        q1, _, _ = an.integrate(real, q, hold, D, rng, over=over, write=(target, h), dt=dt0)
+        lab1 = assign(real, q1, stable)
+        fin = (lab1 >= 0) & (lab0 >= 0)
+        switched.append(float(np.mean((lab0 != lab1)[fin])) if np.any(fin) else 0.0)
+        after.append(_probs(lab1, len(stable)))
+    return {"hold_time": float(hold), "switching_fraction": float(np.mean(switched)) if switched else 0.0,
+            "switching_by_row": switched, "after_hold": after}
+
+
+SWITCHING_EQUILIBRIUM = 0.1   # fraction of the certificate's trajectories that change state during a hold as long as the sweep
+
+
 # ------------------------------------------------------------------------------------------------ one write point
 def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
            n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
@@ -427,6 +457,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         # the law reported: the reduced one-coordinate law where the completion keeps a second parameter (a sweep
         # that itself favours one state), the linear-stage law otherwise
         row["law"] = row["reduced_law"] if reduced is not None else row["linear_stage_law"]
+    sims: List[np.ndarray] = []
     if certify:
         sims = certificate(real, sweep, q0, targets, strengths, D, n_traj, rng)
         for row, qf in zip(rows, sims):
@@ -450,10 +481,27 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         bad = [r for r in rows if r["deviation_sigma"] > DEVIATION_SIGMA and r["deviation"] > DEVIATION_FLOOR]
         out["certified"] = not bad
         if bad:
-            out["obstruction_in_nonlinear_stage"] = (
-                f"the law differs from the full dynamics by up to {max(r['deviation'] for r in bad):.3f} "
-                f"({max(r['deviation_sigma'] for r in bad):.1f} errors): the choice is not complete at the end of "
-                "the linear stage (noise during the nonlinear stage, or a further mode brought into play)")
+            # does the end of the sweep retain the choice? continue the certificate at the end value of the control
+            hold = hold_check(real, sweep, sims, targets, strengths, D, rng, stable, sweep.T)
+            out["hold"] = hold
+            dev = f"{max(r['deviation'] for r in bad):.3f} ({max(r['deviation_sigma'] for r in bad):.1f} errors)"
+            if hold["switching_fraction"] > SWITCHING_EQUILIBRIUM:
+                out["write_class"] = "equilibrium write"
+                out["obstruction_in_nonlinear_stage"] = (
+                    f"the law differs from the full dynamics by up to {dev}, and the written states at the end of the "
+                    f"sweep do not retain the choice: {100 * hold['switching_fraction']:.0f} % of the trajectories change "
+                    f"state during a hold of {sweep.T:.3g} time units at the end value of the control. The full dynamics "
+                    "gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; "
+                    "a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)")
+            else:
+                out["write_class"] = "nonlinear stage"
+                out["obstruction_in_nonlinear_stage"] = (
+                    f"the law differs from the full dynamics by up to {dev}: the choice is not complete at the end of "
+                    "the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the "
+                    f"written states retain it ({100 * hold['switching_fraction']:.0f} % change state during a hold of "
+                    f"{sweep.T:.3g} time units)")
+        else:
+            out["write_class"] = "linear-stage write"
     return out
 
 

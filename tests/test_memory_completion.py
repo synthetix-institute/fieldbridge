@@ -78,3 +78,21 @@ def test_two_critical_directions_give_a_law_over_all_written_states():
         assert row["deviation"] < 0.06
     # a bias favours the states on its side of the plane: the most probable state changes with the direction
     assert len({int(np.argmax(r["law"])) for r in L["rows"]}) == 4
+
+
+def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
+    """The pitchfork swept at the standard rate with a noise far above the depth of the wells at the end of the sweep:
+    the linear-stage law predicts the usual response, the full dynamics loses the choice to hopping, and the rung names
+    the equilibrium write by the trajectories that change state during a hold at the end value of the control."""
+    real = spec.load(EX / "pitchfork.json")
+    rep = completion.complete(real, np.random.default_rng(3), floors=(1.0,), noise=0.5, n_samples=400, n_traj=300)
+    laws = [e["law"] for e in rep["write_points"] if "law" in e and e["law"].get("status") == "derived"]
+    assert laws, rep["write_points"]
+    L = laws[0]
+    assert L["certified"] is False and L["write_class"] == "equilibrium write"
+    assert L["hold"]["switching_fraction"] > completion.SWITCHING_EQUILIBRIUM
+    assert "equilibrium write" in L["obstruction_in_nonlinear_stage"]
+    # the standard noise rule keeps the pitchfork's write: the class is then the linear-stage write
+    rep = completion.complete(real, np.random.default_rng(3), floors=(1.0,), n_samples=400, n_traj=300)
+    L = next(e["law"] for e in rep["write_points"] if "law" in e and e["law"].get("status") == "derived")
+    assert L["write_class"] == "linear-stage write" and "hold" not in L
