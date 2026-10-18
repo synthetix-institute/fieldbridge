@@ -70,7 +70,11 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          chooser: {hidden: element('material-chooser').hidden, expanded: element('material-choose').attributes['aria-expanded'],
                            options: element('material-options').innerHTML, count: element('material-count').textContent,
                            mechanism: element('material-mechanism').value},
-                         selected: element('now-name').textContent + ' | ' + text('now-where')});
+                         selected: element('now-name').textContent + ' | ' + text('now-where'),
+                         params: {...I.state.params},
+                         sequences: {expanded: element('sequence-start').attributes['aria-expanded'],
+                           menuHidden: element('sequence-menu').hidden, picker: element('sequence-picker').innerHTML,
+                           title: element('sequence-title').textContent, playerHidden: element('sequence-player').hidden}});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'start') I.start(step.node);
@@ -88,6 +92,8 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'sequence') context.FieldBridgeSite.begin(step.id);
   if (step.do === 'next') element('sequence-next').click();
   if (step.do === 'prev') element('sequence-prev').click();
+  if (step.do === 'open-sequences') element('sequence-start').click();
+  if (step.do === 'leave') element('sequence-close').click();
   if (step.do === 'param') { I.state.params[step.name] = step.value; I.refresh(); }
   if (step.do === 'term') { I.state.active[step.k] = step.on; I.refresh(); }
   flush();

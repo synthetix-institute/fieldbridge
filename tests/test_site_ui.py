@@ -198,6 +198,27 @@ def test_the_rotation_is_reached_through_the_closure_of_the_observable(data_file
     assert off["axis"] == pytest.approx(spins["axis"], abs=1e-9)
 
 
+def test_following_a_construction_lists_those_through_the_material_and_leaving_returns_to_it(data_file, tmp_path):
+    """The button opens the list of constructions, those through the realization on screen first; a construction
+    replaces the visitor's material, and leaving it restores the material, the path of changes and the settings."""
+    got = scenario(data_file, [
+        {"do": "start", "node": "pitchfork"}, {"do": "edge", "edge": "pf_bias"},
+        {"do": "param", "name": "eps", "value": 0.3},
+        {"do": "open-sequences"},
+        {"do": "sequence", "id": "spin-to-magnet"}, {"do": "next"}, {"do": "next"},
+        {"do": "leave"}], tmp_path)
+    opened = got[3]["sequences"]
+    assert opened["expanded"] == "true" and not opened["menuHidden"]
+    first = opened["picker"].split("</button>")[0]
+    assert 'data-seq="canonical"' in first and "passes through" in first
+    during = got[6]
+    assert during["node"] != "pitchfork_bias" and during["sequences"]["title"].startswith("From a spin rotation")
+    assert during["sequences"]["expanded"] == "false" and not during["sequences"]["playerHidden"]
+    back = got[-1]
+    assert back["node"] == "pitchfork_bias" and back["path"] == ["pitchfork", "pitchfork_bias"]
+    assert back["params"]["eps"] == 0.3 and back["sequences"]["playerHidden"]
+
+
 def test_the_sequence_from_the_spins_to_the_magnet_applies_its_steps_in_order(data_file, tmp_path):
     steps = [{"do": "sequence", "id": "spin-to-magnet"}] + [{"do": "next"}] * 12
     got = scenario(data_file, steps, tmp_path)

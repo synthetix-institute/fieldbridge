@@ -44,7 +44,7 @@
 
   // ---------------------------------------------------------------------------------------- sequences
   function sequences() {
-    $('sequence-start').addEventListener('click', () => menu($('sequence-menu').hidden));
+    $('sequence-start').addEventListener('click', () => menu($('sequence-start').getAttribute('aria-expanded') !== 'true'));
     $('constructor-undo').addEventListener('click', () => { leave(); I().undo(); });
     $('constructor-reset').addEventListener('click', () => { leave(); I().start(S.start); });
     $('sequence-next').addEventListener('click', () => {
@@ -54,7 +54,7 @@
     });
     $('sequence-prev').addEventListener('click', () => step(seq.index - 1));
     $('sequence-close').addEventListener('click', () => leave(true));
-    I().onChange(() => { if (!$('sequence-menu').hidden) picker(); });
+    I().onChange(() => { if ($('sequence-start').getAttribute('aria-expanded') === 'true') picker(); });
   }
   /** The realizations a sequence shows: its start and both ends of every change it makes. */
   function visits(s) {
@@ -119,7 +119,8 @@
     } else apply(s.steps[k]);
     seq.index = k;
     const st = s.steps[k];
-    $('sequence-text').innerHTML = `<b>${esc(s.title)}, ${k + 1} / ${s.steps.length}.</b> ${st.text}`;
+    $('sequence-title').textContent = s.title;
+    $('sequence-text').innerHTML = `<b>${k + 1} / ${s.steps.length}.</b> ${st.text}`;
     $('sequence-progress').innerHTML = s.steps.map((x, i) => {
       const slot = x.kind === 'edge' ? I().byId[x.edge].slot : x.kind === 'prepare' ? 'P' : null;
       return `<span class="${slot ? 'slot' : ''}${i <= k ? ' done' : ''}"${slot ? ` data-slot="${slot}"` : ''} title="${slot ? esc(S.slots[slot].name) : 'start'}"></span>`;

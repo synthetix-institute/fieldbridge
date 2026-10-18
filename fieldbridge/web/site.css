@@ -100,6 +100,7 @@ section { padding: 44px 0 20px; }
 .sequence-menu .sequence-picker { flex-direction: column; align-items: stretch; }
 .sequence-menu .sequence-picker button { text-align: left; border-radius: 8px; }
 .seq-note { color: var(--accent); font-size: 12.5px; margin-left: 6px; }
+.sequence-title { margin: 0 0 6px; font-weight: 600; font-size: 13.5px; }
 .sequence-picker button[aria-pressed="true"] .seq-note { color: inherit; }
 .language-map > summary { cursor: pointer; }
 .language-map { margin: 28px 0 10px; padding-top: 16px; border-top: 1px solid var(--rule); }
