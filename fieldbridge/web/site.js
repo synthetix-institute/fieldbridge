@@ -12,7 +12,7 @@
   const strip = s => String(s).replace(/<[^>]+>/g, '');
   const repo = p => (S.repo || 'https://github.com/synthetix-institute/fieldbridge') + '/blob/main/' + p;
   const I = () => window.FieldBridgeInstrument;
-  const seq = {current: null, index: -1};
+  const seq = {current: null, index: -1, before: null};
 
   function revealSection(fragment) {
     const aliases = {gallery: 'memory', studio: 'instrument'};
@@ -44,23 +44,64 @@
 
   // ---------------------------------------------------------------------------------------- sequences
   function sequences() {
-    $('sequence-start').addEventListener('click', () => begin('canonical'));
+    $('sequence-start').addEventListener('click', () => menu($('sequence-menu').hidden));
     $('constructor-undo').addEventListener('click', () => { leave(); I().undo(); });
     $('constructor-reset').addEventListener('click', () => { leave(); I().start(S.start); });
-    $('sequence-picker').innerHTML = S.sequences.map(s => `<button type="button" data-seq="${s.id}" aria-pressed="false">${esc(s.title)}</button>`).join('');
-    document.querySelectorAll('[data-seq]').forEach(b => b.addEventListener('click', () => begin(b.dataset.seq)));
     $('sequence-next').addEventListener('click', () => {
       const s = seq.current;
       if (s && seq.index === s.steps.length - 1) begin(S.sequences[(S.sequences.indexOf(s) + 1) % S.sequences.length].id);
       else step(seq.index + 1);
     });
     $('sequence-prev').addEventListener('click', () => step(seq.index - 1));
-    $('sequence-close').addEventListener('click', leave);
+    $('sequence-close').addEventListener('click', () => leave(true));
+    I().onChange(() => { if (!$('sequence-menu').hidden) picker(); });
+  }
+  /** The realizations a sequence shows: its start and both ends of every change it makes. */
+  function visits(s) {
+    const nodes = [];
+    for (const st of s.steps) {
+      if (st.kind === 'start') nodes.push(st.node);
+      else if (st.kind === 'edge') { const e = I().byId[st.edge]; if (e) nodes.push(e.from, e.to); }
+    }
+    return nodes;
+  }
+  /** The guided constructions, those that start from or pass through the realization on screen first. */
+  function picker() {
+    const here = I().state.node, name = S.nodes[here] ? (S.nodes[here].short || S.nodes[here].name || here) : here;
+    const rank = s => { const v = visits(s); return v[0] === here ? 0 : v.includes(here) ? 1 : 2; };
+    const list = S.sequences.map((s, i) => ({s, i, r: rank(s)})).sort((a, b) => a.r - b.r || a.i - b.i);
+    const note = r => r === 0 ? ` <span class="seq-note">starts from ${esc(name)}</span>`
+      : r === 1 ? ` <span class="seq-note">passes through ${esc(name)}</span>` : '';
+    $('sequence-picker').innerHTML = list.map(({s, r}) =>
+      `<button type="button" data-seq="${s.id}" aria-pressed="${String(seq.current === s)}">${esc(s.title)}${note(r)}</button>`).join('');
+    document.querySelectorAll('[data-seq]').forEach(b => b.addEventListener('click', () => begin(b.dataset.seq)));
+  }
+  function menu(open) {
+    if (open) picker();
+    $('sequence-menu').hidden = !open;
+    $('sequence-start').setAttribute('aria-expanded', String(open));
+  }
+  /** What the visitor had on screen before a construction began: the path of changes and the settings. */
+  function snapshot() {
+    const st = I().state;
+    return {path: st.path.map(p => ({...p})), params: {...st.params}, prep: st.prep, protocol: st.protocol,
+            noise: st.noise, drive: {...st.drive}};
+  }
+  function restore(snap) {
+    const [first, ...rest] = snap.path;
+    I().start(first.node);
+    for (const p of rest) if (p.edge && I().byId[p.edge]) I().applyEdge(I().byId[p.edge], p.reverse);
+    const st = I().state;
+    Object.assign(st.params, snap.params);
+    Object.assign(st, {prep: snap.prep, protocol: snap.protocol, noise: snap.noise, drive: {...snap.drive}});
+    I().render();   // the controls show the restored settings, and the scene is rebuilt with them
   }
   function begin(id) {
+    if (!seq.current) seq.before = snapshot();
     seq.current = S.sequences.find(s => s.id === id);
-    document.querySelectorAll('[data-seq]').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.seq === id)));
+    menu(false);
     $('sequence-player').hidden = false;
+    seq.index = -1;
     step(0);
     $('instrument').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
   }
@@ -78,19 +119,22 @@
     } else apply(s.steps[k]);
     seq.index = k;
     const st = s.steps[k];
-    $('sequence-text').innerHTML = `<b>${k + 1} / ${s.steps.length}.</b> ${st.text}`;
+    $('sequence-text').innerHTML = `<b>${esc(s.title)}, ${k + 1} / ${s.steps.length}.</b> ${st.text}`;
     $('sequence-progress').innerHTML = s.steps.map((x, i) => {
       const slot = x.kind === 'edge' ? I().byId[x.edge].slot : x.kind === 'prepare' ? 'P' : null;
       return `<span class="${slot ? 'slot' : ''}${i <= k ? ' done' : ''}"${slot ? ` data-slot="${slot}"` : ''} title="${slot ? esc(S.slots[slot].name) : 'start'}"></span>`;
     }).join('');
     $('sequence-prev').disabled = k === 0;
     const lastStep = k === s.steps.length - 1;
-    $('sequence-next').textContent = lastStep ? 'Next sequence' : 'Next step';
+    $('sequence-next').textContent = lastStep ? 'Next construction' : 'Next step';
   }
-  function leave() {
-    seq.current = null; seq.index = -1;
+  /** End the construction. With `back`, the material and settings from before it are restored; a change made by
+   *  hand ends it where it is. */
+  function leave(back) {
+    const snap = seq.before;
+    seq.current = null; seq.index = -1; seq.before = null;
     $('sequence-player').hidden = true;
-    document.querySelectorAll('[data-seq]').forEach(b => b.setAttribute('aria-pressed', 'false'));
+    if (back && snap) restore(snap);
   }
 
   // ---------------------------------------------------------------------------------------- co-discovery

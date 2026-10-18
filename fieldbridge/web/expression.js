@@ -915,6 +915,7 @@
   /** The rotation axis drawn on the sphere, in the frame of the realization (R along the third axis). */
   const axis = () => scene && scene.omega ? Array.from(scene.omega) : null;
   window.FieldBridgeInstrument = {state, load, start, applyEdge, undo, route, walkTo, setPreparation, byId, out, into,
-                                  onChange: f => listeners.push(f), light, reference: shown, axis, refresh, step};
+                                  onChange: f => listeners.push(f), light, reference: shown, axis, refresh, step,
+                                  render: () => render()};
   document.addEventListener('DOMContentLoaded', setup);
 })();

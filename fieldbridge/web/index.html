@@ -43,7 +43,7 @@
       </div>
       <div class="constructor-start">
         <span>Mechanism constructor</span>
-        <button type="button" id="sequence-start" class="primary">Follow a construction</button>
+        <button type="button" id="sequence-start" class="primary" aria-expanded="false" aria-controls="sequence-menu">Follow a construction</button>
         <button type="button" id="constructor-undo" class="icon" aria-label="Undo the last change" title="Undo the last change">↶</button>
         <button type="button" id="constructor-reset" class="icon" aria-label="Reset the constructor" title="Reset the constructor">↺</button>
         <button type="button" id="material-choose" class="plain" aria-expanded="false" aria-controls="material-chooser">Choose a material</button>
@@ -61,17 +61,17 @@
         <p id="material-count" class="muted" role="status"></p>
         <ul id="material-options" class="material-options" aria-label="Available material realizations"></ul>
       </div>
-      <details class="sequence-options">
-        <summary>Other construction sequences</summary>
-        <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Guided sequences"></div>
-      </details>
+      <div class="sequence-menu" id="sequence-menu" hidden>
+        <p class="muted">Guided constructions, step by step. The material on screen is kept: leaving a construction returns to it.</p>
+        <div class="sequence-picker" id="sequence-picker" role="group" aria-label="Guided constructions"></div>
+      </div>
       <div class="sequence-player" id="sequence-player" hidden>
         <div class="sequence-progress" id="sequence-progress"></div>
         <p class="sequence-text" id="sequence-text"></p>
         <div class="sequence-controls">
           <button type="button" id="sequence-prev">Previous</button>
           <button type="button" id="sequence-next" class="primary">Next step</button>
-          <button type="button" id="sequence-close" class="plain">Leave the sequence</button>
+          <button type="button" id="sequence-close" class="plain">Leave and return</button>
         </div>
       </div>
       <div class="instrument">

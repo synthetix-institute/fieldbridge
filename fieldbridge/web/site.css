@@ -95,9 +95,13 @@ section { padding: 44px 0 20px; }
   .realization-links { padding: 0 8px 10px; }
   .material-options { max-height: 360px; }
 }
-.sequence-options { margin-bottom: 14px; color: var(--muted); }
-.sequence-options summary, .language-map > summary { cursor: pointer; }
-.sequence-options[open] .sequence-picker { margin-top: 10px; }
+.sequence-menu { background: var(--panel); border: 1px solid var(--rule); border-radius: 10px; padding: 10px 14px 12px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.sequence-menu > p { margin: 0 0 8px; font-size: 13.5px; }
+.sequence-menu .sequence-picker { flex-direction: column; align-items: stretch; }
+.sequence-menu .sequence-picker button { text-align: left; border-radius: 8px; }
+.seq-note { color: var(--accent); font-size: 12.5px; margin-left: 6px; }
+.sequence-picker button[aria-pressed="true"] .seq-note { color: inherit; }
+.language-map > summary { cursor: pointer; }
 .language-map { margin: 28px 0 10px; padding-top: 16px; border-top: 1px solid var(--rule); }
 .language-map > summary { color: var(--accent); font-weight: 600; }
 .module-panel { border-top: 1px solid var(--rule); padding: 20px 0; }
@@ -440,8 +444,7 @@ details.sources summary { cursor: pointer; color: var(--accent); font-size: 14.5
   .howto li { padding: 8px 12px 9px 44px; font-size: 14px; }
   .howto li::before { left: 10px; top: 9px; width: 24px; height: 24px; font-size: 13px; }
   .sequence-bar { flex-wrap: nowrap; align-items: center; }
-  .sequence-picker { flex-wrap: nowrap; overflow-x: auto; min-width: 0; padding-bottom: 4px; }
-  .sequence-picker button { flex: none; }
+  .sequence-menu .sequence-picker button { flex: none; }
   .change { flex-direction: column; align-items: stretch; gap: 4px; }
   .change-to { max-width: none; }
   .change-to > span { min-width: 0; overflow-wrap: anywhere; }
