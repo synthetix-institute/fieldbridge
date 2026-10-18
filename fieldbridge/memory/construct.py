@@ -110,6 +110,28 @@ def along_path(real: Realization, origin: Dict[str, float], direction: Dict[str,
     return r
 
 
+def along_curved_path(real: Realization, origin: Dict[str, float], direction: Dict[str, float], curvature: float,
+                      normal: Optional[Dict[str, float]] = None) -> Realization:
+    """The realization with its parameters moved together along a curve through `origin`,
+    p = origin + t direction + curvature t^2 normal; t is the new control. For two parameters the normal is the
+    direction turned by a right angle in their plane, (-d_2, d_1), unless one is given."""
+    keys = list(origin)
+    if normal is None:
+        if len(keys) != 2:
+            raise ValueError("a curved path needs a normal direction when more than two parameters move")
+        a_, b_ = keys
+        normal = {a_: -float(direction[b_]), b_: float(direction[a_])}
+    base = real
+
+    def drift(q, p):
+        t = p["t"]
+        moved = {**p, **{k: origin[k] + t * direction[k] + curvature * t * t * normal[k] for k in origin}}
+        return base.drift(q, moved)
+
+    return replace(real, name=real.name + f" along a curved sweep (curvature {curvature:g})", drift=drift,
+                   potential=None, params={**real.params, **origin, "t": 0.0}, control="t", control_range=(-1.0, 1.0))
+
+
 def sweep_normal_form(path: Realization, q) -> Dict:
     """The normal form at a cusp along the sweep through it (a realization of along_path, at t = 0).
 

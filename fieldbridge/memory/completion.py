@@ -54,6 +54,9 @@ LINEAR_FRACTION = 0.2       # the largest size of the mapped deviation (3 sigma)
 DEVIATION_SIGMA = 4.0       # law and certificate differ when a probability differs by more than this many errors ...
 DEVIATION_FLOOR = 0.02      # ... and by more than this absolute amount (the law has its own sampling and time-step
                             # error; near-certain outcomes have binomial errors far below it)
+CURVATURES = (-0.15, -0.1, -0.05, 0.0, 0.05)  # curvatures of the sweep through a cusp tried by
+                            # zero_offset_curvature (on the cusp of a driven Kerr resonator its offset
+                            # is close to linear in the curvature over this range)
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -525,8 +528,72 @@ def _one_direction(rows: List[Dict], coords: List[List[float]], floor: float) ->
 
 
 # ------------------------------------------------------------------------------------------------ the realization
+def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02, gamma: float = 0.05,
+                          curvatures: Sequence[float] = CURVATURES, n_samples: int = 2000, n_traj: int = 2000
+                          ) -> Dict[str, object]:
+    """The curvature of the sweep through a cusp at which its intrinsic offset vanishes.
+
+    A straight sweep through a cusp is tangent to the line on which the two written states are mirror images and leaves
+    it at second order; the noise, acting on the quadratic term that grows away from the cusp, adds a bias of its own.
+    Both appear as an offset of the write: without bias it does not choose either state with probability one half. The
+    sweep is curved, p = cusp + t d + c2 t^2 n with n the direction normal to d in the plane of the two parameters,
+    and the offset is read from the full stochastic dynamics (the certificate of law_at, a bias of one noise floor
+    toward either state) at each curvature. A straight line fitted to the offset against c2 gives the curvature c2*
+    at which it vanishes, and a last run at c2* checks it. `cusp` is a successful result of construct.cancel_asymmetry
+    together with the name of its second parameter under "second"."""
+    second = cusp["second"]
+    origin = {real.control: float(cusp["control"]), second: float(cusp["value"])}
+    q = np.asarray(cusp["state"], float)
+
+    def offset_at(c2: float) -> Dict[str, object]:
+        path = construct.along_curved_path(real, origin, cusp["direction"], c2)
+        nfp = construct.sweep_normal_form(path, q)
+        row: Dict[str, object] = {"curvature": float(c2), "kind_along_sweep": nfp["kind"]}
+        if "pitchfork" not in str(nfp["kind"]).lower():
+            row["status"] = "not a pitchfork along the curved sweep"
+            return row
+        L = law_at(path, nfp, rng, rate, None, (1.0,), n_samples, n_traj, True, gamma, reduce_one=False)
+        cert = ((L.get("one_direction") or {}).get("certificate") or [None])[0]
+        if not cert:
+            row["status"] = str(L.get("status", "no certificate"))
+            return row
+        p_plus, p_minus = cert["P_toward_plus"], cert["P_toward_minus"]
+        err = 0.5 * sum(sqrt(max(x * (1 - x), 1.0 / n_traj) / n_traj) / max(ND.pdf(ND.inv_cdf(x)), 1e-6)
+                        for x in (p_plus, p_minus))
+        row.update(status="measured", offset=float(cert["offset"]), offset_error=float(err),
+                   response_constant=float(cert["response_constant"]), noise_ratio=float(gamma))
+        return row
+
+    rows = [offset_at(c) for c in curvatures]
+    ok = [r for r in rows if r.get("status") == "measured"]
+    out: Dict[str, object] = {"second": second, "rate": rate, "noise_ratio": gamma, "rows": rows,
+                              "curvature_units": "the sweep parameter t of p = cusp + t d + c2 t^2 n, with d the "
+                                                 "direction of cancel_asymmetry and n normal to it"}
+    if len(ok) < 2:
+        out["status"] = "fewer than two curvatures with a measured offset"
+        return out
+    x = np.array([r["curvature"] for r in ok]); y = np.array([r["offset"] for r in ok])
+    w = 1.0 / np.maximum(np.array([r["offset_error"] for r in ok]), 1e-3)
+    slope, intercept = np.polyfit(x, y, 1, w=w)
+    out.update(offset_slope=float(slope), offset_straight=float(intercept))
+    if abs(slope) < 1e-9:
+        out["status"] = "the offset does not depend on the curvature"
+        return out
+    c_star = -intercept / slope
+    span = float(np.max(x) - np.min(x))
+    if not (np.min(x) - span <= c_star <= np.max(x) + span):
+        out.update(status="the zero lies far outside the curvatures tried", zero_offset_curvature=float(c_star))
+        return out
+    check = offset_at(float(c_star))
+    out.update(status="found", zero_offset_curvature=float(c_star), check=check)
+    if check.get("status") == "measured":
+        out["cancelled"] = bool(abs(check["offset"]) <= max(3 * check["offset_error"], 0.1))
+    return out
+
+
 def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
-             n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05) -> Dict[str, object]:
+             n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
+             curvature: bool = False) -> Dict[str, object]:
     """Every write point of `real` along its control: the obstruction, what its completion keeps, and the law of the
     completed model (with its certificate)."""
     if not real.control:
@@ -572,6 +639,11 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
                             # through the cusp keeps the linear-stage law
                             u["law"] = law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
                                               reduce_one=float(nfp.get("a3", 0.0)) < 0)
+                            if curvature and noise is None and u["law"].get("status") == "derived":
+                                # the curvature of the sweep that cancels its intrinsic offset
+                                u["zero_offset_curvature"] = zero_offset_curvature(
+                                    real, {**c, "second": second}, rng, rate=rate, gamma=gamma,
+                                    n_samples=min(n_samples, 2000), n_traj=n_traj)
                     entry["unfoldings"].append(u)
             else:
                 entry["law"] = {"status": "phase: derived by the phase-locking target (memory codiscover --target "
