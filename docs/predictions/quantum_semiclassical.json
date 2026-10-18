@@ -1,0 +1,1659 @@
+{
+ "command": "predictions",
+ "rule": "R8",
+ "rules": [
+  "R8",
+  "holonomy",
+  "closure",
+  "write point"
+ ],
+ "implementation_sha256": "fd9e09d9682bd2baecf3e6b90322acdd2ed6e6415fd38b53f8cf5f3a6c3a1496",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1",
+  "sympy": "1.12",
+  "matplotlib": "3.10.0"
+ },
+ "novelty_established": false,
+ "source_alignment_verified": false,
+ "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+ "settings": {
+  "seed": 0,
+  "budget": 300,
+  "law": true,
+  "trajectories": 400,
+  "complete": true,
+  "completion_budget": 900,
+  "samples": 4000,
+  "trajectories_completion": 2000,
+  "isolated": true,
+  "workers": 2,
+  "exact_up_to": 16,
+  "enumerate_up_to": 16
+ },
+ "rows": [
+  {
+   "spec": "bright_state_resonator.json",
+   "name": "driven Jaynes-Cummings resonator at high power (bright state, punch-out)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Reed, M. D., DiCarlo, L., Johnson, B. R., Sun, L., Schuster, D. I., Frunzio, L., Schoelkopf, R. J., 'High-fidelity readout in circuit quantum electrodynamics using the Jaynes-Cummings nonlinearity', Phys. Rev. Lett. 105, 173601 (2010), arXiv:1004.4323 (full text); Bishop, L. S., Ginossar, E., Girvin, S. M., 'Response of the strongly driven Jaynes-Cummings oscillator', Phys. Rev. Lett. 105, 100505 (2010), arXiv:1005.0377 (full text); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+     "obstruction_short": "fold; no cusp with a supercritical sweep",
+     "word": "CR",
+     "class": "C R(fold)",
+     "seconds": 29.9
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRK",
+     "class": "C R(fold) K",
+     "seconds": 24.1
+    },
+    "phase-locking": {
+     "status": "not derived",
+     "note": "stopped at the time limit of 300 s"
+    }
+   },
+   "completion": {
+    "seconds": 40.4,
+    "write_points": [
+     {
+      "completion": "second parameter",
+      "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+      "write_point": {
+       "xi": 6.574086481770778,
+       "state": [
+        6.47275616479744,
+        -5.433575863022923,
+        -0.38572985502593166,
+        -0.32363780823987204,
+        -0.14895082394392198
+       ]
+      },
+      "unfoldings": [
+       {
+        "second": "dq",
+        "success": false
+       },
+       {
+        "second": "dc",
+        "success": false
+       }
+      ]
+     },
+     {
+      "completion": "second parameter",
+      "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+      "write_point": {
+       "xi": 7.30461580546883,
+       "state": [
+        3.6688101213675237,
+        -0.9892500413458678,
+        -0.6809990784795896,
+        -0.1834405060683762,
+        -0.4640150320039252
+       ]
+      },
+      "unfoldings": [
+       {
+        "second": "dq",
+        "success": false
+       },
+       {
+        "second": "dc",
+        "success": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "spec": "cim_dopo.json",
+   "name": "degenerate optical parametric oscillator with pump depletion (coherent Ising machine node)",
+   "field": "quantum optics",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.079433181032687,
+      "stderr": 0.10799009991402311,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 15.7
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "SCR",
+     "class": "S C R(pitchfork)",
+     "seconds": 7.3
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of Ep in [0, 3] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.4
+    }
+   }
+  },
+  {
+   "spec": "cim_pair.json",
+   "name": "coherent Ising machine, two coupled DOPOs (ferromagnetic)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); Marandi, A., Wang, Z., Takata, K., Byer, R. L., Yamamoto, Y., 'Network of time-multiplexed optical parametric oscillators as a coherent Ising machine', Nat. Photonics 8, 937 (2014), DOI 10.1038/nphoton.2014.249, arXiv:1407.2871 (ar5iv full text through a summarising fetch)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.1687596504390578,
+      "stderr": 0.10961740685634606,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 10.8
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(pitchfork) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187910645233436,
+      "stderr": 1.5977561208746494e-05,
+      "expected": 1.018792971647471
+     },
+     "seconds": 9.7
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of a in [-1, 1] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.1
+    }
+   }
+  },
+  {
+   "spec": "cim_triangle.json",
+   "name": "coherent Ising machine, three DOPOs on an antiferromagnetic triangle",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); McMahon, P. L. et al., 'A fully programmable 100-spin coherent Ising machine with all-to-all connections', Science 354, 614 (2016) (abstract only); Inagaki, T. et al., 'A coherent Ising machine for 2000-node optimization problems', Science 354, 603 (2016) (abstract only)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+     "obstruction_short": "degenerate critical mode: 2 directions",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 5.0
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "CRWRKL",
+     "class": "C R(degenerate critical mode) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0186165466164785,
+      "stderr": 0.00040680151119065755,
+      "expected": 1.018792971647471
+     },
+     "seconds": 20.1
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of a in [-1, 1] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 3.0
+    }
+   },
+   "completion": {
+    "seconds": 510.0,
+    "write_points": [
+     {
+      "completion": "critical space",
+      "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+      "write_point": {
+       "a": -0.19999989999899365,
+       "state": [
+        8.205383164474265e-15,
+        -1.6757743216197437e-14,
+        7.752123533630402e-15
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 2,
+       "certified": true,
+       "write_class": "linear-stage write"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "dissipative_cat.json",
+   "name": "dissipative cat qubit (two-photon loss)",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Mirrahimi et al., New J. Phys. 16, 045014 (2014); Lescanne et al., Nat. Phys. 16, 509 (2020)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 0.969390473756439,
+      "stderr": 0.1061992520536731,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 18.4
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(pitchfork) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.018792959538713,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 19.3
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of A in [0, 6] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 3.0
+    }
+   }
+  },
+  {
+   "spec": "flux_qubit_tilt.json",
+   "name": "persistent-current flux qubit, double well tilted by the loop flux",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Chiorescu, I., Nakamura, Y., Harmans, C. J. P. M., Mooij, J. E., 'Coherent quantum dynamics of a superconducting flux qubit', Science 299, 1869 (2003), arXiv:cond-mat/0305461 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "SCRURKL",
+     "class": "S(reflection) C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.2756535617781317,
+      "stderr": 0.11178102128186396,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 25.6
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187939373842185,
+      "stderr": 5.073376518449635e-06,
+      "expected": 1.018792971647471
+     },
+     "seconds": 20.7
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of eps in [-1.5, 1.5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 3.3
+    }
+   }
+  },
+  {
+   "spec": "fluxonium.json",
+   "name": "fluxonium (superinductance and junction), classical phase particle",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(transcritical) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.3034944627892608,
+      "stderr": 0.1123952204876925,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 22.6
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "CRWRKL",
+     "class": "C R(transcritical) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187923683423465,
+      "stderr": 8.933505291075505e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 29.3
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of phe in [0, 12.566] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 5.0
+    }
+   }
+  },
+  {
+   "spec": "ion_duffing.json",
+   "name": "driven single-ion Duffing oscillator (octupole anharmonicity)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Akerman, N., Kotler, S., Glickman, Y., Dallal, Y., Keselman, A., Ozeri, R., 'A single-ion nonlinear mechanical oscillator', Phys. Rev. A 82, 061402 (2010), arXiv:1003.1577 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.3704518428443757,
+      "stderr": 0.1374586024952627,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 28.1
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187929430840978,
+      "stderr": 9.992525564772592e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 15.4
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of Delta in [-2, 12] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 5.1
+    }
+   }
+  },
+  {
+   "spec": "ion_phonon_laser.json",
+   "name": "trapped-ion phonon laser (Van der Pol image) with injection",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURK",
+     "class": "C R(fold) U R(pitchfork) K",
+     "seconds": 21.8
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187940583437094,
+      "stderr": 5.120710667805284e-05,
+      "expected": 1.018792971647471
+     },
+     "seconds": 12.5
+    },
+    "phase-locking": {
+     "status": "reached",
+     "word": "RKL",
+     "class": "R(phase) K(1:1) L",
+     "law_constant": {
+      "constant": 1.0000263455710239,
+      "stderr": 0.00038763248882667245,
+      "expected": 1.0
+     },
+     "seconds": 69.0
+    }
+   }
+  },
+  {
+   "spec": "jba_resonator.json",
+   "name": "driven Kerr resonator of a Josephson bifurcation amplifier",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.5125400935856659,
+      "stderr": 0.15041695471170044,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 34.1
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187919768159788,
+      "stderr": 2.8165676595470757e-06,
+      "expected": 1.018792971647471
+     },
+     "seconds": 18.7
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of F in [0, 8] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 2.2
+    }
+   }
+  },
+  {
+   "spec": "jpc_nondegenerate.json",
+   "name": "non-degenerate parametric oscillator (Josephson parametric converter above threshold)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Bergeal, N., Schackert, F., Metcalfe, M., Vijay, R., Manucharyan, V. E., Frunzio, L., Prober, D. E., Schoelkopf, R. J., Girvin, S. M., Devoret, M. H., 'Phase-preserving amplification near the quantum limit with a Josephson ring modulator', Nature 465, 64 (2010), arXiv:0912.3407 (main text; DOI 10.1038/nature09035, volume and page checked against Crossref); Roy, A., Devoret, M., 'Introduction to quantum-limited parametric amplification of quantum signals with Josephson circuits', C. R. Physique 17, 740 (2016), arXiv:1605.00539 (full text, Secs. 4-5)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+     "obstruction_short": "degenerate critical mode: 2 directions",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 55.3
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 53.4
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of Ein in [0, 3] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.4
+    }
+   },
+   "completion": {
+    "seconds": 73.9,
+    "write_points": [
+     {
+      "completion": "critical space",
+      "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+      "write_point": {
+       "Ein": 1.0,
+       "state": [
+        2.8409050252664055e-06,
+        2.6392193696177067e-06,
+        2.840905025266406e-06,
+        -2.6392193696177067e-06,
+        0.49999999999535355,
+        2.485213259420854e-22
+       ]
+      },
+      "law": {
+       "status": "continuous family of written states (a marginal direction at every one): the write sets a phase on the family, not a choice between states; its law is that of a phase (Adler)"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "kerr_cat_kpo.json",
+   "name": "Kerr parametric oscillator (Kerr-cat qubit)",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., npj Quantum Inf. 3, 18 (2017); Grimm et al., Nature 584, 205 (2020)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test, whose noise is set by D_s |a3| / r, is not defined",
+     "obstruction_short": "vanishing cubic: leading term of order 5",
+     "word": "SCR",
+     "class": "S(reflection) C R(degenerate cubic)",
+     "seconds": 3.2
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(degenerate cubic) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187929274542025,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 15.2
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of p in [0, 12] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 15.6
+    }
+   },
+   "completion": {
+    "seconds": 172.7,
+    "write_points": [
+     {
+      "completion": "leading order",
+      "kind": "degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along the critical direction is of order 5",
+      "write_point": {
+       "p": 0.5000000999999569,
+       "state": [
+        3.0456643507096865e-12,
+        2.794262079425639e-12
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": false,
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.328 (29.4 errors), and the written states at the end of the sweep do not retain the choice: 51 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "write_class": "equilibrium write",
+       "hold": {
+        "hold_time": 56.568542494923804,
+        "switching_fraction": 0.5113790760869565
+       },
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3042869533475698,
+          "offset": 0.005569370912405502
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 0.04846161112707854,
+          "offset": 0.01921311059110587
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "kpo_pair.json",
+   "name": "two coupled Kerr parametric oscillators (two cat qubits or a two-spin annealer)",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., Nat. Commun. 8, 15785 (2017)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -6.25 s^5, so the canonical form is not the pitchfork and the swept-write test, whose noise is set by D_s |a3| / r, is not defined",
+     "obstruction_short": "vanishing cubic: leading term of order 5",
+     "word": "SCR",
+     "class": "S(reflection) C R(degenerate cubic)",
+     "seconds": 3.3
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(degenerate cubic) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.018792858677842,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 14.9
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of p in [0, 12] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 8.5
+    }
+   },
+   "completion": {
+    "seconds": 440.8,
+    "write_points": [
+     {
+      "completion": "leading order",
+      "kind": "degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along the critical direction is of order 5",
+      "write_point": {
+       "p": 0.5000000999999569,
+       "state": [
+        1.514169684452371e-19,
+        1.0501495932480891e-19,
+        1.603032917180275e-19,
+        1.104849282656089e-19
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": false,
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.335 (30.0 errors), and the written states at the end of the sweep do not retain the choice: 47 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "write_class": "equilibrium write",
+       "hold": {
+        "hold_time": 56.568542494923804,
+        "switching_fraction": 0.47027972027972026
+       },
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3097445227236102,
+          "offset": 0.010675315469004909
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 0.0495930572283986,
+          "offset": 0.03794883731523168
+         }
+        ]
+       }
+      }
+     },
+     {
+      "completion": "distant branch",
+      "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
+      "write_point": {
+       "p": 1.5811388063630432,
+       "state": [
+        0.3121444536417236,
+        0.05065407237250405,
+        -0.31214445368015387,
+        -0.050654072378740415
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": true,
+       "write_class": "linear-stage write",
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3337498417992328,
+          "offset": -0.016560957217359618
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3674643859705147,
+          "offset": 0.024425766421971806
+         }
+        ]
+       }
+      }
+     },
+     {
+      "completion": "distant branch",
+      "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
+      "write_point": {
+       "p": 1.5811388063650895,
+       "state": [
+        -0.3121444539213526,
+        -0.05065407241785086,
+        0.3121444534011331,
+        0.05065407233343087
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": true,
+       "write_class": "linear-stage write",
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3734375491861193,
+          "offset": 0.0026672791135925467
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3064415634351605,
+          "offset": 0.015213333514492666
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "kpo_triangle.json",
+   "name": "three Kerr parametric oscillators on an antiferromagnetic triangle",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Goto, Sci. Rep. 6, 21686 (2016); frustrated Ising triangle",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+     "obstruction_short": "degenerate critical mode: 2 directions",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 8.0
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "CRWRKL",
+     "class": "C R(degenerate critical mode) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.018792994984001,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 26.5
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of p in [0, 12] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 10.6
+    }
+   },
+   "completion": {
+    "note": "stopped at the time limit of 900 s",
+    "write_points": []
+   }
+  },
+  {
+   "spec": "magnon_kerr.json",
+   "name": "cavity magnon polariton with magnon Kerr nonlinearity (YIG sphere in a microwave cavity)",
+   "field": "quantum computing hardware (cavity magnonics)",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Wang, Zhang, Shen, Zhang, Tang, You, Phys. Rev. Lett. 120, 057202 (2018)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.0840935912216636,
+      "stderr": 0.13470021038854468,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 21.9
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187773639272235,
+      "stderr": 3.028280515926518e-05,
+      "expected": 1.018792971647471
+     },
+     "seconds": 49.1
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of eps in [0, 10] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 5.5
+    }
+   }
+  },
+  {
+   "spec": "nuclear_bath.json",
+   "name": "dynamically polarised nuclear-spin bath (Overhauser feedback, rate equation)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Vink, I. T., Nowack, K. C., Koppens, F. H. L., Danon, J., Nazarov, Yu. V., Vandersypen, L. M. K., 'Locking electron spins into magnetic resonance by electron-nuclear feedback', Nat. Phys. 5, 764 (2009), arXiv:0902.2659 (full text); Gullans, M., Krich, J. J., Taylor, J. M., Bluhm, H., Halperin, B. I., Marcus, C. M., Stopa, M., Yacoby, A., Lukin, M. D., 'Dynamic nuclear polarization in double quantum dots', Phys. Rev. Lett. 104, 226807 (2010), arXiv:1003.4508 (abstract only); Bluhm, H., Foletti, S., Mahalu, D., Umansky, V., Yacoby, A., 'Enhancing the coherence of a spin qubit by operating it as a feedback loop that controls its nuclear spin bath', Phys. Rev. Lett. 105, 216803 (2010), arXiv:1003.4031 (abstract only); Burkard, G., Ladd, T. D., Pan, A., Nichol, J. M., Petta, J. R., 'Semiconductor spin qubits', Rev. Mod. Phys. 95, 025003 (2023), arXiv:2112.08863 (full text of the arXiv HTML and ar5iv renderings, read through summarising fetches in 100k-character windows; eqs. 1, 2, 4, 5, 22 and the Pauli-blockade window quoted verbatim in this session; equation numbers are those of the arXiv rendering)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURK",
+     "class": "C R(fold) U R(pitchfork) K",
+     "seconds": 5.6
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187929776267932,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 3.6
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of d in [-2, 12] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 0.2
+    }
+   }
+  },
+  {
+   "spec": "optomech_bistable.json",
+   "name": "cavity optomechanical element, static bistability",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURK",
+     "class": "C R(fold) U R(pitchfork) K",
+     "seconds": 33.6
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187930339862314,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 14.3
+    },
+    "phase-locking": {
+     "status": "not derived",
+     "note": "stopped at the time limit of 300 s"
+    }
+   }
+  },
+  {
+   "spec": "optomech_selfosc.json",
+   "name": "cavity optomechanical element, self-sustained oscillation",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
+     "obstruction_short": "Hopf: an oscillation, not a write",
+     "word": "CR",
+     "class": "C R(Hopf)",
+     "seconds": 1.4
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+     "obstruction_short": "no stable state: the realization oscillates",
+     "word": "CR",
+     "class": "C R(Hopf)",
+     "seconds": 16.3
+    },
+    "phase-locking": {
+     "status": "not derived",
+     "note": "stopped at the time limit of 300 s"
+    }
+   },
+   "completion": {
+    "seconds": 1.7,
+    "write_points": [
+     {
+      "completion": "phase",
+      "kind": "Hopf: the unwritten state starts to oscillate",
+      "write_point": {
+       "Ein": 33.32726396965478,
+       "state": [
+        3.828325114972837,
+        15.508679187821794,
+        0.025517520333670867,
+        7.233854500876678e-28
+       ]
+      },
+      "law": {
+       "status": "phase: derived by the phase-locking target (memory codiscover --target phase-locking)"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "parametric_amplifier.json",
+   "name": "parametric amplifier below threshold",
+   "field": "superconducting quantum circuits",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "no write point along the control",
+     "obstruction_short": "no write point along the control",
+     "word": "",
+     "class": "",
+     "seconds": 0.5
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "",
+     "class": "",
+     "seconds": 1.2
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of p in [0, 0.45] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 0.4
+    }
+   },
+   "completion": {
+    "seconds": 0.5,
+    "write_points": []
+   }
+  },
+  {
+   "spec": "phase_qubit_rfsquid.json",
+   "name": "flux-biased rf-SQUID phase qubit (and Josephson photomultiplier)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Martinis, J. M., 'Superconducting phase qubits', Quantum Inf. Process. 8, 81 (2009) (full text, author manuscript from the UCSB group web page)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+     "obstruction_short": "degenerate critical mode: 2 directions",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 3.4
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "CRWRKL",
+     "class": "C R(degenerate critical mode) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187924772939663,
+      "stderr": 5e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 8.3
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of phe in [0, 8] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 2.9
+    }
+   },
+   "completion": {
+    "seconds": 189.6,
+    "write_points": [
+     {
+      "completion": "critical space",
+      "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+      "write_point": {
+       "phe": 0.945533355077108,
+       "state": [
+        10.895822573124272,
+        -1.7679064174769733e-27
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 2,
+       "certified": true,
+       "write_class": "linear-stage write"
+      }
+     },
+     {
+      "completion": "critical space",
+      "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+      "write_point": {
+       "phe": 5.3376478004455565,
+       "state": [
+        -4.613225200245387,
+        -3.101018054988385e-26
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 2,
+       "certified": true,
+       "write_class": "linear-stage write"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "po_amplitude_oscillator.json",
+   "name": "Josephson parametric oscillator for qubit measurement, amplitude encoded (Krantz 2016)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+     "obstruction_short": "subcritical: jump to a distant branch",
+     "word": "SCR",
+     "class": "S(reflection) C R(subcritical pitchfork)",
+     "seconds": 0.6
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "SCR",
+     "class": "S C R(pitchfork)",
+     "seconds": 1.2
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of eps in [0, 8] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 2.4
+    }
+   },
+   "completion": {
+    "seconds": 36.0,
+    "write_points": [
+     {
+      "completion": "distant branch",
+      "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
+      "write_point": {
+       "eps": 5.432826170603978,
+       "state": [
+        -1.0388312632032444e-16,
+        -9.741766592368845e-18
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": true,
+       "write_class": "linear-stage write",
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3042869533475698,
+          "offset": 0.005569370912405502
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3104146003124926,
+          "offset": 0.010172003075221925
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "pplo_oscillator.json",
+   "name": "Josephson parametric phase-locked oscillator for qubit measurement (Lin 2014)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+     "obstruction_short": "a line of states: the drift vanishes along the critical direction",
+     "word": "SCR",
+     "class": "S(reflection) C R(degenerate)",
+     "seconds": 1.6
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "SCR",
+     "class": "S C R(degenerate)",
+     "seconds": 1.9
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of p in [0, 3] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 0.7
+    }
+   },
+   "completion": {
+    "seconds": 35.2,
+    "write_points": [
+     {
+      "completion": "leading order",
+      "kind": "degenerate: the drift vanishes along the critical direction (a line of states)",
+      "write_point": {
+       "p": 1.0,
+       "state": [
+        0.0010718868931237848,
+        0.0010718870041580765
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 1,
+       "certified": true,
+       "write_class": "linear-stage write",
+       "one_direction": {
+        "law": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.3083253486656394,
+          "offset": 0.0035547088484739753
+         }
+        ],
+        "certificate": [
+         {
+          "bias_floors": 1.0,
+          "response_constant": 1.2692720031665499,
+          "offset": 0.020731252606726036
+         }
+        ]
+       }
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "qfp_latch.json",
+   "name": "quantum flux parametron (QFP) latch",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Berkley, A. J., Johnson, M. W., Bunyk, P., Harris, R., Johansson, J., Lanting, T., Ladizinsky, E., Tolkacheva, E., Amin, M. H. S., Rose, G., 'A scalable readout system for a superconducting adiabatic quantum optimization system', Supercond. Sci. Technol. 23, 105014 (2010), arXiv:0905.0891 (full text of the ar5iv rendering, read through a summarising fetch; equations and values as returned); Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.3172622349110032,
+      "stderr": 0.11268992586246145,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 3.8
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "a single stable state: there is no second state to switch to",
+     "obstruction_short": "a single stable state: nothing to switch to",
+     "word": "SCR",
+     "class": "S C R(pitchfork)",
+     "seconds": 1.1
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of f in [0.5, 1] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 0.5
+    }
+   }
+  },
+  {
+   "spec": "quantum_vdp.json",
+   "name": "self-sustained oscillator with one-quantum gain and two-quantum loss (maser, phonon laser)",
+   "field": "quantum optics and trapped ions",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Lee & Sadeghpour, PRL 111, 234101 (2013); Walter, Nunnenkamp & Bruder, PRL 112, 094102 (2014)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "no write point along the control",
+     "obstruction_short": "no write point along the control",
+     "word": "",
+     "class": "",
+     "seconds": 0.6
+    },
+    "threshold-write": {
+     "status": "obstructed",
+     "obstruction": "no stable state (the realization oscillates): there is no state to leave",
+     "obstruction_short": "no stable state: the realization oscillates",
+     "word": "",
+     "class": "",
+     "seconds": 8.8
+    },
+    "phase-locking": {
+     "status": "reached",
+     "word": "RKL",
+     "class": "R(phase) K(1:1) L",
+     "law_constant": {
+      "constant": 0.9998781986617428,
+      "stderr": 0.0001243274786197901,
+      "expected": 1.0
+     },
+     "seconds": 51.4
+    }
+   },
+   "completion": {
+    "seconds": 0.8,
+    "write_points": []
+   }
+  },
+  {
+   "spec": "rfsquid_annealer.json",
+   "name": "rf-SQUID annealer qubit (CCJJ), classical phase particle",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.1300364083675183,
+      "stderr": 0.1088923113139296,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 3.4
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(pitchfork) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.01879238671748,
+      "stderr": 1.4788474034244103e-06,
+      "expected": 1.018792971647471
+     },
+     "seconds": 5.0
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of beta in [0.5, 2.5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.5
+    }
+   }
+  },
+  {
+   "spec": "rfsquid_pair.json",
+   "name": "two inductively coupled rf-SQUID annealer qubits (antiferromagnetic)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.2483985836948812,
+      "stderr": 0.11120624537592073,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 5.8
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(pitchfork) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187925268767153,
+      "stderr": 7.136026975995691e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 8.9
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of beta in [0.5, 2.5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.0
+    }
+   }
+  },
+  {
+   "spec": "rfsquid_triangle.json",
+   "name": "three rf-SQUID annealer qubits on an antiferromagnetic triangle",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, does not describe the write",
+     "obstruction_short": "degenerate critical mode: 2 directions",
+     "word": "CR",
+     "class": "C R(degenerate critical mode)",
+     "seconds": 0.8
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "CRWRKL",
+     "class": "C R(degenerate critical mode) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187924960596384,
+      "stderr": 7.596476387927709e-07,
+      "expected": 1.018792971647471
+     },
+     "seconds": 5.8
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of beta in [0.5, 2.5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 1.1
+    }
+   },
+   "completion": {
+    "seconds": 274.8,
+    "write_points": [
+     {
+      "completion": "critical space",
+      "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
+      "write_point": {
+       "beta": 0.9500000500001717,
+       "state": [
+        7.047544709302657e-19,
+        -1.3234889800799813e-23,
+        -1.5956459265895907e-18,
+        4.135903062871897e-24,
+        7.052591783679373e-19,
+        -9.098986738135605e-24
+       ]
+      },
+      "law": {
+       "status": "derived",
+       "law_kind": "linear stage and outcome map",
+       "critical_dimension": 2,
+       "certified": true,
+       "write_class": "linear-stage write"
+      }
+     }
+    ]
+   }
+  },
+  {
+   "spec": "rydberg_bistability.json",
+   "name": "driven-dissipative Rydberg ensemble (mean-field optical bistability)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Carr, C., Ritter, R., Wade, C. G., Adams, C. S., Weatherill, K. J., 'Nonequilibrium phase transition in a dilute Rydberg ensemble', Phys. Rev. Lett. 111, 113901 (2013), arXiv:1302.6621 (full text of arXiv v3; the arXiv abstract page lists the title 'Cooperative non-equilibrium phase transition in a dilute Rydberg ensemble'; journal title checked against Crossref); Marcuzzi, M., Levi, E., Diehl, S., Garrahan, J. P., Lesanovsky, I., 'Universal nonequilibrium properties of dissipative Rydberg gases', Phys. Rev. Lett. 113, 210401 (2014), arXiv:1406.1015 (full text); Saffman, M., Walker, T. G., Molmer, K., 'Quantum information with Rydberg atoms', Rev. Mod. Phys. 82, 2313 (2010), arXiv:0909.4777 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.510545812376019,
+      "stderr": 0.11750004979302779,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 9.1
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.018793031940819,
+      "stderr": 2.956770955409027e-06,
+      "expected": 1.018792971647471
+     },
+     "seconds": 5.9
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of Delta in [-15, 5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 5.1
+    }
+   }
+  },
+  {
+   "spec": "snail_po.json",
+   "name": "SNAIL parametric oscillator (three-wave mixing, small Kerr)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached",
+     "word": "SCRKL",
+     "class": "S(reflection) C R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.4938104987779088,
+      "stderr": 0.11699118702639096,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 3.3
+    },
+    "threshold-write": {
+     "status": "reached by a write field",
+     "word": "SCRWRKL",
+     "class": "S C R(pitchfork) W R(fold) K L",
+     "law_constant": {
+      "constant": 1.015668909686033,
+      "stderr": 0.004052327927520638,
+      "expected": 1.018792971647471
+     },
+     "seconds": 12.5
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of g in [0, 1.5] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 2.6
+    }
+   }
+  },
+  {
+   "spec": "spin_ensemble_cavity.json",
+   "name": "spin ensemble strongly coupled to a microwave cavity (driven Tavis-Cummings, absorptive bistability)",
+   "field": "quantum computing hardware (hybrid spin-ensemble memories)",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Angerer et al., Sci. Adv. 3, e1701626 (2017)",
+   "targets": {
+    "symmetric-write": {
+     "status": "obstructed",
+     "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
+     "obstruction_short": "fold; no cusp with a supercritical sweep",
+     "word": "CR",
+     "class": "C R(fold)",
+     "seconds": 11.4
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0115058002133945,
+      "stderr": 0.032811486984288596,
+      "expected": 1.018792971647471
+     },
+     "seconds": 19.6
+    },
+    "phase-locking": {
+     "status": "not derived",
+     "note": "stopped at the time limit of 300 s"
+    }
+   },
+   "completion": {
+    "seconds": 815.6,
+    "write_points": [
+     {
+      "completion": "second parameter",
+      "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+      "write_point": {
+       "eta": 0.34483226835727687,
+       "state": [
+        -5.860063421024686e-35,
+        -0.018924404438142917,
+        -0.11179002204606847,
+        4.2084782698973313e-26,
+        -0.4922656985563072
+       ]
+      },
+      "unfoldings": [
+       {
+        "second": "dc",
+        "success": true,
+        "cusp": {
+         "eta": 0.3727819826768612,
+         "dc": -6.622694489879022
+        },
+        "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
+        "law": {
+         "status": "no choice at the end of the sweep"
+        }
+       },
+       {
+        "second": "ds",
+        "success": false
+       }
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "spec": "transmon_driven.json",
+   "name": "driven transmon (Duffing image)",
+   "field": "quantum computing hardware",
+   "kind": "equations",
+   "rule": "write point",
+   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
+   "targets": {
+    "symmetric-write": {
+     "status": "reached after unfolding",
+     "word": "CRURKL",
+     "class": "C R(fold) U R(pitchfork) K L",
+     "law_constant": {
+      "constant": 1.4004829385219837,
+      "stderr": 0.14101344946850605,
+      "expected": 1.3313353638003897
+     },
+     "seconds": 17.8
+    },
+    "threshold-write": {
+     "status": "reached",
+     "word": "CRKL",
+     "class": "C R(fold) K L",
+     "law_constant": {
+      "constant": 1.0187920382858655,
+      "stderr": 2.714001622328155e-06,
+      "expected": 1.018792971647471
+     },
+     "seconds": 7.1
+    },
+    "phase-locking": {
+     "status": "obstructed",
+     "obstruction": "no oscillation: at 11 values of F in [0, 6] every start settles on a stable state or does not become periodic",
+     "obstruction_short": "no oscillation in the control range",
+     "word": "",
+     "class": "",
+     "seconds": 2.1
+    }
+   }
+  }
+ ]
+}
