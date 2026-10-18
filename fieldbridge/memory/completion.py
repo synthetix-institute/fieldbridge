@@ -610,9 +610,12 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
             b = check
         c_star = secant(a, b)
     last = checks[-1] if checks else {}
-    out.update(status="found", zero_offset_curvature=float(last.get("curvature", c_star)), check=last, checks=checks)
-    if last.get("status") == "measured":
-        out["cancelled"] = bool(abs(last["offset"]) <= max(3 * last["offset_error"], CURVATURE_TOLERANCE))
+    cancelled = bool(last.get("status") == "measured"
+                     and abs(last["offset"]) <= max(3 * last["offset_error"], CURVATURE_TOLERANCE))
+    out.update(status="found" if cancelled else "not cancelled: the offset does not pass through zero cleanly near the "
+                                                 "curvatures tried",
+               zero_offset_curvature=float(last.get("curvature", c_star)), check=last, checks=checks,
+               cancelled=cancelled)
     return out
 
 
