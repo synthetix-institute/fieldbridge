@@ -25,15 +25,16 @@ Near a point where a state loses stability, one mode relaxes more and more slowl
 The fast modes follow the slow one, so the model reduces to the amplitude of that mode (centre-manifold reduction),
 and a change of variables removes the higher terms that do not alter the motion near the critical point (normal
 form). What remains depends on the number of directions that lose stability, on how a symmetry acts on them and on
-whether the instability oscillates. It does not depend on the material. The mechanisms of FieldBridge are these forms:
+whether the instability oscillates. It does not depend on the material. The writes of FieldBridge, and its phase
+locking, are these forms:
 
-| Directions that lose stability | Symmetry | Reduced form | Mechanism |
+| Slow direction | Symmetry | Reduced form | Mechanism |
 | --- | --- | --- | --- |
-| one | none | ẋ = μ + x<sup>2</sup> | [One-sided write (fold)](docs/mechanisms.md#one-sided-write-fold) |
-| one | x → −x | ẋ = εx − x<sup>3</sup> + h | [Symmetric write](docs/mechanisms.md#symmetric-write-supercritical-pitchfork) |
-| one, cubic term of the other sign | x → −x | ẋ = εx + ax<sup>3</sup> − x<sup>5</sup> | [Write to a distant state](docs/mechanisms.md#write-to-a-distant-state-subcritical-pitchfork) |
-| two, related by a symmetry | that of a square | ż = εz − \|z\|<sup>2</sup>z + g z̄<sup>3</sup> | [Write into a degenerate mode](docs/mechanisms.md#write-into-a-degenerate-mode) |
-| the phase of a limit cycle, which is neutral | shift in time | φ̇ = ν − K sin φ under a weak drive | [Limit cycle](docs/mechanisms.md#limit-cycle) |
+| one, losing stability | none | ẋ = μ + x<sup>2</sup> | [One-sided write (fold)](docs/mechanisms.md#one-sided-write-fold) |
+| one, losing stability | x → −x | ẋ = εx − x<sup>3</sup> + h | [Symmetric write](docs/mechanisms.md#symmetric-write-supercritical-pitchfork) |
+| one, losing stability, cubic term of the other sign | x → −x | ẋ = εx + ax<sup>3</sup> − x<sup>5</sup> | [Write to a distant state](docs/mechanisms.md#write-to-a-distant-state-subcritical-pitchfork) |
+| two, losing stability together | that of a square | ż = εz − \|z\|<sup>2</sup>z + g z̄<sup>3</sup> | [Write into a degenerate mode](docs/mechanisms.md#write-into-a-degenerate-mode) |
+| the phase of a limit cycle, neutral at any distance from the onset | shift in time | φ̇ = ν − K sin φ under a weak drive | [Limit cycle](docs/mechanisms.md#limit-cycle) |
 
 The reduction has the structure of a renormalization-group argument. After rescaling x ∝ ε<sup>1/2</sup>,
 t ∝ ε<sup>−1</sup> and h ∝ ε<sup>3/2</sup>, the control and the bias are relevant, while the higher powers and the
@@ -54,6 +55,20 @@ eliminated, and its coupling to the critical mode shifts the cubic coefficient, 
 symmetric write and the write to a distant state. When a reduction stops at a second critical direction, a cubic term
 of the wrong sign, a fold that no symmetry makes two-sided or an oscillatory pair, FieldBridge reports the obstruction
 ([Module 9, §5](docs/tutorial/23_memory_codiscovery.md#5-where-a-derivation-stops)).
+
+The other mechanisms of FieldBridge need no critical point, because they rest on exact properties of the equations
+rather than on an expansion. A spin rotates at one frequency when the commutators of its Hamiltonian terms and the
+observable close into the algebra su(2), and an observable that commutes with the Hamiltonian is conserved
+([Chapter 24](docs/tutorial/24_spin_language.md)). Return-point memory is guaranteed for any drive amplitude when the
+network of couplings, including the drive, is balanced in sign
+([Module 12](docs/tutorial/27_memory_return_point.md)). A stepped input is returned exactly when the model contains an
+integrator of the error ([Regulation 1](docs/tutorial/28_regulation_set_point.md)), and the linear memory and the
+parity rule of a driven body follow from its linear part and its symmetry
+([Computation 1](docs/tutorial/29_computation_capacity.md)). Retention uses the whole landscape: a record is lost by
+relaxation in a curved minimum, by diffusion along a flat direction, or by activation over the barrier between stored
+states, which is computed along the lowest path between them ([laws of retention](docs/mechanisms.md#laws-of-retention)).
+The critical point stands out only for writing, because it is the one place where a weak signal can choose among
+states.
 
 ## Installation
 
