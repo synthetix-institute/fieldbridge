@@ -1,0 +1,71 @@
+{
+  "command": "dynamics",
+  "implementation_sha256": "b678192fae8e4334ea1395cc241f45c3605831f1949024dd8c1e30d87d26249d",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Does the Lorenz model of convection forget its initial state at its largest Lyapunov exponent, as the predictability law says?",
+  "input_sha256": "6c4db5b30e2e690b9610d024fb9e20be5edb7a41f86a23cb437f9dc57fb03086",
+  "assumptions": [
+    "the three-mode truncation of Rayleigh-Benard convection with sigma = 10, r = 28, b = 8/3",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "E. N. Lorenz, Deterministic nonperiodic flow, J. Atmos. Sci. 20, 130 (1963)",
+    "kind": "textbook model"
+  },
+  "chaos": {
+    "starts": 6,
+    "escaped": 0,
+    "lyapunov": {
+      "lambda1": [
+        0.9074194793437839,
+        0.9063310485646136,
+        0.90151753508176,
+        0.9045388045025281,
+        0.9060250268058805,
+        0.9071789439627101
+      ],
+      "first_half": [
+        0.905976305323521,
+        0.8991414202723578,
+        0.9084366998347221,
+        0.8993558706631318,
+        0.9014779889058905,
+        0.9085519605549051
+      ],
+      "median": 0.9061780376852471,
+      "spread": 0.005901944262023839
+    },
+    "attractor_size": 62.03342528923495,
+    "chaotic": true,
+    "predictability": {
+      "deltas": [
+        1e-09,
+        1e-07,
+        1e-05,
+        0.001
+      ],
+      "times": [
+        18.891875000000162,
+        13.986874999999767,
+        8.835781249999856,
+        4.062031249999956
+      ],
+      "slope": 1.0779324757864412,
+      "law": 0.9767987356653575
+    },
+    "law_holds": true,
+    "verdict": "chaotic: the initial state is lost at lambda_1 = 0.9062 (1.31 bits per unit time); predictability slope x lambda_1 = 0.977"
+  },
+  "blowup": {
+    "verdict": "no start escapes during the transient of the chaos test"
+  }
+}

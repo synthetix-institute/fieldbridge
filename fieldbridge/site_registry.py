@@ -65,6 +65,8 @@ CLASSES = {
     "neutral-cycles": "neutral cycles",
     "exponential-loss": "exponential loss",
     "power-loss": "power-law loss",
+    "chaotic-loss": "chaotic loss of the initial state",
+    "blow-up": "blow-up in finite time",
     "convention": "stochastic calculus convention",
 }
 
@@ -225,6 +227,18 @@ MECHANISMS = {
                    "text": "Each mode of the field relaxes at its own rate (Law 1), and for a conserved density the "
                            "rate κ(k) = Mk² vanishes at long wavelengths: the trace of a write decays as a power of "
                            "time.", "node": "field_charge_1d"},
+    "chaotic-loss": {"canonical": "T(δ) = λ<sub>1</sub><sup>−1</sup> ln(Δ/δ)",
+                     "text": "On a chaotic attractor of size Δ two preparations that differ by δ separate as "
+                             "δe<sup>λ<sub>1</sub>t</sup>: a preparation known to the resolution δ is distinguished "
+                             "from its neighbours only for the time T(δ), and the initial state is lost without noise "
+                             "at λ<sub>1</sub>/ln 2 bits per unit time.",
+                     "node": "lorenz"},
+    "blow-up": {"canonical": "x<sub>j</sub> ≈ c<sub>j</sub>(t* − t)<sup>−p<sub>j</sub></sup>",
+                "text": "A state of a polynomial drift reaches infinity at a finite time t*. In every equation the "
+                        "dominant terms balance, max<sub>k</sub> m<sub>k</sub>·p = p<sub>i</sub> + 1, which fixes the "
+                        "exponents; the degree of the drift gives them only when the escape runs along its terms of "
+                        "highest degree.",
+                "node": "cubic_fall"},
     "convention": {"canonical": "Itô μ − σ<sup>2</sup>/2, Stratonovich μ",
                    "text": "The reading of the noise term is part of the closure: it changes the measured growth rate "
                            "of log X by σ<sup>2</sup>/2.", "node": "log_ito"},
@@ -251,6 +265,7 @@ C1 = "docs/tutorial/29_computation_capacity.md"
 QW = "docs/tutorial/30_quantum_write.md"
 H1 = "docs/tutorial/31_heredity_threshold.md"
 D1 = "docs/tutorial/32_decision_population.md"
+M16 = "docs/tutorial/36_memory_chaos_and_blow_up.md"
 
 # ------------------------------------------------------------------------------------------------ nodes
 # family: unitary (fieldbridge.quantum), dissipative (fieldbridge.memory, equations and networks), field
@@ -426,6 +441,19 @@ NODES = [
      "tutorial": M11 + "#3-running-the-constructor"},
     {"id": "josephson", "family": "dissipative", "spec": "examples/memory/oscillators/josephson.json",
      "tutorial": M11 + "#3-running-the-constructor"},
+    # -- no stable state: chaotic loss of the initial state, and blow-up in finite time
+    {"id": "lorenz", "family": "dissipative", "spec": "examples/dynamics/lorenz.json",
+     "tutorial": M16 + "#2-chaotic-loss-of-the-initial-state"},
+    {"id": "lorenz_below", "base": "lorenz", "params": {"r": 0.5},
+     "name": "Lorenz convection model below the onset of convection",
+     "question": "What does the Lorenz model keep of a preparation when the Rayleigh number is lowered to r = 0.5?",
+     "tutorial": M16 + "#2-chaotic-loss-of-the-initial-state"},
+    {"id": "laser_lorenz_haken", "family": "dissipative", "spec": "examples/dynamics/laser_lorenz_haken.json",
+     "tutorial": M16 + "#2-chaotic-loss-of-the-initial-state"},
+    {"id": "cubic_fall", "family": "dissipative", "spec": "examples/dynamics/cubic_fall.json",
+     "tutorial": M16 + "#3-blow-up-in-finite-time"},
+    {"id": "hyperbolic_growth", "family": "dissipative", "spec": "examples/dynamics/hyperbolic_growth.json",
+     "tutorial": M16 + "#3-blow-up-in-finite-time"},
     # -- fields: conservation, dimension and the shape of the write
     {"id": "field_nonconserved", "family": "field", "spec": "examples/memory/fields/nonconserved_1d.json",
      "tutorial": "docs/tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write"},
@@ -928,6 +956,22 @@ EDGES = [
      "change": "pump ramp → pump step",
      "text": "The pump is stepped above the collective threshold. The in-phase mode grows at {rate_end} from the vacuum "
              "seed, and the window of passage times is {window_law} in the growth exponent."},
+    # chaotic loss of the initial state and blow-up in finite time
+    {"id": "lorenz_rayleigh_lowered", "from": "lorenz", "to": "lorenz_below", "slot": "A", "kind": "param",
+     "change": "r: 28 → 0.5",
+     "text": "Below the onset of convection the layer only conducts heat: every preparation relaxes to "
+             "{states_text} state, without convection, and nothing of it is kept."},
+    {"id": "lorenz_to_laser", "from": "lorenz", "to": "laser_lorenz_haken", "slot": "Xi", "kind": "codiscovery",
+     "change": "roll and temperature modes → laser field, polarization and inversion",
+     "text": "A single-mode laser pumped above its second threshold loses its initial state in the same way, at "
+             "λ<sub>1</sub> = {lyapunov} per polarization decay time ({lyapunov_bits} bits per unit time); the "
+             "predictability time follows the law, with slope × λ<sub>1</sub> = {predictability}."},
+    {"id": "fall_to_population", "from": "cubic_fall", "to": "hyperbolic_growth", "slot": "Xi", "kind": "codiscovery",
+     "change": "position and velocity of a particle → size of a population",
+     "text": "A population whose per-capita growth rate is proportional to its size also reaches infinity at a finite "
+             "time, as (t* − t)<sup>−{blowup_p}</sup>. Here the degree {blowup_degree} of the drift gives the "
+             "exponent; for the falling particle, of degree {from.blowup_degree}, the velocity grows as "
+             "(t* − t)<sup>−{from.blowup_p}</sup>, which only the balance of the dominant terms gives."},
     # the convention of a stochastic calculation
     {"id": "stochastic_convention", "from": "log_ito", "to": "log_stratonovich", "slot": "C", "kind": "closure",
      "change": "Itô → Stratonovich",
@@ -1234,7 +1278,7 @@ CLASS_SHORT = {"rotation": "rotation", "conserved": "conserved", "obstructed": "
                "rotation-seed": "two-component seed",
                "linear-stage-write": "linear-stage write", "equilibrium-write": "equilibrium write", "oscillation": "limit cycle",
                "neutral-cycles": "neutral cycles", "exponential-loss": "exponential loss", "power-loss": "power-law loss",
-               "convention": "convention"}
+               "chaotic-loss": "chaotic loss", "blow-up": "blow-up", "convention": "convention"}
 
 # the outcomes in which a mechanism of its group is absent: nothing is stored (memory), or nothing rotates as one
 # three-vector (quantum); the map marks them with this label and reason
@@ -1340,4 +1384,6 @@ SHORT = {
     "rfim_ferromagnet": "ferromagnet", "rfim_antiferromagnet": "antiferromagnet",
     "rfim_antiferromagnet_staggered": "staggered field", "antiferromagnetic_chain": "chain, J < 0",
     "adsorption_pores": "pores", "soft_spots": "soft spots",
+    "lorenz": "Lorenz convection", "lorenz_below": "Lorenz, r = 0.5", "laser_lorenz_haken": "laser above 2nd threshold",
+    "cubic_fall": "fall in a cubic potential", "hyperbolic_growth": "hyperbolic growth",
 }

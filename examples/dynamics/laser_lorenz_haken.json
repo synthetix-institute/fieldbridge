@@ -1,0 +1,41 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "laser_lorenz_haken",
+  "name": "single-mode laser above its second threshold (Lorenz-Haken)",
+  "field": "laser physics",
+  "question": "Does a single-mode laser pumped above its second threshold forget its initial state at its largest Lyapunov exponent, as the predictability law says?",
+  "assumptions": [
+    "a homogeneously broadened single-mode laser in resonance, described by the field, the polarization and the inversion (Maxwell-Bloch equations)",
+    "time in units of the polarization decay time; cavity loss k = 3 and inversion decay g = 1 in these units (a bad cavity, k > g + 1)",
+    "pump r = 25 in units of the first lasing threshold, above the second threshold r_c = k(k + g + 3)/(k - g - 1) = 21",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "H. Haken, Analogy between higher instabilities in fluids and lasers, Phys. Lett. A 53, 77 (1975)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "field, polarization, inversion",
+    "variables": [
+      "field",
+      "pol",
+      "inv"
+    ],
+    "scale": 5.0
+  },
+  "parameters": {
+    "k": 3.0,
+    "g": 1.0,
+    "r": 25.0
+  },
+  "drift": {
+    "field": "k*(pol - field)",
+    "pol": "field*inv - pol",
+    "inv": "g*(r - inv) - field*pol"
+  },
+  "noise": 0.0,
+  "closure": "one cavity mode in resonance with the gain line; the polarization and the inversion are kept as variables",
+  "observable": "the intensity of the laser field"
+}

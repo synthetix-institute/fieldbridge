@@ -1002,3 +1002,46 @@ READING.update({
         "textbooks": [],
     },
 })
+
+# chaotic loss of the initial state and blow-up in finite time (Module 16)
+BIB.update({
+    "lorenz1963": {"cite": "E. N. Lorenz, J. Atmos. Sci. 20, 130 (1963)", "short": "Lorenz, 1963",
+                   "doi": "10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2"},
+    "lorenz1969": {"cite": "E. N. Lorenz, Tellus 21, 289 (1969)", "short": "Lorenz, 1969",
+                   "doi": "10.1111/j.2153-3490.1969.tb00444.x"},
+    "benettin1980": {"cite": "G. Benettin, L. Galgani, A. Giorgilli and J.-M. Strelcyn, Meccanica 15, 9 (1980)",
+                     "short": "Benettin et al., 1980", "doi": "10.1007/BF02128236"},
+    "haken1975": {"cite": "H. Haken, Phys. Lett. A 53, 77 (1975)", "short": "Haken, 1975",
+                  "doi": "10.1016/0375-9601(75)90353-9"},
+    "kowalevski1889": {"cite": "S. Kowalevski, Acta Math. 12, 177 (1889)", "short": "Kowalevski, 1889",
+                       "doi": "10.1007/BF02592182"},
+    "goriely2000": {"cite": "A. Goriely and C. Hyde, J. Differential Equations 161, 422 (2000)",
+                    "short": "Goriely and Hyde, 2000", "doi": "10.1006/jdeq.1999.3688"},
+    "vonfoerster1960": {"cite": "H. von Foerster, P. M. Mora and L. W. Amiot, Science 132, 1291 (1960)",
+                        "short": "von Foerster et al., 1960", "doi": "10.1126/science.132.3436.1291"},
+})
+M16 = T + "36_memory_chaos_and_blow_up.md"
+READING.update({
+    "chaotic-loss": {
+        "defined": ("Module 16, §1", "a material without a stored state that loses its initial state without noise, at "
+                                     "the largest Lyapunov exponent", M16 + "#1-two-outcomes-without-a-stable-state"),
+        "derived": [("Module 16, §2", "the Lorenz model of convection and a single-mode laser above its second "
+                                      "threshold: λ₁ and the predictability law", M16 + "#2-chaotic-loss-of-the-initial-state")],
+        "code": "memory.chaos_blowup.chaos, lyapunov, predictability",
+        "sources": [("lorenz1963", "the three-mode model of convection and its aperiodic motion"),
+                    ("lorenz1969", "the predictability time of a flow and its growth with the resolution of the "
+                                   "initial state"),
+                    ("benettin1980", "the measurement of Lyapunov exponents by renormalized neighbouring trajectories"),
+                    ("haken1975", "the single-mode laser obeys the Lorenz equations")],
+    },
+    "blow-up": {
+        "defined": ("Module 16, §1", "a state that reaches infinity at a finite time, with exponents fixed by the "
+                                     "dominant balance", M16 + "#1-two-outcomes-without-a-stable-state"),
+        "derived": [("Module 16, §3", "a particle in a cubic potential and hyperbolic population growth: the measured "
+                                      "exponents against the balances and the degree", M16 + "#3-blow-up-in-finite-time")],
+        "code": "memory.chaos_blowup.blowup, balances, escape",
+        "sources": [("kowalevski1889", "solutions expanded about a movable singularity, x ~ c (t* - t)^-p"),
+                    ("goriely2000", "the dominant balances of a polynomial vector field and finite-time blow-up"),
+                    ("vonfoerster1960", "hyperbolic growth of the world population, with a blow-up date")],
+    },
+})

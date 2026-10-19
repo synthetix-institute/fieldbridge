@@ -461,6 +461,19 @@ def dissipative_record(node: Dict, rows: Dict[str, Dict]) -> Dict:
         facts.update(write_point=events[0]["value"], write_param=real.control, write_kind=events[0]["kind"])
     facts["scale_control"] = bool(scale)
     klass = _dissipative_class(states, n_unconv, events, scale, lock)
+    dynamics = None
+    # a lone state with no restoring direction (n' = n^2 at n = 0) attracts only in appearance: slow starts near it
+    # look converged
+    marginal = len(states) == 1 and an.classify(spectra[0])["flat"] >= np.size(states[0])
+    if ((klass == "oscillation" and (DYNAMICS_DIR in node["path"]
+                                     or (lock is not None and not str(lock.get("status", "")).startswith("reached"))))
+            or (klass == "single-state" and marginal and DYNAMICS_DIR in node["path"])):
+        # no stable state and no locked cycle: chaos or escape decide the class (memory.chaos_blowup)
+        before = klass
+        klass, dynamics = _no_state_class(real, nid, over, facts, klass)
+        if before == "single-state" and klass != before:  # the marginal point is not a stored state
+            states, counts, spectra = [], [], []
+            facts["states"], facts["states_text"] = 0, NUMBER_WORDS.get(0, "0")
     if klass == "neutral-cycles":  # the wording of the memory card (memory.discovery) once the cycles are neutral
         facts["loss"] = ("no stable state: a family of neutral cycles, with no restoring force on the amplitude or the "
                          "phase (Law 2)")
@@ -498,7 +511,41 @@ def dissipative_record(node: Dict, rows: Dict[str, Dict]) -> Dict:
                         "A": ", ".join(f"{k} = {_num(float(v))}" for k, v in {**real.params, **over}.items())
                         + f"; noise D = {_num(float(real.noise))}"},
               "carrier_spec": carrier}
+    if dynamics is not None:
+        record["dynamics"] = dynamics
+        record["slots"]["P"] = ("preparations known to a resolution δ" if klass == "chaotic-loss"
+                                else "starts scaled by a factor s" if klass == "blow-up" else record["slots"]["P"])
     return record
+
+
+# the materials without a stable state whose class is decided by chaos or blow-up (Module 16)
+DYNAMICS_DIR = "examples/dynamics/"
+
+
+def _no_state_class(real, nid: str, over: Dict, facts: Dict, default: str):
+    """The class of a material without a stable state whose motion is not a locked limit cycle: chaotic loss of the
+    initial state (with lambda_1 and the predictability law) or blow-up in finite time (with its exponent and the
+    degree of the drift); the default class otherwise."""
+    from .memory import chaos_blowup as cb
+    dyn = cb.characterize(real, _rng(nid, "dynamics"), over=over or None)
+    kind = dyn["kind"]
+    if kind == "chaotic":
+        c = dyn["chaos"]
+        lam = float(c["lyapunov"]["median"])
+        law = (c.get("predictability") or {}).get("law")
+        facts.update(lyapunov=lam, lyapunov_bits=lam / np.log(2), predictability=law)
+        facts["loss"] = (f"no stable state: a chaotic attractor, on which two preparations separate at "
+                         f"λ₁ = {_num(lam)}; the initial state is lost without noise")
+        return "chaotic-loss", {"kind": kind, "lambda1": lam, "law": law, "law_holds": c.get("law_holds")}
+    if kind == "blow-up":
+        b = dyn["blowup"]
+        bal = b.get("predicted_by_balance")
+        p = float(bal["growth"]) if bal else float(b["growth_exponent"])
+        facts.update(blowup_p=int(round(p)) if abs(p - round(p)) < 1e-6 else p, blowup_degree=b.get("degree"))
+        facts["loss"] = "no stable state: every start reaches infinity in finite time"
+        return "blow-up", {"kind": kind, "growth": p, "balance": bal and {"p": bal["p"], "c": bal["c"]},
+                           "degree": b.get("degree"), "escape_time_scaling": b.get("escape_time_scaling")}
+    return default, {"kind": kind}
 
 
 def _short_name(name: str) -> str:
@@ -1495,7 +1542,7 @@ def _targets_for(node: Dict) -> List[str]:
     # the oscillators of Module 11 and the ring of three repressors: the realizations in which the tutorial derives
     # phase locking
     oscill = "oscillators" in path or node["id"] == "repressilator"
-    if node["family"] != "dissipative":
+    if node["family"] != "dissipative" or DYNAMICS_DIR in path:
         return []
     if oscill:
         return ["phase-locking"]

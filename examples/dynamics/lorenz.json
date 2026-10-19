@@ -1,0 +1,39 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "lorenz",
+  "name": "Lorenz convection model",
+  "field": "fluid dynamics",
+  "question": "Does the Lorenz model of convection forget its initial state at its largest Lyapunov exponent, as the predictability law says?",
+  "assumptions": [
+    "the three-mode truncation of Rayleigh-Benard convection with sigma = 10, r = 28, b = 8/3",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "E. N. Lorenz, Deterministic nonperiodic flow, J. Atmos. Sci. 20, 130 (1963)",
+    "kind": "textbook model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "x, y, z",
+    "variables": [
+      "x",
+      "y",
+      "z"
+    ],
+    "scale": 10.0
+  },
+  "parameters": {
+    "s": 10.0,
+    "r": 28.0,
+    "b": 2.6666666666666665
+  },
+  "drift": {
+    "x": "s*(y - x)",
+    "y": "x*(r - z) - y",
+    "z": "x*y - b*z"
+  },
+  "noise": 0.0,
+  "closure": "three-mode Galerkin truncation of Rayleigh-Benard convection between free boundaries",
+  "observable": "the amplitude x of the convection roll"
+}

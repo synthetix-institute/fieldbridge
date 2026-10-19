@@ -1,0 +1,73 @@
+{
+  "command": "dynamics",
+  "implementation_sha256": "b678192fae8e4334ea1395cc241f45c3605831f1949024dd8c1e30d87d26249d",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Does a single-mode laser pumped above its second threshold forget its initial state at its largest Lyapunov exponent, as the predictability law says?",
+  "input_sha256": "8cc08ffd807baef7138bb645bddea34760d3ebc419cfa00728ad6b2d40f6efba",
+  "assumptions": [
+    "a homogeneously broadened single-mode laser in resonance, described by the field, the polarization and the inversion (Maxwell-Bloch equations)",
+    "time in units of the polarization decay time; cavity loss k = 3 and inversion decay g = 1 in these units (a bad cavity, k > g + 1)",
+    "pump r = 25 in units of the first lasing threshold, above the second threshold r_c = k(k + g + 3)/(k - g - 1) = 21",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "H. Haken, Analogy between higher instabilities in fluids and lasers, Phys. Lett. A 53, 77 (1975)",
+    "kind": "published model"
+  },
+  "chaos": {
+    "starts": 6,
+    "escaped": 0,
+    "lyapunov": {
+      "lambda1": [
+        0.48147559360652864,
+        0.4809068599673694,
+        0.47457699884405663,
+        0.4804416875466502,
+        0.48042650670243975,
+        0.48079233382801756
+      ],
+      "first_half": [
+        0.4853930319943808,
+        0.4816361856766159,
+        0.47274695642264547,
+        0.4725799889715761,
+        0.48065344254994974,
+        0.4748215562954516
+      ],
+      "median": 0.48061701068733387,
+      "spread": 0.00689859476247201
+    },
+    "attractor_size": 50.0477165715002,
+    "chaotic": true,
+    "predictability": {
+      "deltas": [
+        1e-09,
+        1e-07,
+        1e-05,
+        0.001
+      ],
+      "times": [
+        35.63140625000133,
+        26.722812500001254,
+        16.51953125,
+        7.539687499999911
+      ],
+      "slope": 2.0515732032546814,
+      "law": 0.986020980154503
+    },
+    "law_holds": true,
+    "verdict": "chaotic: the initial state is lost at lambda_1 = 0.4806 (0.693 bits per unit time); predictability slope x lambda_1 = 0.986"
+  },
+  "blowup": {
+    "verdict": "no start escapes during the transient of the chaos test"
+  }
+}
