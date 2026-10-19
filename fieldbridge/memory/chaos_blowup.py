@@ -185,10 +185,11 @@ def monomials(real: Realization):
 def balances(mono, max_combinations: int = 200000) -> List[Dict[str, object]]:
     """Dominant balances x_j ~ c_j tau^(-p_j) of a polynomial drift with a growing state. A subset S of the variables
     grows (p_j > 0); in each of their equations one monomial dominates, max_k m_k.p = p_i + 1, and
-    p_i c_i = sum of the dominant terms has a real solution with c_i != 0. The other variables stay bounded
-    (p_j = 0): their equations must stay integrable at the blow-up, max_k m_k.p < 1, and they enter the growing
-    equations as constants (taken as 1 in the coefficient equations, which decide only whether a real solution
-    exists)."""
+    p_i c_i = sum of the dominant terms has a real solution with c_i != 0. The other variables have no power growth
+    (p_j = 0): their right-hand sides grow at most as tau^(-1), max_k m_k.p <= 1. Below 1 they stay bounded; at 1
+    they grow as ln(1/tau), which changes the growing variables only by logarithmic factors (x' = x^3, y' = x^2 - y:
+    y ~ (1/2) ln(1/tau)); these are listed as "logarithmic". They enter the growing equations as constants (taken as
+    1 in the coefficient equations, which decide only whether a real solution exists)."""
     from scipy.optimize import least_squares
     eqs = mono["equations"]
     d = len(eqs)
@@ -217,8 +218,10 @@ def balances(mono, max_combinations: int = 200000) -> List[Dict[str, object]]:
                 p[list(S)] = q
                 if not all(max(m @ p for m, _ in eqs[i]) <= p[i] + 1 + 1e-9 for i in S):
                     continue
-                if not all(max(m @ p for m, _ in eqs[j]) < 1 - 1e-9 for j in range(d) if j not in S):
+                outside = {j: max(m @ p for m, _ in eqs[j]) for j in range(d) if j not in S}
+                if any(v > 1 + 1e-9 for v in outside.values()):
                     continue
+                log_growing = [int(j) for j, v in outside.items() if v > 1 - 1e-9]
                 key = tuple(np.round(p, 6))
                 if key in seen:
                     continue
@@ -243,8 +246,8 @@ def balances(mono, max_combinations: int = 200000) -> List[Dict[str, object]]:
                 seen.add(key)
                 c = np.zeros(d)
                 c[list(S)] = best
-                found.append({"p": p.tolist(), "growing": [int(i) for i in S], "growth": float(p.max()),
-                              "n_eff": float(1.0 + 1.0 / p.max()), "c": c.tolist()})
+                found.append({"p": p.tolist(), "growing": [int(i) for i in S], "logarithmic": log_growing,
+                              "growth": float(p.max()), "n_eff": float(1.0 + 1.0 / p.max()), "c": c.tolist()})
     found.sort(key=lambda b: -b["growth"])
     return found
 

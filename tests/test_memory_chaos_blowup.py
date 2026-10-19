@@ -52,6 +52,14 @@ def test_the_balance_of_the_dominant_terms_predicts_the_growth_where_the_degree_
     assert p1["escape_time_scaling"]["weighted"] and p1["escape_time_scaling"]["slope"] == pytest.approx(-1.0, abs=0.1)
 
 
+def test_a_variable_driven_at_the_rate_of_the_blow_up_grows_logarithmically_and_keeps_the_balance():
+    # x' = x^3 blows up as tau^(-1/2); y' = x^2 - y is driven as tau^(-1), so y grows as ln(1/tau) and has no power
+    bal = cb.balances(cb.monomials(model(["x", "y"], {"x": "x**3", "y": "x**2 - y"})))
+    assert bal and bal[0]["p"] == pytest.approx([0.5, 0.0]) and bal[0]["logarithmic"] == [1]
+    # a variable driven faster than tau^(-1) cannot stay without a power
+    assert all(b["p"][1] > 0 for b in cb.balances(cb.monomials(model(["x", "y"], {"x": "x**3", "y": "x**4 - y"}))))
+
+
 def test_growth_without_blow_up_and_no_escape_are_told_apart():
     lin = cb.blowup(model(["x"], {"x": "x"}), np.random.default_rng(2), starts=3)
     assert lin["verdict"].startswith("growth without blow-up")
