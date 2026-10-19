@@ -225,6 +225,9 @@ def test_the_guide_opens_on_a_first_visit_and_a_realization_from_a_list_opens_di
                    tmp_path)
     first, closed, reopened, _, opened, back = got
     assert not first["guide"]["hidden"] and first["guide"]["expanded"] == "true"
+    # the size of the collection is counted from the data, in the guide and under the map
+    note = first["guide"]["collection"]
+    assert note == first["guide"]["map"] and "mechanisms, realized in 14 models" in note and "is growing" in note
     assert closed["guide"]["hidden"] and closed["guide"]["expanded"] == "false"
     assert not reopened["guide"]["hidden"]
     # a realization chosen in a list is shown directly, not reached by walking the chain of changes

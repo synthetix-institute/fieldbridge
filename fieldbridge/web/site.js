@@ -407,6 +407,22 @@
     box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open, b)));
   }
   // ---------------------------------------------------------------------------------------- mechanisms in preparation
+  /** How many mechanisms the page holds, counted from its data: the classes that are not an outcome without the
+   *  mechanism, the realizations, the fields (a field and its subfields count once) and the mechanisms realized in
+   *  four or more fields. The collection grows, so the numbers are never written into the page by hand. */
+  function collection() {
+    const nodes = Object.values(S.nodes), absent = S.absent || {};
+    const mechanisms = Object.keys(S.classes).filter(c => !(c in absent));
+    const field = r => String(r.field || '').split(' (')[0];
+    const fields = new Set(nodes.filter(r => !r.universal).map(field));
+    const spread = mechanisms.filter(c => new Set(nodes.filter(r => r.class === c && !r.universal).map(field)).size >= 4);
+    const planned = (S.planned || []).length;
+    const text = `FieldBridge now holds ${mechanisms.length} mechanisms, realized in ${nodes.length} models from `
+      + `${fields.size} fields; ${spread.length} of them occur in four or more fields. The collection is growing: `
+      + `mechanisms, realizations and fields are added as they are derived${planned ? `, and ${planned} further `
+      + `mechanisms are in preparation` : ''}.`;
+    ['guide-collection', 'map-collection'].forEach(id => { $(id).textContent = text; });
+  }
   function planned() {
     const M = window.FieldBridgeMechanisms, items = S.planned || [];
     if (!items.length) { $('planned').hidden = true; return; }
@@ -437,7 +453,7 @@
       if (link) revealSection(link.getAttribute('href'));
     });
     $('expression').addEventListener('toggle', () => { if ($('expression').open) window.FieldBridgeMechanisms.draw(); });
-    definitions(); sequences(); guide(); materialChooser(); realizations(); memory(); planned();
+    definitions(); sequences(); guide(); collection(); materialChooser(); realizations(); memory(); planned();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);

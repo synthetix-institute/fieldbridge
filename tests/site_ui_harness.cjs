@@ -75,7 +75,8 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          sequences: {expanded: element('sequence-start').attributes['aria-expanded'],
                            menuHidden: element('sequence-menu').hidden, picker: element('sequence-picker').innerHTML,
                            title: element('sequence-title').textContent, playerHidden: element('sequence-player').hidden},
-                         guide: {hidden: element('guide').hidden, expanded: element('guide-toggle').attributes['aria-expanded']},
+                         guide: {hidden: element('guide').hidden, expanded: element('guide-toggle').attributes['aria-expanded'],
+                           collection: element('guide-collection').textContent, map: element('map-collection').textContent},
                          back: {hidden: element('back-to').hidden, text: element('back-to').textContent}});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
