@@ -366,6 +366,8 @@ def test_materials_without_a_stable_state_are_chaotic_or_blow_up_and_their_edges
     # x'' = x^2: the velocity grows as (t* - t)^-3, which the degree 2 does not give; n' = n^2/C: (t* - t)^-1
     assert N["cubic_fall"]["facts"]["blowup_p"] == 3 and N["cubic_fall"]["facts"]["blowup_degree"] == 2
     assert N["hyperbolic_growth"]["facts"]["blowup_p"] == 1
+    # n = 0 has no restoring direction: it is not reported as a stored state
+    assert N["hyperbolic_growth"]["facts"]["states"] == 0 and N["hyperbolic_growth"]["engine"]["states"] == []
     texts = {e["id"]: e["text"] for e in data["edges"]}
     assert "—" not in texts["fall_to_population"] and "−3" in texts["fall_to_population"]
 

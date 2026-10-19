@@ -469,7 +469,11 @@ def dissipative_record(node: Dict, rows: Dict[str, Dict]) -> Dict:
                                      or (lock is not None and not str(lock.get("status", "")).startswith("reached"))))
             or (klass == "single-state" and marginal and DYNAMICS_DIR in node["path"])):
         # no stable state and no locked cycle: chaos or escape decide the class (memory.chaos_blowup)
+        before = klass
         klass, dynamics = _no_state_class(real, nid, over, facts, klass)
+        if before == "single-state" and klass != before:  # the marginal point is not a stored state
+            states, counts, spectra = [], [], []
+            facts["states"], facts["states_text"] = 0, NUMBER_WORDS.get(0, "0")
     if klass == "neutral-cycles":  # the wording of the memory card (memory.discovery) once the cycles are neutral
         facts["loss"] = ("no stable state: a family of neutral cycles, with no restoring force on the amplitude or the "
                          "phase (Law 2)")
