@@ -183,50 +183,68 @@ def monomials(real: Realization):
 
 
 def balances(mono, max_combinations: int = 200000) -> List[Dict[str, object]]:
-    """Dominant balances x_j ~ c_j tau^(-p_j) of a polynomial drift with a growing state: in every equation one
-    monomial (with those of equal power) dominates, max_k m_k.p = p_i + 1, and p_i c_i = sum of the dominant terms
-    has a real solution with c_j != 0 where p_j > 0."""
+    """Dominant balances x_j ~ c_j tau^(-p_j) of a polynomial drift with a growing state. A subset S of the variables
+    grows (p_j > 0); in each of their equations one monomial dominates, max_k m_k.p = p_i + 1, and
+    p_i c_i = sum of the dominant terms has a real solution with c_i != 0. The other variables stay bounded
+    (p_j = 0): their equations must stay integrable at the blow-up, max_k m_k.p < 1, and they enter the growing
+    equations as constants (taken as 1 in the coefficient equations, which decide only whether a real solution
+    exists)."""
     from scipy.optimize import least_squares
     eqs = mono["equations"]
     d = len(eqs)
-    found, seen = [], set()
-    choices = [range(len(e)) for e in eqs]
-    total = int(np.prod([max(1, len(e)) for e in eqs]))
-    if total > max_combinations or any(len(e) == 0 for e in eqs):
+    if any(len(e) == 0 for e in eqs):
         return []
-    for pick in itertools.product(*choices):
-        A = np.array([eqs[i][k][0] for i, k in enumerate(pick)]) - np.eye(d)
-        try:
-            p = np.linalg.solve(A, np.ones(d))
-        except np.linalg.LinAlgError:
-            continue
-        if not np.all(np.isfinite(p)) or p.max() <= 1e-9:
-            continue
-        ok = all(max(m @ p for m, _ in eqs[i]) <= p[i] + 1 + 1e-9 for i in range(d))
-        if not ok:
-            continue
-        key = tuple(np.round(p, 6))
-        if key in seen:
-            continue
-        dom = [[(m, a) for m, a in eqs[i] if abs(m @ p - (p[i] + 1)) < 1e-9] for i in range(d)]
+    found, seen = [], set()
+    for size in range(1, d + 1):
+        for S in itertools.combinations(range(d), size):
+            choices = [range(len(eqs[i])) for i in S]
+            if int(np.prod([len(eqs[i]) for i in S])) > max_combinations:
+                continue
+            for pick in itertools.product(*choices):
+                # unknowns: p_i for i in S; p_j = 0 outside S
+                A = np.zeros((size, size))
+                for r, (i, k) in enumerate(zip(S, pick)):
+                    m = eqs[i][k][0]
+                    for c_, j in enumerate(S):
+                        A[r, c_] = m[j] - (1.0 if j == i else 0.0)
+                try:
+                    q = np.linalg.solve(A, np.ones(size))
+                except np.linalg.LinAlgError:
+                    continue
+                if not np.all(np.isfinite(q)) or np.any(q <= 1e-9):
+                    continue
+                p = np.zeros(d)
+                p[list(S)] = q
+                if not all(max(m @ p for m, _ in eqs[i]) <= p[i] + 1 + 1e-9 for i in S):
+                    continue
+                if not all(max(m @ p for m, _ in eqs[j]) < 1 - 1e-9 for j in range(d) if j not in S):
+                    continue
+                key = tuple(np.round(p, 6))
+                if key in seen:
+                    continue
+                dom = {i: [(m, a) for m, a in eqs[i] if abs(m @ p - (p[i] + 1)) < 1e-9] for i in S}
 
-        def resid(c):
-            return [p[i] * c[i] - sum(a * np.prod(np.abs(c) ** m * np.sign(c) ** m) for m, a in dom[i]) for i in range(d)]
+                def resid(cS):
+                    c = np.ones(d)
+                    c[list(S)] = cS
+                    return [p[i] * c[i] - sum(a * np.prod(np.abs(c) ** m * np.sign(c) ** m) for m, a in dom[i]) for i in S]
 
-        rng = np.random.default_rng(0)
-        best = None
-        for _ in range(48):
-            # starts spread over three decades of magnitude: the trivial solution c = 0 attracts small starts
-            c0 = rng.choice([-1.0, 1.0], d) * 10.0 ** rng.uniform(-1, 2, d)
-            sol = least_squares(resid, c0, xtol=1e-12, ftol=1e-12)
-            if np.max(np.abs(sol.fun)) < 1e-8 and np.all(np.abs(sol.x[p > 1e-9]) > 1e-6):
-                best = sol.x
-                break
-        if best is None:
-            continue
-        seen.add(key)
-        found.append({"p": p.tolist(), "growth": float(p.max()), "n_eff": float(1.0 + 1.0 / p.max()),
-                      "c": best.tolist()})
+                rng = np.random.default_rng(0)
+                best = None
+                for _ in range(48):
+                    # starts spread over three decades of magnitude: the trivial solution c = 0 attracts small starts
+                    c0 = rng.choice([-1.0, 1.0], size) * 10.0 ** rng.uniform(-1, 2, size)
+                    sol = least_squares(resid, c0, xtol=1e-12, ftol=1e-12)
+                    if np.max(np.abs(sol.fun)) < 1e-8 and np.all(np.abs(sol.x) > 1e-6):
+                        best = sol.x
+                        break
+                if best is None:
+                    continue
+                seen.add(key)
+                c = np.zeros(d)
+                c[list(S)] = best
+                found.append({"p": p.tolist(), "growing": [int(i) for i in S], "growth": float(p.max()),
+                              "n_eff": float(1.0 + 1.0 / p.max()), "c": c.tolist()})
     found.sort(key=lambda b: -b["growth"])
     return found
 
