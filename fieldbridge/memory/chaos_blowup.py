@@ -277,12 +277,6 @@ def blowup(real: Realization, rng, starts: int = 8, over=None, dt: Optional[floa
     if n <= 1.0 + tol:
         out["verdict"] = f"growth without blow-up in finite time (exponent {n:.3g})"
         return out
-    k = int(np.argmin([r["time"] if r["escaped"] else np.inf for r in runs]))
-    base = 1e2 * x0[k] / np.linalg.norm(x0[k])
-    times = [escape(real, s * base, dt=dt, over=over)["time"] for s in (1.0, 2.0, 4.0, 8.0)]
-    if all(t is not None for t in times):
-        slope = float(np.polyfit(np.log([1, 2, 4, 8]), np.log(times), 1)[0])
-        out["escape_time_scaling"] = {"times": times, "slope": slope, "from_n_eff": 1.0 - n}
     p_meas = 1.0 / (n - 1.0)
     out["growth_exponent"] = p_meas
     match = None
@@ -295,6 +289,22 @@ def blowup(real: Realization, rng, starts: int = 8, over=None, dt: Optional[floa
     if mono:
         deg = int(max(m.sum() for e in mono["equations"] for m, _ in e))
         out["degree"] = deg
+    # escape time of scaled starts. The dominant part of the drift is unchanged by x_j -> s^(p_j) x_j, t -> t / s, so
+    # starts scaled with the weights p of the balance escape after a time proportional to 1/s; without a balance, a
+    # uniform scaling of the start and the measured exponent give the slope 1 - n_eff instead.
+    k = int(np.argmin([r["time"] if r["escaped"] else np.inf for r in runs]))
+    base = x0[k] / np.linalg.norm(x0[k])
+    if match is not None:
+        w = np.clip(np.array(match["p"]), 0.0, None)
+        starts_s = [np.sign(base) * np.maximum(np.abs(base), 0.1) * (10.0 * s) ** w for s in (1.0, 2.0, 4.0, 8.0)]
+        expected = -1.0
+    else:
+        starts_s = [1e2 * s * base for s in (1.0, 2.0, 4.0, 8.0)]
+        expected = 1.0 - n
+    times = [escape(real, x, dt=dt, over=over)["time"] for x in starts_s]
+    if all(t is not None for t in times):
+        slope = float(np.polyfit(np.log([1, 2, 4, 8]), np.log(times), 1)[0])
+        out["escape_time_scaling"] = {"weighted": match is not None, "times": times, "slope": slope, "expected": expected}
     out["verdict"] = (f"blow-up in finite time: |x| ~ (t* - t)^(-{p_meas:.3g})"
                       + (f", predicted by the balance p = {match['growth']:.3g}" if match else ", no balance predicts it"))
     return out

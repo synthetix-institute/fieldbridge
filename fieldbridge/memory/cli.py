@@ -7,6 +7,7 @@
   phase    SPEC                memory in the phase of an oscillating realization (phase response, retention, writing)
   regimes                      information about a write for kappa > 0, = 0 and < 0
   field    SPEC                memory in a field: conservation and dimension set the law of loss
+  dynamics SPEC                chaotic loss of the initial state and blow-up in finite time, with their laws
   hysterons SPEC               return to a turning point of a slow drive: signs of couplings and drive against subloops
   counterpart SPEC             the balanced counterpart of a hysteron network and the states measured against it
   gallery                      every example: cards, figures and an HTML gallery (index.html)
@@ -492,6 +493,37 @@ def cmd_noise_ratio(args) -> int:
     _write(Path(args.out_dir), "noise_ratio", report, nr.markdown(rep) + f"\n{BOUNDARY}\n")
     print(json.dumps({"out_dir": args.out_dir, "first_order": rep["first_order"],
                       "constants": {f"{r['gamma']:g}": round(r["constant"], 4) for r in rep["rows"]}}, indent=2))
+    return 0
+
+
+def cmd_dynamics(args) -> int:
+    """memory dynamics: chaotic loss of the initial state and blow-up in finite time, each with its law
+    (fieldbridge.memory.chaos_blowup)."""
+    import numpy as np
+    from . import chaos_blowup as cb
+    from .spec import load
+    spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
+    real = load(spec)
+    rng = np.random.default_rng(args.seed)
+    ch = cb.chaos(real, rng, starts=args.starts)
+    bu = cb.blowup(real, rng, starts=args.starts)
+    report = {"command": "dynamics", **_provenance(spec), "chaos": ch, "blowup": bu}
+    lines = [f"# Chaos and blow-up of {spec.get('name', 'the model')}", "", str(spec.get("question", "")), "",
+             f"- chaos: {ch.get('verdict')}"]
+    pr = ch.get("predictability") or {}
+    if pr.get("law") is not None:
+        lines.append(f"  - predictability: separation times {['%.3g' % t if t is not None else '-' for t in pr['times']]} "
+                     f"at delta = {pr['deltas']}; slope x lambda_1 = {pr['law']:.3f} (the law gives 1)")
+    lines.append(f"- blow-up: {bu.get('verdict')}")
+    if bu.get("balances"):
+        lines.append("  - dominant balances (growth exponents p): "
+                     + ", ".join(f"{b['growth']:.3g}" for b in bu["balances"]))
+    sc = bu.get("escape_time_scaling")
+    if sc:
+        lines.append(f"  - escape time of {'weighted' if sc['weighted'] else 'uniformly'} scaled starts: slope {sc['slope']:.3f} (expected "
+                     f"{sc['expected']:.3f})")
+    _write(Path(args.out_dir), "dynamics", report, "\n".join(lines) + f"\n\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "chaos": ch.get("verdict"), "blowup": bu.get("verdict")}, indent=2))
     return 0
 
 
@@ -1247,6 +1279,11 @@ def add_parser(sub) -> None:
                    help="D_s|a3|, small enough that the choice is made near the bifurcation (default 5e-4).")
     p.add_argument("--trajectories", type=int, default=400, help="Sweeps per side of the bias.")
     p.set_defaults(func=cmd_noise_ratio)
+    p = msub.add_parser("dynamics", help="Chaotic loss of the initial state (predictability law) and blow-up in "
+                                         "finite time (exponent from the dominant balance).")
+    common(p)
+    p.add_argument("--starts", type=int, default=6, help="Random starts for each test.")
+    p.set_defaults(func=cmd_dynamics)
     p = msub.add_parser("field", help="Memory in a field: conservation and dimension set the law of loss.")
     common(p, spec_arg=False)
     p.add_argument("spec", help="Field specification (examples/memory/fields/*.json).")

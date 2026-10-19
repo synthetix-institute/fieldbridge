@@ -1,0 +1,31 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "painleve_first",
+  "name": "x'' = x^2, written as a first-order system",
+  "field": "nonlinear dynamics",
+  "question": "With what exponent does x'' = x^2 blow up in finite time, and does the degree of the equation predict it?",
+  "assumptions": [
+    "x' = y, y' = x^2 (the autonomous part of the first Painleve equation)",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "dominant balance: S. Kovalevskaya, Acta Math. 12, 177 (1889); A. Goriely and C. Hyde, J. Differential Equations 161, 422 (2000)",
+    "kind": "textbook model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "x, y",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1.0
+  },
+  "parameters": {},
+  "drift": {
+    "x": "y",
+    "y": "x**2"
+  },
+  "noise": 0.0
+}

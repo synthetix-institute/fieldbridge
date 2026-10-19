@@ -41,13 +41,15 @@ def test_a_damped_oscillator_is_not_chaotic():
 def test_the_balance_of_the_dominant_terms_predicts_the_growth_where_the_degree_does_not():
     quad = cb.blowup(model(["x"], {"x": "x**2 + 1"}), np.random.default_rng(1), starts=3)
     assert abs(quad["growth_exponent"] - 1.0) < 0.05 and quad["predicted_by_balance"]["growth"] == pytest.approx(1.0)
-    assert quad["escape_time_scaling"]["slope"] == pytest.approx(-1.0, abs=0.05)
+    assert quad["escape_time_scaling"]["weighted"] and quad["escape_time_scaling"]["slope"] == pytest.approx(-1.0, abs=0.05)
     p1 = cb.blowup(model(["x", "y"], {"x": "y", "y": "x**2"}), np.random.default_rng(1), starts=3)
     assert p1["degree"] == 2
     assert abs(p1["growth_exponent"] - 3.0) < 0.3                       # not 1/(2 - 1) = 1
     assert p1["predicted_by_balance"]["p"] == pytest.approx([2.0, 3.0])  # x ~ tau^-2, y ~ tau^-3
     assert p1["predicted_by_balance"]["c"] == pytest.approx([6.0, 12.0], rel=1e-4)
-    assert p1["escape_time_scaling"]["slope"] == pytest.approx(-1 / 3, abs=0.05)
+    # starts scaled with the weights (2, 3) escape after a time proportional to 1/s; the subdominant term still
+    # shifts the slope by a few per cent at these amplitudes
+    assert p1["escape_time_scaling"]["weighted"] and p1["escape_time_scaling"]["slope"] == pytest.approx(-1.0, abs=0.1)
 
 
 def test_growth_without_blow_up_and_no_escape_are_told_apart():
