@@ -506,7 +506,9 @@ def cmd_dynamics(args) -> int:
     real = load(spec)
     rng = np.random.default_rng(args.seed)
     ch = cb.chaos(real, rng, starts=args.starts)
-    bu = cb.blowup(real, rng, starts=args.starts)
+    # the blow-up test integrates each start until it escapes; it runs when a start escaped in the transient
+    bu = (cb.blowup(real, rng, starts=args.starts) if ch.get("escaped")
+          else {"verdict": "no start escapes during the transient of the chaos test"})
     report = {"command": "dynamics", **_provenance(spec), "chaos": ch, "blowup": bu}
     lines = [f"# Chaos and blow-up of {spec.get('name', 'the model')}", "", str(spec.get("question", "")), "",
              f"- chaos: {ch.get('verdict')}"]

@@ -1,0 +1,33 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "cubic_fall",
+  "name": "particle falling in the cubic potential V = -x^3/3",
+  "field": "classical mechanics",
+  "question": "With what exponent does a particle in the potential V = -x^3/3 reach infinity in finite time, and does the degree of its equation of motion predict it?",
+  "assumptions": [
+    "a unit mass in the potential V = -x^3/3, so that x'' = x^2, written as x' = y, y' = x^2",
+    "no friction and no noise"
+  ],
+  "provenance": {
+    "source": "dominant balance: S. Kowalevski, Acta Math. 12, 177 (1889); A. Goriely and C. Hyde, J. Differential Equations 161, 422 (2000)",
+    "kind": "textbook model"
+  },
+  "carrier": {
+    "kind": "euclid",
+    "name": "x, y",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1.0
+  },
+  "parameters": {},
+  "drift": {
+    "x": "y",
+    "y": "x**2"
+  },
+  "noise": 0.0,
+  "closure": "no friction",
+  "observable": "the position x"
+}

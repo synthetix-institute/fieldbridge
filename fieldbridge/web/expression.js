@@ -487,6 +487,8 @@
       case 'single-state': return 'Every preparation relaxes to one state: nothing of the preparation is kept.';
       case 'oscillation': return 'The preparations settle on a limit cycle. Its phase is a flat direction; a periodic drive can fix it.';
       case 'neutral-cycles': return 'A conserved quantity fills the plane with closed orbits: no orbit attracts its neighbours, and no drive-independent phase is kept.';
+      case 'chaotic-loss': return 'The preparations settle on a chaotic attractor: two that differ by δ separate as δ e^(λ₁t), so the initial state is lost without noise after the predictability time ln(Δ/δ)/λ₁.';
+      case 'blow-up': return 'Every start reaches infinity at a finite time t*, as (t* − t)^(−p); the balance of the dominant terms of the drift fixes p.';
       default: return '';
     }
   }

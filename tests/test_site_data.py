@@ -21,7 +21,8 @@ FACTS = {
                 "cause", "couplings", "tunnelling", "energy_difference", "pairing_amplitude", "single_particle_energy",
                 "field_x", "field_z", "rabi_frequency", "detuning", "ising_coupling_g", "transverse_field_h"},
     "dissipative": {"states", "states_text", "loss", "write_point", "write_param", "write_kind", "scale_control",
-                    "operating_param", "operating_value"}
+                    "operating_param", "operating_value", "lyapunov", "lyapunov_bits", "predictability", "blowup_p",
+                    "blowup_degree"}
                    | {f"{p}_{k}" for p in ("sym", "thr", "lock")
                       for k in ("status", "word", "class", "obstruction", "law", "law_err")}
                    | {"lock_ratio", "lock_K", "lock_period", "lock_width", "lock_width_err"},
@@ -352,6 +353,21 @@ def test_a_small_site_builds_and_its_sequences_are_complete(tmp_path):
     assert 'id="material-mechanism"' in html
     assert 'id="material-field"' in html
     assert 'id="material-search"' in html
+
+
+def test_materials_without_a_stable_state_are_chaotic_or_blow_up_and_their_edges_are_filled():
+    only = ["lorenz", "lorenz_below", "cubic_fall", "hyperbolic_growth"]
+    data = sd.build(only=only, log=lambda *a: None)
+    N = data["nodes"]
+    assert N["lorenz"]["class"] == "chaotic-loss" and N["lorenz_below"]["class"] == "single-state"
+    assert abs(N["lorenz"]["facts"]["lyapunov"] - 0.906) < 0.05                    # Sprott (2003): 0.9056
+    assert abs(N["lorenz"]["facts"]["predictability"] - 1.0) < 0.2
+    assert N["cubic_fall"]["class"] == N["hyperbolic_growth"]["class"] == "blow-up"
+    # x'' = x^2: the velocity grows as (t* - t)^-3, which the degree 2 does not give; n' = n^2/C: (t* - t)^-1
+    assert N["cubic_fall"]["facts"]["blowup_p"] == 3 and N["cubic_fall"]["facts"]["blowup_degree"] == 2
+    assert N["hyperbolic_growth"]["facts"]["blowup_p"] == 1
+    texts = {e["id"]: e["text"] for e in data["edges"]}
+    assert "—" not in texts["fall_to_population"] and "−3" in texts["fall_to_population"]
 
 
 def test_computation_record_labels_linearization_separately_from_global_memory():

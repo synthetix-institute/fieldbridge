@@ -1,0 +1,34 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "kind": "equations",
+  "id": "hyperbolic_growth",
+  "name": "population whose growth rate rises with its size (von Foerster)",
+  "field": "demography",
+  "question": "With what exponent does a population whose per-capita growth rate is proportional to its size reach infinity in finite time?",
+  "assumptions": [
+    "the per-capita growth rate n'/n is proportional to n: von Foerster, Mora and Amiot fitted N = 1.79 x 10^11 / (2026.87 - t)^0.99 persons to the world population, and the exponent 0.99 is taken as 1",
+    "n in units of 10^9 persons and t in years, so that their constant becomes C = 179",
+    "no limit to resources and no noise"
+  ],
+  "provenance": {
+    "source": "H. von Foerster, P. M. Mora and L. W. Amiot, Doomsday: Friday, 13 November, A.D. 2026, Science 132, 1291 (1960)",
+    "kind": "published model"
+  },
+  "carrier": {
+    "kind": "orthant",
+    "name": "population n",
+    "variables": [
+      "n"
+    ],
+    "scale": 6.0
+  },
+  "parameters": {
+    "C": 179.0
+  },
+  "drift": {
+    "n": "n**2 / C"
+  },
+  "noise": 0.0,
+  "closure": "growth limited by nothing but the size of the population",
+  "observable": "the population n"
+}

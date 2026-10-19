@@ -1,0 +1,85 @@
+{
+  "command": "dynamics",
+  "implementation_sha256": "b678192fae8e4334ea1395cc241f45c3605831f1949024dd8c1e30d87d26249d",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "With what exponent does a particle in the potential V = -x^3/3 reach infinity in finite time, and does the degree of its equation of motion predict it?",
+  "input_sha256": "9d85938da5c1e202a7145db7baafc88dc150262ddea97fac8b9108d771d24d14",
+  "assumptions": [
+    "a unit mass in the potential V = -x^3/3, so that x'' = x^2, written as x' = y, y' = x^2",
+    "no friction and no noise"
+  ],
+  "provenance": {
+    "source": "dominant balance: S. Kowalevski, Acta Math. 12, 177 (1889); A. Goriely and C. Hyde, J. Differential Equations 161, 422 (2000)",
+    "kind": "textbook model"
+  },
+  "chaos": {
+    "starts": 6,
+    "escaped": 6,
+    "chaotic": false,
+    "verdict": "every start escapes"
+  },
+  "blowup": {
+    "escaped": 6,
+    "starts": 6,
+    "balances": [
+      {
+        "p": [
+          2.0,
+          3.0
+        ],
+        "growing": [
+          0,
+          1
+        ],
+        "logarithmic": [],
+        "growth": 3.0,
+        "n_eff": 1.3333333333333333,
+        "c": [
+          6.000000000000148,
+          12.000000000000297
+        ]
+      }
+    ],
+    "n_eff": 1.333624799493836,
+    "growth_exponent": 2.9973790962697184,
+    "predicted_by_balance": {
+      "p": [
+        2.0,
+        3.0
+      ],
+      "growing": [
+        0,
+        1
+      ],
+      "logarithmic": [],
+      "growth": 3.0,
+      "n_eff": 1.3333333333333333,
+      "c": [
+        6.000000000000148,
+        12.000000000000297
+      ]
+    },
+    "degree": 2,
+    "escape_time_scaling": {
+      "weighted": true,
+      "times": [
+        0.27111864563774424,
+        0.13309242259820167,
+        0.06408307114148816,
+        0.029585152592695323
+      ],
+      "slope": -1.0642350522558217,
+      "expected": -1.0
+    },
+    "verdict": "blow-up in finite time: |x| ~ (t* - t)^(-3), predicted by the balance p = 3"
+  }
+}

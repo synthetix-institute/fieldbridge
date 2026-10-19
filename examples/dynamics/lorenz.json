@@ -33,5 +33,7 @@
     "y": "x*(r - z) - y",
     "z": "x*y - b*z"
   },
-  "noise": 0.0
+  "noise": 0.0,
+  "closure": "three-mode Galerkin truncation of Rayleigh-Benard convection between free boundaries",
+  "observable": "the amplitude x of the convection roll"
 }

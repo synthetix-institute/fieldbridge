@@ -1,0 +1,92 @@
+{
+  "command": "dynamics",
+  "implementation_sha256": "b678192fae8e4334ea1395cc241f45c3605831f1949024dd8c1e30d87d26249d",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "With what exponent does a population whose per-capita growth rate is proportional to its size reach infinity in finite time?",
+  "input_sha256": "9dfc685aae462168f6b11f5674027d65902b3d5040b26b89223a551b0acbe244",
+  "assumptions": [
+    "the per-capita growth rate n'/n is proportional to n: von Foerster, Mora and Amiot fitted N = 1.79 x 10^11 / (2026.87 - t)^0.99 persons to the world population, and the exponent 0.99 is taken as 1",
+    "n in units of 10^9 persons and t in years, so that their constant becomes C = 179",
+    "no limit to resources and no noise"
+  ],
+  "provenance": {
+    "source": "H. von Foerster, P. M. Mora and L. W. Amiot, Doomsday: Friday, 13 November, A.D. 2026, Science 132, 1291 (1960)",
+    "kind": "published model"
+  },
+  "chaos": {
+    "starts": 6,
+    "escaped": 4,
+    "lyapunov": {
+      "lambda1": [
+        9.360746894536786e-05,
+        0.000557790519653992
+      ],
+      "first_half": [
+        9.19649036925413e-05,
+        0.0004998744853021556
+      ],
+      "median": 0.00032569899429967994,
+      "spread": 0.0004641830507086241
+    },
+    "chaotic": false,
+    "verdict": "not chaotic"
+  },
+  "blowup": {
+    "escaped": 6,
+    "starts": 6,
+    "balances": [
+      {
+        "p": [
+          1.0
+        ],
+        "growing": [
+          0
+        ],
+        "logarithmic": [],
+        "growth": 1.0,
+        "n_eff": 2.0,
+        "c": [
+          179.00000000000003
+        ]
+      }
+    ],
+    "n_eff": 2.0,
+    "growth_exponent": 1.0,
+    "predicted_by_balance": {
+      "p": [
+        1.0
+      ],
+      "growing": [
+        0
+      ],
+      "logarithmic": [],
+      "growth": 1.0,
+      "n_eff": 2.0,
+      "c": [
+        179.00000000000003
+      ]
+    },
+    "degree": 2,
+    "escape_time_scaling": {
+      "weighted": true,
+      "times": [
+        17.89999821592089,
+        8.94999821592089,
+        4.474998224842764,
+        2.2374982203703526
+      ],
+      "slope": -1.000000329574113,
+      "expected": -1.0
+    },
+    "verdict": "blow-up in finite time: |x| ~ (t* - t)^(-1), predicted by the balance p = 1"
+  }
+}

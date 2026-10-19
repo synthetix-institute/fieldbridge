@@ -41,6 +41,8 @@ This page is written from [`fieldbridge/site_references.py`](../fieldbridge/site
 | [Neutral cycles](#neutral-cycles) | dI/dt = 0 | [Glossary, Derivations across fields](tutorial/memory_glossary.md#derivations-across-fields) | [Module 11, §6](tutorial/26_memory_phase_locking.md#6-where-the-derivation-stops) | Lotka, 1920; Volterra, 1926 |
 | [Exponential loss](#exponential-loss) | SNR ∝ e<sup>−2Mκ<sub>0</sub>t</sup> | [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer) | [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write) | Hohenberg and Halperin, 1977; Allen and Cahn, 1979 |
 | [Power-law loss](#power-law-loss) | SNR ∝ t<sup>−d/2−n</sup> | [Glossary, Structure and transfer](tutorial/memory_glossary.md#structure-and-transfer) | [Module 8, §3](tutorial/22_memory_time.md#3-fields-conservation-dimension-and-the-shape-of-the-write) | Fick, 1855; Cahn, 1961; Hohenberg and Halperin, 1977 |
+| [Chaotic loss of the initial state](#chaotic-loss-of-the-initial-state) | T(δ) = λ<sub>1</sub><sup>−1</sup> ln(Δ/δ) | [Module 16, §1](tutorial/36_memory_chaos_and_blow_up.md#1-two-outcomes-without-a-stable-state) | [Module 16, §2](tutorial/36_memory_chaos_and_blow_up.md#2-chaotic-loss-of-the-initial-state) | Lorenz, 1963; Lorenz, 1969; Haken, 1975; Benettin et al., 1980 |
+| [Blow-up in finite time](#blow-up-in-finite-time) | x<sub>j</sub> ≈ c<sub>j</sub>(t* − t)<sup>−p<sub>j</sub></sup> | [Module 16, §1](tutorial/36_memory_chaos_and_blow_up.md#1-two-outcomes-without-a-stable-state) | [Module 16, §3](tutorial/36_memory_chaos_and_blow_up.md#3-blow-up-in-finite-time) | Kowalevski, 1889; von Foerster et al., 1960; Goriely and Hyde, 2000 |
 | [Stochastic calculus convention](#stochastic-calculus-convention) | Itô μ − σ<sup>2</sup>/2, Stratonovich μ | [Chapter 10](tutorial/10_stochastic_construction.md) | [Chapter 10](tutorial/10_stochastic_construction.md#the-convention-changes-a-measurable-consequence) | Itô, 1944; Wong and Zakai, 1965; Stratonovich, 1966; van Kampen, 1981 |
 
 ## Mechanisms of the map
@@ -456,6 +458,29 @@ Canonical form: SNR ∝ t<sup>−d/2−n</sup>. Each mode of the field relaxes a
   - A. Fick, Ann. Phys. 170, 59 (1855), [doi:10.1002/andp.18551700105](https://doi.org/10.1002/andp.18551700105): the diffusion of a conserved density.
   - J. W. Cahn, Acta Metall. 9, 795 (1961), [doi:10.1016/0001-6160(61)90182-1](https://doi.org/10.1016/0001-6160(61)90182-1): the relaxation of a conserved composition.
   - P. C. Hohenberg and B. I. Halperin, Rev. Mod. Phys. 49, 435 (1977), [doi:10.1103/RevModPhys.49.435](https://doi.org/10.1103/RevModPhys.49.435): relaxational dynamics without (Model A) and with (Model B) conservation.
+
+### Chaotic loss of the initial state
+
+Canonical form: T(δ) = λ<sub>1</sub><sup>−1</sup> ln(Δ/δ). On a chaotic attractor of size Δ two preparations that differ by δ separate as δe<sup>λ<sub>1</sub>t</sup>: a preparation known to the resolution δ is distinguished from its neighbours only for the time T(δ), and the initial state is lost without noise at λ<sub>1</sub>/ln 2 bits per unit time.
+
+- **Defined:** [Module 16, §1](tutorial/36_memory_chaos_and_blow_up.md#1-two-outcomes-without-a-stable-state), a material without a stored state that loses its initial state without noise, at the largest Lyapunov exponent.
+- **Derived:** [Module 16, §2](tutorial/36_memory_chaos_and_blow_up.md#2-chaotic-loss-of-the-initial-state), the Lorenz model of convection and a single-mode laser above its second threshold: λ₁ and the predictability law. Code: `memory.chaos_blowup.chaos`, `lyapunov`, `predictability`.
+- **Original publications:**
+  - E. N. Lorenz, J. Atmos. Sci. 20, 130 (1963), [doi:10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2](https://doi.org/10.1175/1520-0469(1963)020<0130:DNF>2.0.CO;2): the three-mode model of convection and its aperiodic motion.
+  - E. N. Lorenz, Tellus 21, 289 (1969), [doi:10.1111/j.2153-3490.1969.tb00444.x](https://doi.org/10.1111/j.2153-3490.1969.tb00444.x): the predictability time of a flow and its growth with the resolution of the initial state.
+  - H. Haken, Phys. Lett. A 53, 77 (1975), [doi:10.1016/0375-9601(75)90353-9](https://doi.org/10.1016/0375-9601(75)90353-9): the single-mode laser obeys the Lorenz equations.
+  - G. Benettin, L. Galgani, A. Giorgilli and J.-M. Strelcyn, Meccanica 15, 9 (1980), [doi:10.1007/BF02128236](https://doi.org/10.1007/BF02128236): the measurement of Lyapunov exponents by renormalized neighbouring trajectories.
+
+### Blow-up in finite time
+
+Canonical form: x<sub>j</sub> ≈ c<sub>j</sub>(t* − t)<sup>−p<sub>j</sub></sup>. A state of a polynomial drift reaches infinity at a finite time t*. In every equation the dominant terms balance, max<sub>k</sub> m<sub>k</sub>·p = p<sub>i</sub> + 1, which fixes the exponents; the degree of the drift gives them only when the escape runs along its terms of highest degree.
+
+- **Defined:** [Module 16, §1](tutorial/36_memory_chaos_and_blow_up.md#1-two-outcomes-without-a-stable-state), a state that reaches infinity at a finite time, with exponents fixed by the dominant balance.
+- **Derived:** [Module 16, §3](tutorial/36_memory_chaos_and_blow_up.md#3-blow-up-in-finite-time), a particle in a cubic potential and hyperbolic population growth: the measured exponents against the balances and the degree. Code: `memory.chaos_blowup.blowup`, `balances`, `escape`.
+- **Original publications:**
+  - S. Kowalevski, Acta Math. 12, 177 (1889), [doi:10.1007/BF02592182](https://doi.org/10.1007/BF02592182): solutions expanded about a movable singularity, x ~ c (t* - t)^-p.
+  - H. von Foerster, P. M. Mora and L. W. Amiot, Science 132, 1291 (1960), [doi:10.1126/science.132.3436.1291](https://doi.org/10.1126/science.132.3436.1291): hyperbolic growth of the world population, with a blow-up date.
+  - A. Goriely and C. Hyde, J. Differential Equations 161, 422 (2000), [doi:10.1006/jdeq.1999.3688](https://doi.org/10.1006/jdeq.1999.3688): the dominant balances of a polynomial vector field and finite-time blow-up.
 
 ### Stochastic calculus convention
 

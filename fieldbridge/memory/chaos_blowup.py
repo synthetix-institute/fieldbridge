@@ -119,15 +119,28 @@ def predictability(real: Realization, points: np.ndarray, lam: float, size: floa
 
 
 def chaos(real: Realization, rng, starts: int = 6, transient: float = 300.0, T: float = 1500.0, span: float = 640.0,
-          dt: Optional[float] = None, over=None, tol: float = 0.2) -> Dict[str, object]:
+          dt: Optional[float] = None, over=None, tol: float = 0.2, folds: float = 10.0) -> Dict[str, object]:
     """Whether the realization is chaotic, its lambda_1, and the predictability law. Chaotic: lambda_1 > 0 at every
-    start, with a spread below half its value; the law holds if slope * lambda_1 is within tol of 1."""
+    start, with a spread below half its value, the same value over the first half of the run to within a quarter, and
+    at least `folds` e-foldings over the run. The last two exclude the separation of neighbouring neutral cycles, which
+    grows linearly, so that its finite-time exponent ln(t)/t is positive and halves when the run doubles. The law holds
+    if slope * lambda_1 is within tol of 1."""
     dt = dt or min(0.01, real.dt)
     x0 = real.carrier.sample(rng, starts)
     pts = settle(real, x0, transient, dt, over)
     out: Dict[str, object] = {"starts": starts, "escaped": int(starts - len(pts))}
     if not len(pts):
         out.update(chaotic=False, verdict="every start escapes"); return out
+    ly = lyapunov(real, pts, T, dt, over=over)
+    out["lyapunov"] = ly
+    lam = ly.get("median")
+    half = None if ly.get("first_half") is None else float(np.median(ly["first_half"]))
+    chaotic = bool(lam is not None and lam > 0 and min(ly["lambda1"]) > 0 and ly["spread"] < 0.5 * lam
+                   and half is not None and abs(half - lam) < 0.25 * lam and lam * T >= folds)
+    if not chaotic:
+        out["chaotic"] = False
+        out["verdict"] = "not chaotic" if lam is not None else "the exponent could not be measured"
+        return out
     sample = [pts[0]]
     F = _F(real, over)
     x = pts[:1].copy()
@@ -138,13 +151,9 @@ def chaos(real: Realization, rng, starts: int = 6, transient: float = 300.0, T: 
             sample.append(x[0].copy())
     sample = np.array(sample)
     size = float(np.linalg.norm(sample.max(0) - sample.min(0)))
-    ly = lyapunov(real, pts, T, dt, over=over)
-    out.update(lyapunov=ly, attractor_size=size)
-    lam = ly.get("median")
-    chaotic = bool(lam is not None and lam > 0 and min(ly["lambda1"]) > 0 and ly["spread"] < 0.5 * lam and size > 0)
-    out["chaotic"] = chaotic
-    if not chaotic:
-        out["verdict"] = "not chaotic" if lam is not None else "the exponent could not be measured"
+    out.update(attractor_size=size, chaotic=bool(size > 0))
+    if size <= 0:
+        out["verdict"] = "not chaotic"
         return out
     # the separation time fluctuates from point to point on the attractor: average over many points along it
     along = sample[:: max(1, len(sample) // 64)][:64]
@@ -329,3 +338,21 @@ def blowup(real: Realization, rng, starts: int = 8, over=None, dt: Optional[floa
     out["verdict"] = (f"blow-up in finite time: |x| ~ (t* - t)^(-{p_meas:.3g})"
                       + (f", predicted by the balance p = {match['growth']:.3g}" if match else ", no balance predicts it"))
     return out
+
+
+# ------------------------------------------------------------------------------------------------ both
+def characterize(real: Realization, rng, starts: int = 4, horizon: float = 100.0, over=None) -> Dict[str, object]:
+    """Which of the two, if either, describes a material without a stable state. A first pass integrates a few starts
+    together for a fixed horizon: if any escapes, the blow-up test runs; otherwise a short Lyapunov measurement decides
+    whether the motion is chaotic, and only then the predictability law is measured. Returns the kind
+    ("blow-up", "growth", "chaotic" or None for neither) with the result of the test that decided it."""
+    dt = min(0.01, real.dt)
+    x0 = real.carrier.sample(rng, starts)
+    kept = settle(real, x0, horizon, dt, over)
+    if len(kept) < starts:
+        b = blowup(real, rng, starts=starts, over=over, dt=dt)
+        v = str(b.get("verdict", ""))
+        kind = "blow-up" if v.startswith("blow-up") else ("growth" if v.startswith("growth") else None)
+        return {"kind": kind, "blowup": b}
+    c = chaos(real, rng, starts=3, transient=horizon, T=3.0 * horizon, span=2.0 * horizon, dt=dt, over=over)
+    return {"kind": "chaotic" if c.get("chaotic") else None, "chaos": c}
