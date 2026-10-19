@@ -42,7 +42,7 @@ const context = {
   matchMedia: () => ({matches: false, addEventListener: noop}),
   requestAnimationFrame: () => 0, cancelAnimationFrame: noop, setTimeout: fn => { timers.push(fn); return timers.length; },
   clearTimeout: noop, getComputedStyle: () => ({getPropertyValue: () => '#000', fontFamily: 'sans-serif'}),
-  ResizeObserver: class { observe() {} }, devicePixelRatio: 1,
+  ResizeObserver: class { observe() {} }, devicePixelRatio: 1, scrollY: 0, scrollTo: noop,
 };
 context.window = context;
 context.globalThis = context;
@@ -74,7 +74,9 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          params: {...I.state.params},
                          sequences: {expanded: element('sequence-start').attributes['aria-expanded'],
                            menuHidden: element('sequence-menu').hidden, picker: element('sequence-picker').innerHTML,
-                           title: element('sequence-title').textContent, playerHidden: element('sequence-player').hidden}});
+                           title: element('sequence-title').textContent, playerHidden: element('sequence-player').hidden},
+                         guide: {hidden: element('guide').hidden, expanded: element('guide-toggle').attributes['aria-expanded']},
+                         back: {hidden: element('back-to').hidden, text: element('back-to').textContent}});
 const out = [];
 for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'start') I.start(step.node);
@@ -94,6 +96,10 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'prev') element('sequence-prev').click();
   if (step.do === 'open-sequences') element('sequence-start').click();
   if (step.do === 'leave') element('sequence-close').click();
+  if (step.do === 'open') context.FieldBridgeSite.open(step.node, element('row-' + step.node));
+  if (step.do === 'back') element('back-to').click();
+  if (step.do === 'guide-close') element('guide-close').click();
+  if (step.do === 'guide-toggle') element('guide-toggle').click();
   if (step.do === 'param') { I.state.params[step.name] = step.value; I.refresh(); }
   if (step.do === 'term') { I.state.active[step.k] = step.on; I.refresh(); }
   flush();

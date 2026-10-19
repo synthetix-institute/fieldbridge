@@ -219,6 +219,20 @@ def test_following_a_construction_lists_those_through_the_material_and_leaving_r
     assert back["params"]["eps"] == 0.3 and back["sequences"]["playerHidden"]
 
 
+def test_the_guide_opens_on_a_first_visit_and_a_realization_from_a_list_opens_directly_with_a_way_back(data_file, tmp_path):
+    got = scenario(data_file, [{"do": "look"}, {"do": "guide-close"}, {"do": "guide-toggle"},
+                               {"do": "edge", "edge": "pf_bias"}, {"do": "open", "node": "two_spins"}, {"do": "back"}],
+                   tmp_path)
+    first, closed, reopened, _, opened, back = got
+    assert not first["guide"]["hidden"] and first["guide"]["expanded"] == "true"
+    assert closed["guide"]["hidden"] and closed["guide"]["expanded"] == "false"
+    assert not reopened["guide"]["hidden"]
+    # a realization chosen in a list is shown directly, not reached by walking the chain of changes
+    assert opened["node"] == "two_spins" and opened["path"] == ["two_spins"]
+    assert not opened["back"]["hidden"] and opened["back"]["text"].startswith("↩ Back to")
+    assert back["back"]["hidden"]
+
+
 def test_the_sequence_from_the_spins_to_the_magnet_applies_its_steps_in_order(data_file, tmp_path):
     steps = [{"do": "sequence", "id": "spin-to-magnet"}] + [{"do": "next"}] * 12
     got = scenario(data_file, steps, tmp_path)

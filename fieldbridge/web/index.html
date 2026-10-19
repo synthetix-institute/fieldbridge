@@ -24,7 +24,7 @@
   <header class="top">
     <a class="brand" href="#instrument">FieldBridge</a>
     <nav aria-label="Sections">
-      <a href="#instrument">Mechanisms</a>
+      <a href="#expression">Map of mechanisms</a>
       <a href="#memory">Memory in materials</a>
       <a href="#codiscovery">One mechanism in many fields</a>
       <a href="#realizations">All realizations</a>
@@ -47,6 +47,36 @@
         <button type="button" id="constructor-undo" class="icon" aria-label="Undo the last change" title="Undo the last change">↶</button>
         <button type="button" id="constructor-reset" class="icon" aria-label="Reset the constructor" title="Reset the constructor">↺</button>
         <button type="button" id="material-choose" class="plain" aria-expanded="false" aria-controls="material-chooser">Choose a material</button>
+        <button type="button" id="guide-toggle" class="plain" aria-expanded="false" aria-controls="guide">How to use this page</button>
+        <button type="button" id="back-to" class="back-to" hidden></button>
+      </div>
+      <div class="guide" id="guide" hidden>
+        <div class="guide-head">
+          <h2>How to use this page</h2>
+          <button type="button" id="guide-close" class="icon" aria-label="Close the guide" title="Close the guide">&#215;</button>
+        </div>
+        <ol>
+          <li><b>One model at a time.</b> The left panel shows the equations of one model, called a realization, split
+            into six components: the operation Ω (what acts), the carrier Ξ (the states it acts on), the closure C (the
+            environment, such as a thermal bath), the observable R (what is measured), the protocol P (what is done to
+            the system) and the parameters A.</li>
+          <li><b>Its mechanism.</b> The right panel names the mechanism that the model carries, such as a symmetric
+            write or phase locking, runs the model in your browser and lists what FieldBridge calculated for it.</li>
+          <li><b>Change one component.</b> Under each component, every card is one change: its left part shows the
+            change, its right part names the mechanism it leads to. Click a card to make the change and see the new
+            mechanism. ↶ undoes the last change, ↺ starts again from the beginning.</li>
+          <li><b>Be guided, or start from your field.</b> <i>Follow a construction</i> goes through a sequence of
+            changes with an explanation at each step. <i>Choose a material</i> starts from a model of a particular
+            material or field.</li>
+          <li><b>Further down.</b> The menu at the top leads to the map of mechanisms, memory in model materials, one
+            mechanism in many fields and the table of all realizations. Opening a realization there shows it in this
+            panel; the button <i>Back to …</i> returns you to where you were. On the map, choosing a mechanism walks
+            through the chain of changes that leads to it, one change at a time.</li>
+        </ol>
+        <p class="muted">The letters of a derivation (S, C, R, K, L and others) are its steps, such as symmetry,
+          continuation, reduction, canonical form and law; hold the pointer over a letter to read it. The
+          <a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/index.md" target="_blank" rel="noopener">tutorial</a>
+          explains every calculation.</p>
       </div>
       <div id="material-chooser" class="material-chooser" hidden aria-labelledby="material-chooser-title">
         <div class="section-head">

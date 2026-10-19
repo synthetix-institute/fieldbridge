@@ -230,7 +230,7 @@
     const where = target.universal ? 'canonical form' : esc(target.field);
     const what = same ? (target.universal ? 'same mechanism, canonical form' : `same mechanism in ${where}`)
       : esc(S.classes_short[target.class] || target.class);
-    const proof = e.kind === 'codiscovery' ? 'Shared canonical form' : 'Specified component change';
+    const proof = e.kind === 'codiscovery' ? 'reduces to the same equation' : 'change of one component';
     return `<button type="button" class="change${reverse ? ' back' : ''}${same ? ' same' : ''}" data-edge="${e.id}"${reverse ? ' data-reverse="1"' : ''} data-to-class="${target.class}">
         <span class="change-what" title="${esc(e.check || proof)}">${reverse ? inverse(e.change) : e.change}<small class="change-proof">${proof}</small></span>
         <span class="change-to">${M.glyph(target.class, 'small')}<span><b>${what}</b><small>${esc(target.short || target.id)}${same || target.universal ? '' : ' · ' + where}</small></span></span></button>`;

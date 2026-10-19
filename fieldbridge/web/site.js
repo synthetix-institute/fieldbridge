@@ -163,7 +163,7 @@
     grid.querySelectorAll('canvas.strip').forEach(c => {
       const near = ev => (c._points || []).find(p => Math.hypot(p.x - ev.offsetX, p.y - ev.offsetY) < 14);
       c.addEventListener('pointermove', ev => { const p = near(ev); c.style.cursor = p ? 'pointer' : 'default'; c.title = p ? p.label : ''; });
-      c.addEventListener('click', ev => { const p = near(ev); if (p) open(p.id); });
+      c.addEventListener('click', ev => { const p = near(ev); if (p) open(p.id, c); });
     });
   }
   function color(i) { return getComputedStyle(document.documentElement).getPropertyValue(FIELD_COLORS[i % FIELD_COLORS.length]).trim(); }
@@ -325,12 +325,53 @@
       <p class="muted">${r.universal ? 'canonical form, no field' : esc(r.field)}${r.question ? ' · ' + esc(r.question) : ''}</p>
       <p>${r.source ? esc(r.source) + ' · ' : ''}<a href="${repo(r.spec || r.base_spec)}" target="_blank" rel="noopener">${r.spec ? 'specification' : 'derived from ' + esc((r.base_spec || '').split('/').pop())}</a>${r.tutorial ? ` · <a href="${repo(r.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : ''}</p>
       <button type="button" class="primary" id="matrix-open">Open it in the instrument</button></div>`;
-    $('matrix-open').addEventListener('click', () => open(id));
+    $('matrix-open').addEventListener('click', () => open(id, $('matrix-open')));
   }
-  function open(id) {
+  /** A realization chosen in a list opens directly, as a material does; the map walks the chain of changes instead. */
+  function open(id, from) {
     leave();
-    I().walkTo(id);
-    $('instrument').scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth', block: 'start'});
+    I().start(id);
+    toInstrument(from);
+  }
+  // ---------------------------------------------------------------------------------------- the way back
+  /** Opening a realization from a section further down brings the visitor up to the instrument; the button
+   *  'Back to ...' returns to the place they came from. */
+  const back = {y: null, el: null};
+  const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth');
+  function sectionName(el) {
+    const d = el && el.closest ? el.closest('details') : null, s = d && d.querySelector ? d.querySelector('summary') : null;
+    return s && s.textContent ? s.textContent.trim() : 'where you were';
+  }
+  function toInstrument(from) {
+    if (from && typeof window.scrollY === 'number') {
+      back.y = window.scrollY;
+      back.el = from;
+      $('back-to').textContent = `↩ Back to ${sectionName(from)}`;
+      $('back-to').hidden = false;
+    }
+    $('instrument').scrollIntoView({behavior: smooth(), block: 'start'});
+  }
+  function goBack() {
+    $('back-to').hidden = true;
+    // the element that was clicked, where it is now: the panels above it change height with the realization
+    if (back.el && back.el.isConnected && back.el.scrollIntoView) back.el.scrollIntoView({behavior: smooth(), block: 'center'});
+    else if (back.y !== null && typeof window.scrollTo === 'function') window.scrollTo({top: back.y, behavior: smooth()});
+    back.y = null; back.el = null;
+  }
+  // ---------------------------------------------------------------------------------------- the guide
+  /** Open on a first visit; closing it is remembered in this browser (when storage is available). */
+  function guide() {
+    const panel = $('guide'), button = $('guide-toggle');
+    const show = open => { panel.hidden = !open; button.setAttribute('aria-expanded', String(open)); };
+    let seen = false;
+    try { seen = window.localStorage.getItem('fieldbridge-guide-closed') === '1'; } catch (e) { seen = false; }
+    show(!seen);
+    button.addEventListener('click', () => show(button.getAttribute('aria-expanded') !== 'true'));
+    $('guide-close').addEventListener('click', () => {
+      show(false);
+      try { window.localStorage.setItem('fieldbridge-guide-closed', '1'); } catch (e) { /* storage unavailable */ }
+    });
+    $('back-to').addEventListener('click', goBack);
   }
   // ---------------------------------------------------------------------------------------- memory in model materials
   function memory() {
@@ -363,7 +404,7 @@
     box.innerHTML = groups.map(g => `<div class="memory-group" data-class="${g.k}">
         <h3>${M.glyph(g.k, 'small')}${esc(S.classes[g.k] || g.k)}${absent[g.k] ? `<span class="absent-tag" title="${esc(absent[g.k][1])}">${esc(absent[g.k][0])}</span>` : ''}<span class="muted">${g.ids.length} material${g.ids.length === 1 ? '' : 's'}</span></h3>
         <div class="memory-grid">${g.ids.map(tile).join('')}</div></div>`).join('');
-    box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open)));
+    box.querySelectorAll('[data-open]').forEach(b => b.addEventListener('click', () => open(b.dataset.open, b)));
   }
   // ---------------------------------------------------------------------------------------- mechanisms in preparation
   function planned() {
@@ -382,7 +423,7 @@
     const rows = Object.values(S.nodes).sort((a, b) => order.indexOf(a.class) - order.indexOf(b.class) || strip(a.name).localeCompare(strip(b.name)));
     $('sources-table').innerHTML = '<thead><tr><th>Realization</th><th>Field</th><th>Source and files</th></tr></thead><tbody>'
       + rows.map(r => `<tr><td><button type="button" class="plain" data-go="${r.id}">${r.name}</button><br><span class="muted">${esc(S.classes[r.class] || '')}</span></td><td>${r.universal ? 'canonical form' : esc(r.field)}</td><td>${r.source ? esc(r.source) + '<br>' : ''}<a href="${repo(r.spec || r.base_spec)}" target="_blank" rel="noopener">${r.spec ? 'specification' : 'derived from ' + esc((r.base_spec || '').split('/').pop())}</a>${r.tutorial ? ` · <a href="${repo(r.tutorial)}" target="_blank" rel="noopener">tutorial</a>` : ''}</td></tr>`).join('') + '</tbody>';
-    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => open(b.dataset.go)));
+    document.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => open(b.dataset.go, b)));
     $('boundary').textContent = S.boundary;
     const law = S.law || {};
     $('provenance').textContent = `Calculated with FieldBridge (memory implementation ${S.provenance.memory_implementation_sha256.slice(0, 12)}; Python ${S.provenance.versions.python}, numpy ${S.provenance.versions.numpy}, scipy ${S.provenance.versions.scipy}). `
@@ -396,12 +437,12 @@
       if (link) revealSection(link.getAttribute('href'));
     });
     $('expression').addEventListener('toggle', () => { if ($('expression').open) window.FieldBridgeMechanisms.draw(); });
-    definitions(); sequences(); materialChooser(); realizations(); memory(); planned();
+    definitions(); sequences(); guide(); materialChooser(); realizations(); memory(); planned();
     // ?r=<realization> opens that realization directly, for links from the tutorial
     const want = new URLSearchParams(location.search).get('r');
     I().start(want && S.nodes[want] ? want : S.start);
     collapse();
     revealSection();
   });
-  window.FieldBridgeSite = {leaveSequence: leave, begin};
+  window.FieldBridgeSite = {leaveSequence: leave, begin, open};
 })();

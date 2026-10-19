@@ -455,3 +455,13 @@ details.sources summary { cursor: pointer; color: var(--accent); font-size: 14.5
   .map-modules .module, #mechanisms .mech rect { transition: none; }
   html { scroll-behavior: auto; }
 }
+
+/* the guide to the page and the way back from a section further down */
+.guide { background: var(--panel); border: 1px solid var(--rule); border-left: 3px solid var(--accent); border-radius: 10px; padding: 12px 18px 10px; margin-bottom: 14px; box-shadow: var(--shadow); }
+.guide-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.guide-head h2 { margin: 0; font-size: 17px; }
+.guide ol { margin: 8px 0 6px; padding-left: 20px; }
+.guide li { margin: 0 0 6px; line-height: 1.45; font-size: 14.5px; }
+.guide > p { margin: 4px 0 2px; font-size: 13.5px; }
+.back-to { border: 1px solid var(--accent); color: var(--accent); background: var(--panel); border-radius: 999px; padding: 4px 12px; font-size: 13.5px; cursor: pointer; }
+.back-to[hidden] { display: none; }
