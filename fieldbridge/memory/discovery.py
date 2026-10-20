@@ -8,7 +8,9 @@ evaluate(real) returns a card:
                to the pitchfork generator, its cancellation by a further material parameter, and the transferred
                swept-write law checked by simulation (construct.py)
   bifurcation  fixed points along the control, for the diagram
-  barrier      minimum-energy-path barrier between the two most populated states (gradient systems)
+  barrier      barrier between the two most populated states along a minimum-energy path (gradient systems),
+               relaxed to a stated tolerance; if the states are half a period apart on a torus, the lowest among
+               the paths relaxed, with the barrier of each; `method` states in words what was done
   hold         Monte Carlo retention time at the realization's noise (censored at the simulated interval)
   writes       bounded writes below and above the restoring threshold at fixed control, and below it while the
                control is swept, from the end of its range where the barriers are low; accuracy, rewriting time,
@@ -96,7 +98,7 @@ def evaluate(real: Realization, rng: np.random.Generator, transfers: Optional[Li
     if stored is not None:
         a, b = states[0], states[1]
         if real.potential is not None:
-            card["barrier"] = an.neb_barrier(real, a, b, iters=1500 if real.carrier.dim > 4 else 3000)
+            card["barrier"] = an.neb_barrier(real, a, b)
         wf = card["construct"].get("write_field", {})
         thr = float(wf["h_c"]) if "h_c" in wf else an.restoring_threshold(real, a, b)
         card["threshold"] = thr
