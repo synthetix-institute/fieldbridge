@@ -879,7 +879,8 @@ def test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_lef
 
 def test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates(monkeypatch):
     """The start of the sweep at r = 3.2e-5 is refused by hand. The faster sweep is left out with it rather than
-    leaving a gap, and the constant is fitted over the five slower sweeps, which are unchanged."""
+    leaving a gap, and the constant is fitted over the five slower sweeps, which are unchanged within the accuracy of
+    the delay constant."""
     from fieldbridge.memory import codiscovery as cd
     real, q_f, p_f, canon, _ = _quintic_fold()
     rates = cd.DELAY_RATES[2:]
@@ -896,7 +897,7 @@ def test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_r
     law = cd.fold_delay_law(real, "h", q_f, p_f, canon, rates=rates)
     assert law["left_out"] == [{"rate": rates[1], "reason": "refused by the test"},
                                {"rate": rates[0], "reason": "a slower sweep was left out"}]
-    assert law["rows"] == full["rows"][2:]
+    _assert_same_sweeps(law["rows"], full["rows"][2:])
     fit = cd.delay_constant([row["rate"] for row in law["rows"]], [row["constant"] for row in law["rows"]])
     assert law["constant"] == fit["constant"] and law["stderr"] == fit["stderr"]
 
