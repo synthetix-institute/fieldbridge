@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "d002eaa1d5253d571957af9369a81fcae02592aee5f1626e44b8624c95d41645",
+  "implementation_sha256": "6f20defabfc20f7dce47dbc1d592dcecabd09f86ab549c379b9329fec03cafd5",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -57,7 +57,7 @@
         "writes": "no bifurcation along the control, which only rescales the energy landscape; a uniform field removes the stable state at h = 0.599",
         "constructs": "no bifurcation along the control; writing requires a field",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.15, retention/rewriting time ratio 0.0667; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.15, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.12, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.17, not rewritten; field 0.4 x threshold, control raised from 0.05 to 0.6: accuracy 0.10, not rewritten"
       }
     },
     {
@@ -233,7 +233,7 @@
         "writes": "saddle-node (fold) at alpha = 3.27; a uniform field removes the stable state at h = 0.446",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp gamma = 1, alpha = 2 (supercritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.72, retention/rewriting time ratio > 21.5; field 0.4 x threshold, control swept through the write point: accuracy 0.23, retention/rewriting time ratio > 129"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.68, retention/rewriting time ratio > 18.4; field 0.4 x threshold, control swept through the write point: accuracy 0.20, not rewritten"
       }
     },
     {
@@ -255,7 +255,7 @@
         "writes": "saddle-node (fold) at mu = 1.21; a uniform field removes the stable state at h = 0.0785",
         "constructs": "fold: one-sided write; a symmetric write is recovered at the cusp L2 = 1, mu = 1.383 (subcritical pitchfork along the sweep)",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.32, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio 1.09; field 0.4 x threshold, control swept through the write point: accuracy 0.53, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.30, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio 2.34; field 0.4 x threshold, control swept through the write point: accuracy 0.53, not rewritten"
       }
     },
     {
