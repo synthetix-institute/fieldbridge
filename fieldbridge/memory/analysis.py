@@ -6,10 +6,13 @@
   neb_barrier        barrier between two stored states along a minimum-energy path, relaxed to a stated tolerance;
                      for states half a period apart on a torus, the lowest over the straight paths of lowest
                      energy, with the paths relaxed and their barriers (gradient systems)
-  hold_time          Monte Carlo time for a stored state to lose its identity at noise D
+  basin_balls        a ball around each stored state that lies in its basin (checked by the noise-free flow)
+  basin_of           the stored state whose basin contains a configuration (noise-free flow into those balls)
+  hold_time          Monte Carlo time for a stored state to lose its identity at noise D: the trajectories that
+                     have left its basin
   write_test         bounded write toward a target at fixed control or while sweeping the control
-                     from the end of its range where the barriers are low; accuracy after release and the
-                     rewriting time
+                     from the end of its range where the barriers are low; accuracy after release (the fraction
+                     in the basin of the target) and the rewriting time
   fixed_points       zeros of the drift (Newton from random starts), stable and unstable, with kappa spectra
   track              continuation of a stable state along a parameter until it loses stability or vanishes
   locate_writes      parameter values at which stored states lose stability or appear (write points)
@@ -443,16 +446,89 @@ def restoring_threshold(real: Realization, a: np.ndarray, b: np.ndarray, n: int 
 
 
 # ------------------------------------------------------------------------------------------------ hold / write
-def nearest(real: Realization, q: np.ndarray, states: Sequence[np.ndarray]) -> np.ndarray:
-    d = np.stack([real.carrier.distance(q, s[None]) for s in states], axis=-1)
-    return np.argmin(d, axis=-1)
+def basin_balls(real: Realization, states: Sequence[np.ndarray], over: Optional[Dict] = None, n_random: int = 16,
+                halvings: int = 8) -> np.ndarray:
+    """Radius of a ball around each stored state that lies in the basin of the state. The radius starts at 0.3 of the
+    distance to the nearest other state, so that the balls are disjoint, and is halved until every test point on the
+    boundary (along the coordinate axes, toward the other states and along random directions) relaxes to the state
+    without noise. A state for which no radius passes gets 0, and its configurations are identified when they settle."""
+    over = over or {}
+    rng = np.random.default_rng(12345)  # fixed test directions; the generator of the simulation is not advanced
+    canon = [_canon(real, np.asarray(s, float)) for s in states]
+    radii = np.zeros(len(states))
+    for i, s in enumerate(states):
+        s = np.asarray(s, float)
+        others = [j for j in range(len(states)) if j != i]
+        d = min((float(real.carrier.distance(canon[i], canon[j])) for j in others), default=base_length(real))
+        u = np.concatenate([np.eye(s.size), -np.eye(s.size), rng.standard_normal((n_random, s.size))]
+                           + [real.carrier.diff(s, states[j])[None] for j in others])
+        u /= np.maximum(np.linalg.norm(u, axis=1, keepdims=True), 1e-300)
+        r = 0.3 * d
+        for _ in range(halvings + 1):
+            end, _ = relax(real, s[None] + r * u, over)
+            if np.all(real.carrier.distance(_canon(real, end), canon[i][None]) < 0.5 * r):
+                radii[i] = r
+                break
+            r /= 2
+    return radii
+
+
+def basin_of(real: Realization, q: np.ndarray, states: Sequence[np.ndarray], radii: np.ndarray,
+             over: Optional[Dict] = None, t_max: float = 300.0, tol: float = 1e-5) -> np.ndarray:
+    """Index of the stored state whose basin contains each configuration. A configuration inside a ball of basin_balls
+    belongs to its state; any other is carried by the noise-free flow until it enters a ball, or until it settles at a
+    stable state (then the stored state within the merging tolerance of stored_states). -1 for a configuration that
+    settles at a stable state that is not stored, or that has done neither within t_max. The nearest stored state is
+    the same only where the separatrix is the bisector of the states, as for two states related by a reflection."""
+    over, dt = over or {}, safe_dt(real)
+    canon = [_canon(real, np.asarray(s, float)) for s in states]
+    radii = np.asarray(radii, float)
+    tol_state = _merge_tol(real)
+
+    def ball(x):
+        inside = np.stack([real.carrier.distance(_canon(real, x), c[None]) for c in canon], axis=-1) < radii
+        return np.where(inside.any(axis=-1), np.argmax(inside, axis=-1), -1)
+
+    x = real.carrier.wrap(np.atleast_2d(np.asarray(q, float)))
+    label = ball(x)
+    todo = np.flatnonzero(label < 0)
+    x = x[todo]
+    for k in range(1, int(t_max / dt) + 1):
+        if not todo.size:
+            break
+        f = real.F(x, **over)
+        x = real.carrier.wrap(x + dt * f)
+        if k % 10:
+            continue
+        hit = ball(x)
+        done = (hit >= 0) | ~np.all(np.isfinite(x), axis=-1)
+        # a configuration that has stopped outside every ball has settled at a stable state, unless it stopped near a
+        # saddle, from which the flow carries it on
+        for j in np.flatnonzero(~done & (np.linalg.norm(f, axis=-1) < tol)):
+            if n_unstable(kappa_spectrum(real, x[j], over)) == 0:
+                d = [float(real.carrier.distance(_canon(real, x[j]), c)) for c in canon]
+                done[j], hit[j] = True, int(np.argmin(d)) if min(d) < tol_state else -1
+        label[todo[done]] = hit[done]
+        todo, x = todo[~done], x[~done]
+    return label
+
+
+def _fraction_in_basin(real: Realization, snaps: np.ndarray, states, radii, over: Optional[Dict], idx: int):
+    """Fraction of the recorded configurations (records x trajectories x dim) in the basin of states[idx] at each
+    record. The records are identified together, after the simulation, in one integration of the noise-free flow."""
+    snaps = np.asarray(snaps, float)
+    label = basin_of(real, snaps.reshape(-1, snaps.shape[-1]), states, radii, over)
+    return np.mean(label.reshape(snaps.shape[:-1]) == idx, axis=-1)
 
 
 def hold_time(real: Realization, idx: int, states, D: float, rng, n_traj: int = 200, t_max: float = 400.0,
-              over: Optional[Dict] = None) -> Dict[str, object]:
+              over: Optional[Dict] = None, radii: Optional[np.ndarray] = None) -> Dict[str, object]:
+    """Fraction of the trajectories started in states[idx] that remain in its basin (basin_of), and the time at which
+    it falls to P_STAR."""
+    radii = basin_balls(real, states, over) if radii is None else radii
     q = np.repeat(states[idx][None], n_traj, axis=0)
-    _, t, frac = integrate(real, q, t_max, D, rng, over, record=lambda x: np.mean(nearest(real, x, states) == idx),
-                           n_record=200)
+    _, t, snaps = integrate(real, q, t_max, D, rng, over, record=np.copy, n_record=200)
+    frac = _fraction_in_basin(real, snaps, states, radii, over, idx)
     below = np.flatnonzero(frac <= P_STAR)
     return {"time": float(t[below[0]]) if below.size else float(t_max), "censored": bool(below.size == 0),
             "t": t.tolist(), "fraction": frac.tolist()}
@@ -460,17 +536,21 @@ def hold_time(real: Realization, idx: int, states, D: float, rng, n_traj: int = 
 
 def write_test(real: Realization, i_old: int, i_new: int, states, h: float, T_w: float, T_rel: float, D: float,
                rng, n_traj: int = 200, mode: str = "fixed", sweep_from: Optional[float] = None,
-               over: Optional[Dict] = None) -> Dict[str, object]:
+               over: Optional[Dict] = None, radii: Optional[np.ndarray] = None) -> Dict[str, object]:
+    """Fraction of the trajectories in the basin of states[i_new] (basin_of, without the field and at the parameters
+    of the stored states) during a bounded write from states[i_old] and after its release."""
     over = dict(over or {})
+    radii = basin_balls(real, states, over) if radii is None else radii
     q = np.repeat(states[i_old][None], n_traj, axis=0)
     target = states[i_new]
-    rec = lambda x: np.mean(nearest(real, x, states) == i_new)
     path = None
     if mode == "sweep":
         v1 = over.get(real.control, real.params[real.control])
         path = lambda t: sweep_from + (v1 - sweep_from) * min(1.0, t / T_w)
-    q, t1, f1 = integrate(real, q, T_w, D, rng, over, write=(target, h), control_path=path, record=rec)
-    q, t2, f2 = integrate(real, q, T_rel, D, rng, over, record=rec)
+    q, t1, s1 = integrate(real, q, T_w, D, rng, over, write=(target, h), control_path=path, record=np.copy)
+    q, t2, s2 = integrate(real, q, T_rel, D, rng, over, record=np.copy)
+    frac = _fraction_in_basin(real, np.concatenate([s1, s2]), states, radii, over, i_new)
+    f1, f2 = frac[:len(t1)], frac[len(t1):]
     reach = np.flatnonzero(f1 >= P_STAR)
     return {"mode": mode, "h": h, "T_w": T_w, "accuracy": float(f2[-1]) if f2.size else float("nan"),
             "rewrite_time": float(t1[reach[0]]) if reach.size else float("nan"),

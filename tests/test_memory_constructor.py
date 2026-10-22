@@ -242,6 +242,92 @@ def test_compartment_kernel():
     assert np.allclose(an.memory_kernel(compartments(), t), 1.5 * 4.5 * np.exp(-3.9 * t))
 
 
+# ------------------------------------------------------------------------------------------------ retention and writing
+CUBIC_STATES = [np.array([-1.0]), np.array([1.0])]
+
+
+def cubic(s):
+    """Stable states at -1 and 1 and the unstable state at s. The separatrix is at s and the bisector of the stored
+    states at 0: s imposes the error of identifying a configuration with the nearest stored state."""
+    from fieldbridge.memory.carriers import euclid
+    from fieldbridge.memory.identity import Realization
+    return Realization("cubic", euclid("x", 1, scale=1.5), lambda q, p: -(q + 1) * (q - p["s"]) * (q - 1), {"s": s})
+
+
+def nearest(real, x, states):
+    return np.argmin(np.stack([real.carrier.distance(x, s[None]) for s in states], axis=-1), axis=-1)
+
+
+def test_a_configuration_belongs_to_the_basin_it_is_in_not_to_the_nearest_state():
+    x = np.linspace(-0.975, 0.975, 40)[:, None]  # no point on the bisector or on a separatrix
+    for s in (-0.5, 0.0, 0.5):
+        real = cubic(s)
+        radii = an.basin_balls(real, CUBIC_STATES)
+        assert radii[0] < 1 + s and radii[1] < 1 - s  # each ball lies in the basin of its state
+        label = an.basin_of(real, x, CUBIC_STATES, radii)
+        assert np.array_equal(label, (x[:, 0] > s).astype(int))
+        # the nearest stored state is wrong exactly between the separatrix and the bisector
+        assert np.array_equal(label != nearest(real, x, CUBIC_STATES), (x[:, 0] - s) * x[:, 0] < 0)
+
+
+def test_a_configuration_that_settles_at_a_state_not_stored_is_not_identified():
+    from fieldbridge.memory.carriers import euclid
+    from fieldbridge.memory.identity import Realization
+    real = Realization("three wells", euclid("x", 1, scale=2.5),
+                       lambda q, p: -(q + 2) * (q + 1) * q * (q - 1) * (q - 2), {})
+    states = [np.array([-2.0]), np.array([2.0])]  # the stable state at 0 is not stored
+    x = np.array([[-2.3], [-1.5], [-0.9], [0.4], [0.95], [1.05], [2.2]])
+    radii = an.basin_balls(real, states)
+    assert an.basin_of(real, x, states, radii).tolist() == [0, 0, -1, -1, -1, 1, 1]
+    # without a ball around a state, the configurations that settle there are still identified with it
+    assert an.basin_of(real, x, states, [0.0, radii[1]]).tolist() == [0, 0, -1, -1, -1, 1, 1]
+
+
+@pytest.mark.parametrize("name, D", [("pitchfork", 0.08), ("toggle", 0.3)])
+def test_for_mirror_states_the_basin_is_the_nearest_state(name, D):
+    """A reflection that maps one stored state onto the other has the bisector as its mirror plane, which the flow
+    cannot cross: it is the separatrix. On the same noisy trajectories, many of which cross it, both rules give the
+    same fraction at every recorded time, so that retention and writing are measured as before."""
+    real = load(name)
+    states, *_ = an.stored_states(real, np.random.default_rng(1), 24)
+    radii = an.basin_balls(real, states)
+    both = lambda x: (np.mean(an.basin_of(real, x, states, radii) == 0), np.mean(nearest(real, x, states) == 0))
+    _, _, rec = an.integrate(real, np.repeat(states[0][None], 60, axis=0), 20.0, D, np.random.default_rng(2),
+                             record=both, n_record=40)
+    assert rec[:, 1].min() < 0.9 and np.array_equal(rec[:, 0], rec[:, 1])
+
+
+def test_trajectories_past_the_bisector_inside_the_basin_are_retained():
+    """With the separatrix imposed at s = 0.5, a trajectory from the state at -1 that has passed the bisector at 0 is
+    still in the basin of -1. On the same trajectories the fraction retained in the basin is never below the fraction
+    nearest to the state, and above it at some time; with s = 0 the two are equal."""
+    for s in (0.0, 0.5):
+        real = cubic(s)
+        radii = an.basin_balls(real, CUBIC_STATES)
+        both = lambda x: (np.mean(an.basin_of(real, x, CUBIC_STATES, radii) == 0),
+                          np.mean(nearest(real, x, CUBIC_STATES) == 0))
+        _, _, rec = an.integrate(real, np.repeat(CUBIC_STATES[0][None], 200, axis=0), 20.0, 0.2,
+                                 np.random.default_rng(2), record=both, n_record=40)
+        gain = rec[:, 0] - rec[:, 1]
+        if s == 0.0:
+            assert rec[:, 1].min() < 0.9 and np.all(gain == 0)
+        else:
+            assert gain.min() >= 0 and gain.max() > 0
+
+
+def test_identifying_the_stored_state_draws_no_random_numbers():
+    """The trajectories of hold_time and write_test are those of the integration alone, so that two rules of
+    identification are compared on the same trajectories."""
+    real = cubic(0.5)
+    rng_a, rng_b = np.random.default_rng(3), np.random.default_rng(3)
+    an.hold_time(real, 0, CUBIC_STATES, 0.2, rng_a, n_traj=8, t_max=2.0)
+    an.write_test(real, 0, 1, CUBIC_STATES, 0.5, 1.0, 1.0, 0.2, rng_a, n_traj=8)
+    q = np.repeat(CUBIC_STATES[0][None], 8, axis=0)
+    for T in (2.0, 1.0, 1.0):
+        an.integrate(real, q, T, 0.2, rng_b)
+    assert rng_a.bit_generator.state == rng_b.bit_generator.state
+
+
 # ------------------------------------------------------------------------------------------------ networks and loops
 def test_rotor_constraints_exact_cases():
     tri = compose._ring_positions(3)
