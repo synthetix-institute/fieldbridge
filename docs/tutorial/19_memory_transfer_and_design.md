@@ -95,7 +95,11 @@ python3 -B -m fieldbridge memory design examples/memory/toggle_unequal.json --fr
 ```
 
 The program follows the write point as the free parameter changes until $a_2$ vanishes, refines the point, and
-reports the kind of write along the sweep through it (`design.md`).
+reports the kind of write along the sweep through it (`design.md`). Where the specification declares `bounds` for
+the free parameter or the control, the write point is not followed past a bound, and a cusp beyond it is reported
+rather than returned. The driven Kerr resonator depends on its loss rate only through $\kappa^2$, so the cusp
+$\kappa = 2\Delta/\sqrt{3}$ has a mirror image at negative loss; with `"bounds": {"kappa": [0, null]}` the fold
+followed from the high branch stops at $\kappa = 0$ and the cusp at positive loss is returned.
 
 | Realization | Free parameter | Fold (obstruction) | Cusp | Sweep direction | Kind along the sweep |
 | --- | --- | --- | --- | --- | --- |

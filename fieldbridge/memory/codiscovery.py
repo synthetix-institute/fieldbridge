@@ -381,7 +381,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                                  **{k: sym[k] for k in ("permutation", "signs", "order")}})
         fold = next((nf for nf in nfs if (nf["obstruction"]["asymmetric"] or nf["obstruction"]["biased"])
                      and not nf.get("hopf")), None)
-        unfolded = None
+        unfolded, bound_notes = None, []
         if fold is not None:
             for second in real.material:
                 with np.errstate(all="ignore"):
@@ -389,6 +389,8 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                         c = cancel_asymmetry(real, fold, second)
                     except np.linalg.LinAlgError:
                         continue
+                if c.get("bound_note"):
+                    bound_notes.append(c["bound_note"])
                 if c.get("success") and c.get("obstruction_along_sweep", {}).get("realizes_generator"):
                     unfolded = c
                     break
@@ -405,7 +407,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                 reason = "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)"
             elif fold is not None:
                 reason = ("one-sided write (fold) and no material parameter reaches a cusp with a supercritical "
-                          "sweep")
+                          "sweep" + "".join(f"; {note}" for note in bound_notes))
             else:
                 reason = "the reduced drift differs from the pitchfork: " + ", ".join(ob.get("terms", {}))
             out.update(obstruction=reason, obstruction_short=short or _short(reason))

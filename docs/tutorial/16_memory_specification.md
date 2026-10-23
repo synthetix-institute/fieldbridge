@@ -27,7 +27,7 @@ a gene circuit, a chemical reactor or a flow network.
 | Closure $C$ | what is specified or discarded to obtain closed equations: the bath, boundaries, imposed conservation, admissible states | `closure` (text) and `noise` (the intensity $D$ of the bath) |
 | Observable $R$ | what is measured | `observable` (text) |
 | Protocol $P$ | how the material is driven | `control`: the parameter an experiment varies, with its range |
-| Parameters $A$ | the material that implements the model, entered as parameter values | `parameters`; `material` lists those an experimenter could also tune |
+| Parameters $A$ | the material that implements the model, entered as parameter values | `parameters`; `material` lists those an experimenter could also tune; `bounds` (optional) gives the domain of a parameter, `{"kappa": [0, null]}` for a loss rate that cannot be negative |
 
 Every file also declares `schema: "fieldbridge-memory/1"`, a physical `question`, its `assumptions` and its
 `provenance`. These are copied into every report together with a hash of the input, so that each result can be
@@ -87,6 +87,7 @@ Each refusal names what to change. All of them are covered by tests.
 | `"u": "u.real"` | Unsupported syntax | No attribute access |
 | a control that is not a parameter | must be a declared parameter | The control is varied by the program |
 | a potential that does not generate the drift | drift = -grad(potential) | A gradient claim must hold |
+| `"bounds": {"kappa": [0, null]}` with `kappa = -1` | lies outside its bounds | A bound states where the model applies; the program does not move a parameter past it |
 | `kind: "field"` given to `memory card` | read by 'fieldbridge memory field' | Fields have their own command (Module 8) |
 | `kind: "hysterons"` given to `memory card` | read by 'fieldbridge memory hysterons' | Hysterons under a slow drive have their own command (Module 12) |
 
