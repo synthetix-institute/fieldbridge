@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "6f20defabfc20f7dce47dbc1d592dcecabd09f86ab549c379b9329fec03cafd5",
+ "implementation_sha256": "604c047a181c3c496910a6dada65f60471ef003e4e57111ff86e202f3457d06f",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -279,9 +279,9 @@
   "fitzhugh_nagumo": {
    "phase-locking": {
     "class": "C R(phase) K(1:1) L",
-    "constant": 0.9998829213669238,
+    "constant": 0.9998849558135361,
     "expected": 1.0,
-    "stderr": 0.003165045804111144,
+    "stderr": 0.00316594018341243,
     "word": "CRKL"
    },
    "spec_sha256": "53a0d55d7996f78621a14addccda5c5a9fbbbd59f793e7506d2044c7e4ce07e3"
@@ -529,9 +529,9 @@
   "josephson": {
    "phase-locking": {
     "class": "C R(phase) K(1:1) L",
-    "constant": 1.0002997530561126,
+    "constant": 1.001722647028331,
     "expected": 1.0,
-    "stderr": 0.0003975564001130749,
+    "stderr": 0.0010982885822719002,
     "word": "CRKL"
    },
    "spec_sha256": "7c1d83a0857e906068ccf01fffe39c0e7d32ade943f0ad252ba2375ef13ada6f"
@@ -884,9 +884,9 @@
   "predator_prey": {
    "phase-locking": {
     "class": "C R(phase) K(1:1) L",
-    "constant": 0.999280142698239,
+    "constant": 0.9993773936751977,
     "expected": 1.0,
-    "stderr": 0.007231636751041659,
+    "stderr": 0.007179080846759334,
     "word": "CRKL"
    },
    "spec_sha256": "0d9cf1b72113d7bdbbd2b59370b17be932fed534b759e64903b3655a7300a173"
