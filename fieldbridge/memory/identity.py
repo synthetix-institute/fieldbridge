@@ -42,6 +42,7 @@ class Realization:
     transport: Optional[str] = None
     tags: Tuple[str, ...] = field(default_factory=tuple)
     material: Tuple[str, ...] = field(default_factory=tuple)   # further tunable parameters (to cancel an obstruction)
+    bounds: Dict[str, Tuple[Optional[float], Optional[float]]] = field(default_factory=dict)  # domain of parameters
     null_modes: Optional[np.ndarray] = None                     # directions of a continuous symmetry (always flat)
     canonical: Optional[Callable[[np.ndarray], np.ndarray]] = None  # removes that symmetry when states are compared
     geometry: Optional[Dict] = None                             # positions and bonds, for drawings

@@ -217,7 +217,8 @@ def _md_design(i: int, e: Dict, control: str, free: str) -> str:
     if c is None:
         lines.append("- no cancellation needed")
     elif not c.get("success"):
-        lines.append(f"- no setting of {free} removes the obstruction within the search range")
+        lines.append(f"- no setting of {free} removes the obstruction within the search range"
+                     + (f": {c['bound_note']}" if c.get("bound_note") else ""))
     else:
         d = c["direction"]
         cstate = ", ".join(f"{x:.4g}" for x in c["state"])
@@ -226,6 +227,9 @@ def _md_design(i: int, e: Dict, control: str, free: str) -> str:
                   f"- sweep through this point along ({control}, {free}) proportional to "
                   f"({d[control]:.3g}, {d[free]:.3g})",
                   f"- kind along the sweep: {c['kind_along_sweep']}"]
+    for s in (c or {}).get("bounds_reached") or ():
+        lines.append(f"- the fold followed toward the bound {s['text']} stops there, at {free} = {s[free]:.4g}, "
+                     f"{control} = {s[control]:.4g}")
     return "\n".join(lines)
 
 
@@ -247,6 +251,8 @@ def cmd_design(args) -> int:
         if ob["asymmetric"] or ob["biased"]:
             c = construct.cancel_asymmetry(real, nf, args.free)
             entry["cancellation"] = {k: c.get(k) for k in ("success", "value", "control", "state", "direction")}
+            entry["cancellation"].update({k: c[k] for k in ("bounds_reached", "cusp_beyond_bound", "bound_note")
+                                          if k in c})
             if c.get("success"):
                 entry["cancellation"]["kind_along_sweep"] = c["normal_form_along_sweep"]["kind"]
         results.append(entry)

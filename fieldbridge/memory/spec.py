@@ -14,6 +14,10 @@ hysterons.from_spec and ``fieldbridge memory hysterons``.
 Expressions are parsed by a restricted arithmetic parser: numbers, declared names, + - * / **, and the functions
 sqrt, exp, log, sin, cos, tanh; the constant pi. Nothing is evaluated with eval, and input is never passed to
 sympify. The parsed expressions are compiled to vectorized numpy functions.
+
+An optional "bounds" field gives the domain of parameters, {"kappa": [0, null]}: a lower and an upper bound, null
+where there is none (a loss rate or a concentration that cannot be negative). It is stored on the Realization, and a
+continuation that moves a parameter stops at its bound instead of crossing it.
 """
 from __future__ import annotations
 
@@ -21,7 +25,7 @@ import ast
 import hashlib
 import json
 from pathlib import Path
-from typing import Dict, List, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 import numpy as np
 
@@ -118,9 +122,36 @@ def load(source: Union[str, Path, Dict]) -> Realization:
     if real is None:
         raise SpecError("kind must be 'equations' or 'network' (a 'field' specification is read by "
                         "'fieldbridge memory field', a 'hysterons' specification by 'fieldbridge memory hysterons')")
+    real.bounds = _bounds(spec, real)
     real.spec = spec
     real.spec_sha256 = input_hash(spec)
     return real
+
+
+def _bounds(spec: Dict, real: Realization) -> Dict[str, Tuple[Optional[float], Optional[float]]]:
+    """The domain of the parameters: {name: (lower, upper)}, None where there is no bound. The value of a parameter,
+    and the range of the control, must lie within its bounds."""
+    raw = spec.get("bounds", {})
+    if not isinstance(raw, dict):
+        raise SpecError("bounds must map parameter names to [lower, upper], with null for no bound")
+    out: Dict[str, Tuple[Optional[float], Optional[float]]] = {}
+    for name, pair in raw.items():
+        if name not in real.params:
+            raise SpecError(f"bounds: {name!r} must be a declared parameter")
+        if not isinstance(pair, list) or len(pair) != 2:
+            raise SpecError(f"bounds.{name} must be [lower, upper], with null for no bound")
+        lo, hi = (None if v is None else _number(v, f"bounds.{name}") for v in pair)
+        if lo is None and hi is None:
+            raise SpecError(f"bounds.{name} gives neither a lower nor an upper bound")
+        if lo is not None and hi is not None and not lo < hi:
+            raise SpecError(f"bounds.{name} must be increasing")
+        inside = lambda v: (lo is None or v >= lo) and (hi is None or v <= hi)
+        if not inside(real.params[name]):
+            raise SpecError(f"parameter {name} = {real.params[name]:g} lies outside its bounds")
+        if name == real.control and not all(inside(v) for v in real.control_range):
+            raise SpecError(f"control.range must lie within bounds.{name}")
+        out[name] = (lo, hi)
+    return out
 
 
 # ------------------------------------------------------------------------------------------------ equations

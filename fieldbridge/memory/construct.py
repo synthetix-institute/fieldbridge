@@ -11,7 +11,8 @@
                   critical together (a degenerate critical mode, as in a ring that its symmetry makes degenerate,
                   where the critical eigenspace is not a line). -Delta is what the material must add. When the
                   realization names further material parameters, the point at which the quadratic term vanishes
-                  (a cusp) is solved for, together with the direction of a sweep through it that carries no bias;
+                  (a cusp) is solved for, within the bounds the specification declares for the parameters, together
+                  with the direction of a sweep through it that carries no bias;
                   the normal form along that sweep is then recomputed, on a window over which the quartic term of
                   the drift does not read as a quadratic one (sweep_normal_form).
 
@@ -164,6 +165,20 @@ def _null_vectors(J):
     return vec, w
 
 
+def domain(real: Realization, name: str):
+    """The interval a parameter may take (Realization.bounds), (-inf, inf) where none is declared."""
+    lo, hi = real.bounds.get(name, (None, None))
+    return (-np.inf if lo is None else float(lo)), (np.inf if hi is None else float(hi))
+
+
+def bound_text(real: Realization, name: str) -> str:
+    """The bound of a parameter as an inequality, "kappa >= 0"."""
+    lo, hi = real.bounds.get(name, (None, None))
+    if lo is not None and hi is not None:
+        return f"{lo:g} <= {name} <= {hi:g}"
+    return f"{name} >= {lo:g}" if lo is not None else f"{name} <= {hi:g}"
+
+
 def _fold_equations(real, param, second, h):
     """Residuals of a write point (F = 0, det J = 0) and its quadratic coefficient a2 along the null direction."""
     def a2_of(q, over, vec_ref=None):
@@ -184,10 +199,15 @@ def _fold_equations(real, param, second, h):
     return fold, a2_of
 
 
-def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400):
+def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops: Optional[List[Dict]] = None):
     """Follow the write point (a fold) as the second parameter changes, in both directions, until its quadratic
     coefficient a2 changes sign or nearly vanishes. |a2| need not fall at the first step, so each direction is
-    followed over its whole range before the directions are compared. Returns the point nearest the cusp."""
+    followed over its whole range before the directions are compared. Returns the point nearest the cusp.
+
+    The bounds of the realization are not crossed: a step past a bound of the second parameter is shortened to end on
+    it, and the direction stops there; a direction also stops before a step that would take the control past its
+    bound. Each direction that stops at a bound without a change of sign of a2 is appended to `stops`, with the last
+    point of the fold it reached."""
     from scipy.optimize import root
     fold, a2_of = _fold_equations(real, param, second, h)
     y = np.concatenate([np.asarray(q0, float), [v0]])
@@ -196,30 +216,43 @@ def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400):
         a2_0, vec0 = a2_of(y[:n], {param: v0, second: p0})
     except np.linalg.LinAlgError:
         return None
+    lo, hi = domain(real, second)
+    c_lo, c_hi = domain(real, param)
     scale = max(abs(p0), 1.0)
     best = None
     for direction in (+1.0, -1.0):
         dp = 0.01 * scale * direction
         yy, pv, a2p, vref = y.copy(), p0, a2_0, vec0
         path = [(pv, float(yy[n]), a2p)]
+        stop = None
         for _ in range(max_steps):
             if abs(dp) < 1e-7 * scale or abs(pv - p0) > 4 * scale:
                 break
             trial = pv + dp
+            onto = trial < lo or trial > hi
+            if onto:
+                trial = lo if trial < lo else hi
+                stop = {"parameter": second, "bound": trial}
+                if trial == pv:
+                    break  # the fold is already on the bound
             sol = root(fold, yy, args=(trial,), method="hybr")
             if not (sol.success and np.all(np.isfinite(sol.x)) and np.max(np.abs(sol.fun)) < 1e-7
                     and np.linalg.norm(sol.x - yy) < 0.2 * an.base_length(real) * max(1.0, np.sqrt(n))):
-                dp /= 2
+                dp = (trial - pv) / 2 if onto else dp / 2
                 continue
+            if not c_lo <= sol.x[n] <= c_hi:
+                stop = {"parameter": param, "bound": c_lo if sol.x[n] < c_lo else c_hi}
+                break  # the next point of the fold lies beyond the bound of the control
             try:
                 a2n, vn = a2_of(sol.x[:n], {param: sol.x[n], second: trial}, vref)
             except np.linalg.LinAlgError:
-                dp /= 2
+                dp = (trial - pv) / 2 if onto else dp / 2
                 continue
             if real.carrier.kind == "orthant" and np.min(sol.x[:n]) < 1e-3 * real.carrier.scale:
                 break  # the fold reached the boundary of the orthant, where the drift need not be smooth
             path.append((trial, float(sol.x[n]), a2n))
             if np.sign(a2n) != np.sign(a2p):
+                stop = None
                 # a zero crossing passes through small values; a jump through a singularity does not
                 if max(abs(a2n), abs(a2p)) < 0.5 * abs(a2_0):
                     cand = {"y": sol.x if abs(a2n) < abs(a2p) else yy, "p": trial if abs(a2n) < abs(a2p) else pv,
@@ -230,7 +263,13 @@ def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400):
             if best is None or abs(a2n) < abs(best["a2"]):
                 best = {"y": sol.x, "p": trial, "path": list(path), "a2": a2n}
             yy, pv, a2p, vref = sol.x, trial, a2n, vn
+            if onto:
+                break  # the fold is on the bound of the second parameter
             dp *= 1.3
+        if stop is not None and stops is not None:
+            lower = stop["bound"] == (lo if stop["parameter"] == second else c_lo)
+            stops.append({**stop, "side": "lower" if lower else "upper", "text": bound_text(real, stop["parameter"]),
+                          second: float(pv), param: float(yy[n]), "state": yy[:n].tolist(), "a2": float(a2p)})
     if best is not None and abs(best["a2"]) < 0.2 * abs(a2_0):
         return best
     return None
@@ -241,7 +280,11 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
     as the second parameter changes until its quadratic coefficient a2 vanishes: the cusp, where the write becomes
     symmetric. The cusp is then refined from F = 0, det J = 0, a2 = 0, and the direction in (control, second)
     that keeps the bias zero and makes kappa negative is computed; the normal form along it is recomputed
-    (sweep_normal_form)."""
+    (sweep_normal_form).
+
+    Where the realization bounds the second parameter or the control, the fold is not followed past the bound
+    (bounds_reached lists where it stops) and a cusp outside the bounds is not returned: it is reported under
+    cusp_beyond_bound, and bound_note states why no cusp was found within the bounds."""
     from scipy.optimize import least_squares, root
     param = nf["param"]
     q0 = np.asarray(nf["state"], float)
@@ -263,8 +306,11 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
         return res if np.all(np.isfinite(res)) else np.full(n + 2, 1e3)
 
     out: Dict[str, object] = {"second": second, "success": False}
+    stops: List[Dict] = []
     with np.errstate(all="ignore"):
-        followed = _follow_fold(real, param, second, q0, nf["value"], p0, h)
+        followed = _follow_fold(real, param, second, q0, nf["value"], p0, h, stops=stops)
+        if stops:
+            out["bounds_reached"] = stops
         starts = []
         if followed is not None:
             path = followed["path"]
@@ -282,7 +328,9 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
             for a, b, _ in path[-4:-1][::-1]:
                 starts.append(np.concatenate([y_end[:n], [b, a]]))
         starts.append(np.concatenate([q0, [nf["value"], p0]]))
-        lb = np.concatenate([np.full(n, 1e-9 if real.carrier.kind == "orthant" else -np.inf), [-np.inf, -np.inf]])
+        (c_lo, c_hi), (lo, hi) = domain(real, param), domain(real, second)
+        lb = np.concatenate([np.full(n, 1e-9 if real.carrier.kind == "orthant" else -np.inf), [c_lo, lo]])
+        ub = np.concatenate([np.full(n, np.inf), [c_hi, hi]])
         x = None
         for x0 in starts:
             for method in ("hybr", "lsq"):
@@ -290,18 +338,34 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
                     if method == "hybr":
                         sol = root(eqs, x0, method="hybr", options={"xtol": 1e-12})
                     else:
-                        sol = least_squares(eqs, np.maximum(x0, lb + 1e-9), bounds=(lb, np.inf), xtol=1e-15,
-                                            ftol=1e-15, gtol=1e-15)
+                        sol = least_squares(eqs, np.minimum(np.maximum(x0, lb + 1e-9), ub - 1e-9), bounds=(lb, ub),
+                                            xtol=1e-15, ftol=1e-15, gtol=1e-15)
                 except (np.linalg.LinAlgError, ValueError):
                     continue
                 ok = bool(np.all(np.isfinite(sol.x)) and np.max(np.abs(sol.fun)) < 1e-7
                           and (real.carrier.kind != "orthant" or np.all(sol.x[:n] > 1e-3 * real.carrier.scale)))
+                if ok and not (c_lo <= sol.x[n] <= c_hi and lo <= sol.x[n + 1] <= hi):
+                    # a cusp of the equations outside the domain of the parameters is no setting of the material
+                    out.setdefault("cusp_beyond_bound", {param: float(sol.x[n]), second: float(sol.x[n + 1]),
+                                                         "state": sol.x[:n].tolist(),
+                                                         "bound": bound_text(real, second if not lo <= sol.x[n + 1]
+                                                                             <= hi else param)})
+                    ok = False
                 if ok:
                     x = sol.x
                     break
             if x is not None:
                 break
     if x is None:
+        beyond = out.get("cusp_beyond_bound")
+        if beyond:
+            out["bound_note"] = (f"the cusp {second} = {beyond[second]:.4g}, {param} = {beyond[param]:.4g} lies "
+                                 f"beyond the bound {beyond['bound']}")
+        elif stops:
+            s = stops[0]
+            out["bound_note"] = (f"the fold reaches the bound {s['text']} at {second} = {s[second]:.4g}, "
+                                 f"{param} = {s[param]:.4g} before its quadratic coefficient vanishes: a cusp along "
+                                 f"{second}, if there is one, lies beyond the bound")
         return out
     q, v, pv = x[:n], float(x[n]), float(x[n + 1])
     over = {param: v, second: pv}

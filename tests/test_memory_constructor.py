@@ -43,6 +43,12 @@ def test_every_example_loads_with_its_provenance():
     ({"drift": {"u": "u.real", "v": "v"}}, "Unsupported syntax"),
     ({"control": {"name": "beta", "range": [0, 1]}}, "must be a declared parameter"),
     ({"schema": "other"}, "schema must be"),
+    ({"bounds": {"beta": [0, None]}}, "bounds: 'beta' must be a declared parameter"),
+    ({"bounds": {"n": [0]}}, r"bounds.n must be \[lower, upper\]"),
+    ({"bounds": {"n": [None, None]}}, "neither a lower nor an upper bound"),
+    ({"bounds": {"n": [3, 1]}}, "bounds.n must be increasing"),
+    ({"bounds": {"n": [3, None]}}, "parameter n = 2 lies outside its bounds"),
+    ({"bounds": {"alpha": [1, None]}}, "control.range must lie within bounds.alpha"),
 ])
 def test_specifications_outside_the_contract_are_refused(bad, message):
     base = json.loads((EX / "toggle.json").read_text(encoding="utf-8"))
@@ -1202,6 +1208,40 @@ def test_the_kerr_resonator_of_bifurcation_readout_is_unfolded_at_its_cusp():
     assert row["class"] == "C R(fold) U R(pitchfork) K"
     (u,) = (st for st in row["steps"] if st["letter"] == "U")
     assert u["cusp"]["Delta"] == pytest.approx(delta_c, abs=1e-8) and u["cusp"]["F"] == pytest.approx(f_c, abs=1e-8)
+
+
+def test_a_bound_on_the_loss_rate_keeps_the_cusp_of_the_kerr_resonator_at_positive_loss():
+    """The steady states depend on the loss rate only through kappa^2, so along kappa the two folds of the drive meet
+    at two cusps, kappa = +-2 Delta/sqrt(3) with F = +-(|kappa|^3/(3 sqrt(3) U))^(1/2) and n = 2 Delta/(3 U) photons.
+    Followed along kappa from the fold of the high branch (F = 2.218, carrier scale 4.5 as in bifurcation readout), the
+    fold reaches both; the one at negative loss ends nearer a2 = 0 and is returned, with a subcritical sweep. With
+    the loss declared non-negative, the fold is followed down to kappa = 0 and stops there, and the cusp at positive loss
+    is returned, with a supercritical sweep. With an upper bound below that cusp, no cusp is returned, and the cusp the
+    refinement converges to is reported as lying beyond the bound."""
+    unbounded = dict(JBA, carrier=dict(JBA["carrier"], scale=4.5))
+    real = spec.load(unbounded)
+    U, delta = JBA["parameters"]["U"], JBA["parameters"]["Delta"]
+    kappa_c = 2 * delta / math.sqrt(3)
+    f_c = math.sqrt(kappa_c ** 3 / (3 * math.sqrt(3) * U))
+    nf = _write_point(real, 2.218)
+    assert nf["value"] == pytest.approx(2.2179, abs=1e-4) and nf["kind"].startswith("saddle-node")
+    mirror = construct.cancel_asymmetry(real, nf, "kappa")
+    assert mirror["value"] == pytest.approx(-kappa_c, abs=1e-8) and mirror["control"] == pytest.approx(-f_c, abs=1e-8)
+    assert "bounds_reached" not in mirror and mirror["normal_form_along_sweep"]["kind"].startswith("subcritical")
+    bounded = spec.load(dict(unbounded, bounds={"kappa": [0, None]}))
+    assert bounded.bounds == {"kappa": (0.0, None)}
+    c = construct.cancel_asymmetry(bounded, nf, "kappa")
+    q = np.asarray(c["state"])
+    assert c["success"] and c["value"] == pytest.approx(kappa_c, abs=1e-8) and c["control"] == pytest.approx(f_c, abs=1e-8)
+    assert float(q @ q) == pytest.approx(2 * delta / (3 * U), rel=1e-8)
+    assert c["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
+    (stop,) = c["bounds_reached"]
+    assert stop["parameter"] == "kappa" and stop["kappa"] == 0.0 and stop["side"] == "lower"
+    assert stop["text"] == "kappa >= 0"
+    below = construct.cancel_asymmetry(spec.load(dict(unbounded, bounds={"kappa": [0, 2]})), nf, "kappa")
+    assert not below["success"] and sorted(s["kappa"] for s in below["bounds_reached"]) == [0.0, 2.0]
+    assert below["cusp_beyond_bound"]["kappa"] == pytest.approx(kappa_c, abs=1e-8)
+    assert below["bound_note"] == "the cusp kappa = 2.309, F = 4.869 lies beyond the bound 0 <= kappa <= 2"
 
 
 def test_the_scan_follows_the_high_branch_of_the_kerr_resonator_to_its_fold():
