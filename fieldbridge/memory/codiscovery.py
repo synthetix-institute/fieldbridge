@@ -165,7 +165,7 @@ def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e
     return None
 
 
-def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> bool:
+def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> bool:   # rng kept for the signature
     """Whether the reversing symmetry found at the write point also holds at the start and at the end of the sweep of
     the write check (construct.sweep_ends). A term that vanishes at the write point and grows with the control, an
     asymmetry proportional to a power of the control, keeps the symmetry there and breaks it during the passage; the
@@ -173,7 +173,10 @@ def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> 
     if not real.control or not nf.get("kappa_slope"):
         return True
     from .construct import sweep_ends
-    return all(reversing_symmetry(real, rng, mode, over={real.control: v}) is not None for v in sweep_ends(nf))
+    # a generator of its own: the confirmation must not advance the caller's stream, so that the law check that follows
+    # draws the same noise as before this check existed and the recorded constants move only where the method changed
+    gen = np.random.default_rng(20261023)
+    return all(reversing_symmetry(real, gen, mode, over={real.control: v}) is not None for v in sweep_ends(nf))
 
 
 def describe_symmetry(real: Realization, sym: Dict[str, object]) -> str:
