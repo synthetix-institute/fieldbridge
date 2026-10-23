@@ -216,6 +216,8 @@ def _attractor(real, rng) -> Dict[str, object]:
     out: Dict[str, object] = {"status": "measured", "stable_states": 0}
     out["motion"] = at.attractor(real, rng)
     kind = out["motion"].get("kind")
+    if kind == "converges":   # a stable state the random starts of the search did not reach
+        out["status"] = "converges to a state outside the sampled box"
     if kind in ("chaotic", "unbounded", "drift"):   # a drift can be a slow escape: the blow-up law decides
         out["laws"] = cb.characterize(real, np.random.default_rng(3))
     return out
