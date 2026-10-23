@@ -493,11 +493,26 @@ def construct(real: Realization, rng, states: Optional[List[np.ndarray]] = None,
             out["events"].append(nf)
     if states is not None and len(states) >= 2 and real.carrier.dim <= max_dim:
         thr = an.restoring_threshold(real, states[0], states[1])
-        rw = an.with_write_field(real, states[1], (0.0, 3.0 * thr))
-        branch, ev = an.track(rw, an.WRITE_FIELD, states[0], 0.0, 3.0 * thr)
+        h_max = 3.0 * thr
+        rw = an.with_write_field(real, states[1], (0.0, h_max))
+        branch, ev = an.track(rw, an.WRITE_FIELD, states[0], 0.0, h_max)
+        # the restoring force on the straight path sets the first range of the field. Where the flow is not normal it
+        # can vanish: the drift of a driven Kerr resonator, of the laser and of the convection roll never opposes the
+        # straight move from the first state to the second, and the threshold is its floor. The range is then raised
+        # fourfold until the occupied state is lost, as the threshold write raises it (codiscovery._field_fold); a
+        # field that exerts no force on the occupied state is not raised
+        if ev is None and float(np.linalg.norm(real.write_force(states[0], states[1], 1.0))) >= 1e-8:
+            for _ in range(13):
+                h_max *= 4.0
+                rw = an.with_write_field(real, states[1], (0.0, h_max))
+                branch, ev = an.track(rw, an.WRITE_FIELD, states[0], 0.0, h_max)
+                if ev is not None:
+                    break
         wf: Dict[str, object] = {"threshold": thr, "branch": [
             {"h": b["v"], "kappa_min": b["kappa_min"],
              "overlap": float(real.overlap(np.asarray(b["q"]), states[1]))} for b in branch]}
+        if h_max > 3.0 * thr:
+            wf["range"] = float(h_max)
         if ev is not None:
             nf = an.normal_form(rw, ev["q"], an.WRITE_FIELD, ev["v"])
             nf.update(event=ev["type"], source="write field")

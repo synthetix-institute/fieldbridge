@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "6f20defabfc20f7dce47dbc1d592dcecabd09f86ab549c379b9329fec03cafd5",
+  "implementation_sha256": "4d2c3c97bcfc0bc8d75520a53d6b178a291a9232070c2b3c9aca67b0e432fb7b",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -43,10 +43,10 @@
       "name": "convection roll (Lorenz-Saltzman)",
       "verdict": {
         "stores": "2 stable state(s)",
-        "writes": "supercritical pitchfork at r = 1",
+        "writes": "supercritical pitchfork at r = 1; a uniform field removes the stable state at h = 0.261",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.00, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.52, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 15.6; field 0.4 x threshold, control swept through the write point: accuracy 1.00, retention/rewriting time ratio > 20.8"
       }
     },
     {
@@ -65,10 +65,10 @@
       "name": "single-mode laser",
       "verdict": {
         "stores": "2 stable state(s)",
-        "writes": "supercritical pitchfork at P = 1",
+        "writes": "supercritical pitchfork at P = 1; a uniform field removes the stable state at h = 0.0588",
         "constructs": "supercritical pitchfork: symmetric write",
         "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.03, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.40, not rewritten"
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.30, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.98, retention/rewriting time ratio 10.3; field 0.4 x threshold, control swept through the write point: accuracy 0.88, not rewritten"
       }
     },
     {
