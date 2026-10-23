@@ -746,6 +746,19 @@ def test_the_write_law_has_the_same_constant_in_a_laser_and_a_toggle():
     assert abs(s["law_constant_mean"] - cd.LAW_CONSTANT) < 3.5 * s["law_constant_stderr"]
 
 
+@pytest.mark.parametrize("name, h_c", [("laser", 0.05876), ("convection_roll", 0.2605)])
+def test_the_write_field_of_a_card_is_raised_until_the_state_is_lost(name, h_c):
+    """In the laser and the convection roll the drift never opposes the straight move from the first stored state to
+    the second (the flow is not normal), so the restoring threshold is its floor, 1e-6, and a field three times that
+    leaves the state in place. The card raises the field fourfold, as the threshold write does, and finds the fold of
+    the write field at the h of the threshold-write derivation (Module 13)."""
+    real = load(name)
+    states, *_ = an.stored_states(real, np.random.default_rng(0), 48)
+    assert len(states) == 2 and an.restoring_threshold(real, states[0], states[1]) == 1e-6
+    wf = construct.construct(real, np.random.default_rng(0), states=states, check_write=False)["write_field"]
+    assert wf["h_c"] == pytest.approx(h_c, rel=1e-3) and wf["h_c"] < wf["range"] <= 4 * wf["h_c"]
+
+
 def test_realizations_that_simulate_the_same_equations_count_as_one_model():
     """The unequal toggle, unfolded to equal promoters, is the toggle: its law constant is a replicate of the
     toggle's, not a second model. The laser reduces to the same canonical form by other equations."""
