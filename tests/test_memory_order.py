@@ -81,3 +81,82 @@ def test_order_and_predictions_commands_write_reports(tmp_path):
     assert res.returncode == 0, res.stderr
     rows = json.loads((out2 / "predictions.json").read_text(encoding="utf-8"))["rows"]
     assert all(r["rule"] == "holonomy" for r in rows) and any("gain" in r for r in rows)
+
+
+# ------------------------------------------------------------------------------------------------ equation networks
+from fieldbridge.memory import order_equations as oe
+
+
+def amplitude_network(n, edges, J, noise=0.002):
+    """Parametric amplitudes x_i' = a_i x_i - x_i^3 + h_i + J sum_j x_j (the coherent Ising machine's normal form)."""
+    drift = {f"x{i}": f"a{i}*x{i} - x{i}**3 + h{i}" + "".join(f" + J*x{j}" for a, b in edges for j in
+                                                               ((b,) if a == i else (a,) if b == i else ())) for i in range(n)}
+    params = {"J": J, **{f"a{i}": -1.0 for i in range(n)}, **{f"h{i}": 0.0 for i in range(n)}}
+    return {"schema": "fieldbridge-memory/1", "kind": "equations", "name": "amplitudes", "question": "q",
+            "assumptions": [], "provenance": {"source": "test"},
+            "carrier": {"kind": "euclid", "variables": [f"x{i}" for i in range(n)], "scale": 1},
+            "parameters": params, "drift": drift, "noise": noise, "dt": 0.01}
+
+
+def equation_spec(network, n, writes, mode="ramp", couplings="attractive", **write):
+    w = {"mode": mode, "rest": -1.0, "on": 1.0, "ramp": 8.0, "bias": 0.05, "hold": 2.0, "settle": 2.0, "release": 20.0}
+    w.update(write)
+    return {"schema": "fieldbridge-memory/1", "kind": "order", "name": "t",
+            "order": {"material": "equations", "network": network,
+                      "nodes": {"count": n, "variables": ["x{i}"], "readout": "x{i}", "control": "a{i}", "bias": "h{i}"},
+                      "coupling": ["J"], "couplings": couplings, "write": w, "writes": writes}}
+
+
+def test_sequential_ramps_record_the_order_only_where_a_coupling_is_against_the_write_signs():
+    # attractive pair written with opposite signs: the second node follows the first (two states, reference one)
+    net = od.from_spec(equation_spec(amplitude_network(2, [(0, 1)], 0.2), 2,
+                                     {"A": {"support": [0], "sign": 1}, "B": {"support": [1], "sign": -1}}))
+    assert net.edges == [(0, 1)]
+    r = od.construct(net)
+    assert r["network"]["states"] == {"AB": "++", "BA": "--"} and r["uncoupled_reference"]["distinct"] == 1
+    assert r["index"]["H"] == 1 and abs(r["gain"] - 1.0) < 1e-12
+    # the same signs on an antiferromagnetic pair satisfy the coupling: the writes commute although H = 1
+    net = od.from_spec(equation_spec(amplitude_network(2, [(0, 1)], -0.2), 2,
+                                     {"A": {"support": [0], "sign": 1}, "B": {"support": [1], "sign": -1}},
+                                     couplings="antiferromagnetic"))
+    r = od.construct(net)
+    assert r["network"]["distinct"] == 1 and r["index"]["H"] == 1 and r["gain"] == 0.0
+    # a coupling weaker than the write bias is not recorded
+    net = od.from_spec(equation_spec(amplitude_network(2, [(0, 1)], 0.01), 2,
+                                     {"A": {"support": [0], "sign": 1}, "B": {"support": [1], "sign": -1}}))
+    assert od.measure(net)["distinct"] == 1
+
+
+def test_the_graph_of_an_equation_network_is_read_from_its_drift_and_unwritten_nodes_read_zero():
+    net = od.from_spec(equation_spec(amplitude_network(3, [(0, 1), (1, 2)], 0.2), 3,
+                                     {"A": {"support": [0], "sign": 1}, "B": {"support": [2], "sign": -1}}))
+    assert net.edges == [(0, 1), (1, 2)]
+    m = od.measure(net)
+    assert all(s[1] == "0" for s in m["states"].values())     # node 1 is never written and holds no state
+    assert od.commutation_index(net)["H"] == 1
+
+
+def test_pulse_writes_on_bistable_nodes_and_a_specification_error_names_the_field():
+    # pulses far above the coercive field on separate nodes of a weakly coupled pair: each node keeps its last pulse
+    s = equation_spec(amplitude_network(2, [(0, 1)], 0.02), 2,
+                      {"A": {"support": [0, 1], "sign": 1}, "B": {"support": [1], "sign": -1}}, mode="pulse",
+                      bias=1.5, pulse=4.0)
+    m = od.measure(od.from_spec(s))
+    assert m["states"] == {"AB": "+-", "BA": "++"} and m["split"] == 0
+    bad = equation_spec(amplitude_network(2, [(0, 1)], 0.2), 2, {"A": {"support": [0]}, "B": {"support": [1]}})
+    bad["order"]["nodes"]["control"] = "pump{i}"
+    with pytest.raises(Exception) as e:
+        od.from_spec(bad)
+    assert "control" in str(e.value)
+
+
+def test_the_noisy_record_is_the_capacity_of_the_order_to_pattern_channel():
+    assert abs(oe.capacity(np.eye(3)) - np.log2(3)) < 1e-9
+    assert oe.capacity(np.full((4, 2), 0.5)) < 1e-9
+    assert abs(oe.capacity(np.array([[0.9, 0.1], [0.1, 0.9]])) - (1 + 0.9 * np.log2(0.9) + 0.1 * np.log2(0.1))) < 1e-6
+    s = equation_spec(amplitude_network(2, [(0, 1)], 0.2), 2,
+                      {"A": {"support": [0], "sign": 1}, "B": {"support": [1], "sign": -1}})
+    s["order"]["noise"] = {"trajectories": 60, "seed": 3}
+    r = od.construct(od.from_spec(s))
+    a = r["noisy"]["network"]
+    assert a["capacity"] > 0.8 and a["p_value"] < 0.05 and r["noisy"]["uncoupled_reference"]["capacity"] < 0.2
