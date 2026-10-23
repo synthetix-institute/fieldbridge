@@ -55,7 +55,8 @@ SEARCH_NODES = 200000
 SYMMETRY_LIMIT = 512
 
 
-def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: int = 6) -> List[Dict[str, object]]:
+def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: int = 6,
+               over: Optional[Dict[str, float]] = None) -> List[Dict[str, object]]:
     """Linear symmetries g (permutation with signs) with F(g q) = g F(q) on sampled states.
 
     On R^n a variable may change sign; on angles a sign change is the reflection theta -> -theta; on concentrations
@@ -63,9 +64,10 @@ def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: 
     to four variables on R^n and with all signs equal otherwise; above max_dim the candidates are the signed
     automorphisms of the linearization (structural_candidates), so that a ring of cells with several variables each
     is turned and reflected as a whole."""
+    ov = over or {}   # parameter values at which the drift is tested (e.g. another value of the control)
     d = real.carrier.dim
     qs = _samples(real, rng, n)
-    F = real.F(qs)
+    F = real.F(qs, **ov)
     scale = max(1e-12, float(np.abs(F).max()))
     if d <= max_dim:
         perms = list(itertools.permutations(range(d)))
@@ -83,7 +85,7 @@ def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: 
         if real.carrier.kind == "torus":
             gq = real.carrier.wrap(gq)
         gF = sgn[None, :] * F[:, perm]
-        if np.max(np.abs(real.F(gq) - gF)) <= tol * scale:
+        if np.max(np.abs(real.F(gq, **ov) - gF)) <= tol * scale:
             order = _order(perm, sgn)
             found.append({"permutation": list(perm), "signs": sgn.astype(int).tolist(), "order": order})
             if d > max_dim and len(found) >= SYMMETRY_LIMIT:
@@ -91,7 +93,7 @@ def symmetries(real: Realization, rng, n: int = 12, tol: float = 1e-7, max_dim: 
     if real.carrier.kind == "torus":
         # a uniform shift by half a period: every orientation turned by the same angle
         shifted = real.carrier.wrap(qs + 0.5 * real.carrier.period)
-        if np.max(np.abs(real.F(shifted) - F)) <= tol * scale:
+        if np.max(np.abs(real.F(shifted, **ov) - F)) <= tol * scale:
             found.append({"shift": 0.5 * real.carrier.period, "order": 2,
                           "meaning": "every angle turned by half a period; stored states come in partner pairs"})
     return found

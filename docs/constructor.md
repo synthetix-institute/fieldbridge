@@ -96,8 +96,25 @@ the status of each target and the completion with its law, class, response const
 the specifications in parallel processes.
 
 The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
-equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md); their report is kept in
+equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md). Their records
+(`memory record`, below) are kept in [docs/records/quantum_semiclassical.jsonl](records/quantum_semiclassical.jsonl), and
+the table of their write targets and completions, read off the records by `memory record --from-records`, in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
+
+## The record of a specification
+
+`memory record PATH` writes, for a drift specification or a directory of them, every quantity the rules measure, in one
+schema (`fieldbridge-record/1`, [docs/DATA_MODEL.md](DATA_MODEL.md)): the three write targets with their law constants;
+the write points along the control with their normal forms, obstructions and the completion a rung would make; the
+completion rung at every write point with its law, certificate, write class after a hold (linear-stage write,
+equilibrium write, nonlinear stage) and the fraction of states that change during the hold, which is the retention;
+and, for a realization without a stable state, the kind of motion (chaotic, cycle, quasi-periodic, drift, converges,
+unbounded) with the laws of chaotic loss and blow-up where they apply. Each step runs in a process of its own under a
+wall-clock limit (`--budget`, `--completion-budget`, `--attractor-budget`), so that a slow or failing step costs its own
+entry and not the record; `--steps` restricts a run to some steps, `--workers` records several specifications at a
+time. The outputs are `records.json`, `records.jsonl`, `records.md` and the table of the write targets and completions
+(`predictions.md`, `predictions.json`), which is a view of the records; `memory record --from-records FILE` writes that
+table from an existing records file without a derivation.
 
 ## Audit of a derived law
 

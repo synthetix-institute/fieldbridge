@@ -40,7 +40,9 @@ python3 -m fieldbridge memory codiscover examples/quantum/semiclassical/kpo_tria
 python3 -m fieldbridge memory complete examples/quantum/semiclassical/kpo_triangle.json
 ```
 
-The report of the whole folder is kept under [docs/predictions](../../../docs/predictions/quantum_semiclassical.md).
+The records of the whole folder (`memory record`) are kept under [docs/records](../../../docs/records/quantum_semiclassical.md),
+and the table of the write targets and completions read off them under
+[docs/predictions](../../../docs/predictions/quantum_semiclassical.md).
 
 ## The elements
 

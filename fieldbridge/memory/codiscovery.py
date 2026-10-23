@@ -143,7 +143,8 @@ def _field(real: Realization) -> str:
     return str(spec.get("field", "unspecified"))
 
 
-def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e-3) -> Optional[Dict[str, object]]:
+def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e-3,
+                       over: Optional[Dict[str, float]] = None) -> Optional[Dict[str, object]]:
     """A linear symmetry g of the drift with g(mode) = -mode: it forbids even terms along the mode.
 
     The mode at a located write point is only as accurate as the located state, which the Newton search leaves up to
@@ -152,7 +153,7 @@ def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e
     maps it a distance of order one away, so the unit mode is compared to within tol."""
     from .predict import symmetries
     mode = np.asarray(mode, float)
-    for g in symmetries(real, rng):
+    for g in symmetries(real, rng, over=over):
         if "permutation" not in g:
             continue
         P = np.eye(mode.size)[list(g["permutation"])] * np.asarray(g["signs"], float)[:, None]
@@ -162,6 +163,17 @@ def reversing_symmetry(real: Realization, rng, mode: np.ndarray, tol: float = 1e
             return {"permutation": g["permutation"], "signs": g["signs"], "order": g["order"],
                     "matrix": P.tolist()}
     return None
+
+
+def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> bool:
+    """Whether the reversing symmetry found at the write point also holds at the start and at the end of the sweep of
+    the write check (construct.sweep_ends). A term that vanishes at the write point and grows with the control, an
+    asymmetry proportional to a power of the control, keeps the symmetry there and breaks it during the passage; the
+    write then carries an offset that one sign of the bias cannot separate from the response."""
+    if not real.control or not nf.get("kappa_slope"):
+        return True
+    from .construct import sweep_ends
+    return all(reversing_symmetry(real, rng, mode, over={real.control: v}) is not None for v in sweep_ends(nf))
 
 
 def describe_symmetry(real: Realization, sym: Dict[str, object]) -> str:
@@ -365,7 +377,8 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
         if sym is not None:
             word.insert(0, "S")
             steps.insert(0, {"letter": "S", "meaning": describe_symmetry(real, sym),
-                             **{k: sym[k] for k in ("permutation", "signs", "order")}})
+                             **{k: sym[k] for k in ("permutation", "signs", "order")},
+                             "along_sweep": symmetry_along_sweep(real, rng, pick, np.asarray(pick["mode"]))})
     else:
         first = nfs[0]
         steps.append({"letter": "R", "value": float(first["value"]), "kind": first["kind"].split(":")[0],
@@ -378,7 +391,8 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
             if sym is not None:
                 word.insert(0, "S")
                 steps.insert(0, {"letter": "S", "meaning": describe_symmetry(real, sym),
-                                 **{k: sym[k] for k in ("permutation", "signs", "order")}})
+                                 **{k: sym[k] for k in ("permutation", "signs", "order")},
+                                 "along_sweep": symmetry_along_sweep(real, rng, first, np.asarray(first["mode"]))})
         fold = next((nf for nf in nfs if (nf["obstruction"]["asymmetric"] or nf["obstruction"]["biased"])
                      and not nf.get("hopf")), None)
         unfolded = None
@@ -434,12 +448,19 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                   "quintic": canon.get("quintic")})
     law, const, notes = {}, {}, []
     if check_law:
-        # a reversing symmetry of the simulated realization maps the test with the bias toward -mode onto the test
-        # toward +mode, so that the write has no offset and one sign measures the constant. Without it (no S, or a
-        # sweep through a cusp, which is not the realization in which S was found) both signs are tested.
-        signs = (1,) if "S" in word and target_real is real else (1, -1)
+        # a reversing symmetry of the simulated realization that holds along the whole sweep maps the test with the
+        # bias toward -mode onto the test toward +mode, so that the write has no offset and one sign measures the
+        # constant. Without it (no S, a symmetry broken along the sweep, or a sweep through a cusp, which is not the
+        # realization in which S was found) both signs are tested.
+        s_step = next((st for st in steps if st["letter"] == "S"), None)
+        along = s_step is None or s_step.get("along_sweep", True)
+        signs = (1,) if "S" in word and target_real is real and along else (1, -1)
         law = swept_write_check(target_real, target_nf, rng, n_traj=n_traj, replicates=replicates, signs=signs)
         const = law_constant(law)
+        if s_step is not None and not along:
+            notes.append("the symmetry holds at the write point and not along the sweep (a term that vanishes at the "
+                         "write point breaks it as the control moves): both signs of the bias are tested so that the "
+                         "offset the passage writes is separated from the response")
         if law and not const:
             notes.append("the law was not measured: in a test every trajectory ended on one side")
         elif law:

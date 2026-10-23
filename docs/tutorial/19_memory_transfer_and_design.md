@@ -176,7 +176,8 @@ equilibrium write, or nonlinear stage.
 
 The same rung runs over a whole folder through `memory predictions`, which derives the three write targets of every
 drift specification and completes the obstructed symmetric writes. The thirty-one elements of quantum-computing
-hardware in `examples/quantum/semiclassical` are run this way; their report is kept in
+hardware in `examples/quantum/semiclassical` are run this way; their records (`memory record`) are kept in
+`docs/records`, and the table of their write targets, read off the records, in
 [docs/predictions/quantum_semiclassical.md](../predictions/quantum_semiclassical.md).
 
 ## 6. Exercises

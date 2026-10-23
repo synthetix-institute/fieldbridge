@@ -84,3 +84,59 @@ def test_the_attractor_step_runs_the_blow_up_law_for_a_slow_escape():
     assert out["status"] == "measured" and out["stable_states"] == 0
     assert out["motion"]["kind"] in ("drift", "unbounded")
     assert out["laws"]["kind"] in ("blow-up", "growth"), out["laws"]
+
+
+def test_the_table_of_the_write_targets_is_a_view_of_the_records(tmp_path):
+    records = rc.load_records(ROOT / "docs" / "records" / "quantum_semiclassical.jsonl")
+    assert len(records) == 31 and all(r["schema"] == rc.SCHEMA for r in records)
+    rows = rc.predictions_rows(records)
+    assert [r["spec"] for r in rows] == [Path(r["source"]).name for r in records]
+    assert rows[0]["targets"] is records[0]["targets"] and rows[0]["rule"] == "write point"
+    counts = rc.predictions_counts(records)
+    assert counts["specifications"] == 31 and counts["reached"]["symmetric-write"] + counts["obstructed_symmetric"] <= 31
+    assert set(counts["write_classes"]) <= {"linear-stage write", "equilibrium write", "nonlinear stage"}
+    assert "kerr_cat_kpo" in counts["write_classes"]["equilibrium write"]
+    md = rc.predictions_markdown(records, intro="Intro sentence.")
+    assert md.startswith("# The write rules on the recorded specifications\n\nIntro sentence. Derived from the records")
+    assert md.count("\n| ") == 31 + 2 and "equilibrium write: 51 % change state" in md
+    # the command writes the same table from a records file, with no derivation
+    out = tmp_path / "table"
+    cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "record", "--from-records",
+           str(ROOT / "docs" / "records" / "quantum_semiclassical.jsonl"), "--out-dir", str(out)]
+    res = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    assert res.returncode == 0, res.stderr
+    assert json.loads(res.stdout)["specifications"] == 31
+    assert (out / "quantum_semiclassical.md").read_text(encoding="utf-8").count("\n| ") == 33
+    table = json.loads((out / "quantum_semiclassical.json").read_text(encoding="utf-8"))
+    assert table["derived_from"].endswith("quantum_semiclassical.jsonl") and len(table["rows"]) == 31
+    assert table["counts"] == counts
+
+
+def test_the_cells_of_the_table_name_the_status_the_law_and_the_class():
+    assert rc.target_cell({"status": "reached", "law_constant": {"constant": 1.3, "stderr": 0.1, "expected": 1.331}}) == \
+        "reached; law constant 1.300 ± 0.100 (expected 1.331)"
+    assert rc.target_cell({"status": "not derived", "note": "stopped at the time limit of 300 s"}) == \
+        "not derived (stopped at the time limit of 300 s)"
+    assert rc.target_cell({"status": "obstructed", "obstruction_short": "fold; no cusp"}) == "obstructed: fold; no cusp"
+    law = {"status": "derived", "certified": False, "write_class": "equilibrium write",
+           "hold": {"hold_time": 56.6, "switching_fraction": 0.51}}
+    assert rc.completion_cell({"write_points": [{"completion": "leading order", "law": law}]}) == \
+        "leading order: derived, not certified (equilibrium write: 51 % change state during a hold of 56.6)"
+    assert rc.completion_cell({"status": "not derived", "note": "stopped at the time limit of 1 s"}) == \
+        "not run (stopped at the time limit of 1 s)"
+    assert rc.completion_cell({"status": "derived", "write_points": []}) == "no write point along the control"
+
+
+def test_a_run_restricted_to_some_steps_records_the_others_as_not_run(tmp_path):
+    specs = tmp_path / "specs"
+    specs.mkdir()
+    (specs / "pitchfork.json").write_text(json.dumps(PITCHFORK), encoding="utf-8")
+    out = tmp_path / "rec"
+    cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "record", str(specs), "--out-dir", str(out), "--no-law",
+           "--steps", "write_points,attractor", "--no-isolate"]
+    res = subprocess.run(cmd, capture_output=True, text=True, cwd=ROOT)
+    assert res.returncode == 0, res.stderr
+    rec = rc.load_records(out / "records.jsonl")[0]
+    assert rec["write_points"]["status"] == "derived" and rec["attractor"]["status"] == "stable states"
+    assert rec["completion"] == {"status": "not run"} and rec["targets"]["symmetric-write"] == {"status": "not run"}
+    assert (out / "predictions.md").exists() and json.loads((out / "predictions.json").read_text(encoding="utf-8"))["counts"]["specifications"] == 1

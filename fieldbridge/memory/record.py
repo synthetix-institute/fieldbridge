@@ -146,7 +146,7 @@ def step(spec: Dict, name: str, settings: Optional[Dict] = None) -> Dict[str, ob
         keep = {k: res[k] for k in ("status", "obstruction", "obstruction_short", "word", "class") if k in res}
         const = res.get("law_constant") or {}
         if const.get("constant") is not None:
-            keep["law_constant"] = {k: const[k] for k in ("constant", "stderr", "expected") if k in const}
+            keep["law_constant"] = {k: const[k] for k in ("constant", "stderr", "expected", "offset", "offset_stderr", "offset_resolved") if k in const}
         keep["seconds"] = round(secs, 1)
         return jsonable(keep)
     if name == "write_points":
@@ -326,4 +326,147 @@ def markdown(records: List[Dict]) -> str:
                  f"{att.get('stable_states', '')} stable states" if att.get("status") == "stable states" else att.get("status", ""))
         lines.append(f"| {r['name'][:40]} | {_target_cell(t['symmetric-write'])} | {_target_cell(t['threshold-write'])} | "
                      f"{_target_cell(t['phase-locking'])} | {wtext[:80]} | {ctext[:90]} | {rtext} | {mtext} |")
+    return "\n".join(lines) + "\n"
+
+
+# ------------------------------------------------------------------------------------------------ the predictions table
+def load_records(path) -> List[Dict]:
+    """Records from a `records.jsonl` or `records.json` file."""
+    p = Path(path)
+    text = p.read_text(encoding="utf-8")
+    if p.suffix == ".jsonl":
+        return [json.loads(line) for line in text.splitlines() if line.strip()]
+    data = json.loads(text)
+    return data["records"] if isinstance(data, dict) else data
+
+
+def target_cell(t: Dict) -> str:
+    """The cell of a write target in the table of predictions: its status with the law constant, or what obstructs it."""
+    st = str(t.get("status", ""))
+    if st.startswith("reached"):
+        const = t.get("law_constant") or {}
+        if const.get("constant") is not None:
+            return (f"{st}; law constant {const['constant']:.3f} ± {const.get('stderr', 0.0):.3f}"
+                    + (f" (expected {const['expected']:.3f})" if const.get("expected") is not None else ""))
+        return st
+    if st in ("not derived", "not run", "not read"):
+        return f"{st} ({t.get('note', '')})" if t.get("note") else st
+    return f"{st}: {t.get('obstruction_short') or str(t.get('obstruction', ''))[:90]}"
+
+
+def class_text(L: Dict) -> str:
+    """The class a failed certificate leaves: the equilibrium write (the choice exchanged with the noise during a hold)
+    or the nonlinear stage."""
+    wc = L.get("write_class")
+    if wc == "equilibrium write":
+        h = L.get("hold") or {}
+        return (f" (equilibrium write: {100 * h.get('switching_fraction', 0):.0f} % change state during a hold of "
+                f"{h.get('hold_time', 0):.3g})")
+    if wc == "nonlinear stage" or (L.get("obstruction_in_nonlinear_stage") and wc is None):
+        return " (nonlinear stage)"
+    return ""
+
+
+def completion_cell(c: Dict) -> str:
+    """The completions of a record or of a predictions row, with their laws, certificates, classes and one-direction
+    constants."""
+    if not c:
+        return ""
+    if c.get("note") and not c.get("write_points"):
+        return f"not run ({c['note']})"
+    parts = []
+    for e in c.get("write_points", []):
+        kind = e.get("completion", "")
+        if "law" in e:
+            L = e["law"]
+            cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+            od = one_direction_text(L)
+            parts.append(f"{kind}: {L.get('status', '')}{cert}{class_text(L)}" + (f"; {od}" if od else ""))
+        elif "unfoldings" in e:
+            done = [u for u in e["unfoldings"] if u.get("success")]
+            if done:
+                u = done[0]
+                L = u.get("law", {})
+                cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
+                od = one_direction_text(L)
+                parts.append(f"{kind}: cusp unfolded along {u['second']} ({u.get('kind_along_sweep', '')} along the "
+                             f"sweep); law {L.get('status', '')}{cert}{class_text(L)}" + (f"; {od}" if od else ""))
+            else:
+                parts.append(f"{kind}: no material parameter cancels the asymmetry")
+        else:
+            parts.append(kind)
+    if parts:
+        return "; ".join(parts)
+    return c.get("status", "") if c.get("status") not in (None, "derived") else "no write point along the control"
+
+
+def predictions_rows(records: List[Dict]) -> List[Dict]:
+    """The rows of the table of the write targets (`memory predictions` on drift specifications) read off the records:
+    the same keys, so that the table is a view of the records and not a second derivation."""
+    rows = []
+    for r in records:
+        src = str(r.get("source") or "")
+        rows.append({"spec": Path(src).name if src else r.get("name", ""), "name": r.get("name", ""),
+                     "field": r.get("field", ""), "kind": r.get("kind"), "rule": "write point", "source": src,
+                     "targets": r.get("targets", {}), "completion": r.get("completion", {}),
+                     "spec_sha256": r.get("spec_sha256"), "summary": r.get("summary", "")})
+    return rows
+
+
+def _laws_of(e: Dict) -> List[Dict]:
+    return ([e["law"]] if isinstance(e.get("law"), dict) else []) + [u["law"] for u in e.get("unfoldings", []) if isinstance(u.get("law"), dict)]
+
+
+def predictions_counts(records: List[Dict]) -> Dict[str, object]:
+    """What the table reports in its first paragraph: targets reached, obstructed symmetric writes, certified
+    completions, write classes by specification, steps stopped at a time limit."""
+    reached = {t: 0 for t in WRITE_TARGETS}
+    obstructed_symmetric, certified, stopped = 0, 0, 0
+    classes: Dict[str, List[str]] = {}
+    for r in records:
+        t = r.get("targets", {})
+        for k in WRITE_TARGETS:
+            st = str(t.get(k, {}).get("status", ""))
+            reached[k] += st.startswith("reached")
+            stopped += "time limit" in str(t.get(k, {}).get("note", ""))
+        obstructed_symmetric += str(t.get("symmetric-write", {}).get("status", "")).startswith("obstructed")
+        for step in ("write_points", "completion", "attractor"):
+            stopped += "time limit" in str((r.get(step) or {}).get("note", ""))
+        comp = r.get("completion", {})
+        for e in (comp.get("write_points") or []) if isinstance(comp, dict) else []:
+            laws = _laws_of(e)
+            certified += any(L.get("certified") for L in laws)
+            for L in laws:
+                if L.get("write_class"):
+                    classes.setdefault(L["write_class"], []).append(Path(str(r.get("source") or r.get("name", ""))).stem)
+    return {"specifications": len(records), "reached": reached, "obstructed_symmetric": obstructed_symmetric,
+            "completions_certified": certified, "stopped": stopped,
+            "write_classes": {k: sorted(set(v)) for k, v in sorted(classes.items())}}
+
+
+def predictions_markdown(records: List[Dict], title: str = "The write rules on the recorded specifications",
+                         intro: str = "") -> str:
+    """The table of the write targets and completions, derived from records."""
+    c = predictions_counts(records)
+    n = c["specifications"]
+    classes = "; ".join(f"{k}: {', '.join(v)}" for k, v in c["write_classes"].items())
+    head = (f"Derived from the records (schema `{SCHEMA}`) of {n} specification(s). {c['reached']['symmetric-write']} reach "
+            f"the symmetric write along their declared control, {c['reached']['threshold-write']} the threshold write and "
+            f"{c['reached']['phase-locking']} phase locking; {c['obstructed_symmetric']} have an obstructed symmetric write; "
+            f"the completion rung certified a law at {c['completions_certified']} write point(s); {c['stopped']} step(s) "
+            f"stopped at a time limit." + (f" Write classes of the completed models ({classes})." if classes else ""))
+    lines = [f"# {title}", "", (intro + " " if intro else "") + head, "",
+             "## Drift equations and networks: the write targets", "",
+             "Each target is read from the record of the specification, where `memory record` derived it as `memory codiscover` "
+             "does: reached (the model's write point carries the mechanism, with the law constant where the law was checked), or "
+             "obstructed, with what obstructs it. The completion column lists the completion rung at every write point of the "
+             "record (`memory complete`, with the hold that fixes the write class): the law of the completed model, its "
+             "certificate from the full simulation, and the response constant and offset in one critical direction.", "",
+             "| Specification | Field | Symmetric write | Threshold write | Phase locking | Completion at the write points |",
+             "| --- | --- | --- | --- | --- | --- |"]
+    for r in predictions_rows(records):
+        t = r["targets"]
+        lines.append(f"| {r['spec']} | {r['field']} | {target_cell(t.get('symmetric-write', {}))} | "
+                     f"{target_cell(t.get('threshold-write', {}))} | {target_cell(t.get('phase-locking', {}))} | "
+                     f"{completion_cell(r.get('completion', {}))} |")
     return "\n".join(lines) + "\n"

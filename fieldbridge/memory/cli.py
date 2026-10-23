@@ -679,6 +679,7 @@ def cmd_order(args) -> int:
 
 from .record import STEPS as STEPS_FOR_PARSER, WRITE_TARGETS, completion_summary as _completion_summary, jsonable as _jsonable  # noqa: E402
 from .record import law_summary as _law_summary, one_direction_text as _one_direction_text, timed as _timed  # noqa: E402
+from .record import target_cell as _drift_cell, completion_cell as _completion_cell  # noqa: E402
 
 
 def _predict_drift(path: str, settings: Dict, progress: "Path | None" = None, only: "str | None" = None) -> Dict:
@@ -713,7 +714,7 @@ def _predict_drift(path: str, settings: Dict, progress: "Path | None" = None, on
             keep = {k: res[k] for k in ("status", "obstruction", "obstruction_short", "word", "class") if k in res}
             const = res.get("law_constant") or {}
             if const.get("constant") is not None:
-                keep["law_constant"] = {k: const[k] for k in ("constant", "stderr", "expected") if k in const}
+                keep["law_constant"] = {k: const[k] for k in ("constant", "stderr", "expected", "offset", "offset_stderr", "offset_resolved") if k in const}
             keep["seconds"] = round(secs, 1)
             row["targets"][target] = keep
         save()
@@ -793,61 +794,6 @@ def _predict_drift_isolated(path: str, settings: Dict) -> Dict:
     return row
 
 
-def _drift_cell(t: Dict) -> str:
-    st = str(t.get("status", ""))
-    if st.startswith("reached"):
-        const = t.get("law_constant") or {}
-        if const.get("constant") is not None:
-            return (f"{st}; law constant {const['constant']:.3f} ± {const.get('stderr', 0.0):.3f}"
-                    + (f" (expected {const['expected']:.3f})" if const.get("expected") is not None else ""))
-        return st
-    if st == "not derived":
-        return f"not derived ({t.get('note', '')})"
-    return f"{st}: {t.get('obstruction_short') or str(t.get('obstruction', ''))[:90]}"
-
-
-def _class_text(L: Dict) -> str:
-    """The class a failed certificate leaves: the equilibrium write (the choice exchanged with the noise during a hold)
-    or the nonlinear stage."""
-    wc = L.get("write_class")
-    if wc == "equilibrium write":
-        h = L.get("hold") or {}
-        return (f" (equilibrium write: {100 * h.get('switching_fraction', 0):.0f} % change state during a hold of "
-                f"{h.get('hold_time', 0):.3g})")
-    if wc == "nonlinear stage" or (L.get("obstruction_in_nonlinear_stage") and wc is None):
-        return " (nonlinear stage)"
-    return ""
-
-
-def _completion_cell(c: Dict) -> str:
-    if not c:
-        return ""
-    if c.get("note") and not c.get("write_points"):
-        return f"not run ({c['note']})"
-    parts = []
-    for e in c.get("write_points", []):
-        kind = e.get("completion", "")
-        if "law" in e:
-            L = e["law"]
-            cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
-            od = _one_direction_text(L)
-            parts.append(f"{kind}: {L.get('status', '')}{cert}{_class_text(L)}" + (f"; {od}" if od else ""))
-        elif "unfoldings" in e:
-            done = [u for u in e["unfoldings"] if u.get("success")]
-            if done:
-                u = done[0]
-                L = u.get("law", {})
-                cert = "" if "certified" not in L else (", certified" if L["certified"] else ", not certified")
-                od = _one_direction_text(L)
-                parts.append(f"{kind}: cusp unfolded along {u['second']} ({u.get('kind_along_sweep', '')} along the "
-                             f"sweep); law {L.get('status', '')}{cert}{_class_text(L)}" + (f"; {od}" if od else ""))
-            else:
-                parts.append(f"{kind}: no material parameter cancels the asymmetry")
-        else:
-            parts.append(kind)
-    return "; ".join(parts) if parts else "no write point along the control"
-
-
 def _record_child(path: Path, settings: Dict, step: str, limit: int) -> "tuple[Dict | None, str]":
     """One step of the record on one specification in a child process with a wall-clock limit (an exception raised
     inside a solver's callback would end this interpreter; a child that runs over is stopped and reported)."""
@@ -881,11 +827,12 @@ def _record_child(path: Path, settings: Dict, step: str, limit: int) -> "tuple[D
         return None, (f"the process ended with code {res.returncode}" + (f": {tail[-1][:160]}" if tail else ""))
 
 
-def _record_one(path: str, settings: Dict, limits: Dict[str, int], isolate: bool, only_step: "str | None") -> Dict:
+def _record_one(path: str, settings: Dict, limits: Dict[str, int], isolate: bool, only_step: "str | None",
+                steps=None) -> Dict:
     from . import record as rc
     p = Path(path)
     spec = json.loads(p.read_text(encoding="utf-8"))
-    steps = [only_step] if only_step else list(rc.STEPS)
+    steps = [only_step] if only_step else list(steps or rc.STEPS)
     parts: Dict[str, Dict] = {}
     for st in steps:
         if isolate:
@@ -903,6 +850,20 @@ def cmd_record(args) -> int:
     targets, the write points with their normal forms, the completions with their classes and retention, and the
     motion of a realization without a stable state; every step in a child process under a time limit."""
     from . import record as rc
+    out = Path(args.out_dir)
+    if args.from_records:   # no derivation: the tables of an existing records file
+        records = rc.load_records(args.from_records)
+        stem = Path(args.from_records).stem
+        out.mkdir(parents=True, exist_ok=True)
+        table = rc.predictions_markdown(records, intro=args.intro or "") + f"\n{BOUNDARY}\n"
+        (out / f"{stem}.md").write_text(table, encoding="utf-8")
+        report = {"command": "record", "derived_from": str(args.from_records), **_provenance(),
+                  "counts": rc.predictions_counts(records), "rows": rc.predictions_rows(records)}
+        (out / f"{stem}.json").write_text(json.dumps(report, indent=1, default=float) + "\n", encoding="utf-8")
+        print(json.dumps({"out_dir": args.out_dir, "derived_from": str(args.from_records), **rc.predictions_counts(records)}, indent=2))
+        return 0
+    if args.path is None:
+        raise SystemExit("a specification file or a directory is needed (or --from-records FILE)")
     root = Path(args.path)
     if root.is_dir():
         paths = sorted(root.rglob("*.json") if args.recursive else root.glob("*.json"))
@@ -916,22 +877,30 @@ def cmd_record(args) -> int:
     limits = {t: args.budget for t in rc.WRITE_TARGETS}
     limits.update({"write_points": args.budget, "completion": args.completion_budget, "attractor": args.attractor_budget})
     isolate = not args.no_isolate
+    steps = tuple(args.steps.split(",")) if args.steps else rc.STEPS
+    unknown = [s for s in steps if s not in rc.STEPS]
+    if unknown:
+        raise SystemExit(f"unknown step(s) {unknown}; the steps are {list(rc.STEPS)}")
     if isolate and args.workers > 1:
         import concurrent.futures as cf
         with cf.ThreadPoolExecutor(max_workers=args.workers) as pool:
-            records = list(pool.map(lambda p: _record_one(str(p), settings, limits, True, None), paths))
+            records = list(pool.map(lambda p: _record_one(str(p), settings, limits, True, None, steps), paths))
     else:
-        records = [_record_one(str(p), settings, limits, isolate, args.only_step) for p in paths]
-    out = Path(args.out_dir)
+        records = [_record_one(str(p), settings, limits, isolate, args.only_step, steps) for p in paths]
     out.mkdir(parents=True, exist_ok=True)
-    (out / "records.json").write_text(json.dumps({"command": "record", **_provenance(), "settings": {**settings, **limits,
-                                                  "isolated": isolate}, "records": records}, indent=1) + "\n",
-                                      encoding="utf-8")
+    report = {"command": "record", **_provenance(), "settings": {**settings, **limits, "isolated": isolate}, "records": records}
+    (out / "records.json").write_text(json.dumps(report, indent=1) + "\n", encoding="utf-8")
     with (out / "records.jsonl").open("w", encoding="utf-8") as fh:
         for r in records:
             fh.write(json.dumps(r) + "\n")
     if not args.only_step:
         (out / "records.md").write_text(rc.markdown(records) + f"\n{BOUNDARY}\n", encoding="utf-8")
+        # the table of the write targets and completions, a view of the records
+        table = rc.predictions_markdown(records) + f"\n{BOUNDARY}\n"
+        (out / "predictions.md").write_text(table, encoding="utf-8")
+        report = {"command": "record", "derived_from": "records.jsonl", **_provenance(),
+                  "counts": rc.predictions_counts(records), "rows": rc.predictions_rows(records)}
+        (out / "predictions.json").write_text(json.dumps(report, indent=1, default=float) + "\n", encoding="utf-8")
         print(json.dumps({"out_dir": args.out_dir, "records": len(records),
                           "summaries": [r.get("summary", "") for r in records][:12]}, indent=2))
     else:
@@ -1353,7 +1322,8 @@ def add_parser(sub) -> None:
                                        "targets, the write points with their normal forms, the completions with their "
                                        "classes and retention, and the motion of a realization without a stable state "
                                        "(schema fieldbridge-record/1); every step in a child process under a time limit.")
-    p.add_argument("path", help="A specification file or a directory of specifications (subfolders with --recursive).")
+    p.add_argument("path", nargs="?", default=None, help="A specification file or a directory of specifications "
+                   "(subfolders with --recursive); not needed with --from-records.")
     p.add_argument("--out-dir", default="out/memory_record")
     p.add_argument("--recursive", action="store_true", help="Include the specifications of the subfolders.")
     p.add_argument("--seed", type=int, default=0)
@@ -1367,6 +1337,11 @@ def add_parser(sub) -> None:
     p.add_argument("--trajectories-completion", type=int, default=2000, help="Trajectories of the completion's certificate per bias.")
     p.add_argument("--workers", type=int, default=1, help="Specifications recorded at a time (each step still in its own process).")
     p.add_argument("--no-isolate", action="store_true", help="Run the steps in this process (no time limits).")
+    p.add_argument("--steps", default=None, help="Comma-separated steps to run (default all: "
+                   + ",".join(STEPS_FOR_PARSER) + "); the others are recorded as not run.")
+    p.add_argument("--from-records", default=None, metavar="FILE", help="No derivation: write the table of the write "
+                   "targets and completions (<stem>.md, <stem>.json in --out-dir) from an existing records.jsonl or records.json.")
+    p.add_argument("--intro", default=None, help="With --from-records: a sentence placed before the counts of the table.")
     p.add_argument("--only-step", default=None, choices=list(STEPS_FOR_PARSER), help=argparse.SUPPRESS)
     p.set_defaults(func=cmd_record)
     p = msub.add_parser("predictions", help="What the rules predict for every specification in a directory: for "

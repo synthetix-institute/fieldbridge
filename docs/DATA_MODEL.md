@@ -121,7 +121,7 @@ its own entry and not the record.
 | `schema`, `name`, `field`, `kind`, `source`, `spec_sha256` | identity of the specification |
 | `carrier` | `kind` (euclid, torus, orthant) and `dimension` |
 | `control`, `material` | the swept parameter with its range (null, with a `note`, when none is declared), the parameters a design can change |
-| `targets` | `symmetric-write`, `threshold-write`, `phase-locking`: `status` (reached, reached after unfolding, reached by a write field, obstructed, not derived), `obstruction`, `obstruction_short`, `word`, `class`, `law_constant` {constant, stderr, expected}, `seconds` |
+| `targets` | `symmetric-write`, `threshold-write`, `phase-locking`: `status` (reached, reached after unfolding, reached by a write field, obstructed, not derived), `obstruction`, `obstruction_short`, `word`, `class`, `law_constant` {constant, stderr, expected, and for the symmetric write the intrinsic offset of the write point in probit units with its error and whether it was resolved}, `seconds` |
 | `write_points` | `symmetry_order` of the drift, `stable_states_at_declared_parameters`, and `points`: for every loss or gain of stability along the control its `control_value`, `state`, `kind`, `critical_dimension`, `coefficients` of the reduced drift, `bias_along_mode`, `kappa_slope`, the `obstruction` terms and the `completion` a rung would make |
 | `completion` | the completion rung at every write point: `completion` kind, `law` {status, law_kind, certified, write_class, hold {hold_time, switching_fraction}, one_direction {law, certificate: response_constant, offset}}, or `unfoldings` along a second parameter with the same law fields |
 | `retention` | per completed write point: `write_class` and the `switching_fraction` of states that change during a hold as long as the sweep |
@@ -131,6 +131,11 @@ its own entry and not the record.
 
 Two records are comparable only when their implementation hashes agree. A record states what the rules find on the
 supplied model; it does not establish that the model describes a physical system or that a result is new.
+
+The table of the write targets and completions (the drift section of `memory predictions`) is a view of the records:
+every run of `memory record` writes it beside them as `predictions.md` and `predictions.json`, and
+`memory record --from-records FILE` writes it from an existing records file without a derivation. `--steps` restricts a
+run to some of the six steps; the others are recorded as not run.
 
 ## Mechanism Record
 

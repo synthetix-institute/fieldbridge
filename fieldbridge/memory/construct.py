@@ -332,6 +332,16 @@ def _phi(x: float) -> float:
     return 0.5 * (1.0 + erf(x / sqrt(2.0)))
 
 
+def sweep_ends(nf: Dict, rate: float = 0.02) -> "tuple[float, float]":
+    """The values of the control at which the write check's sweep starts and ends: the control is swept through the
+    write point so that the linear coefficient of the critical mode grows at `rate`, for 4/sqrt(rate) on each side,
+    toward the side where the state loses stability."""
+    g = abs(nf["kappa_slope"])
+    dv = float(np.sign(-nf["kappa_slope"]) * rate / g)
+    t_half = 4.0 / sqrt(rate)
+    return float(nf["value"] - dv * t_half), float(nf["value"] + dv * t_half)
+
+
 def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, rate: float = 0.02,
                       gamma: float = 0.05, n_traj: int = 400, replicates: int = 1,
                       signs: Sequence[int] = (1,)) -> Dict[str, float]:
@@ -375,7 +385,8 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
     rv = rate / g
     t_half = 4.0 / sqrt(rate)
     dv = np.sign(-nf["kappa_slope"]) * rv
-    path = lambda t: vc - dv * t_half + dv * t
+    v_start, _ = sweep_ends(nf, rate)
+    path = lambda t: v_start + dv * t
     z = NormalDist().inv_cdf(target_p)
 
     def run(sg, D, gen, n):
