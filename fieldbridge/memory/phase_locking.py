@@ -56,6 +56,10 @@ NU_OUTSIDE = (-2.0, -1.3, 1.3, 2.0)
 K_REL = (0.02, 0.01)
 NEUTRAL = 0.99  # a transverse Floquet multiplier above this marks a family of neutral cycles
 GRID = 11       # control values scanned for oscillation when the realization does not oscillate as specified
+SCAN_STARTS = 6  # random starts per scanned value (a stable state coexisting with the cycle swallows some of them)
+NEWTON_RESIDUAL = 1e-6   # above this (in units of the carrier scale) the stroboscopic Newton found no locked orbit
+CENTRE_MAX = 0.5         # the fitted centre of the locking range, in half-widths, beyond which the fit is not a measurement
+EXTRAPOLATION_MAX = 0.5  # the largest relative move of the half-width by the extrapolation to zero drive
 
 
 # ------------------------------------------------------------------------------------------------ integration
@@ -245,14 +249,21 @@ def floquet(real: Realization, over: Dict, cyc: Dict) -> Dict[str, object]:
 
 def operating_point(real: Realization, rng) -> Tuple[Optional[float], Optional[Dict], bool, List[Dict]]:
     """The control value at which the drive acts: the specified value if the realization oscillates there, otherwise
-    the middle of the widest interval of oscillating values on a grid over the control range."""
+    the value of a grid over the control range closest to the middle of the widest run of oscillating values.
+
+    The scan keeps the cycle it finds at each value and the chosen value reuses it, so that the operating point is a
+    function of the scan alone: a second random search at the chosen value, which fails when a stable state coexists
+    with the cycle and the starts land in its basin, used to move the operating point to whichever value the search
+    happened to succeed at (the stirred Belousov-Zhabotinsky model gave 60.6, 15.9 and 8.45 for three seeds). The scan
+    uses SCAN_STARTS starts per value for the same reason."""
     name = real.control
     p0 = float(real.params[name])
-    cyc = find_cycle(real, {name: p0}, rng)
+    cyc = find_cycle(real, {name: p0}, rng, n_starts=SCAN_STARTS)
     if cyc is not None:
         return p0, cyc, False, []
     grid = np.linspace(*real.control_range, GRID)
-    scan = [{"value": float(v), "oscillates": find_cycle(real, {name: float(v)}, rng) is not None} for v in grid]
+    found = {float(v): find_cycle(real, {name: float(v)}, rng, n_starts=SCAN_STARTS) for v in grid}
+    scan = [{"value": v, "oscillates": c is not None} for v, c in found.items()]
     runs, cur = [], []
     for row in scan:
         if row["oscillates"]:
@@ -266,14 +277,9 @@ def operating_point(real: Realization, rng) -> Tuple[Optional[float], Optional[D
         return None, None, True, scan
     best = max(runs, key=lambda r: (len(r), -abs(np.mean(r) - p0)))
     mid = float(0.5 * (best[0] + best[-1]))
-    for v in [mid] + sorted(best, key=lambda v: abs(v - mid)):
-        cyc = find_cycle(real, {name: v}, rng)
-        if cyc is not None:
-            return float(v), cyc, True, scan
-    return None, None, True, scan
+    v = min(best, key=lambda x: (abs(x - mid), x))
+    return float(v), found[v], True, scan
 
-
-# ------------------------------------------------------------------------------------------------ phase response
 def phase_response(real: Realization, over: Dict, cyc: Dict, name: str, n_grid: int = 256) -> Dict[str, object]:
     """Z on the cycle from the adjoint equation integrated backward over several periods, normalized by
     Z . F = omega_0; Z_p = Z . dF/dp along the modulated parameter, and its Fourier harmonics up to NMAX."""
@@ -415,7 +421,7 @@ def locked_rate(real: Realization, over: Dict, cyc: Dict, name: str, n: int, eps
         q = q + np.linalg.solve(J - np.eye(d), -G)
     mu = np.linalg.eigvals(J)
     top = float(np.max(np.abs(mu)))
-    return {"nu": float(nu), "rate": float(-log(top) / Tm), "residual": res, "newton": it + 1}
+    return {"nu": float(nu), "rate": float(-log(top) / Tm), "residual": res / scale, "newton": it + 1}
 
 
 def slip_frequency(real: Realization, over: Dict, cyc: Dict, name: str, n: int, eps: float, K: float,
@@ -486,8 +492,31 @@ def adler_law(real: Realization, over: Dict, cyc: Dict, name: str, n: int, zn: f
     (big, small) = sorted(fits, key=lambda f: -f["eps"])[:2]
     ratio = small["eps"] / big["eps"]
     const = (small["half_width"] - ratio * big["half_width"]) / (1.0 - ratio)
-    return {"fits": fits, "constant": float(const), "stderr": float(abs(const - small["half_width"])),
-            "centre": float(small["centre"]), "expected": 1.0}
+    out = {"fits": fits, "constant": float(const), "stderr": float(abs(const - small["half_width"])),
+           "centre": float(small["centre"]), "expected": 1.0}
+    out.update(adler_quality(fits, const))
+    return out
+
+
+def adler_quality(fits: List[Dict], const: float) -> Dict[str, object]:
+    """Whether the half-width is a measurement. The fit is not one when a locked orbit was not found (the Newton
+    residual of the stroboscopic map stays large), when a slip frequency could not be read, when the fitted centre of
+    the locking range lies outside it (|centre| above CENTRE_MAX half-widths: the range is centred on the natural
+    frequency to first order), or when the extrapolation moves the half-width by more than EXTRAPOLATION_MAX of its
+    value. A relaxation oscillator at a slow operating point fails these, and its constant would be noise."""
+    reasons = []
+    for f in fits:
+        for r in f["rows"]:
+            if r["side"] == "inside" and not (r.get("residual", 0.0) < NEWTON_RESIDUAL):
+                reasons.append(f"no locked orbit at nu = {r['nu']:+.1f} (Newton residual {r.get('residual', float('nan')):.2g})")
+            if r["side"] == "outside" and not np.isfinite(r.get("frequency", float("nan"))):
+                reasons.append(f"no slip frequency at nu = {r['nu']:+.1f}")
+        if abs(f["centre"]) > CENTRE_MAX * max(f["half_width"], 1e-12):
+            reasons.append(f"the fitted centre {f['centre']:+.2f} lies outside the locking range (half-width {f['half_width']:.2f})")
+    small = min(fits, key=lambda f: f["eps"])
+    if abs(const - small["half_width"]) > EXTRAPOLATION_MAX * max(abs(small["half_width"]), 1e-12):
+        reasons.append(f"the extrapolation to zero drive moves the half-width from {small['half_width']:.3f} to {const:.3f}")
+    return {"measured": not reasons, "quality_notes": sorted(set(reasons))}
 
 
 # ------------------------------------------------------------------------------------------------ derivation
@@ -580,10 +609,13 @@ def derive(real: Realization, rng, check_law: bool = True) -> Dict[str, object]:
     law, const = {}, {}
     if check_law:
         law = adler_law(real, over, cyc, name, n, zn, phi_n)
-        const = {"constant": law["constant"], "stderr": law["stderr"], "expected": 1.0}
-        word.append("L")
-        steps.append({"letter": "L", "law_constant": law["constant"], "law_stderr": law["stderr"],
-                      "centre": law["centre"], "amplitudes": len(law["fits"])})
+        if law["measured"]:
+            const = {"constant": law["constant"], "stderr": law["stderr"], "expected": 1.0}
+            word.append("L")
+            steps.append({"letter": "L", "law_constant": law["constant"], "law_stderr": law["stderr"],
+                          "centre": law["centre"], "amplitudes": len(law["fits"])})
+        else:
+            notes.append("the law was not measured: " + "; ".join(law["quality_notes"]))
     out["status"] = "reached"
     return {**out, "word": "".join(word), "route": route_string(steps), "class": derivation_class(steps),
             "steps": steps, "canonical": canon, "law": law, "law_constant": const,
