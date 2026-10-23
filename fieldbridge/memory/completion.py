@@ -377,7 +377,7 @@ SWITCHING_EQUILIBRIUM = 0.1   # fraction of the certificate's trajectories that 
 # ------------------------------------------------------------------------------------------------ one write point
 def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
            n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
-           reduce_one: bool = False) -> Dict[str, object]:
+           reduce_one: bool = False, hold_always: bool = False) -> Dict[str, object]:
     """The write law at one write point of `real` (whose normal form is nf), for biases along the critical space.
 
     The noise is `noise` if given; otherwise it is set, as in construct.swept_write_check, by
@@ -485,10 +485,11 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     if certify:
         bad = [r for r in rows if r["deviation_sigma"] > DEVIATION_SIGMA and r["deviation"] > DEVIATION_FLOOR]
         out["certified"] = not bad
-        if bad:
+        if bad or hold_always:
             # does the end of the sweep retain the choice? continue the certificate at the end value of the control
             hold = hold_check(real, sweep, sims, targets, strengths, D, rng, stable, sweep.T)
             out["hold"] = hold
+        if bad:
             dev = f"{max(r['deviation'] for r in bad):.3f} ({max(r['deviation_sigma'] for r in bad):.1f} errors)"
             if hold["switching_fraction"] > SWITCHING_EQUILIBRIUM:
                 out["write_class"] = "equilibrium write"
@@ -621,7 +622,7 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
 
 def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
              n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
-             curvature: bool = False) -> Dict[str, object]:
+             curvature: bool = False, hold_always: bool = False) -> Dict[str, object]:
     """Every write point of `real` along its control: the obstruction, what its completion keeps, and the law of the
     completed model (with its certificate)."""
     if not real.control:
@@ -638,7 +639,8 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
             entry["leading_term"] = nf["leading_term"]
         try:
             if kind in ("none", "critical space", "leading order", "distant branch"):
-                entry["law"] = law_at(real, nf, rng, rate, noise, floors, n_samples, n_traj, certify, gamma)
+                entry["law"] = law_at(real, nf, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
+                                      hold_always=hold_always)
             elif kind == "second parameter":
                 entry["unfoldings"] = []
                 for second in real.material:
@@ -666,7 +668,7 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
                             # the one-coordinate law needs a saturating cubic along the sweep; a subcritical sweep
                             # through the cusp keeps the linear-stage law
                             u["law"] = law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
-                                              reduce_one=float(nfp.get("a3", 0.0)) < 0)
+                                              reduce_one=float(nfp.get("a3", 0.0)) < 0, hold_always=hold_always)
                             if curvature and noise is None and u["law"].get("status") == "derived":
                                 # the curvature of the sweep that cancels its intrinsic offset
                                 u["zero_offset_curvature"] = zero_offset_curvature(

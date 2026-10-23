@@ -21,6 +21,7 @@
 Contributing a material (CONTRIBUTING.md):
   new NAME                     a template specification that loads and runs, with placeholders to replace
   check SPEC [SPEC ...]        required and recommended checks, the structural predictions and a quick card
+  record PATH                  the record of a specification or a directory: targets, write points, completions, motion
   changes SPEC                 changes of the specification (a term removed or added from a donor, another control, a wider range), judged by the write targets; pairs and their closure
   catalog                      the table of materials in docs/materials.md, calculated from the specifications
 
@@ -676,68 +677,8 @@ def cmd_order(args) -> int:
     return 0
 
 
-WRITE_TARGETS = ("symmetric-write", "threshold-write", "phase-locking")
-
-
-def _jsonable(o):
-    import numpy as np
-    if isinstance(o, dict):
-        return {str(k): _jsonable(v) for k, v in o.items() if k != "final"}
-    if isinstance(o, (list, tuple)):
-        return [_jsonable(v) for v in o]
-    if isinstance(o, (np.floating, np.integer, np.bool_)):
-        return o.item()
-    if isinstance(o, np.ndarray):
-        return o.tolist()
-    return o
-
-
-def _law_summary(law) -> Dict:
-    if not isinstance(law, dict):
-        return {"status": str(law)[:160]}
-    out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
-                               "obstruction_in_nonlinear_stage", "write_class") if k in law}
-    if isinstance(law.get("hold"), dict):
-        out["hold"] = {k: law["hold"].get(k) for k in ("hold_time", "switching_fraction")}
-    od = law.get("one_direction")
-    if isinstance(od, dict):   # response constant and offset of a one-dimensional write, law and certificate
-        out["one_direction"] = {src: [{k: r[k] for k in ("bias_floors", "response_constant", "offset") if k in r}
-                                      for r in rows] for src, rows in od.items() if isinstance(rows, list)}
-    return out
-
-
-def _one_direction_text(law: Dict) -> str:
-    od = law.get("one_direction") or {}
-    parts = []
-    for src in ("law", "certificate"):
-        rows = od.get(src) or []
-        if rows:
-            r = max(rows, key=lambda x: x.get("bias_floors", 0))
-            parts.append(f"{src}: response {r['response_constant']:.2f}, offset {r['offset']:+.2f}")
-    return "; ".join(parts)
-
-
-def _completion_summary(entry: Dict) -> Dict:
-    out = {"completion": entry.get("completion"), "kind": entry.get("kind"), "write_point": entry.get("write_point")}
-    if "law" in entry:
-        out["law"] = _law_summary(entry["law"])
-    if "unfoldings" in entry:
-        out["unfoldings"] = [{"second": u.get("second"), "success": u.get("success"),
-                              **({"cusp": u["cusp"], "kind_along_sweep": u.get("kind_along_sweep")} if u.get("success") else {}),
-                              **({"law": _law_summary(u["law"])} if "law" in u else {})} for u in entry["unfoldings"]]
-    return out
-
-
-def _timed(fn, *args, **kwargs):
-    """fn(*args, **kwargs) with the seconds it took and the exception, if any, as a note. No alarm interrupts it: an
-    exception raised inside a solver's callback ends the interpreter, so time limits are wall-clock limits on the child
-    process that runs a specification (see _predict_drift_isolated)."""
-    import time
-    t0 = time.time()
-    try:
-        return fn(*args, **kwargs), time.time() - t0, ""
-    except Exception as e:  # noqa: BLE001
-        return None, time.time() - t0, f"{type(e).__name__}: {str(e)[:120]}"
+from .record import STEPS as STEPS_FOR_PARSER, WRITE_TARGETS, completion_summary as _completion_summary, jsonable as _jsonable  # noqa: E402
+from .record import law_summary as _law_summary, one_direction_text as _one_direction_text, timed as _timed  # noqa: E402
 
 
 def _predict_drift(path: str, settings: Dict, progress: "Path | None" = None, only: "str | None" = None) -> Dict:
@@ -905,6 +846,97 @@ def _completion_cell(c: Dict) -> str:
         else:
             parts.append(kind)
     return "; ".join(parts) if parts else "no write point along the control"
+
+
+def _record_child(path: Path, settings: Dict, step: str, limit: int) -> "tuple[Dict | None, str]":
+    """One step of the record on one specification in a child process with a wall-clock limit (an exception raised
+    inside a solver's callback would end this interpreter; a child that runs over is stopped and reported)."""
+    import shutil
+    import subprocess
+    import sys
+    import tempfile
+    with tempfile.TemporaryDirectory() as tmp:
+        d = Path(tmp) / "spec"
+        d.mkdir()
+        shutil.copy(path, d / path.name)
+        out = Path(tmp) / "out"
+        cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "record", str(d), "--out-dir", str(out),
+               "--no-isolate", "--only-step", step, "--seed", str(settings["seed"]),
+               "--trajectories", str(settings["trajectories"]), "--samples", str(settings["samples"]),
+               "--trajectories-completion", str(settings["trajectories_completion"])]
+        if not settings["law"]:
+            cmd.append("--no-law")
+        try:
+            res = subprocess.run(cmd, capture_output=True, text=True, check=False, timeout=limit if limit > 0 else None)
+        except subprocess.TimeoutExpired:
+            return None, f"stopped at the time limit of {limit} s"
+        except OSError as e:
+            return None, f"the process could not start: {e}"
+        report = out / "records.json"
+        if res.returncode == 0 and report.exists():
+            rows = json.loads(report.read_text(encoding="utf-8")).get("records", [])
+            if rows and step in rows[0].get("steps", {}):
+                return rows[0]["steps"][step], ""
+        tail = [ln for ln in (res.stderr or "").strip().splitlines() if ln.strip()]
+        return None, (f"the process ended with code {res.returncode}" + (f": {tail[-1][:160]}" if tail else ""))
+
+
+def _record_one(path: str, settings: Dict, limits: Dict[str, int], isolate: bool, only_step: "str | None") -> Dict:
+    from . import record as rc
+    p = Path(path)
+    spec = json.loads(p.read_text(encoding="utf-8"))
+    steps = [only_step] if only_step else list(rc.STEPS)
+    parts: Dict[str, Dict] = {}
+    for st in steps:
+        if isolate:
+            res, why = _record_child(p, settings, st, limits.get(st, 0))
+            parts[st] = res if res is not None else {"status": "not derived", "note": why}
+        else:
+            parts[st] = rc.step(spec, st, settings)
+    if only_step:   # a child: the step alone, for its parent to assemble
+        return {"spec": p.name, "steps": parts}
+    return rc.assemble(spec, parts, source=str(p))
+
+
+def cmd_record(args) -> int:
+    """The record of every drift specification of a file or a directory (schema fieldbridge-record/1): the write
+    targets, the write points with their normal forms, the completions with their classes and retention, and the
+    motion of a realization without a stable state; every step in a child process under a time limit."""
+    from . import record as rc
+    root = Path(args.path)
+    if root.is_dir():
+        paths = sorted(root.rglob("*.json") if args.recursive else root.glob("*.json"))
+    else:
+        paths = [root]
+    paths = [p for p in paths if isinstance(json.loads(p.read_text(encoding="utf-8")), dict)
+             and "schema" in json.loads(p.read_text(encoding="utf-8"))
+             and json.loads(p.read_text(encoding="utf-8")).get("kind") in ("equations", "network")]
+    settings = {"seed": args.seed, "law": not args.no_law, "trajectories": args.trajectories, "samples": args.samples,
+                "trajectories_completion": args.trajectories_completion}
+    limits = {t: args.budget for t in rc.WRITE_TARGETS}
+    limits.update({"write_points": args.budget, "completion": args.completion_budget, "attractor": args.attractor_budget})
+    isolate = not args.no_isolate
+    if isolate and args.workers > 1:
+        import concurrent.futures as cf
+        with cf.ThreadPoolExecutor(max_workers=args.workers) as pool:
+            records = list(pool.map(lambda p: _record_one(str(p), settings, limits, True, None), paths))
+    else:
+        records = [_record_one(str(p), settings, limits, isolate, args.only_step) for p in paths]
+    out = Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "records.json").write_text(json.dumps({"command": "record", **_provenance(), "settings": {**settings, **limits,
+                                                  "isolated": isolate}, "records": records}, indent=1) + "\n",
+                                      encoding="utf-8")
+    with (out / "records.jsonl").open("w", encoding="utf-8") as fh:
+        for r in records:
+            fh.write(json.dumps(r) + "\n")
+    if not args.only_step:
+        (out / "records.md").write_text(rc.markdown(records) + f"\n{BOUNDARY}\n", encoding="utf-8")
+        print(json.dumps({"out_dir": args.out_dir, "records": len(records),
+                          "summaries": [r.get("summary", "") for r in records][:12]}, indent=2))
+    else:
+        print(json.dumps({"out_dir": args.out_dir, "step": args.only_step, "records": len(records)}))
+    return 0
 
 
 def cmd_predictions(args) -> int:
@@ -1317,6 +1349,26 @@ def add_parser(sub) -> None:
     p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
     p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
     p.set_defaults(func=cmd_order)
+    p = msub.add_parser("record", help="The record of every drift specification of a file or a directory: the write "
+                                       "targets, the write points with their normal forms, the completions with their "
+                                       "classes and retention, and the motion of a realization without a stable state "
+                                       "(schema fieldbridge-record/1); every step in a child process under a time limit.")
+    p.add_argument("path", help="A specification file or a directory of specifications (subfolders with --recursive).")
+    p.add_argument("--out-dir", default="out/memory_record")
+    p.add_argument("--recursive", action="store_true", help="Include the specifications of the subfolders.")
+    p.add_argument("--seed", type=int, default=0)
+    p.add_argument("--budget", type=int, default=300, help="Wall-clock seconds per write target and for the write points.")
+    p.add_argument("--completion-budget", type=int, default=1200, help="Wall-clock seconds for the completion rung.")
+    p.add_argument("--attractor-budget", type=int, default=900, help="Wall-clock seconds for the motion of a realization "
+                   "without a stable state.")
+    p.add_argument("--no-law", action="store_true", help="Derive the write targets without checking their law constants.")
+    p.add_argument("--trajectories", type=int, default=400, help="Trajectories of the law check per target.")
+    p.add_argument("--samples", type=int, default=4000, help="Samples of the completion's linear-stage Gaussian.")
+    p.add_argument("--trajectories-completion", type=int, default=2000, help="Trajectories of the completion's certificate per bias.")
+    p.add_argument("--workers", type=int, default=1, help="Specifications recorded at a time (each step still in its own process).")
+    p.add_argument("--no-isolate", action="store_true", help="Run the steps in this process (no time limits).")
+    p.add_argument("--only-step", default=None, choices=list(STEPS_FOR_PARSER), help=argparse.SUPPRESS)
+    p.set_defaults(func=cmd_record)
     p = msub.add_parser("predictions", help="What the rules predict for every specification in a directory: for "
                                            "hysterons rule R8 (frustration index with the drive, balance, the typical "
                                            "gain of the sequence-memory ensemble, the measured gain and return test "

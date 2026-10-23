@@ -109,6 +109,29 @@ fragmenting into many local labels when the relevant transferable substrate may
 be graph topology, probability space, coordinate domain, or stoichiometric
 space.
 
+## Record of a drift specification (`fieldbridge-record/1`)
+
+The unit the constructor judges and reports, written by `memory record PATH` for a specification or a directory
+(`records.json`, `records.jsonl`, `records.md`). Every quantity the rules measure on the specification, in one schema,
+assembled from six steps that run in processes of their own under time limits, so that a slow or failing step costs
+its own entry and not the record.
+
+| Key | Content |
+| --- | --- |
+| `schema`, `name`, `field`, `kind`, `source`, `spec_sha256` | identity of the specification |
+| `carrier` | `kind` (euclid, torus, orthant) and `dimension` |
+| `control`, `material` | the swept parameter with its range (null, with a `note`, when none is declared), the parameters a design can change |
+| `targets` | `symmetric-write`, `threshold-write`, `phase-locking`: `status` (reached, reached after unfolding, reached by a write field, obstructed, not derived), `obstruction`, `obstruction_short`, `word`, `class`, `law_constant` {constant, stderr, expected}, `seconds` |
+| `write_points` | `symmetry_order` of the drift, `stable_states_at_declared_parameters`, and `points`: for every loss or gain of stability along the control its `control_value`, `state`, `kind`, `critical_dimension`, `coefficients` of the reduced drift, `bias_along_mode`, `kappa_slope`, the `obstruction` terms and the `completion` a rung would make |
+| `completion` | the completion rung at every write point: `completion` kind, `law` {status, law_kind, certified, write_class, hold {hold_time, switching_fraction}, one_direction {law, certificate: response_constant, offset}}, or `unfoldings` along a second parameter with the same law fields |
+| `retention` | per completed write point: `write_class` and the `switching_fraction` of states that change during a hold as long as the sweep |
+| `attractor` | for a realization without a stable state at its declared parameters: `motion` {kind: chaotic, cycle, quasi-periodic, drift, converges, unbounded; lyapunov, tolerance, recurrence, spectrum} and `laws` (chaotic loss, blow-up) where they apply; otherwise the count of stable states |
+| `summary` | one line: the targets reached, the completions with their classes, the motion |
+| `implementation_sha256`, `versions` | the code and the libraries that produced the record |
+
+Two records are comparable only when their implementation hashes agree. A record states what the rules find on the
+supplied model; it does not establish that the model describes a physical system or that a result is new.
+
 ## Mechanism Record
 
 A mechanism record is a concrete analogy target. It has equations, variables,
