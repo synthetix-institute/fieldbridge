@@ -249,13 +249,15 @@ def floquet(real: Realization, over: Dict, cyc: Dict) -> Dict[str, object]:
 
 def operating_point(real: Realization, rng) -> Tuple[Optional[float], Optional[Dict], bool, List[Dict]]:
     """The control value at which the drive acts: the specified value if the realization oscillates there, otherwise
-    the value of a grid over the control range closest to the middle of the widest run of oscillating values.
+    the value of a grid over the control range, within the widest run of oscillating values, whose cycle contracts
+    most per period (the largest -ln of the transverse Floquet multiplier); among equal contractions, such as a flow
+    on a circle with no transverse direction, the value nearest the middle of the run.
 
-    The scan keeps the cycle it finds at each value and the chosen value reuses it, so that the operating point is a
-    function of the scan alone: a second random search at the chosen value, which fails when a stable state coexists
-    with the cycle and the starts land in its basin, used to move the operating point to whichever value the search
-    happened to succeed at (the stirred Belousov-Zhabotinsky model gave 60.6, 15.9 and 8.45 for three seeds). The scan
-    uses SCAN_STARTS starts per value for the same reason."""
+    The phase reduction behind the Adler law needs an isolated, strongly attracting cycle, and a run of oscillating
+    values can hold both a fast cycle and a slow relaxation oscillation whose transverse multiplier is close to one
+    (the stirred Belousov-Zhabotinsky model: 0.98 ± 0.03 for the Adler constant at one end of its run, no measurement
+    at the other). The scan keeps the cycle it finds at each value with SCAN_STARTS starts and the chosen value reuses
+    it, so that the operating point is a function of the scan alone and not of a second random search."""
     name = real.control
     p0 = float(real.params[name])
     cyc = find_cycle(real, {name: p0}, rng, n_starts=SCAN_STARTS)
@@ -277,8 +279,25 @@ def operating_point(real: Realization, rng) -> Tuple[Optional[float], Optional[D
         return None, None, True, scan
     best = max(runs, key=lambda r: (len(r), -abs(np.mean(r) - p0)))
     mid = float(0.5 * (best[0] + best[-1]))
-    v = min(best, key=lambda x: (abs(x - mid), x))
-    return float(v), found[v], True, scan
+    refined: Dict[float, Dict] = {}
+    contraction: Dict[float, float] = {}
+    for v in best:
+        try:
+            with np.errstate(all="ignore"):
+                refined[v] = refine_cycle(real, {name: v}, found[v])
+                other = floquet(real, {name: v}, refined[v])["largest_other"]
+        except (StopIteration, ValueError, FloatingPointError):
+            continue
+        contraction[v] = float("inf") if other <= 0.0 else (-log(other) if other < 1.0 else -float("inf"))
+    for row in scan:
+        if row["value"] in contraction:
+            row["contraction_per_period"] = contraction[row["value"]]
+    if not contraction:
+        v = min(best, key=lambda x: (abs(x - mid), x))
+        return float(v), found[v], True, scan
+    top = max(contraction.values())
+    v = min((x for x, c in contraction.items() if c == top), key=lambda x: (abs(x - mid), x))
+    return float(v), refined[v], True, scan
 
 def phase_response(real: Realization, over: Dict, cyc: Dict, name: str, n_grid: int = 256) -> Dict[str, object]:
     """Z on the cycle from the adjoint equation integrated backward over several periods, normalized by

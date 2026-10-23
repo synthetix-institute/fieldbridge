@@ -39,14 +39,14 @@ def test_the_adler_fit_is_a_measurement_only_when_every_part_of_it_succeeded():
     assert not bad["measured"] and any("extrapolation" in n for n in bad["quality_notes"])
 
 
-def test_the_operating_point_is_the_scanned_value_nearest_the_middle_of_the_oscillating_run_and_reuses_its_cycle():
+def test_the_operating_point_is_the_most_contracting_cycle_of_the_oscillating_run_and_reuses_it():
     real = mspec.load(VDP)
     p1, cyc, continued, scan = pl.operating_point(real, np.random.default_rng(0))
     assert continued and cyc is not None
     osc = [row["value"] for row in scan if row["oscillates"]]
     assert min(osc) >= 0.0 and len(osc) >= 3         # no cycle for mu < 0; at mu = 0 the linear motion is periodic
-    mid = 0.5 * (min(osc) + max(osc))
-    assert abs(p1 - min(osc, key=lambda v: abs(v - mid))) < 1e-9
-    assert cyc["period"] > 0 and p1 in [row["value"] for row in scan]   # the cycle found by the scan at that value
+    c = {row["value"]: row["contraction_per_period"] for row in scan if "contraction_per_period" in row}
+    assert len(c) >= 3 and p1 == max(c, key=c.get)    # the van der Pol cycle contracts more per period as mu grows
+    assert abs(p1 - max(osc)) < 1e-9 and cyc["period"] > 0 and "orbit" in cyc   # the refined cycle of the scan
     p2, _, _, _ = pl.operating_point(real, np.random.default_rng(7))
     assert abs(p2 - p1) < 1e-9                         # and the same with other random starts
