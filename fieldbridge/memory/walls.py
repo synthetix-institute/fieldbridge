@@ -227,7 +227,7 @@ def loss_threshold(chain, signs: Sequence[int], name: str, lo: float, hi: float,
     if fp is None:
         raise ValueError(f"the pattern is not stable at {name} = {lo}")
     grid = np.linspace(lo, hi, 61)
-    guess, last = fp["state"], lo
+    guess, last, keep = fp["state"], lo, fp
     for v in grid[1:]:
         fp = fixed_point(replace(chain, **{name: float(v)}), s, guess)
         if fp is None:
@@ -238,40 +238,54 @@ def loss_threshold(chain, signs: Sequence[int], name: str, lo: float, hi: float,
                 if f2 is None:
                     b = c
                 else:
-                    a, guess = c, f2["state"]
-            return {"parameter": name, "value": 0.5 * (a + b), "error": 0.5 * (b - a), "reached": True}
-        guess, last = fp["state"], float(v)
+                    a, guess, keep = c, f2["state"], f2
+            # the slowest eigenvalue of the last stable state says how it is lost: real (a fold: the state meets a
+            # saddle) or complex (an oscillatory instability)
+            return {"parameter": name, "value": 0.5 * (a + b), "error": 0.5 * (b - a), "reached": True,
+                    "last_stable": a, "slowest_before": [keep["slowest"].real, keep["slowest"].imag],
+                    "state_before": keep["state"]}
+        guess, last, keep = fp["state"], float(v), fp
     return {"parameter": name, "value": None, "beyond": hi, "reached": False}
 
 
-def wall_velocity(chain, E: float, t_max: float = 400.0, dt: Optional[float] = None) -> Dict[str, object]:
-    """Deterministic velocity of a single wall (open chain, + domain on the left) in the field E: the number of sites
-    switched per unit time once the wall has left the first quarter of the chain. Zero when the wall is pinned."""
-    ch = replace(chain, ring=False, **({"E": E} if hasattr(chain, "E") else {"theta_x": E}))
+def wall_velocity(chain, E: float, t_max: float = 400.0, dt: Optional[float] = None,
+                  threshold: float = 0.6) -> Dict[str, object]:
+    """Deterministic motion of a single wall in the field E (open chain, + domain on the first quarter, started at
+    the stable state of the pattern at zero field): the time at which each site switches (sign with hysteresis, as in
+    first_switches), and the velocity, sites per unit time, from the switches of the sites between N/4 + 3 and
+    7N/8. `ordered` is False when sites switch out of order (the minority domain is lost as a whole rather than by
+    the motion of the wall); `pinned` when fewer than four sites switch within t_max."""
+    field_name = "E" if hasattr(chain, "E") else "theta_x"
+    ch = replace(chain, ring=False, **{field_name: 0.0})
     s = np.where(np.arange(ch.N) < ch.N // 4, 1, -1)
-    fp = fixed_point(replace(ch, **({"E": 0.0} if hasattr(ch, "E") else {"theta_x": 0.0})), s)
-    z = fp["state"] if fp is not None else ch.start(s)
+    fp = fixed_point(ch, s)
+    if fp is None:
+        raise ValueError("the single-wall pattern is not a stable state at zero field")
+    ch = replace(ch, **{field_name: E})
     dt = dt or ch.default_dt()
-    th = ch.well()
-    times, front = [], []
+    z = fp["state"].copy()
+    bits = s.copy()
+    lim = threshold * ch.well()
+    when = np.full(ch.N, np.nan)
     t = 0.0
-    while t < t_max:
+    lo, hi = ch.N // 4 + 3, (7 * ch.N) // 8
+    while t < t_max and np.isnan(when[hi]):
         a0 = ch.drift(z)
         z = z + 0.5 * dt * (a0 + ch.drift(z + dt * a0))
         t += dt
-        x = ch.coordinate(z)
-        times.append(t)
-        front.append(int(np.sum(x > -0.6 * th)))
-        if front[-1] >= ch.N - ch.N // 8:
-            break
-    times, front = np.array(times), np.array(front)
-    sel = (front >= ch.N // 4 + 2) & (front <= ch.N - ch.N // 8 - 1)
-    if sel.sum() < 2 or front[sel].max() == front[sel].min():
-        return {"E": E, "velocity": 0.0, "pinned": True, "sites_switched": int(front[-1] - ch.N // 4)}
-    # time of each site's switch, then a least-squares slope sites / time
-    sites, when = np.unique(front[sel], return_index=True)
-    v = np.polyfit(times[sel][when], sites, 1)[0]
-    return {"E": E, "velocity": float(v), "pinned": False, "sites_switched": int(front[-1] - ch.N // 4)}
+        flip = ch.coordinate(z) * bits < -lim
+        if flip.any():
+            bits = np.where(flip, -bits, bits)
+            when[flip & np.isnan(when)] = t
+    switched = np.flatnonzero(~np.isnan(when))
+    if switched.size < 4:
+        return {"E": E, "velocity": 0.0, "pinned": True, "switched": int(switched.size), "times": when.tolist()}
+    sel = np.arange(lo, hi + 1)
+    sel = sel[~np.isnan(when[sel])]
+    ordered = bool(np.all(np.diff(when[ch.N // 4:][~np.isnan(when[ch.N // 4:])]) >= -1e-9))
+    v = float(np.polyfit(when[sel], sel, 1)[0]) if sel.size >= 3 else float("nan")
+    return {"E": E, "velocity": v, "pinned": False, "ordered": ordered, "switched": int(switched.size),
+            "times": when.tolist()}
 
 
 def langer_rate(chain, signs: Sequence[int], site: int) -> Dict[str, object]:
@@ -559,6 +573,36 @@ def glauber_overlap(t: np.ndarray, hop: float, nucleation: float = 0.0) -> np.nd
     t = np.asarray(t, float)
     a, g = 2 * hop, 2 * (hop - nucleation)
     return np.exp(-(a - g) * t) * ive(0, g * t)
+
+
+def ring_reversal_rate(N: int, nucleation: float, hop: float, annihilation: float) -> float:
+    """Rate at which an aligned word on a ring of N sites reverses through one nucleus (nearest-neighbour kinetic
+    chain, one nucleus at a time): N Gamma_0 h, with h = p / (N (1 - p) + 4 p - 2) the probability that a one-site
+    nucleus grows to the whole ring, p = 2 Gamma_1 / (Gamma_2 + 2 Gamma_1) the probability that it escapes
+    annihilation at each visit of length one (and symmetrically at length N - 1). The overlap of the word decays at
+    twice this rate; for large N it tends to 4 Gamma_0 Gamma_1 / Gamma_2."""
+    p = 2 * hop / (annihilation + 2 * hop)
+    return float(N * nucleation * p / (N * (1 - p) + 4 * p - 2))
+
+
+def mean_pattern_field(hop: float, nucleation: float, L: int):
+    """The linear field of fieldbridge.memory.fields whose relaxation is that of the mean pattern of Glauber's chain:
+    d<s_j>/dt = -2 Gamma_0 <s_j> + (Gamma_1 - Gamma_0) lap <s_j>, i.e. a non-conserved field with M = 1,
+    kappa0 = 2 Gamma_0 (the mass, from nucleation) and Dgrad = Gamma_1 - Gamma_0 (the mobility, from the hops of
+    walls). Exact for Glauber's rates (Gamma_2 = 2 Gamma_1 - Gamma_0); for other rates the kinetic chain is the
+    reference and this field is its Glauber approximation."""
+    from .fields import FieldModel
+    return FieldModel(d=1, L=L, conserved=False, M=1.0, kappa0=2 * nucleation, Dgrad=hop - nucleation, T=1.0)
+
+
+def mean_pattern_overlap(times: Sequence[float], hop: float, nucleation: float, L: int = 4096) -> np.ndarray:
+    """Overlap of a random written pattern with its mean evolution under mean_pattern_field: (1/L) sum_k
+    exp(-kappa(k) t), kappa(k) = 2 Gamma_0 + (Gamma_1 - Gamma_0) 2 (1 - cos k)."""
+    from .fields import _lambda
+    m = mean_pattern_field(hop, nucleation, L)
+    lam, _ = _lambda(1, L)
+    rate = m.M * (m.kappa0 + m.Dgrad * lam)
+    return np.array([float(np.mean(np.exp(-rate * t))) for t in np.asarray(times, float)])
 
 
 def from_spec(spec: Dict):

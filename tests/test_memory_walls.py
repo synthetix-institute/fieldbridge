@@ -83,6 +83,25 @@ def test_the_kinetic_chain_with_glauber_rates_has_glauber_overlap():
     assert np.allclose(out["overlap"], exact, atol=0.02)
 
 
+def test_the_mean_pattern_of_glauber_chain_is_the_linear_field_of_the_field_module():
+    t = np.array([0.0, 1.0, 10.0, 100.0])
+    assert np.allclose(w.mean_pattern_overlap(t, 0.1, 0.01), w.glauber_overlap(t, 0.1, 0.01), atol=1e-6)
+    m = w.mean_pattern_field(0.1, 0.01, 64)
+    assert not m.conserved and m.kappa0 == pytest.approx(0.02) and m.Dgrad == pytest.approx(0.09)
+
+
+def test_an_aligned_ring_reverses_through_one_nucleus_at_the_predicted_rate():
+    g0, g1, g2 = 0.002, 0.01, 0.04
+    kc = w.KineticChain(6, True, _rates(g0, g1, g2), True, use_five=False)
+    rng = np.random.default_rng(3)
+    R = w.ring_reversal_rate(6, g0, g1, g2)
+    times = np.linspace(0.0, 1.5 / (2 * R), 7)
+    q = np.array(kc.evolve(np.ones(6, int), times, 6000, rng)["overlap"])
+    rate = -np.polyfit(times[2:], np.log(q[2:]), 1)[0]
+    assert rate == pytest.approx(2 * R, rel=0.15)   # one nucleus at a time: within 5-18 % for N = 3-8
+    assert w.ring_reversal_rate(10 ** 6, g0, g1, g2) == pytest.approx(2 * g0 * g1 / g2, rel=1e-4)
+
+
 def test_the_first_error_of_a_word_is_at_the_sum_of_the_rates_of_its_sites():
     kc = w.KineticChain(8, True, _rates(0.001, 0.01, 0.1), True, use_five=False)
     s = [1, 1, 1, -1, -1, 1, -1, -1]          # site 5 is isolated (m = 2), four sites sit at walls (m = 1)
