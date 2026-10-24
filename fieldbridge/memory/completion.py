@@ -454,10 +454,34 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             reduced = reduced_law(real, sweep, q0, targets, strengths, D, stable, n_samples, rng)
         except (ValueError, np.linalg.LinAlgError):
             reduced = None
+    # the sector law of the critical plane (k >= 2): the linear stage fixes the direction of the deviation and the
+    # nonlinear stage carries it to the written state whose direction is nearest; the probabilities are those of the
+    # Gaussian of the linear stage over the angular sectors of the written states (the states near the unwritten one,
+    # at less than half the largest distance, are not sectors). Found on the rf-SQUID triangle, where it reproduces the
+    # certificate to a few percent and the flow map does not.
+    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if k >= 2 else None
+    sector_rng = np.random.default_rng(int(rng.integers(2 ** 63)))
+
+    def sector_law(mc, Cc):
+        if coords_arr is None or coords_arr.shape[1] < 2:
+            return None
+        rad = np.linalg.norm(coords_arr[:, :2], axis=1)
+        big = rad > 0.5 * rad.max()
+        if big.sum() < 2:
+            return None
+        ang = np.arctan2(coords_arr[:, 1], coords_arr[:, 0])
+        w, V = np.linalg.eigh(0.5 * (Cc + Cc.T))
+        z = mc[None] + sector_rng.standard_normal((20000, mc.size)) @ (V * np.sqrt(np.clip(w, 0, None))).T
+        za = np.arctan2(z[:, 1], z[:, 0])
+        dang = np.abs((za[:, None] - ang[None, :] + pi) % (2 * pi) - pi)
+        lab = np.argmin(np.where(big[None, :], dang, np.inf), axis=1)
+        return [float(v) for v in np.bincount(lab, minlength=len(stable)) / len(z)]
+
     rows = []
     for (c, e), r in zip(keys, lin):
         rows.append({"bias_floors": c, "direction": e.tolist(),
                      "linear_stage_law": _probs(assign(real, r["final"], stable), len(stable)), "t_star": r["t_star"],
+                     "sector_law": sector_law(np.asarray(r["mean_critical"], float), np.asarray(r["cov_critical"], float)),
                      "t_cross": r["t_cross"], "t_map": r["t_map"], "linear_stage_ended_by": r["ended_by"],
                      "growth": r["growth"], "linear_size_before_crossing": r["linear_size_before_crossing"],
                      "mean_critical": r["mean_critical"], "cov_critical": r.get("cov_critical")})
@@ -473,6 +497,12 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         for row, qf in zip(rows, sims):
             lab = assign(real, qf, stable)
             row["certificate"] = _probs(lab, len(stable))
+            if row.get("sector_law") is not None:
+                n_c = max(len(lab), 1)
+                diffs = [abs(a - b) for a, b in zip(row["sector_law"], row["certificate"])]
+                errs = [sqrt(max(b * (1 - b), 1e-12) / n_c) for b in row["certificate"]]
+                row["sector_deviation"] = float(max(diffs))
+                row["sector_deviation_sigma"] = float(max(d / e_ for d, e_ in zip(diffs, errs)))
             row["certificate_diverged"] = float(np.mean(lab < 0))
             err = [sqrt(max(p * (1 - p), 1.0 / n_traj) / n_traj) for p in row["certificate"]]
             row["deviation_sigma"] = float(max(abs(a - b) / e for a, b, e in zip(row["law"], row["certificate"], err)))
@@ -496,6 +526,9 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     if certify:
         bad = [r for r in rows if r["deviation_sigma"] > DEVIATION_SIGMA and r["deviation"] > DEVIATION_FLOOR]
         out["certified"] = not bad
+        if any(r.get("sector_law") is not None for r in rows):
+            bad_s = [r for r in rows if r.get("sector_deviation_sigma", 0.0) > DEVIATION_SIGMA and r.get("sector_deviation", 0.0) > DEVIATION_FLOOR]
+            out["sector_certified"] = not bad_s
         if bad or hold_always:
             # does the end of the sweep retain the choice? continue the certificate at the end value of the control
             hold = hold_check(real, sweep, sims, targets, strengths, D, rng, stable, sweep.T)

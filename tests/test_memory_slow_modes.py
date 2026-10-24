@@ -61,6 +61,10 @@ def test_the_completion_law_uses_the_dynamical_dimension_and_reports_both():
     assert law["critical_dimension"] == 1 and law["dynamical_critical_dimension"] == 2
     assert abs(law["second_rate"] - 0.06) < 5e-3 and "relax less than once" in law["slow_modes"]
     assert len(law["rows"]) == 8 and all(len(r["direction"]) == 2 for r in law["rows"])   # eight directions in the plane
+    # the sector law of the critical plane: a distribution over the written states for every direction
+    for r in law["rows"]:
+        assert r["sector_law"] is not None and abs(sum(r["sector_law"]) - 1.0) < 1e-9 and len(r["sector_law"]) == len(law["stable_states"])
+    assert all(r.get("cov_critical") is not None for r in law["rows"])
     # with a stricter factor the second direction counts as relaxed, and the law is the one-dimensional one again
     import fieldbridge.memory.completion as cmod
     saved = cmod.SLOW_FACTOR

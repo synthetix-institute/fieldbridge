@@ -113,6 +113,11 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
+When two or more directions take part, the completion rung reports beside its flow map the sector law of the critical
+plane: the Gaussian of the linear stage assigned by angle to the written state whose direction is nearest, the
+nonlinear stage only carrying each direction to its state. On the rf-SQUID triangle this reproduces the certificate to a
+few percent where the flow map does not (`sector_law`, `sector_certified`).
+
 ## The record of a specification
 
 `memory record PATH` writes, for a drift specification or a directory of them, every quantity the rules measure, in one
