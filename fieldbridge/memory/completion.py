@@ -490,8 +490,16 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         if reduced is not None:
             row["reduced_law"] = reduced[i]
         # the law reported: the reduced one-coordinate law where the completion keeps a second parameter (a sweep
-        # that itself favours one state), the linear-stage law otherwise
-        row["law"] = row["reduced_law"] if reduced is not None else row["linear_stage_law"]
+        # that itself favours one state), the sector law of the critical space where two or more directions take part
+        # (the flow from the mapping point misreads the basins of a weakly split write; the bisector sectors are the
+        # outcome map there, found on the rf-SQUID triangle), the linear-stage law with the flow map otherwise
+        if reduced is not None:
+            row["law"] = row["reduced_law"]
+        elif k >= 2 and row.get("sector_law") is not None:
+            row["law"] = row["sector_law"]
+            row["flow_map_law"] = row["linear_stage_law"]
+        else:
+            row["law"] = row["linear_stage_law"]
     sims: List[np.ndarray] = []
     if certify:
         sims = certificate(real, sweep, q0, targets, strengths, D, n_traj, rng)
@@ -511,7 +519,8 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     # the states written by +-axis biases, in critical coordinates (for k = 1: which stable state is +mode)
     coords = [(L.T @ real.carrier.diff(qc, s)).tolist() for s in stable]          # diff(a, b) = b - a
     out = {"status": "derived", "law_kind": "reduced (one coordinate along the moving branch)" if reduced is not None
-           else "linear stage and outcome map", "critical_dimension": k_static, "dynamical_critical_dimension": k,
+           else ("linear stage and sector map" if k >= 2 and any(r.get("sector_law") is not None for r in rows)
+                 else "linear stage and outcome map"), "critical_dimension": k_static, "dynamical_critical_dimension": k,
            "second_rate": nf.get("second_rate"), "rate": rate, "sweep_end": sweep.T, "noise": D,
            "noise_rule": noise_rule,
            "noise_along_critical": D_s,
