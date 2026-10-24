@@ -113,10 +113,20 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
-When two or more directions take part, the completion rung reports beside its flow map the sector law of the critical
-plane: the Gaussian of the linear stage assigned by angle to the written state whose direction is nearest, the
-nonlinear stage only carrying each direction to its state. On the rf-SQUID triangle this reproduces the certificate to a
-few percent where the flow map does not (`sector_law`, `sector_certified`).
+The outcome map of the completion starts one e-fold after the crossing (the mapping time). The Gaussian of the linear
+stage is carried back to that time by the linear propagator of the critical space, so that each sample has there the
+size and the direction the linear stage gives it. In one direction only the sign of a sample counts. In two or more,
+its direction keeps turning toward the fastest mode for as long as the dynamics is linear, and two regimes follow,
+told apart by the pulled-back spread against the written amplitude at the mapping time (`map_regime`, `spread_at_map`,
+`written_amplitude_at_map`). Where the spread is still a small fraction of that amplitude, the full nonlinear drift
+carries each sample forward and stops the turning at its own saturation. Where the deviation has already reached the
+written amplitude, as it has for every pitchfork under the noise rule of the rung, the choice is made there, and each
+sample goes to the written state nearest in direction: the sector law of the critical space at the mapping time
+(`sector_law`, `sector_certified`). On populations of two, three and four pitchforks coupled at a third of the passage
+scale this law holds to a few percent, where the sector law read at the end of the linear stage misses by a tenth
+(the slow modes decay for another three e-folds there) and a flow from samples rescaled to a small size misses by a
+quarter (it lengthens the nonlinear stage); on the rf-SQUID triangle the same law reproduces the certificate to a few
+percent where that flow left a tenth.
 
 ## The record of a specification
 
