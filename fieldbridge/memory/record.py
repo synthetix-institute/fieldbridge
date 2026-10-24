@@ -89,8 +89,19 @@ def versions() -> Dict[str, str]:
 def law_summary(law) -> Dict:
     if not isinstance(law, dict):
         return {"status": str(law)[:160]}
-    out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "certified",
-                               "obstruction_in_nonlinear_stage", "write_class") if k in law}
+    out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "dynamical_critical_dimension", "second_rate",
+                               "slow_modes", "certified", "sector_certified", "obstruction_in_nonlinear_stage", "write_class")
+           if k in law}
+    if isinstance(law.get("stable_states"), list):
+        out["stable_states"] = len(law["stable_states"])
+    rows = law.get("rows") or []
+    if rows:   # the largest deviation of the two maps from the certificate, over the bias directions
+        flow = [r.get("deviation_sigma") for r in rows if r.get("deviation_sigma") is not None]
+        sect = [r.get("sector_deviation_sigma") for r in rows if r.get("sector_deviation_sigma") is not None]
+        if flow:
+            out["flow_map_deviation_sigma_max"] = float(max(flow))
+        if sect:
+            out["sector_deviation_sigma_max"] = float(max(sect))
     if isinstance(law.get("hold"), dict):
         out["hold"] = {k: law["hold"].get(k) for k in ("hold_time", "switching_fraction")}
     od = law.get("one_direction")
