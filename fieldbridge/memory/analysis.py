@@ -26,6 +26,7 @@ from __future__ import annotations
 from dataclasses import replace
 from typing import Dict, List, Optional, Sequence
 
+from math import sqrt
 import numpy as np
 
 from .identity import Realization
@@ -787,6 +788,43 @@ def leading_order(real, q, vec, w, over, half: float, rate: float, scale: float,
     return {"order": n, "coefficient": float(part[k] / amps[k] ** n), "slope": slope, "amplitude": float(amps[k])}
 
 
+def slow_spectrum(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float, scale: float,
+                  J: np.ndarray, R: np.ndarray) -> Dict[str, object]:
+    """What the record needs beyond the count of critical directions: the rates of the other directions at the write
+    point (`spectrum`, real and imaginary parts sorted by the size of the real part, the eight slowest), the rate of
+    the slowest direction that is not critical (`second_rate`, the splitting of the critical rates), and the rank of
+    the Jacobian restricted to the critical eigenspace (`critical_block_rank`: zero for a semisimple degeneracy, as
+    the equivariant one of a ring, k - 1 for a nilpotent one, Bogdanov-Takens). A direction whose rate is below the
+    square root of the sweep rate of a write check relaxes less than once while the choice is made, so the write then
+    takes place in more directions than the continuation counts as critical: completion.law_at counts them."""
+    crit = critical_directions(ev, cand, lam, slope, resolution, scale)
+    others = [j for j in cand if j not in set(crit.tolist())]
+    order = sorted(cand.tolist(), key=lambda j: abs(ev[j].real))
+    out: Dict[str, object] = {
+        "spectrum": [[float(ev[j].real), float(ev[j].imag)] for j in order[:8]],
+        "second_rate": float(min(abs(ev[j].real) for j in others)) if others else None,
+    }
+    k = int(crit.size)
+    if k >= 2:
+        B = np.real(R[:, crit])
+        Bp = np.linalg.pinv(B)
+        block = Bp @ J @ B
+        out["critical_block_rank"] = int(np.linalg.matrix_rank(block, tol=1e-6 * max(scale, 1e-300)))
+    return out
+
+
+def dynamical_critical_dimension(nf: Dict, rate: float, factor: float = 1.0) -> int:
+    """The number of directions that take part in a write swept at `rate`: the critical ones and those whose rate at
+    the write point is below factor x sqrt(rate), which relax less than once during the passage (the choice is made
+    over a time of order 1/sqrt(rate) around the crossing)."""
+    k = int(nf.get("critical_dimension", 1) or 1)
+    spec = nf.get("spectrum") or []
+    if not spec:
+        return k
+    slow = sum(1 for re, _ in spec if abs(re) <= factor * sqrt(rate))
+    return max(k, int(slow))
+
+
 def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float,
                         scale: float) -> np.ndarray:
     """Indices of the eigenvalues ev (among cand, the directions outside the declared null modes) whose real part is
@@ -906,6 +944,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * half else 0.0
     crit = critical(growth)
     k = crit["critical_dimension"]
+    crit.update(slow_spectrum(ev, cand, lam, growth, WRITE_RESOLUTION * width, scale, J, R))
     if k > 1:
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
                 f"{k}-dimensional, not a line")

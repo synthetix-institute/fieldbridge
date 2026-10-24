@@ -372,6 +372,9 @@ def hold_check(real: Realization, sweep: "Sweep", finals: List[np.ndarray], targ
 
 
 SWITCHING_EQUILIBRIUM = 0.1   # fraction of the certificate's trajectories that change state during a hold as long as the sweep
+RATE_DEFAULT = 0.02           # the sweep rate of the write check and of the record's dynamical critical dimension
+SLOW_FACTOR = 1.0             # a direction with a rate below this times sqrt(rate) takes part in the write (it relaxes less
+                              # than once during the passage): the critical space of the law includes it
 
 
 # ------------------------------------------------------------------------------------------------ one write point
@@ -383,7 +386,9 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     The noise is `noise` if given; otherwise it is set, as in construct.swept_write_check, by
     Gamma = D_s |a3| / rate (the noise against the growth of the barrier behind the choice) where the cubic coefficient
     is resolved, and is the material's own noise where it is not (a vanishing cubic)."""
-    k = max(1, int(nf.get("critical_dimension", 1)))
+    k_static = max(1, int(nf.get("critical_dimension", 1)))
+    # the directions that take part in the write: the critical ones and those too slow to relax during the passage
+    k = max(k_static, an.dynamical_critical_dimension(nf, rate, SLOW_FACTOR))
     R, L = critical_space(real, nf, k)
     sweep = Sweep(real, nf, rate)
     qc = np.asarray(nf["state"], float)
@@ -475,11 +480,17 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     # the states written by +-axis biases, in critical coordinates (for k = 1: which stable state is +mode)
     coords = [(L.T @ real.carrier.diff(qc, s)).tolist() for s in stable]          # diff(a, b) = b - a
     out = {"status": "derived", "law_kind": "reduced (one coordinate along the moving branch)" if reduced is not None
-           else "linear stage and outcome map", "critical_dimension": k, "rate": rate, "sweep_end": sweep.T, "noise": D,
+           else "linear stage and outcome map", "critical_dimension": k_static, "dynamical_critical_dimension": k,
+           "second_rate": nf.get("second_rate"), "rate": rate, "sweep_end": sweep.T, "noise": D,
            "noise_rule": noise_rule,
            "noise_along_critical": D_s,
            "bias_floor": floor, "stable_states": [s.tolist() for s in stable], "stable_critical_coordinates": coords,
            "rows": rows}
+    if k > k_static:
+        out["slow_modes"] = (f"{k - k_static} direction(s) with a rate below {SLOW_FACTOR:g} sqrt(rate) = "
+                             f"{SLOW_FACTOR * sqrt(rate):.3g} at the write point relax less than once during the passage: "
+                             f"the write takes place in {k} directions, and the law is the {k}-dimensional linear stage "
+                             f"with the outcome map")
     if k == 1:
         out.update(_one_direction(rows, coords, floor))
     if certify:

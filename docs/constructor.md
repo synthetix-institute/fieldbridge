@@ -101,6 +101,18 @@ equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/
 the table of their write targets and completions, read off the records by `memory record --from-records`, in
 [docs/predictions/quantum_semiclassical.md](predictions/quantum_semiclassical.md).
 
+## The directions that take part in a write
+
+The continuation counts the directions that become critical together at a write point to its own resolution. A write
+swept at rate r makes its choice over a time of order 1/sqrt(r) around the crossing, so a direction whose rate at the
+point is below sqrt(r) relaxes less than once while the choice is made and takes part in it, whether or not the
+continuation counts it as critical. The record keeps the eight slowest rates at every write point and the rate of the
+slowest direction that is not critical (the splitting of the critical rates), and the completion rung runs its linear
+stage and outcome map in the directions that take part (`dynamical_critical_dimension`), with a note `slow_modes` when
+these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry of one bond splits the two critical
+rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
+one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
+
 ## The record of a specification
 
 `memory record PATH` writes, for a drift specification or a directory of them, every quantity the rules measure, in one
