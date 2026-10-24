@@ -463,18 +463,19 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     sector_rng = np.random.default_rng(int(rng.integers(2 ** 63)))
 
     def sector_law(mc, Cc):
+        """The nearest written state by the angle between directions in the k-dimensional critical space."""
         if coords_arr is None or coords_arr.shape[1] < 2:
             return None
-        rad = np.linalg.norm(coords_arr[:, :2], axis=1)
+        rad = np.linalg.norm(coords_arr, axis=1)
         big = rad > 0.5 * rad.max()
         if big.sum() < 2:
             return None
-        ang = np.arctan2(coords_arr[:, 1], coords_arr[:, 0])
+        units = coords_arr[big] / rad[big][:, None]
+        idx = np.flatnonzero(big)
         w, V = np.linalg.eigh(0.5 * (Cc + Cc.T))
         z = mc[None] + sector_rng.standard_normal((20000, mc.size)) @ (V * np.sqrt(np.clip(w, 0, None))).T
-        za = np.arctan2(z[:, 1], z[:, 0])
-        dang = np.abs((za[:, None] - ang[None, :] + pi) % (2 * pi) - pi)
-        lab = np.argmin(np.where(big[None, :], dang, np.inf), axis=1)
+        zn = z / np.maximum(np.linalg.norm(z, axis=1, keepdims=True), 1e-300)
+        lab = idx[np.argmax(zn @ units.T, axis=1)]
         return [float(v) for v in np.bincount(lab, minlength=len(stable)) / len(z)]
 
     rows = []
