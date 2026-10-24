@@ -130,6 +130,13 @@ class OrderNetwork:
         q = self.advance(q, np.zeros(self.n), self.release)
         return self.certify(q)
 
+    def pattern(self, names: Sequence[str]) -> Optional[str]:
+        eq = self.retained(names)
+        return None if eq is None else _signs(eq)
+
+    def uncoupled(self) -> "OrderNetwork":
+        return replace(self, name=f"{self.name} (uncoupled reference)", coupling=0.0)
+
 
 # ------------------------------------------------------------------------------------------------ specification
 def bfs_order(n: int, edges: Sequence[Tuple[int, int]]) -> List[int]:
@@ -169,8 +176,10 @@ def graph_edges(spec_graph, n: int) -> List[Tuple[int, int]]:
     return edges
 
 
-def from_spec(spec: Dict) -> OrderNetwork:
-    """The network of a specification of kind ``order``; SpecError says what to change."""
+def from_spec(spec: Dict, base=None):
+    """The network of a specification of kind ``order``; SpecError says what to change. With material
+    ``equations`` the network is given by drift equations (`order_equations`); base is the directory against which a
+    network path is read."""
     if spec.get("schema") != SCHEMA:
         raise SpecError(f"schema must be {SCHEMA!r}")
     if spec.get("kind") != KIND:
@@ -178,6 +187,11 @@ def from_spec(spec: Dict) -> OrderNetwork:
     o = spec.get("order")
     if not isinstance(o, dict):
         raise SpecError("A specification of kind 'order' needs an 'order' object")
+    if o.get("material", "bistable") == "equations":
+        from . import order_equations
+        return order_equations.from_spec(spec, base)
+    if o.get("material", "bistable") != "bistable":
+        raise SpecError("order.material must be 'bistable' (the census material) or 'equations'")
     n = int(o.get("units", 0))
     if not 2 <= n <= MAX_UNITS:
         raise SpecError(f"units must be between 2 and {MAX_UNITS}")
@@ -227,8 +241,7 @@ def measure(net: OrderNetwork) -> Dict[str, object]:
     names = [w.name for w in net.writes]
     states: Dict[str, Optional[str]] = {}
     for perm in itertools.permutations(names):
-        eq = net.retained(perm)
-        states["".join(perm)] = None if eq is None else _signs(eq)
+        states["".join(perm)] = net.pattern(perm)
     resolved = {o: s for o, s in states.items() if s is not None}
     by_last: Dict[str, set] = {}
     for o, s in resolved.items():
@@ -239,9 +252,15 @@ def measure(net: OrderNetwork) -> Dict[str, object]:
             "split": sum(1 for v in by_last.values() if len(v) > 1), "last_writes": len(by_last)}
 
 
-def uncoupled(net: OrderNetwork) -> OrderNetwork:
+def uncoupled(net):
     """The same elements and writes with the coupling removed: the last-write reference."""
-    return replace(net, name=f"{net.name} (uncoupled reference)", coupling=0.0)
+    return net.uncoupled()
+
+
+def coupling_kind(net) -> str:
+    if hasattr(net, "couplings"):
+        return net.couplings
+    return "attractive" if all(s > 0 for s in net.signs) else "antiferromagnetic" if all(s < 0 for s in net.signs) else "mixed"
 
 
 def commutation_index(net: OrderNetwork, exact_up_to: int = EXACT_INDEX_UP_TO) -> Dict[str, object]:
@@ -285,13 +304,14 @@ def density_class(net: OrderNetwork) -> str:
     return "sparse" if m < 0.34 else "medium" if m < 0.67 else "dense"
 
 
-def construct(net: OrderNetwork, exact_up_to: int = EXACT_INDEX_UP_TO) -> Dict[str, object]:
+def construct(net, exact_up_to: int = EXACT_INDEX_UP_TO, noisy: bool = True) -> Dict[str, object]:
     """The order record of the network, its uncoupled reference, the gain, the commutation index and the typical
-    record of the census for the network's density and coupling sign."""
+    record of the census for the network's density and coupling sign. An equation network with `noise` adds the
+    record under its noise (`order_equations.noisy_measure`) for the network and the reference."""
     idx = commutation_index(net, exact_up_to)
     meas = measure(net)
     ref = measure(uncoupled(net))
-    kind = "attractive" if all(s > 0 for s in net.signs) else "antiferromagnetic" if all(s < 0 for s in net.signs) else "mixed"
+    kind = coupling_kind(net)
     cls = density_class(net)
     out: Dict[str, object] = {
         "rule": "the order of writes is recorded only where the writes fail to commute on the retaining coordinates "
@@ -300,6 +320,12 @@ def construct(net: OrderNetwork, exact_up_to: int = EXACT_INDEX_UP_TO) -> Dict[s
         "gain": meas["capacity"] - ref["capacity"], "split_gain": meas["split"] - ref["split"],
         "density_class": cls, "couplings": kind,
         "typical_record_in_census": CENSUS.get(kind, {}).get(cls)}
+    cfg = getattr(net, "noise_cfg", None)
+    if noisy and cfg:
+        from .order_equations import noisy_measure
+        m, seed = int(cfg.get("trajectories", 400)), int(cfg.get("seed", 0))
+        out["noisy"] = {"network": noisy_measure(net, m, seed), "uncoupled_reference": noisy_measure(uncoupled(net), m, seed + 1)}
+        out["noisy"]["gain"] = out["noisy"]["network"]["capacity"] - out["noisy"]["uncoupled_reference"]["capacity"]
     out["statement"] = statement(out)
     return out
 
@@ -322,4 +348,9 @@ def statement(r: Dict[str, object]) -> str:
                      "couplings record the order.")
     if net["unresolved"]:
         parts.append(f"{net['unresolved']} orders did not reach a certified state.")
+    if "noisy" in r:
+        a, b = r["noisy"]["network"], r["noisy"]["uncoupled_reference"]
+        parts.append(f"Under the noise of the network ({a['trajectories']} trajectories per order) the order carries "
+                     f"{a['capacity']:.2f} bits (permutation null {a['null_capacity_mean']:.2f}, p = {a['p_value']:.3f}), "
+                     f"the reference {b['capacity']:.2f} bits: the couplings add {r['noisy']['gain']:.2f} bits.")
     return " ".join(parts)

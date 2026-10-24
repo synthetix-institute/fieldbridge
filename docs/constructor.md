@@ -68,6 +68,19 @@ every order in the same state: consensus erases the order and the last write, on
 graph with antiferromagnetic couplings keeps all six orders apart, 1.6 bits over the reference. The index H is 10 to
 12 edits in each case; it says that a record is possible, and the couplings' sign decides whether it is kept.
 
+With `"material": "equations"` the material is a network given by its drift equations (a specification of kind
+`equations`, inline or a path): every node names its variables, a readout variable, a control parameter and a bias
+parameter, and the couplings are the parameters that the reference sets to zero. A write either ramps the control of
+its support from rest through the write point with the bias of its sign (a pump ramp, the anneal of one qubit: the
+initialization or readout of one node after another) or, with every control at work, applies a bias pulse of its sign
+(a flux pulse). The graph of the index is read from the equations; a node at rest holds no state and reads 0. With
+`noise` the same protocol is integrated with the network's noise, and the record is the capacity of the channel from
+the order to the final pattern, with a permutation test against the hypothesis that the order is not recorded.
+
+```bash
+python3 -B -m fieldbridge memory order SPEC.json --out-dir out/order_equations   # --deterministic skips the noise
+```
+
 ## The write point (construction and verification)
 
 A write needs a point along the control where the stable state loses stability. The counterpart holds the control

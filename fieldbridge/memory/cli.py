@@ -665,21 +665,34 @@ def cmd_order(args) -> int:
     """The order of writes measured against the uncoupled reference: the holonomy rule as a measurement."""
     from . import order as od
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
-    net = od.from_spec(spec)
-    r = od.construct(net, exact_up_to=args.exact_up_to)
-    report = {"command": "order", **_provenance(spec), "elements": net.n, "writes": [w.name for w in net.writes], **r}
+    net = od.from_spec(spec, base=Path(args.spec).resolve().parent)
+    r = od.construct(net, exact_up_to=args.exact_up_to, noisy=not args.deterministic)
+    report = {"command": "order", **_provenance(spec), "elements": net.n, "writes": [w.name for w in net.writes],
+              "edges": [list(e) for e in net.edges], **r}
     net_m, ref_m = r["network"], r["uncoupled_reference"]
-    rows = "\n".join(f"| {o} | {s or 'not certified'} | {ref_m['states'].get(o) or 'not certified'} |" for o, s in net_m["states"].items())
+    noisy = r.get("noisy")
+
+    def dist(m, o):
+        c = m["patterns"].get(o, {})
+        tot = sum(c.values()) or 1
+        return ", ".join(f"{k} {v / tot:.2f}" for k, v in sorted(c.items(), key=lambda kv: -kv[1])[:4])
+    rows = "\n".join(f"| {o} | {s or 'not certified'} | {ref_m['states'].get(o) or 'not certified'} |"
+                     + (f" {dist(noisy['network'], o)} | {dist(noisy['uncoupled_reference'], o)} |" if noisy else "")
+                     for o, s in net_m["states"].items())
+    head = ("| Order | Final state of the network | Final state of the uncoupled reference |"
+            + (" Network under noise | Reference under noise |\n| --- | --- | --- | --- | --- |\n" if noisy else "\n| --- | --- | --- |\n"))
     md = (f"# Order of writes\n\n{spec.get('question', '')}\n\n- rule: {r['rule']}\n"
           f"- commutation index H = {r['index']['H']} ({'exact' if r['index']['exact'] else 'bound'}); "
           f"assignment that makes the writes commute: {r['index']['assignment']}\n"
           f"- density class {r['density_class']}, couplings {r['couplings']}; typical record in the census: "
-          f"{r['typical_record_in_census']}\n\n{r['statement']}\n\n"
-          "| Order | Final state of the network | Final state of the uncoupled reference |\n| --- | --- | --- |\n"
-          + rows + f"\n\n{BOUNDARY}\n")
+          f"{r['typical_record_in_census']}\n\n{r['statement']}\n\n" + head + rows + f"\n\n{BOUNDARY}\n")
     _write(Path(args.out_dir), "order", report, md)
-    print(json.dumps({"out_dir": args.out_dir, "H": r["index"]["H"], "distinct": net_m["distinct"], "split": net_m["split"],
-                      "reference_distinct": ref_m["distinct"], "gain": r["gain"]}, indent=2))
+    summary = {"out_dir": args.out_dir, "H": r["index"]["H"], "distinct": net_m["distinct"], "split": net_m["split"],
+               "reference_distinct": ref_m["distinct"], "gain": r["gain"]}
+    if noisy:
+        summary.update(capacity=noisy["network"]["capacity"], reference_capacity=noisy["uncoupled_reference"]["capacity"],
+                       noisy_gain=noisy["gain"], p_value=noisy["network"]["p_value"])
+    print(json.dumps(summary, indent=2))
     return 0
 
 
@@ -933,16 +946,16 @@ def cmd_predictions(args) -> int:
                 continue   # not a specification (a survey or an index kept beside the models)
             if spec.get("kind") == "order":
                 from . import order as od
-                net = od.from_spec(spec)
+                net = od.from_spec(spec, base=path.resolve().parent)
                 idx = od.commutation_index(net, exact_up_to=args.exact_up_to)
-                typ = od.CENSUS.get("attractive" if all(s > 0 for s in net.signs) else "antiferromagnetic", {}).get(od.density_class(net))
+                typ = od.CENSUS.get(od.coupling_kind(net), {}).get(od.density_class(net))
                 row = {"spec": path.name, "name": net.name, "elements": net.n, "rule": "holonomy", "H": idx["H"], "H_exact": idx["exact"],
                        "commuting": idx["H"] == 0, "prediction": "the writes commute: no order is recorded" if idx["H"] == 0 else
                        "the writes fail to commute: a record of the order is possible (necessary, not sufficient)",
                        "typical_record_in_census": typ, "source": spec.get("provenance", {}).get("source", "")}
                 measured = ""
                 if net.n <= args.enumerate_up_to:
-                    r = od.construct(net, exact_up_to=args.exact_up_to)
+                    r = od.construct(net, exact_up_to=args.exact_up_to, noisy=False)
                     row.update(distinct=r["network"]["distinct"], split=r["network"]["split"],
                                reference_distinct=r["uncoupled_reference"]["distinct"], gain=r["gain"])
                     measured = (f"distinct {r['network']['distinct']}, split {r['network']['split']}, reference "
@@ -1321,8 +1334,10 @@ def add_parser(sub) -> None:
     p = msub.add_parser("order", help="The order of writes in a bistable network measured against its uncoupled "
                                       "reference: the holonomy rule as a measurement.")
     common(p, spec_arg=False)
-    p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json).")
+    p.add_argument("spec", help="Specification of kind order (examples/counterpart/order/*.json); with material "
+                   "equations, a network given by drift equations written by ramps or pulses.")
     p.add_argument("--exact-up-to", type=int, default=10, help="Nodes up to which the commutation index is exact.")
+    p.add_argument("--deterministic", action="store_true", help="Skip the measurement under the network's noise.")
     p.set_defaults(func=cmd_order)
     p = msub.add_parser("record", help="The record of every drift specification of a file or a directory: the write "
                                        "targets, the write points with their normal forms, the completions with their "
