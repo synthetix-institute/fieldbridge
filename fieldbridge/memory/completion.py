@@ -460,7 +460,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
                      "linear_stage_law": _probs(assign(real, r["final"], stable), len(stable)), "t_star": r["t_star"],
                      "t_cross": r["t_cross"], "t_map": r["t_map"], "linear_stage_ended_by": r["ended_by"],
                      "growth": r["growth"], "linear_size_before_crossing": r["linear_size_before_crossing"],
-                     "mean_critical": r["mean_critical"]})
+                     "mean_critical": r["mean_critical"], "cov_critical": r.get("cov_critical")})
     for i, row in enumerate(rows):
         if reduced is not None:
             row["reduced_law"] = reduced[i]
