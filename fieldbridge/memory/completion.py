@@ -58,6 +58,11 @@ GROWTH_MAP = 1.0            # the outcome map starts once the critical deviation
 LINEAR_FRACTION = 0.2       # the size (3 sigma) of the deviation, as a fraction of the distance from the unwritten
                             # state to the nearest written state, beyond which the linear stage no longer describes it
                             # (reached before the crossing: linear_size_before_crossing)
+SATURATION_FRACTION = 0.5   # the pulled-back spread (3 sigma) at the mapping time, as a fraction of the written
+                            # amplitude there, above which the deviation counts as saturated and the sector law at the
+                            # mapping time is the outcome map (the flow from the mapping time is exact at a quarter and
+                            # fails from two thirds on populations of three and four pitchforks; the sector law there
+                            # holds to a few percent from three on)
 DEVIATION_SIGMA = 4.0       # law and certificate differ when a probability differs by more than this many errors ...
 DEVIATION_FLOOR = 0.02      # ... and by more than this absolute amount (the law has its own sampling and time-step
                             # error; near-certain outcomes have binomial errors far below it)
@@ -188,7 +193,7 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     and on populations of pitchforks, while leaving the one-direction laws unchanged, where only the sign counts.)
     Two regimes at the mapping time, told apart by the pulled-back spread against the written amplitude there (the
     distance from the unwritten branch to the nearest state that is stable at that control value): linear, where the
-    spread is below LINEAR_FRACTION of that amplitude and the flow is the map; saturated, where it is not, the
+    spread is below SATURATION_FRACTION of that amplitude and the flow is the map; saturated, where it is not, the
     deviation has reached the written states by then, and each sample goes to the written state nearest in direction
     (the sector law at the mapping time; a flow from samples of that size would start them where no trajectory is).
     Under the noise rule of law_at every pitchfork is in the saturated regime, and the one-direction law is the same
@@ -269,7 +274,7 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
                                     default=float("nan"))
         ell_map = amplitude_at[key]
         sector = _sector_labels(z_map, coords_arr) if coords_arr is not None else None
-        if sector is not None and np.isfinite(ell_map) and spread_map > LINEAR_FRACTION * ell_map:
+        if sector is not None and np.isfinite(ell_map) and spread_map > SATURATION_FRACTION * ell_map:
             # saturated: the deviation has reached the written amplitude by the mapping time; the choice is made
             # there, and each sample goes to the written state nearest in direction
             q = np.array([stable[j] for j in sector])
