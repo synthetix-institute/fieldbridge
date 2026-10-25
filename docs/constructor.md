@@ -125,8 +125,11 @@ sample goes to the written state nearest in direction: the sector law of the cri
 (`sector_law`, `sector_certified`). On populations of two, three and four pitchforks coupled at a third of the passage
 scale this law holds to a few percent, where the sector law read at the end of the linear stage misses by a tenth
 (the slow modes decay for another three e-folds there) and a flow from samples rescaled to a small size misses by a
-quarter (it lengthens the nonlinear stage); on the rf-SQUID triangle the same law reproduces the certificate to a few
-percent where that flow left a tenth.
+quarter (it lengthens the nonlinear stage). On the frustrated triangles with one asymmetric part the law holds where the
+splitting of the critical rates is smallest (the coherent Ising machine, splitting below 0.015, three to four errors)
+and deviates by six to twenty-five errors on the rf-SQUID parts (splitting 0.017 to 0.09), where the pulled-back spread
+is between a quarter and two thirds of the written amplitude at the mapping time and the direction still turns during
+the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage.
 
 ## The record of a specification
 
