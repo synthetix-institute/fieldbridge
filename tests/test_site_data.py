@@ -170,6 +170,13 @@ def test_an_edit_that_changes_another_component_is_rejected(nodes):
     spin = next(e for e in reg.EDGES if e["id"] == "spins_measure_z")
     with pytest.raises(sd.SiteError):
         sd.check_edit({**spin, "to": "two_spins_x1"}, nodes, {})  # the Hamiltonian changes too
+    # an attached memory signature: what the edge declares kept or changed is compared as memory attach compares it
+    attach = next(e for e in reg.EDGES if e["id"] == "toggle_to_schlogl")
+    assert "changed reciprocal couplings, writing" in sd.check_edit(attach, nodes, {})
+    for wrong in ({**attach, "signature": {"kept": ["write"]}}, {**attach, "signature": {"changed": ["holding"]}},
+                  {**attach, "to": "toggle_unequal"}):  # the symmetric write is not kept; nor is the carrier changed
+        with pytest.raises(sd.SiteError):
+            sd.check_edit(wrong, nodes, {})
 
 
 # ------------------------------------------------------------------------------------------------ the record

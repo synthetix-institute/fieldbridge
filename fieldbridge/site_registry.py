@@ -793,6 +793,18 @@ EDGES = [
      "text": "The Schlögl reactor writes one-sidedly at two folds of its feed rate b, the first at "
              "b = {write_point} (derivation {thr_word}). Tuning the autocatalytic feed to the cusp and sweeping through it "
              "gives the symmetric write (derivation {sym_word})."},
+    # the memory signature of the toggle switch attached to the reactor (Module 5, Section 3): the retention is kept,
+    # the symmetric write is not; the check compares the two signatures as memory attach does
+    {"id": "toggle_to_schlogl", "from": "toggle", "to": "schlogl", "slot": "Xi", "kind": "attach",
+     "change": "two repressor concentrations → one concentration in a reactor",
+     "signature": {"kept": ["holding"], "changed": ["write", "control_role"]},
+     "text": "The memory signature of the toggle switch, the properties that follow from the structure of its "
+             "operation, is attached to the Schlögl reactor. The carrier is replaced: two repressor concentrations "
+             "become one concentration, made by autocatalysis in a well-mixed reactor fed from two baths. The retention "
+             "is kept: the stored states are discrete and are lost by activation over a barrier. The symmetric write "
+             "is not kept, because the reactor has no exchange symmetry. Its states appear and disappear at two folds "
+             "of the feed rate b, the first at b = {write_point}, and the feed tilts the landscape like a bias instead "
+             "of creating the second state: the write becomes one-sided."},
     {"id": "sw_oblique_to_toggle_unequal", "from": "sw_oblique", "to": "toggle_unequal", "slot": "Xi",
      "kind": "codiscovery", "target": "threshold-write", "change": "magnetization angle → two repressor concentrations",
      "text": "The one-sided write of the magnet in an oblique field and that of the toggle with unequal promoters "
@@ -999,6 +1011,52 @@ SEQUENCES = [
          {"edge": "toggle_to_laser", "reverse": True, "text": "Back to the toggle switch."},
          {"edge": "toggle_to_ring4"},
          {"edge": "ring4_activation_edit"},
+     ]},
+    # moving a mechanism to another carrier (Module 5): a transfer that keeps the whole signature, then one that loses
+    # the symmetric write, the obstruction named by what the new carrier lacks, and its completion at a cusp
+    {"id": "transfer", "title": "Moving a mechanism to a new field",
+     "steps": [
+         {"node": "colloid_patch",
+          "text": "A mechanism is moved to another field by keeping its operation and replacing its carrier, the "
+                  "states and the material on which the operation acts. Caged capillary rotors, elongated colloids at a "
+                  "fluid interface whose positions are fixed and which can only turn, are a first example. Neighbouring "
+                  "rods are joined by two kinds of bond, one that aligns them and one that reflects the direction of one "
+                  "rod across the bond axis; the couplings are reciprocal, and the control only rescales the energy. A "
+                  "uniform field writes one of {states_text} angular patterns, and the barriers between them keep it."},
+         {"edge": "colloids_to_dipoles",
+          "text": "The operation is attached to point dipoles in a plane, at the positions of the colloids. The carrier "
+                  "is replaced: apolar rods, whose angles have period π, become polar dipoles, whose angles have period "
+                  "2π. The material is replaced as well: the ratio of the reflecting to the aligning coupling, which for "
+                  "the rods depends on the distance and has the median 1.25, is fixed at 3 for dipoles. Nothing fails: "
+                  "the whole memory signature is kept, with reciprocal couplings, a control that rescales the energy, "
+                  "discrete states written by a field and retained by activation, and no oscillation. The transfer "
+                  "predicts the mechanism but not the numbers, because the ratio of the couplings sets the energies and "
+                  "the barriers; the calculation for the dipoles finds {states_text} stable states."},
+         {"node": "toggle",
+          "text": "A transfer can also fail, and the failure shows what the new carrier lacks. The genetic toggle "
+                  "switch, two genes that repress each other, writes symmetrically: at α = {write_point} the state in "
+                  "which both genes are expressed equally loses stability at a supercritical pitchfork, and a weak bias "
+                  "selects which gene stays expressed. No parameter has to be tuned for this, because exchanging the two "
+                  "genes is a symmetry of the equations. This operation and its write point are what is moved next."},
+         {"edge": "toggle_to_schlogl"},
+         {"edge": "toggle_unequal_to_schlogl", "reverse": True,
+          "text": "What the reactor lacks is the exchange symmetry, and its absence can be produced on the toggle "
+                  "switch itself. With one promoter a quarter stronger than the other, the two genes are no longer "
+                  "exchangeable, and the toggle writes one-sidedly at a fold, at α = {write_point}, as the reactor does "
+                  "along its feed rate. At their thresholds both reduce to the same fold."},
+         {"edge": "toggle_promoters", "reverse": True,
+          "text": "A fold becomes a pitchfork again at a cusp, a point reached by tuning a second parameter. For the "
+                  "toggle switch the second parameter is the ratio of the promoters, and the cusp lies at equal "
+                  "promoters, where the exchange symmetry returns: the symmetric write is restored at "
+                  "α = {write_point}."},
+         {"edge": "toggle_to_schlogl",
+          "text": "Back in the reactor there is no symmetry to restore, and the cusp has to be found by tuning. Lowering "
+                  "the autocatalytic feed a brings the two folds of the feed rate together until they meet, at "
+                  "a = 4.153 and b = 2.654. A sweep through this point that changes b and a together, along "
+                  "db/da = −1.917, writes symmetrically at a supercritical pitchfork. The command "
+                  "<code>memory complete</code> finds this completion for both folds and derives the law of the write "
+                  "along the sweep, which agrees with the full stochastic dynamics. The commands of such a construction "
+                  "are listed under <a href=\"#contribute\">Adding a realization</a>, at the bottom of the page."},
      ]},
     {"id": "canonical", "title": "From one normal form to other mechanisms",
      "steps": [

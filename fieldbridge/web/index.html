@@ -72,6 +72,14 @@
             mechanism in many fields and the table of all realizations. Opening a realization there shows it in this
             panel; the button <i>Back to …</i> returns you to where you were. On the map, choosing a mechanism walks
             through the chain of changes that leads to it, one change at a time.</li>
+          <li><b>Your own constructions.</b> The cards show changes that FieldBridge has already calculated. The same
+            changes, and new ones on a model of your own, are made with three commands: <code>memory attach</code>
+            detaches the memory mechanism of one model, attaches it to the carrier of another and lists what is kept
+            and what changes; <code>memory changes</code> removes a term, makes another parameter the control or adds
+            a term of a second model; and, where a write cannot be derived, <code>memory complete</code> keeps what
+            the derivation left out, such as a second parameter, and derives the law of the completed write. The
+            construction <i>Moving a mechanism to a new field</i> goes through such a transfer, and
+            <a href="#contribute">Adding a realization</a>, at the bottom of the page, gives a command for each.</li>
         </ol>
         <p class="collection-note" id="guide-collection"></p>
         <p class="muted">The letters of a derivation (S, C, R, K, L and others) are its steps, such as symmetry,
@@ -253,6 +261,13 @@
 python3 -B -m fieldbridge memory check examples/memory/my_material.json
 python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir build/my_material</code></pre>
           <p>The checks of a pull request compute the card and name the materials of other fields with the same mechanism. The Stoner–Wohlfarth particle on this page entered this way: its card places it next to the genetic toggle switch, the single-mode laser and the ring of four repressors.</p>
+          <p>The three commands above compare a model with the catalog. The changes shown on this page are made with three further commands, which work on your own specification as on the examples below; each writes its report to the folder given by <code>--out-dir</code>. The construction <i>Moving a mechanism to a new field</i>, under <i>Follow a construction</i> at the top of the page, shows the results of the first and the third.</p>
+          <pre><code>python3 -B -m fieldbridge memory attach --from examples/memory/toggle.json --to examples/memory/schlogl.json --out-dir build/attach_schlogl</code></pre>
+          <p><code>memory attach</code> compares the memory signature of the genetic toggle switch with that of the Schlögl reactor and returns the entries that are kept, such as the retention of discrete states by activation over a barrier, and those that change, such as the symmetric write, which becomes a one-sided write at folds. It takes about twenty seconds.</p>
+          <pre><code>python3 -B -m fieldbridge memory changes examples/changes/hopf_normal_form.json --out-dir build/changes_hopf</code></pre>
+          <p><code>memory changes</code> removes each term of a Hopf normal form in turn, makes another parameter the control and extends the range of the control, and returns for each changed model the writes it reaches or the reason why they cannot be derived: removing one rotation term makes two directions lose stability together. With <code>--donor</code> and a second specification it also adds the terms of that model. It takes about two minutes.</p>
+          <pre><code>python3 -B -m fieldbridge memory complete examples/memory/schlogl.json --out-dir build/complete_schlogl</code></pre>
+          <p><code>memory complete</code> finds that each of the two folds of the reactor is completed by a second parameter, the autocatalytic feed a, and a sweep through the cusp at a = 4.153 and b = 2.654; it returns the law of the write along that sweep and compares it with the full stochastic dynamics. It takes about ten minutes.</p>
         </div>
         <ul class="contribute-links">
           <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/CONTRIBUTING.md" target="_blank" rel="noopener">How to contribute ↗</a></li>
@@ -260,6 +275,7 @@ python3 -B -m fieldbridge memory card examples/memory/my_material.json --out-dir
           <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/materials.md" target="_blank" rel="noopener">Catalog of materials ↗</a></li>
           <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/mechanisms.md" target="_blank" rel="noopener">Mechanisms: definitions, derivations and original publications ↗</a></li>
           <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/23_memory_codiscovery.md" target="_blank" rel="noopener">Deriving one mechanism in several fields ↗</a></li>
+          <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/19_memory_transfer_and_design.md" target="_blank" rel="noopener">Moving a mechanism to another carrier ↗</a></li>
           <li><a href="https://github.com/synthetix-institute/fieldbridge/blob/main/docs/tutorial/24_spin_language.md" target="_blank" rel="noopener">The language on spins ↗</a></li>
         </ul>
       </div>

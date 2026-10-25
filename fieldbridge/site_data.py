@@ -1277,6 +1277,28 @@ def classical_limit(q_spec: Dict, d_spec: Dict, j: Optional[float] = None) -> fl
     return worst
 
 
+def _check_memory_attach(edge: Dict, a: Dict, b: Dict, fail: Callable[[str], Exception]) -> str:
+    """A memory signature detached from one carrier and attached to another (memory attach): the signatures of the
+    two specifications are compared, and every entry that the edge declares kept or changed must be so."""
+    from .memory import predict
+    from .memory import spec as mspec
+    from .memory.cli import SIGNATURE_NAMES, _signature
+    if _same_carrier(a, b):
+        raise fail("an attachment joins two different carriers")
+    src, tgt = (_signature(predict.predict(mspec.load(n["spec"]), np.random.default_rng(0))) for n in (a, b))
+    kept = [k for k in src if src[k] == tgt[k]]
+    changed = [k for k in src if src[k] != tgt[k]]
+    declared = edge.get("signature") or {}
+    for k in declared.get("kept", []):
+        if k not in kept:
+            raise fail(f"the attachment does not keep {k}")
+    for k in declared.get("changed", []):
+        if k not in changed:
+            raise fail(f"the attachment does not change {k}")
+    words = lambda keys: ", ".join(SIGNATURE_NAMES.get(k, k).lower() for k in keys) or "nothing"  # noqa: E731
+    return f"memory attach compares the two signatures: kept {words(kept)}; changed {words(changed)}"
+
+
 def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> str:
     """Check the correspondence declared by an edge and return its meaning.
 
@@ -1323,6 +1345,8 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
             if not diff or not diff <= {"d", "L"}:
                 raise fail(f"a change of the lattice changes d and L only, not {sorted(diff)}")
             return "the fields differ only in the dimension and the size of the lattice"
+        if a["family"] == "dissipative" and b["family"] == "dissipative":
+            return _check_memory_attach(edge, a, b, fail)
         rep = b.get("attach")
         if not rep or rep["source"] != a["spec"]["name"]:
             raise fail("the target was not attached from the source")
