@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "4d2c3c97bcfc0bc8d75520a53d6b178a291a9232070c2b3c9aca67b0e432fb7b",
+  "implementation_sha256": "69325807d8835023292133e2ae2dd2e710936d00ab599a470a68ea46c5c15239",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -205,6 +205,17 @@
     },
     {
       "id": "card17",
+      "name": "Schl\u00f6gl reactor swept through its cusp",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "supercritical pitchfork at s = 0; a uniform field removes the stable state at h = 0.444",
+        "constructs": "supercritical pitchfork: symmetric write",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 27.1; field 0.4 x threshold, control swept through the write point: accuracy 1.00, retention/rewriting time ratio > 23.1"
+      }
+    },
+    {
+      "id": "card18",
       "name": "Stoner-Wohlfarth particle",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -215,7 +226,7 @@
       }
     },
     {
-      "id": "card18",
+      "id": "card19",
       "name": "genetic toggle switch",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -226,7 +237,7 @@
       }
     },
     {
-      "id": "card19",
+      "id": "card20",
       "name": "genetic toggle, unequal promoters",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -237,7 +248,7 @@
       }
     },
     {
-      "id": "card20",
+      "id": "card21",
       "name": "adaptive transport network, two tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -248,7 +259,7 @@
       }
     },
     {
-      "id": "card21",
+      "id": "card22",
       "name": "adaptive transport network, unequal tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -259,7 +270,7 @@
       }
     },
     {
-      "id": "card22",
+      "id": "card23",
       "name": "two-component normal form with the symmetry of a square",
       "verdict": {
         "stores": "4 stable state(s)",
@@ -270,7 +281,7 @@
       }
     },
     {
-      "id": "card23",
+      "id": "card24",
       "name": "independent pores filled by capillary condensation",
       "verdict": {
         "stores": "400 elements with two states each",
@@ -281,7 +292,7 @@
       }
     },
     {
-      "id": "card24",
+      "id": "card25",
       "name": "random-field Ising antiferromagnetic chain",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -292,7 +303,7 @@
       }
     },
     {
-      "id": "card25",
+      "id": "card26",
       "name": "random-field Ising antiferromagnet in a uniform field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -303,7 +314,7 @@
       }
     },
     {
-      "id": "card26",
+      "id": "card27",
       "name": "random-field Ising antiferromagnet in a staggered field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -314,7 +325,7 @@
       }
     },
     {
-      "id": "card27",
+      "id": "card28",
       "name": "random-field Ising ferromagnet",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -325,7 +336,7 @@
       }
     },
     {
-      "id": "card28",
+      "id": "card29",
       "name": "soft spots of an amorphous solid under shear",
       "verdict": {
         "stores": "144 elements with two states each",

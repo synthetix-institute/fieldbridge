@@ -1230,6 +1230,40 @@
     "word": "CRKL"
    }
   },
+  "schlogl_cusp": {
+   "spec_sha256": "72fdde0d35922c223033f621a3dbcc819726551435e22098bece245b6f206f07",
+   "symmetric-write": {
+    "class": "C R(pitchfork) K L",
+    "constant": 1.3184922489871527,
+    "expected": 1.3313353638003897,
+    "offset": 0.02257981235508577,
+    "offset_stderr": 0.015593177141969712,
+    "signature": [
+     -0.01074793772,
+     0.01113702915,
+     -0.05711348686,
+     -6.706093876e-06,
+     7.778932847e-06,
+     -0.0008864800037,
+     0.01073452553,
+     -0.01112147128,
+     0.05534052685,
+     0.00751772984,
+     0.00751772984,
+     0.00751772984,
+     0.001
+    ],
+    "stderr": 0.015593177141969712,
+    "word": "CRKL"
+   },
+   "threshold-write": {
+    "class": "C R(pitchfork) W R(fold) K L",
+    "constant": 1.0187929578888297,
+    "expected": 1.018792971647471,
+    "stderr": 5e-07,
+    "word": "CRWRKL"
+   }
+  },
   "snail_po": {
    "spec_sha256": "3b0b24cbac11bdb2ddf0f45a476b59fc8843a557e4890a536c4635f02b5b901d",
    "symmetric-write": {

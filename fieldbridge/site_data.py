@@ -1279,7 +1279,8 @@ def classical_limit(q_spec: Dict, d_spec: Dict, j: Optional[float] = None) -> fl
 
 def _check_memory_attach(edge: Dict, a: Dict, b: Dict, fail: Callable[[str], Exception]) -> str:
     """A memory signature detached from one carrier and attached to another (memory attach): the signatures of the
-    two specifications are compared, and every entry that the edge declares kept or changed must be so."""
+    two specifications are compared, and the entries that change must be exactly those the edge names under
+    signature.changed (an empty list: the whole signature is kept)."""
     from .memory import predict
     from .memory import spec as mspec
     from .memory.cli import SIGNATURE_NAMES, _signature
@@ -1288,15 +1289,38 @@ def _check_memory_attach(edge: Dict, a: Dict, b: Dict, fail: Callable[[str], Exc
     src, tgt = (_signature(predict.predict(mspec.load(n["spec"]), np.random.default_rng(0))) for n in (a, b))
     kept = [k for k in src if src[k] == tgt[k]]
     changed = [k for k in src if src[k] != tgt[k]]
-    declared = edge.get("signature") or {}
-    for k in declared.get("kept", []):
-        if k not in kept:
-            raise fail(f"the attachment does not keep {k}")
-    for k in declared.get("changed", []):
-        if k not in changed:
-            raise fail(f"the attachment does not change {k}")
+    declared = (edge.get("signature") or {}).get("changed")
+    if declared is None:
+        raise fail("name the entries of the memory signature that the attachment changes (signature.changed)")
+    if set(declared) != set(changed):
+        raise fail(f"the attachment changes {sorted(changed)}, not {sorted(declared)}")
     words = lambda keys: ", ".join(SIGNATURE_NAMES.get(k, k).lower() for k in keys) or "nothing"  # noqa: E731
     return f"memory attach compares the two signatures: kept {words(kept)}; changed {words(changed)}"
+
+
+def _check_sweep(sweep: Dict[str, str], sa: Dict, sb: Dict, Fa: Callable, Fb: Callable, q: np.ndarray,
+                 fail: Callable[[str], Exception]) -> str:
+    """A protocol that moves several parameters of the source together: sweep maps each moved parameter of the
+    source to an expression in the parameters of the target, whose control runs along the line. At every value of
+    the control across its range the target must be the source at the mapped parameters."""
+    import sympy as sp
+    from .memory import spec as mspec
+    pa, pb = dict(sa.get("parameters", {})), dict(sb.get("parameters", {}))
+    control = (sb.get("control") or {}).get("name")
+    if not control or control in pa:
+        raise fail("a sweep needs a control of its own, which the source does not have")
+    if not set(sweep) <= set(pa) or (sa.get("control") or {}).get("name") not in sweep:
+        raise fail("a sweep moves parameters of the source, among them the control of the source")
+    symbols = {k: sp.Symbol(k) for k in pb}
+    exprs = {k: mspec.parse_expression(text, symbols) for k, text in sweep.items()}
+    lo, hi = sb["control"]["range"]
+    for v in np.linspace(lo, hi, 5):
+        at = {**pb, control: float(v)}
+        mapped = {**pa, **{k: float(e.subs({symbols[n]: at[n] for n in at})) for k, e in exprs.items()}}
+        if not np.allclose(Fa(q, mapped), Fb(q, at), rtol=1e-9, atol=1e-12):
+            raise fail(f"at {control} = {v:g} the target is not the source at the swept parameters")
+    moved = ", ".join(f"{k} → {text}" for k, text in sweep.items())
+    return f"the same drift; the control {control} moves the parameters of the source along a line ({moved})"
 
 
 def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> str:
@@ -1491,6 +1515,8 @@ def check_edit(edge: Dict, nodes: Dict[str, Dict], records: Dict[str, Dict]) -> 
             raise fail("the drift does not change")
         return "same carrier and shared parameters; the drift differs"
     if kind == "protocol":
+        if edge.get("sweep"):
+            return _check_sweep(edge["sweep"], sa, sb, Fa, Fb, q, fail)
         if not np.allclose(Fa(q, pa), Fb(q, pb), rtol=1e-9, atol=1e-12):
             raise fail("a change of protocol keeps the dynamics")
         if (sa.get("control") or {}).get("name") == (sb.get("control") or {}).get("name"):

@@ -411,6 +411,9 @@ NODES = [
      "tutorial": "docs/tutorial/17_memory_predictions.md#1-concepts"},
     {"id": "schlogl", "family": "dissipative", "spec": "examples/memory/schlogl.json",
      "tutorial": "docs/tutorial/19_memory_transfer_and_design.md#3-worked-example-from-the-toggle-switch-to-a-chemical-reactor"},
+    # the reactor swept through the cusp where its two folds meet (Module 5, Sections 4 and 5)
+    {"id": "schlogl_cusp", "family": "dissipative", "spec": "examples/memory/schlogl_cusp.json",
+     "tutorial": "docs/tutorial/19_memory_transfer_and_design.md#4-removing-the-obstruction"},
     {"id": "tubes", "family": "dissipative", "spec": "examples/memory/tubes.json",
      "tutorial": M9 + "#5-where-a-derivation-stops"},
     {"id": "tubes_unequal", "family": "dissipative", "spec": "examples/memory/tubes_unequal.json",
@@ -794,10 +797,11 @@ EDGES = [
              "b = {write_point} (derivation {thr_word}). Tuning the autocatalytic feed to the cusp and sweeping through it "
              "gives the symmetric write (derivation {sym_word})."},
     # the memory signature of the toggle switch attached to the reactor (Module 5, Section 3): the retention is kept,
-    # the symmetric write is not; the check compares the two signatures as memory attach does
+    # the symmetric write is not; the check compares the two signatures as memory attach does, and the entries that
+    # change must be those named here
     {"id": "toggle_to_schlogl", "from": "toggle", "to": "schlogl", "slot": "Xi", "kind": "attach",
      "change": "two repressor concentrations → one concentration in a reactor",
-     "signature": {"kept": ["holding"], "changed": ["write", "control_role"]},
+     "signature": {"changed": ["reciprocal", "write", "oscillation", "multistability", "control_role"]},
      "text": "The memory signature of the toggle switch, the properties that follow from the structure of its "
              "operation, is attached to the Schlögl reactor. The carrier is replaced: two repressor concentrations "
              "become one concentration, made by autocatalysis in a well-mixed reactor fed from two baths. The retention "
@@ -805,6 +809,14 @@ EDGES = [
              "is not kept, because the reactor has no exchange symmetry. Its states appear and disappear at two folds "
              "of the feed rate b, the first at b = {write_point}, and the feed tilts the landscape like a bias instead "
              "of creating the second state: the write becomes one-sided."},
+    # the completion of the reactor's folds (Module 5, Sections 4 and 5): a and b swept together through the cusp
+    {"id": "schlogl_cusp_sweep", "from": "schlogl", "to": "schlogl_cusp", "slot": "P", "kind": "protocol",
+     "change": "sweep of b → sweep of a and b through the cusp", "sweep": {"a": "a + s", "b": "b - k3*s/3"},
+     "text": "The feed rates are swept together through the cusp where the two folds of b meet, at a = 4.153 and "
+             "b = 2.654, along the line on which b falls by 1.917 for every unit by which a rises. On this line the "
+             "concentration 1.384 of the cusp remains a steady state, and at s = {write_point} it loses stability at "
+             "a {write_kind}: {states_text} states appear together, and a weak bias selects the one that is written. "
+             "The one-sided write of the reactor has become a symmetric write."},
     {"id": "sw_oblique_to_toggle_unequal", "from": "sw_oblique", "to": "toggle_unequal", "slot": "Xi",
      "kind": "codiscovery", "target": "threshold-write", "change": "magnetization angle → two repressor concentrations",
      "text": "The one-sided write of the magnet in an oblique field and that of the toggle with unequal promoters "
@@ -819,8 +831,9 @@ EDGES = [
      "change": "L<sub>2</sub>: L<sub>1</sub> → longer",
      "text": "Two equal tubes of an adaptive network write at a subcritical pitchfork: the written state is a "
              "distant branch. Unequal lengths turn it into a fold at μ = {write_point}."},
-    {"id": "colloids_to_dipoles", "from": "colloid_patch", "to": "dipole_patch", "slot": "Xi", "kind": "codiscovery",
-     "change": "capillary rotors (period π) → point dipoles (period 2π)",
+    # the memory signature of the rotors attached to dipoles (Module 5, Section 2): nothing of it changes
+    {"id": "colloids_to_dipoles", "from": "colloid_patch", "to": "dipole_patch", "slot": "Xi", "kind": "attach",
+     "change": "capillary rotors (period π) → point dipoles (period 2π)", "signature": {"changed": []},
      "text": "The memory of the caged rods is carried over to in-plane dipoles: the control only rescales the "
              "energy in both, and a state is written by a uniform field and lost by activation."},
     # oscillators
@@ -1043,20 +1056,23 @@ SEQUENCES = [
           "text": "What the reactor lacks is the exchange symmetry, and its absence can be produced on the toggle "
                   "switch itself. With one promoter a quarter stronger than the other, the two genes are no longer "
                   "exchangeable, and the toggle writes one-sidedly at a fold, at α = {write_point}, as the reactor does "
-                  "along its feed rate. At their thresholds both reduce to the same fold."},
-         {"edge": "toggle_promoters", "reverse": True,
-          "text": "A fold becomes a pitchfork again at a cusp, a point reached by tuning a second parameter. For the "
-                  "toggle switch the second parameter is the ratio of the promoters, and the cusp lies at equal "
-                  "promoters, where the exchange symmetry returns: the symmetric write is restored at "
-                  "α = {write_point}."},
-         {"edge": "toggle_to_schlogl",
-          "text": "Back in the reactor there is no symmetry to restore, and the cusp has to be found by tuning. Lowering "
-                  "the autocatalytic feed a brings the two folds of the feed rate together until they meet, at "
-                  "a = 4.153 and b = 2.654. A sweep through this point that changes b and a together, along "
-                  "db/da = −1.917, writes symmetrically at a supercritical pitchfork. The command "
-                  "<code>memory complete</code> finds this completion for both folds and derives the law of the write "
-                  "along the sweep, which agrees with the full stochastic dynamics. The commands of such a construction "
-                  "are listed under <a href=\"#contribute\">Adding a realization</a>, at the bottom of the page."},
+                  "along its feed rate. On the toggle the fold is removed by restoring the symmetry: with equal "
+                  "promoters the symmetric write returns."},
+         {"edge": "toggle_unequal_to_schlogl",
+          "text": "The reactor writes one-sidedly by the same fold, the first at b = {write_point}, but it has no "
+                  "symmetry to restore. A fold becomes a pitchfork at a cusp, a point reached by tuning a second "
+                  "parameter: lowering the autocatalytic feed a brings the two folds of the feed rate together until "
+                  "they meet, at a = 4.153 and b = 2.654."},
+         {"edge": "schlogl_cusp_sweep",
+          "text": "The completed model sweeps the two feed rates together through the cusp, along the line on which b "
+                  "falls by 1.917 for every unit by which a rises. At s = {write_point} the steady state loses "
+                  "stability at a {write_kind}, {states_text} states appear together, and a weak bias selects the one "
+                  "that is written: the reactor now carries the symmetric write of the toggle switch. The law of this "
+                  "write, measured in simulated sweeps of the full model with a weak bias, has the constant {sym_law}, "
+                  "against π<sup>1/4</sup> = 1.331 for the pitchfork. The command "
+                  "<code>memory complete</code> finds the same completion for both folds of the reactor; the commands "
+                  "of such a construction are listed under <a href=\"#contribute\">Adding a realization</a>, at the "
+                  "bottom of the page."},
      ]},
     {"id": "canonical", "title": "From one normal form to other mechanisms",
      "steps": [
@@ -1432,7 +1448,7 @@ SHORT = {
     "amplitude_square": "square symmetry", "rotation_canonical": "canonical rotation",
     "rotation_axis": "measured on the axis", "laser": "laser", "convection_roll": "convection roll", "toggle": "toggle switch", "toggle_unequal": "unequal toggle",
     "repressor_ring4": "ring of 4", "ring4_activation": "ring 4, activation", "repressilator": "repressilator",
-    "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "tubes": "two tubes",
+    "repressilator_activation": "ring 3, activation", "schlogl": "Schlögl", "schlogl_cusp": "Schlögl, through the cusp", "tubes": "two tubes",
     "tubes_unequal": "unequal tubes", "colloid_patch": "capillary rotors", "dipole_patch": "dipoles",
     "van_der_pol": "van der Pol", "vdp_stiffness": "stiffness drive", "parametron": "parametron",
     "brusselator": "Brusselator", "goodwin": "Goodwin", "fitzhugh_nagumo": "FitzHugh–Nagumo",

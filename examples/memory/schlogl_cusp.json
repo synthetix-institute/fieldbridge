@@ -1,0 +1,50 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Does the Schlögl reactor write symmetrically when its feed rates are swept together through the cusp where its two folds meet?",
+  "provenance": {
+    "source": "Schlogl, Z. Phys. 253, 147 (1972)",
+    "kind": "authored example",
+    "derived_from": "examples/memory/schlogl.json",
+    "derivation": "The cusp of the reactor, where its two folds of the feed rate b meet, found by python3 -B -m fieldbridge memory design examples/memory/schlogl.json --free a and by python3 -B -m fieldbridge memory complete examples/memory/schlogl.json, which completes both folds by the second parameter a: a = 4.1533, b = 2.6535, x = 1.3844, and the sweep through it along (b, a) proportional to (-0.887, 0.463), db/da = -1.917. In closed form the cusp is a = sqrt(3 k3), b = a^3/27, x = a/3, and the sweep that keeps the drift at x = a/3 unchanged to first order has db/da = -x^2 = -k3/3."
+  },
+  "field": "chemical kinetics",
+  "kind": "equations",
+  "name": "Schlögl reactor swept through its cusp",
+  "carrier": {
+    "kind": "orthant",
+    "name": "concentration",
+    "variables": [
+      "x"
+    ],
+    "scale": 3
+  },
+  "parameters": {
+    "a": 4.153311931381232,
+    "b": 2.6535048452464847,
+    "k3": 5.75,
+    "s": 0.5
+  },
+  "drift": {
+    "x": "-x**3 + (a + s)*x**2 - k3*x + b - k3*s/3"
+  },
+  "potential": "x**4/4 - (a + s)*x**3/3 + k3*x**2/2 - (b - k3*s/3)*x",
+  "control": {
+    "name": "s",
+    "range": [
+      -0.5,
+      0.5
+    ]
+  },
+  "material": [
+    "k3"
+  ],
+  "noise": 0.04,
+  "dt": 0.005,
+  "closure": "well-mixed reactor fed by baths of A and B",
+  "observable": "concentration of X",
+  "assumptions": [
+    "unit rate constant for the cubic step",
+    "bath concentrations set the feeds a + s and b - k3 s/3, swept together through the cusp at s = 0",
+    "additive noise"
+  ]
+}

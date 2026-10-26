@@ -159,9 +159,9 @@ trajectories of the certificate.
 
 | Realization | Obstruction | Law: response, offset | Certificate: response, offset |
 | --- | --- | --- | --- |
-| Two equal tubes | positive cubic | 1.36, −0.01 | 1.35, +0.02 |
-| Schlögl reactor, lower write point | fold | 1.34, +0.01 | 1.34, +0.02 |
-| Toggle, unequal promoters | fold | 1.36, +0.01 | 1.32, +0.01 |
+| Two equal tubes | positive cubic | 1.36, +0.02 | 1.30, 0.00 |
+| Schlögl reactor, lower write point | fold | 1.33, 0.00 | 1.35, +0.03 |
+| Toggle, unequal promoters | fold | 1.33, −0.01 | 1.34, −0.01 |
 | Two-component square model | two critical directions | four-state table | largest deviation 0.020 over 8 bias directions |
 
 The subcritical tubes, which stop the derivation of Section 4, have a write law: the choice is made in the linear

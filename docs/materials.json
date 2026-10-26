@@ -289,6 +289,22 @@
    }
   },
   {
+   "file": "examples/memory/schlogl_cusp.json",
+   "name": "Schl\u00f6gl reactor swept through its cusp",
+   "field": "chemical kinetics",
+   "question": "Does the Schl\u00f6gl reactor write symmetrically when its feed rates are swept together through the cusp where its two folds meet?",
+   "source": "Schlogl, Z. Phys. 253, 147 (1972)",
+   "contributor": "",
+   "mechanism": "symmetric write (supercritical pitchfork)",
+   "verdict": {
+    "stores": "2 stable state(s)",
+    "writes": "supercritical pitchfork at s = 0; a uniform field removes the stable state at h = 0.444",
+    "constructs": "supercritical pitchfork: symmetric write",
+    "holds": "activation between stored states (Law 3)",
+    "lock": "field 0.4 x threshold, fixed control: accuracy 0.15, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 27.1; field 0.4 x threshold, control swept through the write point: accuracy 1.00, retention/rewriting time ratio > 23.1"
+   }
+  },
+  {
    "file": "examples/memory/laser.json",
    "name": "single-mode laser",
    "field": "laser physics",

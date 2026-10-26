@@ -262,23 +262,27 @@ def test_the_sequence_from_the_normal_form_reaches_seven_mechanisms(data_file, t
 
 def test_moving_a_mechanism_to_a_new_field_keeps_it_on_the_dipoles_and_completes_it_in_the_reactor(tmp_path):
     """The rods' memory is attached to dipoles and kept; the toggle switch's symmetric write, attached to the reactor,
-    becomes one-sided; the same fold appears on the toggle with unequal promoters, equal promoters restore the
-    pitchfork, and the construction ends in the reactor, where the cusp is found by tuning."""
-    only = ["colloid_patch", "dipole_patch", "toggle", "toggle_unequal", "schlogl"]
+    becomes one-sided; the same fold appears on the toggle with unequal promoters, and the construction ends on the
+    reactor swept through its cusp, which writes symmetrically again."""
+    only = ["colloid_patch", "dipole_patch", "toggle", "toggle_unequal", "schlogl", "schlogl_cusp"]
     data = sd.build(only=only, derive=False, strict=False, log=lambda *a: None)
     small = sd.write(data, tmp_path / "site" / "data.js")
     got = scenario(small, [{"do": "sequence", "id": "transfer"}] + [{"do": "next"}] * 6, tmp_path)
     assert [g["node"] for g in got] == ["colloid_patch", "dipole_patch", "toggle", "schlogl", "toggle_unequal",
-                                         "toggle", "schlogl"]
+                                         "schlogl", "schlogl_cusp"]
     assert [g["mechanism"] for g in got] == ["write by a uniform field"] * 2 + [
         "symmetric write (supercritical pitchfork)", "one-sided write (fold)", "one-sided write (fold)",
-        "symmetric write (supercritical pitchfork)", "one-sided write (fold)"]
+        "one-sided write (fold)", "symmetric write (supercritical pitchfork)"]
     assert got[0]["sequence"].startswith("1 / 7.") and "keeping its operation and replacing its carrier" in got[0]["sequence"]
     assert "Nothing fails" in got[1]["sequence"]
     assert "no exchange symmetry" in got[3]["sequence"] and "b = 1.49" in got[3]["sequence"]
-    assert "a = 4.153 and b = 2.654" in got[-1]["sequence"] and got[-1]["sequence"].startswith("7 / 7.")
-    # outside the construction the attachment is a card of the carrier of the toggle switch
+    assert "a = 4.153 and b = 2.654" in got[5]["sequence"]
+    assert got[-1]["sequence"].startswith("7 / 7.") and "At s = 0 the steady state loses stability at a supercritical" \
+        " pitchfork, two states appear together" in got[-1]["sequence"]
+    # outside the construction the attachments are cards of the carrier, and the sweep a card of the protocol
     assert "one concentration in a reactor" in got[2]["changes"]
+    assert "point dipoles (period 2π)change of one component" in got[0]["changes"]   # no longer a co-discovery
+    assert "sweep of b → sweep of a and b through the cusp" in got[5]["changes"]
 
 
 def test_a_realization_is_reached_by_the_shortest_path_of_changes(data_file, tmp_path):

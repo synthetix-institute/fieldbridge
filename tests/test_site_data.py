@@ -170,11 +170,21 @@ def test_an_edit_that_changes_another_component_is_rejected(nodes):
     spin = next(e for e in reg.EDGES if e["id"] == "spins_measure_z")
     with pytest.raises(sd.SiteError):
         sd.check_edit({**spin, "to": "two_spins_x1"}, nodes, {})  # the Hamiltonian changes too
-    # an attached memory signature: what the edge declares kept or changed is compared as memory attach compares it
+    # an attached memory signature: the entries that change, compared as memory attach compares them, must be those
+    # the edge names
     attach = next(e for e in reg.EDGES if e["id"] == "toggle_to_schlogl")
     assert "changed reciprocal couplings, writing" in sd.check_edit(attach, nodes, {})
-    for wrong in ({**attach, "signature": {"kept": ["write"]}}, {**attach, "signature": {"changed": ["holding"]}},
-                  {**attach, "to": "toggle_unequal"}):  # the symmetric write is not kept; nor is the carrier changed
+    dipoles = next(e for e in reg.EDGES if e["id"] == "colloids_to_dipoles")
+    assert sd.check_edit(dipoles, nodes, {}).endswith("changed nothing")
+    for wrong in ({**attach, "signature": {"changed": ["write"]}}, {**attach, "signature": None},
+                  {**dipoles, "signature": {"changed": ["write"]}},
+                  {**attach, "to": "toggle_unequal"}):  # the write is not all that changes; the carrier must change
+        with pytest.raises(sd.SiteError):
+            sd.check_edit(wrong, nodes, {})
+    # a sweep through the cusp: the target at every value of its control is the source with a and b on the line
+    sweep = next(e for e in reg.EDGES if e["id"] == "schlogl_cusp_sweep")
+    assert "a → a + s" in sd.check_edit(sweep, nodes, {})
+    for wrong in ({**sweep, "sweep": {"a": "a + s", "b": "b + k3*s/3"}}, {**sweep, "sweep": {"a": "a + s"}}):
         with pytest.raises(sd.SiteError):
             sd.check_edit(wrong, nodes, {})
 
@@ -264,7 +274,7 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
              if "fields" not in p.parts}
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
-    assert files <= named and len(files) == 29
+    assert files <= named and len(files) == 30
     # the degenerate write is a material of its own, so that the gallery has its card
     assert next(d for d in sd.all_defs() if d["id"] == "amplitude_square")["spec"] in files
     assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
