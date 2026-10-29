@@ -3,7 +3,7 @@
  "paper": {
   "title": "The Ideal Glass and the Ideal Disk Packing in Two Dimensions",
   "reference": "V. M. Bolton-Lum, R. C. Dennis, P. K. Morse and E. I. Corwin, arXiv:2404.07492v2 (2025); Phys. Rev. Lett. 136, 058201 (2026)",
-  "source_of_numbers": "The estimates under 'protocol' come from an independent reproduction of the seeded-melting measurement (N = 64 triangulated packing built by the paper's route, Metropolis Monte Carlo, overlap threshold 0.3 mean radius, four seeds per temperature, up to 4e6 sweeps). The counts and theorem cases are read from the paper."
+  "source_of_numbers": "The estimates under 'protocol' come from an independent variant of the seeded-melting measurement: an N = 64 triangulated packing built by the radical Delaunay triangulation of a relaxed packing, as in the paper but without its radius minimization; Metropolis Monte Carlo, overlap threshold 0.3 mean radius, four seeds per temperature, up to 4e6 sweeps; censored maximum-likelihood fits (an unrelaxed run enters through the probability that its time exceeds the run length) and the profile of the negative log likelihood over T_m. The counts and theorem cases are read from the paper."
  },
  "systems": {
   "disks_radii_free": {
@@ -79,11 +79,13 @@
    "protocol": {
     "quantity": "melting temperature (divergence of the overlap time, modified Vogel-Fulcher fit)",
     "window": {
-     "estimate": 0.00299,
+     "estimate": 0.00297,
      "warmest_without_relaxation": 0.0025,
      "coldest_with_relaxation": 0.003,
-     "at_fit_bound": true,
-     "profile": [[0.00015, 0.8107], [0.0003, 0.8027], [0.00045, 0.7941], [0.0006, 0.7846], [0.00075, 0.7744], [0.0009, 0.7632], [0.00105, 0.7509], [0.0012, 0.7374], [0.00135, 0.7224], [0.0015, 0.7057], [0.00165, 0.6871], [0.0018, 0.6662], [0.00195, 0.6425], [0.0021, 0.6154], [0.00225, 0.5841], [0.0024, 0.5475], [0.00255, 0.504], [0.0027, 0.4506], [0.00285, 0.3809]],
+     "parameters_at_bound": ["D"],
+     "profile_kind": "neg_log_likelihood",
+     "profile": [[6e-05, 23.038], [0.0001613, 23.016], [0.0002626, 22.992], [0.0003638, 22.968], [0.0004651, 22.941], [0.0005664, 22.914], [0.0006677, 22.885], [0.0007689, 22.854], [0.0008702, 22.821], [0.0009715, 22.787], [0.001073, 22.75], [0.001174, 22.711], [0.001275, 22.669], [0.001377, 22.624], [0.001478, 22.577], [0.001579, 22.525], [0.00168, 22.469], [0.001782, 22.409], [0.001883, 22.344], [0.001984, 22.274], [0.002086, 22.196], [0.002187, 22.111], [0.002288, 22.017], [0.002389, 21.913], [0.002491, 21.796], [0.002592, 21.663], [0.002693, 21.51], [0.002794, 21.328], [0.002896, 21.1], [0.00297, 20.872], [0.002997, 22.335]],
+     "alternative_delta_aicc": 1.5,
      "alternative_without_divergence_fits": true
     }
    },
@@ -92,10 +94,10 @@
    ],
    "novelty_claimed": true,
    "prior_art": [
-    {"statement": "Equilibrium two-dimensional polydisperse disks have a Kauzmann temperature at zero.",
+    {"statement": "The Kauzmann temperature of two-dimensional polydisperse disk models has been studied in equilibrium and found at zero for the models studied.",
      "queries": ["Zero-temperature glass transition in two dimensions", "equilibrium Kauzmann transition two-dimensional atomistic glass"],
      "sources": ["Berthier et al., Nat. Commun. 10, 1508 (2019)", "Jung, Ozawa, Biroli and Berthier, arXiv:2507.03590"],
-     "verdict": "published", "contradicts": true}
+     "verdict": "partly published"}
    ]
   },
   {
@@ -119,7 +121,7 @@
     {"statement": "A power-law fit of the 1/e overlap time locates the (avoided) dynamical transition.",
      "queries": ["Charbonneau Hu Kundu Morse dimensional evolution structure dynamics hard sphere liquids"],
      "sources": ["Charbonneau, Hu, Kundu and Morse, J. Chem. Phys. 156, 134502 (2022)"],
-     "verdict": "published", "contradicts": true}
+     "verdict": "published"}
    ]
   },
   {
