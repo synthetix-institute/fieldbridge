@@ -80,6 +80,20 @@ def test_two_critical_directions_give_a_law_over_all_written_states():
     assert len({int(np.argmax(r["law"])) for r in L["rows"]}) == 4
 
 
+def test_a_degenerate_critical_pair_keeps_a_left_vector_dual_to_its_mode():
+    """The write point that the default seed of memory complete finds on the square model: the Jacobian there is eps
+    times the identity to rounding, and the eigensolver returned the left eigenvectors of the pair in the other order,
+    so that the left vector picked was orthogonal to the mode. The coefficients became NaN and the point read as a
+    subcritical pitchfork with no critical direction; the left vector is now the dual one."""
+    real = spec.load(EX / "two_component_square.json")
+    q = np.array([4.588679728723345e-19, -4.58914073268652e-19])
+    nf = an.normal_form(real, q, "eps", 1.000006995815892e-07)
+    assert nf["critical_dimension"] == 2 and nf["kind"].startswith("degenerate critical mode")
+    assert np.all(np.isfinite(nf["left_mode"])) and np.isfinite(nf["a3"])
+    assert float(np.dot(nf["left_mode"], nf["mode"])) == pytest.approx(1.0, abs=1e-9)
+    assert completion.completion_kind(nf, construct.obstruction(nf)) == "critical space"
+
+
 def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     """The pitchfork swept at the standard rate with a noise far above the depth of the wells at the end of the sweep:
     the linear-stage law predicts the usual response, the full dynamics loses the choice to hopping, and the rung names

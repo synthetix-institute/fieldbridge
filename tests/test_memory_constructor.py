@@ -223,6 +223,24 @@ def test_schlogl_cusp_removes_the_one_sided_write():
     assert c["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
 
 
+def test_the_sweep_through_the_cusp_is_a_pitchfork_with_a_quadratic_term_that_grows_with_s():
+    """On the implemented sweep, a + s and b - k3 s/3 through a = sqrt(3 k3), b = a^3/27, the deviation u from the
+    cusp concentration c = sqrt(k3/3) obeys exactly du/dt = 2 c s u + s u^2 - u^3: a pitchfork at the onset, with a
+    quadratic term that breaks the reflection u -> -u at every s other than zero. The specification carries the cusp
+    found numerically, which agrees with the closed form to 1e-10."""
+    import sympy as sp
+    data = json.loads((EX / "schlogl_cusp.json").read_text(encoding="utf-8"))
+    p = data["parameters"]
+    assert p["a"] == pytest.approx(math.sqrt(3 * p["k3"]), rel=1e-10)
+    assert p["b"] == pytest.approx(math.sqrt(3 * p["k3"]) ** 3 / 27, rel=1e-10)
+    k3 = sp.Symbol("k3", positive=True)
+    s, u = sp.symbols("s u", real=True)
+    a = sp.sqrt(3 * k3)
+    c = sp.sqrt(k3 / 3)
+    drift = sp.sympify(data["drift"]["x"], locals={"a": a, "b": a ** 3 / 27, "k3": k3, "s": s, "x": c + u})
+    assert sp.simplify(sp.expand(drift - (2 * c * s * u + s * u ** 2 - u ** 3))) == 0
+
+
 def test_unequal_tubes_are_cancelled_only_by_equal_lengths():
     from scipy.optimize import brentq
     mu_c = brentq(lambda m: m - 1 - 2 ** -m, 1.0, 2.0)

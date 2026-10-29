@@ -907,6 +907,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         vec /= np.linalg.norm(vec)
         evl, L = np.linalg.eig(J.T)
         w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
+        if abs(np.dot(w, vec)) <= 1e-8 * np.linalg.norm(w):
+            # a degenerate eigenvalue: eig chooses the bases of the right and the left eigenspace independently, and
+            # the left vector of the same eigenvalue can be orthogonal to the right one (at the write point of the
+            # two-component model with the symmetry of a square, where the Jacobian is eps times the identity to
+            # rounding, it was for some seeds; the coefficients became NaN and the point read as a subcritical
+            # pitchfork with no critical direction). The row of R^-1 is the left vector dual to vec: one on it and
+            # zero on the other eigenvectors.
+            w = np.real(np.linalg.inv(R)[i])
         w = w / np.dot(w, vec)
     if half is None:
         half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
