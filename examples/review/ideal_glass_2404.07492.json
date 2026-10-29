@@ -1,0 +1,143 @@
+{
+ "schema": "fieldbridge-review/1",
+ "paper": {
+  "title": "The Ideal Glass and the Ideal Disk Packing in Two Dimensions",
+  "reference": "V. M. Bolton-Lum, R. C. Dennis, P. K. Morse and E. I. Corwin, arXiv:2404.07492v2 (2025); Phys. Rev. Lett. 136, 058201 (2026)",
+  "source_of_numbers": "The estimates under 'protocol' come from an independent reproduction of the seeded-melting measurement (N = 64 triangulated packing built by the paper's route, Metropolis Monte Carlo, overlap threshold 0.3 mean radius, four seeds per temperature, up to 4e6 sweeps). The counts and theorem cases are read from the paper."
+ },
+ "systems": {
+  "disks_radii_free": {
+   "description": "N disks on a torus while the radii are degrees of freedom (the preparation step and the count of the appendix).",
+   "carrier": {"variables": ["positions", "radii", "lattice"], "free_parameters": ["radii"], "fixed_parameters": []},
+   "closure": ["periodic boundaries", "moment constraints on the radii", "contact equations of a triangulation"],
+   "realization": {"radius distribution": "set by the triangulation"},
+   "counts": {"equations": "3*N", "unknowns": "3*N", "sizes": [64, 256, 1024]}
+  },
+  "disks_fixed_radii": {
+   "description": "The same N disks with the radii fixed: the system whose configurational entropy and melting are claimed.",
+   "carrier": {"variables": ["positions", "lattice"], "free_parameters": [], "fixed_parameters": ["radii"]},
+   "closure": ["periodic boundaries", "contact equations of a triangulation"],
+   "realization": {"radius distribution": "log-normal, 20 % polydispersity as prepared"},
+   "counts": {"equations": "3*N", "unknowns": "2*N + 1", "sizes": [64, 256, 1024]}
+  },
+  "disks_fixed_radii_any_packing": {
+   "description": "The fixed disks in any packing, triangulated or not.",
+   "carrier": {"variables": ["positions", "lattice"], "free_parameters": [], "fixed_parameters": ["radii"]},
+   "closure": ["periodic boundaries"],
+   "realization": {"radius distribution": "log-normal, 20 % polydispersity as prepared"}
+  }
+ },
+ "claims": [
+  {
+   "id": "C1",
+   "statement": "The triangulated packings have zero configurational entropy, because triangulated graphs become a vanishing fraction of all graphs.",
+   "kind": "count",
+   "computed_on": "disks_radii_free",
+   "claimed_for": "disks_fixed_radii",
+   "theorems": [
+    {"name": "bender_gao_wormald_local_limit", "case": {"graph_class": "labelled 2-connected toroidal", "edges_per_vertex": 3.0}, "inference": "gaussian_count_at_triangulations"},
+    {"name": "bender_gao_wormald_local_limit", "case": {"graph_class": "labelled 2-connected toroidal", "edges_per_vertex": 3.0}, "inference": "rarity_implies_zero_entropy"},
+    {"name": "circle_packing_uniqueness_torus", "case": {"contact_graph_triangulation": true, "surface": "torus"}, "inference": "entropy_of_fixed_system_from_graph_count"}
+   ],
+   "novelty_claimed": true,
+   "prior_art": [
+    {"statement": "A triangulation of the torus fixes the radii up to scale; generic radii admit no triangulated packing.",
+     "queries": ["Thurston notes Theorem 13.7.1", "Bobenko Springborn Variational principles torus uniqueness", "Connelly Gortler Solomonides Yampolskaya isostatic conjecture"],
+     "sources": ["Thurston, notes (1980), Thm. 13.7.1", "Bobenko and Springborn, Trans. AMS 356, 659 (2004)", "Connelly et al., Discrete Comput. Geom. 64, 734 (2020), Thm. 8.1"],
+     "verdict": "published", "bears_on_novelty": false},
+    {"statement": "The number of triangulations of a fixed surface grows exponentially, with rate 256/27.",
+     "queries": ["OEIS A000260", "Chapuy Fusy Gimenez Mohar Noy graphs of fixed genus 256/27"],
+     "sources": ["Tutte, Canad. J. Math. 14, 21 (1962)", "Chapuy et al., J. Combin. Theory A 118, 748 (2011)"],
+     "verdict": "published", "contradicts": true},
+    {"statement": "Disordered ground states designed so that no crystal competes ('perfect glass').",
+     "queries": ["Zhang Stillinger Torquato perfect glass paradigm"],
+     "sources": ["Zhang, Stillinger and Torquato, Sci. Rep. 6, 36963 (2016)"],
+     "verdict": "partly published"}
+   ]
+  },
+  {
+   "id": "C2",
+   "statement": "A triangulated packing must be the densest packing possible for its radii.",
+   "kind": "structural",
+   "computed_on": "disks_fixed_radii",
+   "claimed_for": "disks_fixed_radii_any_packing",
+   "novelty_claimed": false,
+   "prior_art": [
+    {"statement": "A triangulated torus packing whose small disks can be rearranged into a denser packing of the same disks.",
+     "queries": ["Connelly isostatic conjecture section 12 Nazarov", "Fernique Pchelina compact packings are not always the densest"],
+     "sources": ["Connelly et al., Discrete Comput. Geom. 64, 734 (2020), Sec. 12, Fig. 12.2", "Fernique and Pchelina, arXiv:2104.12458"],
+     "verdict": "published", "contradicts": true}
+   ]
+  },
+  {
+   "id": "C3",
+   "statement": "The packings melt at T_m = 0.00189, equal to the Kauzmann temperature.",
+   "kind": "thermodynamic",
+   "observable_type": "fitted divergence",
+   "computed_on": "disks_fixed_radii",
+   "claimed_for": "disks_fixed_radii",
+   "protocol": {
+    "quantity": "melting temperature (divergence of the overlap time, modified Vogel-Fulcher fit)",
+    "window": {
+     "estimate": 0.00299,
+     "warmest_without_relaxation": 0.0025,
+     "coldest_with_relaxation": 0.003,
+     "at_fit_bound": true,
+     "profile": [[0.00015, 0.8107], [0.0003, 0.8027], [0.00045, 0.7941], [0.0006, 0.7846], [0.00075, 0.7744], [0.0009, 0.7632], [0.00105, 0.7509], [0.0012, 0.7374], [0.00135, 0.7224], [0.0015, 0.7057], [0.00165, 0.6871], [0.0018, 0.6662], [0.00195, 0.6425], [0.0021, 0.6154], [0.00225, 0.5841], [0.0024, 0.5475], [0.00255, 0.504], [0.0027, 0.4506], [0.00285, 0.3809]],
+     "alternative_without_divergence_fits": true
+    }
+   },
+   "theorems": [
+    {"name": "kramers_escape", "case": {"temperature_positive": true}, "inference": "divergence_at_positive_temperature"}
+   ],
+   "novelty_claimed": true,
+   "prior_art": [
+    {"statement": "Equilibrium two-dimensional polydisperse disks have a Kauzmann temperature at zero.",
+     "queries": ["Zero-temperature glass transition in two dimensions", "equilibrium Kauzmann transition two-dimensional atomistic glass"],
+     "sources": ["Berthier et al., Nat. Commun. 10, 1508 (2019)", "Jung, Ozawa, Biroli and Berthier, arXiv:2507.03590"],
+     "verdict": "published", "contradicts": true}
+   ]
+  },
+  {
+   "id": "C4",
+   "statement": "A non-zero melting temperature in two dimensions suggests a violation of the Mermin-Wagner-Hohenberg theorem.",
+   "kind": "structural",
+   "theorems": [
+    {"name": "mermin_wagner_hohenberg", "case": {"dimension": 2, "short_range_interactions": true, "temperature_positive": true, "continuous_symmetry": true}, "inference": "theorem_violated_by_finite_melting_temperature"}
+   ],
+   "novelty_claimed": false
+  },
+  {
+   "id": "C5",
+   "statement": "The hard-disk melting density phi_m = 0.780 is the thermodynamic melting density.",
+   "kind": "thermodynamic",
+   "observable_type": "fitted divergence",
+   "computed_on": "disks_fixed_radii",
+   "claimed_for": "disks_fixed_radii",
+   "novelty_claimed": false,
+   "prior_art": [
+    {"statement": "A power-law fit of the 1/e overlap time locates the (avoided) dynamical transition.",
+     "queries": ["Charbonneau Hu Kundu Morse dimensional evolution structure dynamics hard sphere liquids"],
+     "sources": ["Charbonneau, Hu, Kundu and Morse, J. Chem. Phys. 156, 134502 (2022)"],
+     "verdict": "published", "contradicts": true}
+   ]
+  },
+  {
+   "id": "C6",
+   "statement": "Shear moduli without pressure scaling show, for the first time, that disordered ideal packings behave like crystals.",
+   "kind": "mechanical",
+   "computed_on": "disks_fixed_radii",
+   "claimed_for": "disks_fixed_radii",
+   "theorems": [
+    {"name": "maxwell_constraint_counting", "case": {"coordination": 6, "dimension": 2}, "inference": "ideal_glass"}
+   ],
+   "novelty_claimed": true,
+   "prior_art": [
+    {"statement": "Hyperstatic networks (z > 2d) have a finite shear modulus at zero pressure, ordered or not.",
+     "queries": ["Wyart Nagel Witten geometric origin of excess low-frequency vibrational modes", "constraint counting shear modulus excess coordination"],
+     "sources": ["Maxwell, Phil. Mag. 27, 294 (1864)", "Wyart, Nagel and Witten, Europhys. Lett. 72, 486 (2005)"],
+     "verdict": "published"}
+   ]
+  }
+ ]
+}

@@ -133,6 +133,8 @@ field is added (`memory new`, `memory check`).
 | 15 | [Quantum-computing hardware](35_memory_quantum_hardware.md) | Which mechanisms do the hardware elements of quantum computing carry, and which laws appear where a derivation stops? | `memory codiscover`, `memory complete`, `memory changes` |
 | 16 | [Chaos and blow-up](36_memory_chaos_and_blow_up.md) | What does a material without a stable state do with its initial state: lose it at the largest Lyapunov exponent, or carry it to infinity in finite time, and with which exponent? | `memory dynamics` |
 
+**Reviewing a manuscript.** [Reviewing the claims of a manuscript](40_review_checks.md) runs four checks on the claims of a paper: whether each quantity was computed for the system it is claimed for, whether it depends on the protocol, whether each theorem is used inside its hypotheses, and whether novelty and the statements relied on carry a recorded search (`review check`).
+
 Modules 1–4 form the core and should be read in order. Modules 5, 6 and 8 each build on Module 4 and can be read in
 any order. Module 7 draws on all of them. Module 9 builds on Modules 4 and 5, Module 10 on Module 9, Module 11 on
 Modules 6 and 9, Module 12 on Modules 3 and 4, Module 13 on Modules 4 and 9, Module 14 on Modules 9 and 10, Module 15 on Modules 9, 13 and 14, and Module 16 on Modules 4 and 6. The figures of the modules are produced from the saved results by

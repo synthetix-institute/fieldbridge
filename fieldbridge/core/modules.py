@@ -16,6 +16,7 @@ MODULES: Tuple[Tuple[str, str, str], ...] = (
     ("computation", "fieldbridge.computation.cli", "memory"),
     ("heredity", "fieldbridge.heredity.cli", "memory"),
     ("decision", "fieldbridge.decision.cli", "memory"),
+    ("review", "fieldbridge.review.cli", "construction"),
 )
 
 

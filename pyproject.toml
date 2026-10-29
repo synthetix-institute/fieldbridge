@@ -25,7 +25,8 @@ fieldbridge = "fieldbridge.cli:main"
 
 [tool.setuptools]
 packages = ["fieldbridge", "fieldbridge.computation", "fieldbridge.core", "fieldbridge.memory", "fieldbridge.quantum",
-            "fieldbridge.regulation", "fieldbridge.heredity", "fieldbridge.decision"]
+            "fieldbridge.regulation", "fieldbridge.heredity", "fieldbridge.decision",
+            "fieldbridge.review"]
 
 [tool.setuptools.package-data]
 fieldbridge = ["web/*.html", "web/*.css", "web/*.js"]
