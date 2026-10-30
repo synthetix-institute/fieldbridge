@@ -9,7 +9,7 @@ with a bias and noise predicts the product ratio. The law states that, while the
 small, the displacement is Gaussian and its sign is set by the mean pushed by the asymmetry divided by the spread:
 P = Phi(h I1 / sqrt(sigma0^2 + 2 D I2)). The test used two model surfaces, not molecules.
 
-The answer has five parts.
+The answer has six parts.
 
 1. When friction slows the motion along the path, the law predicts the ratio from static quantities of the surface
    and the incoming speed. Static here means the transverse force and the transverse curvature along the path, and
@@ -29,6 +29,10 @@ The answer has five parts.
    predicts the direction and size of this effect, but only to 0.02-0.12. A pseudo-minimum before the VRI leaves the
    ratio unchanged unless its exit saddle lies near the TS1 level. Even then the ratio is set by the descent after
    that saddle, and the law applies from it.
+6. Harmonic modes act as the friction in the law once their recurrence time exceeds the passage time, and slow modes
+   do not count. Two transverse modes give four products. They decide independently when the products lie in the
+   quadrants. When the products lie on the axes the earlier mode wins by more than the linear stage says, and the
+   boundary between the families has to be found on the surface.
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -352,6 +356,102 @@ or 0.02 or 0.04 below it. The VRI follows at s = 0.7.
 - **Even then.** The ratio is fixed by the descent after the exit saddle. The law applies from that saddle, as if it
   were TS1.
 
+## Friction from explicit modes, and more than two products
+
+### Harmonic modes in place of Langevin friction
+
+**Setup** ([bath.py](bath.py), [bath_scan.py](bath_scan.py)). Each coordinate is coupled to its own M harmonic modes,
+with a discretized Ohmic spectrum up to a frequency of 4 that corresponds to a friction gamma. The whole system is
+conservative. The only noise is the thermal distribution of the modes at the start. This asks whether a molecule's
+own modes can supply the friction the law needs. On the straight surface the linear stage including the modes is
+solved exactly, with no Markov approximation.
+
+**A test that could not fail.** On the straight valley with tilt 0.04 at thermal speeds, trajectories with any number
+of modes agree with the law to 0.003-0.009. This says little, because the ratio barely depends on friction there. It
+is 0.30 even at gamma = 0 for kT = 0.01, since the offset of TS1 sets it. Two tests where friction changes the answer
+are needed.
+
+![bath modes](figures/bath_modes.png)
+
+**Tests where friction matters.** The table gives the mean absolute difference from Langevin trajectories at the same
+gamma.
+
+| modes per coordinate | curved valley (curvature 0.1, thermal speeds, 6 points) | straight valley, fast speeds 1 and 3 (6 points) |
+|---|---|---|
+| 1 | 0.111 | 0.063 |
+| 2 | 0.072 | not run |
+| 4 | 0.031 | 0.010 |
+| 8 | 0.012 | not run |
+| 16 | 0.006 | 0.005 |
+| 32 | 0.006 | 0.007 |
+
+- **How many modes are enough.** Modes act as friction once their recurrence time 2 pi M / 4 exceeds the time the
+  trajectories take to reach a product. That time is 3-11 here (median to 90th percentile, in the curved-valley runs
+  at gamma = 0.3-3). Eight modes recur at 12.6, and the difference is then about 0.01. Four modes recur at 6.3, which
+  is inside the passage, and the difference is about 0.03. With too few modes the energy is not removed in time, and
+  the outside share stays near its conservative value: at gamma = 3 and kT = 0.01 it is 0.83 with one mode and 0.55
+  with Langevin friction.
+- **Which modes count.** Slow modes do not act as friction. Thirty-two modes confined to frequencies below 1 leave the
+  outside share 0.03-0.12 above Langevin at the same gamma. A band extended to 16 stays within 0.04.
+- **The exact linear law does not close the fast-speed gap.** At speed 3 the law with the modes gives 0.26-0.27, and so
+  does the Markov law, while trajectories give 0.03-0.19. The gap at fast speed is nonlinear, as with Langevin friction,
+  and is not caused by the Markov approximation. This fast-speed gap also holds for Langevin friction at gamma up to 3,
+  so the 0.005 accuracy reported above is a statement about thermal speeds.
+- **Returns over TS1.** Fewer trajectories return with modes than with Langevin friction at the same gamma (1503
+  against 1950 of 10000 at gamma = 3 and kT = 0.01). The ratio is unaffected. I did not determine the cause; the band
+  ends at 4, close to the barrier frequency 2.83, which may reduce the friction acting on the barrier crossing.
+
+### Two transverse modes: four products or three
+
+**Setup** ([two_modes.py](two_modes.py), [two_modes_scan.py](two_modes_scan.py)). Two transverse modes y and z lose
+stability along one path, y at x = 1/4 and z after a delay D. A quartic coupling c decides where the products lie.
+
+**Products in the four quadrants (c = 0.5, 36 points).** Each mode decides its sign independently.
+- The sign law of each mode holds to 0.004-0.009 on average (largest 0.024), including without friction and with a
+  delay of 0.3.
+- The share of a quadrant equals the product of the two sign shares to 0.002.
+- Four products here are two independent two-product decisions.
+
+**Products on the axes (c = 1.5, 90 points).** The mode that grows first suppresses the other, so the question is which
+family wins.
+
+![two modes](figures/two_modes.png)
+
+- **The earlier mode wins by more than the linear stage says.** The first estimate compares |y| with |z| in the linear
+  stage, P(|y| > |z|). At D = 0.1, gamma = 1 and kT = 0.01, it gives 0.58 while trajectories give 0.69. Reading the
+  comparison later does not help: 0.57-0.60 for read amplitudes from 0.2 to 0.8.
+- **Why.** The stiffness of z exceeds that of y by 4D along the whole path, including the nonlinear stage. The boundary
+  between the families is therefore not at |y| = |z|. A trajectory with |z| somewhat larger than |y| still ends in the
+  y family.
+- **The boundary from the surface.** I added this after seeing the failure above; nothing is fitted. The linear stage
+  gives the Gaussian (y, z) where the deviation reaches 0.2. A bisection on the angle in noise-free motion on the
+  surface finds the direction separating the families, and the probability is the Gaussian weight on each side. At the
+  same point it gives 0.69.
+- **Not a Boltzmann split.** At D = 0.2 the z products lie 0.27 above the y products, which at kT = 0.01 would give
+  essentially all y. Trajectories give 0.73.
+
+| friction gamma | tilt on z | linear comparison | with the boundary |
+|---|---|---|---|
+| 0 | 0 | 0.129 | 0.077 |
+| 0 | 0.05 | 0.055 | 0.054 |
+| 0 | 0.2 | 0.054 | 0.091 |
+| 1 | 0 | 0.062 | 0.014 |
+| 1 | 0.05 | 0.036 | 0.009 |
+| 1 | 0.2 | 0.014 | 0.039 |
+| 3 | 0 | 0.058 | 0.011 |
+| 3 | 0.05 | 0.034 | 0.011 |
+| 3 | 0.2 | 0.011 | 0.044 |
+
+(Mean absolute difference in the share of the y family over delays and temperatures, 10 points per row.)
+
+**Limits of the boundary**
+- **Strong tilt.** With a tilt of 0.2 on z, one z product is nearly empty, leaving three effective products (at
+  gamma = 1, kT = 0.01 and D = 0: 0.00, 0.86, 0.07, 0.07). There the simple comparison does better than the boundary.
+  I did not resolve why. The offset of z at TS1 is already 0.19, close to the amplitude 0.2 at which the boundary is
+  read, which is a possible reason.
+- **Without friction.** The boundary is not reliable. At D = 0 symmetry requires 45 degrees, and the bisection returns
+  50 and 40 degrees, because the noise-free outcome is not a clean function of the angle after wall reflection.
+
 ## Summary: where the law holds and where it fails
 
 - **It holds** when the transverse instability grows through more than a few e-folds before the motion along the path
@@ -374,8 +474,17 @@ or 0.02 or 0.04 below it. The VRI follows at s = 0.7.
   competes with a static force; the law misses the temperature reversal.
 - **Pseudo-minima** before the VRI do not change the ratio on a downhill path. An intermediate held by an exit
   saddle near the TS1 level changes it modestly. The law then applies from the exit saddle.
-- **Not tested:** more than two products (entries 29 and 30 of Yamaki et al.); curved paths in more than two
-  dimensions; couplings to further modes.
+- **Fast incoming speeds** remain outside the law even with friction up to gamma = 3 and with the modes solved
+  exactly (0.26-0.27 against 0.03-0.19 at speed 3). The law's accuracy with friction is a statement about thermal
+  speeds.
+- **Harmonic modes** reproduce Langevin friction when they recur later than the passage and cover the relevant
+  frequencies. Few or slow modes leave the conservative result.
+- **More than two products.** Products labelled by two signs follow two independent sign laws. Products on the axes
+  need the boundary found on the surface, which works with friction and a weak tilt (0.01). It does worse than the
+  simple comparison with a strong tilt, and it is unreliable without friction.
+- **Not tested:** anharmonic coupling to further modes, which is how energy flows in a molecule; three modes or more;
+  curved paths in more than two dimensions. I do not know whether entries 29 and 30 of Yamaki et al. resemble either
+  two-mode case, because I could not open that paper.
 
 ## What molecular tests would need
 
@@ -386,7 +495,11 @@ would need:
   V_y(s) in the bifurcating mode, projected with the reaction-path Hamiltonian so that the coordinate across the path
   is defined continuously;
 - the speed along the path from TS1 (thermal or quasiclassical) and an estimate of the effective friction from the
-  remaining modes (energy flow out of the two-mode subspace on the time scale of the passage);
+  remaining modes: which of them couple to the path and the bifurcating mode, at which frequencies, and whether energy
+  leaves on the time scale of the passage. In the model tests modes slower than the passage, or too few to recur later
+  than it, do not act as friction;
+- for more than two products, the number of unstable transverse modes along the path, the delay between them, and
+  whether the products are labelled by independent signs or lie on separate axes;
 - the sampling actually used by the trajectories (normal-mode or Wigner), since the law's denominator differs between
   them;
 - for each reaction, the amplification of the transverse mode between the VRI and the product region. This decides
@@ -410,6 +523,8 @@ would need:
 | Static classes | `python classes.py --out results/classes.json` |
 | Figures and summary | `python analyse.py` (writes figures/ and results/summary.json) |
 | Airy limit | `python airy_check.py` |
+| Harmonic modes | `python bath_scan.py traj --backend torch --out results/bath_traj.json`, `python bath_scan.py law --workers 16 --out results/bath_law.json` (a few minutes) |
+| Two transverse modes | `python two_modes_scan.py traj --backend torch --out results/two_modes_traj.json`, the same with `law` and `sep` (`results/two_modes_law.json`, `_sep.json`), then `python extra_analyse.py` |
 | Curved valley and pseudo-minima | `python curved_scan.py traj --backend torch --only G,G1,H --out results/curved_traj_GH.json`, the same with `--only I` and `--only J` (`results/curved_traj_I.json`, `_J.json`; 2.48 million trajectories plus 0.64 million, about 7 minutes on one RTX 3090), `python curved_scan.py law --workers 20 --out results/curved_law_all.json` (about an hour on 20 cores), `python curved_analyse.py` |
 | FieldBridge | `fieldbridge memory noise-ratio ptsb_transverse_overdamped.json --out-dir fieldbridge_noise_ratio --gammas 0.05,1`, and `fieldbridge memory codiscover ptsb_transverse_overdamped.json --target symmetric-write --out-dir fieldbridge_codiscover` |
 

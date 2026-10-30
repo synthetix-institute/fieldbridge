@@ -23,6 +23,9 @@ The Collins et al. (2013) model and protocol were checked against the full arXiv
 | 13 | The curvature terms of the equations of motion along a curved path: a centrifugal force kappa s'^2 across the path and a transverse stiffness lowered by kappa^2 s'^2. | Published (textbook) | Reaction-path Hamiltonian, Miller, Handy and Adams, J. Chem. Phys. 72, 99 (1980); curvature coupling in VRI analysis, Harabuchi and Taketsugu (Hokkaido repository file TCA130-2-3_305-315, read as an abstract snippet only) |
 | 14 | Curvature as the bias of the swept-pitchfork law: selectivity on a valley whose static quantities are all symmetric, with the bias kappa <s'^2> set by the kinetic energy at the VRI; its loss under friction down to the entropic bias kappa kT; reversal of the favoured product by friction when curvature competes with a force toward the inside. | Not found | Queries 46-52 |
 | 15 | An intermediate before the VRI leaves the ratio set by the descent after its exit saddle: trajectories held in the well choose like those that cross it. | Not found | Queries 47, 52. Related: shallow intermediates (Lee and Goodman 2021), dynamical detours (Tantillo, query 43) |
+| 16 | Explicit harmonic modes in place of friction on a bifurcating surface: how many modes, at which frequencies, act as friction for the product ratio. | Not found | Query 53. Dissipation as a parameter: Collins et al. (2013). Cooling in a cavity on a PTSB model: Mondal, Kumar and Keshavamurthy, arXiv:2603.09713 (2026), abstract only |
+| 17 | A path that splits into three branches through a VRI region. | Published | Harabuchi, Nakayama and Taketsugu (Hokkaido repository file CTC1000_70-74), read as a snippet only |
+| 18 | Two transverse modes along one path: quadrant shares as a product of two sign laws; the family won by the earlier mode, with a boundary found from noise-free motion. | Not found | Query 54 |
 
 Yamaki, Yamada, Okamoto, Nakagawa and Takayanagi, J. Comput. Chem. 47, e70517 (2026) could not be opened (HTTP 403).
 Their class definitions and ratios are taken from the summary given in the task.
@@ -83,3 +86,5 @@ All queries went through the WebSearch tool. "ext" marks extended mode.
 50. "Dynamic matching" "Revisiting the Carpenter model" 2022 steered molecular dynamics
 51. curved reaction valley centrifugal effect product branching "bobsled" effect trajectories outside of curve selectivity
 52. intermediate before valley-ridge inflection thermalization loses dynamic matching product ratio statistical Pummerer dynamical detour lifetime
+53. post-transition-state bifurcation intramolecular vibrational energy redistribution bath modes effective friction product ratio Caldeira-Leggett model valley-ridge
+54. reaction trifurcation or sequential bifurcation two valley-ridge inflection points product ratio dynamics model surface two transverse modes competition
