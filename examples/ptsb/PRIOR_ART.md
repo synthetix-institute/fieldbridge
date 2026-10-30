@@ -19,6 +19,10 @@ The Collins et al. (2013) model and protocol were checked against the full arXiv
 | 9 | The shape of the zero-point distribution in quasiclassical sampling (normal-mode, fixed energy and random phase, against Gaussian) changes the ratio. | Partly published | Tremblay and Yang, J. Phys. Org. Chem. (2022) e4322: scaling the zero-point energy changes the ratio. The arcsine-against-Gaussian distinction was not found. |
 | 10 | An index-1 saddle splitting into two index-1 saddles and an index-2 saddle as a surface parameter changes (the static unfolding of a saddle). | Published | Lyu, Naik and Wiggins, Commun. Nonlinear Sci. Numer. Simul. (2021), doi 10.1016/j.cnsns.2021.105949; García-Garrido, Naik and Wiggins, Int. J. Bifurcation Chaos 30, 2030008 (2020) |
 | 11 | The two static classes of Yamaki et al. (downhill, small barrier above TS1) are the two sides of this unfolding, with the write law on one side and transition-state selection on the other. | Not found | Lee and Goodman (2021) treat a shallow intermediate. Suzuki et al., JCTC 22, 7274 (2026) trace the product-dividing boundary from the VRI region to the product-connecting TS. Neither links the classes to the unfolding or to a branching law. |
+| 12 | On a curved path, momentum carries trajectories toward the product that continues the incoming direction (dynamic matching). | Published | Carpenter (1985, 1995); Katsanikas and Wiggins, caldera surfaces (arXiv:1911.09644, arXiv:1911.11811); Collins et al. (2013), reflection of the bundle at the far wall |
+| 13 | The curvature terms of the equations of motion along a curved path: a centrifugal force kappa s'^2 across the path and a transverse stiffness lowered by kappa^2 s'^2. | Published (textbook) | Reaction-path Hamiltonian, Miller, Handy and Adams, J. Chem. Phys. 72, 99 (1980); curvature coupling in VRI analysis, Harabuchi and Taketsugu (Hokkaido repository file TCA130-2-3_305-315, read as an abstract snippet only) |
+| 14 | Curvature as the bias of the swept-pitchfork law: selectivity on a valley whose static quantities are all symmetric, with the bias kappa <s'^2> set by the kinetic energy at the VRI; its loss under friction down to the entropic bias kappa kT; reversal of the favoured product by friction when curvature competes with a force toward the inside. | Not found | Queries 46-52 |
+| 15 | An intermediate before the VRI leaves the ratio set by the descent after its exit saddle: trajectories held in the well choose like those that cross it. | Not found | Queries 47, 52. Related: shallow intermediates (Lee and Goodman 2021), dynamical detours (Tantillo, query 43) |
 
 Yamaki, Yamada, Okamoto, Nakagawa and Takayanagi, J. Comput. Chem. 47, e70517 (2026) could not be opened (HTTP 403).
 Their class definitions and ratios are taken from the summary given in the task.
@@ -72,3 +76,10 @@ All queries went through the WebSearch tool. "ext" marks extended mode.
 43. "dynamical detours" Pummerer post-transition state bifurcation shallow intermediate small barrier Chem Sci 2018 Tantillo
 44. Kondepudi Moss McClintock 1986 Physica D "Observation of symmetry breaking, state selection and sensitivity in a noisy electronic system"
 45. Thomas Waas Harmata Singleton "Control elements in dynamically determined selectivity on a bifurcating surface" JACS 2008
+46. (ext) dynamic matching reaction path curvature centrifugal force product selectivity bifurcation Carpenter analytical model
+47. (ext) post-transition-state bifurcation curved reaction path "pseudo-minimum" OR "shallow intermediate" trajectory product ratio friction temperature
+48. reaction path Hamiltonian curvature coupling bifurcation branching ratio increases with temperature inertial selectivity reversal (the search returned an error and no results)
+49. reaction path curvature coupling branching ratio bifurcating surface temperature dependence inertial dynamic effect model potential
+50. "Dynamic matching" "Revisiting the Carpenter model" 2022 steered molecular dynamics
+51. curved reaction valley centrifugal effect product branching "bobsled" effect trajectories outside of curve selectivity
+52. intermediate before valley-ridge inflection thermalization loses dynamic matching product ratio statistical Pummerer dynamical detour lifetime
