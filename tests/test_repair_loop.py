@@ -120,6 +120,11 @@ def test_an_orthant_point_on_the_boundary_is_reported_and_an_interior_one_reduce
     assert rl._carrier_limit(real, np.array([0.5, 0.5])) is None
 
 
+def test_a_failed_law_drift_with_a_renamed_coordinate_is_read():
+    task = {"model": FAST_SLOW, "candidate_drift": {"w": "e*w+2"}}
+    assert rl._failed_law_coefficients(task, None)({"e": 0.5}).tolist() == [2.0, 0.5]
+
+
 def test_a_second_critical_direction_and_a_complex_pair_are_refused():
     spec = model({"x": "e*x-x**3", "y": "e*y-y**3"}, {"e": 0.0}, ["x", "y"])
     with pytest.raises(ValueError, match="second eigenvalue"):
@@ -130,10 +135,34 @@ def test_a_second_critical_direction_and_a_complex_pair_are_refused():
 
 
 def test_a_resonance_of_the_non_critical_modes_is_reported():
-    # eigenvalues 0, +1, -1: the monomial s1 s2 has a vanishing denominator
+    # eigenvalues 0, +1, -1: the monomial s1 s2 has a vanishing denominator, and the closure stops below it
     spec = model({"x": "x*a*b+e*x", "a": "a", "b": "-b"}, {"e": 0.0}, ["x", "a", "b"])
-    with pytest.raises(ValueError, match="resonance"):
-        closure(spec, state=[0.0, 0.0, 0.0], order=3)
+    c = closure(spec, state=[0.0, 0.0, 0.0], order=3)
+    assert c["resonance_at_order"] == 2 and c["order"] == 1
+
+
+def test_a_strongly_non_normal_operator_is_not_a_resonance():
+    # a bias far above the stable rate gives the operator tiny singular values; its denominators are those of the rate
+    spec = model({"x": "20*e+x*z", "z": "-0.5*z+x**2"}, {"e": 0.0}, ["x", "z"])
+    c = closure(spec, order=7)
+    assert c["resonance_at_order"] is None and c["order"] == 7
+    assert c["smallest_denominator"] == pytest.approx(0.5, rel=1e-6)
+    assert rl.verify_modulo_order({"model": spec}, c, rl.OrderPolicy())["passed"]
+    largest = max(c["h"].values(), key=abs)
+    key = next(k for k, v in c["h"].items() if sum(k) == 2 and v != 0.0)
+    altered = {**c, "h": {**c["h"], key: c["h"][key] * 1.001}}
+    assert not rl.verify_modulo_order({"model": spec}, altered, rl.OrderPolicy())["passed"]
+    assert abs(largest) > 1e5
+
+
+def test_the_generated_coordinate_avoids_the_names_of_the_model():
+    for record in records():
+        if record["source"].endswith("rydberg_bistability.json"):
+            task = rl.learning_task(record, "completion/0/unfolding/0", root=ROOT, policy=FAST)
+            assert list(task["coordinates"]) == ["u_critical"]
+            ln._parse_task(task)
+            return
+    pytest.fail("the Rydberg record is missing")
 
 
 # ------------------------------------------------------------------------------------------- the size rule

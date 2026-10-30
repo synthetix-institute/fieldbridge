@@ -39,6 +39,7 @@ from pathlib import Path
 import time
 from typing import Dict, List, Optional, Tuple
 
+import mpmath as mp
 import numpy as np
 import sympy as sp
 
@@ -281,6 +282,7 @@ def _solve_closure(real, state, parameters: Dict[str, float], swept: List[str], 
     h: Series = {tuple(int(j == 0) for j in range(d)): 1.0}
     g: Series = {}                         # keyed by (power of z, powers of e)
     denominators: List[float] = []
+    resonance = None
     for k in range(0, order + 1):
         residual = _order_residual(field_modal, h, g, k, n, m, order, d)
         keys = _monomials(d, k)
@@ -315,10 +317,15 @@ def _solve_closure(real, state, parameters: Dict[str, float], swept: List[str], 
                             target[0] -= 1
                             target[n + j] += 1
                             L[index[tuple(target)], col] += key[0] * c[j]
-            sv = np.linalg.svd(L, compute_uv=False)
-            denominators.append(float(sv.min()))
-            if sv.min() < policy.denominator_floor * max(1.0, sv.max()):
-                raise ValueError(f"resonance at order {k}: the homological operator is singular")
+            # L is triangular in the eigenbasis, so its eigenvalues are the denominators. Its singular values are not:
+            # a large bias makes it strongly non-normal, with tiny singular values and no resonance
+            smallest = _smallest_denominator(others, lam, k)
+            denominators.append(smallest)
+            if smallest < policy.denominator_floor * max(1.0, float(np.abs(others).max())):
+                if k < 2:
+                    raise ValueError(f"resonance at order {k}: a denominator of the homological operator vanishes")
+                resonance = k
+                break
             rhs = np.array([-residual.get(key, 0.0) for key in mixed])
             solution = np.linalg.solve(L, rhs)
             for key, value in zip(mixed, solution):
@@ -326,9 +333,21 @@ def _solve_closure(real, state, parameters: Dict[str, float], swept: List[str], 
                     h[key] = h.get(key, 0.0) + float(value)
     return {"state": q.tolist(), "parameters": over, "swept": list(swept), "lambda_critical": lam,
             "mode": v.tolist(), "left_mode": w.tolist(), "P_inverse": Pinv.tolist(),
-            "K": K.tolist(), "h": h, "g": g, "order": order, "source_dimension": n,
+            "K": K.tolist(), "h": h, "g": g, "source_dimension": n, "resonance_at_order": resonance,
+            "order": order if resonance is None else resonance - 1,
             "other_spectrum": [[float(z.real), float(z.imag)] for z in others],
             "smallest_denominator": min(denominators) if denominators else None}
+
+
+def _smallest_denominator(others: np.ndarray, lam: float, k: int) -> float:
+    """min |sum beta_i lambda_i + (a - 1) lam| over the monomials of degree k with some non-critical power."""
+    smallest = float("inf")
+    for b in range(1, k + 1):
+        for chosen in combinations_with_replacement(others.tolist(), b):
+            total = sum(chosen)
+            for a in range(0, k - b + 1):
+                smallest = min(smallest, abs(total + (a - 1) * lam))
+    return smallest
 
 
 def _derivative_product(h: Series, fields: List[Series], n: int, order: int) -> Series:
@@ -435,50 +454,95 @@ class Evaluator:
         return np.polyval(a[::-1], z)
 
 
-def verify_modulo_order(task: Dict, candidate: Dict, policy: OrderPolicy, *, rays: int = 8, seed: int = 20261030):
-    """Recompute Dh F - g(h) from the parsed drift along rays through the write point and read its Taylor coefficients
-    by a discrete Cauchy integral. The series arithmetic of the solver takes no part."""
+def verify_modulo_order(task: Dict, candidate: Dict, policy: OrderPolicy, *, rays: int = 4, seed: int = 20261030):
+    """Recompute Dh F and g(h) from the parsed drift along rays through the write point and read the Taylor coefficients
+    of each by a discrete Cauchy integral at 60 digits. The series arithmetic of the solver takes no part. Each order
+    through N must cancel against the size of its own two sides, or against the rounding of the lower orders."""
     real = mspec.load(task["model"])
     sym = real.symbolic
     names = sym["variables"] + sym["parameters"]
-    drift = sp.lambdify(names, sym["drift"], modules="numpy")
+    drift = sp.lambdify(names, sym["drift"], modules="mpmath")
     pnames = [str(s) for s in sym["parameters"]]
-    ev = Evaluator(candidate)
-    n, swept, order = ev.n, ev.swept, candidate["order"]
-    samples = 256 if max(candidate["order"], 1) > 3 else 128
-    radius = 0.1
+    order = candidate["order"]
+    q = candidate["state"]
+    Pinv = candidate["P_inverse"]
+    K = candidate["K"]
+    swept = list(candidate["swept"])
+    fixed = {**real.params, **candidate["parameters"]}
+    n = len(q)
+    d = n + len(swept)
+    h_terms = list(candidate["h"].items())
+    g_terms = list(candidate["g"].items())
+    # g(h) has degree order^2 on a polynomial drift of low degree: below that the coefficients alias
+    samples, radius = (order + 1) ** 2 + 8, mp.mpf("0.01")
     rng = np.random.default_rng(seed)
-    fixed = {**real.params, **ev.p0}
-    largest = np.zeros(order + 2)
-    scale = 0.0
-    for _ in range(rays):
-        dy = rng.standard_normal(n)
-        de = rng.standard_normal(len(swept))
-        norm = np.sqrt(np.dot(dy, dy) + np.dot(de, de))
-        dy, de = dy / norm, de / norm
-        values = np.zeros(samples, complex)
-        for j in range(samples):
-            s = radius * np.exp(2j * np.pi * j / samples)
-            x = ev.q + s * dy
-            params = {**fixed, **{name: fixed[name] + s * de[i] for i, name in enumerate(swept)}}
-            f = np.asarray(drift(*x, *[params[k] for k in pnames]), complex)
-            grad = ev.gradient_h(x, params)
-            z = ev.h(x, params)
-            e = ev._e(params)
-            g = 0j
-            for key, c in zip(ev.gk, ev.gc):
-                g += c * z ** key[0] * (np.prod(e ** key[1:]) if e.size else 1.0)
-            values[j] = np.dot(grad, f) - g
-        coefficients = np.fft.fft(values) / samples
-        for k in range(order + 2):
-            largest[k] = max(largest[k], abs(coefficients[k]) / radius ** k)
-        scale = max(scale, float(np.max(np.abs(values))))
-    noise = 4e-16 * max(scale, 1.0) * radius ** -np.arange(order + 2) * sqrt(samples) / samples
-    limit = np.maximum(policy.identity_tolerance * np.maximum(largest[order + 1], 1.0), noise * 8)
-    passed = bool(np.all(largest[:order + 1] <= limit[:order + 1]))
-    return {"passed": passed, "order": order, "coefficient_by_order": largest.tolist(),
-            "limit_by_order": limit[:order + 1].tolist(), "first_omitted_order": order + 1,
-            "first_omitted_coefficient": float(largest[order + 1])}
+    left_size, right_size, residual = [np.zeros(order + 2) for _ in range(3)]
+    with mp.workdps(60):
+        roots = [mp.expjpi(2 * mp.mpf(j) / samples) for j in range(samples)]
+        for _ in range(rays):
+            direction = rng.standard_normal(d)
+            direction = direction / np.linalg.norm(direction)
+            left, right = [], []
+            for root in roots:
+                s = radius * root
+                x = [mp.mpf(q[i]) + s * mp.mpf(direction[i]) for i in range(n)]
+                e = [s * mp.mpf(direction[n + j]) for j in range(len(swept))]
+                params = {**fixed, **{name: mp.mpf(fixed[name]) + e[j] for j, name in enumerate(swept)}}
+                f = drift(*x, *[params[k] for k in pnames])
+                f = [f[i] for i in range(n)] if not isinstance(f, (list, tuple)) else list(f)
+                xi = [sum(mp.mpf(Pinv[i][k]) * (x[k] - mp.mpf(q[k])) for k in range(n)) for i in range(n)]
+                for i in range(1, n):
+                    xi[i] -= sum(mp.mpf(K[i - 1][j]) * e[j] for j in range(len(swept)))
+                v = xi + e
+                top = order + 2
+                powers = [[mp.mpf(1)] for _ in v]
+                for i, value in enumerate(v):
+                    for _power_index in range(top):
+                        powers[i].append(powers[i][-1] * value)
+                z = mp.mpf(0)
+                modal_gradient = [mp.mpf(0) for _ in range(n)]
+                for key, c in h_terms:
+                    # the product without the factor of variable i gives the partial derivative
+                    product = mp.mpf(c)
+                    nonzero = [i for i, k in enumerate(key) if k]
+                    for i in nonzero:
+                        product *= powers[i][key[i]]
+                    z += product
+                    for i in nonzero:
+                        if i < n:
+                            rest = mp.mpf(c) * key[i] * powers[i][key[i] - 1]
+                            for other in nonzero:
+                                if other != i:
+                                    rest *= powers[other][key[other]]
+                            modal_gradient[i] += rest
+                gradient = [sum(modal_gradient[i] * mp.mpf(Pinv[i][k]) for i in range(n)) for k in range(n)]
+                left.append(sum(gradient[k] * f[k] for k in range(n)))
+                total = mp.mpf(0)
+                for key, c in g_terms:
+                    term = mp.mpf(c) * z ** key[0]
+                    for j, k in enumerate(key[1:]):
+                        if k:
+                            term *= e[j] ** k
+                    total += term
+                right.append(total)
+            for k in range(order + 2):
+                scale = radius ** k * samples
+                a = sum(left[j] * mp.expjpi(-2 * mp.mpf(j * k) / samples) for j in range(samples)) / scale
+                b = sum(right[j] * mp.expjpi(-2 * mp.mpf(j * k) / samples) for j in range(samples)) / scale
+                left_size[k] = max(left_size[k], float(abs(a)))
+                right_size[k] = max(right_size[k], float(abs(b)))
+                residual[k] = max(residual[k], float(abs(a - b)))
+    size = np.maximum(left_size, right_size)
+    rounding = 1e-9 * np.maximum.accumulate(np.maximum(size, 1.0))
+    limit = np.maximum(policy.identity_tolerance * size, rounding)
+    passed = bool(np.all(residual[:order + 1] <= limit[:order + 1]))
+    return {"passed": passed, "order": order, "residual_by_order": residual.tolist(),
+            "side_size_by_order": size.tolist(), "limit_by_order": limit[:order + 1].tolist(),
+            "first_omitted_order": order + 1, "first_omitted_residual": float(residual[order + 1])}
+
+
+def candidate_from_record(frozen: Dict) -> Dict:
+    return {**frozen, "h": {tuple(k): v for k, v in frozen["h"]}, "g": {tuple(k): v for k, v in frozen["g"]}}
 
 
 def candidate_record(candidate: Dict) -> Dict:
@@ -653,7 +717,7 @@ def _interventions(pt: WritePoint, v, w, Q, length, policy: OrderPolicy, seed: i
 def learning_task(record: Dict, target: str, *, root: Path = Path("."), policy: Optional[OrderPolicy] = None) -> Dict:
     """Write the learning task of one law of a record, from its specification, write point and failed law."""
     policy = policy or OrderPolicy()
-    spec = json.loads((Path(root) / record["source"]).read_text())
+    spec = json.loads((Path(root) / record["source"]).read_text(encoding="utf-8"))
     for name, point, unfolding, law in _locate_laws(record):
         if name == target:
             break
@@ -679,18 +743,20 @@ def _task_from_point(record: Dict, spec: Dict, pt: WritePoint, policy: OrderPoli
     c = w @ B
     scale_info = _written_scale(pt, v, w, seed=int(ln.digest(pt.target)[:8], 16))
     length = scale_info["scale"]
-    u_text = "+".join(f"({float(w[i])!r})*({name}-({float(pt.state[i])!r}))" for i, name in enumerate(map(str, x)))
-    terms = [f"({float(lam)!r})*u"]
-    for name, value in zip(pt.swept, c):
-        terms.append(f"({float(value)!r})*({name}-({pt.parameters[name]!r}))")
+    used = {str(s) for s in x + p}
+    name = next(c for c in ("u", "u_critical", "u_critical_mode") if c not in used)
+    u_text = "+".join(f"({float(w[i])!r})*({v_name}-({float(pt.state[i])!r}))" for i, v_name in enumerate(map(str, x)))
+    terms = [f"({float(lam)!r})*{name}"]
+    for swept, value in zip(pt.swept, c):
+        terms.append(f"({float(value)!r})*({swept}-({pt.parameters[swept]!r}))")
     slope = _rate_slope(real, pt)
-    for name, value in zip(pt.swept, slope):
-        terms.append(f"({float(value)!r})*u*({name}-({pt.parameters[name]!r}))")
+    for swept, value in zip(pt.swept, slope):
+        terms.append(f"({float(value)!r})*{name}*({swept}-({pt.parameters[swept]!r}))")
     key = ln.digest({"record": record.get("spec_sha256"), "target": pt.target})
     seed = int(key[:12], 16)
     model = {**spec, "noise": 0}
-    task = {"schema": ln.SCHEMA, "model": model, "coordinates": {"u": u_text},
-            "candidate_drift": {"u": "+".join(terms)},
+    task = {"schema": ln.SCHEMA, "model": model, "coordinates": {name: u_text},
+            "candidate_drift": {name: "+".join(terms)},
             "development": _interventions(pt, v, w, Q, length, policy, seed, "d"),
             "withheld": _interventions(pt, v, w, Q, length, policy, seed + 1, "w"),
             "write_point": {"state": pt.state.tolist(), "parameters": pt.parameters, "swept": pt.swept,
@@ -803,10 +869,11 @@ def _failed_law_coefficients(task: Dict, candidate: Dict):
     """The polynomial in z of the task's proposed drift, at given parameters, for the omission control."""
     real = mspec.load(task["model"])
     p = real.symbolic["parameters"]
-    z = sp.Symbol("u", real=True)
+    (name, text), = task["candidate_drift"].items()
+    z = sp.Symbol(name, real=True)
     names = {str(s): s for s in p}
-    names["u"] = z
-    expr = ln.expression(task["candidate_drift"]["u"], names)
+    names[name] = z
+    expr = ln.expression(text, names)
     poly = sp.Poly(expr, z)
     fns = [sp.lambdify(p, c, modules="numpy") for c in poly.all_coeffs()[::-1]]
     order = [str(s) for s in p]
@@ -864,8 +931,9 @@ def close_modulo_order(task: Dict, library=None, policy: Optional[OrderPolicy] =
         report["other_spectrum"] = closure["other_spectrum"]
         report["smallest_denominator"] = closure["smallest_denominator"]
         report["lambda_critical"] = closure["lambda_critical"]
+        report["resonance_at_order"] = closure["resonance_at_order"]
         report["g_low_orders"] = {str(k): v for k, v in closure["g"].items() if sum(k) <= 3}
-        candidates = {order: truncate(closure, order) for order in policy.order_list()}
+        candidates = {order: truncate(closure, order) for order in policy.order_list() if order <= closure["order"]}
         development_runs = _source_trajectories(real, development)
         selected, evaluations = _select(candidates, development, development_runs, policy)
         report["development_evaluations"] = evaluations
@@ -981,7 +1049,7 @@ def _record_of(departure: Dict, root: Path):
     """The whole record of a retained outcome, located in its JSONL file by its digest."""
     path = Path(departure["source"])
     path = path if path.is_absolute() else Path(root) / path
-    with path.open() as stream:
+    with path.open(encoding="utf-8") as stream:
         for line in stream:
             if line.strip():
                 record = json.loads(line)
@@ -1001,9 +1069,11 @@ def _preserved(record):
 
 
 def close_departures(library, *, root: Path = Path("."), policy: Optional[OrderPolicy] = None,
-                     select=None) -> List[Dict]:
+                     select=None, revisit: Tuple[str, ...] = ()) -> List[Dict]:
     """Every retained outcome gets a row: a law departure is given a task and a campaign (once), and the others keep the
-    reason they are not a repair question. `select` restricts the campaign by its write class."""
+    reason they are not a repair question. `select` restricts the campaign by its write class. `revisit` names earlier
+    statuses to run again after a change of the code; the registry refuses any withheld set already consumed, and the
+    earlier report stays in the attempts and in the new report."""
     policy = policy or OrderPolicy()
     rows = []
     for key, departure in library.departures():
@@ -1017,7 +1087,7 @@ def close_departures(library, *, root: Path = Path("."), policy: Optional[OrderP
                          "write_class": write_class})
             continue
         old = library.campaign(key)
-        if old is not None:
+        if old is not None and old.get("status") not in revisit:
             rows.append({"departure": key, "status": "already_processed", "previous_status": old.get("status")})
             continue
         library.claim_campaign(key)
@@ -1033,6 +1103,8 @@ def close_departures(library, *, root: Path = Path("."), policy: Optional[OrderP
             report = library.store(report)
         else:
             report = close_modulo_order(task, library, policy)
+        if old is not None:
+            report = {**report, "earlier_report": {k: old.get(k) for k in ("status", "reason", "attempt_id")}}
         library.store_campaign(key, _finite(report))
         rows.append({"departure": key, "target": departure.get("target"), "record": departure.get("paper_id"),
                      "write_class": write_class, "status": report["status"]})

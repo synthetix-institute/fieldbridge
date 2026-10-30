@@ -6,6 +6,9 @@ three controls: the exact identity search on the same tasks, the same closure on
 development evaluations with and without a hint from earlier verified campaigns of the class.
 
     python scripts/close_repair_loop.py docs/records/quantum_semiclassical.jsonl --out-dir OUT
+
+--second-pass DIR runs again only the laws of a finished campaign that stopped before their withheld test, with the same
+thresholds, and writes second_pass.json beside the first result, which it leaves unchanged.
 """
 from __future__ import annotations
 
@@ -77,13 +80,71 @@ def hinted_evaluations(report, hint):
     return 1 + direct_evaluations(report, None), True
 
 
+def _model_of(root, report):
+    return {**json.loads((root / report["record"]["source"]).read_text(encoding="utf-8")), "noise": 0}
+
+
+def second_pass(args):
+    policy = rl.OrderPolicy(max_order=args.max_order)
+    out = Path(args.second_pass)
+    root = Path(args.root).resolve()
+    records_path = Path(args.records)
+    first = json.loads((out / "repair_loop.json").read_text(encoding="utf-8"))
+    result = {"schema": "fieldbridge-repair-loop-second-pass/1", "policy": rl.asdict(policy),
+              "implementation_sha256": rl.hashlib.sha256(Path(rl.__file__).read_bytes()).hexdigest(),
+              "campaign": [], "certified_laws": [], "exact_baseline": [], "audit_of_first_pass": []}
+    library = ln.MoveLibrary(out / "campaign.sqlite")
+    # the verifier of the first pass scaled its limit to the first omitted coefficient: the selected candidates again
+    for row in first["campaign"]:
+        report = library.campaign(row["departure"])
+        if report.get("candidate"):
+            check = rl.verify_modulo_order({"model": _model_of(root, report)}, rl.candidate_from_record(report["candidate"]),
+                                           policy)
+            result["audit_of_first_pass"].append({"departure": row["departure"], "source": row["source"],
+                                                  "target": row["target"], "status": row["status"], **check})
+            print(json.dumps({"audit": row["source"], "target": row["target"], "first_status": row["status"],
+                              "passed": check["passed"]}), flush=True)
+    again = {r["departure"] for r in first["campaign"] if r["status"] == "unsupported_or_resonant"}
+    if again:
+        rows = rl.close_departures(library, root=root, policy=policy, select=set(args.classes),
+                                   revisit=("unsupported_or_resonant",))
+        for row in rows:
+            if row["departure"] in again:
+                report = library.campaign(row["departure"])
+                result["campaign"].append({"departure": row["departure"],
+                                           **{a: b for a, b in report.items() if a not in TRIM[:3]}})
+                print(json.dumps({"campaign": report["failed_law"]["target"], "source": report["record"]["source"],
+                                  "status": report["status"]}), flush=True)
+    records = {r["source"]: r for r in map(json.loads, filter(str.strip, records_path.read_text(encoding="utf-8").splitlines()))}
+    for row in first["campaign"]:
+        statuses = {v.get("status") for v in (row.get("exact_baseline") or {}).values()}
+        # the coordinate name of the generator collided with a variable of this model
+        if "unsupported_or_invalid" in statuses and "non-reserved" in json.dumps(row["exact_baseline"]):
+            task = rl.learning_task(records[row["source"]], row["target"], root=root, policy=policy)
+            baseline = exact_baseline(task, _control_dir(out / "second", row["departure"]), args.baseline_seconds)
+            result["exact_baseline"].append({"source": row["source"], "target": row["target"], **baseline})
+            print(json.dumps({"exact": row["target"], "source": row["source"],
+                              **{k: v["status"] for k, v in baseline.items()}}), flush=True)
+    library2 = ln.MoveLibrary(out / "certified.sqlite")
+    for row in first.get("certified_laws", []):
+        if row["status"] == "unsupported_or_resonant" and "resonance" in str(row.get("reason")):
+            task = rl.learning_task(records[row["record"]], row["target"], root=root, policy=policy)
+            report = rl.close_modulo_order(task, library2, policy)
+            result["certified_laws"].append({"record": row["record"], "target": row["target"],
+                                             **{k: v for k, v in report.items() if k not in TRIM}})
+            print(json.dumps({"certified": row["target"], "record": row["record"], "status": report["status"]}),
+                  flush=True)
+    (out / "second_pass.json").write_text(json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n",
+                                          encoding="utf-8")
+
+
 def run(args):
     policy = rl.OrderPolicy(max_order=args.max_order)
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
     root = Path(args.root).resolve()
     records_path = Path(args.records)
-    records = [json.loads(line) for line in records_path.read_text().splitlines() if line.strip()]
+    records = [json.loads(line) for line in records_path.read_text(encoding="utf-8").splitlines() if line.strip()]
     library = ln.MoveLibrary(out / "campaign.sqlite")
     retained = Counter()
     for record in records:
@@ -153,7 +214,8 @@ def run(args):
                             "write_class": (v.get("failed_law") or {}).get("write_class"),
                             "write_point": v.get("write_point")} for k, v in sorted(reports.items())],
               "certified_laws": certified, "memory_against_direct": memory, "novelty_established": False}
-    (out / "repair_loop.json").write_text(json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n")
+    (out / "repair_loop.json").write_text(json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n",
+                                          encoding="utf-8")
     print(json.dumps({"status": Counter(r.get("status") for r in reports.values()),
                       "certified": Counter(r.get("status") for r in certified),
                       "output": str(out / "repair_loop.json")}), flush=True)
@@ -168,10 +230,12 @@ def _control_dir(out, key):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("records")
-    parser.add_argument("--out-dir", required=True)
+    parser.add_argument("--out-dir")
     parser.add_argument("--root", default=".")
     parser.add_argument("--classes", nargs="+", default=list(CAMPAIGN))
     parser.add_argument("--max-order", type=int, default=7)
     parser.add_argument("--baseline-seconds", type=int, default=120)
     parser.add_argument("--certified", action="store_true")
-    run(parser.parse_args())
+    parser.add_argument("--second-pass", metavar="DIR")
+    arguments = parser.parse_args()
+    (second_pass if arguments.second_pass else run)(arguments)
