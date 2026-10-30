@@ -160,7 +160,8 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     keep = [i for i, k in enumerate(spectra) if classify(k)["unstable"] == 0]
     states, counts, spectra = [states[i] for i in keep], [counts[i] for i in keep], [spectra[i] for i in keep]
     n_null = 0 if real.null_modes is None else len(np.atleast_2d(real.null_modes))
-    continuum = bool(len(states) >= max(6, int(conv.sum()) // 2)
+    # many flat states: starts on a circle of states also merge, so that fewer states than half of the starts remain
+    continuum = bool(len(states) >= max(6, int(conv.sum()) // 3)
                      and all(classify(k)["flat"] > n_null for k in spectra))
     return states, counts, spectra, int(np.sum(~conv)), continuum
 
