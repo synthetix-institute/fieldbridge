@@ -57,7 +57,7 @@ def exact_baseline(task, library, seconds):
     return out
 
 
-def direct_evaluations(report, orders):
+def direct_evaluations(report):
     """Development checks when the ladder stops at the first order that passes."""
     rows = report.get("development_evaluations", [])
     used = 0
@@ -74,10 +74,10 @@ def hinted_evaluations(report, hint):
     rows = report.get("development_evaluations", [])
     known = {(r["radius"], r["order"]): r["passed"] for r in rows}
     if hint is None:
-        return direct_evaluations(report, None), True
+        return direct_evaluations(report), True
     if known.get(hint):
         return 1, hint == (report.get("selected_radius"), report.get("selected_order"))
-    return 1 + direct_evaluations(report, None), True
+    return 1 + direct_evaluations(report), True
 
 
 def _model_of(root, report):
@@ -134,8 +134,8 @@ def second_pass(args):
                                              **{k: v for k, v in report.items() if k not in TRIM}})
             print(json.dumps({"certified": row["target"], "record": row["record"], "status": report["status"]}),
                   flush=True)
-    (out / "second_pass.json").write_text(json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n",
-                                          encoding="utf-8")
+    text = json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n"
+    (out / "second_pass.json").write_text(text, encoding="utf-8")
 
 
 def run(args):
@@ -180,11 +180,17 @@ def run(args):
             for target, _, _, law in rl._locate_laws(record):
                 if law.get("write_class") != "linear-stage write" or law.get("critical_dimension") != 1:
                     continue
+                signal.signal(signal.SIGALRM, _budget)
+                signal.alarm(args.law_seconds)
                 try:
                     task = rl.learning_task(record, target, root=root, policy=policy)
                     report = rl.close_modulo_order(task, library2, policy)
+                except TimeoutError as error:
+                    report = {"status": "timed_out", "reason": str(error)}
                 except (ValueError, KeyError, ArithmeticError, np.linalg.LinAlgError, TypeError) as error:
                     report = {"status": "no_task_generated", "reason": f"{type(error).__name__}: {error}"}
+                finally:
+                    signal.alarm(0)
                 certified.append({"record": record["source"], "target": target,
                                   **{k: v for k, v in report.items() if k not in TRIM}})
                 print(json.dumps({"certified": target, "name": record["name"][:40], "status": report["status"],
@@ -198,7 +204,7 @@ def run(args):
         cls = (report.get("failed_law") or {}).get("write_class")
         if "development_evaluations" in report:
             used, same = hinted_evaluations(report, hints.get(cls))
-            memory.append({"departure": key, "class": cls, "direct": direct_evaluations(report, None), "hinted": used,
+            memory.append({"departure": key, "class": cls, "direct": direct_evaluations(report), "hinted": used,
                            "same_selection": same, "hint": hints.get(cls)})
         if report.get("status") == "verified_smaller_description":
             hints[cls] = (report["selected_radius"], report["selected_order"])
@@ -214,8 +220,8 @@ def run(args):
                             "write_class": (v.get("failed_law") or {}).get("write_class"),
                             "write_point": v.get("write_point")} for k, v in sorted(reports.items())],
               "certified_laws": certified, "memory_against_direct": memory, "novelty_established": False}
-    (out / "repair_loop.json").write_text(json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n",
-                                          encoding="utf-8")
+    text = json.dumps(rl._finite(result), indent=1, allow_nan=False) + "\n"
+    (out / "repair_loop.json").write_text(text, encoding="utf-8")
     print(json.dumps({"status": Counter(r.get("status") for r in reports.values()),
                       "certified": Counter(r.get("status") for r in certified),
                       "output": str(out / "repair_loop.json")}), flush=True)
@@ -236,6 +242,7 @@ if __name__ == "__main__":
     parser.add_argument("--max-order", type=int, default=7)
     parser.add_argument("--baseline-seconds", type=int, default=120)
     parser.add_argument("--certified", action="store_true")
+    parser.add_argument("--law-seconds", type=int, default=900, help="Budget of one law of the certified control")
     parser.add_argument("--second-pass", metavar="DIR")
     arguments = parser.parse_args()
     (second_pass if arguments.second_pass else run)(arguments)

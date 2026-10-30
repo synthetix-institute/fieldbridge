@@ -118,6 +118,8 @@ def test_an_orthant_point_on_the_boundary_is_reported_and_an_interior_one_reduce
     real = ms.load(spec)
     assert rl._carrier_limit(real, np.array([0.0, 0.0]))
     assert rl._carrier_limit(real, np.array([0.5, 0.5])) is None
+    c = closure(spec, state=(0.5, 0.5))
+    assert rl.verify_modulo_order({"model": spec}, c, rl.OrderPolicy())["passed"]
 
 
 def test_a_failed_law_drift_with_a_renamed_coordinate_is_read():
