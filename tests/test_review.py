@@ -52,6 +52,17 @@ def test_a_divergence_inside_the_observation_window_fails():
     assert checks.protocol_independence(c)["status"] == "warn"
 
 
+def test_a_flat_likelihood_profile_does_not_determine_the_divergence():
+    window = {"estimate": 0.001, "profile_kind": "neg_log_likelihood",
+              "profile": [[t, 10.0 + 0.5 * abs(t - 0.001) / 0.001]
+                          for t in (0.0002, 0.0006, 0.001, 0.0014, 0.0018, 0.0026)]}
+    flat = checks.protocol_independence({"protocol": {"window": window}})
+    assert flat["status"] == "fail" and "95 %" in flat["explanation"]
+    window["profile"] = [[t, 10.0 + 5.0 * (t - 0.001) ** 2 / 0.001 ** 2] for t, _ in window["profile"]]
+    sharp = checks.protocol_independence({"protocol": {"window": window}})
+    assert sharp["status"] == "pass" and "0.0006 to 0.0014" in sharp["explanation"]
+
+
 def test_thermodynamic_claim_from_a_kinetic_observable_needs_equilibrium_evidence():
     c = {"kind": "thermodynamic", "observable_type": "relaxation time"}
     assert checks.protocol_independence(c)["status"] == "fail"

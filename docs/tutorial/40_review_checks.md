@@ -69,11 +69,14 @@ count it uses is a theorem only inside 1 < m/n < 3, not at the triangulated end 
 graphs can still be an exponential number of them.
 
 The melting-temperature claim fails the second check. It is a thermodynamic statement resting on a fitted divergence
-of a relaxation time, without a free energy or an entropy, and in an independent reproduction of the measurement the
-fitted divergence sits at the edge of the observation window, on a bound of the fit, with a residual that changes by
-less than a factor of two over most of the range, while a form without a divergence fits as well. The statement about
-the Mermin–Wagner–Hohenberg theorem fails the third check: a positive melting temperature is not long-range order of a
-continuous symmetry and cannot violate it. Published results contradict three claims (fourth check).
+of a relaxation time, without a free energy or an entropy. In an independent variant of the measurement, fitted by
+maximum likelihood with the unrelaxed runs included, the divergence sits 1 % below the coldest temperature at which any
+run relaxed, another parameter of the fit sits on its bound, the likelihood changes little over the whole range of
+divergence points (its profile is recorded with `"profile_kind": "neg_log_likelihood"`), and a form without a
+divergence fits nearly as well. The statement about the Mermin–Wagner–Hohenberg theorem fails the third check: a
+positive melting temperature is not long-range order of a continuous symmetry and cannot violate it. Published results
+contradict two claims (fourth check); equilibrium studies that place the Kauzmann temperature of other two-dimensional
+models at zero are recorded as partly published, because they bear on the claim without excluding it.
 
 The three claims computed on the fixed, tuned system warn under the first check rather than fail: they are made for
 the system on which they were computed, but that system exists only because its radii were tuned.
@@ -84,6 +87,7 @@ the system on which they were computed, but that system exists only because its 
    system, using `maxwell_constraint_counting` with the inference `finite_shear_modulus_at_zero_pressure_when_hyperstatic`.
    Which checks pass, and why does a pass not support the ideal-glass interpretation?
 2. Give the melting-temperature claim three estimates of T_m from runs of increasing length that drift downward, and
-   read the slope reported by the second check.
+   read the slope reported by the second check. Then replace the recorded likelihood profile by a sharply curved one
+   and see which statement of the check changes.
 3. Write a review file for a model of your own field with one claim that moves between systems, and see which part of
    the first check's explanation names the difference.
