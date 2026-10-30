@@ -1245,10 +1245,11 @@ def test_a_bound_on_the_loss_rate_keeps_the_cusp_of_the_kerr_resonator_at_positi
     """The steady states depend on the loss rate only through kappa^2, so along kappa the two folds of the drive meet
     at two cusps, kappa = +-2 Delta/sqrt(3) with F = +-(|kappa|^3/(3 sqrt(3) U))^(1/2) and n = 2 Delta/(3 U) photons.
     Followed along kappa from the fold of the high branch (F = 2.218, carrier scale 4.5 as in bifurcation readout), the
-    fold reaches both; the one at negative loss ends nearer a2 = 0 and is returned, with a subcritical sweep. With
-    the loss declared non-negative, the fold is followed down to kappa = 0 and stops there, and the cusp at positive loss
-    is returned, with a supercritical sweep. With an upper bound below that cusp, no cusp is returned, and the cusp the
-    refinement converges to is reported as lying beyond the bound."""
+    fold reaches both. Which one ends nearer a2 = 0 is set by rounding (one direction steps across a2 = 0, the other
+    stalls just short of it), so the cusp reached by the smaller change of the loss is returned: the one at positive
+    loss, from kappa = 1, with a supercritical sweep. With the loss declared non-negative, the fold is followed down to
+    kappa = 0 and stops there, and the same cusp is returned. With an upper bound below that cusp, no cusp is
+    returned, and the cusp the refinement converges to is reported as lying beyond the bound."""
     unbounded = dict(JBA, carrier=dict(JBA["carrier"], scale=4.5))
     real = spec.load(unbounded)
     U, delta = JBA["parameters"]["U"], JBA["parameters"]["Delta"]
@@ -1257,8 +1258,9 @@ def test_a_bound_on_the_loss_rate_keeps_the_cusp_of_the_kerr_resonator_at_positi
     nf = _write_point(real, 2.218)
     assert nf["value"] == pytest.approx(2.2179, abs=1e-4) and nf["kind"].startswith("saddle-node")
     mirror = construct.cancel_asymmetry(real, nf, "kappa")
-    assert mirror["value"] == pytest.approx(-kappa_c, abs=1e-8) and mirror["control"] == pytest.approx(-f_c, abs=1e-8)
-    assert "bounds_reached" not in mirror and mirror["normal_form_along_sweep"]["kind"].startswith("subcritical")
+    assert mirror["value"] == pytest.approx(kappa_c, abs=1e-8) and mirror["control"] == pytest.approx(f_c, abs=1e-8)
+    assert "bounds_reached" not in mirror
+    assert mirror["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
     bounded = spec.load(dict(unbounded, bounds={"kappa": [0, None]}))
     assert bounded.bounds == {"kappa": (0.0, None)}
     c = construct.cancel_asymmetry(bounded, nf, "kappa")
