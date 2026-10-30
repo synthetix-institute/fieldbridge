@@ -26,6 +26,14 @@ The Collins et al. (2013) model and protocol were checked against the full arXiv
 | 16 | Explicit harmonic modes in place of friction on a bifurcating surface: how many modes, at which frequencies, act as friction for the product ratio. | Not found | Query 53. Dissipation as a parameter: Collins et al. (2013). Cooling in a cavity on a PTSB model: Mondal, Kumar and Keshavamurthy, arXiv:2603.09713 (2026), abstract only |
 | 17 | A path that splits into three branches through a VRI region. | Published | Harabuchi, Nakayama and Taketsugu (Hokkaido repository file CTC1000_70-74), read as a snippet only |
 | 18 | Two transverse modes along one path: quadrant shares as a product of two sign laws; the family won by the earlier mode, with a boundary found from noise-free motion. | Not found | Query 54 |
+| 19 | Coupling of a reaction path to further modes through the displacement of those modes along the path, with the relaxed surface fixed. | Published (textbook) | Reaction-path Hamiltonian, Miller, Handy and Adams, J. Chem. Phys. 72, 99 (1980) |
+| 20 | Nonlinear system-bath coupling gives a friction kernel that depends on the coordinate; second-order expansion in the coupling. | Published in rate theory | arXiv:2405.00512 and earlier work found with query 57, read as snippets. These are barrier-crossing rates, not product ratios on a bifurcating surface. |
+| 21 | Energy leaving the active coordinates matters for branching after a VRI. | Partly published | Collins et al. (2013) add dissipation as a parameter and note the competition with IVR. Mondal, Kumar and Keshavamurthy, arXiv:2603.09713 (preprint, read as a snippet), couple a 2D PTSB model to an optical cavity. Queries 55, 56, 58 found no model with explicit modes coupled to the path by cubic terms. |
+| 22 | Trajectories leave the IRC because their momentum does not follow it (non-IRC dynamics). | Published | Lopez et al., direct dynamics of F- + CH3OOH (JACS 2007, read as a summary) |
+| 23 | Slow modes that cannot follow leave the trajectory on a surface that is not relaxed, and this sets the product ratio on a bifurcating surface, with the frozen limit as a quantitative prediction. | Not found | Query 59. A short search, so a weak negative. |
+| 24 | Energy and entropy along the path after TS1 together set ambimodal selectivity. | Published | "Interplay between Energy and Entropy Mediates Ambimodal Selectivity of Cycloadditions" (2024, PMC11673114, read as a snippet), which reports an entropic trap on the minor path |
+| 25 | The mean force from the population of modes that stiffen on one side as the bias of the write law, with selectivity rising as the square root of kT and a share far from the free energies of the products. | Not found | Query 60. A short search, so a weak negative. |
+| 26 | Cubic terms sorted by mode frequency into added inertia, an unrelaxed surface and true energy loss, as the cause of the product ratio depending on the coupling table and not on one friction. | Not found | Queries 55-59. A short search, so a weak negative. |
 
 Yamaki, Yamada, Okamoto, Nakagawa and Takayanagi, J. Comput. Chem. 47, e70517 (2026) could not be opened (HTTP 403).
 Their class definitions and ratios are taken from the summary given in the task.
@@ -88,3 +96,9 @@ All queries went through the WebSearch tool. "ext" marks extended mode.
 52. intermediate before valley-ridge inflection thermalization loses dynamic matching product ratio statistical Pummerer dynamical detour lifetime
 53. post-transition-state bifurcation intramolecular vibrational energy redistribution bath modes effective friction product ratio Caldeira-Leggett model valley-ridge
 54. reaction trifurcation or sequential bifurcation two valley-ridge inflection points product ratio dynamics model surface two transverse modes competition
+55. intramolecular vibrational energy redistribution post-transition-state bifurcation product selectivity reaction path curvature coupling bath modes
+56. anharmonic coupling friction reaction coordinate intramolecular "friction" gas-phase dynamics valley-ridge inflection branching ratio model
+57. cubic coupling nonlinear system-bath temperature dependent friction kernel fluctuation-dissipation quadratic bath coordinate reaction rate position-dependent friction
+58. Carpenter nonstatistical dynamics ambimodal reaction energy flow to spectator modes selectivity trajectory reduced-dimensional model added bath modes
+59. non-IRC dynamics low-frequency modes cannot follow reaction path sudden versus adiabatic limit trajectories avoid minimum energy path unrelaxed surface selectivity
+60. entropic control product selectivity post-transition-state bifurcation free energy vibrational frequencies temperature dependence product ratio increases with temperature dynamics

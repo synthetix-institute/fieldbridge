@@ -9,7 +9,7 @@ with a bias and noise predicts the product ratio. The law states that, while the
 small, the displacement is Gaussian and its sign is set by the mean pushed by the asymmetry divided by the spread:
 P = Phi(h I1 / sqrt(sigma0^2 + 2 D I2)). The test used two model surfaces, not molecules.
 
-The answer has six parts.
+The answer has seven parts.
 
 1. When friction slows the motion along the path, the law predicts the ratio from static quantities of the surface
    and the incoming speed. Static here means the transverse force and the transverse curvature along the path, and
@@ -33,6 +33,12 @@ The answer has six parts.
    do not count. Two transverse modes give four products. They decide independently when the products lie in the
    quadrants. When the products lie on the axes the earlier mode wins by more than the linear stage says, and the
    boundary between the families has to be found on the surface.
+7. Cubic coupling to further modes, which is what a molecule has in place of linear coupling, does not act as the
+   friction in the law. Terms that change the frequency of a mode give friction proportional to temperature, but they are
+   too weak to move the ratio before the mode loses its binding. Terms that displace a mode along the path are strong and
+   do not depend on the population of the modes. A fast mode then adds inertia, a slow mode cannot follow and leaves the
+   trajectory on a surface that is not relaxed, and energy is lost for good only to modes in between. The ratio then depends
+   on which modes are coupled and not on one friction number.
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -452,6 +458,146 @@ family wins.
 - **Without friction.** The boundary is not reliable. At D = 0 symmetry requires 45 degrees, and the bisection returns
   50 and 40 degrees, because the noise-free outcome is not a clean function of the angle after wall reflection.
 
+## Cubic coupling to further modes
+
+The harmonic modes of the previous section are coupled linearly to x and y. At a stationary point of a molecule the normal
+modes are orthogonal, so the lowest coupling is cubic. The question here is whether those terms supply the friction of the
+law during the passage. The code is [anharm.py](anharm.py) and [anharm_scan.py](anharm_scan.py).
+
+### The model
+
+The surface is coupled to M modes (16 unless stated, frequencies 0.5 to 8) through
+
+    V = V0(x, y) + sum_j (1/2) w_j^2 (Q_j - a_j(x, y))^2 + (1/2) x Q^T A Q + (1/2) y Q^T B Q,
+    a_j = (1/2) dxx_j x^2 + dxy_j x y + (1/2) dyy_j y^2.
+
+The first group displaces a mode as (x, y) move. Its cubic terms are x^2 Q, x y Q and y^2 Q, and the square keeps the relaxed
+surface at V0, so the IRC, the saddles and the minima do not change. The second group changes the frequencies of the modes.
+Tables are sparse and random, with three partners per mode and the parity allowed by y -> -y. Each coefficient is g times the
+square root of the frequencies involved times a standard normal number, which is the scaling that makes a cubic constant
+the same size in dimensionless normal coordinates. The strength g is the only parameter. If frequency 1 is 150 cm-1 and
+kT = 0.03 is room temperature, then g = 1 is a cubic constant of about 13 cm-1 for the x y Q term. This is an order-of-magnitude
+estimate and it is not fitted to any molecule. Three tables were drawn for each point, with 10,000 trajectories on each. The
+energy is conserved to 5e-4 root mean square or better, and the forces in path coordinates match numerical derivatives to 1e-9.
+
+I used the two conditions where the previous section found the ratio to depend on friction (curved valley with curvature 0.1,
+and tilt 0.04 at speed 3), and the tilted valley at thermal speeds, which is only a consistency check because the ratio
+hardly depends on friction there. Friction was read from the energy lost by (x, y) up to the first entry into a product
+basin, against the Langevin balance. On harmonic modes of known friction 0.3, 1 and 3 this reads 0.25-0.26, 0.84-0.90 and
+2.7-2.8. At speed 3 it reads less (0.16, 0.66, 0.93), because the passage is short.
+
+![Share, friction and returns for each kind of cubic term](figures/anharm_forces.png)
+
+### Terms that change the frequency of a mode
+
+A term a x Q_i Q_j has a force correlation (kT/w_i^2)(kT/w_j^2) cos(w_i t) cos(w_j t), so by the fluctuation-dissipation
+relation its friction kernel is proportional to kT, with frequencies w_i + w_j and w_i - w_j. I computed this kernel from each
+table before running trajectories and replaced the cubic terms by harmonic modes with the same kernel. The energy lost agrees
+with the cubic system at each temperature, with nothing fitted: 0.0080 against 0.0086 and 0.043 against 0.044 for x Q Q at
+g = 1 and kT = 0.01 and 0.05, and 0.0032 against 0.0034 and 0.016 against 0.017 for both forms at g = 0.5. The fivefold rise
+with temperature is the signature of this channel.
+
+The channel is too weak to matter. Tables stay bound only up to about g = 0.5 with 16 modes, and 60 of the requested tables at
+g = 1 had to be dropped because a mode lost its binding along the path (a stronger coupling would open a new reaction channel
+in that mode). At this limit K(0) is about 0.01 at kT = 0.01, against 1 to 3.5 for the displacement terms at g = 1. The share
+moves by at most 0.016 in all five conditions (standard error 0.004). Because the share hardly moves, the agreement of the
+equivalent system rests on the energy lost and not on the ratio. The population in these runs is classical. Zero-point
+energy in the high modes was not tested on this channel alone.
+
+### Terms that displace a mode along the path
+
+These forces are linear in the mode and scale with the displacement along the path, so they survive at low temperature. The
+energy lost is the same at kT = 0.01 and 0.05 for x^2 Q (0.40 and 0.41 at g = 1), and it rises by 1.3-2 times for x y Q and
+y^2 Q, against 5 for the frequency terms. Populations do not matter for the same reason. With the full set at g = 1 and
+kT = 0.03, classical modes, Bose populations and populations with zero-point energy give 0.19, 0.17, 0.20 on one table and 0.48,
+0.49, 0.47 on another.
+
+The energy lost is not friction, and the share is not a function of it. At the friction read from the energy, Langevin
+trajectories miss the share by 0.05-0.06 on average and by up to 0.33. One strength gives very different ratios on different
+tables: with the full set at g = 1 and kT = 0.01 the inside share is 0.06, 0.18 and 0.46, and with 8 modes it is 0.55, 0.00
+and 0.20. The bare value is 0.10. The sign also differs between terms: x^2 Q raises the inside share, as friction does, and
+x y Q lowers it (0.04 at g = 1, with Langevin friction at every strength above the bare value).
+
+Three limits account for this, one for each range of mode frequency relative to the rate of the passage.
+
+![Each band against its limit, convergence to following, and friction on one coordinate](figures/anharm_limits.png)
+
+**A fast mode follows and adds inertia.** If Q_j stays at a_j, its kinetic energy gives (x, y) the position-dependent inertia
+G = 1 + sum_j (grad a_j)(grad a_j)^T, with no dissipation and no noise. I integrated this limit directly (`run_following`). With
+all frequencies multiplied by 2, 4 and 8 at fixed displacements, the trajectories converge to it: the mean difference in share at
+factor 8 is 0.012, the returns over TS1 converge, and the energy lost by (x, y) approaches the energy of following (0.37, 0.54,
+0.59 against 0.34, 0.50, 0.57 for x^2 Q). This inertia alone moves the share: for x^2 Q at g = 1 exact following gives 0.22-0.27
+from a bare 0.10, against 0.23-0.37 with the modes moving at their own frequencies. A heavier x is slower, so the centrifugal bias is weaker.
+
+**A slow mode cannot follow and leaves the surface unrelaxed.** With modes below frequency 2 held fixed, (x, y) move on
+V0 + sum_j (1/2) w_j^2 (Q_j - a_j)^2, which is stiffer across the path than the relaxed surface. For x y Q this stiffness adds
+C^2 x^2 / w^2 to the transverse curvature and holds off the instability. This explains the lowered inside share: at kT = 0.01,
+modes below 2 moving give 0.028, 0.007 and 0.024 on the three tables, and frozen modes give 0.019, 0.014 and 0.024; at kT = 0.05 they
+give 0.217, 0.170, 0.213 and 0.189, 0.188, 0.215. Over all x y Q comparisons the mean difference is 0.011. In the figure, the
+jump between factors 2 and 4 is where the lowest modes stop being frozen. The limit does worse for the mixed set (0.04 on average
+over the three forms, and up to 0.24 on one table where frozen modes send 82 per cent of trajectories back over TS1).
+
+**Modes near the rate of the passage take energy for good.** This is the only true friction here, and it acts along the path.
+For x^2 Q, modes above 2 raise the inside share to 0.17-0.21 while exact following gives only 0.11-0.12, because x moves fast
+enough that these modes do not follow. For x y Q, modes above 2 stay within 0.03 of following.
+
+**Returns over TS1 are the sensitive signature of the energy loss.** Without modes 6 per cent of trajectories return at
+kT = 0.01. x^2 Q at g = 0.3 reduces this to 0.5 per cent while the share hardly moves (0.12) and the energy lost corresponds to
+friction 0.026, and at g = 1 there are none. Exact following at g = 1 leaves 1-3 per cent. A returning trajectory climbs back to the
+TS1 level, so a small loss of energy is enough to stop it. x y Q does the reverse at large g (14 per cent at g = 3). Frozen modes
+also raise the returns, which fits a stiffened surface sending trajectories back from the wall before the transverse motion has
+grown, although I did not follow individual trajectories to confirm it.
+
+### Two explanations I had to withdraw
+
+Both are recorded because the first results suggested them. The energy in the frame of the displaced mode seemed the natural
+measure of what is left behind, but it reads about twice the known friction on the harmonic reference (0.46 for 0.3), so it was
+dropped. I then explained the lowered share from x y Q by friction across the path, which delays the split without slowing the
+motion along it. Friction on y alone did lower the share in Cartesian coordinates (0.083, 0.061, 0.041), and friction on x alone
+raised it past one half (0.24, 0.40, 0.67). But drag along a fixed axis has a component across a bent path, and with
+friction written in path coordinates this disappears: friction across the path leaves the share at its bare value (0.105, 0.100,
+0.118), and friction along it raises it without reversal (0.20, 0.27, 0.38). The lowered share from x y Q remains in path
+coordinates (0.07, 0.04, 0.06), and the frozen limit explains it. Conclusions on a curved path should therefore use friction along
+and across the path; the Cartesian values measure the choice of axes.
+
+### The law
+
+On the tilted valley at thermal speeds, the linear law with the x y Q modes solved exactly, the x^2 Q modes integrated with the
+reference path and the frequency terms through their equivalent modes agrees with trajectories to 0.006-0.009 at kT = 0.05 and
+0.010-0.023 at kT = 0.01, where the gap without coupling is already 0.014. The worst case is x y Q at g = 1 and kT = 0.01 (0.327
+against 0.285, and in the wrong direction from the bare value). This condition is insensitive to friction, so the agreement is
+weak evidence. At speed 3 the law fails as it does without the modes (mean error 0.20-0.25). A law with modes on the curved
+path was not built, so the curved valley has only the limits above.
+
+### Modes that stiffen on one side
+
+A term (1/2) y B_jj Q_j^2 with B_jj = g w_j stiffens every mode for y > 0. On a surface with no tilt, the two products have equal
+energy and there is no static force on the path. Thermal population then gives a mean force -(1/2) sum_j B_jj kT / w_j^2
+toward the soft side. The law with this force and the static force of each trajectory, set by the action of each mode, agrees with
+trajectories to 0.003 on average over ten points (g = 0.1 and 0.3, kT = 0.005 to 0.1), with nothing fitted. Most of this is the
+mean force: the static force changes the law by at most 0.003, so it was not really tested.
+
+![Selectivity from modes stiffening on one side](figures/anharm_entropic.png)
+
+The bias grows as kT and the spread as its square root, so selectivity rises as the square root of kT: the probit at g = 0.3 goes
+from -0.09 to -0.37 between kT = 0.005 and 0.1. An energy tilt does the opposite: at tilt 0.04 the minor share rises from 0.30 to
+0.41 between kT = 0.01 and 0.05. The two can therefore be told apart by the temperature dependence of the ratio. A prediction from the
+free energies of the products is independent of temperature and far off (0.135 at g = 0.3, against 0.36-0.46 from
+trajectories). The mode populations act during the descent, before the products exist.
+
+### Limits of this test
+
+- These are random tables on model surfaces. The range of g is an estimate, and no molecular cubic constants were used.
+- The model has one frequency band, three partners per mode and a relaxed surface fixed at V0. The split at frequency 2 is
+  chosen from the passage times and is not derived.
+- Adding mode-mode coupling (sparse Q_i Q_j Q_k) changes the share within the table scatter at g up to 1. On one table at g = 1,
+  80 per cent of trajectories returned, and I did not determine why. At g = 3 one table had a mode leave the region of the surface
+  on 5 to 52 per cent of its trajectories (and on up to 3 per cent without mode-mode coupling), so those runs carry little weight.
+  Cubic mode-mode terms are unbounded, and a quartic wall was not added.
+- At speed 3, 48 per cent of trajectories return without coupling, and strong coupling leaves few assigned: with the full set at
+  g = 1 the three tables assign 306, 5,084 and 43 of 10,000. That family rests on few trajectories at large g.
+- All dynamics are classical. The Bose and zero-point runs change only the starting populations.
+
 ## Summary: where the law holds and where it fails
 
 - **It holds** when the transverse instability grows through more than a few e-folds before the motion along the path
@@ -482,8 +628,13 @@ family wins.
 - **More than two products.** Products labelled by two signs follow two independent sign laws. Products on the axes
   need the boundary found on the surface, which works with friction and a weak tilt (0.01). It does worse than the
   simple comparison with a strong tilt, and it is unreliable without friction.
-- **Not tested:** anharmonic coupling to further modes, which is how energy flows in a molecule; three modes or more;
-  curved paths in more than two dimensions. I do not know whether entries 29 and 30 of Yamaki et al. resemble either
+- **Cubic coupling to further modes** is not friction in the law's sense. Frequency terms give friction proportional to kT but
+  move the share by at most 0.016 up to the binding limit. Displacement terms are strong and independent of population: fast
+  modes add inertia, slow modes leave the surface unrelaxed, and only modes near the rate of the passage take energy for good. The
+  ratio depends on which modes are coupled (0.06 to 0.46 at one strength). Modes stiffening on one side give a bias that grows with
+  temperature, and there the law holds to 0.003.
+- **Not tested:** molecular cubic constants, a law with modes on a curved path, three transverse modes or more, and curved paths
+  in more than two dimensions. I do not know whether entries 29 and 30 of Yamaki et al. resemble either
   two-mode case, because I could not open that paper.
 
 ## What molecular tests would need
@@ -494,10 +645,12 @@ would need:
 - the IRC from TS1 and the Hessian along it, which gives the transverse curvature V_yy(s) and the force on the IRC line
   V_y(s) in the bifurcating mode, projected with the reaction-path Hamiltonian so that the coordinate across the path
   is defined continuously;
-- the speed along the path from TS1 (thermal or quasiclassical) and an estimate of the effective friction from the
-  remaining modes: which of them couple to the path and the bifurcating mode, at which frequencies, and whether energy
-  leaves on the time scale of the passage. In the model tests modes slower than the passage, or too few to recur later
-  than it, do not act as friction;
+- the speed along the path from TS1 (thermal or quasiclassical), and for each remaining mode its frequency relative to the rate
+  of the passage and its displacement along the path and across it, which are the derivatives of the reaction-path coupling.
+  A single effective friction will not do: in the model tests fast modes add inertia, slow modes leave the surface unrelaxed,
+  and only modes near the rate of the passage take energy for good, so the relaxed IRC surface is not the surface slow modes see;
+- how the frequencies of the modes differ between the two sides of the path, since modes stiffening on one side give a bias that
+  grows with temperature and that no energy difference records;
 - for more than two products, the number of unstable transverse modes along the path, the delay between them, and
   whether the products are labelled by independent signs or lie on separate axes;
 - the sampling actually used by the trajectories (normal-mode or Wigner), since the law's denominator differs between
@@ -526,6 +679,7 @@ would need:
 | Harmonic modes | `python bath_scan.py traj --backend torch --out results/bath_traj.json`, `python bath_scan.py law --workers 16 --out results/bath_law.json` (a few minutes) |
 | Two transverse modes | `python two_modes_scan.py traj --backend torch --out results/two_modes_traj.json`, the same with `law` and `sep` (`results/two_modes_law.json`, `_sep.json`), then `python extra_analyse.py` |
 | Curved valley and pseudo-minima | `python curved_scan.py traj --backend torch --only G,G1,H --out results/curved_traj_GH.json`, the same with `--only I` and `--only J` (`results/curved_traj_I.json`, `_J.json`; 2.48 million trajectories plus 0.64 million, about 7 minutes on one RTX 3090), `python curved_scan.py law --workers 20 --out results/curved_law_all.json` (about an hour on 20 cores), `python curved_analyse.py` |
+| Cubic coupling | `python anharm_scan.py traj --backend torch --part k/4 --out results/anharm_traj_k.json` for k = 0 to 3 (1,269 points, about 50 minutes on four RTX 3090), `python anharm_scan.py merge --out results/anharm_traj.json`, `python anharm_scan.py law --workers 16 --out results/anharm_law.json` (about 2 minutes), `python anharm_analyse.py` |
 | FieldBridge | `fieldbridge memory noise-ratio ptsb_transverse_overdamped.json --out-dir fieldbridge_noise_ratio --gammas 0.05,1`, and `fieldbridge memory codiscover ptsb_transverse_overdamped.json --target symmetric-write --out-dir fieldbridge_codiscover` |
 
 Seed 20261030, NumPy 1.24 and torch 2.0.1 on the GPU node; laws with SciPy 1.14 on the laptop.
