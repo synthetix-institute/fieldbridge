@@ -1,0 +1,302 @@
+{
+  "command": "codiscover",
+  "implementation_sha256": "69325807d8835023292133e2ae2dd2e710936d00ab599a470a68ea46c5c15239",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "input": {
+    "specifications": [
+      "examples/ptsb/ptsb_transverse_overdamped.json"
+    ],
+    "target": "symmetric-write",
+    "law": true,
+    "trajectories": 400,
+    "replicates": 8,
+    "seed": 20260923
+  },
+  "specifications_sha256": {
+    "post-transition-state bifurcation, transverse coordinate": "98530016567e3abb6bdf1ed8b7a09eed48f9b32a31dfda31a348c7b9e037e2ea"
+  },
+  "summary": {
+    "target_key": "symmetric-write",
+    "target": "symmetric write (supercritical pitchfork, ds/dt = eps s - s^3 + h)",
+    "reached": 1,
+    "obstructed": 0,
+    "fields_reached": [
+      "chemical reaction dynamics"
+    ],
+    "distinct_words": [
+      "SCRKL"
+    ],
+    "derivation_classes": {
+      "S(reflection) C R(pitchfork) K L": [
+        "post-transition-state bifurcation, transverse coordinate"
+      ]
+    },
+    "law_constant_expected": 1.3313353638003897,
+    "constant_name": "pi^(1/4)",
+    "even_part_max": 2.775557145225187e-16,
+    "cubic_signs": [
+      -1
+    ],
+    "trajectories_per_realization": 400,
+    "law_offsets": {},
+    "law_constant_mean": 1.2894238754920297,
+    "law_constant_stderr": 0.11207758226298306,
+    "law_constant_chi2": 0.13983911246287323,
+    "law_constant_dof": 1,
+    "law_constant_max_deviation": 0.04191148830836,
+    "law_constant_realizations": 1,
+    "same_equations": []
+  },
+  "rows": [
+    {
+      "name": "post-transition-state bifurcation, transverse coordinate",
+      "field": "chemical reaction dynamics",
+      "status": "reached",
+      "word": "SCRKL",
+      "route": "S[reflection y -> -y] > C[s] > R[supercritical pitchfork] > K > L",
+      "class": "S(reflection) C R(pitchfork) K L",
+      "steps": [
+        {
+          "letter": "S",
+          "meaning": "reflection y -> -y",
+          "permutation": [
+            0
+          ],
+          "signs": [
+            -1
+          ],
+          "order": 2,
+          "along_sweep": true
+        },
+        {
+          "letter": "C",
+          "control": "s",
+          "write_points": [
+            {
+              "value": 0.25000002500024754,
+              "kind": "supercritical pitchfork"
+            }
+          ]
+        },
+        {
+          "letter": "R",
+          "value": 0.25000002500024754,
+          "a0": 4.771356701156862e-20,
+          "a2": -6.947924164279093e-18,
+          "a3": -1.00000010000099,
+          "eliminated_directions": 0,
+          "kind": "supercritical pitchfork"
+        },
+        {
+          "letter": "K",
+          "scale": 1.0000000500004937,
+          "a3_local": -1.00000010000099,
+          "cubic_sign": -1,
+          "even_part": 2.775557145225187e-16,
+          "linear_part": 1.6000156824745069e-06,
+          "quintic": 1.2424868928682615e-15
+        },
+        {
+          "letter": "L",
+          "predicted": 0.8,
+          "measured": 0.7925,
+          "stderr": 0.02027583228871259,
+          "gamma": 0.05,
+          "signs": [
+            1
+          ],
+          "law_constant": 1.2894238754920297,
+          "law_stderr": 0.11207758226298306,
+          "law_expected": 1.3313353638003897,
+          "law_replicates": 8
+        }
+      ],
+      "canonical": {
+        "scale": 1.0000000500004937,
+        "a3_local": -1.00000010000099,
+        "coefficients": [
+          -1.474210174635671e-19,
+          1.0000099015485369e-07,
+          3.075090057430904e-17,
+          -1.0,
+          -1.1350275792942642e-15,
+          1.2424868928682615e-15
+        ],
+        "cubic_sign": -1,
+        "even_part": 2.775557145225187e-16,
+        "linear_part": 1.6000156824745069e-06,
+        "quintic": 1.2424868928682615e-15,
+        "x": [
+          -0.25000001250012344,
+          -0.23750001187511724,
+          -0.2250000112501111,
+          -0.2125000106251049,
+          -0.20000001000009876,
+          -0.1875000093750926,
+          -0.1750000087500864,
+          -0.1625000081250802,
+          -0.15000000750007406,
+          -0.13750000687506791,
+          -0.12500000625006172,
+          -0.11250000562505554,
+          -0.10000000500004935,
+          -0.0875000043750432,
+          -0.07500000375003701,
+          -0.06250000312503086,
+          -0.050000002500024676,
+          -0.03750000187501849,
+          -0.025000001250012338,
+          -0.012500000625006155,
+          0.0,
+          0.012500000625006183,
+          0.025000001250012366,
+          0.03750000187501855,
+          0.05000000250002473,
+          0.06250000312503086,
+          0.07500000375003704,
+          0.08750000437504322,
+          0.10000000500004941,
+          0.11250000562505559,
+          0.12500000625006172,
+          0.13750000687506791,
+          0.15000000750007408,
+          0.16250000812508028,
+          0.17500000875008645,
+          0.1875000093750926,
+          0.20000001000009876,
+          0.21250001062510496,
+          0.22500001125011113,
+          0.23750001187511732,
+          0.25000001250012344
+        ],
+        "g": [
+          0.015624977343524474,
+          0.013396462634256251,
+          0.0113906042083868,
+          0.009595683314158283,
+          0.007999981199812883,
+          0.006591779113592754,
+          0.0053593583037400755,
+          0.004291000018497019,
+          0.003374985506105751,
+          0.002599596014808444,
+          0.0019531127928472637,
+          0.0014238170884643834,
+          0.0009999901499019726,
+          0.0006699132254022025,
+          0.0004218675632072412,
+          0.00024413441155926005,
+          0.00012499501870042826,
+          5.2730632872916337e-05,
+          1.562250231889437e-05,
+          1.9518752805322078e-06,
+          2.091453186021226e-26,
+          -1.951875280532221e-06,
+          -1.562250231889442e-05,
+          -5.2730632872916574e-05,
+          -0.00012499501870042866,
+          -0.00024413441155926005,
+          -0.00042186756320724167,
+          -0.0006699132254022031,
+          -0.0009999901499019744,
+          -0.0014238170884643855,
+          -0.0019531127928472637,
+          -0.002599596014808444,
+          -0.0033749855061057533,
+          -0.004291000018497023,
+          -0.005359358303740081,
+          -0.006591779113592754,
+          -0.007999981199812883,
+          -0.009595683314158287,
+          -0.011390604208386803,
+          -0.01339646263425626,
+          -0.015624977343524474
+        ],
+        "eps_per_unit_control": 4.0
+      },
+      "law": {
+        "rate": 0.02,
+        "sweep_rate_control": 0.005,
+        "predicted": 0.8,
+        "measured": 0.7925,
+        "stderr": 0.02027583228871259,
+        "gamma": 0.05,
+        "h_along_mode": 0.007517729463759283,
+        "D_along_mode": 0.00099999989999902,
+        "at_material_noise": {
+          "D": 0.01,
+          "D_along_mode": 0.01,
+          "gamma": 0.500000050000495,
+          "h": 0.023773149127104726,
+          "h_along_mode": 0.023773149127104726,
+          "measured": 0.815,
+          "stderr": 0.019414878315353924
+        },
+        "signature": [
+          -0.003556294952,
+          0.003736614287,
+          -0.01812814459,
+          -2.478156752e-07,
+          2.875212192e-07,
+          -3.282976313e-05,
+          0.00355579932,
+          -0.003736039245,
+          0.01806248507,
+          0.007517729464,
+          0.007517729464,
+          0.007517729464,
+          0.0009999999
+        ],
+        "replicates": 8,
+        "trajectories_per_run": 50,
+        "runs": [
+          0.76,
+          0.84,
+          0.72,
+          0.82,
+          0.76,
+          0.78,
+          0.82,
+          0.84
+        ],
+        "stderr_binomial": 0.02027583228871259,
+        "stderr_runs": 0.0155552012431304
+      },
+      "law_constant": {
+        "constant": 1.2894238754920297,
+        "stderr": 0.11207758226298306,
+        "expected": 1.3313353638003897,
+        "replicates": 8,
+        "signature": [
+          -0.003556294952,
+          0.003736614287,
+          -0.01812814459,
+          -2.478156752e-07,
+          2.875212192e-07,
+          -3.282976313e-05,
+          0.00355579932,
+          -0.003736039245,
+          0.01806248507,
+          0.007517729464,
+          0.007517729464,
+          0.007517729464,
+          0.0009999999
+        ]
+      },
+      "write_point": {
+        "param": "s",
+        "value": 0.25000002500024754
+      }
+    }
+  ],
+  "skipped": []
+}

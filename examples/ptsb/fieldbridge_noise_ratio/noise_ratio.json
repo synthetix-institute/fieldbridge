@@ -1,0 +1,87 @@
+{
+  "command": "noise-ratio",
+  "implementation_sha256": "69325807d8835023292133e2ae2dd2e710936d00ab599a470a68ea46c5c15239",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Is the coordinate across the path after a valley-ridge inflection, in the overdamped limit, a swept pitchfork that chooses its product by the Kondepudi-Nelson law?",
+  "input_sha256": "98530016567e3abb6bdf1ed8b7a09eed48f9b32a31dfda31a348c7b9e037e2ea",
+  "assumptions": [
+    "the path coordinate is treated as an external control (no back-reaction of y on the motion along the path)",
+    "overdamped relaxation across the path",
+    "additive Gaussian noise of strength kT/gamma"
+  ],
+  "provenance": {
+    "source": "Transverse part of the minimal valley-ridge surface V = 8/3 x^3 - 4 x^2 + y^2/2 + x y^2 (y^2 - 2) of examples/ptsb/ptsb.py, with the path coordinate x as the control s (friction gamma = 1); the surface follows the form of the model family of Collins, Carpenter, Ezra and Wiggins, J. Chem. Phys. 139, 154108 (2013)",
+    "kind": "authored example"
+  },
+  "name": "post-transition-state bifurcation, transverse coordinate",
+  "first_order": false,
+  "control": "s",
+  "critical_value": 0.25000002500024754,
+  "a3": -1.0000001000009902,
+  "q": 0.0005,
+  "trajectories_per_sign": 400,
+  "rows": [
+    {
+      "measured": 0.6737500000000001,
+      "stderr": 0.016575996859163552,
+      "constant": 1.1989789825653416,
+      "constant_stderr": 0.12243805714770264,
+      "gamma": 0.05,
+      "rate": 0.01,
+      "D_along_mode": 0.0004999999499995099,
+      "steps": 10000,
+      "offset": -0.0037499999999999756,
+      "by_sign": {
+        "1": {
+          "toward_bias": 0.67,
+          "decided_before": 0.0
+        },
+        "-1": {
+          "toward_bias": 0.6775,
+          "decided_before": 0.0
+        }
+      },
+      "expected": 1.3313353638003897,
+      "regime": "linear stage",
+      "decided_before": 0.0
+    },
+    {
+      "measured": 0.70375,
+      "stderr": 0.016143339861224505,
+      "constant": 1.425105915796738,
+      "constant_stderr": 0.1243380704715338,
+      "gamma": 1.0,
+      "rate": 0.0005,
+      "D_along_mode": 0.0004999999499995099,
+      "steps": 45464,
+      "offset": -0.01375000000000004,
+      "by_sign": {
+        "1": {
+          "toward_bias": 0.69,
+          "decided_before": 0.0
+        },
+        "-1": {
+          "toward_bias": 0.7175,
+          "decided_before": 0.0
+        }
+      },
+      "expected": 1.3313353638003897,
+      "regime": "linear stage",
+      "decided_before": 0.0
+    }
+  ],
+  "material": {
+    "noise": 0.01,
+    "noise_ratio_at_rate_0.02": 0.5000000500004951,
+    "crossover_rate": 0.0010000001000009901
+  }
+}
