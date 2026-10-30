@@ -1,0 +1,175 @@
+{
+ "schema": "fieldbridge-quantum-network/1",
+ "name": "Transmon memory with two storage resonators",
+ "field": "superconducting circuits",
+ "question": "What fraction of a single photon sent into the readout resonator comes back out in the expected temporal mode after the transmon has stored it in one storage resonator, moved it to a second one and released it, and where are the lost photons absorbed?",
+ "subsystems": [
+  {
+   "name": "r",
+   "kind": "mode",
+   "max_quanta": 1
+  },
+  {
+   "name": "q",
+   "kind": "levels",
+   "levels": 3
+  },
+  {
+   "name": "s1",
+   "kind": "mode",
+   "max_quanta": 1
+  },
+  {
+   "name": "s2",
+   "kind": "mode",
+   "max_quanta": 1
+  }
+ ],
+ "parameters": {
+  "kappa": 1.0,
+  "kint": 0.01,
+  "g": 50.0,
+  "alpha": -200.0,
+  "gq": 0.005,
+  "gphi": 0.002,
+  "ks1": 0.001,
+  "ks2": 0.001
+ },
+ "controls": {
+  "grq": [
+   {
+    "from": 12.0,
+    "to": 12.0314159265,
+    "value": "g"
+   },
+   {
+    "from": 32.1570796327,
+    "to": 32.1884955592,
+    "value": "g"
+   }
+  ],
+  "gs1": [
+   {
+    "from": 12.0314159265,
+    "to": 12.0628318531,
+    "value": "g"
+   },
+   {
+    "from": 22.0628318531,
+    "to": 22.0942477796,
+    "value": "g"
+   }
+  ],
+  "gs2": [
+   {
+    "from": 22.0942477796,
+    "to": 22.1256637061,
+    "value": "g"
+   },
+   {
+    "from": 32.1256637061,
+    "to": 32.1570796327,
+    "value": "g"
+   }
+  ]
+ },
+ "hamiltonian": [
+  {
+   "coefficient": "alpha/2",
+   "operator": "qd qd q q"
+  },
+  {
+   "coefficient": "grq",
+   "operator": "rd q",
+   "hc": true
+  },
+  {
+   "coefficient": "gs1",
+   "operator": "qd s1",
+   "hc": true
+  },
+  {
+   "coefficient": "gs2",
+   "operator": "qd s2",
+   "hc": true
+  }
+ ],
+ "dissipators": [
+  {
+   "name": "readout internal loss",
+   "rate": "kint",
+   "operator": "r"
+  },
+  {
+   "name": "transmon decay",
+   "rate": "gq",
+   "operator": "q"
+  },
+  {
+   "name": "transmon dephasing",
+   "rate": "2*gphi",
+   "operator": "nq"
+  },
+  {
+   "name": "loss of storage 1",
+   "rate": "ks1",
+   "operator": "s1"
+  },
+  {
+   "name": "loss of storage 2",
+   "rate": "ks2",
+   "operator": "s2"
+  }
+ ],
+ "ports": [
+  {
+   "name": "line",
+   "operator": "r",
+   "rate": "kappa",
+   "input": {
+    "kind": "fock",
+    "photons": 1,
+    "shape": "exp(kappa*(t-12.0)/2)",
+    "from": 0.0,
+    "to": 12.0
+   },
+   "output": {
+    "shape": "exp(-kappa*(t-32.1884955592)/2)",
+    "from": 32.1884955592,
+    "to": 44.1884955592
+   }
+  }
+ ],
+ "observables": {
+  "readout": "nr",
+  "transmon": "nq",
+  "transmon f level": "q_2_2",
+  "storage 1": "ns1",
+  "storage 2": "ns2"
+ },
+ "windows": [
+  {
+   "port": "line",
+   "from": 0.0,
+   "to": 12.0
+  },
+  {
+   "port": "line",
+   "from": 12.0,
+   "to": 32.1884955592
+  }
+ ],
+ "duration": 44.1884955592,
+ "assumptions": [
+  "Every element in the frame rotating at its own frequency; the couplings are parametric (tunable couplers or sideband drives) and resonant while they are on, so each acts as an exchange g (a^dagger b + h.c.); hbar = 1; rates and times in units of the readout line rate kappa.",
+  "Each swap is a pi/2 pulse of the exchange, g t = pi/2, which moves one excitation completely between two elements; the dispersive shifts between transmon and resonators act only on states with two excitations and are left out.",
+  "The transmon keeps three levels with anharmonicity alpha; in the one-photon sector the third level is not reached, and its population is recorded as a check.",
+  "The input photon rises exponentially at the readout line rate, the temporal mode that an empty resonator absorbs completely; the output mode is the decaying exponential that the readout resonator emits once the photon is back in it.",
+  "Loss rates of the order of transmon and resonator lifetimes in circuit QED (T1 of a few hundred and storage lifetimes of about a thousand inverse line rates); they are illustrative, not fitted to a device."
+ ],
+ "provenance": {
+  "origin": "authored example in reduced units",
+  "reference": "catch and release of itinerant photons in circuit QED: J. Wenner et al., Phys. Rev. Lett. 112, 210501 (2014); P. Kurpiers et al., Nature 558, 264 (2018); multimode storage behind a transmon: R. K. Naik et al., Nat. Commun. 8, 1904 (2017); input and output pulses: A. H. Kiilerich and K. Moelmer, Phys. Rev. Lett. 123, 123604 (2019)",
+  "contributor": "FieldBridge quantum examples"
+ }
+}

@@ -90,11 +90,12 @@ reading order.
 | --- | --- | --- | --- |
 | 1 | [When a population acts as one](32_decision_population.md) | At which coupling do limit-cycle units synchronize; with what probability does a population swept through its collective threshold follow a weak bias, for N units and a sweep rate; and with what window of times does it leave a state that a step has made unstable? | `decision predict`, `card`, `survey` |
 
-## The quantum write: one module
+## Open quantum carriers: two modules
 
 | Module | Chapter | Question | Command |
 | --- | --- | --- | --- |
 | 1 | [Quantum write](30_quantum_write.md) | With which probability does a sweep of the two-photon drive through the threshold write the favoured state of a parametric oscillator, with the vacuum as the seed, and when does the balance of two shallow wells decide instead? | `quantum write` |
+| 2 | [Storing a photon behind a transmon](41_quantum_network.md) | What fraction of a single photon sent along a line comes back in the expected temporal mode after a transmon has stored it in one resonator, moved it to another and released it, and which loss took the rest? | `quantum network` |
 
 ## Memory in materials: fifteen modules
 
