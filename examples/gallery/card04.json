@@ -3627,6 +3627,17 @@
       -0.0
      ]
     ],
+    "spectrum": [
+     [
+      9.999671113369857e-08,
+      0.0
+     ],
+     [
+      -0.9999999999732445,
+      0.0
+     ]
+    ],
+    "second_rate": 0.9999999999732445,
     "event": "loses stability",
     "source": "control",
     "obstruction": {
@@ -3767,6 +3778,17 @@
       -0.0
      ]
     ],
+    "spectrum": [
+     [
+      -0.0005720372872000112,
+      0.0
+     ],
+     [
+      -1.0245514685155914,
+      0.0
+     ]
+    ],
+    "second_rate": 1.0245514685155914,
     "event": "vanishes",
     "source": "write field",
     "obstruction": {
@@ -5207,6 +5229,6 @@
   "holds": "activation between stored states (Law 3)",
   "lock": "field 0.4 x threshold, fixed control: accuracy 0.30, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.98, retention/rewriting time ratio 10.3; field 0.4 x threshold, control swept through the write point: accuracy 0.88, not rewritten"
  },
- "seconds": 20.475478172302246,
+ "seconds": 47.46147108078003,
  "id": "card04"
 }

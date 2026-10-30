@@ -1,0 +1,46 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "At which coupling does a population of oscillators with spread natural frequencies synchronize, and what remains free in the synchronized state?",
+  "provenance": {
+    "source": "Y. Kuramoto, Lecture Notes in Physics 39, 420 (1975); E. Ott and T. M. Antonsen, Chaos 18, 037113 (2008)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "collective dynamics",
+  "kind": "equations",
+  "name": "population of phase oscillators (Kuramoto, Ott-Antonsen reduction)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "complex order parameter z = x + i y = <exp(i theta)>",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 1.0
+  },
+  "parameters": {
+    "K": 2.0,
+    "Delta": 0.5
+  },
+  "drift": {
+    "x": "(K/2 - Delta)*x - (K/2)*(x**2 + y**2)*x",
+    "y": "(K/2 - Delta)*y - (K/2)*(x**2 + y**2)*y"
+  },
+  "control": {
+    "name": "K",
+    "range": [
+      0.2,
+      3.0
+    ]
+  },
+  "noise": 0.005,
+  "closure": "infinitely many oscillators with a Lorentzian distribution of natural frequencies of half-width Delta, in the frame rotating with their mean; the fluctuations of a finite population enter as noise",
+  "observable": "the order parameter r = |z| and the collective phase arg z",
+  "assumptions": [
+    "global coupling of strength K",
+    "the Ott-Antonsen manifold, exact for Lorentzian frequencies",
+    "the noise intensity is chosen for the example and stands for a finite population"
+  ],
+  "material": [],
+  "dt": 0.01
+}

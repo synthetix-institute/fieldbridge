@@ -8,7 +8,7 @@ control that must change the prediction, and the test responsible for it.
   [The language, shown on spins](24_spin_language.md) then writes this model as a realization, detaches its rotation
   and attaches it to an exchange chain, atoms in two wells and a Cooper-pair level.
 - **Memory in materials.** [A first memory card](15_memory_first_card.md) asks which states a genetic toggle switch
-  stores and how a state is written. It is Module 1 of [fifteen modules](#memory-in-materials-fifteen-modules).
+  stores and how a state is written. It is Module 1 of [seventeen modules](#memory-in-materials-seventeen-modules).
 - **Regulation.** [Return to a set point](28_regulation_set_point.md) asks whether the output of a cell, a machine or
   a material returns exactly after a step of its input, and through which variable.
 - **Computation.** [Which functions of an input history a body represents](29_computation_capacity.md) asks how
@@ -55,7 +55,7 @@ it was first found.
 | Your purpose | Read in this order |
 | --- | --- |
 | Learn the language of mechanisms (detach, attach, co-discover) | [Quantum closure](11_quantum_closure.md) → [The language, shown on spins](24_spin_language.md) → [Inverse interaction design](14_inverse_construction.md); for memory, [Modules 5](19_memory_transfer_and_design.md) and [9 to 11](23_memory_codiscovery.md) |
-| Analyse memory in a material from any field | [Modules 1–15 on memory](#memory-in-materials-fifteen-modules), starting with [a first memory card](15_memory_first_card.md) |
+| Analyse memory in a material from any field | [Modules 1–17 on memory](#memory-in-materials-seventeen-modules), starting with [a first memory card](15_memory_first_card.md) |
 | Write a bit into a quantum oscillator | [The language, shown on spins](24_spin_language.md) → [Module 4 on writing](18_memory_writing_and_retention.md) → [Quantum write](30_quantum_write.md) |
 | Understand the physical construction | [First run](08_end_to_end_walkthrough.md) → [Equations and assumptions](09_equations_and_assumptions.md) → [Stochastic map](10_stochastic_construction.md) → [Quantum closure](11_quantum_closure.md) |
 | Solve for a new physical construction | [Quantum closure](11_quantum_closure.md) → [Inverse interaction design](14_inverse_construction.md) → [Discovery requirements](12_reproduction_and_discovery.md) |
@@ -97,9 +97,9 @@ reading order.
 | 1 | [Quantum write](30_quantum_write.md) | With which probability does a sweep of the two-photon drive through the threshold write the favoured state of a parametric oscillator, with the vacuum as the seed, and when does the balance of two shallow wells decide instead? | `quantum write` |
 | 2 | [Storing a photon behind a transmon](41_quantum_network.md) | What fraction of a single photon sent along a line comes back in the expected temporal mode after a transmon has stored it in one resonator, moved it to another and released it, and which loss took the rest? | `quantum network` |
 
-## Memory in materials: fifteen modules
+## Memory in materials: seventeen modules
 
-Chapters 15–23, 25–27 and 33–35 treat memory. A material is described
+Chapters 15–23, 25–27, 33–36 and 42 treat memory. A material is described
 once, as a realization: an operation on a carrier, with its closure,
 observable, protocol and parameters. From the structure alone, the program
 states which behaviours are excluded and which are possible: whether the
@@ -133,12 +133,13 @@ field is added (`memory new`, `memory check`).
 | 14 | [Changes of a model](34_memory_changes.md) | Which mechanism appears when a term of a published model is removed, another parameter becomes the control or the range of the control is extended, and when do two such changes do what neither does alone? | `memory changes` |
 | 15 | [Quantum-computing hardware](35_memory_quantum_hardware.md) | Which mechanisms do the hardware elements of quantum computing carry, and which laws appear where a derivation stops? | `memory codiscover`, `memory complete`, `memory changes` |
 | 16 | [Chaos and blow-up](36_memory_chaos_and_blow_up.md) | What does a material without a stable state do with its initial state: lose it at the largest Lyapunov exponent, or carry it to infinity in finite time, and with which exponent? | `memory dynamics` |
+| 17 | [Populations](42_memory_populations.md) | Where do a coupling, a mutation rate or a copying fidelity change the state of a population, is the transition continuous or discontinuous, and which observable characterizes the new state? | `memory card`, `memory dynamics` |
 
 **Reviewing a manuscript.** [Reviewing the claims of a manuscript](40_review_checks.md) runs four checks on the claims of a paper: whether each quantity was computed for the system it is claimed for, whether it depends on the protocol, whether each theorem is used inside its hypotheses, and whether novelty and the statements relied on carry a recorded search (`review check`).
 
 Modules 1–4 form the core and should be read in order. Modules 5, 6 and 8 each build on Module 4 and can be read in
 any order. Module 7 draws on all of them. Module 9 builds on Modules 4 and 5, Module 10 on Module 9, Module 11 on
-Modules 6 and 9, Module 12 on Modules 3 and 4, Module 13 on Modules 4 and 9, Module 14 on Modules 9 and 10, Module 15 on Modules 9, 13 and 14, and Module 16 on Modules 4 and 6. The figures of the modules are produced from the saved results by
+Modules 6 and 9, Module 12 on Modules 3 and 4, Module 13 on Modules 4 and 9, Module 14 on Modules 9 and 10, Module 15 on Modules 9, 13 and 14, Module 16 on Modules 4 and 6, and Module 17 on Modules 1, 2 and 16. The figures of the modules are produced from the saved results by
 [`figures/memory/make_figures.py`](figures/memory/make_figures.py).
 
 ## Construction from specified equations
