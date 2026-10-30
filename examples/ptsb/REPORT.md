@@ -9,7 +9,7 @@ with a bias and noise predicts the product ratio. The law states that, while the
 small, the displacement is Gaussian and its sign is set by the mean pushed by the asymmetry divided by the spread:
 P = Phi(h I1 / sqrt(sigma0^2 + 2 D I2)). The test used two model surfaces, not molecules.
 
-The answer has four parts.
+The answer has five parts.
 
 1. When friction slows the motion along the path, the law predicts the ratio from static quantities of the surface
    and the incoming speed. Static here means the transverse force and the transverse curvature along the path, and
@@ -24,6 +24,11 @@ The answer has four parts.
    but only in a restricted sense, described in the class-mapping section. On the downhill side the write law holds.
    Where the valley of the minor product is born before the TS line, it has its own saddle above TS1, and the
    transition-state split of the Boltzmann weight on the TS line holds. Next to the boundary neither holds.
+5. On a curved path, the centrifugal force kappa <s'^2> is a bias that no static quantity records. On a valley whose
+   IRC, saddles and minima are all symmetric, trajectories favour the product outside the bend by up to 99:1. The law
+   predicts the direction and size of this effect, but only to 0.02-0.12. A pseudo-minimum before the VRI leaves the
+   ratio unchanged unless its exit saddle lies near the TS1 level. Even then the ratio is set by the descent after
+   that saddle, and the law applies from it.
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -217,8 +222,135 @@ kT = 0.01. The trajectories vary smoothly across the boundary.
 - The mapping fails in a band of about 0.05 in d around the boundary, where neither the law nor the split holds.
 - It fails for "small barriers" that are only TS2 seen from the major valley. Those lie below TS1 and say nothing
   about the birth of the minor valley.
-- It is a statement about these two-dimensional surfaces. Molecules with additional modes, curved paths or
-  intermediate pseudo-minima were not modelled.
+- It is a statement about these two-dimensional surfaces. Curved paths and pseudo-minima are treated in the next
+  section; molecules with additional modes were not modelled.
+
+## A curved path and pseudo-minima before the bifurcation
+
+**Surface** ([curved.py](curved.py)). The minimal surface is written in coordinates s along the valley and n across
+it, and the valley is laid along a circular arc of curvature kappa. The potential depends on (s, n) exactly as on the
+straight surface. The stationary points, their energies, the IRC and every static quantity along the path are
+therefore unchanged by the curvature. With no tilt, the IRC runs along the valley floor to the ridge saddle TS2, and
+the two products have the same energy. The curvature enters only through the kinetic energy. In this family the VRI
+sits at s = 1/2 (d = 0.25). Static analysis predicts 50:50 for every curvature.
+
+**The law along a curved path.** Linearizing the equations of motion about the reference path gives
+
+    n'' = -gamma n' - [V_nn - kappa^2 v^2] n - V_n - kappa <s'^2> - 2 kappa v dv + noise.
+
+The term kappa <s'^2> is the centrifugal force toward the outside of the bend. It acts as the bias of the write law,
+and it is set by the kinetic energy along the path, not by the shape of the surface. This is Carpenter's dynamic
+matching expressed as a bias. With strong friction <s'^2> falls to kT, and the bias becomes the entropic force
+kappa kT of the larger room outside the bend. The fluctuations of the speed dv are integrated with the transverse
+motion.
+
+### Curvature alone selects the outside product
+
+![dynamic matching](figures/curved_dynamic_matching.png)
+
+- **Size of the effect.** Without friction, at kT = 0.005, the share of the product outside the bend is 0.64, 0.81,
+  0.97 and 0.99 for curvature 0.02, 0.05, 0.1 and 0.2.
+- **Temperature.** The selectivity falls as temperature rises. At curvature 0.1 without friction, the outside share
+  is 0.97 at kT = 0.005 and 0.62 at kT = 0.1. The push comes from the kinetic energy gained in the descent from TS1
+  to the VRI, which does not depend on temperature, while the thermal width across the path grows.
+- **Incoming speed.** Faster arrival strengthens the push. At curvature 0.05 and kT = 0.005, fixed incoming speeds
+  of 0.3, 1 and 3 give 0.82, 0.93 and 1.00.
+- **Friction.** Friction removes the effect, because it removes the kinetic energy that carries the push. At
+  gamma = 10, every curvature and temperature gives 0.49-0.52.
+
+**Curvature against a force toward the inside** (family H, curvature 0.1).
+
+![curvature against tilt](figures/curved_against_tilt.png)
+
+- **Friction reverses the favoured product.** With an inward tilt of 0.04 at kT = 0.005, 83 per cent of products are
+  outside without friction and 48 per cent with gamma = 1. The tilt is a static force, which friction does not
+  weaken, while the centrifugal push is lost.
+- **Temperature reverses it weakly at the strongest tilt.** With an inward tilt of 0.08 and no friction, the outside
+  share is 0.56 at kT = 0.005 and 0.485 at kT = 0.1. The law predicts 0.52 at every temperature, with no reversal.
+
+**Accuracy of the law.** The law gives the direction and size of the effect. Its accuracy is set by where the
+decision is read: at the largest amplification beyond the VRI, as on the straight surfaces (fixed before the
+comparison), or at the first contact of the reference path with the product wall (chosen after it). The table gives
+the mean absolute difference between the trajectory share and the law, over 20 points per row.
+
+| friction gamma | read at largest amplification | read at first wall contact |
+|---|---|---|
+| 0 | 0.038 | 0.058 |
+| 0.3 | 0.124 | 0.028 |
+| 1 | 0.039 | 0.009 |
+| 3 | 0.037 | 0.035 |
+| 10 | 0.020 | 0.020 |
+
+For a tilt on the same surfaces, the readout does not matter and the law holds to 0.005-0.02 (families I and J
+below). For curvature it does. The push kappa v^2 is largest at the bottom of the descent and near the product wall,
+where the transverse motion is no longer small. At gamma = 0.3, reading at the largest amplification includes the
+return of the reference path from the wall, after the trajectories have already entered a product. With friction the
+trajectories are less selective than the law: by 0.04 on average at gamma = 3 and 0.02 at gamma = 10, and by at most
+0.10.
+
+The reason is a second-order effect of the curvature. The inside of the bend is shorter, so a trajectory displaced
+inward runs ahead along the path. It reaches the unstable region earlier and is amplified more, which acts as a push
+toward the inside. A Gaussian closure of this term has the right sign at gamma = 10 (0.540 becomes 0.521, against
+0.508 from trajectories). The closure grows with the transverse variance, however, and diverges at gamma <= 1. It is
+kept in the code as an option and is not used.
+
+### A pseudo-minimum on a downhill path changes nothing
+
+![pseudo-minimum](figures/curved_pseudo_minimum.png)
+
+**Setup** (family I). A Gaussian dip of depth a sits at s = 0.25, before the VRI.
+- For a < 0.2 the dip is a shoulder.
+- For a >= 0.2 it is a true intermediate, with an exit barrier of 0.01-0.07. Its exit saddle lies 0.42-0.45 below
+  TS1.
+
+**Result.** The ratio does not change.
+- At every friction (0 to 3) and temperature (kT 0.02 and 0.05), the outside share varies by at most 0.017 over
+  a = 0-0.3 on the curved valley and 0.021 on the straight valley with a tilt.
+- Trajectories cross the dip with the energy of the descent from TS1. Only at gamma = 3 and a = 0.3 are more than
+  10 per cent held beyond t = 10 (18 per cent).
+
+**Law.** The law from TS1 needs no change while its reference passes the dip.
+- For the tilt it holds to 0.004-0.015 at every friction.
+- For curvature it carries the readout errors of the previous section.
+
+### An intermediate held by an exit saddle at the level of TS1
+
+![held intermediate](figures/curved_held_intermediate.png)
+
+**Setup** (family J). An intermediate lies 0.1 below TS1, between TS1 and an exit saddle TS1b at the level of TS1,
+or 0.02 or 0.04 below it. The VRI follows at s = 0.7.
+- At gamma = 1 and kT = 0.02, 42-69 per cent of trajectories decide after t = 10. At kT = 0.02 and gamma >= 0.1, up
+  to 11 per cent are still in the well at t = 300; those are excluded from the ratio.
+
+**Results**
+- **The held intermediate reduces the outside share only modestly.**
+  - At curvature 0.1 and kT = 0.02 the reduction is from 0.91 to 0.81-0.83 at gamma = 0.1, and from 0.64 to
+    0.61-0.63 at gamma = 1.
+  - Without friction the reduction is from 0.89 to 0.84-0.86. This is consistent with the transverse energy
+    picked up in the well.
+- **Held trajectories choose like the rest.** At gamma = 1 with the exit saddle at the level of TS1, the trajectories
+  decided after t = 10 have outside share 0.61, against 0.62 for the earlier ones (0.57 against 0.56 for the tilt).
+  The outcome is set after the exit saddle.
+- **Why the push survives.** Without friction, the kinetic energy at the VRI is the total energy minus the potential
+  there. Whatever happens before the last saddle, the trajectories leave TS1b with nearly the same energy and gain
+  the same speed on the way down. The centrifugal push is acquired downhill of the last saddle, so an intermediate
+  cannot erase it. It can only add transverse energy, or give friction more time to act.
+
+**Law.** The law started at TS1b, with thermal speeds and the thermal transverse state there:
+- holds at gamma = 1 to 0.006 for curvature and 0.005 for the tilt;
+- for the tilt, holds to 0.005-0.021 at every friction;
+- for curvature at gamma <= 0.1, the trajectories exceed it by 0.10-0.12. This is the conservative excess seen on
+  all surfaces.
+
+### What this adds to the class mapping
+
+- **Path curvature.** A curved path is a source of selectivity that no static quantity records. On these surfaces
+  the IRC, the stationary points and their energies are those of a symmetric bifurcation, while trajectories favour
+  the outside product by up to 99:1.
+- **Pseudo-minima.** A pseudo-minimum or shallow intermediate before the VRI does not change the ratio, unless its
+  exit saddle lies near the TS1 level and friction is present.
+- **Even then.** The ratio is fixed by the descent after the exit saddle. The law applies from that saddle, as if it
+  were TS1.
 
 ## Summary: where the law holds and where it fails
 
@@ -235,9 +367,15 @@ kT = 0.01. The trajectories vary smoothly across the boundary.
     the first entry only.
   - **Next to the cusp.** Within the band where the minor valley is born on the TS line, neither the law nor the
     static split holds.
-- **Not tested:** strong curvature of the path with pseudo-minima (entry 30 of Yamaki et al.); more than two
-  products (entries 29 and 30); paths whose curvature carries momentum into one valley (Carpenter's dynamic matching
-  as a separate effect); couplings to further modes.
+- **On a curved path** the push is the centrifugal force kappa <s'^2>. The law gives its direction and size: the
+  outside share rises with curvature and speed and falls with temperature and friction. It is accurate only to
+  0.02-0.12, depending on friction and on where the decision is read, because the push is largest where the
+  transverse motion is no longer small. Friction and temperature can reverse the favoured product when curvature
+  competes with a static force; the law misses the temperature reversal.
+- **Pseudo-minima** before the VRI do not change the ratio on a downhill path. An intermediate held by an exit
+  saddle near the TS1 level changes it modestly. The law then applies from the exit saddle.
+- **Not tested:** more than two products (entries 29 and 30 of Yamaki et al.); curved paths in more than two
+  dimensions; couplings to further modes.
 
 ## What molecular tests would need
 
@@ -255,6 +393,11 @@ would need:
   whether the linear-stage law applies or the trajectories will be more selective;
 - for small-barrier connections, all saddles near the TS line (TS1', the hill between), to separate a second
   transition state from TS2;
+- the curvature of the IRC between the last saddle before the VRI and the product region, in mass-weighted
+  coordinates, with the kinetic energy gained along it: the centrifugal push kappa v^2 is the bias of the law on a
+  curved path, and it is not visible in any static quantity;
+- for pseudo-minima, the energy of the exit saddle relative to TS1 and an estimate of the friction, which decide
+  whether the law starts at TS1 or at the exit saddle;
 - the published trajectory ratios with their counting rules (first entry or final well) and the share of recrossing
   trajectories.
 
@@ -267,6 +410,7 @@ would need:
 | Static classes | `python classes.py --out results/classes.json` |
 | Figures and summary | `python analyse.py` (writes figures/ and results/summary.json) |
 | Airy limit | `python airy_check.py` |
+| Curved valley and pseudo-minima | `python curved_scan.py traj --backend torch --only G,G1,H --out results/curved_traj_GH.json`, the same with `--only I` and `--only J` (`results/curved_traj_I.json`, `_J.json`; 2.48 million trajectories plus 0.64 million, about 7 minutes on one RTX 3090), `python curved_scan.py law --workers 20 --out results/curved_law_all.json` (about an hour on 20 cores), `python curved_analyse.py` |
 | FieldBridge | `fieldbridge memory noise-ratio ptsb_transverse_overdamped.json --out-dir fieldbridge_noise_ratio --gammas 0.05,1`, and `fieldbridge memory codiscover ptsb_transverse_overdamped.json --target symmetric-write --out-dir fieldbridge_codiscover` |
 
 Seed 20261030, NumPy 1.24 and torch 2.0.1 on the GPU node; laws with SciPy 1.14 on the laptop.
