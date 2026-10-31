@@ -590,6 +590,19 @@ def part_actions(rng, quick):
     be = lambda x: f0 * q * x * (1 - x) / (1 + (f0 - 1) * x)
     de = lambda x: x * (f0 * x * (1 - q) + 1 - x) / (1 + (f0 - 1) * x)
     res["error"] = three(be, de, x_star, 1e-6)
+    res["budworm_extinction"] = three(b, d, low, 1e-6)
+    # far from threshold, where births and deaths do not balance along the path, with the slope of the exact chain
+    far = []
+    for R0 in (1.5, 3.0, 10.0, 30.0):
+        bs = lambda x, R0=R0: R0 * x * (1 - x)
+        ds = lambda x: x
+        row = {"R0": R0, **three(bs, ds, 1 - 1 / R0, 1e-6)}
+        Ns = (100, 200) if R0 > 2 else (400, 800)
+        lt = [extinction_time(lambda n, N=N: N * bs(n / N), lambda n, N=N: N * ds(n / N), N, int(round((1 - 1 / R0) * N)))
+              for N in Ns]
+        row["exact_slope"] = (lt[1] - lt[0]) / (Ns[1] - Ns[0])
+        far.append(row)
+    res["epidemic"] = far
     return res
 
 

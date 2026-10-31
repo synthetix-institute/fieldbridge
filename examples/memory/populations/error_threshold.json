@@ -24,6 +24,12 @@
   "drift": {
     "x": "x*(f0*q - 1 - (f0 - 1)*x)"
   },
+  "rates": {
+    "birth": "f0*q*x*(1 - x)",
+    "death": "x*(f0*(1 - q)*x + 1 - x)",
+    "upper": "1",
+    "scale": "number of sequences in the population"
+  },
   "control": {
     "name": "q",
     "range": [
