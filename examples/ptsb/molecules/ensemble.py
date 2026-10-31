@@ -7,7 +7,9 @@
 
 Two samplings of the same dividing surface (the imaginary mode of TS1 at zero, in curvilinear modes):
   cl  classical. Positions are drawn from the harmonic energy of the curvilinear modes at 298 K and then resampled by their DFT energy, so that they follow the
-      true Boltzmann factor on the surface. Momenta are Maxwell-Boltzmann in mass-weighted Cartesian coordinates with the flux along the normal of the surface.
+      Boltzmann factor on the surface. Momenta are Maxwell-Boltzmann in mass-weighted Cartesian coordinates with the flux along the normal of the surface.
+      The weights have a tail index near 1, from soft rotor-like modes that a harmonic proposal covers badly, so the effective size of the raw weights does not grow with the
+      number of candidates. They are truncated at sqrt(N) times their mean (Ionides, 2008). The truncated marginal of the torsion is stable under the choice of cap.
   qc  quasiclassical. Each mode is given a level of its quantum Boltzmann distribution with its zero-point energy and a random phase, the usual normal-mode sampling.
 
 Each start runs forward until the product is decided and backward until the molecule is back on one side, so that only reactant-to-product trajectories count.
@@ -206,14 +208,16 @@ def part_select(draws):
         ok = np.isfinite(en)
         e0 = float((ENS / "energy" / f"TS{e}.txt").read_text())
         lw = np.where(ok, -((en - e0) - d["vharm"]) / KT + d["logj"] + np.log(d["gradn"]), -np.inf)
-        w = np.exp(lw - lw[ok].max())
+        raw = np.exp(lw - lw[ok].max())
+        w = np.minimum(raw, np.sqrt(ok.sum()) * raw[ok].mean())
         rng = np.random.default_rng([e, 7])
         order = rng.choice(n, size=draws, p=w / w.sum())
-        np.savez(ENS / f"order_{e}_cl.npz", order=order, w=w, en=en)
+        np.savez(ENS / f"order_{e}_cl.npz", order=order, w=w, raw=raw, en=en)
         phi = np.degrees(d["phi"])
-        print(f"{e}: {ok.sum()} of {n} energies; effective size {w.sum() ** 2 / (w ** 2).sum():.0f}; excess over harmonic mean {np.nanmean((en - e0 - d['vharm']) * 627.509):.2f} kcal/mol; "
-              f"phi harmonic {phi[ok].mean():.1f} +- {phi[ok].std():.1f}; reweighted {np.average(phi, weights=w):.1f}; distinct starts {len(set(order.tolist()))} of {draws}; "
-              f"share below -87: harmonic {(phi[ok] < -87).mean():.3f}, reweighted {w[phi < -87].sum() / w.sum():.3f}", flush=True)
+        ess = lambda u: u.sum() ** 2 / (u ** 2).sum()  # noqa: E731
+        print(f"{e}: {ok.sum()} of {n} energies; effective size raw {ess(raw):.0f}, truncated {ess(w):.0f}; excess over harmonic mean {np.nanmean((en - e0 - d['vharm']) * 627.509):.2f} kcal/mol; "
+              f"phi harmonic {phi[ok].mean():.1f} +- {phi[ok].std():.1f}; truncated {np.average(phi, weights=w):.1f} +- {np.sqrt(np.cov(phi, aweights=w)):.1f}; distinct starts {len(set(order.tolist()))} of {draws}; "
+              f"share below -87: harmonic {(phi[ok] < -87).mean():.3f}, raw {raw[phi < -87].sum() / raw.sum():.3f}, truncated {w[phi < -87].sum() / w.sum():.3f}", flush=True)
 
 
 def claim(name):
