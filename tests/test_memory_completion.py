@@ -5,6 +5,7 @@ Statistical thresholds only (the probabilities are Monte Carlo estimates on a fe
 residual is pinned."""
 from __future__ import annotations
 
+import json
 from math import pi
 from pathlib import Path
 
@@ -157,3 +158,58 @@ def test_the_curved_sweep_moves_the_parameters_along_a_parabola():
     straight = construct.along_curved_path(real, origin, d, 0.0)
     straight.drift(np.zeros((1, 2)), {**straight.params, "t": t})
     assert abs(seen["F"] - (2.0 + t * 0.6)) < 1e-12
+
+
+def _pair():
+    """Two pitchforks coupled through their mean."""
+    base = json.loads((EX / "pitchfork.json").read_text())
+    base.pop("potential", None)
+    base["carrier"] = {"kind": "euclid", "name": "2 copies", "variables": ["x_1", "x_2"], "scale": 2}
+    base["parameters"] = {"eps": 1.0, "g_pop": 0.05}
+    base["drift"] = {"x_1": "eps*x_1 - x_1**3 + g_pop*((x_1 + x_2)/2 - x_1)",
+                     "x_2": "eps*x_2 - x_2**3 + g_pop*((x_1 + x_2)/2 - x_2)"}
+    return spec.load(base)
+
+
+def test_the_saturation_time_grows_at_weak_noise_and_is_absent_at_strong_noise():
+    assert completion.saturation_time(0.05) == pytest.approx(1.46, abs=0.02)
+    assert completion.saturation_time(1e-9) == pytest.approx(4.58, abs=0.02)
+    assert completion.saturation_time(0.2) is None
+
+
+def test_final_states_still_at_the_unwritten_state_are_unsettled():
+    real = spec.load(EX / "pitchfork.json")
+    stable = [np.array([1.0]), np.array([-1.0])]
+    reference = np.array([0.0])
+    assert completion.unsettled_fraction(real, np.array([[0.1], [-0.2], [0.9], [-1.1]]), stable, reference) == 0.5
+    assert completion.unsettled_fraction(real, np.array([[0.9], [-1.1], [np.nan]]), stable, reference) == 0.0
+
+
+def test_a_sweep_too_short_for_very_weak_noise_is_extended_and_gets_the_share_right():
+    """Two directions at Gamma = 1e-9: the fluctuation saturates at tau = 4.6, after the window of tau = 4. Over the old
+    window every trajectory is still at the unwritten state, and the mixed states, which take about 0.12 of the
+    trajectories, would take about a half of them by the labels."""
+    real = _pair()
+    nf = an.normal_form(real, np.zeros(2), real.control, 0.0)
+    a3 = abs(nf["a3"])
+    _, L = completion.critical_space(real, nf, 2)
+    D = 1e-9 * 0.02 / (a3 * float(np.mean(np.diag(L.T @ L))))
+    sweep = completion.Sweep(real, nf, 0.02)
+    rng = np.random.default_rng(1)
+    q0 = completion._relaxed(real, np.zeros(2), sweep.over(0.0))
+    R, _ = completion.critical_space(real, nf, 2)
+    stable = completion.stable_states(real, rng, sweep.over(sweep.T), seeds=completion.swept_seeds(real, sweep, q0, R, sweep.T))
+    old = completion.certificate(real, sweep, q0, [q0 + np.array([1.0, 0.0]) * 1e3], [0.0], D, 200, rng)[0]
+    assert completion.unsettled_fraction(real, old, stable, np.zeros(2)) > 0.9
+
+    r = completion.law_at(real, nf, np.random.default_rng(5), rate=0.02, noise=D, n_samples=200, certify=False)
+    assert r["sweep_extended_for_saturation"]["saturation_time"] == pytest.approx(4.58, abs=0.02)
+    assert "unsettled_at_end" not in r
+    st = np.array(r["stable_states"])
+    mixed = [i for i, s in enumerate(st) if len({x > 0 for x in s}) > 1]
+    assert np.mean([sum(row["law"][i] for i in mixed) for row in r["rows"]]) < 0.25
+
+
+def test_the_standard_noise_rule_stays_inside_the_window_of_the_sweep():
+    # Gamma = 0.05 saturates at tau = 1.46 and the window ends at tau = 4, so reference records keep their sweep
+    assert completion.saturation_time(0.05) + completion.SETTLE_MARGIN < 4.0

@@ -171,6 +171,66 @@ def shares(s: TwoModes, code, y, z) -> Dict[str, float]:
     return out
 
 
+# ------------------------------------------------------------------------------------------- when a share is a ratio
+BOUND_DEPTH = 5.0     # a family of products counts as bound when its well is at least this many kT deep
+
+
+def well_depths(s: TwoModes) -> Dict[str, float]:
+    """Depth of the y and z wells: the lowest saddle between products above the minimum of each family."""
+    g = s.geometry()
+    vs = min(float(s.V(*q)) for q in g["saddles"])
+    vy = min(float(s.V(*q)) for q in g["minima"] if abs(q[1]) > abs(q[2]))
+    vz = min(float(s.V(*q)) for q in g["minima"] if abs(q[2]) > abs(q[1]))
+    return {"y": vs - vy, "z": vs - vz}
+
+
+def fate(s: TwoModes, gamma: float, kT: float, n: int = 10000, times=(5, 10, 20, 40, 60), dt: float = 0.005,
+         seed: int = 0) -> Dict[str, object]:
+    """Follow the trajectories after run() would have counted them. `run` stops a trajectory at its first entry into
+    the product region, so its shares are shares at first entry. Here the motion goes on with the same friction and
+    noise; `z_share` is P(|z| > |y|) among the arrived trajectories at each time, and `z_kept` the part of those
+    counted in the z family at first entry that is still there. The reading rule: a share is a branching ratio only
+    where the later well is bound (BOUND_DEPTH) and the share has stopped changing; otherwise it is a transient that
+    depends on when it is read. Numpy only, and without friction (gamma = 0) nothing settles."""
+    g = s.geometry()
+    level, xc = g["level"], g["xc"]
+    rng = np.random.default_rng(seed)
+    x, y, z, px, py, pz = sample(s, n, rng, kT)
+    c1 = float(np.exp(-gamma * dt))
+    c2 = float(np.sqrt((1 - c1 * c1) * kT))
+    arrived, gone = np.zeros(n, bool), np.zeros(n, bool)
+    z_first = np.zeros(n, bool)
+    marks = {int(round(t / dt)): t for t in times}
+    z_share, z_kept = {}, {}
+    gx, gy, gz = s.grad(x, y, z)
+    for k in range(1, max(marks) + 1):
+        px, py, pz = px - 0.5 * dt * gx, py - 0.5 * dt * gy, pz - 0.5 * dt * gz
+        x, y, z = x + 0.5 * dt * px, y + 0.5 * dt * py, z + 0.5 * dt * pz
+        px = c1 * px + c2 * rng.standard_normal(n)
+        py = c1 * py + c2 * rng.standard_normal(n)
+        pz = c1 * pz + c2 * rng.standard_normal(n)
+        x, y, z = x + 0.5 * dt * px, y + 0.5 * dt * py, z + 0.5 * dt * pz
+        out = (x < -0.4) | (np.abs(x) > 5) | (np.abs(y) > 5) | (np.abs(z) > 5)
+        gone |= out & ~arrived
+        x[out], y[out], z[out], px[out], py[out], pz[out] = 0.0, 0.0, 0.0, 0.0, 0.0, 0.0
+        gx, gy, gz = s.grad(x, y, z)
+        px, py, pz = px - 0.5 * dt * gx, py - 0.5 * dt * gy, pz - 0.5 * dt * gz
+        if k % 4 == 0:
+            new = ~arrived & ~gone & (x > xc) & (s.V(x, y, z) < level)
+            z_first |= new & (np.abs(z) > np.abs(y))
+            arrived |= new
+        if k in marks:
+            a = arrived & ~gone
+            z_share[marks[k]] = float((np.abs(z[a]) > np.abs(y[a])).mean()) if a.any() else float("nan")
+            f = a & z_first
+            z_kept[marks[k]] = float((np.abs(z[f]) > np.abs(y[f])).mean()) if f.any() else float("nan")
+    a = arrived & ~gone
+    depth = well_depths(s)
+    return {"n": n, "arrived": int(a.sum()), "z_share_first_entry": float(z_first[a].mean()) if a.any() else float("nan"),
+            "z_share": z_share, "z_kept": z_kept, "z_well_depth": depth["z"], "z_well_over_kT": depth["z"] / kT,
+            "z_bound": bool(depth["z"] >= BOUND_DEPTH * kT)}
+
+
 # ------------------------------------------------------------------------------------------------------------ law
 def law(s: TwoModes, speed: float, gamma: float, kT: float, t_end: float = 14.0, n_eval: int = 2801) -> Dict[str, float]:
     """Mean and spread of y and z along one reference path. Returns the sign laws (read at the largest amplification
