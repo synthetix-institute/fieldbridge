@@ -158,7 +158,7 @@ def protocol_independence(claim: Dict) -> Dict:
             status = "fail"
             msgs.append(f"The fitted divergence {est:g} lies within 5 % below the coldest temperature at which "
                         f"relaxation was still seen ({float(hi):g}): the fit places it at the edge of the observation "
-                        "window, which a longer run would move.")
+                        "window; whether it follows the length of the runs is untested.")
         elif lo is not None and hi is not None and float(lo) <= est <= float(hi):
             status = "warn" if status == "pass" else status
             msgs.append(f"The fitted divergence {est:g} lies in the interval {float(lo):g}-{float(hi):g} where no "
@@ -170,8 +170,26 @@ def protocol_independence(claim: Dict) -> Dict:
         if w.get("at_fit_bound"):
             status = "fail"
             msgs.append("The fitted divergence sits on a bound of the fit.")
+        bounded = w.get("parameters_at_bound")
+        if bounded:
+            status = "warn" if status == "pass" else status
+            msgs.append(f"Fit parameters on their bounds: {', '.join(bounded)}; the data do not fix them.")
         prof = w.get("profile")
-        if prof:
+        if prof and w.get("profile_kind") == "neg_log_likelihood":
+            # profile likelihood: values within 1.92 of the minimum form the approximate 95 % range
+            vals = [float(v) for _, v in prof]
+            span = [float(t) for t, _ in prof]
+            vmin = min(vals)
+            ok = [t for t, v in zip(span, vals) if v - vmin <= 1.92]
+            rise = max(vals) - vmin
+            if ok and (max(ok) - min(ok)) > 0.5 * (max(span) - min(span)):
+                status = "fail"
+                msgs.append(f"The negative log likelihood rises by only {rise:.2g} over divergence points from "
+                            f"{min(span):g} to {max(span):g}, and the approximate 95 % range runs from {min(ok):g} to "
+                            f"{max(ok):g}; the data do not determine the divergence.")
+            else:
+                msgs.append(f"The approximate 95 % range of the divergence is {min(ok):g} to {max(ok):g}.")
+        elif prof:
             vals = [float(v) for _, v in prof]
             span = [float(t) for t, _ in prof]
             vmin = min(vals)
@@ -182,7 +200,9 @@ def protocol_independence(claim: Dict) -> Dict:
                             f"{min(ok):g} to {max(ok):g}; the data do not determine the divergence.")
         if w.get("alternative_without_divergence_fits"):
             status = "fail"
-            msgs.append("A form without any divergence at positive temperature fits the same data comparably.")
+            d = w.get("alternative_delta_aicc")
+            extra = f" (difference {float(d):.2g} in the corrected Akaike criterion)" if d is not None else ""
+            msgs.append(f"A form without any divergence at positive temperature fits the same data comparably{extra}.")
     return _result("protocol_independence", status, " ".join(msgs) if msgs else "Nothing to test.")
 
 

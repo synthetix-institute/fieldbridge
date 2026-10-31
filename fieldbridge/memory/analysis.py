@@ -160,7 +160,8 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     keep = [i for i, k in enumerate(spectra) if classify(k)["unstable"] == 0]
     states, counts, spectra = [states[i] for i in keep], [counts[i] for i in keep], [spectra[i] for i in keep]
     n_null = 0 if real.null_modes is None else len(np.atleast_2d(real.null_modes))
-    continuum = bool(len(states) >= max(6, int(conv.sum()) // 2)
+    # many flat states: starts on a circle of states also merge, so that fewer states than half of the starts remain
+    continuum = bool(len(states) >= max(6, int(conv.sum()) // 3)
                      and all(classify(k)["flat"] > n_null for k in spectra))
     return states, counts, spectra, int(np.sum(~conv)), continuum
 
@@ -907,6 +908,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         vec /= np.linalg.norm(vec)
         evl, L = np.linalg.eig(J.T)
         w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
+        if abs(np.dot(w, vec)) <= 1e-8 * np.linalg.norm(w):
+            # a degenerate eigenvalue: eig chooses the bases of the right and the left eigenspace independently, and
+            # the left vector of the same eigenvalue can be orthogonal to the right one (at the write point of the
+            # two-component model with the symmetry of a square, where the Jacobian is eps times the identity to
+            # rounding, it was for some seeds; the coefficients became NaN and the point read as a subcritical
+            # pitchfork with no critical direction). The row of R^-1 is the left vector dual to vec: one on it and
+            # zero on the other eigenvectors.
+            w = np.real(np.linalg.inv(R)[i])
         w = w / np.dot(w, vec)
     if half is None:
         half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8

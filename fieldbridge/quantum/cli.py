@@ -14,6 +14,10 @@
                                      the observable's closure rotates), the closed counterpart, the excess of the
                                      signal over it (spread and shift of its lines) and the check that every line
                                      lies in the closure spectrum (default: examples/quantum)
+  network [SPEC ...]                 evolve open networks of modes and multilevel systems with time-dependent
+                                     controls, losses and pulses through transmission lines; report the photons in
+                                     the output mode, those emitted into each line and those absorbed by each loss
+                                     (default: examples/quantum/network)
 
 Every command writes <name>.json and <name>.md to --out-dir, with the input hashes and the hash of the implementation.
 """
@@ -209,6 +213,30 @@ def cmd_write(args) -> int:
     return 0
 
 
+def cmd_network(args) -> int:
+    from . import network as qn
+    paths = [Path(p) for p in args.specs] or sorted(Path(args.examples).glob("*.json"))
+    rows, skipped, specs, md = [], [], [], []
+    for p in paths:
+        try:
+            net = qn.load(p)
+        except qn.SpecError as err:
+            skipped.append(f"{p.name}: {err}")
+            continue
+        specs.append(net.spec)
+        rep = qn.measure(net, samples=args.samples)
+        rows.append({"spec": p.name, **rep})
+        md.append(qn.markdown(rep))
+    out = Path(args.out_dir)
+    report = {"command": "quantum network", **_provenance(specs), "rows": rows, "skipped": skipped}
+    _write(out, "network", report, "\n".join(md) + f"\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "networks": len(rows),
+                      "efficiency": {r["spec"]: [p.get("efficiency") for p in r["ports"]] for r in rows},
+                      "budget_difference_max": max((abs(r["budget"]["difference"]) for r in rows), default=None),
+                      "skipped": len(skipped)}, indent=2))
+    return 0
+
+
 def cmd_closure(args) -> int:
     from . import closure as qc
     from . import language as ql
@@ -269,3 +297,9 @@ def add_parser(sub) -> None:
     p.add_argument("--out-dir", required=True)
     p.add_argument("--max-removed", type=int, default=None, help="Largest number of terms removed in the search for the index.")
     p.set_defaults(func=cmd_closure)
+    p = qsub.add_parser("network", help="Evolve open networks of modes and multilevel systems with pulses in and out.")
+    p.add_argument("specs", nargs="*", help="Specifications fieldbridge-quantum-network/1 (default: every file in --examples).")
+    p.add_argument("--examples", default="examples/quantum/network")
+    p.add_argument("--out-dir", required=True)
+    p.add_argument("--samples", type=int, default=200, help="Number of time samples recorded for the observables.")
+    p.set_defaults(func=cmd_network)

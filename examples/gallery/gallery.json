@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "69325807d8835023292133e2ae2dd2e710936d00ab599a470a68ea46c5c15239",
+  "implementation_sha256": "5512a030208f924b147091b0c3c0000ce1215d09c070f2fccc3740d5b6e0672a",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -172,6 +172,50 @@
     },
     {
       "id": "card14",
+      "name": "three strategies in cyclic dominance with mutation",
+      "verdict": {
+        "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+        "writes": "Hopf at mu = 0.0833",
+        "constructs": "Hopf bifurcation: the state oscillates and no stable state is selected; information is kept in the phase",
+        "holds": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
+        "lock": "-"
+      }
+    },
+    {
+      "id": "card15",
+      "name": "master sequence under mutation (quasispecies, single-peak landscape)",
+      "verdict": {
+        "stores": "1 stable state(s)",
+        "writes": "transcritical at q = 0.499",
+        "constructs": "differs from the pitchfork normal form by: quadratic a2",
+        "holds": "relaxation to a single state (Law 1); part of the trajectories do not settle (oscillation)",
+        "lock": "-"
+      }
+    },
+    {
+      "id": "card16",
+      "name": "population of phase oscillators (Kuramoto, Ott-Antonsen reduction)",
+      "verdict": {
+        "stores": "a continuum of neutral states (zero mode)",
+        "writes": "degenerate critical mode at K = 1",
+        "constructs": "degenerate critical mode at K = 1: 2 directions become critical together, and the write chooses a direction in a 2-dimensional critical eigenspace, not one of two states of a pitchfork",
+        "holds": "a continuum of neutral states: diffusion along the flat directions (Law 2)",
+        "lock": "-"
+      }
+    },
+    {
+      "id": "card17",
+      "name": "spruce budworm outbreaks",
+      "verdict": {
+        "stores": "2 stable state(s)",
+        "writes": "saddle-node (fold) at k = 11.6; saddle-node (fold) at k = 6.6; a uniform field removes the stable state at h = 0.162",
+        "constructs": "differs from the pitchfork normal form by: bias per unit control; quadratic a2",
+        "holds": "activation between stored states (Law 3)",
+        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.88, retention/rewriting time ratio > 7.27; field 0.4 x threshold, control swept through the write point: accuracy 0.00, not rewritten"
+      }
+    },
+    {
+      "id": "card18",
       "name": "ring of 3 repressors",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -182,7 +226,7 @@
       }
     },
     {
-      "id": "card15",
+      "id": "card19",
       "name": "ring of 4 repressors",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -193,7 +237,7 @@
       }
     },
     {
-      "id": "card16",
+      "id": "card20",
       "name": "Schl\u00f6gl reactor",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -204,7 +248,7 @@
       }
     },
     {
-      "id": "card17",
+      "id": "card21",
       "name": "Schl\u00f6gl reactor swept through its cusp",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -215,7 +259,7 @@
       }
     },
     {
-      "id": "card18",
+      "id": "card22",
       "name": "Stoner-Wohlfarth particle",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -226,7 +270,7 @@
       }
     },
     {
-      "id": "card19",
+      "id": "card23",
       "name": "genetic toggle switch",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -237,7 +281,7 @@
       }
     },
     {
-      "id": "card20",
+      "id": "card24",
       "name": "genetic toggle, unequal promoters",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -248,7 +292,7 @@
       }
     },
     {
-      "id": "card21",
+      "id": "card25",
       "name": "adaptive transport network, two tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -259,7 +303,7 @@
       }
     },
     {
-      "id": "card22",
+      "id": "card26",
       "name": "adaptive transport network, unequal tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -270,7 +314,7 @@
       }
     },
     {
-      "id": "card23",
+      "id": "card27",
       "name": "two-component normal form with the symmetry of a square",
       "verdict": {
         "stores": "4 stable state(s)",
@@ -281,7 +325,7 @@
       }
     },
     {
-      "id": "card24",
+      "id": "card28",
       "name": "independent pores filled by capillary condensation",
       "verdict": {
         "stores": "400 elements with two states each",
@@ -292,7 +336,7 @@
       }
     },
     {
-      "id": "card25",
+      "id": "card29",
       "name": "random-field Ising antiferromagnetic chain",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -303,7 +347,7 @@
       }
     },
     {
-      "id": "card26",
+      "id": "card30",
       "name": "random-field Ising antiferromagnet in a uniform field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -314,7 +358,7 @@
       }
     },
     {
-      "id": "card27",
+      "id": "card31",
       "name": "random-field Ising antiferromagnet in a staggered field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -325,7 +369,7 @@
       }
     },
     {
-      "id": "card28",
+      "id": "card32",
       "name": "random-field Ising ferromagnet",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -336,7 +380,7 @@
       }
     },
     {
-      "id": "card29",
+      "id": "card33",
       "name": "soft spots of an amorphous solid under shear",
       "verdict": {
         "stores": "144 elements with two states each",

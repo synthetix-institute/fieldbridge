@@ -1,0 +1,43 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Over which range of forest capacity do a low and an outbreak population of budworm coexist, and how is an outbreak triggered?",
+  "provenance": {
+    "source": "D. Ludwig, D. D. Jones and C. S. Holling, J. Anim. Ecol. 47, 315 (1978)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "ecology",
+  "kind": "equations",
+  "name": "spruce budworm outbreaks",
+  "carrier": {
+    "kind": "orthant",
+    "name": "budworm density u in units of the density at which predation saturates",
+    "variables": [
+      "u"
+    ],
+    "scale": 8.0
+  },
+  "parameters": {
+    "r": 0.55,
+    "k": 8.0
+  },
+  "drift": {
+    "u": "r*u*(1 - u/k) - u**2/(1 + u**2)"
+  },
+  "control": {
+    "name": "k",
+    "range": [
+      3.0,
+      20.0
+    ]
+  },
+  "noise": 0.01,
+  "closure": "logistic growth with predation by birds that saturates; the forest changes slowly and enters as the fixed capacity k; fluctuations of the population enter as noise",
+  "observable": "the budworm density",
+  "assumptions": [
+    "the dimensionless form of the equation",
+    "the values r = 0.55 and k = 8, inside the bistable range, and the noise intensity are chosen for the example"
+  ],
+  "material": [],
+  "dt": 0.01
+}

@@ -14,7 +14,6 @@ before writing the specification: the parameter values must be those of the pape
 | mechanics | Driven Duffing oscillator, written as the averaged (slow-flow) equations of amplitude and phase | G. Duffing, *Erzwungene Schwingungen bei veränderlicher Eigenfrequenz* (Vieweg, 1918) | jumps between two response amplitudes when the drive frequency is swept |
 | climate | Stommel's two-box model of the thermohaline circulation | H. Stommel, Tellus 13, 224 (1961) | two circulation states and hysteresis under freshwater forcing |
 | climate | Budyko energy-balance model with ice–albedo feedback | M. I. Budyko, Tellus 21, 611 (1969) | an ice-covered and an ice-free climate for the same forcing |
-| ecology | Spruce budworm outbreaks | D. Ludwig, D. D. Jones and C. S. Holling, J. Anim. Ecol. 47, 315 (1978) | an outbreak threshold and hysteresis of the population |
 | cell biology | Lac operon induction | E. M. Ozbudak, M. Thattai, H. N. Lim, B. I. Shraiman and A. van Oudenaarden, Nature 427, 737 (2004) | bistable induction and memory of the inducer history |
 | cell biology | Cdc2–cyclin B mitotic switch | J. R. Pomerening, E. D. Sontag and J. E. Ferrell, Nat. Cell Biol. 5, 346 (2003) | hysteresis of mitotic entry |
 | neuroscience | Wilson–Cowan excitatory and inhibitory populations | H. R. Wilson and J. D. Cowan, Biophys. J. 12, 1 (1972) | coexisting activity states and oscillations |

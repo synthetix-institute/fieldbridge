@@ -162,11 +162,22 @@ trajectories of the certificate.
 | Two equal tubes | positive cubic | 1.36, +0.02 | 1.30, 0.00 |
 | Schlögl reactor, lower write point | fold | 1.33, 0.00 | 1.35, +0.03 |
 | Toggle, unequal promoters | fold | 1.33, −0.01 | 1.34, −0.01 |
-| Two-component square model | two critical directions | four-state table | largest deviation 0.020 over 8 bias directions |
+| Two-component square model | two critical directions | four-state table | largest deviation 0.026 over 8 bias directions |
 
 The subcritical tubes, which stop the derivation of Section 4, have a write law: the choice is made in the linear
 stage, and the positive cubic only decides where the state jumps. For the square model the law gives the
 probabilities of all four written states for a bias in any direction of the critical plane.
+
+The row of the square model is given by
+`python3 -B -m fieldbridge memory complete examples/memory/two_component_square.json --floors 1 --trajectories 4000 --out-dir build/complete_square`
+with the default seed, 20260923, in about three minutes; the command of the list above, with biases of 0.5, 1 and 2
+noise floors and 2,000 trajectories, gives the same largest deviation, 0.026, over its 24 biases. A deviation of this
+size is the sampling error of the law and of the certificate, about 0.01 for each probability, and its value changes
+with the seed. It changes for a second reason as well: the noise is set by the cubic coefficient along one direction
+of the critical plane, the direction the eigensolver happens to return, so that seed 0, which returns a diagonal, runs
+at about half the noise of the default seed, which returns an axis. With seed 3 and the default settings the largest
+deviation is 0.033, and one of the 96 probabilities differs from the law by 4.2 errors of the certificate, so that the
+law is reported as not certified.
 
 **When the certificate fails.** A law that the full dynamics does not follow can fail for two reasons, and the rung
 tells them apart by continuing the certificate's final states at the end value of the control for as long as the sweep

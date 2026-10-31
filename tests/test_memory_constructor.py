@@ -223,6 +223,24 @@ def test_schlogl_cusp_removes_the_one_sided_write():
     assert c["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
 
 
+def test_the_sweep_through_the_cusp_is_a_pitchfork_with_a_quadratic_term_that_grows_with_s():
+    """On the implemented sweep, a + s and b - k3 s/3 through a = sqrt(3 k3), b = a^3/27, the deviation u from the
+    cusp concentration c = sqrt(k3/3) obeys exactly du/dt = 2 c s u + s u^2 - u^3: a pitchfork at the onset, with a
+    quadratic term that breaks the reflection u -> -u at every s other than zero. The specification carries the cusp
+    found numerically, which agrees with the closed form to 1e-10."""
+    import sympy as sp
+    data = json.loads((EX / "schlogl_cusp.json").read_text(encoding="utf-8"))
+    p = data["parameters"]
+    assert p["a"] == pytest.approx(math.sqrt(3 * p["k3"]), rel=1e-10)
+    assert p["b"] == pytest.approx(math.sqrt(3 * p["k3"]) ** 3 / 27, rel=1e-10)
+    k3 = sp.Symbol("k3", positive=True)
+    s, u = sp.symbols("s u", real=True)
+    a = sp.sqrt(3 * k3)
+    c = sp.sqrt(k3 / 3)
+    drift = sp.sympify(data["drift"]["x"], locals={"a": a, "b": a ** 3 / 27, "k3": k3, "s": s, "x": c + u})
+    assert sp.simplify(sp.expand(drift - (2 * c * s * u + s * u ** 2 - u ** 3))) == 0
+
+
 def test_unequal_tubes_are_cancelled_only_by_equal_lengths():
     from scipy.optimize import brentq
     mu_c = brentq(lambda m: m - 1 - 2 ** -m, 1.0, 2.0)
@@ -1227,10 +1245,11 @@ def test_a_bound_on_the_loss_rate_keeps_the_cusp_of_the_kerr_resonator_at_positi
     """The steady states depend on the loss rate only through kappa^2, so along kappa the two folds of the drive meet
     at two cusps, kappa = +-2 Delta/sqrt(3) with F = +-(|kappa|^3/(3 sqrt(3) U))^(1/2) and n = 2 Delta/(3 U) photons.
     Followed along kappa from the fold of the high branch (F = 2.218, carrier scale 4.5 as in bifurcation readout), the
-    fold reaches both; the one at negative loss ends nearer a2 = 0 and is returned, with a subcritical sweep. With
-    the loss declared non-negative, the fold is followed down to kappa = 0 and stops there, and the cusp at positive loss
-    is returned, with a supercritical sweep. With an upper bound below that cusp, no cusp is returned, and the cusp the
-    refinement converges to is reported as lying beyond the bound."""
+    fold reaches both. Which one ends nearer a2 = 0 is set by rounding (one direction steps across a2 = 0, the other
+    stalls just short of it), so the cusp reached by the smaller change of the loss is returned: the one at positive
+    loss, from kappa = 1, with a supercritical sweep. With the loss declared non-negative, the fold is followed down to
+    kappa = 0 and stops there, and the same cusp is returned. With an upper bound below that cusp, no cusp is
+    returned, and the cusp the refinement converges to is reported as lying beyond the bound."""
     unbounded = dict(JBA, carrier=dict(JBA["carrier"], scale=4.5))
     real = spec.load(unbounded)
     U, delta = JBA["parameters"]["U"], JBA["parameters"]["Delta"]
@@ -1239,8 +1258,9 @@ def test_a_bound_on_the_loss_rate_keeps_the_cusp_of_the_kerr_resonator_at_positi
     nf = _write_point(real, 2.218)
     assert nf["value"] == pytest.approx(2.2179, abs=1e-4) and nf["kind"].startswith("saddle-node")
     mirror = construct.cancel_asymmetry(real, nf, "kappa")
-    assert mirror["value"] == pytest.approx(-kappa_c, abs=1e-8) and mirror["control"] == pytest.approx(-f_c, abs=1e-8)
-    assert "bounds_reached" not in mirror and mirror["normal_form_along_sweep"]["kind"].startswith("subcritical")
+    assert mirror["value"] == pytest.approx(kappa_c, abs=1e-8) and mirror["control"] == pytest.approx(f_c, abs=1e-8)
+    assert "bounds_reached" not in mirror
+    assert mirror["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
     bounded = spec.load(dict(unbounded, bounds={"kappa": [0, None]}))
     assert bounded.bounds == {"kappa": (0.0, None)}
     c = construct.cancel_asymmetry(bounded, nf, "kappa")

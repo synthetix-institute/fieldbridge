@@ -199,15 +199,27 @@ def _fold_equations(real, param, second, h):
     return fold, a2_of
 
 
-def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops: Optional[List[Dict]] = None):
+CUSP_TIE = 1e-2  # |a2| relative to its start below which a direction counts as having reached a cusp
+
+
+def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops: Optional[List[Dict]] = None,
+                 bounded: bool = True):
     """Follow the write point (a fold) as the second parameter changes, in both directions, until its quadratic
     coefficient a2 changes sign or nearly vanishes. |a2| need not fall at the first step, so each direction is
     followed over its whole range before the directions are compared. Returns the point nearest the cusp.
 
+    Where both directions reach a cusp, that is, end with |a2| below CUSP_TIE times its value at the start, the
+    smaller |a2| decides nothing: next to a cusp the fold equations turn singular, so one direction can step across
+    a2 = 0 while the other stalls just short of it, and which ends nearer zero is set by the steps and by rounding.
+    This happens wherever the second parameter enters the steady states only through its square (a loss rate, a
+    detuning), which places two mirror cusps at +-p*. The cusp reached by the smaller change of the second parameter
+    from its starting value is then returned, and of two at equal distance the one at the larger value (for mirror
+    cusps, the non-negative parameter).
+
     The bounds of the realization are not crossed: a step past a bound of the second parameter is shortened to end on
     it, and the direction stops there; a direction also stops before a step that would take the control past its
     bound. Each direction that stops at a bound without a change of sign of a2 is appended to `stops`, with the last
-    point of the fold it reached."""
+    point of the fold it reached. With bounded=False the bounds are ignored."""
     from scipy.optimize import root
     fold, a2_of = _fold_equations(real, param, second, h)
     y = np.concatenate([np.asarray(q0, float), [v0]])
@@ -216,11 +228,12 @@ def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops
         a2_0, vec0 = a2_of(y[:n], {param: v0, second: p0})
     except np.linalg.LinAlgError:
         return None
-    lo, hi = domain(real, second)
-    c_lo, c_hi = domain(real, param)
+    lo, hi = domain(real, second) if bounded else (-np.inf, np.inf)
+    c_lo, c_hi = domain(real, param) if bounded else (-np.inf, np.inf)
     scale = max(abs(p0), 1.0)
-    best = None
+    ends = []
     for direction in (+1.0, -1.0):
+        best = None
         dp = 0.01 * scale * direction
         yy, pv, a2p, vref = y.copy(), p0, a2_0, vec0
         path = [(pv, float(yy[n]), a2p)]
@@ -270,7 +283,16 @@ def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops
             lower = stop["bound"] == (lo if stop["parameter"] == second else c_lo)
             stops.append({**stop, "side": "lower" if lower else "upper", "text": bound_text(real, stop["parameter"]),
                           second: float(pv), param: float(yy[n]), "state": yy[:n].tolist(), "a2": float(a2p)})
-    if best is not None and abs(best["a2"]) < 0.2 * abs(a2_0):
+        if best is not None:
+            ends.append(best)
+    if not ends:
+        return None
+    reached = [e for e in ends if abs(e["a2"]) < CUSP_TIE * abs(a2_0)]
+    if len(reached) > 1:
+        best = min(reached, key=lambda e: (abs(e["p"] - p0), -e["p"]))
+    else:
+        best = min(ends, key=lambda e: abs(e["a2"]))
+    if abs(best["a2"]) < 0.2 * abs(a2_0):
         return best
     return None
 
@@ -284,7 +306,12 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
 
     Where the realization bounds the second parameter or the control, the fold is not followed past the bound
     (bounds_reached lists where it stops) and a cusp outside the bounds is not returned: it is reported under
-    cusp_beyond_bound, and bound_note states why no cusp was found within the bounds."""
+    cusp_beyond_bound, and bound_note states why no cusp was found within the bounds. Where the fold stops at a bound
+    and the refinement from the write point finds no cusp beyond it, the fold is followed again with the bounds
+    ignored, so that a cusp beyond a bound is reported whatever the start at the write point converges to.
+
+    Where the fold reaches a cusp in both directions of the second parameter, the cusp nearer its starting value is
+    the one returned (_follow_fold states the rule)."""
     from scipy.optimize import least_squares, root
     param = nf["param"]
     q0 = np.asarray(nf["state"], float)
@@ -307,14 +334,14 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
 
     out: Dict[str, object] = {"second": second, "success": False}
     stops: List[Dict] = []
-    with np.errstate(all="ignore"):
-        followed = _follow_fold(real, param, second, q0, nf["value"], p0, h, stops=stops)
-        if stops:
-            out["bounds_reached"] = stops
+    (c_lo, c_hi), (lo, hi) = domain(real, param), domain(real, second)
+    lb = np.concatenate([np.full(n, 1e-9 if real.carrier.kind == "orthant" else -np.inf), [c_lo, lo]])
+    ub = np.concatenate([np.full(n, np.inf), [c_hi, hi]])
+
+    def starts_from(followed):
         starts = []
         if followed is not None:
             path = followed["path"]
-            out["fold_path"] = [{"second": a, "control": b, "a2": c} for a, b, c in path]
             y_end = np.asarray(followed["y"], float)
             if len(path) >= 3:
                 # continuation stalls where the fold equations turn singular, next to the cusp: extrapolate a2 -> 0
@@ -327,11 +354,9 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
             starts.append(np.concatenate([y_end, [followed["p"]]]))
             for a, b, _ in path[-4:-1][::-1]:
                 starts.append(np.concatenate([y_end[:n], [b, a]]))
-        starts.append(np.concatenate([q0, [nf["value"], p0]]))
-        (c_lo, c_hi), (lo, hi) = domain(real, param), domain(real, second)
-        lb = np.concatenate([np.full(n, 1e-9 if real.carrier.kind == "orthant" else -np.inf), [c_lo, lo]])
-        ub = np.concatenate([np.full(n, np.inf), [c_hi, hi]])
-        x = None
+        return starts
+
+    def refine(starts):
         for x0 in starts:
             for method in ("hybr", "lsq"):
                 try:
@@ -352,10 +377,21 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
                                                                              <= hi else param)})
                     ok = False
                 if ok:
-                    x = sol.x
-                    break
-            if x is not None:
-                break
+                    return sol.x
+        return None
+
+    with np.errstate(all="ignore"):
+        followed = _follow_fold(real, param, second, q0, nf["value"], p0, h, stops=stops)
+        if stops:
+            out["bounds_reached"] = stops
+        if followed is not None:
+            out["fold_path"] = [{"second": a, "control": b, "a2": c} for a, b, c in followed["path"]]
+        x = refine(starts_from(followed) + [np.concatenate([q0, [nf["value"], p0]])])
+        if x is None and stops and "cusp_beyond_bound" not in out:
+            # the fold stopped at a bound: follow it past the bound, to tell whether a cusp lies beyond it
+            past = _follow_fold(real, param, second, q0, nf["value"], p0, h, bounded=False)
+            if past is not None:
+                refine(starts_from(past))
     if x is None:
         beyond = out.get("cusp_beyond_bound")
         if beyond:

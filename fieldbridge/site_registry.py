@@ -249,6 +249,7 @@ START = "pitchfork"
 # specifications in these folders that no node names are added to the page automatically (site_data.auto_nodes):
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
+             "examples/memory/populations": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
              "examples/quantum/semiclassical": "dissipative",
              "examples/regulation": "regulation", "examples/computation": "computation", "examples/quantum/open": "open",
@@ -816,7 +817,11 @@ EDGES = [
              "b = 2.654, along the line on which b falls by 1.917 for every unit by which a rises. On this line the "
              "concentration 1.384 of the cusp remains a steady state, and at s = {write_point} it loses stability at "
              "a {write_kind}: {states_text} states appear together, and a weak bias selects the one that is written. "
-             "The one-sided write of the reactor has become a symmetric write."},
+             "The one-sided write of the reactor has become a symmetric write near the onset. The symmetry is that of "
+             "the onset along this sweep, not of the whole potential: in the deviation u from the cusp concentration "
+             "c = 1.384 the drift is exactly du/dt = 2cs u + s u<sup>2</sup> − u<sup>3</sup>, and its quadratic term, "
+             "which makes the two wells unequal at finite s, is smaller than the pitchfork terms near s = 0 by a factor "
+             "of order (s/2c)<sup>1/2</sup>."},
     {"id": "sw_oblique_to_toggle_unequal", "from": "sw_oblique", "to": "toggle_unequal", "slot": "Xi",
      "kind": "codiscovery", "target": "threshold-write", "change": "magnetization angle → two repressor concentrations",
      "text": "The one-sided write of the magnet in an oblique field and that of the toggle with unequal promoters "
@@ -835,7 +840,11 @@ EDGES = [
     {"id": "colloids_to_dipoles", "from": "colloid_patch", "to": "dipole_patch", "slot": "Xi", "kind": "attach",
      "change": "capillary rotors (period π) → point dipoles (period 2π)", "signature": {"changed": []},
      "text": "The memory of the caged rods is carried over to in-plane dipoles: the control only rescales the "
-             "energy in both, and a state is written by a uniform field and lost by activation."},
+             "energy in both, and a state is written by a uniform field and lost by activation. What the attachment "
+             "keeps are the entries of the memory signature that it compares, among them the reciprocal couplings, "
+             "the way a state is written, the class of its retention and the role of the control. It does not keep "
+             "the dynamics: the barriers, the retention times and the number of states are calculated for the dipoles "
+             "on their own."},
     # oscillators
     {"id": "ring3_is_clock", "from": "ring4_activation", "to": "repressilator", "slot": "Xi", "kind": "codiscovery",
      "change": "four genes → three genes",
@@ -1025,8 +1034,9 @@ SEQUENCES = [
          {"edge": "toggle_to_ring4"},
          {"edge": "ring4_activation_edit"},
      ]},
-    # moving a mechanism to another carrier (Module 5): a transfer that keeps the whole signature, then one that loses
-    # the symmetric write, the obstruction named by what the new carrier lacks, and its completion at a cusp
+    # moving a mechanism to another carrier (Module 5): a transfer that keeps every entry of the signature it compares,
+    # then one that loses the symmetric write, the obstruction named by what the new carrier lacks, its removal on the
+    # toggle by equal promoters, and its completion in the reactor at a cusp; eight steps, each a calculated change
     {"id": "transfer", "title": "Moving a mechanism to a new field",
      "steps": [
          {"node": "colloid_patch",
@@ -1041,10 +1051,13 @@ SEQUENCES = [
                   "is replaced: apolar rods, whose angles have period π, become polar dipoles, whose angles have period "
                   "2π. The material is replaced as well: the ratio of the reflecting to the aligning coupling, which for "
                   "the rods depends on the distance and has the median 1.25, is fixed at 3 for dipoles. Nothing fails: "
-                  "the whole memory signature is kept, with reciprocal couplings, a control that rescales the energy, "
-                  "discrete states written by a field and retained by activation, and no oscillation. The transfer "
-                  "predicts the mechanism but not the numbers, because the ratio of the couplings sets the energies and "
-                  "the barriers; the calculation for the dipoles finds {states_text} stable states."},
+                  "every entry of the memory signature that the attachment compares is the same for both carriers. The "
+                  "couplings are reciprocal, the control only rescales the energy, a state is written by a uniform "
+                  "field and retained by activation over a barrier, no oscillation is possible, and whether several "
+                  "states are stable is left open by the structure of both. What is kept is this list of properties, "
+                  "not the dynamics. The barriers, the retention times and the number of stable states depend on the "
+                  "ratio of the couplings and are calculated again for the dipoles, which have {states_text} stable "
+                  "states."},
          {"node": "toggle",
           "text": "A transfer can also fail, and the failure shows what the new carrier lacks. The genetic toggle "
                   "switch, two genes that repress each other, writes symmetrically: at α = {write_point} the state in "
@@ -1056,20 +1069,32 @@ SEQUENCES = [
           "text": "What the reactor lacks is the exchange symmetry, and its absence can be produced on the toggle "
                   "switch itself. With one promoter a quarter stronger than the other, the two genes are no longer "
                   "exchangeable, and the toggle writes one-sidedly at a fold, at α = {write_point}, as the reactor does "
-                  "along its feed rate. On the toggle the fold is removed by restoring the symmetry: with equal "
-                  "promoters the symmetric write returns."},
-         {"edge": "toggle_unequal_to_schlogl",
-          "text": "The reactor writes one-sidedly by the same fold, the first at b = {write_point}, but it has no "
-                  "symmetry to restore. A fold becomes a pitchfork at a cusp, a point reached by tuning a second "
-                  "parameter: lowering the autocatalytic feed a brings the two folds of the feed rate together until "
-                  "they meet, at a = 4.153 and b = 2.654."},
+                  "along its feed rate. At their thresholds both reduce to the same fold."},
+         {"edge": "toggle_promoters", "reverse": True,
+          "text": "On the toggle switch the fold is removed by restoring the symmetry. With equal promoters the two "
+                  "genes are exchangeable again, and at α = {write_point} the state in which both are expressed "
+                  "equally loses stability at a {write_kind}: the symmetric write returns. A fold becomes a pitchfork "
+                  "at a cusp, a point reached by tuning a second parameter; for the toggle switch the second parameter "
+                  "is the ratio of the promoters, and the cusp lies where the exchange symmetry is restored."},
+         {"edge": "toggle_to_schlogl",
+          "text": "Back in the reactor there is no symmetry to restore. The reactor writes one-sidedly at two folds of "
+                  "the feed rate b, the first at b = {write_point}, and its cusp has to be found by tuning: lowering "
+                  "the autocatalytic feed a brings the two folds together until they meet, at a = 4.153 and "
+                  "b = 2.654."},
          {"edge": "schlogl_cusp_sweep",
           "text": "The completed model sweeps the two feed rates together through the cusp, along the line on which b "
                   "falls by 1.917 for every unit by which a rises. At s = {write_point} the steady state loses "
                   "stability at a {write_kind}, {states_text} states appear together, and a weak bias selects the one "
-                  "that is written: the reactor now carries the symmetric write of the toggle switch. The law of this "
-                  "write, measured in simulated sweeps of the full model with a weak bias, has the constant {sym_law}, "
-                  "against π<sup>1/4</sup> = 1.331 for the pitchfork. The command "
+                  "that is written: the reactor now carries the symmetric write of the toggle switch. The symmetry "
+                  "belongs to this sweep and to the onset, not to the whole potential: with the concentration written "
+                  "as x = c + u, where c = (k<sub>3</sub>/3)<sup>1/2</sup> = 1.384 is the concentration at the cusp, "
+                  "the drift along the sweep is exactly du/dt = 2cs u + s u<sup>2</sup> − u<sup>3</sup>. Its "
+                  "quadratic term breaks the reflection u → −u at every s other than zero, so that the two wells at "
+                  "s = 0.5 are unequal, but near the onset, where the states lie at u ≈ ±(2cs)<sup>1/2</sup> and the "
+                  "choice is made, it is smaller than the other two terms by a factor of order "
+                  "(s/2c)<sup>1/2</sup>. The law of this write, measured in simulated sweeps of the full model with a "
+                  "weak bias, has the constant {sym_law}, against π<sup>1/4</sup> = 1.331 for the pitchfork. The "
+                  "command "
                   "<code>memory complete</code> finds the same completion for both folds of the reactor; the commands "
                   "of such a construction are listed under <a href=\"#contribute\">Adding a realization</a>, at the "
                   "bottom of the page."},

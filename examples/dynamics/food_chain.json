@@ -1,0 +1,51 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Does a three-species food chain forget its initial state at its largest Lyapunov exponent, as the predictability law states?",
+  "provenance": {
+    "source": "A. Hastings and T. Powell, Ecology 72, 896 (1991)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "ecology",
+  "kind": "equations",
+  "name": "three-species food chain (Hastings-Powell)",
+  "carrier": {
+    "kind": "orthant",
+    "name": "dimensionless densities of resource x, consumer y and predator z",
+    "variables": [
+      "x",
+      "y",
+      "z"
+    ],
+    "scale": 3.0
+  },
+  "parameters": {
+    "a1": 5.0,
+    "b1": 3.0,
+    "a2": 0.1,
+    "b2": 2.0,
+    "d1": 0.4,
+    "d2": 0.01
+  },
+  "drift": {
+    "x": "x*(1 - x) - a1*x*y/(1 + b1*x)",
+    "y": "a1*x*y/(1 + b1*x) - a2*y*z/(1 + b2*y) - d1*y",
+    "z": "a2*y*z/(1 + b2*y) - d2*z"
+  },
+  "control": {
+    "name": "b1",
+    "range": [
+      2.0,
+      3.2
+    ]
+  },
+  "noise": 0.0,
+  "closure": "well-mixed chain with a saturating functional response at both levels; no input from outside",
+  "observable": "the three densities",
+  "assumptions": [
+    "the parameter values of the paper, with b1 = 3",
+    "no noise"
+  ],
+  "dt": 0.01,
+  "id": "food_chain"
+}

@@ -262,27 +262,32 @@ def test_the_sequence_from_the_normal_form_reaches_seven_mechanisms(data_file, t
 
 def test_moving_a_mechanism_to_a_new_field_keeps_it_on_the_dipoles_and_completes_it_in_the_reactor(tmp_path):
     """The rods' memory is attached to dipoles and kept; the toggle switch's symmetric write, attached to the reactor,
-    becomes one-sided; the same fold appears on the toggle with unequal promoters, and the construction ends on the
-    reactor swept through its cusp, which writes symmetrically again."""
+    becomes one-sided; the same fold appears on the toggle with unequal promoters, equal promoters restore the
+    pitchfork as a change of its own, and the construction ends on the reactor swept through its cusp, which writes
+    symmetrically again near the onset."""
     only = ["colloid_patch", "dipole_patch", "toggle", "toggle_unequal", "schlogl", "schlogl_cusp"]
     data = sd.build(only=only, derive=False, strict=False, log=lambda *a: None)
     small = sd.write(data, tmp_path / "site" / "data.js")
-    got = scenario(small, [{"do": "sequence", "id": "transfer"}] + [{"do": "next"}] * 6, tmp_path)
+    got = scenario(small, [{"do": "sequence", "id": "transfer"}] + [{"do": "next"}] * 7, tmp_path)
     assert [g["node"] for g in got] == ["colloid_patch", "dipole_patch", "toggle", "schlogl", "toggle_unequal",
-                                         "schlogl", "schlogl_cusp"]
+                                         "toggle", "schlogl", "schlogl_cusp"]
     assert [g["mechanism"] for g in got] == ["write by a uniform field"] * 2 + [
         "symmetric write (supercritical pitchfork)", "one-sided write (fold)", "one-sided write (fold)",
-        "one-sided write (fold)", "symmetric write (supercritical pitchfork)"]
-    assert got[0]["sequence"].startswith("1 / 7.") and "keeping its operation and replacing its carrier" in got[0]["sequence"]
-    assert "Nothing fails" in got[1]["sequence"]
+        "symmetric write (supercritical pitchfork)", "one-sided write (fold)", "symmetric write (supercritical pitchfork)"]
+    assert got[0]["sequence"].startswith("1 / 8.") and "keeping its operation and replacing its carrier" in got[0]["sequence"]
+    # what the attachment keeps is the list of signature entries it compares, not the dynamics
+    assert "Nothing fails" in got[1]["sequence"] and "not the dynamics" in got[1]["sequence"]
     assert "no exchange symmetry" in got[3]["sequence"] and "b = 1.49" in got[3]["sequence"]
-    assert "a = 4.153 and b = 2.654" in got[5]["sequence"]
-    assert got[-1]["sequence"].startswith("7 / 7.") and "At s = 0 the steady state loses stability at a supercritical" \
+    assert "equal promoters" in got[5]["sequence"] and "supercritical pitchfork: the symmetric write returns" \
+        in got[5]["sequence"]
+    assert "no symmetry to restore" in got[6]["sequence"] and "a = 4.153 and b = 2.654" in got[6]["sequence"]
+    assert got[-1]["sequence"].startswith("8 / 8.") and "At s = 0 the steady state loses stability at a supercritical" \
         " pitchfork, two states appear together" in got[-1]["sequence"]
+    assert "not to the whole potential" in got[-1]["sequence"]
     # outside the construction the attachments are cards of the carrier, and the sweep a card of the protocol
     assert "one concentration in a reactor" in got[2]["changes"]
     assert "point dipoles (period 2π)change of one component" in got[0]["changes"]   # no longer a co-discovery
-    assert "sweep of b → sweep of a and b through the cusp" in got[5]["changes"]
+    assert "sweep of b → sweep of a and b through the cusp" in got[6]["changes"]
 
 
 def test_a_realization_is_reached_by_the_shortest_path_of_changes(data_file, tmp_path):
