@@ -157,3 +157,24 @@ The certified control ran on the corrected code. Its first run stalled on one la
   and `tests/test_repair_loop.py` skips without the two modules, and gives 31 passed with the read-only copy in place.
 - **When the two modules land:** the locale test will fail on their own reads, at `learning.py:530`, `:535` and
   `repair_families.py:165`, `:182` of the copy, until these take an explicit encoding.
+
+## The campaign set moves with the records
+
+The campaign read the stored records of 2026-10-23, which predate commits before a06823f. The regenerated records on the series branch
+(b4f8c15, not on main on 2026-10-31) give 20 failed laws in the two classes, 17 nonlinear-stage and 3 equilibrium-write, in place of
+9 and 4. All five verified laws stay in the set. This is a comparison of the two files and the rows already run, not a new campaign.
+
+| Law | Stored records | Series records | Row already run, at the frozen rule |
+|---|---|---|---|
+| `kerr_cat_kpo` 0, `kpo_pair` 0 | failed, equilibrium write | certified, linear stage | insufficient excitation, both |
+| `optomech_bistable` 0 | failed, nonlinear stage | failed, equilibrium write | no order passes development |
+| `rfsquid_pair` 0 | certified, linear stage | failed, nonlinear stage | verified at radius 0.125 |
+| `pplo_oscillator` 0 | certified, linear stage | failed, nonlinear stage | insufficient excitation |
+| `cim_pair` 2 | certified, linear stage | failed, nonlinear stage | no order passes development |
+| `phase_qubit_rfsquid` 0, 1 | certified, linear stage | failed, nonlinear stage | none |
+| `rfsquid_triangle` 0 | certified, linear stage | failed, nonlinear stage | none |
+| `kpo_triangle` 0, 1, 2 | not derived | failed, nonlinear stage | none |
+
+On the rows already run, 6 of the 14 laws of the new set that have a row are verified, and 6 laws have no row. The certified control
+loses `rfsquid_pair` 0, `pplo_oscillator` 0 and `cim_pair` 2. The count of 5 of 13 therefore holds for the stored records only, and a
+count on the new set needs the series branch on main, followed by a campaign with fresh libraries.
