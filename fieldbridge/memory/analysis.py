@@ -24,7 +24,7 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from math import sqrt
 import numpy as np
@@ -837,6 +837,70 @@ def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: f
     return cand[np.abs(ev.real[cand]) <= tol]
 
 
+def _relaxes_on_a_side(real: Realization, q: np.ndarray, param: str, v: float, width: float, scale: float) -> bool:
+    """Whether the state continues to one side of v along the control as a state with no growing direction and at
+    least one relaxing direction, within a tenth of the base length."""
+    lo, hi = real.control_range if real.control_range is not None else (-np.inf, np.inf)
+    for w in (v - 0.01 * width, v + 0.01 * width):
+        if not lo <= w <= hi:
+            continue
+        over = {param: w}
+        qn, ok = newton(real, q, over)
+        if not ok or real.carrier.distance(q, qn) > 0.1 * base_length(real):
+            continue
+        re = np.linalg.eigvals(jacobian(real, qn, over)).real
+        if re.max() <= 1e-7 * scale and re.min() < -1e-7 * scale:
+            return True
+    return False
+
+
+def _on_one_family(real: Realization, a: np.ndarray, b: np.ndarray, over: Dict, nodes: int = 24) -> bool:
+    """Whether two states at the same control are joined by a connected set of equilibria: the nodes of the straight
+    path between them, each corrected by Newton (minimal norm, so a node already on the set stays), stay equilibria and
+    keep their spacing. Mirror images have an unstable or isolated state between them, and the nodes jump."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    d = b - a
+    if real.carrier.kind == "torus":
+        d = (d + real.carrier.period / 2) % real.carrier.period - real.carrier.period / 2
+    step = float(np.linalg.norm(d)) / (nodes - 1)
+    last = a
+    for t in np.linspace(0.0, 1.0, nodes)[1:]:
+        q, ok = newton(real, a + t * d, over)
+        if not ok or real.carrier.distance(last, q) > 3 * step + 1e-9:
+            return False
+        last = q
+    return True
+
+
+def distinct_write_points(real: Realization, events: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """The events of locate_writes that are distinct places where a state loses stability, and those set aside.
+
+    A state with no relaxing direction that does not continue along the control as a state with one is set aside: at
+    the ends of the control range of a dissipationless free top the drift vanishes on a whole plane, nothing there
+    is stable, and nothing loses stability. Random starts sample a continuum of equilibria at one control value many
+    times; the samples count as one event, which keeps the number of them as `samples`."""
+    param = real.control
+    width = abs(real.control_range[1] - real.control_range[0]) if real.control_range is not None else 1.0
+    kept: List[Dict] = []
+    aside: List[Dict] = []
+    for ev in events:
+        q, v = np.asarray(ev["q"], float), float(ev["v"])
+        over = {param: v}
+        spectrum = np.linalg.eigvals(jacobian(real, q, over))
+        re = spectrum.real
+        scale = max(1e-12, float(np.abs(spectrum).max()))
+        if re.min() >= -1e-7 * scale and not _relaxes_on_a_side(real, q, param, v, width, scale):
+            aside.append({**ev, "reason": "no relaxing direction on either side of the control value"})
+            continue
+        for e in kept:
+            if abs(float(e["v"]) - v) < WRITE_RESOLUTION * width and _on_one_family(real, np.asarray(e["q"], float), q, over):
+                e["samples"] = int(e.get("samples", 1)) + 1
+                break
+        else:
+            kept.append(dict(ev))
+    return kept, aside
+
+
 def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: Optional[Dict] = None,
                 npts: int = 41, half: Optional[float] = None) -> Dict[str, object]:
     """Reduce the drift at a write point to one coordinate s along the critical direction:
@@ -951,9 +1015,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     bias = abs(bias_along) / (abs(bias_along) + abs(growth) * half + 1e-300)
     quad, cub = abs(a2) * half ** 2, abs(a3) * half ** 3
     asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * half else 0.0
-    crit = critical(growth)
+    # at a fold the control pushes along the critical direction and the eigenvalue goes as the square root of the
+    # distance from the point: the growth along the branch diverges, is no rate of crossing, and took in every eigenvalue
+    # of a cavity magnon and of a phase qubit. There the rate is the part that does not follow the state.
+    fold = asym > 0.1 and abs(bias_along) > max(0.1 * abs(growth_partial) * half, 1e-9 * scale)
+    crossing = growth_partial if fold else growth
+    crit = critical(crossing)
     k = crit["critical_dimension"]
-    crit.update(slow_spectrum(ev, cand, lam, growth, WRITE_RESOLUTION * width, scale, J, R))
+    crit.update(slow_spectrum(ev, cand, lam, crossing, WRITE_RESOLUTION * width, scale, J, R))
     if k > 1:
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
                 f"{k}-dimensional, not a line")
@@ -967,7 +1036,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
             out["leading_term"] = lead
             kind = (f"degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along "
                     f"the critical direction is of order {lead['order']}")
-    elif bias > 0.1 and asym > 0.1:
+    elif asym > 0.1 and (fold or bias > 0.1):
         kind = "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold"
     elif asym > 0.1:
         kind = "transcritical: two states exchange stability; the write is one-sided"

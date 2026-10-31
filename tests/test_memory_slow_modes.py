@@ -6,6 +6,7 @@ rates by 0.018 against a passage scale of 0.14 and the one-dimensional law then 
 from __future__ import annotations
 
 import json
+import math
 from math import sqrt
 from pathlib import Path
 
@@ -74,3 +75,43 @@ def test_the_completion_law_uses_the_dynamical_dimension_and_reports_both():
     finally:
         cmod.SLOW_FACTOR = saved
     assert one["dynamical_critical_dimension"] == 1 and "slow_modes" not in one and "one_direction" in one
+
+
+DRIFT = {"schema": "fieldbridge-memory/1", "kind": "equations", "name": "t", "question": "q", "assumptions": ["a"],
+         "closure": "c", "observable": "o", "provenance": {"origin": "test"}, "noise": 0.01}
+
+
+def _model(variables, drift, parameters, control, scale=1.0):
+    return mspec.load({**DRIFT, "carrier": {"kind": "euclid", "name": "x", "variables": variables, "scale": scale},
+                      "drift": drift, "parameters": parameters, "control": control,
+                      "material": [k for k in parameters if k != control["name"]]})
+
+
+def test_a_fold_has_one_critical_direction_and_is_not_read_as_transcritical():
+    """A washboard of a phase qubit folds where cos(ph) = -ell. The eigenvalue goes as a square root of the distance
+    from the fold, and the other, of rate gam, is not critical."""
+    ell, gam = 0.1, 0.2
+    real = _model(["ph", "v"], {"ph": "v", "v": "-gam*v - ell*(ph - phe) - sin(ph)"},
+                  {"ell": ell, "gam": gam, "phe": 0.0}, {"name": "phe", "range": [0.0, 8.0]}, scale=15)
+    ph = 4 * math.pi - math.acos(-ell)
+    phe = ph + math.sin(ph) / ell
+    nf = an.normal_form(real, np.array([ph - 1e-3, 0.0]), "phe", phe)
+    assert nf["critical_dimension"] == 1
+    assert nf["kind"].startswith("saddle-node")
+
+
+def test_a_plane_of_equilibria_of_a_dissipationless_top_gives_no_write_point():
+    real = _model(["x", "y", "z"], {"x": "2*y*z*(C-B)", "y": "-2*x*z*(C-A)", "z": "2*x*y*(B-A)"},
+                  {"A": 9.3, "B": 14.5, "C": 27.9}, {"name": "B", "range": [9.3, 27.9]})
+    events = [{"v": 9.3, "q": np.array([-0.576, 0.374, 0.0])}, {"v": 9.3, "q": np.array([0.207, 0.446, 0.0])}]
+    kept, aside = an.distinct_write_points(real, events)
+    assert kept == [] and len(aside) == 2
+
+
+def test_samples_of_a_line_of_states_count_once_and_mirror_states_twice():
+    line = _model(["ph", "r"], {"ph": "f*sin(ph)", "r": "-r"}, {"f": 0.0}, {"name": "f", "range": [0.0, 2.0]})
+    kept, aside = an.distinct_write_points(line, [{"v": 0.0, "q": np.array([p, 0.0])} for p in (0.5, 1.0, 2.0)])
+    assert len(kept) == 1 and kept[0]["samples"] == 3 and aside == []
+    mirror = _model(["x", "y"], {"x": "a*x - x**3", "y": "-y"}, {"a": 1.0}, {"name": "a", "range": [0.0, 2.0]})
+    kept, _ = an.distinct_write_points(mirror, [{"v": 1.0, "q": np.array([s, 0.0])} for s in (1.0, -1.0)])
+    assert len(kept) == 2
