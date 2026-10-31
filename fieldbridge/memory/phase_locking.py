@@ -60,6 +60,8 @@ SCAN_STARTS = 6  # random starts per scanned value (a stable state coexisting wi
 NEWTON_RESIDUAL = 1e-6   # above this (in units of the carrier scale) the stroboscopic Newton found no locked orbit
 CENTRE_MAX = 0.5         # the fitted centre of the locking range, in half-widths, beyond which the fit is not a measurement
 EXTRAPOLATION_MAX = 0.5  # the largest relative move of the half-width by the extrapolation to zero drive
+ANGLE_RTOL = 1e-13       # relative tolerance on an angle, so small that the absolute tolerance sets the local error
+ANGLE_DIFFERENCE = 1e-4  # step of the central differences of the stroboscopic map in an angle, in radians
 
 
 # ------------------------------------------------------------------------------------------------ integration
@@ -112,9 +114,13 @@ def _compiled(real: Realization) -> _Compiled:
 def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, dense: bool = False,
            rtol: float = 1e-10, atol: Optional[float] = None):
     """solve_ivp on the realization; drive = (name, p1, eps, omega_f) modulates a parameter as p1 + eps cos(omega_f t).
-    Angles are integrated without wrapping; the drift is periodic in them."""
+    Angles are integrated without wrapping; the drift is periodic in them. A relative tolerance on an angle would
+    loosen with its winding number, which depends on where a run began and has no physical meaning, so on a torus rtol
+    becomes an absolute tolerance in units of the radian."""
     from scipy.integrate import solve_ivp
     atol = 1e-12 * an.base_length(real) if atol is None else atol
+    if real.carrier.kind == "torus":
+        atol, rtol = max(atol, rtol * an.base_length(real)), ANGLE_RTOL
     c = _compiled(real)
     pv = c.values(over)
     if drive is None:
@@ -163,6 +169,12 @@ def _wrap_pi(x):
     return (np.asarray(x) + pi) % (2 * pi) - pi
 
 
+def _unwound(real: Realization, q) -> np.ndarray:
+    """A state of a rotating cycle with whole turns removed (each angle within half a period of zero). The turns are an
+    exact symmetry of the drift, and they would otherwise record how long the search for the cycle took."""
+    return (np.asarray(q, float) + 0.5 * real.carrier.period) % real.carrier.period - 0.5 * real.carrier.period
+
+
 # ------------------------------------------------------------------------------------------------ the cycle
 def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: float = 100.0,
                t_max: float = 3000.0) -> Optional[Dict[str, object]]:
@@ -186,6 +198,8 @@ def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: flo
                 states += [np.asarray(y, float) for y in sol.y_events[0]]
             silent = silent + 1 if ev is not None and sol.t_events[0].size == 0 else 0
             q, t = sol.y[:, -1], t + chunk
+            if sect is not None and sect[2]:
+                q = _unwound(real, q)
             if np.linalg.norm(real.F(q, **over)) < 1e-7 * f_ref:
                 break  # settled on a stable state
             Y = sol.y[:, sol.t >= 0.5 * chunk]
@@ -205,8 +219,8 @@ def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: flo
                 X = np.array(states[-6:])
                 dx = max(float(real.carrier.distance(X[k], X[-1])) for k in range(len(X) - 1))
                 if np.ptp(P) < 1e-6 * P[-1] and dx < 1e-5 * scale:
-                    return {"period": float(P[-1]), "state": X[-1], "coordinate": sect[0], "level": sect[1],
-                            "torus": bool(sect[2])}
+                    return {"period": float(P[-1]), "state": _unwound(real, X[-1]) if sect[2] else X[-1],
+                            "coordinate": sect[0], "level": sect[1], "torus": bool(sect[2])}
     return None
 
 
@@ -215,10 +229,14 @@ def refine_cycle(real: Realization, over: Dict, cyc: Dict) -> Dict[str, object]:
     scale = an.base_length(real)
     ev = _event(cyc["coordinate"], cyc["level"], cyc["torus"])
     T, x0 = float(cyc["period"]), np.asarray(cyc["state"], float)
+    if cyc["torus"]:
+        x0 = _unwound(real, x0)
     for _ in range(2):
         sol = _solve(real, over, (0.0, 1.5 * T), x0, events=ev, rtol=1e-12, atol=1e-14 * scale)
         k = next(i for i, te in enumerate(sol.t_events[0]) if te > 0.5 * T)
         T, x0 = float(sol.t_events[0][k]), np.asarray(sol.y_events[0][k], float)
+        if cyc["torus"]:
+            x0 = _unwound(real, x0)
     orbit = _solve(real, over, (0.0, T), x0, dense=True, rtol=1e-12, atol=1e-14 * scale)
     return {**cyc, "period": T, "omega": 2 * pi / T, "state": x0, "orbit": orbit.sol,
             "closure": float(real.carrier.distance(orbit.y[:, -1], x0)),
@@ -417,7 +435,10 @@ def locked_rate(real: Realization, over: Dict, cyc: Dict, name: str, n: int, eps
     drive = (name, p1, eps, wf)
     psi = (phi_n + np.arccos(-nu)) / n
     q = np.asarray(orbit((psi / w0) % T), float)
-    d, hq = q.size, 1e-6 * scale
+    # the central differences divide the error of the integrator by the step. An angle has no boundary, and its step can
+    # be as large as the curvature of the map allows; elsewhere a large step could leave the carrier near a small
+    # concentration
+    d, hq = q.size, (ANGLE_DIFFERENCE if real.carrier.kind == "torus" else 1e-6) * scale
 
     def P(y):
         return _solve(real, over, (0.0, Tm), y, drive=drive, rtol=1e-12, atol=1e-14 * scale).y[:, -1]
@@ -469,6 +490,8 @@ def slip_frequency(real: Realization, over: Dict, cyc: Dict, name: str, n: int, 
                 target += s * step
             psi_prev, t_prev = psi, float(te)
         q, t = sol.y[:, -1], float(sol.t[-1])
+        if cyc["torus"]:
+            q = _unwound(real, q)
     if len(hits) < 3:
         return {"nu": float(nu), "frequency": float("nan")}
     return {"nu": float(nu), "frequency": float(2 * step / (hits[2] - hits[0]))}
