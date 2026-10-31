@@ -1,0 +1,72 @@
+{
+  "command": "dynamics",
+  "implementation_sha256": "5512a030208f924b147091b0c3c0000ce1215d09c070f2fccc3740d5b6e0672a",
+  "versions": {
+    "python": "3.11.3",
+    "numpy": "1.26.0",
+    "scipy": "1.14.1",
+    "sympy": "1.12",
+    "matplotlib": "3.10.0"
+  },
+  "novelty_established": false,
+  "source_alignment_verified": false,
+  "evidence_boundary": "Calculated and structural statements about a supplied model. They do not establish that the model describes a physical system, and they do not establish novelty; both need comparison with experiment and with the literature.",
+  "question": "Does a three-species food chain forget its initial state at its largest Lyapunov exponent, as the predictability law states?",
+  "input_sha256": "66dd71e404b1cb20b25c25482458135f81c67aaff7916ccddce940563afcde1d",
+  "assumptions": [
+    "the parameter values of the paper, with b1 = 3",
+    "no noise"
+  ],
+  "provenance": {
+    "source": "A. Hastings and T. Powell, Ecology 72, 896 (1991)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "chaos": {
+    "starts": 6,
+    "escaped": 0,
+    "lyapunov": {
+      "lambda1": [
+        0.0073016512278462654,
+        0.006995308150868496,
+        0.006303975814603315,
+        0.006841733113647354,
+        0.007113215847059771,
+        0.007189919642834013
+      ],
+      "first_half": [
+        0.007545436429981512,
+        0.00621900810182038,
+        0.006457505059756464,
+        0.006311044487214705,
+        0.007705417991944374,
+        0.006935436907221127
+      ],
+      "median": 0.007054261998964134,
+      "spread": 0.0009976754132429502
+    },
+    "attractor_size": 3.033582931360458,
+    "chaotic": true,
+    "predictability": {
+      "deltas": [
+        1e-09,
+        1e-07,
+        1e-05,
+        0.001
+      ],
+      "times": [
+        2346.516874998156,
+        1566.033749998866,
+        886.8184374994835,
+        426.19531249988233
+      ],
+      "slope": 139.8467318230582,
+      "law": 0.9865154859787277
+    },
+    "law_holds": true,
+    "verdict": "chaotic: the initial state is lost at lambda_1 = 0.007054 (0.0102 bits per unit time); predictability slope x lambda_1 = 0.987"
+  },
+  "blowup": {
+    "verdict": "no start escapes during the transient of the chaos test"
+  }
+}

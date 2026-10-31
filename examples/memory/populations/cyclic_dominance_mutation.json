@@ -1,0 +1,47 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Below which mutation rate do three strategies in cyclic dominance stop coexisting at fixed frequencies and start to cycle?",
+  "provenance": {
+    "source": "J. Hofbauer and K. Sigmund, Evolutionary Games and Population Dynamics (Cambridge University Press, 1998); M. Mobilia, J. Theor. Biol. 264, 1 (2010)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "evolutionary dynamics",
+  "kind": "equations",
+  "name": "three strategies in cyclic dominance with mutation",
+  "carrier": {
+    "kind": "orthant",
+    "name": "frequencies x and y of two strategies; the third has frequency 1 - x - y",
+    "variables": [
+      "x",
+      "y"
+    ],
+    "scale": 0.4
+  },
+  "parameters": {
+    "a": 1.0,
+    "b": 1.5,
+    "mu": 0.05
+  },
+  "drift": {
+    "x": "x*(a*y - b*(1 - x - y) - (a - b)*(x*y + y*(1 - x - y) + (1 - x - y)*x)) + mu*(1/3 - x)",
+    "y": "y*(a*(1 - x - y) - b*x - (a - b)*(x*y + y*(1 - x - y) + (1 - x - y)*x)) + mu*(1/3 - y)"
+  },
+  "control": {
+    "name": "mu",
+    "range": [
+      0.01,
+      0.3
+    ]
+  },
+  "noise": 0.002,
+  "closure": "well-mixed population of constant size, so that the frequencies sum to one; sampling in a finite population enters as noise",
+  "observable": "the frequencies of the three strategies",
+  "assumptions": [
+    "replicator dynamics with payoff a for a win, -b for a loss and 0 for a draw",
+    "mutation at rate mu to a strategy drawn uniformly",
+    "the values a = 1, b = 1.5 and the noise intensity are chosen for the example"
+  ],
+  "material": [],
+  "dt": 0.01
+}

@@ -512,7 +512,7 @@ def cmd_dynamics(args) -> int:
     spec = json.loads(Path(args.spec).read_text(encoding="utf-8"))
     real = load(spec)
     rng = np.random.default_rng(args.seed)
-    ch = cb.chaos(real, rng, starts=args.starts)
+    ch = cb.chaos(real, rng, starts=args.starts, transient=args.transient, T=args.time, dt=args.dt)
     # the blow-up test integrates each start until it escapes; it runs when a start escaped in the transient
     bu = (cb.blowup(real, rng, starts=args.starts) if ch.get("escaped")
           else {"verdict": "no start escapes during the transient of the chaos test"})
@@ -1305,6 +1305,10 @@ def add_parser(sub) -> None:
                                          "finite time (exponent from the dominant balance).")
     common(p)
     p.add_argument("--starts", type=int, default=6, help="Random starts for each test.")
+    p.add_argument("--transient", type=float, default=300.0, help="Time before the exponent is measured.")
+    p.add_argument("--time", type=float, default=1500.0,
+                   help="Length of the run that measures the exponent; a slow system needs ten e-foldings within it.")
+    p.add_argument("--dt", type=float, default=None, help="Integration step (default: the smaller of 0.01 and dt of the file).")
     p.set_defaults(func=cmd_dynamics)
     p = msub.add_parser("field", help="Memory in a field: conservation and dimension set the law of loss.")
     common(p, spec_arg=False)

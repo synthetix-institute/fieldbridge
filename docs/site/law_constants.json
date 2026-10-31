@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "3540707cf0a8f77ff7ca6c3853c02225efe1378c0804c0fcd6c1f86f61df1cc5",
+ "implementation_sha256": "d7cf993ef5cedc413a1afe8417821e6ad0a20a9902e9ba65e7e14a53a9aec415",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -1315,6 +1315,16 @@
     "constant": 1.0115057993219034,
     "expected": 1.018792971647471,
     "stderr": 0.032811487480786106,
+    "word": "CRKL"
+   }
+  },
+  "spruce_budworm": {
+   "spec_sha256": "d8b6fc1023d1e71cfb3ba4c30dfd53e85562884f1b44ea2449e78f3d37ea9d38",
+   "threshold-write": {
+    "class": "C R(fold) K L",
+    "constant": 1.018790511416231,
+    "expected": 1.018792971647471,
+    "stderr": 2.205481293082734e-05,
     "word": "CRKL"
    }
   },

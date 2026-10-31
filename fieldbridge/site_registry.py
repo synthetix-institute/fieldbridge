@@ -249,6 +249,7 @@ START = "pitchfork"
 # specifications in these folders that no node names are added to the page automatically (site_data.auto_nodes):
 # a contributed material appears in the column of its mechanism, joined to a realization of the same mechanism
 AUTO_DIRS = {"examples/quantum": "unitary", "examples/memory": "dissipative", "examples/memory/oscillators": "dissipative",
+             "examples/memory/populations": "dissipative",
              "examples/memory/fields": "field", "examples/memory/hysterons": "hysterons",
              "examples/quantum/semiclassical": "dissipative",
              "examples/regulation": "regulation", "examples/computation": "computation", "examples/quantum/open": "open",

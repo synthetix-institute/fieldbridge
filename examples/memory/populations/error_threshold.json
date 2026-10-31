@@ -1,0 +1,44 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "At which copying fidelity does a population lose its fittest genotype?",
+  "provenance": {
+    "source": "M. Eigen, Naturwissenschaften 58, 465 (1971)",
+    "kind": "authored example",
+    "contributor": "Vladimir Baulin"
+  },
+  "field": "molecular evolution",
+  "kind": "equations",
+  "name": "master sequence under mutation (quasispecies, single-peak landscape)",
+  "carrier": {
+    "kind": "euclid",
+    "name": "frequency x of the master sequence; negative x lies outside the physical range and is kept so that the exchange of stability at x = 0 can be followed",
+    "variables": [
+      "x"
+    ],
+    "scale": 1.0
+  },
+  "parameters": {
+    "f0": 2.0,
+    "q": 0.8
+  },
+  "drift": {
+    "x": "x*(f0*q - 1 - (f0 - 1)*x)"
+  },
+  "control": {
+    "name": "q",
+    "range": [
+      0.2,
+      1.0
+    ]
+  },
+  "noise": 0.002,
+  "closure": "single-peak fitness landscape and constant population; mutants do not mutate back to the master sequence",
+  "observable": "the frequency of the master sequence",
+  "assumptions": [
+    "master fitness f0 and mutant fitness 1",
+    "copying fidelity q of the whole genome",
+    "the value f0 = 2 and the noise intensity are chosen for the example"
+  ],
+  "material": [],
+  "dt": 0.01
+}
