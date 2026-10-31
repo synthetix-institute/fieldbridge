@@ -33,11 +33,13 @@ OUT = HERE / "results"
 class Calc:
     """Energy and gradient with the density of the previous point as the starting guess."""
 
-    def __init__(self, entry):
+    def __init__(self, entry, grid=(99, 590), tol=1e-10):
         self.entry = entry
         self.elements = ELEMENTS[entry]
         self.dm = None
         self.calls = 0
+        self.grid = grid
+        self.tol = tol
 
     def __call__(self, x_bohr):
         from gpu4pyscf.dft import uks
@@ -46,8 +48,8 @@ class Calc:
         mol = gto.M(atom=atom, unit="Bohr", basis="def2-svp", spin=1, charge=0, verbose=0)
         mf = uks.UKS(mol, xc="b3lyp").density_fit()
         mf.disp = "d3bj"
-        mf.grids.atom_grid = (99, 590)
-        mf.conv_tol = 1e-10
+        mf.grids.atom_grid = self.grid
+        mf.conv_tol = self.tol
         ms = mf.SMD()
         ms.with_solvent.solvent = "1,4-dioxane"
         ms.with_solvent.lebedev_order = 29
@@ -60,6 +62,24 @@ class Calc:
         g = ms.nuc_grad_method().kernel()
         self.calls += 1
         return float(e), np.asarray(g).ravel()
+
+    def energy(self, x_bohr):
+        """The energy alone, for a geometry whose forces are not needed."""
+        from gpu4pyscf.dft import uks
+        from pyscf import gto
+        atom = [(e, tuple(r)) for e, r in zip(self.elements, np.asarray(x_bohr).reshape(-1, 3))]
+        mol = gto.M(atom=atom, unit="Bohr", basis="def2-svp", spin=1, charge=0, verbose=0)
+        mf = uks.UKS(mol, xc="b3lyp").density_fit()
+        mf.disp = "d3bj"
+        mf.grids.atom_grid = self.grid
+        mf.conv_tol = self.tol
+        ms = mf.SMD()
+        ms.with_solvent.solvent = "1,4-dioxane"
+        ms.with_solvent.lebedev_order = 29
+        e = ms.kernel()
+        if not ms.converged:
+            raise RuntimeError("SCF not converged")
+        return float(e)
 
 
 def masses(entry):
