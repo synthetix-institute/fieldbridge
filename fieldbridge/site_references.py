@@ -329,7 +329,7 @@ READING: Dict[str, Dict] = {
         "derived": [("Module 4, §1.1–1.2", "the normal form and the law of the swept write, with its derivation",
                      M4 + "#12-swept-writes"),
                     ("Module 9", "the same canonical form and law constant in models from different fields",
-                     T + "23_memory_codiscovery.md#4-four-classes-of-derivation")],
+                     T + "23_memory_codiscovery.md#4-five-classes-of-derivation")],
         "code": "memory.analysis.normal_form, construct.swept_write_check, codiscovery.derive_symmetric_write",
         "sources": [("poincare1885", "the bifurcation of a family of equilibria as a parameter changes"),
                     ("landau1937", "the order parameter and the symmetric expansion of the free energy at a "

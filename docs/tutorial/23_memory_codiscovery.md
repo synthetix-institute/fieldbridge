@@ -75,6 +75,7 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.340 ± 0.051 |
 | Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.265 ± 0.053 |
 | toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.227 ± 0.050 |
+| Schlögl reactor swept through its cusp | chemical kinetics | CRKL | reached | $s = 0$ | 1.407 ± 0.055 |
 | ring of 3 repressors | synthetic biology | CR | stops at R: Hopf | — | — |
 | two equal tubes | transport networks | SCR | stops at R: subcritical | — | — |
 | two unequal tubes | transport networks | CR | stops at U: no supercritical cusp | — | — |
@@ -83,9 +84,10 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | caged in-plane dipoles | magnetism | — | stops at C: the control rescales the drift | — | — |
 | three compartments | compartment models | — | stops at C: no control | — | — |
 
-Eight realizations from six fields reach the target by four classes of derivation. Two of them simulate the same
-equations: the toggle with unequal promoters, unfolded to equal promoters, is the genetic toggle switch. They are
-seven models, and the statistics below count the two as one. `codiscover.md` also lists every
+Nine realizations from six fields reach the target by five classes of derivation. Two pairs of them simulate the same
+equations: the toggle with unequal promoters, unfolded to equal promoters, is the genetic toggle switch, and the
+Schlögl reactor swept through its cusp is the reactor reached by unfolding, with that sweep written into its
+specification. They are seven models, and the statistics below count each pair as one. `codiscover.md` also lists every
 derivation with its steps, for example for the laser
 
 ```text
@@ -96,12 +98,12 @@ S[reflection amp -> -amp] > C[P] > R[supercritical pitchfork; 1 direction elimin
 
 *Figure 1. The symmetric write. (a) The derivation in each model: letters on the slots of a common chain. A thin line joins the steps
 of one derivation; a red cross marks the step at which it stops, with the reason on the right. (b) The reduced
-drift at the write point in the canonical coordinate, for the eight realizations that reach the target, against $-x^3$.
+drift at the write point in the canonical coordinate, for the nine realizations that reach the target, against $-x^3$.
 (c) The constant of the swept-write law estimated from the simulation of each model, against $\pi^{1/4}$; the grey
 band is the weighted mean over models ± one standard error; an open circle simulates the equations of a
 realization above it.*
 
-## 4. Four classes of derivation
+## 4. Five classes of derivation
 
 **By a reflection: the laser and Landau theory.** The laser model has a field amplitude $E$ (`amp`) and an
 inversion $N$ (`inv`):
@@ -146,6 +148,14 @@ $k_3 = 5.75$ this is $a = 4.153$ and $b = 2.654$, the values found by the constr
 promoters the cusp lies at $\gamma = 1.000$: the unfolding recovers equal promoters. There the symmetry is a
 result of the derivation, not an assumption.
 
+**Along a sweep through the cusp: the Schlögl reactor with its sweep in the specification.** The specification
+`examples/memory/schlogl_cusp.json` makes the sweep that the unfolding finds the control itself, $a \to a + s$ and
+$b \to b - k_3 s/3$, starting from the cusp. No step S or U is then needed: along $s$ the write point is a pitchfork at
+once. With $x = x_0 + u$ the drift is exactly $\dot u = 2 x_0 s\, u + s\, u^2 - u^3$. The quadratic term breaks the
+reflection $u \to -u$ at every $s \neq 0$, so the drift has no symmetry and the symmetric write holds only near the
+onset, where the states lie at $u = \pm(2 x_0 s)^{1/2}$ and that term is smaller than the other two by a factor of
+order $(s/2 x_0)^{1/2}$. The class differs from the unfolding, and the equations along the sweep are the same.
+
 ## 5. Where a derivation stops
 
 A derivation that stops is a result: it names the property of the model that differs from the target.
@@ -186,8 +196,8 @@ shows the four states and the two directions that become critical together at $\
 
 **The canonical form.** In the coordinate $x$ the reduced drift at the write point is $\sum_n c_n x^n$. The cubic
 coefficient $c_3 = -1$ by the choice of units, so the check lies in the other coefficients. In every model that
-reaches the target, the even part is at most $2 \times 10^{-9}$ of the cubic term at the edge of the fitted window,
-and $c_3 < 0$. The fifth-order coefficient differs between the models: $c_5 = 1.8$ for the laser (2 from Eq. (2);
+reaches the target, the even part is at most $5 \times 10^{-8}$ of the cubic term at the edge of the fitted window
+($2 \times 10^{-9}$ without the sweep through the cusp), and $c_3 < 0$. The fifth-order coefficient differs between the models: $c_5 = 1.8$ for the laser (2 from Eq. (2);
 the remainder comes from seventh-order terms within the window), 1.26 for the toggle, 0.76 for the ring, 0.46 for
 the Stoner–Wohlfarth particle (1/2 from the expansion of its energy), −0.07 for the convection roll and 0 for the
 Schlögl reactor and Landau theory. It sets how far from the write point the models remain equivalent. It does
@@ -206,7 +216,7 @@ A sweep can itself favour one state, whatever the bias: a straight sweep through
 term that vanishes at the cusp grows along the sweep. Such an offset would be folded into a constant measured with
 one sign of the bias. Where the derivation has a reversing symmetry (S), the symmetry maps the test with the bias
 toward $-$mode onto the test toward $+$mode, so the write has no offset and one sign is tested. Otherwise (the two
-models reached by unfolding) half of the trajectories are biased toward each state. The constants $k_\pm$ that
+models reached by unfolding and the sweep through the cusp) half of the trajectories are biased toward each state. The constants $k_\pm$ that
 Eq. (3) gives for the two signs are slope $\pm$ offset: the law constant is the slope $(k_+ + k_-)/2$, and the
 offset $(k_+ - k_-)/2$ is reported separately and flagged when it exceeds two standard errors.
 
@@ -214,11 +224,14 @@ The trajectories of each realization are split into eight runs on independent ra
 constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. Each realization
 draws these streams from its own generator, set by the seed and the name of the material, so adding or removing a
 specification leaves the constants of the other realizations unchanged. With 2000 trajectories per realization and
-the default seed, the seven models have a weighted mean of $1.326 \pm 0.019$, against $\pi^{1/4} = 1.331$, with
-$\chi^2 = 8.7$ for 7 values. The seeds 11 to 14 give weighted means of 1.331, 1.348, 1.290 and 1.324. The offsets
-of the two unfolded models are $+0.027 \pm 0.053$ (Schlögl reactor) and $+0.011 \pm 0.050$ (toggle with unequal
-promoters), and lie between $-0.029$ and $+0.062$ with errors of 0.05 to 0.06 for the seeds 11 to 14: neither sweep
-offsets the write at this precision. For the toggle none is expected: its sweep keeps the promoters equal, so it
+the default seed, the seven models have a weighted mean of $1.334 \pm 0.018$, against $\pi^{1/4} = 1.331$, with
+$\chi^2 = 7.1$ for 7 values. Without the sweep through the cusp the mean is $1.326 \pm 0.019$ with $\chi^2 = 8.7$,
+and the seeds 11 to 14 give 1.331, 1.348, 1.290 and 1.324. The offsets of the two unfolded models are
+$+0.027 \pm 0.053$ (Schlögl reactor) and $+0.011 \pm 0.050$ (toggle with unequal promoters), and lie between $-0.029$
+and $+0.062$ with errors of 0.05 to 0.06 for the seeds 11 to 14: neither sweep offsets the write at this precision.
+The sweep through the cusp gives $-0.121 \pm 0.055$ at the default seed, which the report flags as exceeding two
+standard errors; the record below gives $+0.023 \pm 0.016$ for it, so that value was a fluctuation. For the toggle none
+is expected: its sweep keeps the promoters equal, so it
 simulates the equations of the genetic toggle switch and has its exchange symmetry. The accuracies
 scatter between seeds as their binomial errors predict (a test with 16 seeds on three of the models), so one run of
 this size tests the constant to about 0.02; the record below is the precise test. The constant depends only on the
@@ -226,13 +239,14 @@ canonical form. A derivation that ended on another mechanism, such as a fold, wo
 follow Eq. (3).
 
 The record of the [web page](https://synthetix-institute.github.io/fieldbridge/) uses 25,600 trajectories per
-realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.021. Ten realizations reach
-the target; besides the two toggles, the normal form continued from below its write point simulates the equations of
-the normal form, so they are eight models. Their constants lie between 1.306 and 1.343 (the convection roll gives
-$1.333 \pm 0.014$, the two-component normal form with split rates of Section 5 $1.306 \pm 0.021$), with a weighted
-mean of $1.331 \pm 0.005$ and $\chi^2 = 3.6$ for 8 values: the scatter between models is that of the statistical
-error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl reactor) and $+0.006 \pm 0.014$
-(toggle with unequal promoters).
+realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.021. Eleven realizations reach
+the target; besides the two toggles and the two forms of the Schlögl reactor, the normal form continued from below its
+write point simulates the equations of the normal form, so they are eight models. Their constants lie between 1.306
+and 1.343 (the convection roll gives $1.333 \pm 0.014$, the two-component normal form with split rates of Section 5
+$1.306 \pm 0.021$), with a weighted mean of $1.330 \pm 0.005$ and $\chi^2 = 4.2$ for 8 values: the scatter between
+models is that of the statistical error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl
+reactor) and $+0.006 \pm 0.014$ (toggle with unequal promoters), and that of the sweep through the cusp is
+$+0.023 \pm 0.016$.
 With 400 trajectories the Schlögl reactor gave $1.04 \pm 0.11$; with 25,600 it gives $1.322 \pm 0.015$, so that
 value was a fluctuation. An earlier record drew all the trajectories of a constant from one stream, after the draws
 of the derivation, and counted the replicates as separate models; it gave $\chi^2 = 20$ for 8 values.
@@ -279,12 +293,13 @@ added as a function with the signature of `derive_symmetric_write` in the dictio
 ## Summary
 
 - A derivation of a mechanism is a word of transformations, each acting on named components of the realization.
-- The constructor derives the symmetric write in models from six fields by four classes of derivation: by a
-  reflection, an exchange, a cyclic permutation, or an unfolding to a cusp.
+- The constructor derives the symmetric write in models from six fields by five classes of derivation: by a
+  reflection, an exchange, a cyclic permutation, an unfolding to a cusp, or a sweep through that cusp given as the
+  control.
 - A derivation that stops names the responsible property: a Hopf bifurcation, a degenerate critical mode, a
   positive cubic term, a fold without a supercritical cusp, or a control that only rescales the drift.
 - Two invariants test that the end points are the same mechanism: the canonical form $-x^3$ with no even part, and
-  the constant of the write law, $1.332 \pm 0.005$ over eight models in the record of the web page, against
+  the constant of the write law, $1.330 \pm 0.005$ over eight models in the record of the web page, against
   $\pi^{1/4} = 1.331$.
 
 ## Reference
