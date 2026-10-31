@@ -101,12 +101,20 @@ law is checked. Where the symmetric write is obstructed, the completion rung of 
 specification: it keeps what the obstruction names (a second parameter that cancels a bias, the full critical space,
 the next order, the distant branch) and derives the law of the completed model with its certificate. Where the
 certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
-choice between shallow written states) from a failure in the nonlinear stage. A sweep through a cusp found by the
-second parameter is read on a window narrowed until the quartic term of the drift no longer appears as a quadratic one,
-and its law is refused when the sweep is not a pitchfork; with `--curvature`, `memory complete` also finds the curvature
+choice between shallow written states) from a failure in the nonlinear stage. The law of a sweep through a cusp found by
+the second parameter is refused when the sweep is not a pitchfork; with `--curvature`, `memory complete` also finds the curvature
 of the sweep at which its intrinsic offset vanishes (tutorial Module 15). The report lists, per specification,
 the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
 the specifications in parallel processes.
+
+The coefficients of the reduced drift at a write point are not fitted. `analysis.series_reduction` closes the centre
+manifold of the critical direction order by order at the point, to order 7, in the truncated-series arithmetic of
+`memory/series.py`, which runs through the compiled drift, and the kind of the write point is read from that series. It
+covers one critical direction and every function of a specification; several critical directions, and a drift without a
+power series at the point (`abs` at a kink), are reported as not covered in `nf["series"]`, and the kind is then read from
+the cubic fitted on the window, which is kept beside the series as `nf["fit"]`. The coefficient $a_2$ does not depend on
+the coordinate along the slow manifold, and $a_3$ does not where $a_2$ vanishes; at a fold, $a_3$ is that of the
+coordinate $s = w \cdot (x - q)$ and is not an invariant of the write point.
 
 The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md). Their records
@@ -163,7 +171,7 @@ table from an existing records file without a derivation.
 
 `memory audit SPEC` derives the symmetric write of a specification with its law and then asks, for each assumption
 that the derivation does not test, what error would follow if the assumption failed, and runs the one test that
-decides it. Six checks are implemented: the class of the reduced equation read on half the window of the fit; the law
+decides it. Six checks are implemented: the class of the reduced equation read on half the window; the law
 measured with the bias toward either state, so that an offset of the write separates from the response; the noise
 ratio at the element's own noise, where the constant is c(Γ) of the noise-ratio law rather than π^(1/4); the law
 measured again with half the time step; for a semiclassical description of a quantum element, the number of quanta

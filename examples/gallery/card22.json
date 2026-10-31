@@ -3511,6 +3511,10 @@
      0.0007069876960757726,
      -0.0
     ],
+    "a4": -10.27282920312132,
+    "a5": -49.56722025820924,
+    "a6": -240.25257522990182,
+    "a7": -1136.787281278708,
     "hopf": false,
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "mode": [
@@ -3521,15 +3525,15 @@
      0.2639105543908817,
      -0.9968216267377922
     ],
-    "a0": 1.9981442893171723e-05,
-    "a1": -0.0003698744128080886,
-    "a2": 0.5934729950586669,
-    "a3": -0.5199272320524582,
+    "a0": 6.0892242514202076e-15,
+    "a1": -0.0007069877040308191,
+    "a2": 0.6353760702922968,
+    "a3": -0.3132104966007202,
     "bias_along_mode": 0.15763598536404544,
     "bias": 0.9954193185589123,
     "kappa_slope": 0.010959895412360643,
     "kappa_slope_partial": 0.3017093213115438,
-    "asymmetry": 0.9451931132764766,
+    "asymmetry": 0.9684037953636541,
     "transverse_residual": 1.3541577233573411e-12,
     "cubic_misfit": 0.01941950779944374,
     "s": [
@@ -3619,6 +3623,36 @@
      0.002391005215739819
     ],
     "half": 0.06618704337090077,
+    "fit": {
+     "a0": 1.9981442893171723e-05,
+     "a1": -0.0003698744128080886,
+     "a2": 0.5934729950586669,
+     "a3": -0.5199272320524582
+    },
+    "series": {
+     "covered": true,
+     "order": 7,
+     "coefficients": [
+      6.0892242514202076e-15,
+      -0.0007069877040308191,
+      0.6353760702922968,
+      -0.3132104966007202,
+      -10.27282920312132,
+      -49.56722025820924,
+      -240.25257522990182,
+      -1136.787281278708
+     ],
+     "rounding": [
+      6.314393452555578e-28,
+      6.186359062602121e-17,
+      5.558268212345091e-14,
+      6.518566127914326e-14,
+      9.582744087395077e-13,
+      4.6206821280762924e-12,
+      2.2180670475201598e-11,
+      1.0400022715203118e-10
+     ]
+    },
     "critical_dimension": 1,
     "critical_kappa": [
      [
@@ -3626,6 +3660,17 @@
       -0.0
      ]
     ],
+    "spectrum": [
+     [
+      -0.0007069876960757726,
+      0.0
+     ],
+     [
+      -0.9999999999608429,
+      0.0
+     ]
+    ],
+    "second_rate": 0.9999999999608429,
     "event": "vanishes",
     "source": "control",
     "obstruction": {
@@ -3635,7 +3680,7 @@
      "subcritical": false,
      "realizes_generator": false,
      "terms": {
-      "quadratic a2": 0.5934729950586669,
+      "quadratic a2": 0.6353760702922968,
       "bias per unit control": 0.15763598536404544
      },
      "required": [
@@ -3705,9 +3750,9 @@
      },
      "normal_form_along_sweep": {
       "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
-      "a2": -4.411112969424295e-11,
-      "a3": 0.9182245599666757,
-      "asymmetry": 2.4516887635190227e-10,
+      "a2": -4.9914495334654944e-11,
+      "a3": 0.9914731498130318,
+      "asymmetry": 2.569282081389171e-10,
       "bias": 4.867013684406308e-11,
       "kappa_slope": -0.9149693998140426
      },
@@ -3718,7 +3763,7 @@
       "subcritical": true,
       "realizes_generator": false,
       "terms": {
-       "cubic a3 > 0": 0.9182245599666757
+       "cubic a3 > 0": 0.9914731498130318
       },
       "required": [
        "The cubic term does not saturate the instability, so the state jumps to a distant branch: a saturating term (a finite resource, Hill saturation, an anisotropy) is required for a local write."
@@ -3737,6 +3782,10 @@
      0.0010209059430572598,
      -0.0
     ],
+    "a4": 7.394576894151561,
+    "a5": -3.975076359322898,
+    "a6": -201.8372218164726,
+    "a7": -2480.1384394593424,
     "hopf": false,
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "mode": [
@@ -3747,15 +3796,15 @@
      0.4291260956770245,
      -1.1084073176269074
     ],
-    "a0": -0.00011347703060537183,
-    "a1": -0.00035627479594366494,
-    "a2": -2.283298239876346,
-    "a3": 0.14408306300940682,
+    "a0": -8.359625929356522e-12,
+    "a1": -0.0010209059254995823,
+    "a2": -2.413179048065725,
+    "a3": -1.9998362136866794,
     "bias_along_mode": -1.126952571153649,
     "bias": 0.9608361370405587,
     "kappa_slope": 0.49737440197699395,
     "kappa_slope_partial": -0.1821346284141761,
-    "asymmetry": 0.9942059126975216,
+    "asymmetry": 0.9289056801846877,
     "transverse_residual": 4.88184354291017e-12,
     "cubic_misfit": 0.012878142751989636,
     "s": [
@@ -3845,6 +3894,36 @@
      -0.01929989832929964
     ],
     "half": 0.09235457252960962,
+    "fit": {
+     "a0": -0.00011347703060537183,
+     "a1": -0.00035627479594366494,
+     "a2": -2.283298239876346,
+     "a3": 0.14408306300940682
+    },
+    "series": {
+     "covered": true,
+     "order": 7,
+     "coefficients": [
+      -8.359625929356522e-12,
+      -0.0010209059254995823,
+      -2.413179048065725,
+      -1.9998362136866794,
+      7.394576894151561,
+      -3.975076359322898,
+      -201.8372218164726,
+      -2480.1384394593424
+     ],
+     "rounding": [
+      6.336146884944327e-25,
+      8.246935591240956e-17,
+      1.9512131797529268e-13,
+      5.960589083956831e-13,
+      2.379261400484024e-12,
+      1.961006017003741e-11,
+      2.027061196430411e-10,
+      2.5939716262659275e-09
+     ]
+    },
     "critical_dimension": 1,
     "critical_kappa": [
      [
@@ -3852,6 +3931,17 @@
       -0.0
      ]
     ],
+    "spectrum": [
+     [
+      -0.0010209059430572598,
+      0.0
+     ],
+     [
+      -1.1711011877226545,
+      0.0
+     ]
+    ],
+    "second_rate": 1.1711011877226545,
     "event": "vanishes",
     "source": "write field",
     "obstruction": {
@@ -3861,7 +3951,7 @@
      "subcritical": false,
      "realizes_generator": false,
      "terms": {
-      "quadratic a2": -2.283298239876346,
+      "quadratic a2": -2.413179048065725,
       "bias per unit control": -1.126952571153649
      },
      "required": [
@@ -5336,6 +5426,6 @@
   "holds": "activation between stored states (Law 3)",
   "lock": "field 0.4 x threshold, fixed control: accuracy 0.30, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.77, retention/rewriting time ratio 2.34; field 0.4 x threshold, control swept through the write point: accuracy 0.53, not rewritten"
  },
- "seconds": 14.120528936386108,
+ "seconds": 289.66818261146545,
  "id": "card22"
 }

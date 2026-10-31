@@ -138,7 +138,8 @@ two coupled Kerr parametric oscillators, have no cubic term in the reduced equat
 order. The law of the completed model gives 1.35, but the full dynamics give 0.04 to 0.06: with the noise of the
 vacuum the choice is not complete at the end of the linear stage. Here the classical image is not enough, and the
 quantum dynamics decide ([the quantum write](30_quantum_write.md)). The phase-locked parametric oscillator used to
-measure qubits has a degenerate leading order too, but at many photons, and its law is certified.
+measure qubits has a vanishing cubic term too, with the leading term $-5.76 \times 10^{-4}\, s^5 = -K^2 s^5/\kappa$, but at many
+photons; there the [record](../records/quantum_semiclassical.md) gives 0.78 from the law and 1.27 from the full dynamics.
 
 In all, 20 laws at obstructions are certified and 22 are derived but not certified; the remaining
 write points have no cusp, no choice at the end of the sweep, a continuous family of written states (the

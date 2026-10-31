@@ -67,14 +67,15 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 
 | Realization | Field | Derivation | Result | Write point | Law constant |
 | --- | --- | --- | --- | --- | --- |
-| single-mode laser | laser physics | SCRKL | reached | $P = 1$ | 1.374 ± 0.051 |
+| single-mode laser | laser physics | SCRKL | reached | $P = 1$ | 1.377 ± 0.051 |
 | convection roll | fluid dynamics | SCRKL | reached | $r = 1$ | 1.354 ± 0.063 |
 | pitchfork normal form | statistical physics | SCRKL | reached | $\varepsilon = 0$ | 1.292 ± 0.050 |
-| ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.427 ± 0.052 |
-| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.346 ± 0.061 |
-| Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.340 ± 0.051 |
+| ring of 4 repressors | synthetic biology | SCRKL | reached | $\alpha = 1.013$ | 1.415 ± 0.051 |
+| genetic toggle switch | synthetic biology | SCRKL | reached | $\alpha = 2$ | 1.346 ± 0.064 |
+| Stoner–Wohlfarth particle | magnetism | SCRKL | reached | $h = 1$ | 1.346 ± 0.051 |
 | Schlögl reactor | chemical kinetics | CRURKL | reached after unfolding | cusp $a = 4.153$, $b = 2.654$ | 1.265 ± 0.053 |
-| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.227 ± 0.050 |
+| Schlögl reactor swept through its cusp | chemical kinetics | CRKL | reached | cusp $a = 4.153$, $b = 2.654$ | 1.407 ± 0.055 |
+| toggle, unequal promoters | synthetic biology | CRURKL | reached after unfolding | cusp $\gamma = 1.000$, $\alpha = 2.000$ | 1.230 ± 0.050 |
 | ring of 3 repressors | synthetic biology | CR | stops at R: Hopf | — | — |
 | two equal tubes | transport networks | SCR | stops at R: subcritical | — | — |
 | two unequal tubes | transport networks | CR | stops at U: no supercritical cusp | — | — |
@@ -83,9 +84,10 @@ It writes `codiscover.json`, `codiscover.md` and `codiscover.png` and takes abou
 | caged in-plane dipoles | magnetism | — | stops at C: the control rescales the drift | — | — |
 | three compartments | compartment models | — | stops at C: no control | — | — |
 
-Eight realizations from six fields reach the target by four classes of derivation. Two of them simulate the same
-equations: the toggle with unequal promoters, unfolded to equal promoters, is the genetic toggle switch. They are
-seven models, and the statistics below count the two as one. `codiscover.md` also lists every
+Nine realizations from six fields reach the target by five classes of derivation. Two pairs simulate the same
+equations: the toggle with unequal promoters, unfolded to equal promoters, is the genetic toggle switch, and the
+Schlögl reactor reaches the same cusp when it is unfolded and when it is swept through it. They are seven models, and
+the statistics below count each pair as one. `codiscover.md` also lists every
 derivation with its steps, for example for the laser
 
 ```text
@@ -118,7 +120,7 @@ $$
 \dot E = \tfrac12\Bigl(\frac{gP}{\gamma} - \kappa\Bigr) E - \frac{g^2 P}{2\gamma^2}\, E^3 + O(E^5) \qquad (2)
 $$
 
-At threshold the cubic coefficient is $a_3 = -g\kappa/(2\gamma) = -0.5$; the constructor finds $-0.499$. The
+At threshold the cubic coefficient is $a_3 = -g\kappa/(2\gamma) = -0.5$; the constructor finds $-0.500$. The
 pitchfork normal form has the same class: the class is fixed by the kind of symmetry, not by the field. So has the
 Stoner–Wohlfarth particle in a field along its hard axis: with the magnetization angle $\varphi$ measured from the hard
 axis, the reflection $\varphi \to -\varphi$ leaves its drift $\tfrac12\sin 2\varphi - h\sin\varphi$ unchanged, and the
@@ -127,7 +129,7 @@ in the three-mode truncation of the Boussinesq equations (Saltzman 1962; Lorenz 
 $\dot X = \sigma(Y - X)$, $\dot Y = rX - Y - XZ$, $\dot Z = XY - bZ$, has the reflection
 $(X, Y, Z) \to (-X, -Y, Z)$, which exchanges the two senses of rotation. The fluid at rest becomes unstable at the
 onset of convection, $r = 1$; $Y$ and $Z$ are eliminated, and along the normalized critical mode the cubic coefficient
-is $-\sigma/(2(\sigma + 1)b) = -0.1641$ for $\sigma = 7$ and $b = 8/3$; the constructor finds $-0.1642$.
+is $-\sigma/(2(\sigma + 1)b) = -0.1641$ for $\sigma = 7$ and $b = 8/3$; the constructor finds $-0.1641$.
 
 **By an exchange: the toggle switch.** Exchanging the two repressors, $u \leftrightarrow v$, leaves the equations
 of Module 1 unchanged and reverses the antisymmetric mode $(1, -1)$. With $n = 2$ the symmetric state $u = v = 1$
@@ -186,7 +188,7 @@ shows the four states and the two directions that become critical together at $\
 
 **The canonical form.** In the coordinate $x$ the reduced drift at the write point is $\sum_n c_n x^n$. The cubic
 coefficient $c_3 = -1$ by the choice of units, so the check lies in the other coefficients. In every model that
-reaches the target, the even part is at most $2 \times 10^{-9}$ of the cubic term at the edge of the fitted window,
+reaches the target, the even part is at most $5 \times 10^{-8}$ of the cubic term at the edge of the fitted window,
 and $c_3 < 0$. The fifth-order coefficient differs between the models: $c_5 = 1.8$ for the laser (2 from Eq. (2);
 the remainder comes from seventh-order terms within the window), 1.26 for the toggle, 0.76 for the ring, 0.46 for
 the Stoner–Wohlfarth particle (1/2 from the expansion of its energy), −0.07 for the convection roll and 0 for the
@@ -214,9 +216,9 @@ The trajectories of each realization are split into eight runs on independent ra
 constant is the larger of the scatter of the runs and the binomial error of the pooled accuracy. Each realization
 draws these streams from its own generator, set by the seed and the name of the material, so adding or removing a
 specification leaves the constants of the other realizations unchanged. With 2000 trajectories per realization and
-the default seed, the seven models have a weighted mean of $1.326 \pm 0.019$, against $\pi^{1/4} = 1.331$, with
-$\chi^2 = 8.7$ for 7 values. The seeds 11 to 14 give weighted means of 1.331, 1.348, 1.290 and 1.324. The offsets
-of the two unfolded models are $+0.027 \pm 0.053$ (Schlögl reactor) and $+0.011 \pm 0.050$ (toggle with unequal
+the default seed, the seven models have a weighted mean of $1.334 \pm 0.018$, against $\pi^{1/4} = 1.331$, with
+$\chi^2 = 6.5$ for 7 values. The seeds 11 to 14 give weighted means of 1.330, 1.354, 1.302 and 1.322. The offsets
+of the two unfolded models are $+0.027 \pm 0.053$ (Schlögl reactor) and $+0.013 \pm 0.050$ (toggle with unequal
 promoters), and lie between $-0.029$ and $+0.062$ with errors of 0.05 to 0.06 for the seeds 11 to 14: neither sweep
 offsets the write at this precision. For the toggle none is expected: its sweep keeps the promoters equal, so it
 simulates the equations of the genetic toggle switch and has its exchange symmetry. The accuracies
@@ -230,8 +232,8 @@ realization in eight runs of 3200, for which the error of one constant is 0.014 
 the target; besides the two toggles, the normal form continued from below its write point simulates the equations of
 the normal form, so they are eight models. Their constants lie between 1.306 and 1.343 (the convection roll gives
 $1.333 \pm 0.014$, the two-component normal form with split rates of Section 5 $1.306 \pm 0.021$), with a weighted
-mean of $1.331 \pm 0.005$ and $\chi^2 = 3.6$ for 8 values: the scatter between models is that of the statistical
-error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl reactor) and $+0.006 \pm 0.014$
+mean of $1.330 \pm 0.005$ and $\chi^2 = 3.6$ for 8 values: the scatter between models is that of the statistical
+error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl reactor) and $+0.005 \pm 0.015$
 (toggle with unequal promoters).
 With 400 trajectories the Schlögl reactor gave $1.04 \pm 0.11$; with 25,600 it gives $1.322 \pm 0.015$, so that
 value was a fluctuation. An earlier record drew all the trajectories of a constant from one stream, after the draws
@@ -284,7 +286,7 @@ added as a function with the signature of `derive_symmetric_write` in the dictio
 - A derivation that stops names the responsible property: a Hopf bifurcation, a degenerate critical mode, a
   positive cubic term, a fold without a supercritical cusp, or a control that only rescales the drift.
 - Two invariants test that the end points are the same mechanism: the canonical form $-x^3$ with no even part, and
-  the constant of the write law, $1.332 \pm 0.005$ over eight models in the record of the web page, against
+  the constant of the write law, $1.330 \pm 0.005$ over eight models in the record of the web page, against
   $\pi^{1/4} = 1.331$.
 
 ## Reference
