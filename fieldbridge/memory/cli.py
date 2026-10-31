@@ -482,7 +482,8 @@ def cmd_noise_ratio(args) -> int:
     if args.law or not args.spec:
         md = nr.law_markdown() + f"\n{BOUNDARY}\n"
         report = {"command": "noise-ratio", **_provenance(), "law": {
-            "gammas": list(nr.GAMMAS), "continuous": list(nr.CONTINUOUS), "first_order": list(nr.FIRST_ORDER),
+            "gammas": list(nr.GAMMAS), "continuous": list(nr.CONTINUOUS), "continuous_error": list(nr.CONTINUOUS_ERROR),
+            "first_order": list(nr.FIRST_ORDER), "first_order_error": list(nr.FIRST_ORDER_ERROR),
             "early_gammas": list(nr.EARLY_GAMMAS), "early": list(nr.EARLY)}}
         _write(Path(args.out_dir), "noise_ratio", report, md)
         print(md)

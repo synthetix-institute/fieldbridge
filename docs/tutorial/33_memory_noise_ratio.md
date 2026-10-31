@@ -52,13 +52,18 @@ python3 -m fieldbridge memory noise-ratio --law --out-dir results/noise_ratio/la
 
 | $\Gamma$ | 0.1 | 1 | 3 | 10 | 30 | 100 |
 | --- | --- | --- | --- | --- | --- | --- |
-| $c$, continuous | 1.331 | 1.331 | 1.268 | 1.144 | 0.949 | 0.784 |
+| $c$, continuous | 1.331 | 1.331 | 1.268 | 1.12 | 0.949 | 0.775 |
 | $c$, first order | 1.331 | 1.331 | 1.250 | 1.110 | 0.962 | 0.791 |
 | regime | linear stage | linear stage | crossover | crossover | activated | activated |
 
 The values were simulated on Eq. (2), with the bias toward each side in turn: 40 000 sweeps per side up to
-$\Gamma = 3$ and 20 000 above, with standard errors of 0.012 to 0.016. The activated limit lies about 10% above them
-at $\Gamma = 30$ to 100.
+$\Gamma = 3$ and 20 000 above, with standard errors of 0.012 to 0.016. The continuous entries at $\Gamma = 10$ and 100
+pool five independent simulations. At $\Gamma = 100$ they agree and give $0.775 \pm 0.005$. At $\Gamma = 10$ they range
+from 1.088 to 1.145 and pool to $1.1215 \pm 0.0069$ with $\chi^2 = 10.2$ on 4 degrees of freedom, so the scatter exceeds
+the statistical errors. The value established there is $1.12 \pm 0.01$, and the table gives no third digit. The constant
+has then fallen from $\pi^{1/4}$ by about 16% at $\Gamma = 10$ and 42% at $\Gamma = 100$. The other entries are one
+simulation each, and the runs at $\Gamma = 10$ show that one run can lie further from the pool than its standard error.
+The activated limit lies about 10% above the table at $\Gamma = 30$ to 100.
 
 ## 3. A first-order switch decides before its bifurcation
 

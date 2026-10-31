@@ -26,6 +26,18 @@ def test_the_law_starts_at_kondepudi_and_falls_monotonically():
     assert [nr.regime(g) for g in (0.05, 1.0, 10.0, 30.0)] == [nr.LINEAR, nr.LINEAR, nr.CROSSOVER, nr.ACTIVATED]
 
 
+@pytest.mark.parametrize("gamma", sorted(nr.REPEATED))
+def test_the_table_states_the_repeated_simulations_no_tighter_than_their_scatter(gamma):
+    runs = np.array(nr.REPEATED[gamma])
+    weights = runs[:, 1] ** -2.0
+    mean = float(np.sum(weights * runs[:, 0]) / np.sum(weights))
+    chi2 = float(np.sum(weights * (runs[:, 0] - mean) ** 2))
+    error = float(np.sum(weights) ** -0.5 * max(1.0, (chi2 / (len(runs) - 1)) ** 0.5))
+    k = nr.GAMMAS.index(gamma)
+    assert abs(nr.CONTINUOUS[k] - mean) <= nr.CONTINUOUS_ERROR[k]
+    assert nr.CONTINUOUS_ERROR[k] >= float(f"{error:.1g}")     # the scaled error, to its one significant digit
+
+
 def test_the_activated_limit_is_an_upper_estimate_at_large_noise_ratio():
     for g in (30.0, 100.0):
         act = nr.activated_constant(g)
@@ -70,4 +82,6 @@ def test_the_command_writes_the_law(tmp_path):
     assert cmd_noise_ratio(args) == 0
     report = json.loads((tmp_path / "noise_ratio.json").read_text())
     assert report["law"]["continuous"][0] == pytest.approx(K)
-    assert "activated" in (tmp_path / "noise_ratio.md").read_text()
+    assert len(report["law"]["continuous_error"]) == len(report["law"]["gammas"])
+    text = (tmp_path / "noise_ratio.md").read_text()
+    assert "activated" in text and "| 10 | 1.12 +- 0.01 |" in text
