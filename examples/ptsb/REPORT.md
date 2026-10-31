@@ -39,6 +39,11 @@ The answer has seven parts.
    do not depend on the population of the modes. A fast mode then adds inertia, a slow mode cannot follow and leaves the
    trajectory on a surface that is not relaxed, and energy is lost for good only to modes in between. The ratio then depends
    on which modes are coupled and not on one friction number.
+8. DFT on two radical additions to methylallene gives what those rows contain in a real molecule. Slow couplings have g near 1,
+   as in the model, but the passage takes 30 fs, so almost every mode stays behind or lags. Staying behind does not delay the
+   instability, which starts at the same bond length on the trajectory as on the relaxed path. The sweep hardly amplifies anything.
+   The product follows the side of a perpendicular torsion on which the molecule starts, and a thermal width at TS1 then gives
+   shares of 0.81 to 0.91 and 0.67 to 0.81, against 0.956 and 0.823 counted by Wu et al. (no ensemble was run).
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -598,6 +603,130 @@ trajectories). The mode populations act during the descent, before the products 
   g = 1 the three tables assign 306, 5,084 and 43 of 10,000. That family rests on few trajectories at large g.
 - All dynamics are classical. The Bose and zero-point runs change only the starting populations.
 
+## Two radical additions to methylallene by DFT
+
+The cubic-coupling model raised two questions that only a molecule can answer: whether a coupling of g about 1 is realistic, and whether slow modes really leave a molecule on an unrelaxed surface. I took entries 31 and 32 of Yamaki et al. (J. Comput. Chem. 47, e70517, 2026), the additions of the methyl and fluoromethyl radicals to the central carbon of methylallene. After the C-C bond forms, the CHR end of the allyl radical turns one way to the Z radical (P1) or the other way to the E radical (P2). Wu, Zhang and Hong (Chem. Eur. J. 30, e202403316, 2024) counted 129:6 and 93:20 trajectories in favour of Z, which are shares of 0.956 and 0.823 with counting errors of 0.018 and 0.036. Their full text is behind a subscription and I read only the abstract, so I do not know their level of theory or sampling. I ran no ensemble, so the ratios below are not computed. They are compared with what a few chosen trajectories imply.
+
+### Method
+
+The code is in [molecules/](molecules/). The level of theory is that of Yamaki et al. for these entries, UB3LYP-D3(BJ)/def2-SVP with SMD (1,4-dioxane) and a (99,590) grid, computed with gpu4pyscf, with density fitting as the one difference. The calculations reproduce theirs:
+
+| Quantity | Entry 31, this work | Entry 31, paper | Entry 32, this work | Entry 32, paper |
+|---|---|---|---|---|
+| TS1 energy (hartree) | -195.676511 | -195.676452 | -294.834914 | -294.834821 |
+| End of the IRC below TS1 (kcal/mol) | 60.91 | 60.94 | 57.13 | 57.15 |
+| Pseudo-minimum below TS1 (kcal/mol) | 53.84 | 53.97 | 43.91 | 43.97 |
+
+I computed the following:
+
+- the Hessian at TS1 and the IRC from it;
+- exact Hessians at 12 and 13 points of the IRC and at 8 frames of a trajectory, with the path tangent or the velocity projected out, so that nothing assumes a direction across the motion;
+- one trajectory from TS1 for each reaction, without thermal motion, with the mean flux speed along the imaginary mode and every other mode at rest (220 fs, dt 0.5 fs, total energy conserved to 0.05 kcal/mol);
+- further trajectories started at other positions along the transverse direction, or with a velocity along it.
+
+Progress along the reaction is the length of the forming bond, as x is in the model. The passage ends when that bond first reaches its length on the IRC after bond formation, 1.53 angstrom. This takes 30 fs and 32.5 fs, and the bond overshoots to 1.28 and 1.30 angstrom a few femtoseconds later.
+
+### The slow direction is the turn that separates the products
+
+The lowest curvature across the IRC falls through zero at s = 0.92 and R = 2.18 angstrom in entry 31, and at s = 1.23 and R = 2.12 angstrom in entry 32. The lowest mode of TS1 (59 and 58 cm-1, periods 565 and 577 fs) continues into this direction, and from TS1 until shortly before bond formation it is the turn of the CHR end combined with a sideways shift of the radical. So in these reactions the slow transverse mode of TS1 is the coordinate that separates the products.
+
+In entry 32 the zero agrees with the published valley-ridge transition (s = 1.25). In entry 31 it does not: at the published point, s = 0.55, I find a positive curvature of 55 cm-1. I have not resolved this.
+
+Entry 31 also has a second negative curvature from R of about 1.87 angstrom, the spin of the methyl group, which becomes a hindered rotor. It does not separate the products, and it does not appear in entry 32 on the IRC before bond formation.
+
+### Which modes fall in which row
+
+![modes of the two molecules](figures/molecule_modes.png)
+
+Modes have to be read in two sets of coordinates, for two different questions.
+
+**How far a mode moves** comes from mass-weighted straight-line normal coordinates. In them a mode with no force on it stays at zero, so the following share F, the regression of the mode's displacement on its displacement along the IRC at the same bond length, measures a real response. Modes moving at least 0.05 sqrt(amu) bohr on the path by bond formation fall as follows (cm-1):
+
+| Row | CH3 radical | CH2F radical |
+|---|---|---|
+| Stays behind (F < 0.3) | 59, 192, 317, 519, 595, 875, 884, 1010, 1076, 3132 | 58, 177, 198, 257, 545, 592, 856, 1014, 3131 |
+| Between | 783, 808, 1139, 1337, 1440, 1475, 3119 | 438, 811, 885, 1077, 1135, 1339, 1441, 1456, 1477, 3119 |
+| Follows (F > 0.7) | 1941, 3084 | 334, 1947 |
+
+The C-H stretches in this table are an effect of the coordinates and should not be counted, as the next paragraph shows. What remains is simple: the passage is so short that only the C=C stretch keeps up. A harmonic mode at its TS1 frequency, forced by the path, predicts F with a mean difference of 0.15 and 0.14 and correlations of 0.93 and 0.86. Frequency does sort the modes, and the crossover lies at about 1300 cm-1, a period of 25 fs. The measured F is usually a little larger than the prediction, and mode 334 of the fluoro system is an outlier.
+
+**How large a coupling is** comes from internal coordinates (bonds, angles and dihedrals). Straight-line coordinates read a turning group as a stretch of its bonds. They give a C-H stretch a displacement of 0.75 sqrt(amu) bohr, a coupling of g = 132 and harmonic energies of 101 kcal/mol in the following modes, more than the 54 kcal/mol the reaction releases. In internal coordinates the same C-H stretches move by 0.01 or less, and the energy held in the modes at bond formation totals 11.3 and 11.9 kcal/mol. The harmonic estimate of how far the trajectory is above the path at that moment is then 6.8 and 6.8 kcal/mol, against 6.1 and 6.9 from the DFT energies. Earlier in the passage the same estimate falls well below the DFT difference, so the agreement at bond formation should not be taken further.
+
+Internal coordinates have their own artefact: a straight-line motion along the imaginary mode alone already reads as motion of other modes. Many modes that seem to follow in these coordinates (for example 317 cm-1 in entry 31, F = 0.84) are reproduced by that straight line (0.85). They receive no force, which is why the rows above do not use these coordinates.
+
+**Is g about 1 realistic?** Yes, for slow modes. Below 240 cm-1, four times the transverse frequency and the band of the model, the nine modes have g from 0.12 to 2.37 with a median of 0.86. Above that band the modes that are displaced reach g of 3 to 35. The largest is the mode at 808 cm-1 in entry 31 (811 in entry 32, g = 14), which involves the turn of the CH2 end. These modes are fast enough that g no longer measures an unrelaxed surface.
+
+**The energy-losing row.** Of the 11.3 and 11.9 kcal/mol held in the modes at bond formation, 9.9 and 8.6 kcal/mol lie in modes of 250 to about 1100 cm-1, periods of 130 to 30 fs. This is the row the model says takes energy for good, although with a 200 fs trajectory I cannot say that the energy stays there.
+
+**The inertia row** is close to empty. All modes together would add 0.16 and 0.20 to the inertia of the reaction coordinate up to bond formation, and the modes that actually follow would add much less.
+
+### The instability starts where the relaxed surface says it does
+
+Slow modes do stay behind. By bond formation the undisplaced trajectory has moved along the turn by only 0.01 of its thermal width. But this does not change the surface in the part of the passage where the instability starts.
+
+| Time (fs) | Bond (angstrom) | CH3, trajectory | CH3, IRC at the same bond | Bond (angstrom) | CH2F, trajectory | CH2F, IRC at the same bond |
+|---|---|---|---|---|---|---|
+| 10 | 2.28 | 59 | 57 | 2.29 | 63 | 60 |
+| 15 | 2.21 | 38 | 36 | 2.22 | 59 | 56 |
+| 20 | 2.08 | -85 | -85 | 2.12 | -14 | -13 |
+| 25 | 1.85 | -140 | -148 | 1.94 | -97 | -100 |
+| 30 | 1.53 | -111 | not one direction | 1.66 | -92 | -121 |
+
+(Curvature of the turn in cm-1, negative meaning imaginary.) The trajectory is less than 0.6 kcal/mol above the path up to 25 fs, and 6 to 7 kcal/mol above it at bond formation. The frozen limit of the model, a stiffer surface that delays the instability, therefore does not apply to these molecules: the modes that have stayed behind have barely been asked to move when the curvature changes sign.
+
+The surfaces separate only at bond formation. On the IRC the turn stops being a soft single direction there: the lowest curvature is +22 cm-1 at the pseudo-minimum of entry 32, and in entry 31 the turn mixes with other motions and is lost among them at R below 1.6 angstrom. On the trajectory the turn stays unstable through bond formation (-111 and -92 cm-1, then -207 and -107 at 40 fs with less clean directions). The trajectories do not stop at the pseudo-minimum. They reach the Z geometry in about 90 and 105 fs and swing about it, which agrees with the sequence reported by Yamaki et al. and Wu et al., bond first, then torsion.
+
+### The product is set by the starting torsion, and the sweep plays almost no part
+
+![turn of the molecules](figures/molecule_turn.png)
+
+The instability has little time to grow. The growth exponent, the integral of the square root of the negative curvature up to bond formation, is 0.27 and 0.15, against 0.64 on the model surface. The push arrives later: the undisplaced trajectory is displaced by 0.07 and 0.05 thermal widths at 40 fs, and by 1.1 and 0.9 widths at 80 fs.
+
+Trajectories started at other positions along the turn show what decides the product. Writing phi for the torsion through the carbon on the turning end (180 degrees in Z, 0 in E):
+
+| Reaction | Start, in thermal widths | Starting phi (degrees) | Ends in |
+|---|---|---|---|
+| CH3 | -2, -1, 0, +1 | -149, -130, -110, -90 | Z |
+| CH3 | +1.5, +2 | -80, -71 | E |
+| CH2F | +2, +1, 0, -0.5 | -139, -121, -102, -93 | Z |
+| CH2F | -1, -1.5, -2 | -84, -75, -66 | E |
+
+The two brackets for the boundary, -90 to -80 degrees and -93 to -84 degrees, overlap at about -87 degrees, close to the perpendicular geometry. TS1 lies 23 degrees to the Z side of that in the methyl case and 15 degrees in the fluoromethyl case. Trajectories near the boundary take much longer to decide. The torsion stays near perpendicular for about 80 fs from +1.5 in entry 31 and for about 130 fs from -1 in entry 32.
+
+My interpretation is that conjugation of the allyl group develops when the C-C bond forms, so a strong torque towards planarity appears with its ridge at the perpendicular geometry, and the bond forms about 18 times faster than the period of the turn. The torsion at bond formation is then still the thermal torsion of TS1, and the side of perpendicular it falls on decides the product. The boundary at the same angle in both molecules supports this. I did not compute the torque profile, so it remains an interpretation.
+
+This gives a share of Phi(d / sigma), with d the distance from TS1 to the boundary and sigma the spread of the turn at TS1. Thermal velocity along the turn adds to the spread: one thermal velocity shifts the torsion at 40 and 60 fs by 0.40 and 0.51 (CH3) and 0.34 and 0.54 (CH2F) of what one thermal width of position does, so the spread grows by a factor of about 1.12.
+
+| Reaction | Boundary (widths) | Share, position only | Share, with velocity | Wu et al. |
+|---|---|---|---|---|
+| CH3 | 1.0 to 1.5 | 0.84 to 0.93 | 0.81 to 0.91 | 0.956 +- 0.018 |
+| CH2F | 0.5 to 1.0 | 0.69 to 0.84 | 0.67 to 0.81 | 0.823 +- 0.036 |
+
+The order and the rough size agree, but the estimate is lower than the counted share in both reactions. The difference may lie in other slow modes, which I did not displace and which would widen the spread and lower the estimate further, or in the anharmonic potential along the turn, in the zero-point energy of quasiclassical sampling, or in their level of theory. Two reactions cannot establish a relation, and I have no control for this comparison.
+
+### The law and the model against the molecule
+
+I integrated the linear equation of the law, y'' = -k(t) y + f(t), with k and f from the exact Hessians and forces at the frames, up to 40 fs. In that range it is right. It gives y of -0.090 and +0.037 widths at 40 fs against -0.065 and +0.045 on the trajectory, including the opposite signs of the two reactions, and a velocity against position ratio of 0.45 and 0.46 against the measured 0.40 and 0.34. But at this point the boundary implied by the law is 0.08 and 0.04 widths, compared with the 1.0 to 1.5 and 0.5 to 1.0 found. The law's linear stage ends before the push that decides the product, so it cannot give the numerator here. Its form with a Gaussian denominator survives, with the mean set by the place of the ridge.
+
+The molecules also lie outside the range of the model surface, in the direction of a sudden passage:
+
+| Quantity | Model (kT = 0.03) | CH3 | CH2F |
+|---|---|---|---|
+| Transverse frequency times the passage | 1.3 | 0.33 | 0.35 |
+| Imaginary over transverse frequency | 2.8 | 8.2 | 7.4 |
+| Energy drop over w_y^2 X^2 | 1.33 | 35 | 30 |
+| Thermal width of y over the path length X | 0.17 | 0.62 | 0.63 |
+| Growth exponent up to bond formation | 0.64 | 0.27 | 0.15 |
+
+### Limits and pitfalls
+
+- These are two very similar reactions with a torsional bifurcation and a very soft turn. They do not represent cycloadditions, whose transverse modes may be stiffer and whose products differ by bonds. The conclusions about a sudden passage should not be carried over without a calculation.
+- I displaced one coordinate. Other slow modes were left at rest and no thermal velocity was given to them.
+- Each row of the mode table comes from one trajectory with every mode at rest. Thermal motion would change F, in particular for the low modes.
+- The curvature along a fixed direction is misleading. An earlier scan of y'Hy along y fixed near the valley-ridge transition stayed positive in entry 31 and suggested a wider ridge in the fluoro system. Exact Hessians show the opposite (-154 against -121 cm-1 at most). The scan reads +44 cm-1 at s = 1.15, while the lowest curvature at s = 1.25 is -65 cm-1 in a direction with overlap 0.96 with y. The remaining 4 per cent of y lies in stiffer modes, which dominate its curvature. I withdraw that suggestion, and results/scan_*.npz is kept only as a record of it.
+- The curvature of the turn past bond formation depends on recognizing the direction by its overlap with a rigid turn, which falls below 0.7 there. The values at 40 fs and later are less certain.
+- The geometries in molecules/yamaki_geometries.py come from the supporting information of the paper, which is under CC BY-NC-ND. This should be checked before the branch is published.
+
 ## Summary: where the law holds and where it fails
 
 - **It holds** when the transverse instability grows through more than a few e-folds before the motion along the path
@@ -633,13 +762,16 @@ trajectories). The mode populations act during the descent, before the products 
   modes add inertia, slow modes leave the surface unrelaxed, and only modes near the rate of the passage take energy for good. The
   ratio depends on which modes are coupled (0.06 to 0.46 at one strength). Modes stiffening on one side give a bias that grows with
   temperature, and there the law holds to 0.003.
-- **Not tested:** molecular cubic constants, a law with modes on a curved path, three transverse modes or more, and curved paths
-  in more than two dimensions. I do not know whether entries 29 and 30 of Yamaki et al. resemble either
-  two-mode case, because I could not open that paper.
+- **Two radical additions to methylallene** are a sudden case the model surface does not reach. The law's linear equation with DFT
+  curvatures and forces is right up to 40 fs, but the push that decides the product comes later. The product follows the side of the
+  perpendicular torsion on which the molecule starts, and the Gaussian denominator holds with the spread of the turn at TS1.
+- **Not tested:** a law with modes on a curved path, three transverse modes or more, curved paths in more than two dimensions, and
+  molecules other than entries 31 and 32. Entries 29 and 30 of Yamaki et al. are tripericyclic reactions with three products of
+  different connectivity, and I have not compared them with either two-mode case.
 
 ## What molecular tests would need
 
-Molecular tests are out of scope here. AIQM2 would serve for entries 1-27 of Yamaki et al. and DFT for 28-33. They
+Entries 31 and 32 are done above. AIQM2 would serve for entries 1-27 of Yamaki et al. and DFT for the others. Those tests
 would need:
 
 - the IRC from TS1 and the Hessian along it, which gives the transverse curvature V_yy(s) and the force on the IRC line
@@ -680,6 +812,8 @@ would need:
 | Two transverse modes | `python two_modes_scan.py traj --backend torch --out results/two_modes_traj.json`, the same with `law` and `sep` (`results/two_modes_law.json`, `_sep.json`), then `python extra_analyse.py` |
 | Curved valley and pseudo-minima | `python curved_scan.py traj --backend torch --only G,G1,H --out results/curved_traj_GH.json`, the same with `--only I` and `--only J` (`results/curved_traj_I.json`, `_J.json`; 2.48 million trajectories plus 0.64 million, about 7 minutes on one RTX 3090), `python curved_scan.py law --workers 20 --out results/curved_law_all.json` (about an hour on 20 cores), `python curved_analyse.py` |
 | Cubic coupling | `python anharm_scan.py traj --backend torch --part k/4 --out results/anharm_traj_k.json` for k = 0 to 3 (1,269 points, about 50 minutes on four RTX 3090), `python anharm_scan.py merge --out results/anharm_traj.json`, `python anharm_scan.py law --workers 16 --out results/anharm_law.json` (about 2 minutes), `python anharm_analyse.py` |
+| Molecules, on a GPU node with pyscf, gpu4pyscf and pyscf-dispersion (from examples/ptsb/molecules, E = 31, 32) | `python qm.py hess E`, then `irc`, `vrt`, `traj`, `hessat E --k ...` and `hessframe E --k 10,15,20,25,30,40,50,60`, `trajy E --k=-2,-1,1,2`, `trajy 31 --k=1.5 --tend=200`, `trajy 32 --k=-1.5,-0.5,-1 --tend=200`, `trajy E --k=0 --vy=1 --tend=110` and the same with `--vy=-1` (about 4 s per gradient, 6 to 8 minutes per Hessian, 20 minutes per 130 fs on one RTX 3090) |
+| Molecules, analysis (no GPU; the results are in molecules/results) | `python modes.py E`, `python curvature.py E`, `python checks.py E`, `python displaced.py`, `python law_molecule.py`, `python analyse_molecules.py` |
 | FieldBridge | `fieldbridge memory noise-ratio ptsb_transverse_overdamped.json --out-dir fieldbridge_noise_ratio --gammas 0.05,1`, and `fieldbridge memory codiscover ptsb_transverse_overdamped.json --target symmetric-write --out-dir fieldbridge_codiscover` |
 
-Seed 20261030, NumPy 1.24 and torch 2.0.1 on the GPU node; laws with SciPy 1.14 on the laptop.
+Seed 20261030, NumPy 1.24 and torch 2.0.1 on the GPU node; laws with SciPy 1.14 on the laptop. The molecular calculations are deterministic and use a Python 3.9 environment on the GPU node.

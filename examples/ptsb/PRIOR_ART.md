@@ -35,8 +35,12 @@ The Collins et al. (2013) model and protocol were checked against the full arXiv
 | 25 | The mean force from the population of modes that stiffen on one side as the bias of the write law, with selectivity rising as the square root of kT and a share far from the free energies of the products. | Not found | Query 60. A short search, so a weak negative. |
 | 26 | Cubic terms sorted by mode frequency into added inertia, an unrelaxed surface and true energy loss, as the cause of the product ratio depending on the coupling table and not on one friction. | Not found | Queries 55-59. A short search, so a weak negative. |
 
-Yamaki, Yamada, Okamoto, Nakagawa and Takayanagi, J. Comput. Chem. 47, e70517 (2026) could not be opened (HTTP 403).
-Their class definitions and ratios are taken from the summary given in the task.
+| 27 | Radical additions to allenes have a PTSB to Z and E allylic radicals through torsion after the bond forms, and the dynamic Z preference is controlled by the transition state structure and by trends along the bifurcating coordinates. | Published | Wu, Zhang and Hong, Chem. Eur. J. 30, e202403316 (2024), abstract only (the full text is behind a subscription). Their full text may already contain the statement in row 28. |
+| 28 | In the two methylallene additions the side of a perpendicular torsion at the start decides the product, with the boundary at about -87 degrees in both, and the thermal spread of the turn at TS1 gives the ratio as a Gaussian share. | Partly published | Empirical TS descriptors are published: Wu et al. (2024), row 3 above, and the VRAI method of Lee and Goodman, which allows thermal fluctuation of the real modes at TS1 (as summarized by Kuan and Hsu, J. Phys. Chem. A 2024, PMC11331512). I found no statement of this boundary with this share, but Wu et al. could not be read in full. |
+| 29 | Hessians along a trajectory compared with the IRC at the same bond length, showing that the instability starts at the same place while slow modes stay behind. | Not found | Queries 61 and 64. A short search, so a weak negative. |
+| 30 | The product of a PTSB follows from the phase-space structure and not from barriers. | Published | Agaoglou, García-Garrido, Katsanikas and Wiggins, Chem. Phys. Lett. 754, 137610 (2020), arXiv:2004.06112, for the mechanism on a model surface, and Kuan and Hsu (2024) for the statement that dynamics after TS1 govern the ratio. |
+
+The paper of Yamaki, Yamada, Okamoto, Nakagawa and Takayanagi, J. Comput. Chem. 47, e70517 (2026), which WebFetch could not open (HTTP 403), is open access at PMC13620280. I read its full text through Europe PMC and its supporting information in the Wiley page through the browser. Earlier rows that rest on the task summary agree with it. Its entries 31 and 32 take their counts from Wu et al. (2024), and the separate paper by Yamaki et al., Int. J. Quantum Chem. qua.70208, was still read only as a snippet.
 
 ## Recorded queries
 
@@ -102,3 +106,9 @@ All queries went through the WebSearch tool. "ext" marks extended mode.
 58. Carpenter nonstatistical dynamics ambimodal reaction energy flow to spectator modes selectivity trajectory reduced-dimensional model added bath modes
 59. non-IRC dynamics low-frequency modes cannot follow reaction path sudden versus adiabatic limit trajectories avoid minimum energy path unrelaxed surface selectivity
 60. entropic control product selectivity post-transition-state bifurcation free energy vibrational frequencies temperature dependence product ratio increases with temperature dynamics
+61. post-transition-state bifurcation product determined by initial displacement of low-frequency vibrational mode at transition state trajectories phase of mode selectivity
+62. radical addition to allene central carbon post-transition-state bifurcation allyl radical E Z selectivity dynamics methyl radical
+63. predict branching ratio bifurcating reaction from separatrix dividing surface at transition state thermal Gaussian width transverse mode phase space reactive islands valley-ridge
+64. sudden limit reaction faster than low-frequency modes trajectories bypass intermediate pseudo-minimum not following IRC post-transition state direct dynamics Hessian along trajectory instantaneous normal modes
+65. Yamaki Yamada Okamoto Nakagawa Takayanagi post-transition-state bifurcation 33 reactions AIQM2 valley-ridge transition J. Comput. Chem. 2026
+66. Zhang Hong "Post-Transition State Bifurcation Controls Torsional Selectivity in Radical Addition of Allenes" Chemistry A European Journal 2024 (then read by DOI through Europe PMC)
