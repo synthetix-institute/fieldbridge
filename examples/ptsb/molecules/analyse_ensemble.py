@@ -84,6 +84,7 @@ def read_set(ens, e, s):
         order = np.arange(len(ini["q"]))
     rows = {}
     fails = 0
+    # a repeated draw counts only up to the first start that has not finished: later repeats would favour the heavy starts that happen to have run
     for draw, i in enumerate(order):
         name = f"{e}{s}_{int(i):04d}"
         if i in rows:
@@ -92,8 +93,9 @@ def read_set(ens, e, s):
         fd, bd = ens / "traj" / f"{name}_f.done", ens / "traj" / f"{name}_b.done"
         if (ens / "traj" / f"{name}_f.failed").exists():
             fails += 1
-        if not fd.exists():
             continue
+        if not fd.exists():
+            break
         rows[i] = dict(i=int(i), draw=draw, mult=1, forward=fd.read_text(), backward=bd.read_text() if bd.exists() else None)
     return ini, rows, fails
 
@@ -116,6 +118,7 @@ def main():
             back = [rows[i]["backward"] for i in idx]
             mult = np.array([rows[i]["mult"] for i in idx], float)
             phi = np.degrees(ini["phi"][idx])
+            phi = phi_ts + (phi - phi_ts + 180) % 360 - 180          # continuous through +-180 on the Z side, relative to the torsion at TS1
             pdot = np.array([phi_dot(C, iphi, ini["q"][i], ini["v"][i]) for i in idx])
             count = {k: float(mult[[v == k for v in verdict]].sum()) for k in ("Z", "E", "reactant", "undecided")}
             # reactant-to-product: the backward segment must return to the reactant side; before it has run, a start counts as long as its forward end is a product
