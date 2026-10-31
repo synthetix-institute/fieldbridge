@@ -901,6 +901,40 @@ def distinct_write_points(real: Realization, events: List[Dict]) -> Tuple[List[D
     return kept, aside
 
 
+def _without_neutral(real: Realization, q: np.ndarray, param: str, v: float, ev: np.ndarray, R: np.ndarray,
+                     cand: np.ndarray, over: Dict) -> np.ndarray:
+    """The candidates without the directions that are neutral on both sides of v along the control while another
+    candidate crosses there. A conserved quantity (the spin length of an undamped atom) or a line of states keeps a zero
+    eigenvalue along the whole branch; counted with the eigenvalues that cross, it reads as a degenerate critical mode.
+    Where nothing else is near zero, or the state does not continue to both sides, the candidates are returned as they
+    are."""
+    width = (abs(real.control_range[1] - real.control_range[0])
+             if real.control_range is not None and param == real.control else max(1.0, abs(v)))
+    neutral: Optional[np.ndarray] = None
+    moved = np.inf
+    for w in (v - 5e-3 * width, v + 5e-3 * width):
+        side = {**over, param: w}
+        qn, ok = newton(real, q, side)
+        if not ok or real.carrier.distance(q, qn) > 0.1 * base_length(real):
+            return cand
+        ev_side, R_side = np.linalg.eig(jacobian(real, qn, side))
+        zero = np.abs(ev_side.real) <= 1e-7 * max(1e-12, float(np.abs(ev_side).max()))
+        if not zero.all():
+            moved = min(moved, float(np.abs(ev_side.real[~zero]).min()))
+        if neutral is None or zero.sum() < neutral.shape[1]:
+            neutral = R_side[:, zero]
+    m = neutral.shape[1]
+    if m == 0 or not np.isfinite(moved):
+        return cand
+    # the crossing eigenvalue is within what it moves over this step of the control
+    near = cand[np.abs(ev.real[cand]) <= moved]
+    if m >= near.size:
+        return cand
+    basis = np.linalg.qr(neutral)[0]
+    overlap = [float(np.linalg.norm(basis.conj().T @ R[:, j]) / np.linalg.norm(R[:, j])) for j in near]
+    return np.setdiff1d(cand, near[np.argsort(overlap, kind="stable")[::-1][:m]])
+
+
 def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: Optional[Dict] = None,
                 npts: int = 41, half: Optional[float] = None) -> Dict[str, object]:
     """Reduce the drift at a write point to one coordinate s along the critical direction:
@@ -927,6 +961,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         overl = np.array([np.linalg.norm(Nm @ (R[:, i] / np.linalg.norm(R[:, i]))) for i in range(n)])
         if np.any(overl < 0.9):
             cand = np.flatnonzero(overl < 0.9)
+    cand = _without_neutral(real, q, param, v, ev, R, cand, over)
     i = int(cand[np.argmin(np.abs(ev.real[cand]))])
     lam = ev[i]
     scale = max(1e-12, float(np.abs(ev).max()))

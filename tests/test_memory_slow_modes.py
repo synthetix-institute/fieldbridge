@@ -115,3 +115,12 @@ def test_samples_of_a_line_of_states_count_once_and_mirror_states_twice():
     mirror = _model(["x", "y"], {"x": "a*x - x**3", "y": "-y"}, {"a": 1.0}, {"name": "a", "range": [0.0, 2.0]})
     kept, _ = an.distinct_write_points(mirror, [{"v": 1.0, "q": np.array([s, 0.0])} for s in (1.0, -1.0)])
     assert len(kept) == 2
+
+
+def test_a_direction_neutral_on_both_sides_is_not_counted_with_the_eigenvalue_that_crosses():
+    """A coordinate z that never moves keeps a zero eigenvalue along the branch; the pitchfork of x crosses at a = 0."""
+    real = _model(["x", "z"], {"x": "a*x - x**3", "z": "0*z"}, {"a": 1.0}, {"name": "a", "range": [-1.0, 1.0]})
+    nf = an.normal_form(real, np.array([0.0, 0.3]), "a", 0.0)
+    assert nf["critical_dimension"] == 1 and nf["kind"].startswith("supercritical pitchfork")
+    pair = _model(["x", "y"], {"x": "a*x - y**3", "y": "a*y + x**3"}, {"a": 1.0}, {"name": "a", "range": [-1.0, 1.0]})
+    assert an.normal_form(pair, np.zeros(2), "a", 0.0)["critical_dimension"] == 2
