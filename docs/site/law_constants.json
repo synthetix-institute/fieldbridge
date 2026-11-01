@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "f971ef80c3bbcce902b08fc0b70dd3c053e72cadfc40fc350954ff3e07992cc3",
+ "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -796,12 +796,48 @@
   },
   "phase_qubit_rfsquid": {
    "spec_sha256": "f68cc4781f1b2933d1500d4ff8269db1e1a147ee086ec91974792fa5ce4bc3c6",
+   "symmetric-write": {
+    "class": "S(reflection) C R(fold) U R(pitchfork) K L",
+    "constant": 1.297125200711887,
+    "expected": 1.3313353638003897,
+    "offset": 0.02232907155505426,
+    "offset_stderr": 0.014031480783387316,
+    "signature": [
+     -0.09907864747,
+     0.00900747865,
+     0.07867508786,
+     -0.08833335039,
+     0.2711962912,
+     0.00193435504,
+     -0.09907864747,
+     0.01967604169,
+     0.07867508786,
+     -0.03399168647,
+     0.2711962912,
+     -0.04351869854,
+     -0.09907864747,
+     0.03034460473,
+     0.07867508786,
+     0.02034997744,
+     0.2711962912,
+     -0.08897175212,
+     0.008235260429,
+     5.439623961e-08,
+     0.008235260429,
+     -4.319537236e-08,
+     0.008235260427,
+     -1.488874846e-07,
+     4.615384615e-05
+    ],
+    "stderr": 0.014031480783387316,
+    "word": "SCRURKL"
+   },
    "threshold-write": {
-    "class": "C R(degenerate critical mode) W R(fold) K L",
-    "constant": 1.0187924975337554,
+    "class": "C R(fold) K L",
+    "constant": 1.0187964622247534,
     "expected": 1.018792971647471,
-    "stderr": 5e-07,
-    "word": "CRWRKL"
+    "stderr": 8.654221181592092e-05,
+    "word": "CRKL"
    }
   },
   "pitchfork": {
