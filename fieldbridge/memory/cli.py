@@ -121,8 +121,13 @@ def cmd_card(args) -> int:
     comp = predict.compare(pred, card)
     report = {"command": "card", **_provenance(real.spec), "structure": pred, "card": card, "comparison": comp}
     v = card["verdict"]
+    escape_md = ""
+    if getattr(real, "rates", None) is not None:   # the retention of the card is at constant noise; add what the rates give
+        from . import population
+        report["escape"] = population.escape(real)
+        escape_md = f"\n\n## Time to leave a state, from the birth and death rates\n\n{population.markdown(report['escape'])}"
     md = (f"# Memory card: {card['name']}\n\n{real.spec['question']}\n\n## Calculated\n\n"
-          + "\n".join(f"- **{VERDICT_NAMES.get(k, k)}**: {val}" for k, val in v.items())
+          + "\n".join(f"- **{VERDICT_NAMES.get(k, k)}**: {val}" for k, val in v.items()) + escape_md
           + "\n\n## Predicted from structure\n\n" + _md_predictions(pred)
           + "\n\n## Agreement\n\n" + "\n".join(f"- {k}: {c}" for k, c in comp.items())
           + f"\n\n{BOUNDARY}\n")
@@ -500,6 +505,21 @@ def cmd_noise_ratio(args) -> int:
     _write(Path(args.out_dir), "noise_ratio", report, nr.markdown(rep) + f"\n{BOUNDARY}\n")
     print(json.dumps({"out_dir": args.out_dir, "first_order": rep["first_order"],
                       "constants": {f"{r['gamma']:g}": round(r["constant"], 4) for r in rep["rows"]}}, indent=2))
+    return 0
+
+
+def cmd_escape(args) -> int:
+    """memory escape: the time to leave each state of a population, from its birth and death rates."""
+    from . import population
+    from .spec import SpecError, load
+    real = load(args.spec)
+    if getattr(real, "rates", None) is None:
+        raise SpecError(f"{args.spec} declares no birth and death rates (the field 'rates')")
+    report = {"command": "escape", **_provenance(real.spec), **population.escape(real, N=args.size)}
+    _write(Path(args.out_dir), "escape", report,
+           f"# Time to leave a state of {real.name}\n\n{population.markdown(report)}\n\n{BOUNDARY}\n")
+    print(json.dumps({"out_dir": args.out_dir, "paths": report["paths"], "equal_occupation": report["equal_occupation"]},
+                     indent=2))
     return 0
 
 
@@ -1301,6 +1321,11 @@ def add_parser(sub) -> None:
                    help="D_s|a3|, small enough that the choice is made near the bifurcation (default 5e-4).")
     p.add_argument("--trajectories", type=int, default=400, help="Sweeps per side of the bias.")
     p.set_defaults(func=cmd_noise_ratio)
+    p = msub.add_parser("escape", help="The time to leave each state of a population, from its birth and death rates "
+                                       "(the field 'rates'), against the exponents of a constant and a state noise.")
+    common(p)
+    p.add_argument("--size", type=int, default=None, help="Population scale N for the exact mean time of the chain.")
+    p.set_defaults(func=cmd_escape)
     p = msub.add_parser("dynamics", help="Chaotic loss of the initial state (predictability law) and blow-up in "
                                          "finite time (exponent from the dominant balance).")
     common(p)

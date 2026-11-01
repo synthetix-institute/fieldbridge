@@ -24,6 +24,12 @@
   "drift": {
     "u": "r*u*(1 - u/k) - u**2/(1 + u**2)"
   },
+  "rates": {
+    "birth": "r*u",
+    "death": "r*u**2/k + u**2/(1 + u**2)",
+    "upper": "k + 2",
+    "scale": "number of budworms at u = 1 in the habitat"
+  },
   "control": {
     "name": "k",
     "range": [
