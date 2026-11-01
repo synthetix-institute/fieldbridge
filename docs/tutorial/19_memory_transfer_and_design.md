@@ -186,11 +186,13 @@ law is reported as not certified.
 tells them apart by continuing the certificate's final states at the end value of the control for as long as the sweep
 took. If more than a tenth of the trajectories change state during that hold, the written states do not retain the
 choice: the noise exchanges it, and the full dynamics gives the steady-state selection under the bias. This is the
-equilibrium write of Module 30, here on a classical carrier; the Kerr parametric oscillator of
-`examples/quantum/semiclassical` at the vacuum noise κ/8 is one, since the sweep ends with a fifth of a photon in each
-well. If the states retain the choice, the deviation belongs to the nonlinear stage proper (noise while the state is
-still small, or a further mode), and the report says so. The class is reported as `write_class`: linear-stage write,
-equilibrium write, or nonlinear stage.
+equilibrium write of Module 30, here on a classical carrier. The Kerr parametric oscillator of
+`examples/quantum/semiclassical` at the vacuum noise κ/8 exchanges its wells in this way, since the sweep ends with a
+fifth of a photon in each well and half of the trajectories change state during the hold; there the outcome map agrees
+with the certificate that the bias hardly chooses, so the hold is not consulted and the record reports the class of a
+law that holds. If the states retain the choice, the deviation belongs to the nonlinear stage proper (noise while the
+state is still small, or a further mode), and the report says so. The class is reported as `write_class`: linear-stage
+write, equilibrium write, or nonlinear stage.
 
 The same rung runs over a whole folder through `memory predictions`, which derives the three write targets of every
 drift specification and completes the obstructed symmetric writes. The thirty-one elements of quantum-computing
