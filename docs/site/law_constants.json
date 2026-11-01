@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "63ea37e303ee971fbf80d663c8f5d9d1d2aa287f10e5820e51b121f00082bc42",
+ "implementation_sha256": "f971ef80c3bbcce902b08fc0b70dd3c053e72cadfc40fc350954ff3e07992cc3",
  "nodes": {
   "amplitude_split": {
    "spec_sha256": "5b850cd4a3b8f59b906547c59c4681817a2e4ab1a510ae04a2f01c55870674fa",
@@ -529,9 +529,9 @@
   "josephson": {
    "phase-locking": {
     "class": "C R(phase) K(1:1) L",
-    "constant": 1.001722647028331,
+    "constant": 1.0002949904665583,
     "expected": 1.0,
-    "stderr": 0.0010982885822719002,
+    "stderr": 0.00039141883628746044,
     "word": "CRKL"
    },
    "spec_sha256": "7c1d83a0857e906068ccf01fffe39c0e7d32ade943f0ad252ba2375ef13ada6f"
