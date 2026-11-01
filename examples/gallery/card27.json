@@ -3665,6 +3665,16 @@
      -0.08749994999965022
     ],
     "half": 0.5,
+    "fit": {
+     "a0": -7.47371201319244e-19,
+     "a1": 1.0000069959551251e-07,
+     "a2": 1.490178041989912e-17,
+     "a3": -0.7000000000000003
+    },
+    "series": {
+     "covered": false,
+     "reason": "2 critical directions: the series is closed along one"
+    },
     "critical_dimension": 2,
     "critical_kappa": [
      [
@@ -3716,6 +3726,10 @@
      0.003331057096822576,
      -0.0
     ],
+    "a4": 1.360454212285642e-16,
+    "a5": 1.1446346052237823e-16,
+    "a6": -2.070734493715029e-14,
+    "a7": 1.4643003870453951e-12,
     "hopf": false,
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "mode": [
@@ -3726,15 +3740,15 @@
      1.0,
      -7.50944039268336e-10
     ],
-    "a0": 8.220456047462927e-13,
-    "a1": -0.0033310570825168953,
-    "a2": 1.0281027282685744,
-    "a3": -0.7000000000000036,
+    "a0": 8.220646385836972e-13,
+    "a1": -0.0033310570825174635,
+    "a2": 1.0281027282685746,
+    "a3": -0.7,
     "bias_along_mode": 0.9999999999986476,
     "bias": 1.0,
     "kappa_slope": 2.56867836980609e-17,
     "kappa_slope_partial": 4.1790257588024673e-19,
-    "asymmetry": 0.746027641611496,
+    "asymmetry": 0.7460276416114973,
     "transverse_residual": 1.9756829166503026e-13,
     "cubic_misfit": 8.017411986510249e-16,
     "s": [
@@ -3824,6 +3838,36 @@
      0.16786015352670694
     ],
     "half": 0.5,
+    "fit": {
+     "a0": 8.220456047462927e-13,
+     "a1": -0.0033310570825168953,
+     "a2": 1.0281027282685744,
+     "a3": -0.7000000000000036
+    },
+    "series": {
+     "covered": true,
+     "order": 7,
+     "coefficients": [
+      8.220646385836972e-13,
+      -0.0033310570825174635,
+      1.0281027282685746,
+      -0.7,
+      1.360454212285642e-16,
+      1.1446346052237823e-16,
+      -2.070734493715029e-14,
+      1.4643003870453951e-12
+     ],
+     "rounding": [
+      8.220646385836972e-26,
+      3.3310570825174637e-16,
+      1.0281027282685746e-13,
+      6.999999999999999e-14,
+      1.5432413394429263e-20,
+      4.0371825006467866e-19,
+      2.0578445083328723e-17,
+      1.5516457026250868e-15
+     ]
+    },
     "critical_dimension": 1,
     "critical_kappa": [
      [
@@ -3851,7 +3895,7 @@
      "subcritical": false,
      "realizes_generator": false,
      "terms": {
-      "quadratic a2": 1.0281027282685744,
+      "quadratic a2": 1.0281027282685746,
       "bias per unit control": 0.9999999999986476
      },
      "required": [
@@ -5774,6 +5818,6 @@
   "holds": "activation between stored states (Law 3)",
   "lock": "field 0.4 x threshold, fixed control: accuracy 0.27, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.40, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.22, not rewritten"
  },
- "seconds": 21.705241918563843,
+ "seconds": 325.34564423561096,
  "id": "card27"
 }

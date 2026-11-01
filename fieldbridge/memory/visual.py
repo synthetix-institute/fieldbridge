@@ -237,10 +237,11 @@ def panel_normal_form(ax, card):
         return
     e = sorted(real_evs, key=lambda x: x["source"] != "control")[0]
     s, f = np.asarray(e["s"]), np.asarray(e["f"])
-    fit = e["a0"] + e["a1"] * s + e["a2"] * s ** 2 + e["a3"] * s ** 3
+    c = e.get("fit", e)   # the curves are of the cubic fitted to these points; the text gives the series at the point
+    fit = c["a0"] + c["a1"] * s + c["a2"] * s ** 2 + c["a3"] * s ** 3
     ax.plot(s, f, "o", ms=2.3, color=INK, label="drift along the unstable direction")
     ax.plot(s, fit, color=BLUE, lw=1.1, label="cubic fit")
-    ax.plot(s, e["a1"] * s + e["a3"] * s ** 3, color=ORANGE, lw=1.0, ls="--", label="symmetric part a1 s + a3 s^3")
+    ax.plot(s, c["a1"] * s + c["a3"] * s ** 3, color=ORANGE, lw=1.0, ls="--", label="symmetric part a1 s + a3 s^3")
     ax.axhline(0, color=INK2, lw=0.6)
     ax.set_xlabel(f"coordinate s along the unstable direction ({e['param']} = {e['value']:.4g})")
     ax.set_ylabel("ds/dt")

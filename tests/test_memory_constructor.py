@@ -1215,10 +1215,9 @@ JBA = {
 
 def test_the_kerr_resonator_of_bifurcation_readout_is_unfolded_at_its_cusp():
     """The two folds of the drive F meet at the cusp Delta/kappa = sqrt(3)/2, with n = kappa/(sqrt(3) U) photons and
-    F^2 = kappa^3/(3 sqrt(3) U). The quadratic coefficient vanishes there, but the quartic term of the reduced drift is
-    0.6 s times the cubic one: a cubic fitted over the default window takes it up as a quadratic coefficient and reads
-    the sweep through the cusp as one-sided (asymmetry 0.12). On half the window that coefficient falls by four and the
-    sweep is a supercritical pitchfork, so the detuning unfolds the write."""
+    F^2 = kappa^3/(3 sqrt(3) U). The quadratic coefficient vanishes there and the sweep is a supercritical pitchfork, so
+    the detuning unfolds the write. A cubic fitted over the default window, where the quartic term of the drift along the
+    mode is 0.6 s times the cubic one, takes it up as a quadratic coefficient and would read the sweep as one-sided."""
     from fieldbridge.memory import codiscovery
     real = spec.load(JBA)
     U, kappa = JBA["parameters"]["U"], JBA["parameters"]["kappa"]
@@ -1230,9 +1229,8 @@ def test_the_kerr_resonator_of_bifurcation_readout_is_unfolded_at_its_cusp():
     assert c["success"] and c["value"] == pytest.approx(delta_c, abs=1e-8) and c["control"] == pytest.approx(f_c, abs=1e-8)
     assert float(q @ q) == pytest.approx(kappa / (math.sqrt(3) * U), rel=1e-8)
     path = construct.along_path(real, {"F": c["control"], "Delta": c["value"]}, c["direction"])
-    wide, narrow = an.normal_form(path, q, "t", 0.0), construct.sweep_normal_form(path, q)
-    assert wide["asymmetry"] > construct.TOL and narrow["window_halvings"] == 1
-    assert narrow["a2"] == pytest.approx(wide["a2"] / 4, rel=0.02)
+    sweep = an.normal_form(path, q, "t", 0.0)
+    assert abs(sweep["a2"]) < 1e-9 and sweep["asymmetry"] < 1e-6 and abs(sweep["fit"]["a2"]) > 1e-3
     assert c["normal_form_along_sweep"]["kind"].startswith("supercritical pitchfork")
     row = codiscovery.derive_symmetric_write(real, np.random.default_rng(1), check_law=False)
     assert row["status"] == "reached after unfolding" and row["word"] == "CRURK"

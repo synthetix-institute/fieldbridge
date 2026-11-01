@@ -13,8 +13,7 @@
                   realization names further material parameters, the point at which the quadratic term vanishes
                   (a cusp) is solved for, within the bounds the specification declares for the parameters, together
                   with the direction of a sweep through it that carries no bias;
-                  the normal form along that sweep is then recomputed, on a window over which the quartic term of
-                  the drift does not read as a quadratic one (sweep_normal_form).
+                  the normal form along that sweep is then recomputed.
 
 For a write point that realizes the generator, the swept-write law of the source,
 P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})) (Kondepudi and Nelson), is transferred with h_s and D_s projected on
@@ -34,7 +33,6 @@ from . import analysis as an
 from .identity import Realization
 
 TOL = 0.1
-SWEEP_WINDOW_HALVINGS = 3  # at a cusp, the window of the reduction is narrowed at most to an eighth
 
 
 def obstruction(nf: Dict) -> Dict[str, object]:
@@ -131,28 +129,6 @@ def along_curved_path(real: Realization, origin: Dict[str, float], direction: Di
 
     return replace(real, name=real.name + f" along a curved sweep (curvature {curvature:g})", drift=drift,
                    potential=None, params={**real.params, **origin, "t": 0.0}, control="t", control_range=(-1.0, 1.0))
-
-
-def sweep_normal_form(path: Realization, q) -> Dict:
-    """The normal form at a cusp along the sweep through it (a realization of along_path, at t = 0).
-
-    The quadratic coefficient vanishes at the cusp, where cancel_asymmetry solves for it. A cubic fitted over a window
-    of half-width w also takes up the quartic term of the drift, a2 = (6/7) a4 w^2 to leading order, which gives an
-    asymmetry that falls in proportion to w. Where the quartic term is comparable to the cubic one over the default
-    window (at the cusp of a driven Kerr resonator it is 0.6 s times the cubic term, and the asymmetry is 0.12), the
-    write reads as one-sided. The window is then halved, at most SWEEP_WINDOW_HALVINGS times, until it does not. A quadratic
-    term grows relative to the cubic one as the window narrows (|a2| w^2 against |a3| w^3), so the halving removes only
-    an even part of higher order; where it does not remove the asymmetry, the normal form of the default window is
-    returned. window_halvings records a narrowed window."""
-    nf = an.normal_form(path, q, "t", 0.0)
-    if not obstruction(nf)["asymmetric"]:
-        return nf
-    for k in range(1, SWEEP_WINDOW_HALVINGS + 1):
-        narrow = an.normal_form(path, q, "t", 0.0, half=nf["half"] / 2 ** k)
-        if not obstruction(narrow)["asymmetric"]:
-            narrow["window_halvings"] = k
-            return narrow
-    return nf
 
 
 def _null_vectors(J):
@@ -418,9 +394,8 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
         d = -d
     d = d / max(np.linalg.norm(d), 1e-300)
     path = along_path(real, {param: v, second: pv}, {param: float(d[0]), second: float(d[1])})
-    nf_path = sweep_normal_form(path, q)
-    keys = ("kind", "a2", "a3", "asymmetry", "bias", "kappa_slope") + (
-        ("half", "window_halvings") if "window_halvings" in nf_path else ())
+    nf_path = an.normal_form(path, q, "t", 0.0)
+    keys = ("kind", "a2", "a3", "asymmetry", "bias", "kappa_slope")
     out.update(success=True, state=q.tolist(), control=v, value=pv,
                direction={param: float(d[0]), second: float(d[1])},
                normal_form_along_sweep={k: nf_path[k] for k in keys if k in nf_path},

@@ -244,7 +244,8 @@ def _equations(spec: Dict) -> Realization:
         cols = [q[:, k] for k in range(q.shape[1])]
         with np.errstate(divide="ignore", invalid="ignore"):
             vals = fn(*cols, *[p[k] for k in pnames])
-        return np.stack([np.broadcast_to(np.asarray(v, float), cols[0].shape) for v in vals], axis=-1)
+        # q.dtype is float, or object where q holds truncated series (analysis.series_reduction)
+        return np.stack([np.broadcast_to(np.asarray(v, q.dtype), cols[0].shape) for v in vals], axis=-1)
 
     def potential_fn(q, p):
         cols = [q[:, k] for k in range(q.shape[1])]

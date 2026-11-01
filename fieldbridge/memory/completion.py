@@ -315,7 +315,8 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     """The one-coordinate law along the moving branch, for a write point whose completion keeps a second parameter.
 
     The unwritten branch q*(t) is followed through the crossing; at n_grid times its reduction to the slow direction
-    (analysis.normal_form: s' = a1 s + a2 s^2 + a3 s^3, left vector w) and the projections of the lag
+    (the window fit of analysis.normal_form: s' = a1 s + a2 s^2 + a3 s^3, left vector w; this cubic is integrated up to
+    the written amplitude, where the Taylor coefficients of the series reduction do not hold) and the projections of the lag
     beta = -w.dq*/dt, of the bias and of the noise D_s = D w.w give
         ds/dt = a1(t) s + a2(t) s^2 + a3(t) s^3 + beta(t) + h_s(t) + sqrt(2 D_s(t)) xi,
     which is solved from s = 0. The final s is assigned to the stable state whose coordinate along w is nearest. The
@@ -338,7 +339,8 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
         if real_from is None:
             real_from = i
         qs.append(q.copy())
-        coef.append((nf["a1"], nf["a2"], nf["a3"], np.asarray(nf["mode"]), np.asarray(nf["left_mode"])))
+        fit = nf["fit"]
+        coef.append((fit["a1"], fit["a2"], fit["a3"], np.asarray(nf["mode"]), np.asarray(nf["left_mode"])))
     if real_from is None or ts_all[real_from] > sweep.t_cross:
         raise ValueError("no real slow direction before the crossing")
     ts = ts_all[real_from:]
@@ -640,7 +642,7 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
 
     def offset_at(c2: float) -> Dict[str, object]:
         path = construct.along_curved_path(real, origin, cusp["direction"], c2)
-        nfp = construct.sweep_normal_form(path, q)
+        nfp = an.normal_form(path, q, "t", 0.0)
         row: Dict[str, object] = {"curvature": float(c2), "kind_along_sweep": nfp["kind"]}
         if "pitchfork" not in str(nfp["kind"]).lower():
             row["status"] = "not a pitchfork along the curved sweep"
@@ -739,14 +741,10 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
                     if c.get("success"):
                         path = construct.along_path(real, {real.control: c["control"], second: c["value"]},
                                                     c["direction"])
-                        # the sweep is read on a window narrowed until the quartic term of the drift no longer appears
-                        # as a quadratic one (construct.sweep_normal_form): on the default window the cusp of a driven
-                        # Kerr oscillator reads as transcritical
-                        nfp = construct.sweep_normal_form(path, np.asarray(c["state"]))
+                        nfp = an.normal_form(path, np.asarray(c["state"]), "t", 0.0)
                         u.update(cusp={real.control: c["control"], second: c["value"]}, direction=c["direction"],
                                  kind_along_sweep=nfp["kind"], asymmetry_at_fold=float(nf.get("asymmetry", 0.0)),
-                                 asymmetry_along_sweep=float(nfp.get("asymmetry", 0.0)),
-                                 window_halvings=int(nfp.get("window_halvings", 0)))
+                                 asymmetry_along_sweep=float(nfp.get("asymmetry", 0.0)))
                         if "pitchfork" not in str(nfp["kind"]).lower():
                             # the path through the cusp does not cross a symmetric point: the second parameter has
                             # not cancelled the asymmetry along the sweep (a transcritical point, two states exchanging

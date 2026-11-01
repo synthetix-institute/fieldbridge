@@ -95,10 +95,10 @@ def test_the_table_of_the_write_targets_is_a_view_of_the_records(tmp_path):
     counts = rc.predictions_counts(records)
     assert counts["specifications"] == 31 and counts["reached"]["symmetric-write"] + counts["obstructed_symmetric"] <= 31
     assert set(counts["write_classes"]) <= {"linear-stage write", "equilibrium write", "nonlinear stage"}
-    assert "kerr_cat_kpo" in counts["write_classes"]["equilibrium write"]
+    assert "rfsquid_pair" in counts["write_classes"]["equilibrium write"]
     md = rc.predictions_markdown(records, intro="Intro sentence.")
     assert md.startswith("# The write rules on the recorded specifications\n\nIntro sentence. Derived from the records")
-    assert md.count("\n| ") == 31 + 2 and "equilibrium write: 51 % change state" in md
+    assert md.count("\n| ") == 31 + 2 and "equilibrium write: 10 % change state" in md
     # the command writes the same table from a records file, with no derivation
     out = tmp_path / "table"
     cmd = [sys.executable, "-B", "-m", "fieldbridge", "memory", "record", "--from-records",
