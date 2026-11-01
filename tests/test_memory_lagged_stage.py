@@ -12,12 +12,12 @@ from fieldbridge.memory import analysis as an, completion as cm, spec
 
 RATE = 0.02
 PI4 = pi ** 0.25
-TOOL = {"T": 0.0, "B": 1.0, "G0": 0.5, "E": 3.75}
-RELAX = "G0*exp(E*T)*(T - f)"
+TOOL = {"T": 0.0, "B": 1.0, "G0": 0.5, "Ea": 3.75}
+RELAX = "G0*exp(Ea*T)*(T - f)"
 
 
 def real_of(variables, parameters, drift, control, lo=-0.8, hi=0.8, dt=0.02):
-    return spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "lagging state", "field": "test",
+    return spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "lagging state", "field": "test", "question": "what the write follows", "assumptions": [], "provenance": {"source": "test"},
                       "carrier": {"kind": "euclid", "name": "state", "variables": list(variables), "scale": 1.0}, "parameters": parameters,
                       "drift": drift, "noise": 0.001, "dt": dt, "control": {"name": control, "range": [lo, hi]}})
 
@@ -86,7 +86,7 @@ def test_the_motion_of_the_branch_along_the_critical_direction_stays_a_forcing_o
 
 
 def test_a_slow_mode_inside_the_critical_space_follows_the_flow():
-    r = stage(real_of(["s", "f"], {"T": 0.0, "B": 1.0, "G0": 0.1, "E": 0.6}, {"s": "-B*f*s - s**3", "f": RELAX}, "T", -0.9, 0.9))
+    r = stage(real_of(["s", "f"], {"T": 0.0, "B": 1.0, "G0": 0.1, "Ea": 0.6}, {"s": "-B*f*s - s**3", "f": RELAX}, "T", -0.9, 0.9))
     assert r["k"] == 2
     assert abs(r["c"] - 1.3640) < 0.01
     assert r["lag"] > 0.1                                    # about r / G0 = 0.2 at the crossing of the static branch
