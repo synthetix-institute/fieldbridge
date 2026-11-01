@@ -719,7 +719,7 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
     completed model (with its certificate)."""
     if not real.control:
         return {"write_points": [], "note": "no control parameter"}
-    events = an.locate_writes(real, rng, n_starts=24 if real.carrier.dim <= 4 else 12)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24 if real.carrier.dim <= 4 else 12))
     points = []
     for ev in events:
         nf = an.normal_form(real, ev["q"], real.control, ev["v"])
