@@ -15,9 +15,11 @@ discarded:
 The completed model is not reduced to a canonical form whose law is known in advance; its write law is derived from
 the sweep itself, in the same way for every completion:
 
-  linear stage   the exact Gaussian moments of the drift linearized about the unwritten state along the sweep, with
-                 the bias and the noise, up to the time at which the spread reaches a small fraction of the distance
-                 to the written states (the end of the linear stage);
+  linear stage   the exact Gaussian moments of the drift linearized about the state the sweep really follows, with the
+                 bias and the noise, up to the time at which the spread reaches a small fraction of the distance to the
+                 written states (the end of the linear stage). The modes that relax follow the drift and lag behind
+                 the static branch; a lag changes the critical rate, and where it grows along the sweep the rate
+                 at the crossing is not the declared one;
   outcome map    the deterministic flow of the full drift from samples of that Gaussian, carried back by the linear
                  propagator of the critical space to one e-fold after the crossing, to the end of the sweep; each final
                  state is assigned to the nearest stable state there. In one direction only the sign of the sample
@@ -176,10 +178,22 @@ def _rk4_step(f, q, t, h):
 # ------------------------------------------------------------------------------------------------ the law
 def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray,
                      targets: Sequence[np.ndarray], strengths: Sequence[float], D: float, stable: List[np.ndarray],
-                     n_samples: int, rng, dt: Optional[float] = None) -> List[Dict]:
+                     n_samples: int, rng, dt: Optional[float] = None, crossing: Optional[Tuple[np.ndarray, np.ndarray]] = None
+                     ) -> List[Dict]:
     """For each bias (target, strength): the Gaussian of the linear stage and the outcome map.
 
-    The moments of the deviation from the unwritten state (no bias, no noise) are integrated through the crossing
+    The reference of the moments is the state the sweep really follows, with no bias and no noise. Along the directions
+    that relax it is the deterministic flow of the full drift, which lags behind the static branch, and the Jacobian is
+    evaluated on it: where the relaxation rate changes along the sweep, the lag changes with it and the critical rate
+    grows at a rate other than the declared one. Along the directions that cross (`crossing`, the bases of the static
+    critical space; R, L by default) it stays on the branch followed by Newton through the crossing (after it, an
+    unstable fixed point), since the free flow would leave for a written state there and the linearization about it
+    would no longer describe the choice. What this constraint removes from the flow, the lag of the branch along those
+    directions, enters the mean as a deterministic forcing: a sweep that itself favours one state. A direction that takes
+    part in the write only because it is slow (R beyond `crossing`) still relaxes, and it follows the flow. Where Newton
+    fails, the whole reference is carried by the flow.
+
+    The moments of the deviation from this reference are integrated through the crossing
     until the critical rate integrated since the crossing reaches GROWTH_STOP: the fluctuations present then decide
     the write, and noise added later is amplified less by that factor. Their distribution in the critical space gives
     the statistics of the decision (in one direction, the ratio of mean to spread; in k directions, also the angles).
@@ -210,38 +224,53 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if (k >= 2 and len(stable) >= 2) else None
     amplitude_at: Dict[float, float] = {}
     results = []
+    Rx, Lx = crossing if crossing is not None else (R, L)
+    F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
     for target, h in zip(targets, strengths):
-        # reference: the unwritten branch itself, followed by Newton through the crossing (after it, an unstable
-        # fixed point). Where the branch moves along the sweep, the state lags behind it; the lag, -dq*/dt, enters
-        # the mean as a deterministic forcing (a sweep that itself favours one state). Where Newton fails, the
-        # reference is carried by the drift.
-        q_ref = q0.copy()
-        m = np.zeros(n); C = np.zeros((n, n)); Phi = np.eye(R.shape[1])
+        # the reference q_ref and the branch q_branch it is held to along the crossing directions; m is the mean deviation
+        # from q_ref, and d the displacement of q_ref from the branch in the critical coordinates (the lag of a slow mode)
+        q_ref, q_branch = q0.copy(), q0.copy()
+        d = np.zeros(k)
+        m = np.zeros(n); C = np.zeros((n, n)); Phi = np.eye(k)
         t, t_star, grown, ended_by = 0.0, None, 0.0, "end of the sweep"
-        hist_t, hist_spread, hist_q, hist_g, hist_Phi = [], [], [], [], []
+        lag_at_crossing, kappa_before = None, None
+        rate_at_crossing = None
+        hist_t, hist_spread, hist_q, hist_b, hist_d, hist_g, hist_Phi = [], [], [], [], [], [], []
         steps = int(np.ceil(sweep.T / dt))
         for i in range(steps):
             over = sweep.over(t)
             J = an.jacobian(real, q_ref, over)
             Jc = L.T @ J @ R
+            kappa = float(np.max(np.linalg.eigvals(Jc).real))
             if t > sweep.t_cross:
-                grown += dt * max(float(np.max(np.linalg.eigvals(Jc).real)), 0.0)
+                grown += dt * max(kappa, 0.0)
+            if rate_at_crossing is None and kappa_before is not None and kappa_before < 0.0 <= kappa:
+                rate_at_crossing = (kappa - kappa_before) / dt
+            kappa_before = kappa
+            if lag_at_crossing is None and t >= sweep.t_cross:
+                lag_at_crossing = float(np.linalg.norm(real.carrier.diff(q_branch, q_ref)))
             b = real.write_force(q_ref, target, h)
-            q_new, ok = an.newton(real, q_ref, sweep.over(t + dt))
-            q_new = np.asarray(q_new, float)
-            if not ok or not np.all(np.isfinite(q_new)) or np.linalg.norm(q_new - q_ref) > 0.1 * an.base_length(real):
-                q_new = _rk4_step(lambda q, s: real.F(q, **sweep.over(s)), q_ref, t, dt)
-                lag = np.zeros(n)
+            q_free = _rk4_step(F, q_ref, t, dt)
+            q_next, ok = an.newton(real, q_branch, sweep.over(t + dt))
+            q_next = np.asarray(q_next, float)
+            if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q_branch, q_next)) <= 0.1 * an.base_length(real):
+                q_branch = q_next
+                q_new = q_free + Rx @ (Lx.T @ real.carrier.diff(q_free, q_branch))
             else:
-                lag = -(q_new - q_ref) / dt
-            m = m + dt * (J @ m + b + lag)
+                q_new = q_free
+                q_branch = real.carrier.wrap(q_free)
+            forcing = real.carrier.diff(q_new, q_free)     # what the reference does not follow: F(q_ref) - dq_ref/dt
+            q_new = real.carrier.wrap(q_new)
+            m = m + dt * (J @ m + b) + forcing
             C = C + dt * (J @ C + C @ J.T + 2 * D * np.eye(n))
             Phi = Phi + dt * (Jc @ Phi)
             q_ref = q_new
             t += dt
+            d = L.T @ real.carrier.diff(q_branch, q_ref)
             Cc = L.T @ C @ L
             spread = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(0.5 * (Cc + Cc.T)))), 0.0))
-            hist_t.append(t); hist_spread.append(spread + float(np.linalg.norm(L.T @ m))); hist_q.append(q_ref.copy())
+            hist_t.append(t); hist_spread.append(spread + float(np.linalg.norm(L.T @ m + d))); hist_q.append(q_ref.copy())
+            hist_b.append(q_branch.copy()); hist_d.append(d.copy())
             hist_g.append(grown if t > sweep.t_cross else 0.0); hist_Phi.append(Phi.copy())
             if t > sweep.t_cross and grown >= GROWTH_STOP:
                 t_star, ended_by = t, "growth"
@@ -264,16 +293,17 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
         P = hist_Phi[i_map] @ np.linalg.inv(hist_Phi[-1])
         z_map = z @ P.T
         C_map = 0.5 * (P @ Cc @ P.T + (P @ Cc @ P.T).T)
-        spread_map = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(C_map))), 0.0)) + float(np.linalg.norm(P @ mc))
+        spread_map = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(C_map))), 0.0)) + float(np.linalg.norm(P @ mc + hist_d[i_map]))
         # the written amplitude at the mapping time: the distance from the unwritten branch to the nearest state
         # stable at that value of the control (the states grow along the sweep; none may exist yet)
         key = round(t_map, 9)
         if key not in amplitude_at:
             st_map = stable_states(real, rng, sweep.over(t_map), seeds=swept_seeds(real, sweep, q0, R, t_map))
-            amplitude_at[key] = min((float(np.linalg.norm(real.carrier.diff(hist_q[i_map], s_))) for s_ in st_map),
+            amplitude_at[key] = min((float(np.linalg.norm(real.carrier.diff(hist_b[i_map], s_))) for s_ in st_map),
                                     default=float("nan"))
         ell_map = amplitude_at[key]
-        sector = _sector_labels(z_map, coords_arr) if coords_arr is not None else None
+        # the sectors are read from the branch: a slow mode's lag belongs to the sample's direction there
+        sector = _sector_labels(z_map + hist_d[i_map], coords_arr) if coords_arr is not None else None
         if sector is not None and np.isfinite(ell_map) and spread_map > SATURATION_FRACTION * ell_map:
             # saturated: the deviation has reached the written amplitude by the mapping time; the choice is made
             # there, and each sample goes to the written state nearest in direction
@@ -293,7 +323,8 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
                         "growth": grown, "linear_size_before_crossing": bool(reach < sweep.t_cross),
                         "spread_at_map": spread_map, "written_amplitude_at_map": ell_map, "regime": regime,
                         "sector_law": _probs(sector, len(stable)) if sector is not None else None,
-                        "mean_critical": mc.tolist(), "cov_critical": Cc.tolist(), "final": q})
+                        "lag_at_crossing": lag_at_crossing, "rate_at_crossing": rate_at_crossing,
+                        "mean_critical": (mc + hist_d[-1]).tolist(), "cov_critical": Cc.tolist(), "final": q})
     return results
 
 
@@ -512,7 +543,8 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             tgt = qc + far * u
             per = float(np.linalg.norm(L.T @ real.write_force(q0, tgt, 1.0)))
             targets.append(tgt); strengths.append(c * floor / max(per, 1e-12)); keys.append((c, e))
-    lin = linear_stage_law(real, sweep, q0, R, L, targets, strengths, D, stable, n_samples, rng)
+    crossing = critical_space(real, nf, k_static) if k > k_static else None
+    lin = linear_stage_law(real, sweep, q0, R, L, targets, strengths, D, stable, n_samples, rng, crossing=crossing)
     reduced = None
     if k == 1 and reduce_one:
         try:
@@ -526,6 +558,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
                      "sector_law": r.get("sector_law"), "regime": r["regime"],
                      "t_cross": r["t_cross"], "t_map": r["t_map"], "linear_stage_ended_by": r["ended_by"],
                      "growth": r["growth"], "linear_size_before_crossing": r["linear_size_before_crossing"],
+                     "lag_at_crossing": r["lag_at_crossing"], "rate_at_crossing": r["rate_at_crossing"],
                      "spread_at_map": r["spread_at_map"], "written_amplitude_at_map": r["written_amplitude_at_map"],
                      "mean_critical": r["mean_critical"], "cov_critical": r.get("cov_critical")})
     for i, row in enumerate(rows):
@@ -561,6 +594,8 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
            "noise_along_critical": D_s,
            "bias_floor": floor, "stable_states": [s.tolist() for s in stable], "stable_critical_coordinates": coords,
            "map_regime": (rows[0]["regime"] if len({r["regime"] for r in rows}) == 1 else "mixed") if rows else None,
+           "lag_at_crossing": rows[0]["lag_at_crossing"] if rows else None,
+           "rate_at_crossing": rows[0]["rate_at_crossing"] if rows else None,
            "rows": rows}
     if k > k_static:
         out["slow_modes"] = (f"{k - k_static} direction(s) with a rate below {SLOW_FACTOR:g} sqrt(rate) = "

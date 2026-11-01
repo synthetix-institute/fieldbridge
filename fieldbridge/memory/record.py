@@ -90,7 +90,8 @@ def law_summary(law) -> Dict:
     if not isinstance(law, dict):
         return {"status": str(law)[:160]}
     out = {k: law[k] for k in ("status", "law_kind", "critical_dimension", "dynamical_critical_dimension", "second_rate",
-                               "slow_modes", "certified", "sector_certified", "obstruction_in_nonlinear_stage", "write_class")
+                               "slow_modes", "certified", "sector_certified", "obstruction_in_nonlinear_stage", "write_class",
+                               "rate", "lag_at_crossing", "rate_at_crossing")
            if k in law}
     if isinstance(law.get("stable_states"), list):
         out["stable_states"] = len(law["stable_states"])

@@ -126,6 +126,15 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
+The linear stage of the completion is taken about the state the sweep really follows: the deterministic flow of the
+drift along the directions that relax, and the static branch, followed by Newton through the crossing, along the
+directions that cross. A constant lag only delays the crossing. A lag that changes along the sweep changes the rate at
+which the critical rate grows, and the constant of the swept write scales as that rate to the power -1/4. In the coherent
+Ising machine of two oscillators the antiphase amplitude relaxes at 2 (a - e), which falls with the pump, so that
+the critical rate grows at r (1 - 3 r / (8 e^2)), 19 % below the declared rate at r = 0.02, e = 0.2, and the constant is
+about 1.40. The record reports both numbers as `lag_at_crossing` and `rate_at_crossing`. The reduced one-coordinate
+law along a moving branch, reported for a sweep through a cusp, still takes its coefficients on the static branch.
+
 The outcome map of the completion starts one e-fold after the crossing (the mapping time). The Gaussian of the linear
 stage is carried back to that time by the linear propagator of the critical space, so that each sample has there the
 size and the direction the linear stage gives it. In one direction only the sign of a sample counts. In two or more,

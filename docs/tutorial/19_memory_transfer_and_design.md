@@ -141,9 +141,12 @@ python3 -B -m fieldbridge memory complete examples/memory/schlogl.json --out-dir
 
 The law is derived from the sweep itself.
 
-- **Linear stage.** The drift is linearized about the unwritten branch, which is followed through the crossing. The
-  exact Gaussian moments of the deviation (bias, noise, and the lag behind a moving branch) give the statistics of the
-  choice.
+- **Linear stage.** The drift is linearized about the state the sweep really follows. Along the directions that relax,
+  this is the deterministic flow of the drift, which lags behind the static branch; along the directions that cross, it
+  stays on the branch, followed through the crossing. The exact Gaussian moments of the deviation (bias, noise, and the
+  motion of the branch along the crossing directions) give the statistics of the choice. A constant lag only delays the
+  crossing. A lag that changes along the sweep changes the rate at which the critical rate grows, and with it the
+  constant, which scales as that rate to the power -1/4 (`rate_at_crossing`, against the declared rate).
 - **Outcome map.** The full drift carries samples of that Gaussian to the stable states at the end of the sweep.
 
 Where a sweep through a cusp moves the branch, the one-coordinate equation along the moving branch replaces the
