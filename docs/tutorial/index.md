@@ -59,6 +59,9 @@ it was first found.
 | Write a bit into a quantum oscillator | [The language, shown on spins](24_spin_language.md) → [Module 4 on writing](18_memory_writing_and_retention.md) → [Quantum write](30_quantum_write.md) |
 | Understand the physical construction | [First run](08_end_to_end_walkthrough.md) → [Equations and assumptions](09_equations_and_assumptions.md) → [Stochastic map](10_stochastic_construction.md) → [Quantum closure](11_quantum_closure.md) |
 | Solve for a new physical construction | [Quantum closure](11_quantum_closure.md) → [Inverse interaction design](14_inverse_construction.md) → [Discovery requirements](12_reproduction_and_discovery.md) |
+| Learn a reusable equation correction from a failed reduction | [Equations and assumptions](09_equations_and_assumptions.md) → [Constructor learning](37_constructor_learning.md) |
+| Correct a stochastic writing prediction and design its protocol | [Writing and retention](18_memory_writing_and_retention.md) → [Stochastic self-correction](38_stochastic_self_correction.md) |
+| Investigate an unexpected response after a calculation passes | [Stochastic self-correction](38_stochastic_self_correction.md) → [Physical inquiry](39_physical_inquiry.md) |
 | Connect equations recovered from papers | [Fingerprint](01_operational_fingerprints.md) → [Mechanism sheet](02_mechanism_sheets.md) → [Retrieval](03_cross_field_retrieval.md) → [Proposal](04_constructor_transfers.md) → [Calculated source](13_retrieval_to_calculation.md) |
 | Bring another field into the workbench | [Paper folder](07_pdf_field_adapter.md) → [Calculated source](13_retrieval_to_calculation.md) → [New question](12_reproduction_and_discovery.md) |
 | Develop or evaluate the code | [System map](00_system_map.md) → [Retrieval evaluation](05_complete_paper_validation.md) → [Continuation evaluation](06_future_state_prediction.md) → [Extensions](12_reproduction_and_discovery.md) |
