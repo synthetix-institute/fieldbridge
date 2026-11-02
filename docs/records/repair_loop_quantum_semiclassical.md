@@ -5,6 +5,45 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+## On the corrected records, 2026-11-03
+
+Commit 86e4e4a (origin/main 70f8590 merged in), run on the cluster with fresh libraries and 3600 s per law, under the rule of
+d2e1c9a and the code of dd530a8. The records now carry the one-direction outcome-map fix. Results:
+`repair_loop_fixed_records_campaign.json` and `repair_loop_fixed_records_certified_control.json`. This supersedes the
+provisional count below.
+
+**9 of the 23 failed laws (18 nonlinear-stage, 5 equilibrium-write) get a verified smaller description, and 0 of the 23 at the
+scale of the written states.** The provisional run had 7 of 20. The 17 laws in both sets keep their outcome and frozen candidate,
+and every move comes from a law that changed class with the fix:
+
+| Law | Provisional run | Corrected records |
+|---|---|---|
+| `cim_triangle` 0 | certified; verified in the control | failed (nonlinear stage); verified, 6 -> 2 at radius 0.125, withheld 0.00036 |
+| `magnon_kerr` unfolding 1 | not a failed law | failed; verified at 0.03125, withheld 0.0023 |
+| `kerr_cat_kpo` 0, `kpo_pair` 0 | certified; insufficient excitation | failed (equilibrium write); insufficient excitation |
+| `phase_qubit_rfsquid` 0, 1 | laws, no order passes development | the failed law is now the unfolding; withheld failed (0.040, 0.019) |
+| `pplo_oscillator` 0 | failed; insufficient excitation | certified; insufficient excitation |
+
+The nine are `ion_duffing` 0 and 1, `jba_resonator` 0 and 1, `rydberg_bistability`, `rfsquid_pair` 0, `magnon_kerr` 1
+(one critical direction, two to four coordinates -> 1), and `rfsquid_triangle` 0 and `cim_triangle` 0 (two directions, 6 -> 2).
+The remaining 14: 4 insufficient excitation, 4 no order passes development, 3 withheld failed, 2 no test power, and
+`kpo_triangle` 1 timed out.
+
+| Control | Result |
+|---|---|
+| exact identity | 0 of 23 |
+| certified laws | 8 of 18 (44 %, against 39 % on failed laws), median radius 0.1875 against 0.0625 |
+| plain critical coordinate within the tolerance | 4 of 9 (`jba_resonator` 0, 1; `cim_triangle`; `magnon_kerr` 1) |
+| strongest nonlinear term scaled by 1.25 | rejected on all 9 |
+| memory hint against the direct ladder | 807 against 821 development checks on 22 laws |
+
+`cim_triangle` 0 is verified in both roles: as a certified law before the fix and as a failed law after it. Verification does
+not separate failed from certified laws. Of the 230 retained outcomes, 23 get a task and 207 are `no_failed_law`.
+
+Law record: `docs/site/law_constants.json` was regenerated with /usr/local/bin/python3.11 (11753 s), because `repair_loop.py` is in
+`memory/`. Against origin/main 70f8590, 1 of 1261 leaves differs, the implementation hash; every constant, error, word, class and
+signature is identical.
+
 ## Two critical directions, 2026-11-02 (provisional)
 
 Commit dd530a8 closes the loop at k real, semisimple critical directions. Before it the four failed laws of `kpo_triangle`
