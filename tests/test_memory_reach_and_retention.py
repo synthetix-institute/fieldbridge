@@ -144,3 +144,36 @@ def test_a_failure_at_one_second_parameter_keeps_the_later_ones(monkeypatch):
     assert [u["second"] for u in entry["unfoldings"]] == ["b", "c"]
     assert entry["unfoldings"][0]["law"]["status"].startswith("not derived")
     assert "law" not in entry
+
+
+def test_the_followed_branch_stays_unwritten_through_the_crossing():
+    # the unwritten state x = 0.5 T moves along the critical direction while the fictive temperature lags: at r = 0.01 Newton from the last point slid
+    # onto a written state at the crossing, and the critical rate never turned positive (0.207 against 1.347)
+    real = real_of(["x", "f"], {"T": 0.0, "B": 1.0, "G0": 0.6, "Ea": 3.0, "al": 0.5},
+                   {"x": "-B*f*(x - al*T) - (x - al*T)**3", "f": "G0*exp(Ea*T)*(T - f)"}, "T", -0.8, 0.8)
+    nf = an.normal_form(real, np.zeros(2), "T", 0.0)
+    sweep = cm.Sweep(real, nf, 0.01)
+    R, L = cm.critical_space(real, nf, 1)
+    q0, how = cm.start_of_sweep(real, sweep, np.zeros(2), (R, L))
+    path = cm.reference_path(real, sweep, q0, R, L, (R, L), [1e3 * R[:, 0]], [1e-3], 0.01, 1e-3)
+    assert path["ended_by"] == "growth"
+    t, B = np.array(path["t"]), np.array(path["branch"])
+    after = t > sweep.t_cross + 5.0
+    assert np.all(np.abs(B[after, 0] - 0.5 * np.array([sweep.value(x) for x in t[after]])) < 1e-3)    # on x = al T, not on a written state
+
+
+def test_the_sweep_starts_on_the_unwritten_branch_where_the_write_point_lies_outside_its_basin():
+    # w relaxes to 0.5 p only from within 0.27 of it; at the start the write point w = 0 lies 0.28 away, and relaxed from there the state runs away
+    real = real_of(["s", "w"], {"p": 0.0, "al": 0.5}, {"s": "p*s - s**3 + 0.2*(w - al*p)", "w": "(w - al*p)*(-1 + 14*(w - al*p)**2)"}, "p")
+    nf = an.normal_form(real, np.zeros(2), "p", 0.0)
+    sweep = cm.Sweep(real, nf, RATE)
+    q0, how = cm.start_of_sweep(real, sweep, np.zeros(2), cm.critical_space(real, nf, 1))
+    assert how.startswith("the unwritten branch")
+    assert np.allclose(q0, [0.0, 0.5 * sweep.value(0.0)], atol=1e-6)
+
+
+def test_a_start_that_does_not_relax_is_reported():
+    # the relaxing mode is unstable at the start of the sweep and runs away from any displacement, so neither the branch nor the relaxation gives a start
+    real = real_of(["s", "w"], {"p": 0.0, "al": 0.5}, {"s": "p*s - s**3", "w": "-(p + 0.3)*(w - al*p) + (w - al*p)**3"}, "p")
+    law = law_at_zero(real)
+    assert law["status"].startswith("the start of the sweep does not relax")

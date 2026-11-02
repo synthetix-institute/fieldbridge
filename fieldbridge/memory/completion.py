@@ -29,8 +29,11 @@ the sweep itself, in the same way for every completion:
                  pitchfork there), the choice is made there and each sample goes to the written state nearest in
                  direction: the sign of the sample in one direction, the sector law of the critical space in several.
 
-A sweep has a law only if it comes to the write point. The branch followed from the start of the sweep must arrive at
-the write point at the crossing; where the start lies on another stable state, nothing crosses and no law is reported.
+A sweep starts on the unwritten branch, followed back from the write point to the start, wherever it is stable there.
+A sweep has a law only if it comes to the write point: where the unwritten branch does not reach the start and the state
+relaxed from the write point lies on another stable state, nothing crosses and no law is reported. Through the crossing
+the branch is followed from a secant predictor, so that it does not slide onto a written state where the Jacobian is
+singular.
 
 The probabilities of the stable states are the law. It is tested against a simulation of the full stochastic
 dynamics over the whole sweep (the certificate), which is then continued during a hold at the end value of the control.
@@ -75,6 +78,9 @@ HOLD_BEFORE = 1.5           # the reference is held along the crossing direction
                             # at the write point no longer describe the state: a flow held along them can be unstable where the
                             # free flow is stable, by up to exp(HOLD_BEFORE^2 / 2) over this window and far more before it. A
                             # later start lets the lag along the crossing direction, which is a forcing, enter the Jacobian
+BRANCH_SMOOTH = 10.0        # a Newton correction larger than this many times the branch's own motion over the last step is a
+                            # step onto another branch: at a pitchfork the written branches leave the unwritten one with a speed
+                            # that diverges as (t - t_c)^(-1/2), while the unwritten branch moves smoothly through the crossing
 REACH_FRACTION = 0.5        # the branch followed from the start of the sweep comes to the write point when it arrives there
                             # within this fraction of the distance from the write point to the nearest written state
 DEVIATION_SIGMA = 4.0       # law and certificate differ when a probability differs by more than this many errors ...
@@ -188,22 +194,66 @@ def _rk4_step(f, q, t, h):
 
 
 # ------------------------------------------------------------------------------------------------ the law
-def branch_at_crossing(real: Realization, sweep: Sweep, q0: np.ndarray, n_steps: int = 400) -> np.ndarray:
+def branch_step(real: Realization, q: np.ndarray, q_prev: Optional[np.ndarray], over: Dict[str, float],
+                crossing: Tuple[np.ndarray, np.ndarray]) -> Tuple[np.ndarray, bool]:
+    """One step along the unwritten branch: Newton from the secant predictor through the last two points.
+
+    Near a pitchfork the Jacobian is singular along the crossing direction, and the written branches leave the unwritten
+    one there with a speed that diverges as (t - t_c)^(-1/2). Newton started from the last point lands a little off the
+    unwritten branch and converges to the nearest root, which just after the crossing can be a written one: step by step
+    the followed branch then slides onto a written state. The secant predictor lies on the unwritten branch to second
+    order in the step, and a correction larger than BRANCH_SMOOTH times the branch's own motion over the last step keeps
+    only its part across the crossing directions, since along them it would be a step onto a written branch. Returns the
+    new point and whether Newton converged within the usual bound on a step."""
+    Rx, Lx = crossing
+    pred = q if q_prev is None else q + real.carrier.diff(q_prev, q)
+    q_next, ok = an.newton(real, pred, over)
+    q_next = np.asarray(q_next, float)
+    if not (ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q, q_next)) <= 0.1 * an.base_length(real)):
+        return q_next, False
+    own = 0.0 if q_prev is None else float(np.linalg.norm(real.carrier.diff(q_prev, q)))
+    move = real.carrier.diff(pred, q_next)
+    if q_prev is not None and float(np.linalg.norm(move)) > BRANCH_SMOOTH * own + 1e-9 * an.base_length(real):
+        q_next = pred + move - Rx @ (Lx.T @ move)
+    return q_next, True
+
+
+def branch_at_crossing(real: Realization, sweep: Sweep, q0: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
+                       n_steps: int = 400) -> np.ndarray:
     """The branch followed by Newton from the start of the sweep to the crossing, with the flow carrying the state where
     the branch ends. A start on the branch of the write arrives at the write point, whatever the lag of the sweep behind
     the branch; a start on another stable state stays there."""
     F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
     h = sweep.t_cross / n_steps
-    q, t = q0.copy(), 0.0
+    q, q_prev, t = q0.copy(), None, 0.0
     for _ in range(n_steps):
-        q_next, ok = an.newton(real, q, sweep.over(t + h))
-        q_next = np.asarray(q_next, float)
-        if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q, q_next)) <= 0.1 * an.base_length(real):
-            q = q_next
+        q_next, ok = branch_step(real, q, q_prev, sweep.over(t + h), crossing)
+        if ok:
+            q, q_prev = q_next, q
         else:
-            q = real.carrier.wrap(_rk4_step(F, q, t, h))
+            q, q_prev = real.carrier.wrap(_rk4_step(F, q, t, h)), None
         t += h
     return q
+
+
+def start_of_sweep(real: Realization, sweep: Sweep, qc: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
+                   n_steps: int = 400) -> Tuple[np.ndarray, str]:
+    """The unwritten state at the start of the sweep: the branch followed back from the write point, where it reaches the
+    start and is stable there; otherwise the state relaxed from the write point at the start, which can be another stable
+    state (the branch ends in a fold before the start) or none, since the write point need not lie in the basin of the
+    unwritten state at the start."""
+    h = sweep.t_cross / n_steps
+    q, q_prev, t = qc.copy(), None, sweep.t_cross
+    for _ in range(n_steps):
+        q_next, ok = branch_step(real, q, q_prev, sweep.over(t - h), crossing)
+        if not ok:
+            break
+        q, q_prev, t = q_next, q, t - h
+    else:
+        rate = float(np.max(np.linalg.eigvals(an.jacobian(real, q, sweep.over(0.0))).real))
+        if rate < 0.0:
+            return q, "the unwritten branch followed back from the write point"
+    return _relaxed(real, qc, sweep.over(0.0)), "relaxed from the write point"
 
 
 def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
@@ -232,7 +282,7 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
     F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
     bias = lambda q: np.array([real.write_force(q, target, h) for target, h in zip(targets, strengths)])    # noqa: E731
     t_hold = sweep.t_cross - HOLD_BEFORE / sqrt(sweep.rate)
-    q_ref, q_branch = q0.copy(), q0.copy()
+    q_ref, q_branch, q_branch_prev = q0.copy(), q0.copy(), None
     C, Phi, mf, mb = np.zeros((n, n)), np.eye(k), np.zeros(n), np.zeros((len(targets), n))
     t, t_star, grown, ended_by = 0.0, None, 0.0, "end of the sweep"
     lag_at_crossing, rate_at_crossing = None, None
@@ -245,14 +295,13 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         if lag_at_crossing is None and t >= sweep.t_cross:
             lag_at_crossing = float(np.linalg.norm(real.carrier.diff(q_branch, q_ref)))
         q_free = _rk4_step(F, q_ref, t, dt)
-        q_next, ok = an.newton(real, q_branch, sweep.over(t + dt))
-        q_next = np.asarray(q_next, float)
+        q_next, ok = branch_step(real, q_branch, q_branch_prev, sweep.over(t + dt), crossing)
         held = False
-        if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q_branch, q_next)) <= 0.1 * an.base_length(real):
-            q_branch = q_next
+        if ok:
+            q_branch, q_branch_prev = q_next, q_branch
             held = t + dt >= t_hold
         else:
-            q_branch = real.carrier.wrap(q_free)
+            q_branch, q_branch_prev = real.carrier.wrap(q_free), None
         q_new = q_free + Rx @ (Lx.T @ real.carrier.diff(q_free, q_branch)) if held else q_free
         impulse = real.carrier.diff(q_new, q_free)     # what the reference does not follow: F(q_ref) - dq_ref/dt
         if not (held and real.carrier.kind == "orthant"):
@@ -403,7 +452,8 @@ def _sector_labels(z: np.ndarray, coords: np.ndarray) -> Optional[np.ndarray]:
 
 
 def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, strengths, D: float,
-                stable: List[np.ndarray], n_traj: int, rng, n_grid: int = 49) -> List[List[float]]:
+                stable: List[np.ndarray], n_traj: int, rng, n_grid: int = 49,
+                crossing: Optional[Tuple[np.ndarray, np.ndarray]] = None) -> List[List[float]]:
     """The one-coordinate law along the moving branch, for a write point whose completion keeps a second parameter.
 
     The unwritten branch q*(t) is followed through the crossing; at n_grid times its reduction to the slow direction
@@ -415,10 +465,12 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     the quadratic and cubic terms."""
     ts_all = np.linspace(0.0, sweep.T, n_grid)
     qs, coef, real_from = [], [], None
-    q = q0.copy()
+    q, q_prev = q0.copy(), None
+    if crossing is None:
+        crossing = (np.zeros((q0.size, 0)), np.zeros((q0.size, 0)))
     for i, t in enumerate(ts_all):
-        qn, ok = an.newton(real, q, sweep.over(t))
-        q = np.asarray(qn, float) if ok else q
+        qn, ok = branch_step(real, q, q_prev, sweep.over(t), crossing)
+        q, q_prev = (qn, q) if ok else (q, None)
         nf = an.normal_form(real, q, sweep.param, sweep.value(t))
         if nf.get("hopf") or "mode" not in nf:
             # far from the crossing the slowest relaxation can be a complex pair (a spiral): the one-coordinate
@@ -549,7 +601,12 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     R, L = critical_space(real, nf, k)
     sweep = Sweep(real, nf, rate)
     qc = np.asarray(nf["state"], float)
-    q0 = _relaxed(real, qc, sweep.over(0.0))
+    crossing = critical_space(real, nf, k_static) if k > k_static else (R, L)
+    q0, start = start_of_sweep(real, sweep, qc, crossing)
+    if not np.all(np.isfinite(q0)):
+        return {"status": "the start of the sweep does not relax: the write point lies outside the basin of every state at "
+                          "the start, and the unwritten branch does not reach the start as a stable state",
+                "write_point": qc.tolist()}
     stable = stable_states(real, rng, sweep.over(sweep.T), seeds=swept_seeds(real, sweep, q0, R, sweep.T))
     if len(stable) < 2:
         # the sweep leaves the range in which a choice exists (a cusp sweep that crosses the far fold): it ends at the
@@ -574,7 +631,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
                           "phase on the family, not a choice between states; its law is that of a phase (Adler)",
                 "stable_states": [s.tolist() for s in stable[:8]], "completion_needed": "phase"}
     # a sweep that starts on another stable state never comes to the write point, and nothing crosses there
-    arrival = float(np.linalg.norm(real.carrier.diff(qc, branch_at_crossing(real, sweep, q0))))
+    arrival = float(np.linalg.norm(real.carrier.diff(qc, branch_at_crossing(real, sweep, q0, crossing))))
     nearest = min(float(np.linalg.norm(real.carrier.diff(qc, s))) for s in stable)
     if arrival > REACH_FRACTION * nearest:
         return {"status": "the sweep does not reach the write point: from its start it stays on another state",
@@ -611,12 +668,12 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             tgt = qc + far * u
             per = float(np.linalg.norm(L.T @ real.write_force(q0, tgt, 1.0)))
             targets.append(tgt); strengths.append(c * floor / max(per, 1e-12)); keys.append((c, e))
-    crossing = critical_space(real, nf, k_static) if k > k_static else None
     lin = linear_stage_law(real, sweep, q0, R, L, targets, strengths, D, stable, n_samples, rng, crossing=crossing)
     reduced = None
     if k == 1 and reduce_one:
         try:
-            reduced = reduced_law(real, sweep, q0, targets, strengths, D, stable, n_samples, rng)
+            reduced = reduced_law(real, sweep, q0, targets, strengths, D, stable, n_samples, rng,
+                                  crossing=critical_space(real, nf, k_static))
         except (ValueError, np.linalg.LinAlgError):
             reduced = None
     rows = []
@@ -657,7 +714,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     coords = [(L.T @ real.carrier.diff(qc, s)).tolist() for s in stable]          # diff(a, b) = b - a
     out = {"status": "derived", "law_kind": "reduced (one coordinate along the moving branch)" if reduced is not None
            else "linear stage and outcome map", "critical_dimension": k_static, "dynamical_critical_dimension": k,
-           "second_rate": nf.get("second_rate"), "rate": rate, "sweep_end": sweep.T, "noise": D,
+           "second_rate": nf.get("second_rate"), "rate": rate, "sweep_end": sweep.T, "noise": D, "start_of_sweep": start,
            "noise_rule": noise_rule,
            "noise_along_critical": D_s,
            "bias_floor": floor, "stable_states": [s.tolist() for s in stable], "stable_critical_coordinates": coords,
