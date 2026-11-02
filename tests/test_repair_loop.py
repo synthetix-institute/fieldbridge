@@ -317,7 +317,7 @@ def test_a_law_over_its_budget_is_kept_as_timed_out(tmp_path, monkeypatch):
     monkeypatch.setattr(rl, "close_modulo_order", lambda *_: time.sleep(30))
     rows = rl.close_departures(library, root=ROOT, policy=FAST, select={"equilibrium write"}, law_seconds=1)
     timed_out = [r for r in rows if r["status"] == "timed_out"]
-    assert len(timed_out) == 3 and all(r["write_class"] == "equilibrium write" for r in timed_out)
+    assert len(timed_out) == 5 and all(r["write_class"] == "equilibrium write" for r in timed_out)
     assert library.campaign(next(k for k, d in library.departures() if d["target"] == timed_out[0]["target"]
                                  and library.campaign(k)))["status"] == "timed_out"
 
