@@ -385,6 +385,7 @@ python3 -B -m pytest -q -p no:cacheprovider
 The tests also run `memory check` on every material specification, so a
 specification with placeholders or without a source does not pass.
 
-MIT license, except the third-party molecular structures named in
-[yamaki_geometries.py](examples/ptsb/molecules/yamaki_geometries.py), which keep the license stated there. Developed
-within the [Synthetix Institute](https://synthetix.institute).
+[PolyForm Noncommercial License 1.0.0](LICENSE): free for research, teaching and other non-commercial use; commercial use
+needs a separate license. The third-party molecular structures named in
+[yamaki_geometries.py](examples/ptsb/molecules/yamaki_geometries.py) keep the license stated there. Developed within the
+[Synthetix Institute](https://synthetix.institute).
