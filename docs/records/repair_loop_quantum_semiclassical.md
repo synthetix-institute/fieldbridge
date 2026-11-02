@@ -5,6 +5,40 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+## Two critical directions, 2026-11-02 (provisional)
+
+Commit dd530a8 closes the loop at k real, semisimple critical directions. Before it the four failed laws of `kpo_triangle`
+and `rfsquid_triangle` were refused. The run took the merged records, the cluster, fresh libraries and 3600 s per law, under
+the rule of d2e1c9a. Results: `repair_loop_two_directions_campaign.json` and `repair_loop_two_directions_certified_control.json`.
+The records still carry the one-direction outcome-map defect of 87427d6 (`pplo_oscillator`, `kerr_cat_kpo`, `kpo_pair`,
+`phase_qubit_rfsquid`), so these counts are provisional until a rerun on the corrected records.
+
+**7 of the 20 failed laws get a verified smaller description, and 0 of the 20 at the scale of the written states.** The 16
+laws with one critical direction reproduce their earlier status, order, radius and frozen candidate, and so do the 18
+such certified laws. The new verified law is `rfsquid_triangle` 0, six source coordinates replaced by two, at radius 0.0625 of
+the separation of the two nearest written states. Its withheld error is 0.0026, the failed-law drift is wrong by 0.32, the power
+control is rejected, and the plain critical coordinates miss by 0.039.
+
+| Law (two critical directions) | Outcome |
+|---|---|
+| `rfsquid_triangle` 0 | verified smaller description, 6 -> 2 |
+| `kpo_triangle` 0 | insufficient excitation (failed-law drift within 0.0095 at radius 0.0625) |
+| `kpo_triangle` 1 | timed out at 3600 s |
+| `kpo_triangle` 2 | no order passes development |
+
+At the KPO triangle the reduced drift on the critical plane has quadratic terms of about 6.7. A displacement of 0.036 therefore
+reaches the written states, about 1 away, within some 10 time units, and the truncated series stops at a spurious equilibrium
+near 0.1. This is the reach of a local series, not a defect of the closure.
+
+| Control | Result |
+|---|---|
+| exact identity | 0 of 20; the triangles have six source coordinates, beyond its four |
+| certified laws | 9 of 20 (45 %, against 35 % on failed laws), median radius 0.125 against 0.0625; `cim_triangle` 0, the one certified law with two directions, verified at 0.125 |
+| memory hint against the direct ladder | 636 against 707 development checks on 19 laws |
+
+Tests at dd530a8: 933 passed, 7 skipped, 1 failed. The failure is `test_no_locale_dependent_file_reads`, because the encoding commit
+of this branch was reverted (889e73a) in favour of the same fix on origin/main (0f86208). This branch does not merge it.
+
 ## Rerun on the merged records, 2026-11-02
 
 Commit f9b6850, main at 0e19b29 merged in, run on the cluster with fresh libraries and a budget of 3600 s per law. Thresholds,
