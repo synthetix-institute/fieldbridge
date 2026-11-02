@@ -211,3 +211,8 @@ The campaign read the stored records of 2026-10-23, which predate commits before
 On the rows already run, 6 of the 14 laws of the new set that have a row are verified, and 6 laws have no row. The certified control
 loses `rfsquid_pair` 0, `pplo_oscillator` 0 and `cim_pair` 2. The count of 5 of 13 therefore holds for the stored records only, and a
 count on the new set needs the series branch on main, followed by a campaign with fresh libraries. That campaign is the rerun above.
+- **Tests on the merged state (f9b6850):** the full suite gave 928 passed, 7 skipped, 2 failed in 2 h 34 min, at a laptop
+  load average near 290. `test_no_locale_dependent_file_reads` fails on main itself, on 63 reads and writes in 16 files that
+  came with the learning modules, none of them in the repair loop. `test_a_child_that_outruns_its_time_limit_keeps_the_steps_it_had_written`
+  found the symmetric write not derived within its time limit, and it passes alone (38.6 s, load 35). This branch does not
+  change that test or the code it exercises.
