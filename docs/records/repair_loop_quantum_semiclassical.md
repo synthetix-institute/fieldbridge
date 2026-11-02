@@ -5,7 +5,40 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
-## Result
+## Rerun on the merged records, 2026-11-02
+
+Commit f9b6850, main at 0e19b29 merged in, run on the cluster with fresh libraries and a budget of 3600 s per law. Thresholds,
+interventions and selection rule are those of d2e1c9a. Results: `repair_loop_merged_campaign.json`,
+`repair_loop_merged_certified_control.json`.
+
+**6 of the 20 failed laws (17 nonlinear-stage, 3 equilibrium-write) get a verified smaller description, and 0 of the 20 at the
+scale of the written states.** The six are the five of the first campaign and `rfsquid_pair` 0, all nonlinear-stage. They hold at
+radii 0.03 to 0.125 of the written-state separation, and each replaces two to four source coordinates by one. None of the three
+equilibrium writes is verified. The 14 laws that already had a row get the same outcome as before.
+
+| Outcome on the 20 | Count | Laws |
+|---|---:|---|
+| verified smaller description | 6 | `ion_duffing` 0, 1; `jba_resonator` 0, 1; `rydberg_bistability`; `rfsquid_pair` 0 |
+| no order passes development | 5 | `cim_pair` 2; `phase_qubit_rfsquid` 0, 1; `ion_phonon_laser`; `optomech_bistable` |
+| refused: a second critical eigenvalue | 4 | `kpo_triangle` 0, 1, 2; `rfsquid_triangle` 0 |
+| no test power | 2 | `transmon_driven` 0, 1 |
+| insufficient excitation | 2 | `pplo_oscillator` 0; `rfsquid_pair` 1 |
+| withheld test failed | 1 | `magnon_kerr` |
+
+| Control | Result |
+|---|---|
+| exact identity (search and symbolic, 120 s each) | 0 of 20 verified: budget exhausted, numerical failure, or non-polynomial refused |
+| same closure on certified linear-stage laws | 8 of 19 verified (42 %, against 30 % on failed laws); 2 timed out (`kpo_pair` 1, 2) |
+| median verified radius | 0.1875 on certified laws, 0.0625 on failed laws |
+| plain critical coordinate within the tolerance | 2 of 6 (`jba_resonator` 0, 1: 0.004 and 0.006) |
+| strongest nonlinear term scaled by 1.25 | rejected on all 6 (errors 0.013 to 0.060) |
+| memory hint against the direct ladder | 591 against 602 development checks on 16 laws; one hint saves 22 and selects another pair, 11 cost one, 4 have none |
+
+The closure does not separate failed from certified laws, and the margin of `rfsquid_pair` 0 is narrow, with a withheld error of
+0.0095 against 0.01. The four refused laws lie at a write point with two critical directions, the limit already stated. Of the 230
+retained outcomes, 20 get a task and 210 are `no_failed_law`. The campaign below, on the stored records, is kept as it was run.
+
+## Result on the stored records, 2026-10-30
 
 **5 of the 13 failed laws (9 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, one coordinate in place
 of two to four, and 0 of the 13 get one at the scale of the written states.** The five hold at 3 % to 6 % of the separation of
@@ -177,4 +210,4 @@ The campaign read the stored records of 2026-10-23, which predate commits before
 
 On the rows already run, 6 of the 14 laws of the new set that have a row are verified, and 6 laws have no row. The certified control
 loses `rfsquid_pair` 0, `pplo_oscillator` 0 and `cim_pair` 2. The count of 5 of 13 therefore holds for the stored records only, and a
-count on the new set needs the series branch on main, followed by a campaign with fresh libraries.
+count on the new set needs the series branch on main, followed by a campaign with fresh libraries. That campaign is the rerun above.
