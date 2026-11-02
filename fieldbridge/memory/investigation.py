@@ -45,8 +45,8 @@ def probability_variance(p, n):
 def read_case(comparison_path):
     path = Path(comparison_path)
     prediction_path = path.with_name("prediction.json")
-    comparison = json.loads(path.read_text())
-    prediction = json.loads(prediction_path.read_text())
+    comparison = json.loads(path.read_text(encoding="utf-8"))
+    prediction = json.loads(prediction_path.read_text(encoding="utf-8"))
     if file_hash(prediction_path) != comparison["prediction_sha256"]:
         raise ValueError("The comparison belongs to another prediction")
     model = prediction.get("probability_prediction", prediction.get("repaired_prediction"))
@@ -159,7 +159,7 @@ def write_report(paths, output):
     report = investigate(paths)
     out = Path(output)
     out.mkdir(parents=True, exist_ok=False)
-    (out/"investigation.json").write_text(json.dumps(report, indent=2, allow_nan=False)+"\n")
+    (out/"investigation.json").write_text(json.dumps(report, indent=2, allow_nan=False)+"\n", encoding="utf-8")
     lines = ["# Signed probability departures", "",
              f"Independent calculations: {len(report['cases'])}.",
              f"Repeatable departures: {report['repeatable_departures']}.", "",
@@ -169,5 +169,5 @@ def write_report(paths, output):
     for q in report["questions"]:
         lines.append(f"| {q['state']} | {q['replications']} | {q['estimated_departure']:.5g} | "
                      f"{q['standard_error']:.4g} | {q['adjusted_p_value']:.4g} | {q['status']} |")
-    (out/"investigation.md").write_text("\n".join(lines)+"\n")
+    (out/"investigation.md").write_text("\n".join(lines)+"\n", encoding="utf-8")
     return report

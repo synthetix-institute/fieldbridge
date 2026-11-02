@@ -527,12 +527,12 @@ def retain_record(library, record, *, source):
 
 
 def cmd_learn(args):
-    task = json.loads(Path(args.task).read_text())
+    task = json.loads(Path(args.task).read_text(encoding="utf-8"))
     report = learn(task, MoveLibrary(args.library), Policy(max_degree=args.max_degree,
                                                           max_added_coordinates=args.max_added_coordinates))
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "learning.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
+    (out / "learning.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     print(json.dumps({"status": report["status"], "candidate_evaluations": report["candidate_evaluations"],
                       "selection_origin": report.get("selection_origin"), "output": str(out / "learning.json")}))
     return 0 if report["status"] in {"verified_extension", "already_closed"} else 2

@@ -42,14 +42,14 @@ def main():
         manifest["stages"].append({"name": name, "command": command, "exit_code": process.returncode,
                                    "seconds": time.monotonic()-started})
         manifest["completed"] = len(manifest["stages"]) == len(commands) and process.returncode == 0
-        (out / "validation_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        (out / "validation_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         print(json.dumps(manifest["stages"][-1]), flush=True)
         if process.returncode:
             raise SystemExit(process.returncode)
     if any(hashlib.sha256((ROOT / p).read_bytes()).hexdigest() != value for p, value in hashes.items()):
         manifest["completed"] = False
         manifest["error"] = "Implementation changed during validation"
-        (out / "validation_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n")
+        (out / "validation_manifest.json").write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
         raise SystemExit("Implementation changed during validation")
 
 

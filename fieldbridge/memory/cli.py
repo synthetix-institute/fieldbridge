@@ -943,7 +943,7 @@ def cmd_record(args) -> int:
             from .learning import MoveLibrary, retain_record
             library = MoveLibrary(args.learning_library)
             for path, record in zip(paths, records):
-                retain_record(library, {**record, "spec": json.loads(path.read_text())}, source=str(path))
+                retain_record(library, {**record, "spec": json.loads(path.read_text(encoding="utf-8"))}, source=str(path))
         (out / "records.md").write_text(rc.markdown(records) + f"\n{BOUNDARY}\n", encoding="utf-8")
         # the table of the write targets and completions, a view of the records
         table = rc.predictions_markdown(records) + f"\n{BOUNDARY}\n"
@@ -1257,14 +1257,14 @@ def cmd_repair(args):
     evaluations = MoveLibrary(args.library)
     families = FamilyLibrary(Path(args.families), frozen=bool(args.task))
     if args.task:
-        report = construct(json.loads(Path(args.task).read_text()), families, policy,
+        report = construct(json.loads(Path(args.task).read_text(encoding="utf-8")), families, policy,
                            evaluation_library=evaluations, strategy=args.strategy)
     else:
         report = {"campaigns": repair_departures(evaluations, families, policy),
                   "family_library_sha256": families.digest()}
     out = Path(args.out_dir)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "repair.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
+    (out / "repair.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
     if args.task:
         print(json.dumps({"status": report["status"], "candidate_evaluations": report["candidate_evaluations"],
                           "output": str(out / "repair.json")}))
@@ -1292,7 +1292,7 @@ def cmd_passage(args):
     from . import stochastic_passage as sp
     out=Path(args.out_dir)
     if args.stage=="verify":
-        commitment=json.loads((out/"prediction.json").read_text())
+        commitment=json.loads((out/"prediction.json").read_text(encoding="utf-8"))
         seed=commitment["repaired_prediction"]["seed"]+2
         report=sp.verify_prediction(out,seed,device=args.device)
         print(json.dumps({"repair_verified":report["repair_verified"],"output":str(out/"comparison.json")}))
@@ -1300,12 +1300,12 @@ def cmd_passage(args):
     if not args.task:
         raise ValueError("--task is required for the prediction stage")
     if args.rule:
-        policy=sp.Policy(**json.loads(Path(args.rule).read_text())["policy"])
+        policy=sp.Policy(**json.loads(Path(args.rule).read_text(encoding="utf-8"))["policy"])
         if args.n is not None and args.n!=policy.n_prediction:
             raise ValueError("A frozen rule fixes its sampling policy")
     else:
         policy=sp.Policy(n_prediction=args.n or 4096,n_reference=args.n or 4096)
-    report=sp.prepare_prediction(json.loads(Path(args.task).read_text()),policy,args.seed,out,
+    report=sp.prepare_prediction(json.loads(Path(args.task).read_text(encoding="utf-8")),policy,args.seed,out,
                                  device=args.device,frozen_rule=args.rule)
     print(json.dumps({**report,"output":str(out/"prediction.json")}))
     return 0 if report["prediction_valid"] else 2
