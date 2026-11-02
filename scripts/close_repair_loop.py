@@ -179,7 +179,7 @@ def run(args):
         library2 = ln.MoveLibrary(out / "certified.sqlite")
         for record in records:
             for target, _, _, law in rl._locate_laws(record):
-                if law.get("write_class") != "linear-stage write" or law.get("critical_dimension") != 1:
+                if law.get("write_class") != "linear-stage write" or law.get("critical_dimension") not in args.critical:
                     continue
                 signal.signal(signal.SIGALRM, _budget)
                 signal.alarm(args.law_seconds)
@@ -244,6 +244,8 @@ if __name__ == "__main__":
     parser.add_argument("--baseline-seconds", type=int, default=120)
     parser.add_argument("--certified", action="store_true")
     parser.add_argument("--law-seconds", type=int, default=900, help="Budget of one law of the campaign and of the certified control")
+    parser.add_argument("--critical", type=int, nargs="+", default=[1, 2],
+                        help="Critical dimensions of the certified laws in the control")
     parser.add_argument("--second-pass", metavar="DIR")
     arguments = parser.parse_args()
     (second_pass if arguments.second_pass else run)(arguments)

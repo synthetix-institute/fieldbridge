@@ -128,13 +128,62 @@ def test_a_failed_law_drift_with_a_renamed_coordinate_is_read():
     assert rl._failed_law_coefficients(task, None)({"e": 0.5}).tolist() == [2.0, 0.5]
 
 
-def test_a_second_critical_direction_and_a_complex_pair_are_refused():
-    spec = model({"x": "e*x-x**3", "y": "e*y-y**3"}, {"e": 0.0}, ["x", "y"])
-    with pytest.raises(ValueError, match="second eigenvalue"):
+SYMMETRIC_PAIR = model({"x": "e*x-x*z", "y": "e*y-y*z", "z": "-z+x**2+y**2"}, {"e": 0.0}, ["x", "y", "z"])
+
+
+def test_two_critical_directions_are_closed_together():
+    # a double zero eigenvalue with two directions: g is the radial cubic of the slow plane, z = x^2 + y^2
+    c = closure(SYMMETRIC_PAIR, state=(0.0, 0.0, 0.0), order=5)
+    assert c["critical_dimension"] == 2 and len(c["h"]) == 2
+    assert rl.verify_modulo_order({"model": SYMMETRIC_PAIR}, c, rl.OrderPolicy())["passed"]
+    g = c["g"]
+    # the critical plane may be rotated by the frame; the cubic is the same in any orthonormal pair
+    radial = sum(g[0].get(key, 0.0) ** 2 for key in [(3, 0, 0), (1, 2, 0)])
+    assert radial == pytest.approx(2.0, abs=1e-9)
+    assert g[0][(1, 0, 1)] == pytest.approx(1.0, abs=1e-12) and g[1][(0, 1, 1)] == pytest.approx(1.0, abs=1e-12)
+    altered = rl._scaled(c, (0, (3, 0, 0)), 1.1)
+    assert not rl.verify_modulo_order({"model": SYMMETRIC_PAIR}, altered, rl.OrderPolicy())["passed"]
+    frozen = rl.candidate_from_record(json.loads(json.dumps(rl.candidate_record(c))))
+    assert frozen["h"] == c["h"] and frozen["g"] == c["g"]
+
+
+def test_two_critical_coordinates_predict_a_preparation_off_the_slow_plane():
+    c = closure(SYMMETRIC_PAIR, state=(0.0, 0.0, 0.0), order=7)
+    case = {"id": "off", "initial": [0.12, -0.08, 0.1], "parameters": {"e": 0.02}, "duration": 30.0, "radius": 1.0}
+    runs = rl._source_trajectories(ms.load(SYMMETRIC_PAIR), [case])
+    row = rl._rows(c, [case], runs, rl.OrderPolicy())[0]
+    plain = rl._rows(rl._plain_projection(c), [case], runs, rl.OrderPolicy())[0]
+    assert row["error"] < 1e-3 and plain["error"] > 10 * row["error"]
+    assert rl.description_size(3, c["critical_dimension"], 2)["verdict"] == "smaller"
+
+
+def test_a_jordan_block_and_a_complex_pair_are_refused():
+    spec = model({"x": "y+e*x", "y": "-x**2+e*y"}, {"e": 0.0}, ["x", "y"])
+    with pytest.raises(ValueError, match="Jordan"):
         closure(spec)
     spec = model({"x": "e*x-y", "y": "x+e*y"}, {"e": 0.0}, ["x", "y"])
     with pytest.raises(ValueError, match="complex"):
         closure(spec)
+
+
+def test_a_failed_law_drift_of_two_coordinates_is_read():
+    task = {"model": FAST_SLOW, "candidate_drift": {"u1": "e*u1+2*u2", "u2": "-u1*e"}}
+    (k1, c1), (k2, c2) = rl._failed_law_coefficients(task, None)({"e": 0.5})
+    assert dict(zip(map(tuple, k1), c1)) == {(1, 0): 0.5, (0, 1): 2.0}
+    assert dict(zip(map(tuple, k2), c2)) == {(1, 0): -0.5}
+
+
+def test_the_generator_writes_two_coordinates_at_a_symmetric_triangle():
+    for record in records():
+        if record["source"].endswith("kpo_triangle.json"):
+            task = rl.learning_task(record, "completion/0/law", root=ROOT, policy=FAST)
+            assert list(task["coordinates"]) == ["u1", "u2"] and list(task["candidate_drift"]) == ["u1", "u2"]
+            assert len(task["withheld"]) == len(FAST.radii) * FAST.per_radius
+            # six source coordinates: beyond the exact search, which takes one to four
+            terms = rl._failed_law_coefficients(task, None)(task["write_point"]["parameters"])
+            assert len(terms) == 2 and all(keys.shape[1] == 2 for keys, _ in terms)
+            return
+    pytest.fail("the KPO triangle record is missing")
 
 
 def test_a_resonance_of_the_non_critical_modes_is_reported():
