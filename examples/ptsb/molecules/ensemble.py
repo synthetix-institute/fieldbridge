@@ -4,6 +4,7 @@
     python ensemble.py energy --gpu 0                            # one worker: DFT energy of each classical candidate
     python ensemble.py select                                    # chooses the classical starts from those energies; writes ens/order_E_S.npy
     python ensemble.py work --gpu 0 --set 31cl,32cl,31qc,32qc    # one worker: takes unclaimed trajectories until none is left
+    python ensemble.py late 6 --gpu 0 --set 31cl,32cl            # one worker: continues finished trajectories to --t-end fs with no stopping rule
 
 Two samplings of the same dividing surface (the imaginary mode of TS1 at zero, in curvilinear modes):
   cl  classical. Positions are drawn from the harmonic energy of the curvilinear modes at 298 K and then resampled by their DFT energy, so that they follow the
@@ -307,6 +308,56 @@ def tasks(sets, count):
     return out
 
 
+def part_late(gpu_label, sets, per_side, t_end_fs):
+    """Continues finished forward trajectories without a stopping rule, to see whether a product reached first is left again. Takes the first per_side of Z and of E in each set."""
+    (ENS / "late").mkdir(exist_ok=True)
+    (ENS / "claims").mkdir(parents=True, exist_ok=True)
+    dt = DT_FS / TIME_UNIT_FS
+    frames = {e: Frame(e) for e in {int(s[:2]) for s in sets}}
+    for s in sets:
+        e, code = int(s[:2]), s[2:]
+        f = frames[e]
+        count = {"Z": 0, "E": 0}
+        order = np.load(ENS / f"order_{e}_cl.npz")["order"] if code == "cl" else np.arange(400)
+        for i in dict.fromkeys(int(k) for k in order):
+            done = ENS / "traj" / f"{e}{code}_{i:04d}_f.done"
+            if not done.exists():
+                continue
+            side = done.read_text()
+            if side not in count or count[side] >= per_side:
+                continue
+            count[side] += 1
+            name = f"late_{e}{code}_{i:04d}"
+            if (ENS / "late" / f"{name}.done").exists() or not claim(name):
+                continue
+            o = np.load(ENS / "traj" / f"{e}{code}_{i:04d}_f.npz")
+            q, v = o["q"][-1].copy(), o["v"][-1].copy()
+            n0 = len(o["q"]) - 1
+            calc = Calc(e, GRID, TOL)
+            en, gc = calc(q / f.sm)
+            g = gc / f.sm
+            phi, R, E = [], [], []
+            t0 = time.time()
+            try:
+                for k in range(n0, int(round(t_end_fs / DT_FS))):
+                    v = v - 0.5 * dt * g
+                    q = q + dt * v
+                    en, gc = calc(q / f.sm)
+                    g = gc / f.sm
+                    v = v - 0.5 * dt * g
+                    phi.append(f.phi(q))
+                    R.append(f.bond(q))
+                    E.append(en + 0.5 * float(v @ v))
+                    if k % 40 == 39:
+                        np.savez(ENS / "late" / f"{name}.npz", phi=np.array(phi), R=np.array(R), E=np.array(E), first=side, start_fs=n0 * DT_FS)
+                np.savez(ENS / "late" / f"{name}.npz", phi=np.array(phi), R=np.array(R), E=np.array(E), first=side, start_fs=n0 * DT_FS)
+                (ENS / "late" / f"{name}.done").write_text(side)
+                print(f"{name} first {side}, from {n0 * DT_FS:.0f} to {t_end_fs:.0f} fs, {time.time() - t0:.0f} s, worker {gpu_label}", flush=True)
+            except Exception as err:
+                (ENS / "late" / f"{name}.failed").write_text(repr(err))
+                print(f"{name} FAILED {err!r}", flush=True)
+
+
 def part_work(gpu_label, sets, count):
     (ENS / "claims").mkdir(parents=True, exist_ok=True)
     (ENS / "traj").mkdir(exist_ok=True)
@@ -341,10 +392,11 @@ def part_work(gpu_label, sets, count):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("part", choices=["init", "energy", "select", "work"])
+    ap.add_argument("part", choices=["init", "energy", "select", "work", "late"])
     ap.add_argument("count", type=int, nargs="?", default=200)
     ap.add_argument("--gpu", default="0")
     ap.add_argument("--set", default="31cl,32cl,31qc,32qc")
+    ap.add_argument("--t-end", type=float, default=400.0)
     args = ap.parse_args()
     if args.part == "init":
         part_init([(31, "qc", 400), (32, "qc", 400), (32, "cl", 3000), (31, "cl", 10000)])
@@ -352,6 +404,8 @@ def main():
         part_energy(args.gpu)
     elif args.part == "select":
         part_select(args.count)
+    elif args.part == "late":
+        part_late(args.gpu, args.set.split(","), args.count, args.t_end)
     else:
         part_work(args.gpu, args.set.split(","), args.count)
 

@@ -35,3 +35,26 @@ unchanged. These trajectories were read only to check the code, and they are kep
 |---|---|---|
 | Torsion at the classical starts, truncated weights | -104.9 +- 26.9 degrees | -97.9 +- 29.9 degrees |
 | Z share from the positions below -87 degrees, truncated (raw) | 0.74 (0.71) | 0.66 (0.69) |
+
+## Outcome, 2 November 2026
+
+The first 100 draws of each set ran forward and backward with no failed SCF (86 and 94 distinct classical starts, 104 quasiclassical starts each, recrossers included). The counts below are reactant-to-product trajectories, read at the first product well.
+
+| Quantity | 31 classical | 31 quasiclassical | 32 classical | 32 quasiclassical |
+|---|---|---|---|---|
+| Z and E counts of reactant-to-product trajectories, classical draws with their repeats | 83 and 22 | 74 and 17 | 71 and 27 | 65 and 23 |
+| Z share with its 68 per cent interval | 0.790 (0.748-0.827) | 0.813 (0.769-0.851) | 0.724 (0.677-0.767) | 0.739 (0.689-0.783) |
+| Boundary in the torsion at TS1, degrees | -76 +- 5 | -52 +- 18 | -74 +- 8 | -10 +- 44 |
+| Width of the change at TS1, degrees | 23 +- 6 | 57 +- 17 | 36 +- 10 | 140 +- 70 |
+| Spread of the torsion at TS1, degrees | 27 | 27 | 29 | 29 |
+
+Against the three conditions:
+
+1. Refuted. The classical boundaries agree with each other but lie just outside the stated range of -97 to -77 degrees. The quasiclassical boundaries are outside it and are poorly defined.
+2. Refuted, except for entry 31 with classical sampling. The width exceeds the spread in entry 32 (classical) and in both quasiclassical sets, so the torsion at TS1 does not decide the product.
+3. Not a test as it stands. The Gaussian formula with the fitted boundary and width returns the measured share because the fit is made on the same trajectories. The share from positions alone (0.74 and 0.66) is lower than the classical share by 1.3 to 1.4 standard errors.
+
+The boundary of -87 degrees does describe the torsion later on. From 30 to 60 fs after TS1, with the bond at 1.5 to 1.9 angstrom, the boundary lies between -87 and -96 degrees in all four sets. At these times it is close to the definition of the product, so its position is not independent evidence.
+
+The published shares remain higher than these first-well shares: by 3.2 to 3.8 standard errors in entry 31 and by 1.4 to 1.7 in entry 32. The cause is unknown. I have not read the level of theory, sampling or counting rule of Wu, Zhang and Hong.
+

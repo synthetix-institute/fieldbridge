@@ -113,6 +113,7 @@ def main():
             ini, rows, fails = read_set(ens, e, s)
             if not rows:
                 continue
+            rows = {i: r for i, r in rows.items() if r["backward"] is not None or r["forward"] == "reactant"}   # complete pairs only
             idx = np.array(sorted(rows))
             verdict = [rows[i]["forward"] for i in idx]
             back = [rows[i]["backward"] for i in idx]
@@ -121,7 +122,7 @@ def main():
             phi = phi_ts + (phi - phi_ts + 180) % 360 - 180          # continuous through +-180 on the Z side, relative to the torsion at TS1
             pdot = np.array([phi_dot(C, iphi, ini["q"][i], ini["v"][i]) for i in idx])
             count = {k: float(mult[[v == k for v in verdict]].sum()) for k in ("Z", "E", "reactant", "undecided")}
-            # reactant-to-product: the backward segment must return to the reactant side; before it has run, a start counts as long as its forward end is a product
+            # reactant-to-product: the backward segment must return to the reactant side
             reactive = np.array([v in ("Z", "E") and b != "product" for v, b in zip(verdict, back)])
             z = np.array([v == "Z" for v in verdict])
             nz, ne = mult[reactive & z].sum(), mult[reactive & ~z].sum()
