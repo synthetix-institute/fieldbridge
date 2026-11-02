@@ -27,12 +27,17 @@ the sweep itself, in the same way for every completion:
                  linear, and the flow stops that turning at each sample's own saturation. Where the deviation has
                  already reached the written amplitude at that time (the noise rule of this module puts every
                  pitchfork there), the choice is made there and each sample goes to the written state nearest in
-                 direction: the sector law of the critical space at the mapping time.
+                 direction: the sign of the sample in one direction, the sector law of the critical space in several.
+
+A sweep has a law only if it comes to the write point. The branch followed from the start of the sweep must arrive at
+the write point at the crossing; where the start lies on another stable state, nothing crosses and no law is reported.
 
 The probabilities of the stable states are the law. It is tested against a simulation of the full stochastic
-dynamics over the whole sweep (the certificate). A deviation beyond the statistical error is itself an obstruction:
-the choice is not complete at the end of the linear stage (noise acts during the nonlinear stage, or the nonlinear
-stage brings another mode into play), and it is reported as such.
+dynamics over the whole sweep (the certificate), which is then continued during a hold at the end value of the control.
+A hold in which the trajectories exchange the written states makes it an equilibrium write, whether or not the law agrees
+with the certificate, since nothing is retained. Otherwise a deviation beyond the statistical error is itself an
+obstruction: the choice is not complete at the end of the linear stage (noise acts during the nonlinear stage, or the
+nonlinear stage brings another mode into play), and it is reported as such.
 
 For one critical direction the law is reported in the units of the swept pitchfork: with the bias toward either
 state, z(+-h) = Phi^-1(P(state of the bias)); the response constant c = (z(+h) + z(-h)) / 2 * sqrt(D_s) r^(1/4) / h_s
@@ -65,6 +70,13 @@ SATURATION_FRACTION = 0.5   # the pulled-back spread (3 sigma) at the mapping ti
                             # mapping time is the outcome map (the flow from the mapping time is exact at a quarter and
                             # fails from two thirds on populations of three and four pitchforks; the sector law there
                             # holds to a few percent from three on)
+HOLD_BEFORE = 1.5           # the reference is held along the crossing directions from this many passage times 1 / sqrt(rate)
+                            # before the crossing. Earlier the free flow is stable and there is nothing to hold, and bases read
+                            # at the write point no longer describe the state: a flow held along them can be unstable where the
+                            # free flow is stable, by up to exp(HOLD_BEFORE^2 / 2) over this window and far more before it. A
+                            # later start lets the lag along the crossing direction, which is a forcing, enter the Jacobian
+REACH_FRACTION = 0.5        # the branch followed from the start of the sweep comes to the write point when it arrives there
+                            # within this fraction of the distance from the write point to the nearest written state
 DEVIATION_SIGMA = 4.0       # law and certificate differ when a probability differs by more than this many errors ...
 DEVIATION_FLOOR = 0.02      # ... and by more than this absolute amount (the law has its own sampling and time-step
                             # error; near-certain outcomes have binomial errors far below it)
@@ -176,32 +188,119 @@ def _rk4_step(f, q, t, h):
 
 
 # ------------------------------------------------------------------------------------------------ the law
+def branch_at_crossing(real: Realization, sweep: Sweep, q0: np.ndarray, n_steps: int = 400) -> np.ndarray:
+    """The branch followed by Newton from the start of the sweep to the crossing, with the flow carrying the state where
+    the branch ends. A start on the branch of the write arrives at the write point, whatever the lag of the sweep behind
+    the branch; a start on another stable state stays there."""
+    F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
+    h = sweep.t_cross / n_steps
+    q, t = q0.copy(), 0.0
+    for _ in range(n_steps):
+        q_next, ok = an.newton(real, q, sweep.over(t + h))
+        q_next = np.asarray(q_next, float)
+        if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q, q_next)) <= 0.1 * an.base_length(real):
+            q = q_next
+        else:
+            q = real.carrier.wrap(_rk4_step(F, q, t, h))
+        t += h
+    return q
+
+
+def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
+                   targets: Sequence[np.ndarray], strengths: Sequence[float], dt: float, D: float) -> Dict[str, object]:
+    """The state the sweep really follows, with no bias and no noise, and the moments of the deviation from it: the
+    covariance and the propagator of the critical space, the mean forced by the sweep, and the mean under each bias.
+
+    The reference is the deterministic flow of the full drift, which lags behind the static branch, and the Jacobian is
+    evaluated on it: where the relaxation rate changes along the sweep, the lag changes with it and the critical rate
+    grows at a rate other than the declared one. From HOLD_BEFORE passage times before the crossing on, it stays along the
+    directions that cross (`crossing`, the bases of the static critical space) on the branch followed by Newton through
+    the crossing (after it, an unstable fixed point), since the free flow would leave for a written state there and the
+    linearization about it would no longer describe the choice. What this constraint removes from the flow, the lag of the
+    branch along those directions, enters the mean as a deterministic forcing: a sweep that itself favours one state. A
+    direction that takes part in the write only because it is slow (R beyond `crossing`) still relaxes, and it follows the
+    flow. Where Newton fails, the whole reference is carried by the flow. A held state is not reflected at the boundary of
+    an orthant: a reflection takes it out of the range of the projection, and the two together can amplify it.
+
+    The moments are integrated by Heun's rule with the Jacobians at both ends of each step, until the critical rate
+    integrated since the crossing reaches GROWTH_STOP: the fluctuations present then decide the write, and noise added
+    later is amplified less by that factor."""
+    n = q0.size
+    k = R.shape[1]
+    Rx, Lx = crossing
+    I = np.eye(n)
+    F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
+    bias = lambda q: np.array([real.write_force(q, target, h) for target, h in zip(targets, strengths)])    # noqa: E731
+    t_hold = sweep.t_cross - HOLD_BEFORE / sqrt(sweep.rate)
+    q_ref, q_branch = q0.copy(), q0.copy()
+    C, Phi, mf, mb = np.zeros((n, n)), np.eye(k), np.zeros(n), np.zeros((len(targets), n))
+    t, t_star, grown, ended_by = 0.0, None, 0.0, "end of the sweep"
+    lag_at_crossing, rate_at_crossing = None, None
+    J, b = an.jacobian(real, q_ref, sweep.over(t)), bias(q_ref)
+    Jc = L.T @ J @ R
+    kappa = float(np.max(np.linalg.eigvals(Jc).real))
+    path: Dict[str, List] = {"t": [t], "q": [q_ref.copy()], "branch": [q_branch.copy()], "Phi": [Phi.copy()], "grown": [0.0], "cov": [np.zeros((k, k))],
+                             "forced": [np.zeros(k)], "biased": [np.zeros((len(targets), k))], "d": [np.zeros(k)]}
+    for i in range(int(np.ceil(sweep.T / dt))):
+        if lag_at_crossing is None and t >= sweep.t_cross:
+            lag_at_crossing = float(np.linalg.norm(real.carrier.diff(q_branch, q_ref)))
+        q_free = _rk4_step(F, q_ref, t, dt)
+        q_next, ok = an.newton(real, q_branch, sweep.over(t + dt))
+        q_next = np.asarray(q_next, float)
+        held = False
+        if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q_branch, q_next)) <= 0.1 * an.base_length(real):
+            q_branch = q_next
+            held = t + dt >= t_hold
+        else:
+            q_branch = real.carrier.wrap(q_free)
+        q_new = q_free + Rx @ (Lx.T @ real.carrier.diff(q_free, q_branch)) if held else q_free
+        impulse = real.carrier.diff(q_new, q_free)     # what the reference does not follow: F(q_ref) - dq_ref/dt
+        if not (held and real.carrier.kind == "orthant"):
+            q_new = real.carrier.wrap(q_new)
+        t_next = t + dt
+        J_next, b_next = an.jacobian(real, q_new, sweep.over(t_next)), bias(q_new)
+        Jc_next = L.T @ J_next @ R
+        kappa_next = float(np.max(np.linalg.eigvals(Jc_next).real))
+        # the deterministic forcing acts through the step: half of it before the flow of the step and half after
+        mf = mf + 0.5 * impulse
+        d1 = J @ mf
+        mf = mf + 0.5 * dt * (d1 + J_next @ (mf + dt * d1)) + 0.5 * impulse
+        d1 = mb @ J.T + b
+        mb = mb + 0.5 * dt * (d1 + (mb + dt * d1) @ J_next.T + b_next)
+        d1 = J @ C + C @ J.T + 2 * D * I
+        C_pred = C + dt * d1
+        C = C + 0.5 * dt * (d1 + J_next @ C_pred + C_pred @ J_next.T + 2 * D * I)
+        d1 = Jc @ Phi
+        Phi = Phi + 0.5 * dt * (d1 + Jc_next @ (Phi + dt * d1))
+        if t > sweep.t_cross:
+            grown += 0.5 * dt * (max(kappa, 0.0) + max(kappa_next, 0.0))
+        if rate_at_crossing is None and t_next >= t_hold and kappa < 0.0 <= kappa_next:
+            rate_at_crossing = (kappa_next - kappa) / dt
+        q_ref, J, Jc, kappa, b, t = q_new, J_next, Jc_next, kappa_next, b_next, t_next
+        path["t"].append(t); path["q"].append(q_ref.copy()); path["branch"].append(q_branch.copy())
+        path["Phi"].append(Phi.copy()); path["grown"].append(grown if t > sweep.t_cross else 0.0); path["cov"].append(L.T @ C @ L)
+        path["forced"].append(L.T @ mf); path["biased"].append(mb @ L); path["d"].append(L.T @ real.carrier.diff(q_branch, q_ref))
+        if t > sweep.t_cross and grown >= GROWTH_STOP:
+            t_star, ended_by = t, "growth"
+            break
+    path.update(t_star=t if t_star is None else t_star, ended_by=ended_by, grown_end=grown, lag_at_crossing=lag_at_crossing, rate_at_crossing=rate_at_crossing)
+    return path
+
+
 def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray,
                      targets: Sequence[np.ndarray], strengths: Sequence[float], D: float, stable: List[np.ndarray],
                      n_samples: int, rng, dt: Optional[float] = None, crossing: Optional[Tuple[np.ndarray, np.ndarray]] = None
                      ) -> List[Dict]:
     """For each bias (target, strength): the Gaussian of the linear stage and the outcome map.
 
-    The reference of the moments is the state the sweep really follows, with no bias and no noise. Along the directions
-    that relax it is the deterministic flow of the full drift, which lags behind the static branch, and the Jacobian is
-    evaluated on it: where the relaxation rate changes along the sweep, the lag changes with it and the critical rate
-    grows at a rate other than the declared one. Along the directions that cross (`crossing`, the bases of the static
-    critical space; R, L by default) it stays on the branch followed by Newton through the crossing (after it, an
-    unstable fixed point), since the free flow would leave for a written state there and the linearization about it
-    would no longer describe the choice. What this constraint removes from the flow, the lag of the branch along those
-    directions, enters the mean as a deterministic forcing: a sweep that itself favours one state. A direction that takes
-    part in the write only because it is slow (R beyond `crossing`) still relaxes, and it follows the flow. Where Newton
-    fails, the whole reference is carried by the flow.
-
-    The moments of the deviation from this reference are integrated through the crossing
-    until the critical rate integrated since the crossing reaches GROWTH_STOP: the fluctuations present then decide
-    the write, and noise added later is amplified less by that factor. Their distribution in the critical space gives
-    the statistics of the decision (in one direction, the ratio of mean to spread; in k directions, also the angles).
-    The samples are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by the noise-free linear
-    propagator of the critical space, so that each has there the size and the direction the linear stage gives it,
-    and from there the deterministic flow of the full drift to the end of the sweep assigns each to a stable state:
-    the linear part of that flow retraces the propagator, the nonlinear part stops the growth, and with it the
-    turning of the direction toward the fastest mode, at each sample's own saturation. (An isotropic rescaling of the
+    The reference and the moments that do not depend on the bias are those of reference_path. Their distribution in the
+    critical space gives the statistics of the decision (in one direction, the ratio of mean to spread; in k directions,
+    also the angles). The samples are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by the
+    noise-free linear propagator of the critical space, so that each has there the size and the direction the linear stage
+    gives it; the forcing of the sweep after the mapping time is taken out of the sample, since the drift applies it again
+    on the way forward. From there the deterministic flow of the full drift to the end of the sweep assigns each to a
+    stable state: the linear part of that flow retraces the propagator, the nonlinear part stops the growth, and with it
+    the turning of the direction toward the fastest mode, at each sample's own saturation. (An isotropic rescaling of the
     samples to a small size in place of the propagator counted the differential growth of the modes twice and
     lengthened the nonlinear stage; it misread every write through a weakly split degeneracy, on the rf-SQUID triangle
     and on populations of pitchforks, while leaving the one-direction laws unchanged, where only the sign counts.)
@@ -209,91 +308,47 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     distance from the unwritten branch to the nearest state that is stable at that control value): linear, where the
     spread is below SATURATION_FRACTION of that amplitude and the flow is the map; saturated, where it is not, the
     deviation has reached the written states by then, and each sample goes to the written state nearest in direction
-    (the sector law at the mapping time; a flow from samples of that size would start them where no trajectory is).
-    Under the noise rule of law_at every pitchfork is in the saturated regime, and the one-direction law is the same
-    in both (the sign decides). Found on populations of pitchforks: at a coupling of a third of the passage scale
-    the sector law at the mapping time holds to a few percent with two, three and four units, where the sector law
-    at the end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter. Where the spread
-    reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing, the noise is too strong
-    for the deviation to stay linear through the crossing (recorded as linear_size_before_crossing); the certificate
-    then decides whether the law still holds."""
+    (a flow from samples of that size would start them where no trajectory is, and an amplitude-dependent rotation
+    scrambles their sign). In one direction this is the sign of the sample at the end of the linear stage, which holds all
+    of the forcing; in several it is the sector law at the mapping time, since the direction turns on until then.
+    Under the noise rule of law_at every pitchfork is in the saturated regime. Found on populations of pitchforks: at a
+    coupling of a third of the passage scale the sector law at the mapping time holds to a few percent with two, three and
+    four units, where the sector law at the end of the linear stage and the flow from a rescaled start fail by a tenth and
+    a quarter. Where the spread reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing,
+    the noise is too strong for the deviation to stay linear through the crossing (recorded as
+    linear_size_before_crossing); the certificate then decides whether the law still holds."""
     dt = dt or 0.5 * an.safe_dt(real)
-    n = q0.size
     ell = min(float(np.linalg.norm(s - q0)) for s in stable) if stable else an.base_length(real)
     k = R.shape[1]
-    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if (k >= 2 and len(stable) >= 2) else None
+    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if len(stable) >= 2 else None
     amplitude_at: Dict[float, float] = {}
     results = []
-    Rx, Lx = crossing if crossing is not None else (R, L)
-    F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
-    for target, h in zip(targets, strengths):
-        # the reference q_ref and the branch q_branch it is held to along the crossing directions; m is the mean deviation
-        # from q_ref, and d the displacement of q_ref from the branch in the critical coordinates (the lag of a slow mode)
-        q_ref, q_branch = q0.copy(), q0.copy()
-        d = np.zeros(k)
-        m = np.zeros(n); C = np.zeros((n, n)); Phi = np.eye(k)
-        t, t_star, grown, ended_by = 0.0, None, 0.0, "end of the sweep"
-        lag_at_crossing, kappa_before = None, None
-        rate_at_crossing = None
-        hist_t, hist_spread, hist_q, hist_b, hist_d, hist_g, hist_Phi = [], [], [], [], [], [], []
-        steps = int(np.ceil(sweep.T / dt))
-        for i in range(steps):
-            over = sweep.over(t)
-            J = an.jacobian(real, q_ref, over)
-            Jc = L.T @ J @ R
-            kappa = float(np.max(np.linalg.eigvals(Jc).real))
-            if t > sweep.t_cross:
-                grown += dt * max(kappa, 0.0)
-            if rate_at_crossing is None and kappa_before is not None and kappa_before < 0.0 <= kappa:
-                rate_at_crossing = (kappa - kappa_before) / dt
-            kappa_before = kappa
-            if lag_at_crossing is None and t >= sweep.t_cross:
-                lag_at_crossing = float(np.linalg.norm(real.carrier.diff(q_branch, q_ref)))
-            b = real.write_force(q_ref, target, h)
-            q_free = _rk4_step(F, q_ref, t, dt)
-            q_next, ok = an.newton(real, q_branch, sweep.over(t + dt))
-            q_next = np.asarray(q_next, float)
-            if ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q_branch, q_next)) <= 0.1 * an.base_length(real):
-                q_branch = q_next
-                q_new = q_free + Rx @ (Lx.T @ real.carrier.diff(q_free, q_branch))
-            else:
-                q_new = q_free
-                q_branch = real.carrier.wrap(q_free)
-            forcing = real.carrier.diff(q_new, q_free)     # what the reference does not follow: F(q_ref) - dq_ref/dt
-            q_new = real.carrier.wrap(q_new)
-            m = m + dt * (J @ m + b) + forcing
-            C = C + dt * (J @ C + C @ J.T + 2 * D * np.eye(n))
-            Phi = Phi + dt * (Jc @ Phi)
-            q_ref = q_new
-            t += dt
-            d = L.T @ real.carrier.diff(q_branch, q_ref)
-            Cc = L.T @ C @ L
-            spread = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(0.5 * (Cc + Cc.T)))), 0.0))
-            hist_t.append(t); hist_spread.append(spread + float(np.linalg.norm(L.T @ m + d))); hist_q.append(q_ref.copy())
-            hist_b.append(q_branch.copy()); hist_d.append(d.copy())
-            hist_g.append(grown if t > sweep.t_cross else 0.0); hist_Phi.append(Phi.copy())
-            if t > sweep.t_cross and grown >= GROWTH_STOP:
-                t_star, ended_by = t, "growth"
-                break
-        if t_star is None:
-            t_star = t
-        mc = L.T @ m
-        Cc = 0.5 * (L.T @ C @ L + (L.T @ C @ L).T)
-        w, V = np.linalg.eigh(Cc)
+    path = reference_path(real, sweep, q0, R, L, crossing if crossing is not None else (R, L), targets, strengths, dt, D)
+    hist_t, hist_q, hist_b, hist_d, hist_g, hist_Phi = path["t"], path["q"], path["branch"], path["d"], path["grown"], path["Phi"]
+    hist_Cc, hist_mf, hist_mb = path["cov"], path["forced"], path["biased"]
+    t_star, ended_by = path["t_star"], path["ended_by"]
+    Cc = 0.5 * (hist_Cc[-1] + hist_Cc[-1].T)
+    w, V = np.linalg.eigh(Cc)
+    i_map = next((i for i, g in enumerate(hist_g) if g >= GROWTH_MAP), len(hist_t) - 1)
+    t_map = hist_t[i_map]
+    P = hist_Phi[i_map] @ np.linalg.inv(hist_Phi[-1])
+    C_map = 0.5 * (P @ Cc @ P.T + (P @ Cc @ P.T).T)
+    size = LINEAR_FRACTION * ell
+    spread_of = [3 * sqrt(max(float(np.max(np.linalg.eigvalsh(0.5 * (c_ + c_.T)))), 0.0)) for c_ in hist_Cc]
+    for j, (target, h) in enumerate(zip(targets, strengths)):
+        spreads = [sp + float(np.linalg.norm(mb[j] + mf_ + d_)) for sp, mb, mf_, d_ in zip(spread_of[1:], hist_mb[1:], hist_mf[1:], hist_d[1:])]
+        mb = hist_mb[-1][j]
+        mf_end, mf_map = hist_mf[-1], hist_mf[i_map]
+        mc = mb + mf_end
         z = mc[None] + rng.standard_normal((n_samples, mc.size)) @ (V * np.sqrt(np.clip(w, 0, None))).T
-        size = LINEAR_FRACTION * ell
-        reach = next((hist_t[i] for i, sp in enumerate(hist_spread) if sp >= size), t_star)
+        reach = next((hist_t[i + 1] for i, sp in enumerate(spreads) if sp >= size), t_star)
         # the decision statistics are those at t_star (they contain the bias and the noise of the whole linear stage);
         # they are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by the propagator of the
         # critical space and placed there, each sample at the size and in the direction the linear stage gives it,
         # and carried forward by the drift alone: the map decides to which state each sample leads under the full
         # nonlinear drift, which stops the turning of its direction at its own saturation
-        i_map = next((i for i, g in enumerate(hist_g) if g >= GROWTH_MAP), len(hist_t) - 1)
-        t_map = hist_t[i_map]
-        P = hist_Phi[i_map] @ np.linalg.inv(hist_Phi[-1])
-        z_map = z @ P.T
-        C_map = 0.5 * (P @ Cc @ P.T + (P @ Cc @ P.T).T)
-        spread_map = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(C_map))), 0.0)) + float(np.linalg.norm(P @ mc + hist_d[i_map]))
+        z_map = (z - mf_end[None]) @ P.T + mf_map[None]
+        spread_map = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(C_map))), 0.0)) + float(np.linalg.norm(P @ mb + mf_map + hist_d[i_map]))
         # the written amplitude at the mapping time: the distance from the unwritten branch to the nearest state
         # stable at that value of the control (the states grow along the sweep; none may exist yet)
         key = round(t_map, 9)
@@ -302,8 +357,14 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
             amplitude_at[key] = min((float(np.linalg.norm(real.carrier.diff(hist_b[i_map], s_))) for s_ in st_map),
                                     default=float("nan"))
         ell_map = amplitude_at[key]
-        # the sectors are read from the branch: a slow mode's lag belongs to the sample's direction there
-        sector = _sector_labels(z_map + hist_d[i_map], coords_arr) if coords_arr is not None else None
+        # the sectors are read from the branch: a slow mode's lag belongs to the sample's direction there. In one
+        # direction the sign does not turn, and at the end of the linear stage it holds all of the forcing
+        sector = None
+        if coords_arr is not None:
+            if k == 1:
+                sector = np.where(z[:, 0] + hist_d[-1][0] > 0, int(np.argmax(coords_arr[:, 0])), int(np.argmin(coords_arr[:, 0])))
+            else:
+                sector = _sector_labels(z_map + hist_d[i_map], coords_arr)
         if sector is not None and np.isfinite(ell_map) and spread_map > SATURATION_FRACTION * ell_map:
             # saturated: the deviation has reached the written amplitude by the mapping time; the choice is made
             # there, and each sample goes to the written state nearest in direction
@@ -320,10 +381,10 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
                 tt += h_step
             regime = "linear at the mapping time"
         results.append({"t_star": t_star, "t_cross": sweep.t_cross, "t_map": t_map, "ended_by": ended_by,
-                        "growth": grown, "linear_size_before_crossing": bool(reach < sweep.t_cross),
+                        "growth": path["grown_end"], "linear_size_before_crossing": bool(reach < sweep.t_cross),
                         "spread_at_map": spread_map, "written_amplitude_at_map": ell_map, "regime": regime,
                         "sector_law": _probs(sector, len(stable)) if sector is not None else None,
-                        "lag_at_crossing": lag_at_crossing, "rate_at_crossing": rate_at_crossing,
+                        "lag_at_crossing": path["lag_at_crossing"], "rate_at_crossing": path["rate_at_crossing"],
                         "mean_critical": (mc + hist_d[-1]).tolist(), "cov_critical": Cc.tolist(), "final": q})
     return results
 
@@ -476,7 +537,7 @@ SLOW_FACTOR = 1.0             # a direction with a rate below this times sqrt(ra
 # ------------------------------------------------------------------------------------------------ one write point
 def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
            n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
-           reduce_one: bool = False, hold_always: bool = False) -> Dict[str, object]:
+           reduce_one: bool = False, hold_always: bool = True) -> Dict[str, object]:
     """The write law at one write point of `real` (whose normal form is nf), for biases along the critical space.
 
     The noise is `noise` if given; otherwise it is set, as in construct.swept_write_check, by
@@ -512,6 +573,13 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         return {"status": "continuous family of written states (a marginal direction at every one): the write sets a "
                           "phase on the family, not a choice between states; its law is that of a phase (Adler)",
                 "stable_states": [s.tolist() for s in stable[:8]], "completion_needed": "phase"}
+    # a sweep that starts on another stable state never comes to the write point, and nothing crosses there
+    arrival = float(np.linalg.norm(real.carrier.diff(qc, branch_at_crossing(real, sweep, q0))))
+    nearest = min(float(np.linalg.norm(real.carrier.diff(qc, s))) for s in stable)
+    if arrival > REACH_FRACTION * nearest:
+        return {"status": "the sweep does not reach the write point: from its start it stays on another state",
+                "start": q0.tolist(), "write_point": qc.tolist(), "distance_at_crossing": arrival,
+                "stable_states": [s.tolist() for s in stable]}
     dfac = float(np.mean(np.diag(L.T @ L)))
     a3 = abs(float(nf.get("a3", 0.0) or 0.0))
     if noise is not None:
@@ -614,23 +682,23 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             # does the end of the sweep retain the choice? continue the certificate at the end value of the control
             hold = hold_check(real, sweep, sims, targets, strengths, D, rng, stable, sweep.T)
             out["hold"] = hold
-        if bad:
-            dev = f"{max(r['deviation'] for r in bad):.3f} ({max(r['deviation_sigma'] for r in bad):.1f} errors)"
-            if hold["switching_fraction"] > SWITCHING_EQUILIBRIUM:
-                out["write_class"] = "equilibrium write"
-                out["obstruction_in_nonlinear_stage"] = (
-                    f"the law differs from the full dynamics by up to {dev}, and the written states at the end of the "
-                    f"sweep do not retain the choice: {100 * hold['switching_fraction']:.0f} % of the trajectories change "
-                    f"state during a hold of {sweep.T:.3g} time units at the end value of the control. The full dynamics "
-                    "gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; "
-                    "a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)")
-            else:
-                out["write_class"] = "nonlinear stage"
-                out["obstruction_in_nonlinear_stage"] = (
-                    f"the law differs from the full dynamics by up to {dev}: the choice is not complete at the end of "
-                    "the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the "
-                    f"written states retain it ({100 * hold['switching_fraction']:.0f} % change state during a hold of "
-                    f"{sweep.T:.3g} time units)")
+        dev = f"{max(r['deviation'] for r in bad):.3f} ({max(r['deviation_sigma'] for r in bad):.1f} errors)" if bad else ""
+        if (bad or hold_always) and hold["switching_fraction"] > SWITCHING_EQUILIBRIUM:
+            out["write_class"] = "equilibrium write"
+            agreement = f"the law differs from the full dynamics by up to {dev}, and" if bad else "the law agrees with the full dynamics, but"
+            out["obstruction_in_nonlinear_stage"] = (
+                f"{agreement} the written states at the end of the "
+                f"sweep do not retain the choice: {100 * hold['switching_fraction']:.0f} % of the trajectories change "
+                f"state during a hold of {sweep.T:.3g} time units at the end value of the control. The full dynamics "
+                "gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; "
+                "a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)")
+        elif bad:
+            out["write_class"] = "nonlinear stage"
+            out["obstruction_in_nonlinear_stage"] = (
+                f"the law differs from the full dynamics by up to {dev}: the choice is not complete at the end of "
+                "the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the "
+                f"written states retain it ({100 * hold['switching_fraction']:.0f} % change state during a hold of "
+                f"{sweep.T:.3g} time units)")
         else:
             out["write_class"] = "linear-stage write"
     return out
@@ -680,7 +748,7 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
         if "pitchfork" not in str(nfp["kind"]).lower():
             row["status"] = "not a pitchfork along the curved sweep"
             return row
-        L = law_at(path, nfp, rng, rate, None, (1.0,), n_samples, n_traj, True, gamma, reduce_one=False)
+        L = law_at(path, nfp, rng, rate, None, (1.0,), n_samples, n_traj, True, gamma, reduce_one=False, hold_always=False)
         cert = ((L.get("one_direction") or {}).get("certificate") or [None])[0]
         if not cert:
             row["status"] = str(L.get("status", "no certificate"))
@@ -747,7 +815,7 @@ def zero_offset_curvature(real: Realization, cusp: Dict, rng, rate: float = 0.02
 
 def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] = None, floors=(1.0,),
              n_samples: int = 4000, n_traj: int = 2000, certify: bool = True, gamma: float = 0.05,
-             curvature: bool = False, hold_always: bool = False) -> Dict[str, object]:
+             curvature: bool = False, hold_always: bool = True) -> Dict[str, object]:
     """Every write point of `real` along its control: the obstruction, what its completion keeps, and the law of the
     completed model (with its certificate)."""
     if not real.control:
@@ -769,36 +837,41 @@ def complete(real: Realization, rng, rate: float = 0.02, noise: Optional[float] 
             elif kind == "second parameter":
                 entry["unfoldings"] = []
                 for second in real.material:
-                    c = construct.cancel_asymmetry(real, nf, second)
-                    u = {"second": second, "success": bool(c.get("success"))}
-                    if c.get("success"):
-                        path = construct.along_path(real, {real.control: c["control"], second: c["value"]},
-                                                    c["direction"])
-                        # the sweep is read on a window narrowed until the quartic term of the drift no longer appears
-                        # as a quadratic one (construct.sweep_normal_form): on the default window the cusp of a driven
-                        # Kerr oscillator reads as transcritical
-                        nfp = construct.sweep_normal_form(path, np.asarray(c["state"]))
-                        u.update(cusp={real.control: c["control"], second: c["value"]}, direction=c["direction"],
-                                 kind_along_sweep=nfp["kind"], asymmetry_at_fold=float(nf.get("asymmetry", 0.0)),
-                                 asymmetry_along_sweep=float(nfp.get("asymmetry", 0.0)),
-                                 window_halvings=int(nfp.get("window_halvings", 0)))
-                        if "pitchfork" not in str(nfp["kind"]).lower():
-                            # the path through the cusp does not cross a symmetric point: the second parameter has
-                            # not cancelled the asymmetry along the sweep (a transcritical point, two states exchanging
-                            # stability, or a fold), and the linear-stage law does not apply
-                            u["law"] = {"status": f"no law: the sweep through the cusp found along {second} is "
-                                                  f"{str(nfp['kind']).split(':')[0]}, not a pitchfork; the asymmetry is "
-                                                  "not cancelled on the path"}
-                        else:
-                            # the one-coordinate law needs a saturating cubic along the sweep; a subcritical sweep
-                            # through the cusp keeps the linear-stage law
-                            u["law"] = law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
-                                              reduce_one=float(nfp.get("a3", 0.0)) < 0, hold_always=hold_always)
-                            if curvature and noise is None and u["law"].get("status") == "derived":
-                                # the curvature of the sweep that cancels its intrinsic offset
-                                u["zero_offset_curvature"] = zero_offset_curvature(
-                                    real, {**c, "second": second}, rng, rate=rate, gamma=gamma,
-                                    n_samples=min(n_samples, 2000), n_traj=n_traj)
+                    u = {"second": second, "success": False}
+                    # a failure at one second parameter is that unfolding's result and does not drop the others
+                    try:
+                        c = construct.cancel_asymmetry(real, nf, second)
+                        u["success"] = bool(c.get("success"))
+                        if c.get("success"):
+                            path = construct.along_path(real, {real.control: c["control"], second: c["value"]},
+                                                        c["direction"])
+                            # the sweep is read on a window narrowed until the quartic term of the drift no longer appears
+                            # as a quadratic one (construct.sweep_normal_form): on the default window the cusp of a driven
+                            # Kerr oscillator reads as transcritical
+                            nfp = construct.sweep_normal_form(path, np.asarray(c["state"]))
+                            u.update(cusp={real.control: c["control"], second: c["value"]}, direction=c["direction"],
+                                     kind_along_sweep=nfp["kind"], asymmetry_at_fold=float(nf.get("asymmetry", 0.0)),
+                                     asymmetry_along_sweep=float(nfp.get("asymmetry", 0.0)),
+                                     window_halvings=int(nfp.get("window_halvings", 0)))
+                            if "pitchfork" not in str(nfp["kind"]).lower():
+                                # the path through the cusp does not cross a symmetric point: the second parameter has
+                                # not cancelled the asymmetry along the sweep (a transcritical point, two states exchanging
+                                # stability, or a fold), and the linear-stage law does not apply
+                                u["law"] = {"status": f"no law: the sweep through the cusp found along {second} is "
+                                                      f"{str(nfp['kind']).split(':')[0]}, not a pitchfork; the asymmetry is "
+                                                      "not cancelled on the path"}
+                            else:
+                                # the one-coordinate law needs a saturating cubic along the sweep; a subcritical sweep
+                                # through the cusp keeps the linear-stage law
+                                u["law"] = law_at(path, nfp, rng, rate, noise, floors, n_samples, n_traj, certify, gamma,
+                                                  reduce_one=float(nfp.get("a3", 0.0)) < 0, hold_always=hold_always)
+                                if curvature and noise is None and u["law"].get("status") == "derived":
+                                    # the curvature of the sweep that cancels its intrinsic offset
+                                    u["zero_offset_curvature"] = zero_offset_curvature(
+                                        real, {**c, "second": second}, rng, rate=rate, gamma=gamma,
+                                        n_samples=min(n_samples, 2000), n_traj=n_traj)
+                    except (ValueError, np.linalg.LinAlgError) as e:
+                        u["law"] = {"status": f"not derived: {e}"}
                     entry["unfoldings"].append(u)
             else:
                 entry["law"] = {"status": "phase: derived by the phase-locking target (memory codiscover --target "

@@ -1,7 +1,7 @@
 """The linear stage of a completed write about the state the sweep really follows (completion.linear_stage_law).
 
 The numbers come from the equations: exact Gaussian moments with Jacobians written by hand, computed outside this package, and closed
-forms in the sweep rate. The law's moments carry no sampling error; the gate is the Euler step of their integration."""
+forms in the sweep rate. The law's moments carry no sampling error; the gate is much wider than the step of their integration."""
 from __future__ import annotations
 
 from math import pi, sqrt
