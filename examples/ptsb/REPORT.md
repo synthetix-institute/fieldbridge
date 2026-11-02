@@ -32,7 +32,9 @@ The answer has seven parts.
 6. Harmonic modes act as the friction in the law once their recurrence time exceeds the passage time, and slow modes
    do not count. Two transverse modes give four products. They decide independently when the products lie in the
    quadrants. When the products lie on the axes the earlier mode wins by more than the linear stage says, and the
-   boundary between the families has to be found on the surface.
+   boundary between the families has to be found on the surface. That share is a first-entry share. It is a product
+   ratio only where the shallower well is at least five kT deep; below that, trajectories leave for the deeper well
+   and the share depends on when it is read.
 7. Cubic coupling to further modes, which is what a molecule has in place of linear coupling, does not act as the
    friction in the law. Terms that change the frequency of a mode give friction proportional to temperature, but they are
    too weak to move the ratio before the mode loses its binding. Terms that displace a mode along the path are strong and
@@ -439,8 +441,9 @@ family wins.
   gives the Gaussian (y, z) where the deviation reaches 0.2. A bisection on the angle in noise-free motion on the
   surface finds the direction separating the families, and the probability is the Gaussian weight on each side. At the
   same point it gives 0.69.
-- **Not a Boltzmann split.** At D = 0.2 the z products lie 0.27 above the y products, which at kT = 0.01 would give
-  essentially all y. Trajectories give 0.73.
+- **Shares at first entry.** At D = 0.2 the z products lie 0.27 above the y products, which at kT = 0.01 would give
+  essentially all y, while 0.73 of the trajectories enter the y family first. This is a share at first entry and not a
+  product ratio, as the next paragraph shows: that z well is only 1.1 kT deep.
 
 | friction gamma | tilt on z | linear comparison | with the boundary |
 |---|---|---|---|
@@ -455,6 +458,34 @@ family wins.
 | 3 | 0.2 | 0.011 | 0.044 |
 
 (Mean absolute difference in the share of the y family over delays and temperatures, 10 points per row.)
+
+**What becomes of the trajectories after first entry** ([two_modes_fate.py](two_modes_fate.py)). The share above is
+counted when a trajectory first enters a product region. The motion was continued with the same friction and noise, at
+zero tilt and c = 1.5, and the z share is P(|z| > |y|) among the arrived trajectories (10000 started at each point).
+
+| D | z well depth | kT | depth / kT | gamma | first entry | t = 20 | t = 60 | t = 120 |
+|---|---|---|---|---|---|---|---|---|
+| 0.05 | 0.088 | 0.01 | 8.8 | 1 | 0.402 | 0.402 | 0.401 | |
+| 0.05 | 0.088 | 0.01 | 8.8 | 3 | 0.388 | 0.387 | 0.388 | 0.388 |
+| 0.05 | 0.088 | 0.05 | 1.8 | 1 | 0.402 | 0.313 | 0.234 | |
+| 0.05 | 0.088 | 0.05 | 1.8 | 3 | 0.399 | 0.358 | 0.273 | 0.235 |
+| 0.1 | 0.054 | 0.01 | 5.4 | 1 | 0.308 | 0.305 | 0.293 | |
+| 0.1 | 0.054 | 0.01 | 5.4 | 3 | 0.289 | 0.286 | 0.281 | 0.273 |
+| 0.1 | 0.054 | 0.05 | 1.1 | 1 | 0.301 | 0.161 | 0.087 | |
+| 0.1 | 0.054 | 0.05 | 1.1 | 3 | 0.306 | 0.230 | 0.110 | 0.092 |
+| 0.2 | 0.011 | 0.01 | 1.1 | 1 | 0.260 | 0.087 | 0.013 | |
+| 0.2 | 0.011 | 0.01 | 1.1 | 3 | 0.272 | 0.117 | 0.049 | 0.014 |
+| 0.2 | 0.011 | 0.05 | 0.2 | 1 | 0.233 | 0.026 | 0.015 | |
+| 0.2 | 0.011 | 0.05 | 0.2 | 3 | 0.281 | 0.073 | 0.016 | 0.015 |
+
+The first-entry share is the same at every friction and temperature of a given delay, within about 0.05, and the later
+history is not. Where the z well is at least five kT deep the share keeps its first-entry value over the whole run, up to
+a slow leak (from 0.308 to 0.293 at D = 0.1, gamma = 1 and kT = 0.01). Where it is one or two kT deep the trajectories
+leave the z well for the deeper y well, and the share keeps falling with the time at which it is read. At D = 0.2 and
+kT = 0.05 it stops near 0.015, while at kT = 0.01 it is still falling at the last reading. A share therefore counts as a
+product ratio only where the later well is bound (at least five kT deep) and the share has stopped changing. Otherwise
+it is a transient. The table of differences above counts first entries at all 90 points, including the transient ones, so
+it is a statement about first entry at every point and about products only at the bound ones.
 
 **Limits of the boundary**
 - **Strong tilt.** With a tilt of 0.2 on z, one z product is nearly empty, leaving three effective products (at
@@ -789,7 +820,8 @@ The molecules also lie outside the range of the model surface, in the direction 
   frequencies. Few or slow modes leave the conservative result.
 - **More than two products.** Products labelled by two signs follow two independent sign laws. Products on the axes
   need the boundary found on the surface, which works with friction and a weak tilt (0.01). It does worse than the
-  simple comparison with a strong tilt, and it is unreliable without friction.
+  simple comparison with a strong tilt, and it is unreliable without friction. These shares are first-entry shares, and
+  they are product ratios only where the shallower well is at least five kT deep.
 - **Cubic coupling to further modes** is not friction in the law's sense. Frequency terms give friction proportional to kT but
   move the share by at most 0.016 up to the binding limit. Displacement terms are strong and independent of population: fast
   modes add inertia, slow modes leave the surface unrelaxed, and only modes near the rate of the passage take energy for good. The
@@ -844,6 +876,7 @@ would need:
 | Airy limit | `python airy_check.py` |
 | Harmonic modes | `python bath_scan.py traj --backend torch --out results/bath_traj.json`, `python bath_scan.py law --workers 16 --out results/bath_law.json` (a few minutes) |
 | Two transverse modes | `python two_modes_scan.py traj --backend torch --out results/two_modes_traj.json`, the same with `law` and `sep` (`results/two_modes_law.json`, `_sep.json`), then `python extra_analyse.py` |
+| Two transverse modes after first entry | `python two_modes_fate.py --out results/two_modes_fate.json` (about 40 minutes on one core) |
 | Curved valley and pseudo-minima | `python curved_scan.py traj --backend torch --only G,G1,H --out results/curved_traj_GH.json`, the same with `--only I` and `--only J` (`results/curved_traj_I.json`, `_J.json`; 2.48 million trajectories plus 0.64 million, about 7 minutes on one RTX 3090), `python curved_scan.py law --workers 20 --out results/curved_law_all.json` (about an hour on 20 cores), `python curved_analyse.py` |
 | Cubic coupling | `python anharm_scan.py traj --backend torch --part k/4 --out results/anharm_traj_k.json` for k = 0 to 3 (1,269 points, about 50 minutes on four RTX 3090), `python anharm_scan.py merge --out results/anharm_traj.json`, `python anharm_scan.py law --workers 16 --out results/anharm_law.json` (about 2 minutes), `python anharm_analyse.py` |
 | Molecules, on a GPU node with pyscf, gpu4pyscf and pyscf-dispersion (from examples/ptsb/molecules, E = 31, 32) | `python qm.py hess E`, then `irc`, `vrt`, `traj`, `hessat E --k ...` and `hessframe E --k 10,15,20,25,30,40,50,60`, `trajy E --k=-2,-1,1,2`, `trajy 31 --k=1.5 --tend=200`, `trajy 32 --k=-1.5,-0.5,-1 --tend=200`, `trajy E --k=0 --vy=1 --tend=110` and the same with `--vy=-1` (about 4 s per gradient, 6 to 8 minutes per Hessian, 20 minutes per 130 fs on one RTX 3090) |

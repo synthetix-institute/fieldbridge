@@ -158,7 +158,12 @@ quarter (it lengthens the nonlinear stage). On the frustrated triangles with one
 splitting of the critical rates is smallest (the coherent Ising machine, splitting below 0.015, three to four errors)
 and deviates by six to twenty-five errors on the rf-SQUID parts (splitting 0.017 to 0.09), where the pulled-back spread
 is between a quarter and two thirds of the written amplitude at the mapping time and the direction still turns during
-the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage.
+the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage. The window of the sweep ends four scaled times after
+the crossing, and at very weak noise (Gamma below about 1.4e-4) the fluctuation has not saturated by then. In two or more
+directions the rung then runs the sweep one scaled time past the saturation time, which it reports as
+`sweep_extended_for_saturation`. Where more than 5% of the final states are still at the unwritten state, `unsettled_at_end`
+is set, the class says so and nothing is certified: their labels come from where the noise left them, and a law and a
+certificate can agree on such labels while both are wrong.
 
 The certificate compares probabilities with a tolerance of 0.02, so that it cannot test a law whose response is close to
 zero: at a constant of 0.04 every probability lies within 0.02 of one half. The rung has no such law. The linear stage
