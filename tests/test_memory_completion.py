@@ -106,10 +106,12 @@ def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     assert L["certified"] is False and L["write_class"] == "equilibrium write"
     assert L["hold"]["switching_fraction"] > completion.SWITCHING_EQUILIBRIUM
     assert "equilibrium write" in L["obstruction_in_nonlinear_stage"]
-    # the standard noise rule keeps the pitchfork's write: the class is then the linear-stage write
+    # the standard noise rule keeps the pitchfork's write: the hold, which is always read, retains the choice, and the class is
+    # then the linear-stage write
     rep = completion.complete(real, np.random.default_rng(3), floors=(1.0,), n_samples=400, n_traj=300)
     L = next(e["law"] for e in rep["write_points"] if "law" in e and e["law"].get("status") == "derived")
-    assert L["write_class"] == "linear-stage write" and "hold" not in L
+    assert L["write_class"] == "linear-stage write"
+    assert L["hold"]["switching_fraction"] <= completion.SWITCHING_EQUILIBRIUM
 
 
 def test_the_sweep_through_the_kerr_cusp_reads_as_a_pitchfork_on_the_narrowed_window():
