@@ -28,7 +28,7 @@ import numpy as np
 from . import analysis as an
 from . import codiscovery as cd
 from . import noise_ratio as nr
-from .construct import along_path, cancel_asymmetry, obstruction, swept_write_check
+from .construct import along_path, cancel_asymmetry, obstruction, swept_write_check, sweep_ends, sweep_half_time
 from .identity import Realization
 
 CONFIRMED, REFUTED, QUALIFIED = "confirmed", "refuted", "qualified"
@@ -194,8 +194,8 @@ def check_few_quanta(real, target, nf, rng, base) -> Dict:
     g = abs(float(nf.get("kappa_slope", 0.0)))
     if g <= 0:
         return _item(error, assumption, test, NOT_TESTABLE, note="the growth rate of the critical mode is not resolved")
-    # the end of the sweep of the law test (construct.swept_write_check): 4/sqrt(rate) past the write point
-    end = {target.control: float(nf["value"]) + float(np.sign(-nf["kappa_slope"])) * (rate / g) * 4.0 / sqrt(rate)}
+    # the end of the sweep of the law test (construct.swept_write_check)
+    end = {target.control: sweep_ends(nf, rate, sweep_half_time(target, nf, rate))[1]}
     from .completion import stable_states
     try:
         states = stable_states(target, rng, end, n_starts=24)

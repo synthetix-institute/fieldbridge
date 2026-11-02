@@ -9,8 +9,10 @@ import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
+from fieldbridge.memory import codiscovery, construct
 from fieldbridge.memory import spec as mspec
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -185,14 +187,58 @@ def test_the_phase_qubit_reaches_the_symmetric_write_through_its_cusp_and_the_th
     assert targets["threshold-write"]["status"] == "reached" and targets["threshold-write"]["word"] == "CRKL"
 
 
-def test_the_start_of_the_check_lowers_the_constant_of_a_weakly_damped_element():
-    """The linear stage alone, integrated exactly: from rest 4/sqrt(r) before the crossing, as the check starts, the
-    ringing of the phase particle lowers the constant where the damping is weak; a start twice as early removes it."""
+def test_a_start_from_rest_lowers_the_constant_of_a_weakly_damped_element_until_the_ringing_has_decayed():
+    """The linear stage alone, integrated exactly: from rest 4/sqrt(r) before the crossing, the ringing of the phase
+    particle lowers the constant where the damping is weak, and RING_EFOLDS of decay remove it at every damping."""
     start = _survey_script("phase_qubit_start")
     assert start.linear_constant(0.1) == pytest.approx(1.169, abs=0.005)
     assert start.linear_constant(0.2) == pytest.approx(1.311, abs=0.005)
-    assert start.linear_constant(0.1, before=8.0) == pytest.approx(1.332, abs=0.005)
-    assert start.linear_constant(0.2, before=8.0) == pytest.approx(1.324, abs=0.005)
     assert start.linear_constant(1.0) == pytest.approx(start.linear_constant(1.0, before=8.0), abs=0.001)
+    for damping in (0.05, 0.1, 0.2, 0.3):
+        before = max(4.0, 2.0 * construct.RING_EFOLDS / damping * start.math.sqrt(start.RATE))
+        assert start.linear_constant(damping, before=before) == pytest.approx(1.325, abs=0.0015), damping
     # with no noise on the phase itself the law of one coordinate holds to 0.2 %
     assert start.linear_constant(0.2, before=8.0, noise_on_phase=False) == pytest.approx(start.math.pi ** 0.25, rel=0.002)
+
+
+def _symmetric_write_point(name: str, **parameters):
+    """The realization and the normal form that the symmetric-write derivation hands to its law check."""
+    data = json.loads((FOLDER / f"{name}.json").read_text(encoding="utf-8"))
+    data["parameters"].update(parameters)
+    passed = []
+    real_check = codiscovery.swept_write_check
+    codiscovery.swept_write_check = lambda real, nf, rng, **kw: passed.append((real, nf)) or {}
+    try:
+        codiscovery.derive_symmetric_write(mspec.load(data), np.random.default_rng(0), check_law=True, n_traj=2)
+    finally:
+        codiscovery.swept_write_check = real_check
+    return passed[-1]
+
+
+@pytest.mark.parametrize("name, half_time", [("phase_qubit_rfsquid", 60.0), ("fluxonium", 40.0),
+                                             ("rfsquid_annealer", 4.0 / 0.02 ** 0.5), ("qfp_latch", 4.0 / 0.02 ** 0.5),
+                                             ("optomech_bistable", 4.0 / 0.02 ** 0.5),
+                                             ("dissipative_cat", 4.0 / 0.02 ** 0.5)])
+def test_the_sweep_of_the_check_waits_only_for_a_ringing_that_decays(name, half_time):
+    """Half the damping of a phase particle at 0.1 and 0.15 needs the longer sweep, and at 0.25 and above it does not.
+    The optomechanical pair grows at the start of the sweep and the slow mode of the cat does not ring: neither is
+    waited for."""
+    assert construct.sweep_half_time(*_symmetric_write_point(name)) == pytest.approx(half_time, rel=1e-6)
+
+
+def test_the_longest_sweep_of_the_check_is_bounded():
+    """An oscillation that hardly decays cannot be waited for: a phase particle with a damping of 0.001 at the bottom of
+    a well would need 12,000 time units."""
+    data = json.loads((FOLDER / "phase_qubit_rfsquid.json").read_text(encoding="utf-8"))
+    data["parameters"]["gam"] = 1e-3
+    nf = {"value": 0.0, "kappa_slope": 1.0, "state": [0.0, 0.0], "param": data["control"]["name"]}
+    assert construct.sweep_half_time(mspec.load(data), nf) == pytest.approx(construct.RING_LONGEST * 4.0 / 0.02 ** 0.5)
+
+
+def test_the_constant_of_a_weakly_damped_element_returns_to_the_law_with_the_longer_sweep():
+    """At a damping of 0.1 the check gave 1.154 +- 0.008 from a start 4/sqrt(r) before the crossing. The error here,
+    0.03, tells the two apart."""
+    real, nf = _symmetric_write_point("phase_qubit_rfsquid", gam=0.1)
+    law = construct.swept_write_check(real, nf, np.random.default_rng(1), n_traj=3200, replicates=4, signs=(1, -1))
+    const = codiscovery.law_constant(law)
+    assert const["stderr"] < 0.05 and abs(const["constant"] - 1.3313) < 3.5 * const["stderr"], const

@@ -407,13 +407,35 @@ def _phi(x: float) -> float:
     return 0.5 * (1.0 + erf(x / sqrt(2.0)))
 
 
-def sweep_ends(nf: Dict, rate: float = 0.02) -> "tuple[float, float]":
+# e-folds that an oscillation of the state gets to decay on each side of the crossing. An element started from rest with
+# the bias on rings at half its damping, and with fewer e-folds the constant of its write depends on the phase of that
+# ringing: 1 % low at a damping of 0.2 and 12 % at 0.1, with 4/sqrt(rate) (examples/quantum/semiclassical/survey/phase_qubit_start.py)
+RING_EFOLDS = 6.0
+RING_LONGEST = 8.0  # the longest sweep, in units of 4/sqrt(rate): an element that rings longer is undamped on this time
+
+
+def sweep_half_time(real: Realization, nf: Dict, rate: float = 0.02) -> float:
+    """The time for which the write check's sweep runs on each side of the crossing: 4/sqrt(rate), in which the critical
+    mode itself gets rate t^2 / 2 = 8 e-folds, or longer where the state rings at the start of the sweep. A pair that
+    grows there is no ringing to wait for: a sweep that starts beyond another instability does not end by waiting."""
+    t_half = 4.0 / sqrt(rate)
+    g = abs(nf["kappa_slope"])
+    if g <= 0:
+        return t_half
+    start = nf["value"] - np.sign(-nf["kappa_slope"]) * rate / g * t_half
+    ev = np.linalg.eigvals(an.jacobian(real, np.asarray(nf["state"], float), {nf["param"]: float(start)}))
+    scale = max(float(np.max(np.abs(ev))), 1e-300)
+    decay = [-z.real for z in ev if z.real < -1e-9 * scale and abs(z.imag) > 1e-6 * scale]   # a pair undamped to rounding does not decay
+    return min(max(t_half, RING_EFOLDS / min(decay)), RING_LONGEST * t_half) if decay else t_half
+
+
+def sweep_ends(nf: Dict, rate: float = 0.02, t_half: Optional[float] = None) -> "tuple[float, float]":
     """The values of the control at which the write check's sweep starts and ends: the control is swept through the
-    write point so that the linear coefficient of the critical mode grows at `rate`, for 4/sqrt(rate) on each side,
-    toward the side where the state loses stability."""
+    write point so that the linear coefficient of the critical mode grows at `rate`, for t_half (sweep_half_time;
+    4/sqrt(rate) if not given) on each side, toward the side where the state loses stability."""
     g = abs(nf["kappa_slope"])
     dv = float(np.sign(-nf["kappa_slope"]) * rate / g)
-    t_half = 4.0 / sqrt(rate)
+    t_half = 4.0 / sqrt(rate) if t_half is None else t_half
     return float(nf["value"] - dv * t_half), float(nf["value"] + dv * t_half)
 
 
@@ -458,9 +480,9 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
         return {}
     target = targets[1]
     rv = rate / g
-    t_half = 4.0 / sqrt(rate)
+    t_half = sweep_half_time(real, nf, rate)
     dv = np.sign(-nf["kappa_slope"]) * rv
-    v_start, _ = sweep_ends(nf, rate)
+    v_start, _ = sweep_ends(nf, rate, t_half)
     path = lambda t: v_start + dv * t
     z = NormalDist().inv_cdf(target_p)
 

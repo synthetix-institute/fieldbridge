@@ -1,19 +1,20 @@
-"""Why the symmetric write of the rf-SQUID phase qubit lies below pi^(1/4) in the law record (Module 15, section 4).
+"""Why the swept-write check waits for a ringing to decay (construct.sweep_half_time; Module 15, section 4).
 
-The swept-write check starts an element from rest, with the bias and the noise on, a time 4/sqrt(r) before the crossing. A
-weakly damped phase particle rings for a time 2/gam, and at gam = 0.2 that is not short against 4/sqrt(r) = 28. Three
-calculations separate this from the write itself:
+The check starts an element from rest, with the bias and the noise on. A weakly damped phase particle rings for a time
+2/gam, and at gam = 0.2 that is not short against 4/sqrt(r) = 28, the time before the crossing at which the check used to
+start: the constant of the rf-SQUID phase qubit came out 4 standard errors below pi^(1/4). Three calculations separate this
+from the write itself:
 
   measured   the constant of `memory codiscover` at the record's 25,600 trajectories, on independent seeds and at several
-             dampings of the specification;
-  linear     the linear stage alone, integrated exactly (mean and covariance) from the start of the check and from an
-             earlier start, with no simulation;
-  full       the nonlinear dynamics at the cusp, read at the well after a hold, with the start of the check and with a
-             longer run-up, and at weaker noise.
+             dampings of the specification, with the sweep of the check and with the old start at 4/sqrt(r);
+  linear     the linear stage alone, integrated exactly (mean and covariance) from the old start and from earlier starts,
+             with no simulation;
+  full       the nonlinear dynamics at the cusp, read at the well after a hold, with the old start and with a longer
+             run-up, and at weaker noise.
 
     python3 -B examples/quantum/semiclassical/survey/phase_qubit_start.py
 
-The results are written beside this file (phase_qubit_start.json). `measured` takes about half an hour on one core and `full`
+The results are written beside this file (phase_qubit_start.json). `measured` takes about two hours on one core and `full`
 about ten minutes; --only linear takes a few seconds.
 """
 from __future__ import annotations
@@ -32,7 +33,7 @@ ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fieldbridge.memory import codiscovery, record, spec  # noqa: E402
+from fieldbridge.memory import codiscovery, construct, record, spec  # noqa: E402
 
 SPEC = ROOT / "examples/quantum/semiclassical/phase_qubit_rfsquid.json"
 RATE = 0.02           # the rate of swept_write_check
@@ -92,11 +93,17 @@ def full_constant(gam: float, before: float, gamma: float, n: int = 40000, dt: f
             "constant": ND.inv_cdf(p) * scale, "stderr": math.sqrt(p * (1.0 - p) / n) / ND.pdf(ND.inv_cdf(p)) * scale}
 
 
-def measured_constant(gam: float, seed: int, n_traj: int = 25600, replicates: int = 8) -> dict:
+def measured_constant(gam: float, seed: int, old_start: bool = False, n_traj: int = 25600, replicates: int = 8) -> dict:
     data = json.loads(SPEC.read_text(encoding="utf-8"))
     data["parameters"]["gam"] = gam
-    row = codiscovery.codiscover([spec.load(data)], seed, target="symmetric-write", check_law=True, n_traj=n_traj,
-                                 replicates=replicates)["rows"][0]
+    sweep_half_time = construct.sweep_half_time
+    if old_start:
+        construct.sweep_half_time = lambda real, nf, rate=RATE: 4.0 / math.sqrt(rate)
+    try:
+        row = codiscovery.codiscover([spec.load(data)], seed, target="symmetric-write", check_law=True, n_traj=n_traj,
+                                     replicates=replicates)["rows"][0]
+    finally:
+        construct.sweep_half_time = sweep_half_time
     const = row.get("law_constant") or {}
     return {"damping": gam, "seed": seed, "word": row.get("word"), "constant": const.get("constant"),
             "stderr": const.get("stderr"), "offset": const.get("offset")}
@@ -125,12 +132,13 @@ def main() -> int:
     if args.only in (None, "full"):
         out["full"] = [full_constant(*p) for p in FULL]
     if args.only in (None, "measured"):
-        rows = [measured_constant(g, s) for g, s in MEASURED]
-        out["measured"] = rows
-        out["mean_by_damping"] = {str(g): weighted_mean([r for r in rows if r["damping"] == g])
-                                  for g in sorted({r["damping"] for r in rows})}
+        for key, old_start in (("measured", False), ("measured_old_start", True)):
+            rows = [measured_constant(g, s, old_start) for g, s in MEASURED]
+            out[key] = rows
+            out[f"mean_by_damping{key[8:]}"] = {str(g): weighted_mean([r for r in rows if r["damping"] == g])
+                                                for g in sorted({r["damping"] for r in rows})}
     args.out.write_text(json.dumps(out, indent=1) + "\n", encoding="utf-8")
-    print(json.dumps({k: v for k, v in out.items() if k in ("linear", "mean_by_damping")}, indent=1))
+    print(json.dumps({k: v for k, v in out.items() if k == "linear" or k.startswith("mean_by_damping")}, indent=1))
     return 0
 
 
