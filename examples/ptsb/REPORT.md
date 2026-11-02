@@ -44,7 +44,7 @@ The answer has seven parts.
    instability, which starts at the same bond length on the trajectory as on the relaxed path. The sweep hardly amplifies anything.
    Thermal ensembles then showed that the torsion at TS1 does not decide the product, as I had inferred from chosen starts. The
    product is mostly settled 30 to 60 fs later, on the side of the perpendicular torsion the molecule has reached by then. The first-well Z
-   shares are 0.79 to 0.81 and 0.72 to 0.74, against 0.956 and 0.823 counted by Wu et al.
+   shares are 0.79 to 0.81 and 0.74, against 0.956 and 0.823 counted by Wu et al.
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -713,9 +713,9 @@ I ran 100 draws per set from the dividing surface at TS1, forward and backward, 
 
 | Reaction and sampling | First-well Z share | Wu et al. | Width of the change at TS1 (spread 27-29 degrees) | Boundary at 30 fs, and its width |
 |---|---|---|---|---|
-| CH3, classical | 0.790 (0.748-0.827) | 0.956 +- 0.018 | 23 degrees | -91, 10 degrees |
+| CH3, classical | 0.792 (0.747-0.830) | 0.956 +- 0.018 | 23 degrees | -91, 10 degrees |
 | CH3, quasiclassical | 0.813 (0.769-0.851) | | 57 degrees | -93, 17 degrees |
-| CH2F, classical | 0.724 (0.677-0.767) | 0.823 +- 0.036 | 36 degrees | -88, 16 degrees |
+| CH2F, classical | 0.742 (0.693-0.785) | 0.823 +- 0.036 | 34 degrees | -88, 16 degrees |
 | CH2F, quasiclassical | 0.739 (0.689-0.783) | | 140 degrees | -90, 17 degrees |
 
 The torsion at TS1 is a weak guide to the fate of a single trajectory, because the molecule keeps turning while the bond forms. The bond takes about 30 fs to reach 1.8 angstrom, and the turn continues over that time at a typical rate of 1.3 to 2.0 degrees per fs. Only when the bond has formed does the side of the perpendicular torsion hold. The torsion at 30 fs separates the products better than the torsion at TS1 in all four sets, as the table below shows. Its value is mostly fixed in advance by the slow modes at TS1: a linear fit to the positions and rates of the modes below 300 cm-1 accounts for 84 and 89 per cent of its variance in the classical sets and for 74 and 66 per cent in the quasiclassical sets. Modes above 300 cm-1 add nothing to a linear fit, so what they contribute is not a simple harmonic addition.
@@ -728,9 +728,9 @@ The torsion at TS1 is a weak guide to the fate of a single trajectory, because t
 | Z share of starts with torsion below -110 degrees | 0.98 | 0.95 | 0.95 | 0.84 |
 | Z share of starts with torsion above -70 degrees | 0.25 | 0.70 | 0.29 | 0.64 |
 
-Zero-point energy has opposite effects on individual trajectories and on the share. Quasiclassical starts carry about 75 kcal/mol in the modes, against 22 kcal/mol for classical ones, and their fate is much harder to foresee from TS1. The shares nevertheless agree within error between the two samplings, 0.02 apart in both reactions. With zero-point energy, starts on the far side of the boundary reach E more often and starts on the near side reach Z more often, so the changes partly cancel in the total. The ensemble does not separate the cause, and a series with scaled zero-point energy would be needed for that. I did not run one, because the shares give no effect to explain.
+Zero-point energy has opposite effects on individual trajectories and on the share. Quasiclassical starts carry about 75 kcal/mol in the modes, against 22 kcal/mol for classical ones, and their fate is much harder to foresee from TS1. The shares nevertheless agree within error between the two samplings, at most 0.02 apart. With zero-point energy, starts on the far side of the boundary reach E more often and starts on the near side reach Z more often, so the changes partly cancel in the total. The ensemble does not separate the cause, and a series with scaled zero-point energy would be needed for that. I did not run one, because the shares give no effect to explain.
 
-The difference between the two reactions is consistent with the position of TS1 relative to the perpendicular torsion. The mean torsion at the starts is 4 to 7 degrees nearer perpendicular in CH2F, and its share is 0.07 lower. A boundary and width fitted in one classical set predict the share of the other within error (0.75 against 0.72, and 0.76 against 0.79). This is weak evidence, because the two reactions are nearly the same.
+The difference between the two reactions is consistent with the position of TS1 relative to the perpendicular torsion. The mean torsion at the starts is 4 to 7 degrees nearer perpendicular in CH2F, and its share is 0.05 to 0.07 lower. A boundary and width fitted in one classical set predict the share of the other within error (0.76 against 0.74, and 0.77 against 0.79). This is weak evidence, because the two reactions are nearly the same.
 
 The first product well is not always the last. I continued the first 6 Z and the first 6 E trajectories of each set to 400 fs. In that time 4 of 24 E trajectories moved to Z, and none of 24 Z trajectories moved to E (Fisher exact test, two-sided, p = 0.11). This has the direction needed to bring the shares towards the published ones: an E-to-Z fraction of 0.17 would raise the shares by about 0.03 to 0.05. It does not close the gap in entry 31, and the sample is small. If this goes on, the share in the gas phase depends on when it is read, as Carpenter (2023) found for other reactions. The share in solution would then depend on the cooling rate.
 

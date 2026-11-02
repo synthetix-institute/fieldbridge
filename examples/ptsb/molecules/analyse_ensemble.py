@@ -23,6 +23,7 @@ from qm import BOND, OUT  # noqa: E402
 from yamaki_geometries import atoms, coords  # noqa: E402
 
 PUBLISHED = {31: (129, 6), 32: (93, 20)}          # Z and E counts of Wu, Zhang and Hong (2024)
+DRAWS = 100                                       # the draws of each set that have both segments
 
 
 def wilson(k, n, z=1.0):
@@ -84,8 +85,7 @@ def read_set(ens, e, s):
         order = np.arange(len(ini["q"]))
     rows = {}
     fails = 0
-    # a repeated draw counts only up to the first start that has not finished: later repeats would favour the heavy starts that happen to have run
-    for draw, i in enumerate(order):
+    for draw, i in enumerate(order[:DRAWS]):
         name = f"{e}{s}_{int(i):04d}"
         if i in rows:
             rows[i]["mult"] += 1
@@ -95,7 +95,7 @@ def read_set(ens, e, s):
             fails += 1
             continue
         if not fd.exists():
-            break
+            continue
         rows[i] = dict(i=int(i), draw=draw, mult=1, forward=fd.read_text(), backward=bd.read_text() if bd.exists() else None)
     return ini, rows, fails
 
@@ -113,7 +113,6 @@ def main():
             ini, rows, fails = read_set(ens, e, s)
             if not rows:
                 continue
-            rows = {i: r for i, r in rows.items() if r["backward"] is not None or r["forward"] == "reactant"}   # complete pairs only
             idx = np.array(sorted(rows))
             verdict = [rows[i]["forward"] for i in idx]
             back = [rows[i]["backward"] for i in idx]
