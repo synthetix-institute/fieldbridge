@@ -2,6 +2,11 @@
 copied from the Cartesian coordinates in their supporting information, with their energies in hartree at (U)B3LYP-D3(BJ)/def2-SVP
 with SMD (1,4-dioxane). Entry 31 is CH3 + methylallene and entry 32 is CH2F + methylallene, both doublets. Trajectory ratios of the
 Z and E allylic radicals are 129:6 and 93:20 (cited by Yamaki et al. from the original dynamics study).
+
+The coordinates and energies below are third-party data, copied with credit and not changed. The paper is (c) 2026 The Authors,
+published by Wiley Periodicals LLC under CC BY-NC-ND 4.0 (https://creativecommons.org/licenses/by-nc-nd/4.0/). The MIT license of
+FieldBridge does not extend to them, nor to the same TS1 structures in results/ts_31.npz and results/ts_32.npz. The code of this
+file is under the MIT license.
 """
 from __future__ import annotations
 

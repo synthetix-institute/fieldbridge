@@ -758,7 +758,7 @@ The molecules also lie outside the range of the model surface, in the direction 
 - Each row of the mode table comes from one trajectory with every mode at rest. Thermal motion would change F, in particular for the low modes.
 - The curvature along a fixed direction is misleading. An earlier scan of y'Hy along y fixed near the valley-ridge transition stayed positive in entry 31 and suggested a wider ridge in the fluoro system. Exact Hessians show the opposite (-154 against -121 cm-1 at most). The scan reads +44 cm-1 at s = 1.15, while the lowest curvature at s = 1.25 is -65 cm-1 in a direction with overlap 0.96 with y. The remaining 4 per cent of y lies in stiffer modes, which dominate its curvature. I withdraw that suggestion, and results/scan_*.npz is kept only as a record of it.
 - The curvature of the turn past bond formation depends on recognizing the direction by its overlap with a rigid turn, which falls below 0.7 there. The values at 40 fs and later are less certain.
-- The geometries in molecules/yamaki_geometries.py come from the supporting information of the paper, which is under CC BY-NC-ND. This should be checked before the branch is published.
+- The geometries in molecules/yamaki_geometries.py come from the supporting information of the paper, which is under CC BY-NC-ND 4.0. They are kept unchanged and credited, and they are excepted from the MIT license of the repository, with a notice in that file and in the README. The same TS1 structures are in results/ts_31.npz and results/ts_32.npz.
 
 ## Summary: where the law holds and where it fails
 
