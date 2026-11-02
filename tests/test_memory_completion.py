@@ -213,3 +213,25 @@ def test_a_sweep_too_short_for_very_weak_noise_is_extended_and_gets_the_share_ri
 def test_the_standard_noise_rule_stays_inside_the_window_of_the_sweep():
     # Gamma = 0.05 saturates at tau = 1.46 and the window ends at tau = 4, so reference records keep their sweep
     assert completion.saturation_time(0.05) + completion.SETTLE_MARGIN < 4.0
+
+
+def test_the_crossover_reads_the_flow_until_the_spread_reaches_the_written_amplitude():
+    """At Gamma = 0.002 the pulled-back spread of the pair at x = 0.35 is about two thirds of the written amplitude at
+    the mapping time. The sector law there puts the mixed states at about 0.37, the full dynamics at about 0.26; the
+    flow from the mapping time follows the full dynamics. At the reference noise the spread exceeds the amplitude and
+    the sector law is kept."""
+    real = _pair()
+    nf = an.normal_form(real, np.zeros(2), real.control, 0.0)
+    a3 = abs(nf["a3"])
+    _, L = completion.critical_space(real, nf, 2)
+    dfac = float(np.mean(np.diag(L.T @ L)))
+    weak = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, noise=0.002 * 0.02 / (a3 * dfac),
+                             n_samples=1000, certify=False)
+    assert weak["map_regime"] == "linear at the mapping time"
+    st = np.array(weak["stable_states"])
+    mixed = [i for i, s in enumerate(st) if len({x > 0 for x in s}) > 1]
+    share = np.mean([sum(row["law"][i] for i in mixed) for row in weak["rows"]])
+    sector = np.mean([sum(row["sector_law"][i] for i in mixed) for row in weak["rows"]])
+    assert share < sector - 0.05
+    ref = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, n_samples=400, certify=False)
+    assert ref["map_regime"] == "saturated at the mapping time"

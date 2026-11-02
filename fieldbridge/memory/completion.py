@@ -58,11 +58,13 @@ GROWTH_MAP = 1.0            # the outcome map starts once the critical deviation
 LINEAR_FRACTION = 0.2       # the size (3 sigma) of the deviation, as a fraction of the distance from the unwritten
                             # state to the nearest written state, beyond which the linear stage no longer describes it
                             # (reached before the crossing: linear_size_before_crossing)
-SATURATION_FRACTION = 0.5   # the pulled-back spread (3 sigma) at the mapping time, as a fraction of the written
-                            # amplitude there, above which the deviation counts as saturated and the sector law at the
-                            # mapping time is the outcome map (the flow from the mapping time is exact at a quarter and
-                            # fails from two thirds on populations of three and four pitchforks; the sector law there
-                            # holds to a few percent from three on)
+SATURATION_FRACTION = 1.0   # the pulled-back spread (3 sigma) at the mapping time, as a fraction of the written
+                            # amplitude there, at or above which the deviation has reached the written states and the
+                            # sector law at the mapping time is the outcome map; below it the flow from the mapping time
+                            # is (exact at a quarter; at two thirds, the crossover, it is off by 2 to 8 errors on two and
+                            # three pitchforks where the sector law is off by 11 to 12, and the sector law at one e-fold
+                            # puts a pair at x = 0.35, Gamma = 0.002 at 0.365 against 0.261; at three the sector law
+                            # holds to a few percent and the flow starts samples where no trajectory is)
 SETTLE_MARGIN = 1.0         # in two or more directions the sweep runs at least this far, in scaled time, past the
                             # saturation time: the direction read at the end of a shorter sweep is still turning
 UNSETTLED_LIMIT = 0.05      # above this fraction of final states still at the unwritten state the sweep ended before
@@ -306,7 +308,7 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
                                     default=float("nan"))
         ell_map = amplitude_at[key]
         sector = _sector_labels(z_map, coords_arr) if coords_arr is not None else None
-        if sector is not None and np.isfinite(ell_map) and spread_map > SATURATION_FRACTION * ell_map:
+        if sector is not None and np.isfinite(ell_map) and spread_map >= SATURATION_FRACTION * ell_map:
             # saturated: the deviation has reached the written amplitude by the mapping time; the choice is made
             # there, and each sample goes to the written state nearest in direction
             q = np.array([stable[j] for j in sector])
