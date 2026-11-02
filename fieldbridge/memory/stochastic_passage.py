@@ -343,7 +343,7 @@ def prepare_prediction(task,policy,seed,output,device="cpu",frozen_rule=None):
                   "implementation_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
     # No reference outcomes have been evaluated when the prediction is committed.
     path = output/"prediction.json"
-    path.write_text(json.dumps(commitment,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+    path.write_text(json.dumps(commitment,indent=2,allow_nan=False)+"\n")
     return {"prediction_sha256":hashlib.sha256(path.read_bytes()).hexdigest(),
             "prediction_valid":repaired["valid"]}
 
@@ -354,7 +354,7 @@ def verify_prediction(output,seed,device="cpu"):
         raise ValueError("Reference evaluation has already been used")
     path=output/"prediction.json"
     prediction_hash=hashlib.sha256(path.read_bytes()).hexdigest()
-    commitment=json.loads(path.read_text(encoding="utf-8"))
+    commitment=json.loads(path.read_text())
     if hashlib.sha256(Path(__file__).read_bytes()).hexdigest()!=commitment["implementation_sha256"]:
         raise ValueError("Implementation changed after prediction")
     task,states,prediction=[commitment[k] for k in ("task","states","linear")]
@@ -374,7 +374,7 @@ def verify_prediction(output,seed,device="cpu"):
         raise RuntimeError("The rule changed during its application")
     if hashlib.sha256(path.read_bytes()).hexdigest()!=prediction_hash:
         raise RuntimeError("The prediction changed during reference evaluation")
-    (output/"comparison.json").write_text(json.dumps(result,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+    (output/"comparison.json").write_text(json.dumps(result,indent=2,allow_nan=False)+"\n")
     return result
 
 

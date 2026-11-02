@@ -162,7 +162,7 @@ class FamilyLibrary:
         self.frozen = frozen
         self._data = {"schema": SCHEMA, "families": {}}
         if self.path and self.path.exists():
-            self._data = json.loads(self.path.read_text(encoding="utf-8"))
+            self._data = json.loads(self.path.read_text())
         if self._data.get("schema") != SCHEMA or not isinstance(self._data.get("families"), dict):
             raise ValueError("Invalid repair-family library")
 
@@ -179,7 +179,7 @@ class FamilyLibrary:
         if self.path:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             temporary = self.path.with_suffix(self.path.suffix + ".tmp")
-            temporary.write_text(json.dumps(self._data, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+            temporary.write_text(json.dumps(self._data, indent=2, allow_nan=False) + "\n")
             temporary.replace(self.path)
 
     def families(self) -> Dict[str, Dict]:

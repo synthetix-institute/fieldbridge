@@ -26,11 +26,11 @@ def main():
     parser.add_argument("--out-dir",type=Path,required=True)
     parser.add_argument("--n",type=int,default=4096)
     args=parser.parse_args()
-    parent=json.loads((args.parent/"report.json").read_text(encoding="utf-8"))
+    parent=json.loads((args.parent/"report.json").read_text())
     if not parent["timing_effect_confirmed"]:
         raise SystemExit("The first timing contrast must be resolved before this follow-up")
-    plan=json.loads((args.parent/"plan.json").read_text(encoding="utf-8"))
-    design=json.loads((args.parent/"committed_design.json").read_text(encoding="utf-8"))
+    plan=json.loads((args.parent/"plan.json").read_text())
+    design=json.loads((args.parent/"committed_design.json").read_text())
     high=next(s for s in design["selected"] if s["id"]==design["high"])
     late=max(plan["schedules"],key=lambda s:s["lower"])
     baseline=plan["schedules"][0]

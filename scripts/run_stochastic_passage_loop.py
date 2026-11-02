@@ -109,7 +109,7 @@ def main():
           "construction_target":{"family":"coupled_amplitudes","state":"all amplitudes positive",
                                  "probability":.60,"confidence":"Wilson 95% lower bound"},
           "novelty_established":False,"complete":False}
-    (args.out_dir/"plan.json").write_text(json.dumps(plan,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+    (args.out_dir/"plan.json").write_text(json.dumps(plan,indent=2,allow_nan=False)+"\n")
     plan_hash=st.digest(plan)
     results=[]
     design_record=None
@@ -127,7 +127,7 @@ def main():
                                    "checked multistable final drift and force-free retention"],
                   "repair":"retain the calculated nonlinear drift and diffusion after Gaussian-prefix matching"}
             raw=json.dumps(rule,sort_keys=True,indent=2)+"\n"
-            (args.out_dir/"frozen_rule.json").write_text(raw, encoding="utf-8")
+            (args.out_dir/"frozen_rule.json").write_text(raw)
             frozen_hash=hashlib.sha256(raw.encode()).hexdigest()
         batch=[j for j in jobs if j["split"]==split]
         parameters=[(job,policy,str(args.out_dir/job["id"]),
@@ -145,7 +145,7 @@ def main():
             for job in batch:
                 if job["task"]["model"]["name"]!="coupled_amplitudes":
                     continue
-                record=json.loads((args.out_dir/job["id"]/"prediction.json").read_text(encoding="utf-8"))
+                record=json.loads((args.out_dir/job["id"]/"prediction.json").read_text())
                 index=next(i for i,q in enumerate(record["states"]["states"]) if min(q)>0)
                 options.append({"id":job["id"],"state_index":index,"rate":job["task"]["protocol"]["rate"],
                                 "predicted_probability":record["repaired_prediction"]["probabilities"][index],
@@ -155,12 +155,12 @@ def main():
                            "target":"all three amplitudes positive with probability at least 0.60",
                            "target_probability":.60,"options":options,"chosen":chosen,
                            "prediction_met_target":chosen["predicted_probability"]>=.60}
-            (args.out_dir/"protocol_design.json").write_text(json.dumps(design_record,indent=2)+"\n", encoding="utf-8")
+            (args.out_dir/"protocol_design.json").write_text(json.dumps(design_record,indent=2)+"\n")
             parameters=[(*p[:-1],"verify") for p in parameters]
         with get_context("spawn").Pool(args.workers) as pool:
             for result in pool.imap_unordered(worker,parameters):
                 results.append(result)
-                (args.out_dir/"progress.json").write_text(json.dumps(results,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+                (args.out_dir/"progress.json").write_text(json.dumps(results,indent=2,allow_nan=False)+"\n")
                 print(json.dumps({k:result[k] for k in ("id","seconds","repair_verified")},default=str),flush=True)
         if split=="withheld" and hashlib.sha256((args.out_dir/"frozen_rule.json").read_bytes()).hexdigest()!=frozen_hash:
             raise RuntimeError("Rule changed during withheld evaluation")
@@ -183,7 +183,7 @@ def main():
     if args.development_only:
         report["scope"]="development only; no withheld outcomes evaluated"
     report["new_physics_claim"]="not established by this validation"
-    (args.out_dir/"report.json").write_text(json.dumps(report,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+    (args.out_dir/"report.json").write_text(json.dumps(report,indent=2,allow_nan=False)+"\n")
     print(json.dumps({k:v for k,v in report.items() if k!="results"},indent=2))
     return 0 if report["closed_loop_verified"] or args.development_only else 2
 

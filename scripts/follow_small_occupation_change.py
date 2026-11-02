@@ -15,7 +15,7 @@ from fieldbridge.memory import stochastic_passage as st
 
 
 def save(path,value):
-    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n", encoding="utf-8")
+    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n")
 
 
 def main():
@@ -24,8 +24,8 @@ def main():
     parser.add_argument("--out-dir",type=Path,required=True)
     parser.add_argument("--maximum-n",type=int,default=16384)
     args=parser.parse_args()
-    reference=json.loads((args.parent/"reference.json").read_text(encoding="utf-8"))
-    plan=json.loads((args.parent/"plan.json").read_text(encoding="utf-8"))
+    reference=json.loads((args.parent/"reference.json").read_text())
+    plan=json.loads((args.parent/"plan.json").read_text())
     baseline=next(s for s in plan["schedules"] if s["amplitude"]==0)
     late=max(plan["schedules"],key=lambda s:s["lower"])
     candidates=[]

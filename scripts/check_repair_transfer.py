@@ -47,11 +47,11 @@ def case(i, init, params, T=3.0):
 
 def training_tasks():
     ex = ROOT / "examples" / "learning"
-    quintic = json.loads((ex / "quintic_saturation.json").read_text(encoding="utf-8"))
-    hidden = json.loads((ex / "hidden_exchange.json").read_text(encoding="utf-8"))
+    quintic = json.loads((ex / "quintic_saturation.json").read_text())
+    hidden = json.loads((ex / "hidden_exchange.json").read_text())
     square = copy.deepcopy(hidden)
     square["model"]["drift"]["x"] = "-a*x+b*y**2"
-    moving = json.loads((ex / "moving_branch.json").read_text(encoding="utf-8"))
+    moving = json.loads((ex / "moving_branch.json").read_text())
     return {"quintic_saturation": quintic, "hidden_exchange": hidden, "hidden_square": square,
             "moving_branch": moving}
 
@@ -190,7 +190,7 @@ def main():
     report = {"scope": "authored equation-level cases; tests transfer of repair families between equation families, "
                        "not novelty of any physical law", "training": training, "test": test_rows,
               "summary": summary}
-    (out / "transfer_experiment.json").write_text(json.dumps(report, indent=2, allow_nan=False, default=str) + "\n", encoding="utf-8")
+    (out / "transfer_experiment.json").write_text(json.dumps(report, indent=2, allow_nan=False, default=str) + "\n")
     print(json.dumps(summary, indent=2))
 
 

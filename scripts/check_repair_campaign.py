@@ -21,7 +21,7 @@ def main():
     if args.out_dir.exists() and any(args.out_dir.iterdir()):
         raise SystemExit("Choose a fresh directory")
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    task = json.loads((ROOT / "examples/learning/hidden_exchange.json").read_text(encoding="utf-8"))
+    task = json.loads((ROOT / "examples/learning/hidden_exchange.json").read_text())
     registry = args.out_dir / "registry.sqlite"
     families_path = args.out_dir / "families.json"
     evaluations = ln.MoveLibrary(registry)
@@ -45,7 +45,7 @@ def main():
     assert all(r["status"] == "verified_extension" for r in (warm, cold, symbolic))
     report = {"scope": "supplied deterministic exchange equations; no novelty claim",
               "frozen_library_sha256": digest, "warm": warm, "cold": cold, "symbolic": symbolic}
-    (args.out_dir / "campaign_comparison.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n", encoding="utf-8")
+    (args.out_dir / "campaign_comparison.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
     print(json.dumps({k: {f: r[f] for f in ("status", "candidate_evaluations", "seconds")}
                       for k, r in (("warm", warm), ("cold", cold), ("symbolic", symbolic))}, indent=2))
 
