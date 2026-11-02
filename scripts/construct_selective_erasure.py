@@ -23,7 +23,7 @@ from fieldbridge.memory import investigation as inquiry
 
 
 def save(path,value):
-    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n")
+    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n",encoding="utf-8")
 
 
 def deterministic(c,M,initial,peak,duration,mu,method):
@@ -114,12 +114,12 @@ def main():
     parser.add_argument("--n",type=int,default=256)
     args=parser.parse_args()
     args.out_dir.mkdir(parents=True,exist_ok=False)
-    source=json.loads(args.task.read_text())
+    source=json.loads(args.task.read_text(encoding="utf-8"))
     c,M,witness=pulse.mixing_witness(source)
     mu=.16
     if args.parent:
-        parent=json.loads((args.parent/"report.json").read_text())
-        design=json.loads((args.parent/"committed_design.json").read_text())
+        parent=json.loads((args.parent/"report.json").read_text(encoding="utf-8"))
+        design=json.loads((args.parent/"committed_design.json").read_text(encoding="utf-8"))
         if not parent["timing_effect_confirmed"] or st.digest(source)!=st.digest(design["tasks"][0]):
             raise SystemExit("A completed inquiry on the same source is required")
         selected=next(s for s in design["selected"] if s["id"]==design["high"])

@@ -40,17 +40,17 @@ def main():
     if args.out_dir.exists():
         raise SystemExit("Choose a new output directory")
     args.out_dir.mkdir(parents=True)
-    report=json.loads((args.design/"report.json").read_text())
-    committed=json.loads((args.design/"committed_design.json").read_text())
-    parent=json.loads((args.parent/"report.json").read_text())
-    source=json.loads((args.parent/parent["designed_protocol"]["chosen"]["id"]/"prediction.json").read_text())["task"]
+    report=json.loads((args.design/"report.json").read_text(encoding="utf-8"))
+    committed=json.loads((args.design/"committed_design.json").read_text(encoding="utf-8"))
+    parent=json.loads((args.parent/"report.json").read_text(encoding="utf-8"))
+    source=json.loads((args.parent/parent["designed_protocol"]["chosen"]["id"]/"prediction.json").read_text(encoding="utf-8"))["task"]
     target=report["target_probability"]
     if not report["target_verified"]:
         raise SystemExit("The construction did not reach its stated target")
     options=[]
     for name,result in report["controls"].items():
         path=Path(committed["selected"]["out"]) if name=="selected" else args.design/name
-        prediction=json.loads((path/"prediction.json").read_text())
+        prediction=json.loads((path/"prediction.json").read_text(encoding="utf-8"))
         idx=next(i for i,q in enumerate(prediction["states"]["states"]) if min(q)>0)
         changes=changed_settings(source,prediction["task"])
         p=result["reference"]["probabilities"][idx]
@@ -71,7 +71,7 @@ def main():
             "scope":"verified on the recorded source conditions; a new application is a proposal until tested",
             "evidence":selected,"comparison":options}
     raw=json.dumps(recipe,sort_keys=True,indent=2)+"\n"
-    (args.out_dir/"learned_recipe.json").write_text(raw)
+    (args.out_dir/"learned_recipe.json").write_text(raw,encoding="utf-8")
     recipe_hash=hashlib.sha256(raw.encode()).hexdigest()
     # A new base rate and preparation were not part of either previous comparison.
     task=copy.deepcopy(source)
@@ -79,12 +79,12 @@ def main():
     task["preparation"]={"mean":[-.015,.0125,-.005],
                          "covariance":[[2e-4,0,0],[0,1e-4,0],[0,0,2e-4]]}
     task["protocol"]["rate"]*=recipe["factor"]
-    (args.out_dir/"new_task.json").write_text(json.dumps(task,indent=2)+"\n")
+    (args.out_dir/"new_task.json").write_text(json.dumps(task,indent=2)+"\n",encoding="utf-8")
     frozen=args.parent/"frozen_rule.json"
-    policy=st.Policy(**json.loads(frozen.read_text())["policy"])
+    policy=st.Policy(**json.loads(frozen.read_text(encoding="utf-8"))["policy"])
     out=args.out_dir/"transfer"
     st.prepare_prediction(task,policy,2026103100,out,device=args.device,frozen_rule=frozen)
-    prediction=json.loads((out/"prediction.json").read_text())
+    prediction=json.loads((out/"prediction.json").read_text(encoding="utf-8"))
     idx=next(i for i,q in enumerate(prediction["states"]["states"]) if min(q)>0)
     pp=prediction["repaired_prediction"]["probabilities"][idx]
     print(json.dumps({"stage":"committed_reuse_prediction","rate":task["protocol"]["rate"],
@@ -100,7 +100,7 @@ def main():
              "rate_multiplier":factor,"new_rate":task["protocol"]["rate"],"predicted_probability":pp,
              "observed_probability":p,"lower_95":lower,"verified_reuse":verified,
              "comparison":result,"novelty_established":False}
-    (args.out_dir/"report.json").write_text(json.dumps(summary,indent=2,allow_nan=False)+"\n")
+    (args.out_dir/"report.json").write_text(json.dumps(summary,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     print(json.dumps({k:v for k,v in summary.items() if k!="comparison"},indent=2))
     return 0 if verified else 2
 

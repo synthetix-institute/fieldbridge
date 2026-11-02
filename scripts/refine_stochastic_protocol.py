@@ -52,7 +52,7 @@ def main():
     parser.add_argument("--device",default="cpu")
     parser.add_argument("--workers",type=int,default=2)
     args=parser.parse_args()
-    parent=json.loads((args.parent/"report.json").read_text())
+    parent=json.loads((args.parent/"report.json").read_text(encoding="utf-8"))
     if not parent["closed_loop_verified"]:
         raise SystemExit("The frozen repair must pass its independent transfer tests first")
     if args.out_dir.exists():
@@ -60,7 +60,7 @@ def main():
     args.out_dir.mkdir(parents=True)
     original=parent["designed_protocol"]
     chosen=original["chosen"]
-    prior=json.loads((args.parent/chosen["id"]/"prediction.json").read_text())
+    prior=json.loads((args.parent/chosen["id"]/"prediction.json").read_text(encoding="utf-8"))
     policy=st.Policy(**prior["policy"])
     rule=args.parent/"frozen_rule.json"
     frozen=hashlib.sha256(rule.read_bytes()).hexdigest()
@@ -71,7 +71,7 @@ def main():
           "minimum_rate":.000625,"proposal":"halve the best predicted rate; retain scaled D/r and h/r^(3/4)",
           "controls":["new rate with old writing noise and signal","old rate with new writing noise and signal"],
           "implementation_sha256":hashlib.sha256(Path(__file__).read_bytes()).hexdigest()}
-    (args.out_dir/"plan.json").write_text(json.dumps(plan,indent=2)+"\n")
+    (args.out_dir/"plan.json").write_text(json.dumps(plan,indent=2)+"\n",encoding="utf-8")
     attempts=[];selected=None
     for k in range(plan["maximum_new_candidates"]):
         rate=chosen["rate"]/(2**(k+1))
@@ -81,7 +81,7 @@ def main():
         seed=2026102900+17*k
         out=args.out_dir/f"proposal_{k}"
         st.prepare_prediction(task,policy,seed,out,device=args.device,frozen_rule=rule)
-        prediction=json.loads((out/"prediction.json").read_text())
+        prediction=json.loads((out/"prediction.json").read_text(encoding="utf-8"))
         idx=next(i for i,q in enumerate(prediction["states"]["states"]) if min(q)>0)
         p=prediction["repaired_prediction"]["probabilities"][idx]
         row={"rate":rate,"probability":p,"prediction_lower_95":lower_bound(p,policy.n_prediction),
@@ -104,7 +104,7 @@ def main():
     design={"selected":selected,"attempts":attempts,"target":target,"controls":[
         {"name":name,"task":t,"seed":seed,"prediction_sha256":hashlib.sha256(
             (args.out_dir/name/"prediction.json").read_bytes()).hexdigest()} for name,t,seed in controls]}
-    (args.out_dir/"committed_design.json").write_text(json.dumps(design,indent=2)+"\n")
+    (args.out_dir/"committed_design.json").write_text(json.dumps(design,indent=2)+"\n",encoding="utf-8")
     jobs=[("selected",selected["out"],selected["seed"]+2)]+[(name,str(args.out_dir/name),seed+2) for name,_,seed in controls]
     with get_context("spawn").Pool(args.workers) as pool:
         rows=pool.map(verify_job,[(out,seed,args.device) for _,out,seed in jobs])
@@ -118,7 +118,7 @@ def main():
             "controls":results,"parent_observed_probability":original["observed_probability"],"novelty_established":False}
     if hashlib.sha256(rule.read_bytes()).hexdigest()!=frozen:
         raise RuntimeError("Rule changed during design verification")
-    (args.out_dir/"report.json").write_text(json.dumps(report,indent=2,allow_nan=False)+"\n")
+    (args.out_dir/"report.json").write_text(json.dumps(report,indent=2,allow_nan=False)+"\n",encoding="utf-8")
     print(json.dumps({k:v for k,v in report.items() if k!="controls"},indent=2))
     return 0 if target_verified else 2
 
