@@ -149,7 +149,8 @@ def run(args):
     retained = Counter()
     for record in records:
         retained.update(r["kind"] for r in ln.retain_record(library, record, source=str(records_path)))
-    rows = rl.close_departures(library, root=root, policy=policy, select=set(args.classes))
+    rows = rl.close_departures(library, root=root, policy=policy, select=set(args.classes),
+                               law_seconds=args.law_seconds)
     reports = {}
     for row in rows:
         if row["status"] not in {"no_failed_law", "outside_this_campaign"}:
@@ -242,7 +243,7 @@ if __name__ == "__main__":
     parser.add_argument("--max-order", type=int, default=7)
     parser.add_argument("--baseline-seconds", type=int, default=120)
     parser.add_argument("--certified", action="store_true")
-    parser.add_argument("--law-seconds", type=int, default=900, help="Budget of one law of the certified control")
+    parser.add_argument("--law-seconds", type=int, default=900, help="Budget of one law of the campaign and of the certified control")
     parser.add_argument("--second-pass", metavar="DIR")
     arguments = parser.parse_args()
     (second_pass if arguments.second_pass else run)(arguments)

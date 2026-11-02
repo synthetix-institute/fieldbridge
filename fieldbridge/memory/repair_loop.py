@@ -36,6 +36,7 @@ import hashlib
 import json
 from math import comb, sqrt
 from pathlib import Path
+import signal
 import time
 from typing import Dict, List, Optional, Tuple
 
@@ -644,7 +645,7 @@ def _write_point(record: Dict, spec: Dict, target: str, point: Dict, unfolding: 
     drift_of_cusp = max(abs(cusp[k] - float(recorded[k])) for k in cusp) if recorded else None
     q = _polish(real, np.asarray(found["state"], float), cusp)
     path = construct.along_path(real, cusp, found["direction"])
-    nfp = construct.sweep_normal_form(path, q)
+    nfp = an.normal_form(path, q, "t", 0.0)
     g = abs(nfp["kappa_slope"])
     if g <= 0:
         raise ValueError("The critical rate does not change along the sweep")
@@ -1068,8 +1069,12 @@ def _preserved(record):
     return record
 
 
+def _law_budget(*_):
+    raise TimeoutError("the time budget of this law ended")
+
+
 def close_departures(library, *, root: Path = Path("."), policy: Optional[OrderPolicy] = None,
-                     select=None, revisit: Tuple[str, ...] = ()) -> List[Dict]:
+                     select=None, revisit: Tuple[str, ...] = (), law_seconds: Optional[int] = None) -> List[Dict]:
     """Every retained outcome gets a row: a law departure is given a task and a campaign (once), and the others keep the
     reason they are not a repair question. `select` restricts the campaign by its write class. `revisit` names earlier
     statuses to run again after a change of the code; the registry refuses any withheld set already consumed, and the
@@ -1092,17 +1097,25 @@ def close_departures(library, *, root: Path = Path("."), policy: Optional[OrderP
             continue
         library.claim_campaign(key)
         record = _record_of(departure, root)
+        if law_seconds:
+            signal.signal(signal.SIGALRM, _law_budget)
+            signal.alarm(int(law_seconds))
         try:
             if record is None:
                 raise ValueError("the record of this departure is no longer in its source file")
             task = learning_task(record, departure["target"], root=root, policy=policy)
+            report = close_modulo_order(task, library, policy)
+        except TimeoutError as error:
+            report = library.store({"status": "timed_out", "reason": str(error), "target": departure.get("target"),
+                                    "failed_law": {"target": departure.get("target"), "write_class": write_class},
+                                    "record": {"source": (record or {}).get("source")}, "novelty_established": False})
         except (ValueError, KeyError, ArithmeticError, np.linalg.LinAlgError, mspec.SpecError,
                 sp.PolynomialError, TypeError) as error:
             report = {"status": "no_task_generated", "reason": f"{type(error).__name__}: {error}",
                       "target": departure.get("target"), "novelty_established": False}
             report = library.store(report)
-        else:
-            report = close_modulo_order(task, library, policy)
+        finally:
+            signal.alarm(0)
         if old is not None:
             report = {**report, "earlier_report": {k: old.get(k) for k in ("status", "reason", "attempt_id")}}
         library.store_campaign(key, _finite(report))

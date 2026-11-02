@@ -1,14 +1,15 @@
 """The loop from a retained law departure to a tested description of smaller dimension."""
 import json
 from pathlib import Path
+import time
 
 import numpy as np
 import pytest
 
-ln = pytest.importorskip("fieldbridge.memory.learning", reason="the learning modules are not committed yet")
-rf = pytest.importorskip("fieldbridge.memory.repair_families", reason="the learning modules are not committed yet")
-from fieldbridge.memory import repair_loop as rl  # noqa: E402
-from fieldbridge.memory import spec as ms  # noqa: E402
+from fieldbridge.memory import learning as ln
+from fieldbridge.memory import repair_families as rf
+from fieldbridge.memory import repair_loop as rl
+from fieldbridge.memory import spec as ms
 
 ROOT = Path(__file__).resolve().parents[1]
 RECORDS = ROOT / "docs/records/quantum_semiclassical.jsonl"
@@ -256,8 +257,20 @@ def test_every_retained_outcome_of_the_records_gets_a_row(tmp_path):
     assert len(rows) == len(library.departures()) >= 227
     assert not [r for r in rows if r["status"] == "needs_equation_task"]
     failed = [r for r in rows if r["status"] == "outside_this_campaign"]
-    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 9
-    assert sum(r["write_class"] == "equilibrium write" for r in failed) == 4
+    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 17
+    assert sum(r["write_class"] == "equilibrium write" for r in failed) == 3
+
+
+def test_a_law_over_its_budget_is_kept_as_timed_out(tmp_path, monkeypatch):
+    library = ln.MoveLibrary(tmp_path / "library.sqlite")
+    for record in records():
+        ln.retain_record(library, record, source=str(RECORDS))
+    monkeypatch.setattr(rl, "close_modulo_order", lambda *_: time.sleep(30))
+    rows = rl.close_departures(library, root=ROOT, policy=FAST, select={"equilibrium write"}, law_seconds=1)
+    timed_out = [r for r in rows if r["status"] == "timed_out"]
+    assert len(timed_out) == 3 and all(r["write_class"] == "equilibrium write" for r in timed_out)
+    assert library.campaign(next(k for k, d in library.departures() if d["target"] == timed_out[0]["target"]
+                                 and library.campaign(k)))["status"] == "timed_out"
 
 
 def test_the_exact_baseline_and_the_loop_do_not_share_a_withheld_key():
