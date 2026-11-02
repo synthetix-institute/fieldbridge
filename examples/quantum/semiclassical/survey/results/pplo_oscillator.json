@@ -8,9 +8,9 @@
  "derivations": {
   "symmetric-write": {
    "status": "obstructed",
-   "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
-   "obstruction_short": "a line of states: the drift vanishes along the critical direction",
-   "class": "S(reflection) C R(degenerate)",
+   "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.000576 s^5, so the canonical form is not the pitchfork and the swept-write test, whose noise is set by D_s |a3| / r, is not defined",
+   "obstruction_short": "vanishing cubic: leading term of order 5",
+   "class": "S(reflection) C R(degenerate cubic)",
    "word": "SCR",
    "law_constant": null
   },
@@ -18,7 +18,7 @@
    "status": "obstructed",
    "obstruction": "a single stable state: there is no second state to switch to",
    "obstruction_short": "a single stable state: nothing to switch to",
-   "class": "S C R(degenerate)",
+   "class": "S C R(degenerate cubic)",
    "word": "SCR",
    "law_constant": null
   },
@@ -48,9 +48,9 @@
       0.0011853558105768588
      ]
     },
-    "kind": "degenerate: the drift vanishes along the critical direction (a line of states)",
+    "kind": "degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along the critical direction is of order 5",
     "obstruction": {
-     "vanishing drift along the critical direction": 0.0
+     "vanishing cubic (leading term of order 5)": -0.000576
     },
     "completion": "leading order",
     "law": {
@@ -312,6 +312,10 @@
       ]
      },
      "certified": true
+    },
+    "leading_term": {
+     "order": 5,
+     "coefficient": -0.000576
     }
    }
   ]
@@ -321,7 +325,7 @@
   "base": {
    "symmetric-write": {
     "status": "obstructed",
-    "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
+    "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.000576 s^5, so the canonical form is not the pitchfork and the swept-write test, whose noise is set by D_s |a3| / r, is not defined",
     "seconds": 1.0,
     "class": "unclassified"
    },

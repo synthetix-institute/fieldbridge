@@ -16,6 +16,7 @@
   fixed_points       zeros of the drift (Newton from random starts), stable and unstable, with kappa spectra
   track              continuation of a stable state along a parameter until it loses stability or vanishes
   locate_writes      parameter values at which stored states lose stability or appear (write points)
+  series_reduction   drift on the centre manifold of one critical direction, closed order by order at the write point
   normal_form        drift along the critical direction at a write point, reduced onto the slow manifold, and the
                      number of directions that become critical there together
   with_write_field   the realization plus a bounded write toward a target, with the field WRITE_FIELD as parameter
@@ -24,12 +25,13 @@
 from __future__ import annotations
 
 from dataclasses import replace
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from math import sqrt
 import numpy as np
 
 from .identity import Realization
+from .series import NotAnalytic, Series, coefficients as series_coefficients
 
 P_STAR = 0.9
 # the parameter of the added write field; reserved in specifications (spec.RESERVED), so that it cannot replace a
@@ -38,6 +40,7 @@ WRITE_FIELD = "h_write"
 # resolution of the continuation in units of the scanned range: locate_writes takes write points closer than this for
 # one, and normal_form counts every eigenvalue that crosses zero within it of a write point as critical there
 WRITE_RESOLUTION = 2e-3
+SERIES_ORDER = 7  # order of the reduction at a write point; a Kerr parametric oscillator at zero detuning needs 5
 
 
 def base_length(real: Realization) -> float:
@@ -160,7 +163,8 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     keep = [i for i, k in enumerate(spectra) if classify(k)["unstable"] == 0]
     states, counts, spectra = [states[i] for i in keep], [counts[i] for i in keep], [spectra[i] for i in keep]
     n_null = 0 if real.null_modes is None else len(np.atleast_2d(real.null_modes))
-    continuum = bool(len(states) >= max(6, int(conv.sum()) // 2)
+    # many flat states: starts on a circle of states also merge, so that fewer states than half of the starts remain
+    continuum = bool(len(states) >= max(6, int(conv.sum()) // 3)
                      and all(classify(k)["flat"] > n_null for k in spectra))
     return states, counts, spectra, int(np.sum(~conv)), continuum
 
@@ -764,7 +768,7 @@ def _slow_manifold_drift(real, q, vec, w, s, over):
 def leading_order(real, q, vec, w, over, half: float, rate: float, scale: float,
                   levels: int = 8) -> Optional[Dict[str, float]]:
     """The leading nonlinear term c s^n of the drift on the slow manifold where its quadratic and cubic coefficients
-    are not resolved at the write point. The drift less its linear part, rate s, is split into its odd and even parts
+    are not resolved at the write point and the series of series_reduction does not exist. The drift less its linear part, rate s, is split into its odd and even parts
     at the amplitudes half 2^-k; the larger part is resolved where it exceeds 1e-6 of the largest rate per unit s (the
     floor of the degenerate kind of normal_form), and n is the slope of its logarithm between the two smallest
     resolved amplitudes, rounded to an integer within 0.25. None where no two amplitudes resolve it (the drift
@@ -786,6 +790,108 @@ def leading_order(real, q, vec, w, over, half: float, rate: float, scale: float,
     if n < 2 or abs(slope - n) > 0.25:
         return None
     return {"order": n, "coefficient": float(part[k] / amps[k] ** n), "slope": slope, "amplitude": float(amps[k])}
+
+
+def _series_drift(real, q0, direction, over, size: int) -> np.ndarray:
+    """The coefficients in s of the drift at q0 + direction(s); direction holds one row of coefficients per coordinate,
+    constant term excluded. One row per coordinate of the result."""
+    y = np.empty((1, q0.size), dtype=object)
+    for i in range(q0.size):
+        c = np.zeros(size)
+        c[0] = q0[i]
+        c[1:] = direction[i]
+        y[0, i] = Series(c)
+    values = real.drift(y, {**real.params, **over})
+    return np.array([series_coefficients(v, size) for v in np.asarray(values, dtype=object).reshape(-1)])
+
+
+def series_reduction(real: Realization, q: np.ndarray, vec: np.ndarray, w: np.ndarray, over: Dict,
+                     order: int = SERIES_ORDER) -> Dict[str, object]:
+    """The drift on the centre manifold of one critical direction, as a power series in s = w.(x - q), closed order by
+    order with no window.
+
+    With x(s) = q + s v + h(s), w.h = 0, h of second order, the invariance of the manifold reads
+    (v + h'(s)) ds/dt = F(x(s)), so that ds/dt = w.F(x(s)) and, at order s^k, with a1 the linear coefficient,
+        (J - k a1) h_k = [h'(s) ds/dt]_k (from h_2 .. h_(k-1)) - [F]_k (at h_k = 0), w.h_k = 0,
+    where the left side is solved as a bordered system (Govaerts, Numerical Methods for Bifurcations of Dynamical
+    Equilibria, 2000), which needs no rank decision for the slow directions of a stiff drift. A direction of a continuous
+    symmetry (Realization.null_modes) remains in the kernel of the bordered matrix, and the least-squares solution has
+    no component along it. The Jacobian comes from the same arithmetic, and vec and w are refined against it to rounding,
+    so that a term that vanishes is not given a size by the finite differences of analysis.jacobian.
+
+    Returns {"covered": True, "order": order, "coefficients": [a0 .. a_order], "rounding": per order, the size of a
+    coefficient that is rounding of the terms it is a sum of}, or {"covered": False, "reason": ...} where the drift has no power series at q (abs at a kink, sqrt or
+    log at zero) or is not written in operations that a Series supports. The coefficient a2 is invariant among the
+    coordinates with the same tangent; a3 is invariant only where a2 vanishes, and at a fold it depends on the coordinate."""
+    q, v, w = np.asarray(q, float), np.array(vec, float), np.array(w, float)
+    n, size = q.size, order + 1
+    try:
+        J = np.zeros((n, n))
+        for i in range(n):
+            e = np.zeros((n, 1))
+            e[i] = 1.0
+            J[:, i] = _series_drift(real, q, e, over, 2)[:, 1]
+        if not np.all(np.isfinite(J)):
+            raise NotAnalytic("the Jacobian at the write point is not finite")
+        lam = float(w @ J @ v) / float(w @ v)
+
+        def bordered(M, a, b, rhs):
+            # solves M x + a mu = rhs, b.x = 0
+            B = np.zeros((n + 1, n + 1))
+            B[:n, :n], B[:n, n], B[n, :n] = M, a, b
+            return np.linalg.lstsq(B, np.append(rhs, 0.0), rcond=1e-13)[0][:n]
+
+        for _ in range(3):
+            v = v + bordered(J - lam * np.eye(n), v, v, -(J - lam * np.eye(n)) @ v)
+            v = v / np.linalg.norm(v)
+            w = w + bordered((J - lam * np.eye(n)).T, w, w, -(J - lam * np.eye(n)).T @ w)
+            w = w / float(w @ v)
+            lam = float(w @ J @ v)
+        h = np.zeros((n, order))              # h[:, j] is the coefficient of s^(j + 1) of the tangent part and h
+        h[:, 0] = v
+        for k in range(2, order + 1):
+            f = _series_drift(real, q, h, over, size)
+            ds = w @ f
+            # h'(s) ds/dt, without the tangent, which the projection removes
+            dh = np.zeros(n)
+            for j in range(2, k):
+                dh += j * h[:, j - 1] * ds[k - j + 1]
+            h[:, k - 1] = bordered(J - k * lam * np.eye(n), v, w, dh - f[:, k])
+        f = _series_drift(real, q, h, over, size)
+    except NotAnalytic as error:
+        return {"covered": False, "reason": str(error)}
+    except (TypeError, AttributeError, ValueError, ArithmeticError, np.linalg.LinAlgError) as error:
+        return {"covered": False, "reason": f"the drift is not written in operations of a power series ({error})"}
+    a = w @ f
+    if not np.all(np.isfinite(a)):
+        return {"covered": False, "reason": "a coefficient of the drift at the write point is not finite"}
+    return {"covered": True, "order": order, "coefficients": [float(x) for x in a],
+            "rounding": [float(1e-13 * x) for x in np.max(np.abs(f), axis=0)]}
+
+
+def series_reach(reduced: Dict[str, object], half: float, rate: float) -> float:
+    """The amplitude, at most `half`, up to which the series describes the drift: where a term of order n >= 4 gives a
+    rate a_n s^(n - 1) as large as `rate`, that of the slowest relaxing direction (the largest rate where there is none),
+    the reduction to one coordinate is no longer accurate, nor is a term of the series a measure of the drift."""
+    a = reduced["coefficients"]
+    return min([half] + [(rate / abs(a[n])) ** (1.0 / (n - 1)) for n in range(4, len(a)) if a[n] != 0.0])
+
+
+def leading_series_term(reduced: Dict[str, object], half: float, scale: float) -> Optional[Dict[str, float]]:
+    """The leading term c s^n of a reduced drift whose quadratic and cubic terms are not resolved at the write point: the
+    term of lowest order from the quartic on that, at the amplitude `half`, is within a tenth of the largest of them,
+    among those above rounding (1e-13 of the largest rate, or of the terms of the drift it is a sum of). The tenth is
+    the tolerance of the asymmetry: a write point located a distance d along the mode from the zero of c s^n has the
+    lower terms of c (s + d)^n, which are not a term of the material. None where no term up to the order of the series
+    is resolved: the drift vanishes along the critical direction to that order."""
+    a, rounding = reduced["coefficients"], reduced["rounding"]
+    resolved = {n: abs(a[n]) * half ** n for n in range(4, len(a))
+                if abs(a[n]) > rounding[n] + 1e-13 * scale * half ** (1 - n)}
+    if not resolved:
+        return None
+    top = max(resolved.values())
+    n = min(m for m, t in resolved.items() if t >= 0.1 * top)
+    return {"order": n, "coefficient": float(a[n])}
 
 
 def slow_spectrum(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float, scale: float,
@@ -836,6 +942,104 @@ def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: f
     return cand[np.abs(ev.real[cand]) <= tol]
 
 
+def _relaxes_on_a_side(real: Realization, q: np.ndarray, param: str, v: float, width: float, scale: float) -> bool:
+    """Whether the state continues to one side of v along the control as a state with no growing direction and at
+    least one relaxing direction, within a tenth of the base length."""
+    lo, hi = real.control_range if real.control_range is not None else (-np.inf, np.inf)
+    for w in (v - 0.01 * width, v + 0.01 * width):
+        if not lo <= w <= hi:
+            continue
+        over = {param: w}
+        qn, ok = newton(real, q, over)
+        if not ok or real.carrier.distance(q, qn) > 0.1 * base_length(real):
+            continue
+        re = np.linalg.eigvals(jacobian(real, qn, over)).real
+        if re.max() <= 1e-7 * scale and re.min() < -1e-7 * scale:
+            return True
+    return False
+
+
+def _on_one_family(real: Realization, a: np.ndarray, b: np.ndarray, over: Dict, nodes: int = 24) -> bool:
+    """Whether two states at the same control are joined by a connected set of equilibria: the nodes of the straight
+    path between them, each corrected by Newton (minimal norm, so a node already on the set stays), stay equilibria and
+    keep their spacing. Mirror images have an unstable or isolated state between them, and the nodes jump."""
+    a, b = np.asarray(a, float), np.asarray(b, float)
+    d = b - a
+    if real.carrier.kind == "torus":
+        d = (d + real.carrier.period / 2) % real.carrier.period - real.carrier.period / 2
+    step = float(np.linalg.norm(d)) / (nodes - 1)
+    last = a
+    for t in np.linspace(0.0, 1.0, nodes)[1:]:
+        q, ok = newton(real, a + t * d, over)
+        if not ok or real.carrier.distance(last, q) > 3 * step + 1e-9:
+            return False
+        last = q
+    return True
+
+
+def distinct_write_points(real: Realization, events: List[Dict]) -> Tuple[List[Dict], List[Dict]]:
+    """The events of locate_writes that are distinct places where a state loses stability, and those set aside.
+
+    A state with no relaxing direction that does not continue along the control as a state with one is set aside: at
+    the ends of the control range of a dissipationless free top the drift vanishes on a whole plane, nothing there
+    is stable, and nothing loses stability. Random starts sample a continuum of equilibria at one control value many
+    times; the samples count as one event, which keeps the number of them as `samples`."""
+    param = real.control
+    width = abs(real.control_range[1] - real.control_range[0]) if real.control_range is not None else 1.0
+    kept: List[Dict] = []
+    aside: List[Dict] = []
+    for ev in events:
+        q, v = np.asarray(ev["q"], float), float(ev["v"])
+        over = {param: v}
+        spectrum = np.linalg.eigvals(jacobian(real, q, over))
+        re = spectrum.real
+        scale = max(1e-12, float(np.abs(spectrum).max()))
+        if re.min() >= -1e-7 * scale and not _relaxes_on_a_side(real, q, param, v, width, scale):
+            aside.append({**ev, "reason": "no relaxing direction on either side of the control value"})
+            continue
+        for e in kept:
+            if abs(float(e["v"]) - v) < WRITE_RESOLUTION * width and _on_one_family(real, np.asarray(e["q"], float), q, over):
+                e["samples"] = int(e.get("samples", 1)) + 1
+                break
+        else:
+            kept.append(dict(ev))
+    return kept, aside
+
+
+def _without_neutral(real: Realization, q: np.ndarray, param: str, v: float, ev: np.ndarray, R: np.ndarray,
+                     cand: np.ndarray, over: Dict) -> np.ndarray:
+    """The candidates without the directions that are neutral on both sides of v along the control while another
+    candidate crosses there. A conserved quantity (the spin length of an undamped atom) or a line of states keeps a zero
+    eigenvalue along the whole branch; counted with the eigenvalues that cross, it reads as a degenerate critical mode.
+    Where nothing else is near zero, or the state does not continue to both sides, the candidates are returned as they
+    are."""
+    width = (abs(real.control_range[1] - real.control_range[0])
+             if real.control_range is not None and param == real.control else max(1.0, abs(v)))
+    neutral: Optional[np.ndarray] = None
+    moved = np.inf
+    for w in (v - 5e-3 * width, v + 5e-3 * width):
+        side = {**over, param: w}
+        qn, ok = newton(real, q, side)
+        if not ok or real.carrier.distance(q, qn) > 0.1 * base_length(real):
+            return cand
+        ev_side, R_side = np.linalg.eig(jacobian(real, qn, side))
+        zero = np.abs(ev_side.real) <= 1e-7 * max(1e-12, float(np.abs(ev_side).max()))
+        if not zero.all():
+            moved = min(moved, float(np.abs(ev_side.real[~zero]).min()))
+        if neutral is None or zero.sum() < neutral.shape[1]:
+            neutral = R_side[:, zero]
+    m = neutral.shape[1]
+    if m == 0 or not np.isfinite(moved):
+        return cand
+    # the crossing eigenvalue is within what it moves over this step of the control
+    near = cand[np.abs(ev.real[cand]) <= moved]
+    if m >= near.size:
+        return cand
+    basis = np.linalg.qr(neutral)[0]
+    overlap = [float(np.linalg.norm(basis.conj().T @ R[:, j]) / np.linalg.norm(R[:, j])) for j in near]
+    return np.setdiff1d(cand, near[np.argsort(overlap, kind="stable")[::-1][:m]])
+
+
 def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: Optional[Dict] = None,
                 npts: int = 41, half: Optional[float] = None) -> Dict[str, object]:
     """Reduce the drift at a write point to one coordinate s along the critical direction:
@@ -848,8 +1052,15 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     not a line, and the kind is a degenerate critical mode. The coefficients along one direction of that eigenspace
     are kept as a diagnostic.
 
-    The drift is sampled over s in [-half, half], by default a quarter of the base length (an eighth of the period on
-    a torus), and the window is halved further where the cubic does not fit."""
+    Where one direction is critical, the coefficients a0, a1, a2, a3 and the terms up to SERIES_ORDER are those of the
+    series closed order by order at the write point (series_reduction, in the coordinate s = w.(x - q)), and the kind is
+    read from them, with the amplitude of the comparison (asymmetry, bias) set by the default window and series_reach
+    and not by a fit. Where the series does not exist or is not covered (several critical directions, abs at a kink), the
+    coefficients are those of the cubic fitted to the drift on the slow manifold, and `series` says why.
+
+    That drift is sampled in either case, for the record of its shape (s, f and the coefficients `fit`), over s in
+    [-half, half], by default a quarter of the base length (an eighth of the period on a torus), and the window is halved
+    further where the cubic does not fit."""
     q = np.asarray(q, float)
     over = {**(extra or {}), param: v}
     n = q.size
@@ -862,6 +1073,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         overl = np.array([np.linalg.norm(Nm @ (R[:, i] / np.linalg.norm(R[:, i]))) for i in range(n)])
         if np.any(overl < 0.9):
             cand = np.flatnonzero(overl < 0.9)
+    cand = _without_neutral(real, q, param, v, ev, R, cand, over)
     i = int(cand[np.argmin(np.abs(ev.real[cand]))])
     lam = ev[i]
     scale = max(1e-12, float(np.abs(ev).max()))
@@ -933,6 +1145,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
             break
         half /= 2
     a3, a2, a1, a0 = (float(c) for c in coef)
+    fit = {"a0": a0, "a1": a1, "a2": a2, "a3": a3}
     Jp = jacobian(real, q, {**over, param: v + dv})
     Jm = jacobian(real, q, {**over, param: v - dv})
     growth_partial = float(w @ ((Jp - Jm) / (2 * dv)) @ vec)
@@ -947,26 +1160,42 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     else:
         growth = growth_partial
     bias_along = float(w @ dF)
-    bias = abs(bias_along) / (abs(bias_along) + abs(growth) * half + 1e-300)
     quad, cub = abs(a2) * half ** 2, abs(a3) * half ** 3
     asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * half else 0.0
-    crit = critical(growth)
+    # at a fold the control pushes along the critical direction and the eigenvalue goes as the square root of the
+    # distance from the point: the growth along the branch diverges, is no rate of crossing, and took in every eigenvalue
+    # of a cavity magnon and of a phase qubit. There the rate is the part that does not follow the state.
+    fold = asym > 0.1 and abs(bias_along) > max(0.1 * abs(growth_partial) * half, 1e-9 * scale)
+    crossing = growth_partial if fold else growth
+    crit = critical(crossing)
     k = crit["critical_dimension"]
-    crit.update(slow_spectrum(ev, cand, lam, growth, WRITE_RESOLUTION * width, scale, J, R))
+    crit.update(slow_spectrum(ev, cand, lam, crossing, WRITE_RESOLUTION * width, scale, J, R))
+    series = (series_reduction(real, q, vec, w, over) if k == 1 else
+              {"covered": False, "reason": f"{k} critical directions: the series is closed along one"})
+    measure, window = half, half
+    if series["covered"]:
+        a0, a1, a2, a3 = series["coefficients"][:4]
+        out.update({f"a{j}": c for j, c in enumerate(series["coefficients"]) if j > 3})
+        measure, window = series_reach(series, half0, crit["second_rate"] or scale), half0
+    bias = abs(bias_along) / (abs(bias_along) + abs(growth) * measure + 1e-300)
+    quad, cub = abs(a2) * measure ** 2, abs(a3) * measure ** 3
+    asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * measure else 0.0
+    fold = asym > 0.1 and abs(bias_along) > max(0.1 * abs(growth_partial) * measure, 1e-9 * scale)
     if k > 1:
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
                 f"{k}-dimensional, not a line")
-    elif cub + quad <= 1e-6 * scale * half:
-        # the cubic fit is resolved only on a window where the linear part dominates: the order of the leading term is
-        # read from larger amplitudes (a Kerr parametric oscillator at zero detuning saturates at fifth order)
-        lead = leading_order(real, q, vec, w, over, half0, float(lam.real), scale)
+    elif abs(a2) * window ** 2 + abs(a3) * window ** 3 <= 1e-6 * scale * window:
+        # neither the quadratic nor the cubic term is resolved: the leading term is of higher order (a Kerr parametric
+        # oscillator at zero detuning saturates at fifth order)
+        lead = (leading_series_term(series, measure, scale) if series["covered"] else
+                leading_order(real, q, vec, w, over, half0, float(lam.real), scale))
         if lead is None:
             kind = "degenerate: the drift vanishes along the critical direction (a line of states)"
         else:
             out["leading_term"] = lead
             kind = (f"degenerate cubic: the quadratic and cubic terms vanish at the write point; the leading term along "
                     f"the critical direction is of order {lead['order']}")
-    elif bias > 0.1 and asym > 0.1:
+    elif asym > 0.1 and (fold or bias > 0.1):
         kind = "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold"
     elif asym > 0.1:
         kind = "transcritical: two states exchange stability; the write is one-sided"
@@ -979,7 +1208,8 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     out.update(hopf=False, kind=kind, mode=vec.tolist(), left_mode=w.tolist(), a0=a0, a1=a1, a2=a2, a3=a3,
                bias_along_mode=bias_along, bias=bias, kappa_slope=-growth, kappa_slope_partial=-growth_partial,
                asymmetry=asym,
-               transverse_residual=transverse, cubic_misfit=misfit, s=s.tolist(), f=f.tolist(), half=half, **crit)
+               transverse_residual=transverse, cubic_misfit=misfit, s=s.tolist(), f=f.tolist(), half=half, fit=fit,
+               series=series, **crit)
     return out
 
 

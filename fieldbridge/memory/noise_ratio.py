@@ -19,8 +19,12 @@ continuous switch freezes after it. A first-order switch follows the law only wh
 bistable range (the range of the control in which its far states exist); beyond it the far states decide.
 
 The tabulated values are simulations of the normal form with the bias toward each side in turn (40 000 sweeps per side
-for Gamma <= 3 and 20 000 above; standard errors 0.012-0.016); for Gamma <= 1 they agree with pi^{1/4} within their
-errors, and the table uses pi^{1/4} there.
+for Gamma <= 3 and 20 000 above); for Gamma <= 1 they agree with pi^{1/4} within their errors, and the table uses
+pi^{1/4} there. The continuous entries at Gamma = 10 and 100 pool five independent simulations (REPEATED). At Gamma = 100
+these agree and give 0.775 +- 0.005. At Gamma = 10 they give 1.1215 +- 0.0069 with chi-squared 10.2 on 4 degrees of
+freedom: the scatter exceeds the statistical errors, so the error is scaled by the square root of chi-squared per degree
+of freedom and the entry is 1.12 +- 0.01, without a third digit. Every other entry is one simulation with its standard
+error of 0.012 to 0.016, and the runs at Gamma = 10 show that one such run can lie further from the pool than that.
 """
 from __future__ import annotations
 
@@ -35,8 +39,14 @@ from .identity import Realization
 
 KONDEPUDI = pi ** 0.25
 GAMMAS = (1.0, 3.0, 10.0, 30.0, 100.0)
-CONTINUOUS = (KONDEPUDI, 1.268, 1.144, 0.949, 0.784)
+CONTINUOUS = (KONDEPUDI, 1.268, 1.12, 0.949, 0.775)
+CONTINUOUS_ERROR = (0.012, 0.012, 0.01, 0.013, 0.005)
 FIRST_ORDER = (KONDEPUDI, 1.250, 1.110, 0.962, 0.791)
+FIRST_ORDER_ERROR = (0.012, 0.012, 0.016, 0.013, 0.011)
+# the independent simulations of the continuous normal form behind the entries at Gamma = 10 and 100, as (constant,
+# standard error); 20 000 sweeps per side, accuracies near 0.69
+REPEATED = {10.0: ((1.1445, 0.0158), (1.088, 0.015), (1.130, 0.015), (1.143, 0.016), (1.107, 0.015)),
+            100.0: ((0.784, 0.0107), (0.770, 0.010), (0.771, 0.010), (0.769, 0.010), (0.783, 0.010))}
 # share of the sweeps of a first-order switch decided before the bifurcation, on the normal form
 EARLY_GAMMAS = (0.01, 0.03, 0.1, 0.3, 1.0, 3.0)
 EARLY = (0.0, 0.0, 0.031, 0.314, 0.829, 0.997)
@@ -65,6 +75,16 @@ def write_constant(gamma: float, first_order: bool = False) -> float:
     if gamma <= GAMMAS[-1]:
         return float(np.interp(log(gamma), [log(g) for g in GAMMAS], table))
     return table[-1] * activated_constant(gamma) / activated_constant(GAMMAS[-1])
+
+
+def stated(gamma: float, first_order: bool = False) -> str:
+    """c(Gamma) as text: an entry of the simulated table with its error and no digit beyond what it establishes;
+    pi^{1/4}, an interpolation or the continuation above the table to three decimals."""
+    if gamma in GAMMAS[1:]:
+        k = GAMMAS.index(gamma)
+        err = (FIRST_ORDER_ERROR if first_order else CONTINUOUS_ERROR)[k]
+        return f"{(FIRST_ORDER if first_order else CONTINUOUS)[k]:.{len(f'{err:g}') - 2}f} +- {err:g}"
+    return f"{write_constant(gamma, first_order):.3f}"
 
 
 def early_share(gamma: float) -> float:
@@ -239,7 +259,7 @@ def markdown(rep: Dict[str, object]) -> str:
              "|---|---|---|---|---|---|" + ("---|" if rep["first_order"] else "")]
     for r in rep["rows"]:
         line = (f"| {r['gamma']:g} | {r['regime']} | {r['measured']:.3f} | {r['constant']:.3f} +- "
-                f"{r['constant_stderr']:.3f} | {r['expected']:.3f} | {r['offset']:+.3f} |")
+                f"{r['constant_stderr']:.3f} | {stated(r['gamma'], rep['first_order'])} | {r['offset']:+.3f} |")
         if rep["first_order"]:
             line += f" {r['decided_before']:.2f} (normal form {r['decided_before_normal_form']:.2f}) |"
         lines.append(line)
@@ -256,6 +276,6 @@ def law_markdown() -> str:
              "| Gamma | c, continuous | c, first order | activated limit | regime |", "|---|---|---|---|---|"]
     for G in (0.1, 1.0, 3.0, 10.0, 30.0, 100.0, 300.0):
         act = activated_constant(G) if G >= 10 else float("nan")
-        lines.append(f"| {G:g} | {write_constant(G):.3f} | {write_constant(G, True):.3f} | "
+        lines.append(f"| {G:g} | {stated(G)} | {stated(G, True)} | "
                      f"{'' if act != act else f'{act:.3f}'} | {regime(G)} |")
     return "\n".join(lines) + "\n"

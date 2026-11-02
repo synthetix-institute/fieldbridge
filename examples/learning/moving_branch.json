@@ -1,0 +1,25 @@
+{
+  "schema": "fieldbridge-learning/1",
+  "model": {
+    "schema": "fieldbridge-memory/1",
+    "name": "Moving branch of a cubic drift",
+    "kind": "equations",
+    "question": "What term appears when a coordinate is measured relative to a moving branch?",
+    "provenance": {"kind": "authored verification example", "source": "Algebraic translation of a cubic drift; this example tests equations, not a chemical implementation"},
+    "assumptions": ["dimensionless deterministic coordinates", "the branch centre moves at constant speed v", "real state space"],
+    "carrier": {"kind": "euclid", "variables": ["x", "m"], "scale": 1},
+    "parameters": {"k": 3, "v": 0.03},
+    "drift": {"x": "-x**3+3*m*x**2-k*x+k*m-2*m**3", "m": "v"},
+    "noise": 0
+  },
+  "coordinates": {"u": "x-m", "w": "m"},
+  "candidate_drift": {"u": "(3*w**2-k)*u-u**3", "w": "v"},
+  "development": [
+    {"id": "develop-forward", "initial": [1.04, 1], "parameters": {}, "duration": 2},
+    {"id": "develop-backward", "initial": [0.95, 1], "parameters": {"v": -0.02}, "duration": 2}
+  ],
+  "withheld": [
+    {"id": "intervene-faster", "initial": [1.1, 1.05], "parameters": {"v": 0.05, "k": 3.2}, "duration": 3},
+    {"id": "intervene-reversal", "initial": [0.98, 0.95], "parameters": {"v": -0.04, "k": 2.8}, "duration": 3}
+  ]
+}

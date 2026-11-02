@@ -18,6 +18,11 @@ sympify. The parsed expressions are compiled to vectorized numpy functions.
 An optional "bounds" field gives the domain of parameters, {"kappa": [0, null]}: a lower and an upper bound, null
 where there is none (a loss rate or a concentration that cannot be negative). It is stored on the Realization, and a
 continuation that moves a parameter stops at its bound instead of crossing it.
+
+An optional "rates" field of a one-variable population gives the births and deaths behind its drift, per unit of the
+population scale: {"birth": "r*u", "death": "...", "upper": "k", "scale": "number of individuals at u = 1"}, where upper
+bounds the variable and birth - death must equal the drift. The time to leave a state then follows from the rates
+(population.py and ``fieldbridge memory escape``), which a constant noise does not give.
 """
 from __future__ import annotations
 
@@ -191,6 +196,22 @@ def _common(spec: Dict, params: Dict[str, float]) -> Dict:
     return out
 
 
+def _rates(spec: Dict, names: Dict, vsyms: List, psyms: List, exprs: List) -> Dict:
+    sp = _sympy()
+    r = _require(spec, "rates", dict)
+    if len(vsyms) != 1:
+        raise SpecError("rates are defined for a population of one variable")
+    birth = parse_expression(_require(r, "birth", str), names)
+    death = parse_expression(_require(r, "death", str), names)
+    if sp.simplify(birth - death - exprs[0]) != 0:
+        raise SpecError("rates: birth - death must equal the drift")
+    pnames = [str(s) for s in psyms]
+    upper = sp.lambdify(psyms, parse_expression(str(_require(r, "upper")), dict(zip(pnames, psyms))), modules="numpy")
+    fb, fd = (sp.lambdify(vsyms + psyms, e, modules="numpy") for e in (birth, death))
+    return {"birth": lambda x, p: fb(x, *[p[k] for k in pnames]), "death": lambda x, p: fd(x, *[p[k] for k in pnames]),
+            "upper": lambda p: upper(*[p[k] for k in pnames]), "scale": str(_require(r, "scale", str))}
+
+
 def _equations(spec: Dict) -> Realization:
     sp = _sympy()
     variables = _require(_require(spec, "carrier", dict), "variables", list)
@@ -223,7 +244,8 @@ def _equations(spec: Dict) -> Realization:
         cols = [q[:, k] for k in range(q.shape[1])]
         with np.errstate(divide="ignore", invalid="ignore"):
             vals = fn(*cols, *[p[k] for k in pnames])
-        return np.stack([np.broadcast_to(np.asarray(v, float), cols[0].shape) for v in vals], axis=-1)
+        # q.dtype is float, or object where q holds truncated series (analysis.series_reduction)
+        return np.stack([np.broadcast_to(np.asarray(v, q.dtype), cols[0].shape) for v in vals], axis=-1)
 
     def potential_fn(q, p):
         cols = [q[:, k] for k in range(q.shape[1])]
@@ -237,6 +259,8 @@ def _equations(spec: Dict) -> Realization:
                        provenance=common["provenance"], material=common["material"], tags=tuple(spec.get("tags", ())))
     real.variables = list(variables)
     real.symbolic = {"variables": vsyms, "parameters": psyms, "drift": exprs}
+    if "rates" in spec:
+        real.rates = _rates(spec, names, vsyms, psyms, exprs)
     return real
 
 

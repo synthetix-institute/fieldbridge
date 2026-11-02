@@ -2,7 +2,7 @@
 
 **Learning objectives.** After this module you can
 
-1. derive the threshold write, a fold, along the control or by a write field, and read the four classes of its
+1. derive the threshold write, a fold, along the control or by a write field, and read the five classes of its
    derivation;
 2. explain why a symmetry that permits the symmetric write forbids a threshold along the same parameter, and why
    the threshold write is reached in more models;
@@ -55,17 +55,20 @@ The command takes about one minute.
 | Stoner–Wohlfarth particle | magnetism | SCRWRKL | $h = 0.1847$ | −0.438 | 1.0187929 ± 0.0000007 |
 | ring of 4 repressors | synthetic biology | SCRWRKL | $h = 1.5988$ | 2.975 | 1.018793 ± 0.000014 |
 | two equal tubes | transport networks | SCRWRKL | $h = 0.06396$ | 0.163 | 1.0187929 ± 0.0000009 |
+| Schlögl reactor swept through its cusp | chemical kinetics | CRWRKL | $h = 0.4444$ | −0.227 | 1.0187930 ± 0.0000005 |
 | two-component normal form, square symmetry | statistical physics | CRWRKL | $h = 0.1062$ | −0.713 | 1.0187929 ± 0.0000009 |
 | caged capillary rotors | soft matter | WRKL | $h = 4.2912$ | −0.019 | 1.0187930 ± 0.0000005 |
 | caged in-plane dipoles | magnetism | WRKL | $h = 0.1776$ | 3.205 | 1.021 ± 0.005 |
 | ring of 3 repressors | synthetic biology | CR | stops: no stable state | — | — |
 | three compartments | compartment models | — | stops: a single stable state | — | — |
 
-Thirteen models from eight fields reach the target by four classes of derivation: by the control, C R(fold) K L; by a
-field after a symmetric write point, S C R(pitchfork) W R(fold) K L; by a field after a write point at which two
-directions become critical together (Module 9, Section 5), C R(degenerate critical mode) W R(fold) K L; and by a
-field where the control only rescales the drift, W R(fold) K L. In the second class the symmetry that forces a
-pitchfork along the control also forbids a threshold there. A field toward one of the two states breaks the symmetry,
+Fourteen models from eight fields reach the target by five classes of derivation: by the control, C R(fold) K L; by a
+field after a symmetric write point, S C R(pitchfork) W R(fold) K L; by a field after a pitchfork that holds only
+locally, where a sweep passes through a cusp without a symmetry of the whole drift (the Schlögl reactor, Module 9,
+Section 4), C R(pitchfork) W R(fold) K L; by a field after a write point at which two directions become critical
+together (Module 9, Section 5), C R(degenerate critical mode) W R(fold) K L; and by a field where the control only
+rescales the drift, W R(fold) K L. In the second class the symmetry that forces a pitchfork along the control also
+forbids a threshold there. A field toward one of the two states breaks the symmetry,
 and the occupied state disappears at the coercive field; for the Landau model, $\dot x = x - x^3 - h$, this is
 $h_c = 2/(3\sqrt3) = 0.3849$. The cubic coefficient $c_3$ of the canonical form, the leading correction to Eq. (1),
 differs between the models.
@@ -137,7 +140,7 @@ check ends the series, so that the fit rests on the slowest rates; the report li
 (`test_a_sweep_that_would_start_beyond_the_branch_of_the_occupied_state_is_left_out`,
 `test_a_sweep_left_out_ends_the_series_so_that_the_fit_rests_on_the_slowest_rates`).
 
-In eleven of the thirteen models the constant lies within $1.2 \times 10^{-6}$ of $\lvert a_1'\rvert$, and the
+In twelve of the fourteen models the constant lies within $1.2 \times 10^{-6}$ of $\lvert a_1'\rvert$, and the
 weighted mean is $1.0187930 \pm 0.0000002$. Apart from the dipoles (below), the slopes of the corrections range from
 $-0.45$ for the laser to $+0.40$ for the ring of four, as the fifth-order coefficients differed for the symmetric
 write (Module 9, Section 6). For
@@ -171,6 +174,7 @@ $2 \times 10^{-3}$ for the laser and 330 for the capillary rotors, whose switch 
 | ring of 4 repressors | synthetic biology | S C R K L | S C R W R K L |
 | Stoner–Wohlfarth particle | magnetism | S C R K L | S C R W R K L |
 | Schlögl reactor | chemical kinetics | C R U R K L | C R K L |
+| Schlögl reactor swept through its cusp | chemical kinetics | C R K L | C R W R K L |
 | toggle, unequal promoters | synthetic biology | C R U R K L | C R K L |
 | two equal tubes | transport networks | stops at R (subcritical) | S C R W R K L |
 | two unequal tubes | transport networks | stops at U | C R K L |
@@ -183,8 +187,8 @@ The two targets are complementary. A symmetry makes the symmetric write possible
 along the same parameter; a field that breaks the symmetry restores the threshold. Without a symmetry the write
 along the control is a fold, and the symmetric write needs a second parameter tuned to the cusp, where two folds
 merge into a pitchfork. A fold is the generic way for a state to disappear, whereas a pitchfork requires a symmetry
-or a tuned parameter; the threshold write is therefore reached in thirteen of the fifteen models and the symmetric
-write in eight.
+or a tuned parameter; the threshold write is therefore reached in fourteen of the sixteen models and the symmetric
+write in nine.
 
 ## 5. A model from your field
 
@@ -222,11 +226,11 @@ specification.
 
 ## Summary
 
-- The threshold write, a fold, is reached in thirteen models from eight fields by four classes of derivation: by the
-  control, or by a write field where a symmetry, a degenerate critical mode or a scale control prevents a threshold
+- The threshold write, a fold, is reached in fourteen models from eight fields by five classes of derivation: by the
+  control, or by a write field where a pitchfork, a degenerate critical mode or a scale control prevents a threshold
   along the control.
 - The switch lags behind a sweep by $\mu = \lvert a_1'\rvert r^{2/3}$; the constant $\lvert a_1'\rvert = 1.0187930$,
-  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in eleven models, to $2 \times 10^{-5}$ in
+  the first zero of $\mathrm{Ai}'$, is recovered to $1.2 \times 10^{-6}$ in twelve models, to $2 \times 10^{-5}$ in
   the unequal tubes and to $2 \times 10^{-3}$ in the caged dipoles, within its uncertainty in each.
 - Each sweep starts on the branch of the occupied state. For the pair of dipole states drawn in the default run this
   branch ends at a second fold, close to the first in canonical units, and the two fastest sweeps, which would start

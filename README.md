@@ -70,6 +70,36 @@ states, which is computed along the lowest path between them ([laws of retention
 The critical point stands out only for writing, because it is the one place where a weak signal can choose among
 states.
 
+## Learning From a Failed Reduction
+
+The [constructor-learning tutorial](docs/tutorial/37_constructor_learning.md)
+derives missing equation terms and observables from a failed reduction, tests
+the result on withheld interventions, and retains the successful move for reuse.
+The first backend handles deterministic polynomial equations. Coefficients and
+validity are checked again on every model. Recorded equation-level failures can
+enter `memory repair`, which retains verified recipes and conditions on their
+reuse. A four-way comparison separates enumeration, direct symbolic closure,
+stored recipes and family guidance; fewer candidate evaluations alone do not
+establish a gain over the direct symbolic solver.
+
+The [stochastic writing tutorial](docs/tutorial/38_stochastic_self_correction.md)
+tests a failed basin-probability prediction, retains nonlinear dynamics and
+diffusion where they are required, and freezes that correction before applying
+it to new rates and another drift family. A separate protocol search chooses a
+writing rate from committed predictions and checks the resulting stored pattern
+after the force is removed. These numerical calculations use the optional
+`stochastic` dependencies; the existing memory commands are unchanged.
+
+The [physical-inquiry tutorial](docs/tutorial/39_physical_inquiry.md) follows
+small signed discrepancies even when a prediction passes, and tests physical
+questions beyond the requested target. Its worked calculation compares
+equal-dose coupling pulses at different stages of writing, with identical final
+equations. A source-derived mean-force identity and fresh trajectory comparisons
+connect the changed pattern probabilities to the applied interaction.
+The same investigation calculates two nearby instability thresholds and uses
+the interval between them to construct selective erasure of one stored pattern,
+with finite-noise tests and controls on pulse strength and duration.
+
 ## Installation
 
 Python 3.10 or newer. From a clone of the repository:

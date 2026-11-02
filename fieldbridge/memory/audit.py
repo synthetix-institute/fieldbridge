@@ -1,7 +1,7 @@
 """Audit of a derived writing law: the specific ways it could be wrong, each settled by a test of its own.
 
 A law that the constructor derives rests on assumptions that the derivation itself does not test: the class of the
-reduced equation read on one window of the fit, a law measured with the bias toward one state only, a noise ratio
+reduced equation read at the amplitude of one window, a law measured with the bias toward one state only, a noise ratio
 chosen for the test rather than the element's own, a time step, a write that the description of the element cannot
 represent, a write at a value of the control that the published model does not allow. For each assumption the audit
 states the error that would follow if it failed, runs the one test that decides it, and records the result:
@@ -28,7 +28,7 @@ import numpy as np
 from . import analysis as an
 from . import codiscovery as cd
 from . import noise_ratio as nr
-from .construct import along_path, cancel_asymmetry, obstruction, swept_write_check, sweep_normal_form
+from .construct import along_path, cancel_asymmetry, obstruction, swept_write_check
 from .identity import Realization
 
 CONFIRMED, REFUTED, QUALIFIED = "confirmed", "refuted", "qualified"
@@ -64,7 +64,7 @@ def symmetric_write_target(real: Realization, rng) -> Tuple[Optional[Realization
                 continue
         if c.get("success") and c.get("obstruction_along_sweep", {}).get("realizes_generator"):
             path = along_path(real, {real.control: c["control"], second: c["value"]}, c["direction"])
-            nfp = sweep_normal_form(path, np.asarray(c["state"]))
+            nfp = an.normal_form(path, np.asarray(c["state"]), "t", 0.0)
             nfp["obstruction"] = obstruction(nfp)
             nfp["_second"], nfp["_second_value"], nfp["_control_at_write"] = second, float(c["value"]), float(c["control"])
             return path, nfp, f"the sweep through the cusp found along {second}"
@@ -87,12 +87,12 @@ def _item(error: str, assumption: str, test: str, status: str, **evidence) -> Di
 
 # ------------------------------------------------------------------------------------------------ the checks
 def check_window(real, target, nf, rng, base) -> Dict:
-    """The class of the reduced equation is read on one window of the fit; read on half that window, closer to the
-    write point, it must not change. A wider window takes up terms of higher order (at a cusp, the quartic term reads as
-    a quadratic one), so its class is reported but does not decide."""
-    error = "the class of the reduced equation is an artefact of the window on which the drift is fitted"
+    """The class of the reduced equation compares its terms at the amplitude of one window; read on half that window,
+    closer to the write point, it must not change. On a wider window, where the series does not reach and where a fit
+    takes up terms of higher order, its class is reported but does not decide."""
+    error = "the class of the reduced equation is an artefact of the amplitude at which its terms are compared"
     assumption = "the reduced equation keeps its class on a narrower window"
-    test = "refit the reduced equation on half the window and compare the classes (twice the window is reported)"
+    test = "read the reduced equation on half the window and compare the classes (twice the window is reported)"
     half = float(nf.get("half", 0.0) or 0.0)
     if half <= 0 or nf.get("hopf"):
         return _item(error, assumption, test, NOT_APPLICABLE)

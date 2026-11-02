@@ -102,9 +102,10 @@ def evaluate(real: Realization, rng: np.random.Generator, transfers: Optional[Li
         if real.potential is not None:
             card["barrier"] = an.neb_barrier(real, a, b)
         wf = card["construct"].get("write_field", {})
-        thr = float(wf["h_c"]) if "h_c" in wf else an.restoring_threshold(real, a, b)
+        thr = float(wf["h_c"]) if wf.get("h_c", 0.0) > 0.0 else an.restoring_threshold(real, a, b)
         card["threshold"] = thr
-        card["threshold_source"] = ("field at which the write-field continuation loses the stored state" if "h_c" in wf
+        card["threshold_source"] = ("field at which the write-field continuation loses the stored state"
+                                    if wf.get("h_c", 0.0) > 0.0
                                     else "largest restoring force on the straight path")
         kmin = max(min(float(k.real[k.real > 1e-3].min()) for k in spectra), 1e-2)
         T_w, T_rel = float(np.clip(30 / kmin, 5, 150)), float(np.clip(10 / kmin, 2, 50))

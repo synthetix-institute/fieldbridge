@@ -32,7 +32,9 @@ class Carrier:
 
     def diff(self, a: np.ndarray, b: np.ndarray) -> np.ndarray:
         """b - a as a tangent vector (shortest angular difference on a torus)."""
-        d = np.asarray(b, float) - np.asarray(a, float)
+        # an object array holds truncated series (analysis.series_reduction), which a cast to float would lose
+        d = np.asarray(b, object if np.asarray(b).dtype == object else float) \
+            - np.asarray(a, object if np.asarray(a).dtype == object else float)
         if self.kind == "torus":
             d = (d + 0.5 * self.period) % self.period - 0.5 * self.period
         return d

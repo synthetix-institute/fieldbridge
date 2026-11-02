@@ -4,10 +4,16 @@ of the corpus cells, whose constant ranged from 0.95 to 405 across seeds: the ra
 end of the oscillating interval was its middle, and the fit at a slow relaxation oscillation had no gate."""
 from __future__ import annotations
 
+from math import cos, log, pi, sin, sqrt
+from pathlib import Path
+
 import numpy as np
+from scipy.integrate import solve_ivp
 
 from fieldbridge.memory import phase_locking as pl
 from fieldbridge.memory import spec as mspec
+
+JUNCTION = Path(__file__).resolve().parents[1] / "examples/memory/oscillators/josephson.json"
 
 VDP = {
     "schema": "fieldbridge-memory/1", "kind": "equations", "name": "van der Pol below onset (test)", "field": "test",
@@ -50,3 +56,44 @@ def test_the_operating_point_is_the_most_contracting_cycle_of_the_oscillating_ru
     assert abs(p1 - max(osc)) < 1e-9 and cyc["period"] > 0 and "orbit" in cyc   # the refined cycle of the scan
     p2, _, _, _ = pl.operating_point(real, np.random.default_rng(7))
     assert abs(p2 - p1) < 1e-9                         # and the same with other random starts
+
+
+def _junction_rate(cur, eps, wf, q):
+    """The relaxation rate of the junction at the locked orbit nearest q, from the stroboscopic map and its variational
+    equation: no central difference and a tolerance far below the one of the measurement."""
+    def rhs(t, y):
+        return [cur + eps * cos(wf * t) - sin(y[0]), -cos(y[0]) * y[1]]
+
+    period = 2 * pi / wf
+    for _ in range(40):
+        end = solve_ivp(rhs, (0.0, period), [q, 1.0], method="DOP853", rtol=1e-13, atol=1e-14).y[:, -1]
+        q -= (end[0] - q - 2 * pi) / (end[1] - 1.0)
+    return -log(abs(end[1])) / period
+
+
+def test_whole_turns_of_a_rotating_angle_do_not_enter_the_relaxation_rate():
+    """The drift of the junction is periodic in its angle, so a state wound by whole turns is the same state. The search
+    for the cycle ends after a number of turns set by the random start, and a relative tolerance on the unwrapped angle
+    loosened with it: the central differences of the stroboscopic map then moved one canonical rate by up to 1%, and
+    the constant by more than its error from one seed to the next."""
+    real = mspec.load(JUNCTION)
+    cur, name = 1.6, real.control
+    over = {name: cur}
+    w0 = sqrt(cur ** 2 - 1.0)
+    start = {"period": 2 * pi / w0, "coordinate": 0, "level": 0.0, "torus": True}
+    K = pl.K_REL[-1] * w0
+    eps = 2.0 * K * w0   # |Z_1| = 1 / w0
+    for turns in (0, 10, 100):
+        cyc = pl.refine_cycle(real, over, {**start, "state": np.array([2 * pi * turns])})
+        assert abs(cyc["state"][0]) < 1e-6                   # the crossing of the section, with the turns removed
+        pr = pl.phase_response(real, over, {**cyc, "kappa": float("inf")}, name)
+        phi_n = float(np.arctan2(pr["b"][1], pr["a"][1]))
+        rate = pl.locked_rate(real, over, cyc, name, 1, eps, K, phi_n, 0.0)["rate"]
+        q = float(cyc["orbit"](((phi_n + pi / 2) / w0) % cyc["period"])[0])
+        assert abs(rate - _junction_rate(cur, eps, w0, q)) < 3e-4 * K
+
+
+def test_the_locking_constant_of_the_junction_moves_with_the_seed_by_less_than_its_error():
+    real = mspec.load(JUNCTION)
+    rows = [pl.derive(real, np.random.default_rng(seed))["law_constant"] for seed in (2, 3)]
+    assert abs(rows[0]["constant"] - rows[1]["constant"]) <= max(rows[0]["stderr"], rows[1]["stderr"])
