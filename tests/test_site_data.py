@@ -192,9 +192,10 @@ def test_an_edit_that_changes_another_component_is_rejected(nodes):
 # ------------------------------------------------------------------------------------------------ the record
 # recorded constants that differ from the universal one for a reason that belongs to the element, not to the record
 DOCUMENTED_DEVIATIONS = {
-    ("dissipative_cat", "symmetric-write"): "reached by symmetry at noise ratio 0.05 with one sign of the bias, 1.22 to "
-    "1.27 against pi^(1/4) in the record, the hardware survey and a separate run of 6,400 trajectories; the noise ratio "
-    "is small, and the cause is not identified",
+    ("dissipative_cat", "symmetric-write"): "1.22 against pi^(1/4) at the rate of the check: the quadrature that is not "
+    "written relaxes at 0.05 at the write point, slower than sqrt(r) = 0.14, and loses stability itself 0.05 below it, "
+    "where the sweep starts; at sweeps slow enough that sqrt(r) falls below 0.05 the constant returns (1.325 +- 0.014 at "
+    "r = 0.0003, examples/quantum/semiclassical/survey/dissipative_cat_rate.py)",
 }
 
 

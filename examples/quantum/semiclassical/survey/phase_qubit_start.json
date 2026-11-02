@@ -1,5 +1,5 @@
 {
- "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -126,6 +126,184 @@
   }
  ],
  "measured": [
+  {
+   "damping": 0.2,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.3118142000762956,
+   "stderr": 0.01407122523992973,
+   "offset": -0.008956511524123356
+  },
+  {
+   "damping": 0.2,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.343740644918594,
+   "stderr": 0.015927086339893714,
+   "offset": 0.003999302398147275
+  },
+  {
+   "damping": 0.2,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3122367428718955,
+   "stderr": 0.014072305434107665,
+   "offset": -0.005025492039107848
+  },
+  {
+   "damping": 0.2,
+   "seed": 4,
+   "word": "SCRURKL",
+   "constant": 1.3112063596006174,
+   "stderr": 0.01587527186911686,
+   "offset": -0.016160322872678545
+  },
+  {
+   "damping": 0.2,
+   "seed": 5,
+   "word": "SCRURKL",
+   "constant": 1.3460168731092743,
+   "stderr": 0.016302010246405065,
+   "offset": -0.03225664693031549
+  },
+  {
+   "damping": 0.2,
+   "seed": 6,
+   "word": "SCRURKL",
+   "constant": 1.3267076027364877,
+   "stderr": 0.014682238588626556,
+   "offset": 0.002421905230341581
+  },
+  {
+   "damping": 0.1,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.320241934576017,
+   "stderr": 0.016242157054096238,
+   "offset": 0.0221617953025377
+  },
+  {
+   "damping": 0.1,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3410796591345193,
+   "stderr": 0.014758602070311247,
+   "offset": -0.0053247976947901066
+  },
+  {
+   "damping": 0.1,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3144516664793466,
+   "stderr": 0.017045460403785774,
+   "offset": -0.011593977927174537
+  },
+  {
+   "damping": 0.5,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.3499681166620257,
+   "stderr": 0.014178947906816215,
+   "offset": 0.0008917175583365022
+  },
+  {
+   "damping": 0.5,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3267236410077652,
+   "stderr": 0.014112860533640153,
+   "offset": -0.008146487510263256
+  },
+  {
+   "damping": 0.5,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3192456168369446,
+   "stderr": 0.016477304810070974,
+   "offset": -0.006359887023880684
+  },
+  {
+   "damping": 1.0,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.3384557325951247,
+   "stderr": 0.014146250343410284,
+   "offset": 0.012850228734300084
+  },
+  {
+   "damping": 1.0,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3457898741581955,
+   "stderr": 0.014296105204619648,
+   "offset": -0.014013028501090319
+  },
+  {
+   "damping": 1.0,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3102646943940965,
+   "stderr": 0.0149862095193785,
+   "offset": 0.00043654772561751987
+  },
+  {
+   "damping": 2.0,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.337133086370626,
+   "stderr": 0.015681315837230432,
+   "offset": 0.013726747849736376
+  },
+  {
+   "damping": 2.0,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3384347276417854,
+   "stderr": 0.014389853795753466,
+   "offset": -0.009305219674956011
+  },
+  {
+   "damping": 2.0,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3098365722440084,
+   "stderr": 0.01511122674175347,
+   "offset": 0.005673852371088639
+  }
+ ],
+ "mean_by_damping": {
+  "0.1": {
+   "runs": 3,
+   "constant": 1.3266476583618734,
+   "stderr": 0.009196616550030201,
+   "chi_squared": 1.6237103905054728
+  },
+  "0.2": {
+   "runs": 6,
+   "constant": 1.324057419754904,
+   "stderr": 0.006153176609140589,
+   "chi_squared": 5.492322042716333
+  },
+  "0.5": {
+   "runs": 3,
+   "constant": 1.3331628942287976,
+   "stderr": 0.008550427139859797,
+   "chi_squared": 2.3263407954270123
+  },
+  "1.0": {
+   "runs": 3,
+   "constant": 1.3322058800106986,
+   "stderr": 0.008349992185149396,
+   "chi_squared": 3.2416124235138586
+  },
+  "2.0": {
+   "runs": 3,
+   "constant": 1.3286019751272211,
+   "stderr": 0.008679187074328607,
+   "chi_squared": 2.3049970953502674
+  }
+ },
+ "measured_old_start": [
   {
    "damping": 0.2,
    "seed": 1,
@@ -271,7 +449,7 @@
    "offset": 0.005673852371088639
   }
  ],
- "mean_by_damping": {
+ "mean_by_damping_old_start": {
   "0.1": {
    "runs": 3,
    "constant": 1.1538826398153474,

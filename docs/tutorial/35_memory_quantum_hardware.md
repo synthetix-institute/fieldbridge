@@ -83,18 +83,26 @@ These results are expected. A universal law returns its constant on every carrie
 normal form; what the survey adds is the device's own scales, which set how weak a signal the element can write.
 
 The law record (`docs/site/law_constants.json`), with 25,600 trajectories, resolves the symmetric write to about 0.015.
-Thirteen of the 15 models stay within 2.2 standard errors of $\pi^{1/4}$ there, and two do not. The dissipative cat
-qubit gives $1.217 \pm 0.017$, for a reason that is not identified. The rf-SQUID phase qubit gives $1.297 \pm 0.014$,
-and six more runs of the same size bring its mean to $1.307 \pm 0.006$, which is 4.2 standard errors low. This
-deviation comes from the way the constant is measured and not from the write. The check starts the element from rest,
-with the bias and the noise on, a time $4/\sqrt{r} = 28$ before the crossing, and a phase particle with the damping
-$\gamma = 0.2$ of this element rings for a time $2/\gamma = 10$, which is not short against that time. The linear stage
-integrated exactly from this start gives 1.311, and from a start twice as early 1.324; the noise on the phase itself
-accounts for the remaining 0.5 %. At the lower damping $\gamma = 0.1$ the check gives $1.154 \pm 0.008$ against 1.169
-from the linear stage, the value does not change when the noise ratio falls from 0.05 to 0.0008, and in the full
-dynamics a start twice as early restores $1.33$. At $\gamma \geq 0.5$ the start has no measurable effect
-([phase_qubit_start.py](../../examples/quantum/semiclassical/survey/phase_qubit_start.py)). The phase qubit therefore
-carries the law, and its recorded constant is low by a known amount.
+Fourteen of the 15 models stay within 2.4 standard errors of $\pi^{1/4}$ there. The largest of these deviations is that
+of fluxonium, $1.298 \pm 0.014$; four more runs bring its mean to $1.314 \pm 0.007$, against 1.325 from the linear
+stage of a phase particle, whose noise acts on the phase as well as on its velocity. The fifteenth model is the
+dissipative cat qubit, at $1.217 \pm 0.017$. The quadrature that its write does not choose relaxes at 0.05 at the
+write point, more slowly than $\sqrt{r} = 0.14$, and it loses stability itself 0.05 below the write point, beyond
+which the sweep of the check starts. At slower sweeps the constant returns to the law: 1.24, 1.26 and 1.28 at
+$r = 0.02$, 0.005 and 0.00125, and $1.325 \pm 0.014$ and $1.318 \pm 0.014$ at 0.0003 and 0.00015, once $\sqrt{r}$ is
+below 0.05 ([dissipative_cat_rate.py](../../examples/quantum/semiclassical/survey/dissipative_cat_rate.py)).
+
+The check starts every element from rest, with the bias and the noise on, and a weakly damped element then rings. A
+phase particle with the damping $\gamma = 0.2$ of the rf-SQUID phase qubit rings for a time $2/\gamma = 10$, which is
+not short against the time $4/\sqrt{r} = 28$ before the crossing at which the check used to start. The constant then
+depends on the phase of that ringing. With that start the phase qubit gave $1.307 \pm 0.006$ over seven runs, 4.2
+standard errors low, and the linear stage integrated exactly from the same start gives 1.311. At $\gamma = 0.1$ the
+check gave $1.154 \pm 0.008$ against 1.169 from the linear stage, a value that does not change when the noise ratio
+falls from 0.05 to 0.0008. The check now waits until a ringing at the start of the sweep has decayed by six e-folds:
+it starts 60 time units before the crossing for the phase qubit and 40 for fluxonium, and every other element starts
+as before. The phase qubit then gives $1.333 \pm 0.014$ in the law record and $1.324 \pm 0.006$ over six further runs,
+and at $\gamma = 0.1$ the check gives $1.327 \pm 0.009$. At $\gamma \geq 0.5$ the start makes no difference
+([phase_qubit_start.py](../../examples/quantum/semiclassical/survey/phase_qubit_start.py)).
 
 ## 5. Laws where a derivation stops
 
@@ -131,8 +139,11 @@ change during a hold, so only the full dynamics give the write.
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
 cusp at $\ell = 1$ and a flux of an odd multiple of $\pi$. The reflection of the potential about that flux makes the
-sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.02 or less, with a response of 1.31
-to 1.34. The reduced law of one coordinate gives only 0.86 to 0.89 here and is not certified.
+sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.32
+to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.23 at one of three equivalent
+cusps and 1.21 at the other two, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
+The two eigenvalues of the phase particle are complex for all but the last 2.5 time units before the crossing, and no
+single coordinate describes that motion.
 
 **The curvature of the sweep that cancels the offset.** `memory complete --curvature` curves the sweep through the
 cusp, p = cusp + t d + c2 t² n with n normal to the sweep direction d in the plane of the two parameters, reads the

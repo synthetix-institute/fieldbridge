@@ -5,7 +5,7 @@
   "source": "Akerman, N., Kotler, S., Glickman, Y., Dallal, Y., Keselman, A., Ozeri, R., 'A single-ion nonlinear mechanical oscillator', Phys. Rev. A 82, 061402 (2010), arXiv:1003.1577 (full text)",
   "kind": "classical image of census entry 47: Driven single-ion Duffing oscillator"
  },
- "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 20.3,
-  "threshold-write": 9.8,
-  "phase-locking": 5.9,
-  "completion": 436.2,
-  "changes": 118.3
+  "symmetric-write": 19.6,
+  "threshold-write": 6.7,
+  "phase-locking": 3.7,
+  "completion": 373.4,
+  "changes": 95.1
  },
  "completion": {
   "write_points": [
@@ -931,13 +931,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 6.2,
+    "seconds": 4.5,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 5.9,
+    "seconds": 5.4,
     "class": "reached"
    }
   },
@@ -949,13 +949,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.2,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.5,
+      "seconds": 1.3,
       "class": "single stable state"
      }
     },
@@ -970,28 +970,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.0,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.0,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "control",
-    "what": "control = k over [0.75, 12]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 0.7,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
@@ -1006,13 +985,34 @@
     "step": false
    },
    {
+    "kind": "control",
+    "what": "control = k over [0.75, 12]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
     "kind": "range",
     "what": "range of Delta wider: [-142, 152]",
     "judged": {
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 3.2,
+      "seconds": 2.5,
       "class": "reached"
      },
      "threshold-write": {
@@ -1039,7 +1039,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.4,
+      "seconds": 1.2,
       "class": "single stable state"
      }
     },
@@ -1060,7 +1060,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.9,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -1075,13 +1075,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 5.2,
+      "seconds": 2.7,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.9,
+      "seconds": 4.3,
       "class": "reached"
      }
     },
@@ -1096,13 +1096,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.3,
+      "seconds": 4.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.7,
+      "seconds": 3.8,
       "class": "single stable state"
      }
     },
@@ -1123,7 +1123,7 @@
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.2,
+      "seconds": 3.1,
       "class": "reached"
      }
     },

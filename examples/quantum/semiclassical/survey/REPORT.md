@@ -1,6 +1,6 @@
 # Mechanisms of quantum-computing hardware
 
-Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py` (code stamp 942550ff, versions {"python": "3.11.3", "numpy": "1.26.0", "scipy": "1.14.1"}).
+Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py` (code stamp e52fc059, versions {"python": "3.11.3", "numpy": "1.26.0", "scipy": "1.14.1"}).
 
 The census lists 60 hardware elements described in reviews of superconducting, semiconductor, trapped-ion, neutral-atom, photonic and optomechanical platforms: 21 have a classical write, 15 have one in part and 24 have none (gates, codes and linear amplifiers store or process information without a write). 31 models represent the elements with a write; the status of every element is in `census.json`.
 
@@ -14,7 +14,7 @@ The census lists 60 hardware elements described in reviews of superconducting, s
 | cim_triangle | degenerate critical mode: 2 directions | known law, 1.019 ± 0.000 | no oscillation in the control range | critical space: 6 states, largest deviation 0.024, certified | remove '- e*(x2 + x3)' from dx1/dt (symmetric write); remove 'a*x2' from dx2/dt (symmetric write) |
 | dissipative_cat | known law, 1.331 ± 0.126 | known law, 1.019 ± 0.000 | no oscillation in the control range | none: not certified |  |
 | flux_qubit_tilt | known law, 1.346 ± 0.139 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (beta): response 1.2, offset -0.01; full dynamics 1.31, -0.01; certified; second parameter (beta): response 1.19, offset 0.0; full dynamics 1.29, -0.01; certified |  |
-| fluxonium | known law, 1.185 ± 0.114 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (ell): response 1.27, offset -0.0; full dynamics 1.33, -0.02; certified; second parameter (ell): response 1.26, offset -0.0; full dynamics 1.33, 0.03; certified |  |
+| fluxonium | known law, 1.277 ± 0.133 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (ell): response 1.3, offset 0.01; full dynamics 1.28, 0.02; certified; second parameter (ell): response 1.29, offset 0.02; full dynamics 1.33, -0.02; certified |  |
 | ion_duffing | known law, 1.474 ± 0.163 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (k): response 1.34, offset -0.95; full dynamics 1.32, -0.78; not certified; second parameter (k): response 1.29, offset -0.92; full dynamics 1.35, -0.79; not certified |  |
 | ion_phonon_laser | law differs, 0.124 ± 0.275 | known law, 1.019 ± 0.000 | known law, 1.000 ± 0.000 | second parameter (Delta): response 0.64, offset 0.43; full dynamics 0.78, 0.82; not certified |  |
 | jba_resonator | known law, 1.156 ± 0.133 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (chi): response 1.31, offset -1.02; full dynamics 1.35, -0.77; not certified; second parameter (chi): response 1.34, offset -1.03; full dynamics 1.36, -0.75; not certified |  |
@@ -27,7 +27,7 @@ The census lists 60 hardware elements described in reviews of superconducting, s
 | optomech_bistable | reached, no law | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (Dl): not certified |  |
 | optomech_selfosc | Hopf: an oscillation, not a write | no stable state: the realization oscillates | reached, no law | phase: phase |  |
 | parametric_amplifier | no write point along the control | a single stable state: nothing to switch to | no oscillation in the control range | no write point along the control | remove '- 0.5*kappa*x' from dx/dt (threshold write); remove '- 0.5*kappa*y' from dy/dt (threshold write) |
-| phase_qubit_rfsquid | known law, 1.147 ± 0.121 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (ell): response 0.89, offset 0.01; full dynamics 1.31, -0.02; not certified; second parameter (ell): response 0.88, offset 0.01; full dynamics 1.34, 0.01; not certified; second parameter (ell): response 0.86, offset -0.01; full dynamics 1.31, 0.0; not certified |  |
+| phase_qubit_rfsquid | known law, 1.363 ± 0.167 | known law, 1.019 ± 0.000 | no oscillation in the control range | second parameter (ell): response 0.23, offset 0.01; full dynamics 1.34, -0.0; not certified; second parameter (ell): response 1.21, offset 0.01; full dynamics 1.32, 0.04; not certified; second parameter (ell): response 1.21, offset -0.0; full dynamics 1.34, 0.02; not certified |  |
 | po_amplitude_oscillator | subcritical: jump to a distant branch | a single stable state: nothing to switch to | no oscillation in the control range | distant branch: response 1.35, offset -0.02; full dynamics 1.32, -0.03; certified | remove '+ alpha*(x**2 + y**2)*x' from dy/dt (symmetric write) |
 | pplo_oscillator | vanishing cubic: leading term of order 5 | a single stable state: nothing to switch to | no oscillation in the control range | leading order: response 0.81, offset 0.0; full dynamics 1.33, -0.02; not certified | remove '-0.5*kappa*qx' from dqx/dt (threshold write); remove '-0.5*kappa*qy' from dqy/dt (threshold write) |
 | qfp_latch | known law, 1.623 ± 0.121 | a single stable state: nothing to switch to | no oscillation in the control range | none: response 1.35, offset -0.02; full dynamics 1.33, -0.0; certified |  |
@@ -66,8 +66,8 @@ Response constant and offset at a bias of one noise floor, from the law of the c
 | --- | --- | --- | --- |
 | flux_qubit_tilt | beta | 1.2, -0.01 | 1.31, -0.01 |
 | flux_qubit_tilt | beta | 1.19, 0.0 | 1.29, -0.01 |
-| fluxonium | ell | 1.27, -0.0 | 1.33, -0.02 |
-| fluxonium | ell | 1.26, -0.0 | 1.33, 0.03 |
+| fluxonium | ell | 1.3, 0.01 | 1.28, 0.02 |
+| fluxonium | ell | 1.29, 0.02 | 1.33, -0.02 |
 | ion_duffing | k | 1.34, -0.95 | 1.32, -0.78 |
 | ion_duffing | k | 1.29, -0.92 | 1.35, -0.79 |
 | ion_phonon_laser | Delta | 0.64, 0.43 | 0.78, 0.82 |
@@ -77,9 +77,9 @@ Response constant and offset at a bias of one noise floor, from the law of the c
 | magnon_kerr | Dm | -0.09, 0.06 | 1.31, -1.03 |
 | nuclear_bath | p | 1.34, -2.28 | 1.32, -2.3 |
 | nuclear_bath | p | 1.27, -2.22 | 1.28, -2.21 |
-| phase_qubit_rfsquid | ell | 0.89, 0.01 | 1.31, -0.02 |
-| phase_qubit_rfsquid | ell | 0.88, 0.01 | 1.34, 0.01 |
-| phase_qubit_rfsquid | ell | 0.86, -0.01 | 1.31, 0.0 |
+| phase_qubit_rfsquid | ell | 0.23, 0.01 | 1.34, -0.0 |
+| phase_qubit_rfsquid | ell | 1.21, 0.01 | 1.32, 0.04 |
+| phase_qubit_rfsquid | ell | 1.21, -0.0 | 1.34, 0.02 |
 | rydberg_bistability | Om | 1.31, 0.21 | 1.36, 0.11 |
 | transmon_driven | Delta | 1.34, 0.98 | 1.37, 0.81 |
 | transmon_driven | Delta | 1.33, 0.96 | 1.36, 0.81 |

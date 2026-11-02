@@ -5,7 +5,7 @@
   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
   "kind": "classical image of census entry 0: Transmon (fixed-frequency and flux-tunable SQUID transmon)"
  },
- "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 18.6,
-  "threshold-write": 5.0,
-  "phase-locking": 3.4,
-  "completion": 741.3,
-  "changes": 216.9
+  "symmetric-write": 16.7,
+  "threshold-write": 5.3,
+  "phase-locking": 3.3,
+  "completion": 414.5,
+  "changes": 139.7
  },
  "completion": {
   "write_points": [
@@ -931,13 +931,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 8.3,
+    "seconds": 4.0,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 4.9,
+    "seconds": 2.9,
     "class": "reached"
    }
   },
@@ -949,13 +949,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 10.5,
+      "seconds": 5.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.4,
+      "seconds": 4.7,
       "class": "reached"
      }
     },
@@ -970,112 +970,7 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 7.7,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 5.1,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "control",
-    "what": "control = kappa over [0.25, 4]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 16.7,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 9.0,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of F wider: [-60, 66]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 3.2,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 2.7,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of F above: [6, 66]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 1.9,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "reached by a write field",
-      "obstruction": "",
-      "seconds": 8.0,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of F below: [-60, 0]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 9.6,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 7.3,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '- 0.5*kappa*x' from dx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 9.8,
+      "seconds": 6.2,
       "class": "reached"
      },
      "threshold-write": {
@@ -1090,19 +985,124 @@
     "step": false
    },
    {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 8.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F wider: [-60, 66]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 2.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 1.4,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F above: [6, 66]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.8,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 4.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of F below: [-60, 0]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 5.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.1,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 5.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 3.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
     "kind": "remove",
     "what": "remove '- F' from dy/dt",
     "judged": {
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 7.8,
+      "seconds": 5.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 10.2,
+      "seconds": 8.1,
       "class": "single stable state"
      }
     },
@@ -1117,13 +1117,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 4.7,
+      "seconds": 4.2,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 3.1,
       "class": "reached"
      }
     },

@@ -5,7 +5,7 @@
   "source": "Wang, Zhang, Shen, Zhang, Tang, You, Phys. Rev. Lett. 120, 057202 (2018)",
   "kind": "classical image of a corpus-census class"
  },
- "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -113,11 +113,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 42.7,
-  "threshold-write": 32.6,
-  "phase-locking": 9.1,
-  "completion": 731.5,
-  "changes": 570.3
+  "symmetric-write": 40.1,
+  "threshold-write": 33.7,
+  "phase-locking": 8.2,
+  "completion": 636.5,
+  "changes": 416.8
  },
  "completion": {
   "write_points": [
@@ -919,13 +919,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 9.0,
+    "seconds": 9.7,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 11.7,
+    "seconds": 6.3,
     "class": "reached"
    }
   },
@@ -937,13 +937,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.6,
+      "seconds": 1.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 9.4,
+      "seconds": 7.1,
       "class": "reached"
      }
     },
@@ -958,13 +958,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 11.7,
+      "seconds": 10.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.3,
+      "seconds": 5.7,
       "class": "reached"
      }
     },
@@ -979,13 +979,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 7.0,
+      "seconds": 6.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.3,
+      "seconds": 4.9,
       "class": "reached"
      }
     },
@@ -1000,13 +1000,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.1,
+      "seconds": 6.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.9,
+      "seconds": 5.9,
       "class": "reached"
      }
     },
@@ -1021,13 +1021,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 8.8,
+      "seconds": 10.2,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 9.7,
+      "seconds": 4.6,
       "class": "reached"
      }
     },
@@ -1042,13 +1042,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 4 directions become critical together at the write point; the critical eigenspace is 4-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 3.6,
+      "seconds": 2.5,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 27.2,
+      "seconds": 18.6,
       "class": "reached"
      }
     },
@@ -1063,13 +1063,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 17.8,
+      "seconds": 8.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 18.0,
+      "seconds": 8.4,
       "class": "reached"
      }
     },
@@ -1084,13 +1084,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.9,
+      "seconds": 1.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 7.9,
+      "seconds": 5.6,
       "class": "reached"
      }
     },
@@ -1105,7 +1105,112 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 11.5,
+      "seconds": 7.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.2,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kc*ax' from dax/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 7.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '+ g*by' from dax/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 8.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kc*ay' from day/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 9.6,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 5.6,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- g*bx' from day/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 9.4,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*km*bx' from dbx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 11.7,
       "class": "reached"
      },
      "threshold-write": {
@@ -1121,123 +1226,18 @@
    },
    {
     "kind": "remove",
-    "what": "remove '-0.5*kc*ax' from dax/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 9.1,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 7.6,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '+ g*by' from dax/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 11.1,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 9.9,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '-0.5*kc*ay' from day/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 12.5,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 7.5,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '- g*bx' from day/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 11.0,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 6.4,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '-0.5*km*bx' from dbx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 26.2,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 8.4,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
     "what": "remove '+ g*ay' from dbx/dt",
     "judged": {
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 15.8,
+      "seconds": 6.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 12.3,
+      "seconds": 4.8,
       "class": "reached"
      }
     },
@@ -1252,13 +1252,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 13.3,
+      "seconds": 8.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 22.1,
+      "seconds": 9.7,
       "class": "single stable state"
      }
     },
@@ -1273,13 +1273,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 18.0,
+      "seconds": 8.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.7,
+      "seconds": 7.2,
       "class": "reached"
      }
     },
@@ -1294,13 +1294,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 11.0,
+      "seconds": 8.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 11.3,
+      "seconds": 6.2,
       "class": "reached"
      }
     },
