@@ -134,16 +134,24 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
-The outcome map of the completion starts one e-fold after the crossing (the mapping time). The Gaussian of the linear
-stage is carried back to that time by the linear propagator of the critical space, so that each sample has there the
-size and the direction the linear stage gives it. In one direction only the sign of a sample counts. In two or more,
-its direction keeps turning toward the fastest mode for as long as the dynamics is linear, and two regimes follow,
-told apart by the pulled-back spread against the written amplitude at the mapping time (`map_regime`, `spread_at_map`,
+The outcome map of the completion starts one e-fold after the crossing (the mapping time). In two or more directions
+the Gaussian of the linear stage is carried back to that time by the linear propagator of the critical space, so that
+each sample has there the size and the direction the linear stage gives it, and its direction keeps turning toward the
+fastest mode for as long as the dynamics is linear. In any number of directions two regimes follow, told apart by the
+pulled-back spread against the written amplitude at the mapping time (`map_regime`, `spread_at_map`,
 `written_amplitude_at_map`). Where the spread is still a small fraction of that amplitude, the full nonlinear drift
 carries each sample forward and stops the turning at its own saturation. Where the deviation has already reached the
 written amplitude, as it has for every pitchfork under the noise rule of the rung, the choice is made there, and each
 sample goes to the written state nearest in direction: the sector law of the critical space at the mapping time
-(`sector_law`, `sector_certified`). On populations of two, three and four pitchforks coupled at a third of the passage
+(`sector_law`, `sector_certified`), in one direction the sign of the sample. A flow from samples of that size does not
+keep the sign: on the phase-locked oscillator, with a spread four times the amplitude, it crosses along the Kerr
+rotation to the other state, 60 % of the samples above two written amplitudes and none below, and reads a response of
+0.79 at a bias of one noise floor where the full dynamics gives 1.29. In one direction the flow, where it is the map,
+therefore starts from samples rescaled to a small size, which keeps the sign (at a quarter of that Kerr rate, where no
+written amplitude is defined at the mapping time, the unscaled flow read 1.18 at two floors against 1.34). Written
+states in the same direction from the unwritten one have no sector law, and the flow is the map there (past a fold
+with a slow second direction, on the rf-SQUID phase qubit with a damping of 0.1, the sector law gave a deviation of 1.0
+from the full dynamics and the flow none). On populations of two, three and four pitchforks coupled at a third of the passage
 scale this law holds to a few percent, where the sector law read at the end of the linear stage misses by a tenth
 (the slow modes decay for another three e-folds there) and a flow from samples rescaled to a small size misses by a
 quarter (it lengthens the nonlinear stage). On the frustrated triangles with one asymmetric part the law holds where the
@@ -151,6 +159,13 @@ splitting of the critical rates is smallest (the coherent Ising machine, splitti
 and deviates by six to twenty-five errors on the rf-SQUID parts (splitting 0.017 to 0.09), where the pulled-back spread
 is between a quarter and two thirds of the written amplitude at the mapping time and the direction still turns during
 the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage.
+
+The certificate compares probabilities with a tolerance of 0.02, so that it cannot test a law whose response is close to
+zero: at a constant of 0.04 every probability lies within 0.02 of one half. The rung has no such law. The linear stage
+with this map gives the constant of the pitchfork at a bias of one noise floor, a probability of 0.84, and where the full
+dynamics lose that response the difference is far above the tolerance and the hold names the class. On the Kerr-cat qubit
+the law is 1.30 and the full dynamics 0.05, with 53 % of the trajectories changing state during a hold: an equilibrium
+write. No separate test near zero response is therefore applied. A future law that can predict such a response needs one.
 
 ## The record of a specification
 

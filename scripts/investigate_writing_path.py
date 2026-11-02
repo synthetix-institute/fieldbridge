@@ -23,7 +23,7 @@ from fieldbridge.memory import paired_occupations
 
 
 def save(path,value):
-    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n")
+    Path(path).write_text(json.dumps(value,indent=2,allow_nan=False)+"\n",encoding="utf-8")
 
 
 def worker(args):
@@ -60,7 +60,7 @@ def main():
     parser.add_argument("--workers",type=int,default=2)
     args=parser.parse_args()
     args.out_dir.mkdir(parents=True,exist_ok=False)
-    task=json.loads(args.task.read_text())
+    task=json.loads(args.task.read_text(encoding="utf-8"))
     # A single physical question, not a search over equations or final states.
     centres=[-.08,.04,.16,.28,.40]
     schedules=[{"id":"no_pulse","lower":-.12,"upper":-.04,"amplitude":0.}]
