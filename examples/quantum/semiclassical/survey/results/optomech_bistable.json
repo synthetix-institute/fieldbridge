@@ -5,7 +5,7 @@
   "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
   "kind": "classical image of census entry 58: Cavity optomechanical element: static radiation-pressure bistability and self-sustained oscillation"
  },
- "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
+ "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -42,11 +42,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 66.6,
-  "threshold-write": 10.2,
-  "phase-locking": 809.1,
-  "completion": 2602.1,
-  "changes": 442.1
+  "symmetric-write": 106.1,
+  "threshold-write": 17.0,
+  "phase-locking": 1192.3,
+  "completion": 2972.5,
+  "changes": 442.3
  },
  "completion": {
   "write_points": [
@@ -95,16 +95,16 @@
        "bias_floor": 1.1804971493876597,
        "stable_states": [
         [
-         21.968532026075575,
-         -47.61632689398484,
+         21.96853202607558,
+         -47.61632689398485,
          0.2749930986255499,
-         -1.1938542684612995e-22
+         -1.1671001455240375e-23
         ],
         [
-         118.22856598053764,
-         28.659632113289522,
-         1.4799368326683437,
-         -1.171363780944576e-25
+         118.22856598053762,
+         28.65963211328956,
+         1.479936832668344,
+         -1.485267312350121e-25
         ]
        ],
        "stable_critical_coordinates": [
@@ -115,8 +115,8 @@
         ],
         [
          64.15709118780006,
-         15.91812134803394,
-         1.5973659971434662
+         15.918121348033928,
+         1.5973659971434666
         ]
        ],
        "map_regime": "linear at the mapping time",
@@ -141,7 +141,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 458.41891929817984,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -106.96761496704816,
           -39.72552050589286,
@@ -196,7 +196,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 426.9349680022555,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -40.426892934262305,
           -14.821138565242595,
@@ -251,7 +251,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 420.0133068462004,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -25.341854432689622,
           -9.166428392174806,
@@ -306,7 +306,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 441.7210917513677,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -70.58249775175254,
           -26.086360628557962,
@@ -361,7 +361,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 479.34127204631466,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -149.6420110035288,
           -55.66741750821129,
@@ -416,7 +416,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 510.82089483834693,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -216.17498523248278,
           -80.56888738523179,
@@ -471,7 +471,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 517.7220062353185,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -231.2127822518293,
           -86.20588504960946,
@@ -526,7 +526,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 496.01762033115244,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -185.9798867403129,
           -69.28886487824387,
@@ -581,7 +581,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 562.1116373272143,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           339.6244544246933,
           122.71904311715836,
@@ -636,7 +636,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 683.4492462295912,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -596.2343925622782,
           -218.11198388341273,
@@ -691,7 +691,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 447.9612896085926,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -85.63539564530375,
           -31.756428063350636,
@@ -746,7 +746,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 431.42912632008375,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           47.44604842026905,
           18.052335817950368,
@@ -801,7 +801,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 445.2778340440606,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           77.61612542341526,
           29.36175616408624,
@@ -856,7 +856,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 414.5839982457982,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -12.865161214711335,
           -4.478108308680429,
@@ -911,7 +911,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 489.8054221020763,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -170.9841877182641,
           -63.640222067987025,
@@ -966,7 +966,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 552.7643701843592,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -304.05013617617055,
           -113.44316182202726,
@@ -1021,7 +1021,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 566.5667281633093,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -334.12573021486793,
           -124.71715715078457,
@@ -1076,7 +1076,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 523.1582236960589,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -243.6599391918295,
           -90.88311680805116,
@@ -1131,7 +1131,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 776.6789290436197,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           807.5487431381755,
           293.13269918274966,
@@ -1186,7 +1186,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 898.0211698498204,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -1064.168950835758,
           -388.52935481838836,
@@ -1241,7 +1241,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 427.05447067426087,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -42.970957001812415,
           -15.818243178265156,
@@ -1296,7 +1296,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 515.3140685649216,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           223.19193112933283,
           83.79928458433662,
@@ -1351,7 +1351,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 543.0096362782357,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           283.5320851356265,
           106.41812527660885,
@@ -1406,7 +1406,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 456.18474463827715,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           102.56951185937065,
           38.73839633107454,
@@ -1461,7 +1461,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 510.73425602586724,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -213.66854114773275,
           -79.58583118753802,
@@ -1516,7 +1516,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 636.6513234283609,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -479.8004380635473,
           -179.19171069561935,
@@ -1571,7 +1571,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 664.2562703870258,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -539.9516261409378,
           -201.73970135313175,
@@ -1626,7 +1626,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 577.4398667725739,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -359.0200440948635,
           -134.07162066766642,
@@ -1681,7 +1681,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 1205.8135667721592,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           1743.3973205651364,
           633.9600113139331,
@@ -1736,7 +1736,7 @@
          "growth": 1.7849850621265657,
          "linear_size_before_crossing": true,
          "spread_at_map": 1327.1650369124363,
-         "written_amplitude_at_map": 49.20086861836917,
+         "written_amplitude_at_map": 49.200868618369164,
          "mean_critical": [
           -2000.038067382709,
           -729.364096688336,
@@ -1946,13 +1946,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 6.1,
+    "seconds": 5.4,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 4.9,
+    "seconds": 5.5,
     "class": "reached"
    }
   },
@@ -1964,13 +1964,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.8,
+      "seconds": 6.1,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 19.2,
+      "seconds": 18.1,
       "class": "single stable state"
      }
     },
@@ -1985,13 +1985,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.3,
+      "seconds": 4.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 17.9,
+      "seconds": 15.2,
       "class": "single stable state"
      }
     },
@@ -2012,7 +2012,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 17.4,
+      "seconds": 15.5,
       "class": "single stable state"
      }
     },
@@ -2027,13 +2027,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.3,
+      "seconds": 6.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 15.6,
+      "seconds": 17.2,
       "class": "single stable state"
      }
     },
@@ -2048,13 +2048,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.2,
+      "seconds": 5.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 19.4,
+      "seconds": 16.3,
       "class": "single stable state"
      }
     },
@@ -2069,13 +2069,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 3.2,
+      "seconds": 3.5,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 12.0,
+      "seconds": 13.9,
       "class": "single stable state"
      }
     },
@@ -2090,13 +2090,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 4.3,
+      "seconds": 3.8,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 12.5,
+      "seconds": 15.6,
       "class": "single stable state"
      }
     },
@@ -2111,13 +2111,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 6.5,
+      "seconds": 5.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.5,
+      "seconds": 4.6,
       "class": "reached"
      }
     },
@@ -2132,13 +2132,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.7,
+      "seconds": 9.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.7,
+      "seconds": 5.9,
       "class": "reached"
      }
     },
@@ -2153,13 +2153,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.6,
+      "seconds": 5.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 17.6,
+      "seconds": 16.9,
       "class": "single stable state"
      }
     },
@@ -2180,7 +2180,7 @@
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.3,
+      "seconds": 5.0,
       "class": "reached"
      }
     },
@@ -2216,13 +2216,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 6.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.6,
+      "seconds": 5.7,
       "class": "reached"
      }
     },
@@ -2243,7 +2243,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 11.6,
+      "seconds": 11.5,
       "class": "oscillation"
      }
     },

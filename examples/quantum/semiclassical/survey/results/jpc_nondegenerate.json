@@ -5,7 +5,7 @@
   "source": "Bergeal, N., Schackert, F., Metcalfe, M., Vijay, R., Manucharyan, V. E., Frunzio, L., Prober, D. E., Schoelkopf, R. J., Girvin, S. M., Devoret, M. H., 'Phase-preserving amplification near the quantum limit with a Josephson ring modulator', Nature 465, 64 (2010), arXiv:0912.3407 (main text; DOI 10.1038/nature09035, volume and page checked against Crossref); Roy, A., Devoret, M., 'Introduction to quantum-limited parametric amplification of quantum signals with Josephson circuits', C. R. Physique 17, 740 (2016), arXiv:1605.00539 (full text, Secs. 4-5)",
   "kind": "classical image of census entry 26: Josephson parametric converter (JPC) on a Josephson ring modulator: phase-preserving amplifier"
  },
- "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
+ "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 18.1,
-  "threshold-write": 20.0,
-  "phase-locking": 1.5,
-  "completion": 29.1,
-  "changes": 540.4
+  "symmetric-write": 24.7,
+  "threshold-write": 25.6,
+  "phase-locking": 2.4,
+  "completion": 38.8,
+  "changes": 715.6
  },
  "completion": {
   "write_points": [
@@ -75,12 +75,12 @@
        -2.8340757521869043e-18
       ],
       [
-       1.5328125543159323,
-       -1.5630709481278322,
-       1.5328125543159323,
-       1.5630709481278322,
-       0.5,
-       -2.748572593196181e-18
+       -2.1891202183904492,
+       0.021395910448592334,
+       -2.1891202183904492,
+       -0.021395910448592334,
+       0.49999999999999994,
+       -4.877161743217641e-19
       ],
       [
        -1.5630709482375997,
@@ -91,44 +91,44 @@
        -2.3792468411476995e-18
       ],
       [
-       1.5630709288156428,
-       1.5328125740093528,
-       1.5630709288156428,
-       -1.5328125740093528,
+       -0.021395910517135776,
+       -2.1891202183897795,
+       -0.021395910517135776,
+       2.1891202183897795,
+       0.5,
+       2.8030049032125034e-21
+      ],
+      [
+       1.5328125543159323,
+       -1.5630709481278322,
+       1.5328125543159323,
+       1.5630709481278322,
+       0.5,
+       -2.748572593196181e-18
+      ],
+      [
+       2.1891202183904492,
+       -0.021395910448592233,
+       2.1891202183904492,
+       0.021395910448592233,
+       0.49999999999999994,
+       1.2595422399457196e-19
+      ],
+      [
+       1.5630709288156432,
+       1.5328125740093523,
+       1.5630709288156432,
+       -1.5328125740093523,
        0.5,
        2.9854420688529113e-18
       ],
       [
-       -0.7951147710294123,
-       -2.0397297900557065,
-       -0.7951147710294073,
-       2.0397297900557088,
-       0.5000000000000011,
-       -3.1593351668322508e-15
-      ],
-      [
-       2.0000650227994736,
-       0.8901938104277722,
-       2.0000650227994736,
-       -0.8901938104277721,
+       0.021395910517135873,
+       2.1891202183897795,
+       0.02139591051713587,
+       -2.1891202183897795,
        0.5,
-       1.026278808732448e-17
-      ],
-      [
-       -1.969243080496032,
-       -0.9564448784264947,
-       -1.9692430804960317,
-       0.9564448784264947,
-       0.5,
-       -6.8954347651018814e-18
-      ],
-      [
-       2.1060912690390414,
-       -0.5975656298908404,
-       2.1060912690391107,
-       0.5975656298907194,
-       0.5000000000005151,
-       1.5496533796235663e-13
+       -2.639393747928343e-19
       ]
      ],
      "completion_needed": "phase"
@@ -142,13 +142,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-    "seconds": 19.0,
+    "seconds": 22.6,
     "class": "several critical directions"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 18.9,
+    "seconds": 25.5,
     "class": "single stable state"
    }
   },
@@ -160,13 +160,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 0.9,
+      "seconds": 1.6,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.8,
+      "seconds": 2.3,
       "class": "single stable state"
      }
     },
@@ -181,13 +181,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 1.1,
+      "seconds": 1.8,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.0,
+      "seconds": 2.4,
       "class": "single stable state"
      }
     },
@@ -202,13 +202,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0183 s^7, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 7.5,
+      "seconds": 10.4,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 6.1,
+      "seconds": 10.7,
       "class": "single stable state"
      }
     },
@@ -228,13 +228,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 3.3,
+      "seconds": 3.9,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.6,
+      "seconds": 4.7,
       "class": "single stable state"
      }
     },
@@ -253,16 +253,20 @@
       "class": "not derived"
      },
      "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 56.3,
-      "class": "single stable state"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      }
     },
     "reaches": [],
     "changed": {
      "symmetric-write": [
       "several critical directions",
+      "not derived"
+     ],
+     "threshold-write": [
+      "single stable state",
       "not derived"
      ]
     },
@@ -275,13 +279,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 26.2,
+      "seconds": 27.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 15.6,
+      "seconds": 28.9,
       "class": "single stable state"
      }
     },
@@ -299,23 +303,27 @@
     "what": "range of Ein below: [-30, 0]",
     "judged": {
      "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is 0.00245 s^7, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 37.3,
-      "class": "vanishing cubic"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      },
      "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 47.4,
-      "class": "single stable state"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      }
     },
     "reaches": [],
     "changed": {
      "symmetric-write": [
       "several critical directions",
-      "vanishing cubic"
+      "not derived"
+     ],
+     "threshold-write": [
+      "single stable state",
+      "not derived"
      ]
     },
     "step": true
@@ -333,7 +341,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.2,
+      "seconds": 10.7,
       "class": "oscillation"
      }
     },
@@ -357,13 +365,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.8,
+      "seconds": 3.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.2,
+      "seconds": 4.3,
       "class": "single stable state"
      }
     },
@@ -380,13 +388,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
-      "seconds": 3.0,
+      "seconds": 5.9,
       "class": "unclassified"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.7,
+      "seconds": 10.9,
       "class": "oscillation"
      }
     },
@@ -410,13 +418,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.7,
+      "seconds": 4.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.1,
+      "seconds": 4.4,
       "class": "single stable state"
      }
     },
@@ -433,13 +441,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is 2.1e-11 s^4, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 4.5,
+      "seconds": 6.8,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 7.7,
+      "seconds": 12.0,
       "class": "oscillation"
      }
     },
@@ -463,13 +471,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.9,
+      "seconds": 3.2,
       "class": "single stable state"
      }
     },
@@ -486,13 +494,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -1.58e-11 s^4, so the canonical form is not the pitchfork and the swept-write",
-      "seconds": 3.7,
+      "seconds": 5.1,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 7.4,
+      "seconds": 11.0,
       "class": "oscillation"
      }
     },
@@ -516,13 +524,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.8,
+      "seconds": 2.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.2,
+      "seconds": 3.6,
       "class": "single stable state"
      }
     },
@@ -539,13 +547,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 12.3,
+      "seconds": 17.9,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 21.4,
+      "seconds": 30.3,
       "class": "reached"
      }
     },
@@ -567,13 +575,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 1.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.1,
+      "seconds": 1.9,
       "class": "single stable state"
      }
     },
@@ -593,13 +601,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 9.7,
+      "seconds": 14.5,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
-      "seconds": 25.5,
+      "seconds": 34.1,
       "class": "one-sided write"
      }
     },
@@ -619,13 +627,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 14.8,
+      "seconds": 20.7,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 12.6,
+      "seconds": 22.1,
       "class": "single stable state"
      }
     },

@@ -5,7 +5,7 @@
   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
   "kind": "classical image of census entry 0: Transmon (fixed-frequency and flux-tunable SQUID transmon)"
  },
- "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
+ "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 16.7,
-  "threshold-write": 5.3,
-  "phase-locking": 3.3,
-  "completion": 414.5,
-  "changes": 139.7
+  "symmetric-write": 21.8,
+  "threshold-write": 6.1,
+  "phase-locking": 4.1,
+  "completion": 489.2,
+  "changes": 150.1
  },
  "completion": {
   "write_points": [
@@ -164,8 +164,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.523,
-          0.477
+          1.0,
+          0.0
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -207,8 +207,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.545375,
-          0.454625
+          0.984875,
+          0.015125
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -250,8 +250,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.479,
-          0.521
+          1.0,
+          0.0
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -293,8 +293,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.50125,
-          0.49875
+          0.92475,
+          0.07525
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -336,8 +336,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.454,
-          0.546
+          1.0,
+          0.0
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -379,8 +379,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.398125,
-          0.601875
+          0.80775,
+          0.19225
          ],
          "t_star": 53.178575029722175,
          "sector_law": null,
@@ -577,8 +577,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.514875,
-          0.485125
+          0.99975,
+          0.00025
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -620,8 +620,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.558,
-          0.442
+          0.983875,
+          0.016125
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -663,8 +663,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.472,
-          0.528
+          1.0,
+          0.0
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -706,8 +706,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.5015,
-          0.4985
+          0.92825,
+          0.07175
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -749,8 +749,8 @@
           1.0
          ],
          "linear_stage_law": [
-          0.456875,
-          0.543125
+          1.0,
+          0.0
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -792,8 +792,8 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.403875,
-          0.596125
+          0.809625,
+          0.190375
          ],
          "t_star": 53.17857502928324,
          "sector_law": null,
@@ -931,13 +931,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 4.0,
+    "seconds": 4.6,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 2.9,
+    "seconds": 3.5,
     "class": "reached"
    }
   },
@@ -949,13 +949,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.4,
+      "seconds": 5.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.7,
+      "seconds": 4.8,
       "class": "reached"
      }
     },
@@ -970,13 +970,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 6.2,
+      "seconds": 6.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.0,
+      "seconds": 5.4,
       "class": "reached"
      }
     },
@@ -991,13 +991,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.7,
+      "seconds": 9.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.7,
+      "seconds": 5.0,
       "class": "reached"
      }
     },
@@ -1012,13 +1012,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 2.7,
+      "seconds": 2.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.4,
+      "seconds": 1.6,
       "class": "reached"
      }
     },
@@ -1039,7 +1039,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.3,
+      "seconds": 3.7,
       "class": "reached"
      }
     },
@@ -1060,7 +1060,7 @@
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.1,
+      "seconds": 6.0,
       "class": "reached"
      }
     },
@@ -1075,13 +1075,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.7,
+      "seconds": 5.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 3.2,
       "class": "reached"
      }
     },
@@ -1096,13 +1096,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.9,
+      "seconds": 5.7,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 8.1,
+      "seconds": 7.7,
       "class": "single stable state"
      }
     },
@@ -1117,13 +1117,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 4.2,
+      "seconds": 3.7,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.1,
+      "seconds": 3.4,
       "class": "reached"
      }
     },

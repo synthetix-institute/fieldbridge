@@ -5,7 +5,7 @@
   "source": "Berkley, A. J., Johnson, M. W., Bunyk, P., Harris, R., Johansson, J., Lanting, T., Ladizinsky, E., Tolkacheva, E., Amin, M. H. S., Rose, G., 'A scalable readout system for a superconducting adiabatic quantum optimization system', Supercond. Sci. Technol. 23, 105014 (2010), arXiv:0905.0891 (full text of the ar5iv rendering, read through a summarising fetch; equations and values as returned); Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text)",
   "kind": "classical image of census entry 15: Quantum flux parametron (QFP) latch in annealing processors"
  },
- "implementation_sha256": "e52fc059899cbf9e1efe88944a9b63bfe749a63546b9312bdf006fa3f3b74500",
+ "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -70,11 +70,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 4.9,
-  "threshold-write": 1.2,
-  "phase-locking": 1.1,
-  "completion": 57.1,
-  "changes": 44.2
+  "symmetric-write": 6.8,
+  "threshold-write": 1.7,
+  "phase-locking": 1.8,
+  "completion": 58.9,
+  "changes": 70.5
  },
  "completion": {
   "write_points": [
@@ -119,7 +119,7 @@
        -1.86232457277742
       ]
      ],
-     "map_regime": "linear at the mapping time",
+     "map_regime": "saturated at the mapping time",
      "rows": [
       {
        "bias_floors": 0.5,
@@ -131,8 +131,11 @@
         0.3125
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.6875,
+        0.3125
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -156,6 +159,8 @@
         0.6915,
         0.3085
        ],
+       "sector_deviation": 0.0040000000000000036,
+       "sector_deviation_sigma": 0.547729725109014,
        "certificate_diverged": 0.0,
        "deviation_sigma": 0.547729725109014,
        "deviation": 0.0040000000000000036
@@ -170,8 +175,11 @@
         0.696375
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.303625,
+        0.696375
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -195,6 +203,8 @@
         0.30125,
         0.69875
        ],
+       "sector_deviation": 0.002375000000000016,
+       "sector_deviation_sigma": 0.3273928355663929,
        "certificate_diverged": 0.0,
        "deviation_sigma": 0.3273928355663929,
        "deviation": 0.002375000000000016
@@ -209,8 +219,11 @@
         0.159625
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.840375,
+        0.159625
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -234,6 +247,8 @@
         0.84075,
         0.15925
        ],
+       "sector_deviation": 0.0003750000000000142,
+       "sector_deviation_sigma": 0.06481687742173839,
        "certificate_diverged": 0.0,
        "deviation_sigma": 0.06481687742173839,
        "deviation": 0.0003750000000000142
@@ -248,8 +263,11 @@
         0.85
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.15,
+        0.85
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -273,6 +291,8 @@
         0.158,
         0.842
        ],
+       "sector_deviation": 0.008000000000000007,
+       "sector_deviation_sigma": 1.3871882241814049,
        "certificate_diverged": 0.0,
        "deviation_sigma": 1.3871882241814049,
        "deviation": 0.008000000000000007
@@ -287,8 +307,11 @@
         0.02475
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.97525,
+        0.02475
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -312,6 +335,8 @@
         0.9785,
         0.0215
        ],
+       "sector_deviation": 0.003250000000000086,
+       "sector_deviation_sigma": 1.4171431167157587,
        "certificate_diverged": 0.0,
        "deviation_sigma": 1.4171431167157587,
        "deviation": 0.003250000000000086
@@ -326,8 +351,11 @@
         0.9765
        ],
        "t_star": 51.63500000000796,
-       "sector_law": null,
-       "regime": "linear at the mapping time",
+       "sector_law": [
+        0.0235,
+        0.9765
+       ],
+       "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.45500000000122,
        "linear_stage_ended_by": "growth",
@@ -351,6 +379,8 @@
         0.02075,
         0.97925
        ],
+       "sector_deviation": 0.002749999999999999,
+       "sector_deviation_sigma": 1.2201320884651075,
        "certificate_diverged": 0.0,
        "deviation_sigma": 1.2201320884651075,
        "deviation": 0.002749999999999999
@@ -405,6 +435,7 @@
       ]
      },
      "certified": true,
+     "sector_certified": true,
      "write_class": "linear-stage write"
     }
    }
@@ -416,13 +447,13 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 0.6,
+    "seconds": 0.9,
     "class": "reached"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 0.7,
+    "seconds": 0.9,
     "class": "single stable state"
    }
   },
@@ -434,13 +465,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.4,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -455,13 +486,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.3,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -476,13 +507,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.4,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -497,13 +528,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.2,
+      "seconds": 2.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.2,
+      "seconds": 2.4,
       "class": "single stable state"
      }
     },
@@ -518,13 +549,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.7,
+      "seconds": 1.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.8,
+      "seconds": 1.8,
       "class": "single stable state"
      }
     },
@@ -539,13 +570,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.7,
       "class": "single stable state"
      }
     },
@@ -560,13 +591,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 2.3,
+      "seconds": 3.8,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 3.2,
+      "seconds": 5.7,
       "class": "oscillation"
      }
     },
@@ -586,13 +617,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
-      "seconds": 0.5,
+      "seconds": 0.7,
       "class": "unclassified"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "along every write field the occupied state is lost by an exchange of stability or not at all, not by a fold",
-      "seconds": 1.4,
+      "seconds": 3.2,
       "class": "one-sided write"
      }
     },
@@ -612,13 +643,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.2,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.2,
+      "seconds": 0.4,
       "class": "single stable state"
      }
     },

@@ -131,8 +131,8 @@ of the qubit is the bias of this write, so the offset is a systematic error of t
 sweep must cancel. The reduced law overestimates the offset by about a quarter and is not certified at the strict
 tolerance; the full dynamics are the reference. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
 polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
-an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it gives a response of −0.08
-where the full dynamics give 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
+an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it writes the same state whatever
+the bias, where the full dynamics give a response of 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
 the optomechanical element the law departs from the full dynamics by up to 0.30, and 13 % of the written states
 change during a hold, so only the full dynamics give the write.
 
@@ -154,33 +154,31 @@ it by secant steps until the offset is below 0.1 or three standard errors:
 python3 -m fieldbridge memory complete examples/quantum/semiclassical/jba_resonator.json --curvature --out-dir results/jba_curvature
 ```
 
-For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.124, −0.122, −0.104, −0.070 and −0.022
-for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2, with the response staying at 1.27 to 1.40. The curvature has a
+For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.124 to −0.131, −0.120 to −0.122, −0.098
+to −0.104, −0.069 to −0.070 and −0.021 to −0.023 for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
+numbers are its two write points), with the response staying at 1.27 to 1.40. The curvature has a
 part that does not depend on the noise, the curvature of the line on which the two written states are mirror images,
 and a part that grows with the noise ratio, which compensates the drift that the quadratic term of the reduced
 equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.081 to
-0.085 and at 0.067 to 0.069 in the coordinates of their own second parameters, and the magnon element at 0.205, where
-an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature within reach cancels the offset: it is
-still 0.62 at c2 = 0.38, and its zero lies beyond the curvatures that the sweep can reach. The equation of this
+0.085 and at 0.069 to 0.074 in the coordinates of their own second parameters, and the magnon element at 0.205, where
+an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at one write point
+its zero lies beyond the curvatures that the sweep can reach, and at the other the offset is still 0.37 at c2 = 0.44. The equation of this
 element near the cusp differs from the Kerr form. These runs are collected in
 [curvature.json](../../examples/quantum/semiclassical/survey/curvature.json).
 
 **Frustrated triangles write into a critical plane.** Three coherent-Ising-machine nodes, three Kerr parametric
 oscillators or three rf-SQUID annealer qubits on an antiferromagnetic triangle have two directions that lose
 stability together. The law of the plane, the linear-stage write applied in both directions and read as the sector
-in which the state lands, gives the probabilities of the six frustrated configurations to within 0.024 of the full
-dynamics on the coherent Ising machine, where it is certified, and to within 0.039 and 0.044 at the two upper write
-points of the parametric-oscillator triangle, where these small differences still exceed the statistical error.
+in which the state lands, gives the probabilities of the frustrated configurations to within 0.024 of the full
+dynamics on the coherent Ising machine and on the rf-SQUID triangle, whose eight written states include the two
+configurations of equal phases, and to within 0.039 and 0.044 at the two upper write points of the
+parametric-oscillator triangle. Only on the coherent Ising machine in the survey does the difference stay within the
+statistical error, and the law is certified there; the record, at another seed, does not certify it.
 
 At the write point where the parametric-oscillator triangle leaves the state of zero amplitude, the law gives the six
 configurations probabilities between 0.08 and 0.29 at a bias of half a noise floor, but the full dynamics end in none
 of them: as the amplitude grows, the Kerr shift brings the uniform mode into resonance, and the network writes a state
-that is not frustrated. The plane law holds where the shift moves every other mode away from resonance. On the
-rf-SQUID triangle the law misses two uniform configurations, which are stable there and which the law of the plane
-does not reach: the full dynamics end in one of them with a probability of up to 0.35, which is also the largest
-deviation from the law. During a hold of 56.6 time units 20 % of the written states change in the survey and 8 % in
-the record, on either side of the 10 % that separates an equilibrium write from the nonlinear stage, so the class of
-this write is not settled.
+that is not frustrated. The plane law holds where the shift moves every other mode away from resonance.
 
 **A jump to a distant branch keeps the law of the linear stage.** A parametric oscillator that measures a qubit
 through its amplitude loses its state through a subcritical pitchfork and jumps to a distant branch. The choice is
@@ -189,15 +187,17 @@ pitchfork: 1.35 from the law and 1.32 from the full dynamics, certified. Module 
 
 **Where the cubic term vanishes, the vacuum decides.** The Kerr-cat qubit at zero detuning, and the in-phase mode of
 two coupled Kerr parametric oscillators, have no cubic term in the reduced equation, and the leading term is of fifth
-order. The response to a bias then almost vanishes: the full dynamics give 0.08 and 0.07, and the law of the completed
-model, which keeps the leading term, gives 0.04 and 0.00. The written states do not keep the choice either, since in
-the [records](../records/quantum_semiclassical.md) about half of them change during a hold of 56.6 time units. Here the
+order. The law of the completed model gives 1.35, but in the full dynamics the response almost vanishes, 0.08 and
+0.07, and the written states do not keep the choice: in the [records](../records/quantum_semiclassical.md) about half
+of them change during a hold of 56.6 time units. Here the
 classical image is not enough, and the quantum dynamics decide ([the quantum write](30_quantum_write.md)). The
 phase-locked parametric oscillator used to measure qubits has a vanishing cubic term too, with the leading term
 $-5.76 \times 10^{-4}\, s^5 = -K^2 s^5/\kappa$, but at many photons, where the written states are kept; there the
-[record](../records/quantum_semiclassical.md) gives 0.78 from the law and 1.27 from the full dynamics.
+[record](../records/quantum_semiclassical.md) gives 1.31 from the law and 1.27 from the full dynamics, certified. A
+noise-free flow from the size the linear stage gives the samples follows the Kerr rotation to either state and had
+read 0.78; in one direction only the sign of a sample counts.
 
-In all, 17 laws at obstructions are certified and 25 are derived but not certified; the remaining
+In all, 18 laws at obstructions are certified and 24 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 
