@@ -1,0 +1,26 @@
+{
+  "schema": "fieldbridge-learning/1",
+  "model": {
+    "schema": "fieldbridge-memory/1",
+    "name": "Coupled exchange deviations",
+    "kind": "equations",
+    "question": "Which discarded imbalance is needed to predict the visible concentration deviation?",
+    "provenance": {"kind": "authored verification example", "source": "Linear deviations about an exchange equilibrium"},
+    "assumptions": ["dimensionless deterministic deviations, not absolute positive concentrations", "real coordinates", "constant rates during each intervention"],
+    "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 1},
+    "parameters": {"a": 1, "b": 0.5, "c": 2},
+    "bounds": {"a": [0.1, 4], "c": [0.1, 4]},
+    "drift": {"x": "-a*x+b*y", "y": "-c*y"},
+    "noise": 0
+  },
+  "coordinates": {"u": "x"},
+  "candidate_drift": {"u": "-a*u"},
+  "development": [
+    {"id": "develop-imbalance", "initial": [0.2, 1], "parameters": {}, "duration": 3},
+    {"id": "develop-opposite", "initial": [0.2, -0.7], "parameters": {}, "duration": 3}
+  ],
+  "withheld": [
+    {"id": "intervene-coupling", "initial": [0.1, 1.3], "parameters": {"b": 0.8}, "duration": 4},
+    {"id": "intervene-decay", "initial": [-0.3, -0.9], "parameters": {"c": 1.3}, "duration": 4}
+  ]
+}

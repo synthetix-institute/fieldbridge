@@ -21,11 +21,13 @@ the sweep itself, in the same way for every completion:
   outcome map    the deterministic flow of the full drift from samples of that Gaussian, carried back by the linear
                  propagator of the critical space to one e-fold after the crossing, to the end of the sweep; each final
                  state is assigned to the nearest stable state there. In one direction only the sign of the sample
-                 matters; in several, its direction keeps turning toward the fastest mode as long as the dynamics is
-                 linear, and the flow stops that turning at each sample's own saturation. Where the deviation has
-                 already reached the written amplitude at that time (the noise rule of this module puts every
-                 pitchfork there), the choice is made there and each sample goes to the written state nearest in
-                 direction: the sector law of the critical space at the mapping time.
+                 matters, and the samples start at a small size that keeps it (a flow from the size the linear
+                 stage gives them can turn a sample to the other state); in several, the direction keeps turning
+                 toward the fastest mode as long as the dynamics is linear, and the flow stops that turning at each
+                 sample's own saturation. Where the deviation has already reached the written amplitude at that time
+                 (the noise rule of this module puts every pitchfork there), the choice is made there and each sample
+                 goes to the written state nearest in direction: the sector law of the critical space at the mapping
+                 time, in one direction the sign.
 
 The probabilities of the stable states are the law. It is tested against a simulation of the full stochastic
 dynamics over the whole sweep (the certificate). A deviation beyond the statistical error is itself an obstruction:
@@ -58,6 +60,8 @@ GROWTH_MAP = 1.0            # the outcome map starts once the critical deviation
 LINEAR_FRACTION = 0.2       # the size (3 sigma) of the deviation, as a fraction of the distance from the unwritten
                             # state to the nearest written state, beyond which the linear stage no longer describes it
                             # (reached before the crossing: linear_size_before_crossing)
+SAME_DIRECTION = 0.999      # two written states whose directions from the unwritten state have a cosine above this
+                            # are not told apart by the direction of a sample (no sector law)
 SATURATION_FRACTION = 0.5   # the pulled-back spread (3 sigma) at the mapping time, as a fraction of the written
                             # amplitude there, above which the deviation counts as saturated and the sector law at the
                             # mapping time is the outcome map (the flow from the mapping time is exact at a quarter and
@@ -120,11 +124,28 @@ def stable_states(real: Realization, rng, over: Dict, n_starts: int = 40, seeds=
     return out
 
 
+def _space_directions(k: int) -> List[np.ndarray]:
+    """Directions in the critical space: +-each axis for k = 1; 8 directions on the unit circle of the first two axes
+    and +-each further axis otherwise."""
+    if k == 1:
+        return [np.array([1.0]), np.array([-1.0])]
+    dirs = []
+    for j in range(8):
+        e = np.zeros(k); e[0], e[1] = np.cos(j * pi / 4), np.sin(j * pi / 4)
+        dirs.append(e)
+    for a in range(2, k):
+        for sg in (1, -1):
+            e = np.zeros(k); e[a] = sg; dirs.append(e)
+    return dirs
+
+
 def swept_seeds(real: Realization, sweep: "Sweep", q0: np.ndarray, R: np.ndarray, t_end: float,
                 dt: Optional[float] = None) -> np.ndarray:
-    """End states of deterministic sweeps started from the unwritten state displaced along each critical direction,
-    by several amplitudes and both signs, at the crossing and half-way after it: the states a write can reach. (A
-    sweep that itself favours one state carries small displacements to that state; larger ones reach the other.)"""
+    """End states of deterministic sweeps started from the unwritten state displaced along each direction of the critical
+    space that law_at biases, by several amplitudes, at the crossing and half-way after it: the states a write can reach.
+    (A sweep that itself favours one state carries small displacements to that state; larger ones reach the other. The
+    axes of a critical plane alone reach four of the six frustrated states of a triangle, and the others were found only
+    by a random start.)"""
     dt = dt or 0.5 * an.safe_dt(real)
     b = an.base_length(real)
     out = []
@@ -136,7 +157,7 @@ def swept_seeds(real: Realization, sweep: "Sweep", q0: np.ndarray, R: np.ndarray
             h = min(dt, t0 - t)
             q_ref = _rk4_step(lambda x, s_: real.F(x, **sweep.over(s_)), q_ref, t, h)
             t += h
-        q = np.array([q_ref + sg * a * b * R[:, j] for j in range(R.shape[1]) for sg in (1, -1)
+        q = np.array([q_ref + a * b * (R @ e) / np.linalg.norm(R @ e) for e in _space_directions(R.shape[1])
                       for a in (0.01, 0.1, 0.5, 2.0)])
         t = t0
         while t < t_end - 1e-12:
@@ -183,31 +204,43 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     until the critical rate integrated since the crossing reaches GROWTH_STOP: the fluctuations present then decide
     the write, and noise added later is amplified less by that factor. Their distribution in the critical space gives
     the statistics of the decision (in one direction, the ratio of mean to spread; in k directions, also the angles).
-    The samples are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by the noise-free linear
-    propagator of the critical space, so that each has there the size and the direction the linear stage gives it,
-    and from there the deterministic flow of the full drift to the end of the sweep assigns each to a stable state:
-    the linear part of that flow retraces the propagator, the nonlinear part stops the growth, and with it the
-    turning of the direction toward the fastest mode, at each sample's own saturation. (An isotropic rescaling of the
-    samples to a small size in place of the propagator counted the differential growth of the modes twice and
-    lengthened the nonlinear stage; it misread every write through a weakly split degeneracy, on the rf-SQUID triangle
-    and on populations of pitchforks, while leaving the one-direction laws unchanged, where only the sign counts.)
+    In one direction there is no direction to turn and only the sign of a sample counts. Where the deviation is
+    saturated at the mapping time (below), the sign decides; otherwise the samples are rescaled to the size the
+    distribution had at the mapping time, capped at LINEAR_FRACTION of the distance to the nearest written state, and
+    the deterministic flow of the full drift to the end of the sweep assigns each to a stable state. The size that the
+    linear stage gives them can be several written amplitudes, where no trajectory is, and a noise-free flow from there
+    follows the amplitude-dependent rotation of a Kerr term and can end in the other state (found on the phase-locked
+    parametric oscillator: above two written amplitudes 60 % of the samples change sign, none below, and the law fell
+    with the bias, 1.03, 0.79 and 0.21 at 0.5, 1 and 2 noise floors, while the full dynamics kept 1.26 to 1.34; at a
+    Kerr rate of a quarter of that, where no written amplitude is defined at the mapping time, the unscaled flow gave
+    1.18 at two floors against 1.34).
+    In two or more directions the samples are carried back to the mapping time (GROWTH_MAP e-folds after the crossing)
+    by the noise-free linear propagator of the critical space, so that each has there the size and the direction the
+    linear stage gives it, and from there the deterministic flow of the full drift to the end of the sweep assigns each
+    to a stable state: the linear part of that flow retraces the propagator, the nonlinear part stops the growth, and
+    with it the turning of the direction toward the fastest mode, at each sample's own saturation. (An isotropic
+    rescaling of the samples to a small size in place of the propagator counted the differential growth of the modes
+    twice and lengthened the nonlinear stage; it misread every write through a weakly split degeneracy, on the rf-SQUID
+    triangle and on populations of pitchforks.)
     Two regimes at the mapping time, told apart by the pulled-back spread against the written amplitude there (the
     distance from the unwritten branch to the nearest state that is stable at that control value): linear, where the
     spread is below SATURATION_FRACTION of that amplitude and the flow is the map; saturated, where it is not, the
     deviation has reached the written states by then, and each sample goes to the written state nearest in direction
-    (the sector law at the mapping time; a flow from samples of that size would start them where no trajectory is).
-    Under the noise rule of law_at every pitchfork is in the saturated regime, and the one-direction law is the same
-    in both (the sign decides). Found on populations of pitchforks: at a coupling of a third of the passage scale
-    the sector law at the mapping time holds to a few percent with two, three and four units, where the sector law
-    at the end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter. Where the spread
-    reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing, the noise is too strong
-    for the deviation to stay linear through the crossing (recorded as linear_size_before_crossing); the certificate
-    then decides whether the law still holds."""
+    (the sector law at the mapping time, in one direction the sign; a flow from samples of that size would start them
+    where no trajectory is). Written states that lie in the same direction from the unwritten one are not told apart by
+    the direction of a sample, and have no sector law (SAME_DIRECTION; on the rf-SQUID phase qubit, past a fold with a
+    slow second direction, the sector law gave the states on one side probabilities they do not have, a deviation of 1.0
+    from the full dynamics, where the flow gives none). Under the noise rule of law_at every pitchfork is
+    in the saturated regime. Found on populations of pitchforks: at a coupling of a third of the passage scale the
+    sector law at the mapping time holds to a few percent with two, three and four units, where the sector law at the
+    end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter. Where the spread reaches
+    LINEAR_FRACTION of the distance to the nearest written state before the crossing, the noise is too strong for the
+    deviation to stay linear through the crossing (recorded as linear_size_before_crossing); the certificate then
+    decides whether the law still holds."""
     dt = dt or 0.5 * an.safe_dt(real)
     n = q0.size
     ell = min(float(np.linalg.norm(s - q0)) for s in stable) if stable else an.base_length(real)
-    k = R.shape[1]
-    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if (k >= 2 and len(stable) >= 2) else None
+    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if len(stable) >= 2 else None
     amplitude_at: Dict[float, float] = {}
     results = []
     for target, h in zip(targets, strengths):
@@ -255,10 +288,10 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
         size = LINEAR_FRACTION * ell
         reach = next((hist_t[i] for i, sp in enumerate(hist_spread) if sp >= size), t_star)
         # the decision statistics are those at t_star (they contain the bias and the noise of the whole linear stage);
-        # they are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by the propagator of the
-        # critical space and placed there, each sample at the size and in the direction the linear stage gives it,
-        # and carried forward by the drift alone: the map decides to which state each sample leads under the full
-        # nonlinear drift, which stops the turning of its direction at its own saturation
+        # in two or more directions they are carried back to the mapping time (GROWTH_MAP e-folds after the crossing) by
+        # the propagator of the critical space and placed there, each sample at the size and in the direction the linear
+        # stage gives it, and carried forward by the drift alone: the map decides to which state each sample leads under
+        # the full nonlinear drift, which stops the turning of its direction at its own saturation
         i_map = next((i for i, g in enumerate(hist_g) if g >= GROWTH_MAP), len(hist_t) - 1)
         t_map = hist_t[i_map]
         P = hist_Phi[i_map] @ np.linalg.inv(hist_Phi[-1])
@@ -280,7 +313,9 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
             q = np.array([stable[j] for j in sector])
             regime = "saturated at the mapping time"
         else:
-            q = hist_q[i_map][None] + z_map @ R.T
+            # in one direction the samples start at a small size that keeps their sign
+            start = z_map if R.shape[1] >= 2 else min(hist_spread[i_map], size) / max(hist_spread[-1], 1e-300) * z
+            q = hist_q[i_map][None] + start @ R.T
             def fmap(q, t):
                 return real.F(q, **sweep.over(t))
             tt = t_map
@@ -299,12 +334,15 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
 
 def _sector_labels(z: np.ndarray, coords: np.ndarray) -> Optional[np.ndarray]:
     """The written state nearest in direction to each sample of the critical space, among the states at more than
-    half the largest distance from the unwritten one (the others are not sectors)."""
+    half the largest distance from the unwritten one (the others are not sectors). None where fewer than two remain, or
+    where two of them lie in the same direction, which then does not tell them apart."""
     rad = np.linalg.norm(coords, axis=1)
     big = rad > 0.5 * rad.max()
     if big.sum() < 2:
         return None
     units = coords[big] / rad[big][:, None]
+    if np.max(units @ units.T - 2 * np.eye(len(units))) > SAME_DIRECTION:
+        return None
     idx = np.flatnonzero(big)
     zn = z / np.maximum(np.linalg.norm(z, axis=1, keepdims=True), 1e-300)
     return idx[np.argmax(zn @ units.T, axis=1)]
@@ -494,21 +532,9 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     D_s = D * dfac
     floor = sqrt(D_s) * rate ** 0.25 / pi ** 0.25          # the bias at which the pitchfork write follows it (z = 1)
     far = 1e3 * an.base_length(real)
-    # directions in the critical space: +-each axis for k = 1; 2k directions on the unit circle of the first two axes
-    # and +-each further axis otherwise
-    dirs: List[np.ndarray] = []
-    if k == 1:
-        dirs = [np.array([1.0]), np.array([-1.0])]
-    else:
-        for j in range(8):
-            e = np.zeros(k); e[0], e[1] = np.cos(j * pi / 4), np.sin(j * pi / 4)
-            dirs.append(e)
-        for a in range(2, k):
-            for sg in (1, -1):
-                e = np.zeros(k); e[a] = sg; dirs.append(e)
     targets, strengths, keys = [], [], []
     for c in floors:
-        for e in dirs:
+        for e in _space_directions(k):
             u = R @ e
             u = u / np.linalg.norm(u)
             tgt = qc + far * u
@@ -534,9 +560,8 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         if reduced is not None:
             row["reduced_law"] = reduced[i]
         # the law reported: the reduced one-coordinate law where the completion keeps a second parameter (a sweep
-        # that itself favours one state), the linear-stage law with its outcome map otherwise (in two or more
-        # directions the flow of the Gaussian carried back by the propagator, or, where the deviation has reached the
-        # written amplitude by the mapping time, the sector law there)
+        # that itself favours one state), the linear-stage law with its outcome map otherwise (the flow of the samples
+        # from the mapping time, or, where the deviation has reached the written amplitude by then, the sector law there)
         row["law"] = row["reduced_law"] if reduced is not None else row["linear_stage_law"]
     sims: List[np.ndarray] = []
     if certify:

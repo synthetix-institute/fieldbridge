@@ -188,4 +188,4 @@ python3 -B -m pytest -q -p no:cacheprovider
 ```
 
 By contributing you agree that your contribution is released under the
-[MIT license](LICENSE).
+[PolyForm Noncommercial License 1.0.0](LICENSE).

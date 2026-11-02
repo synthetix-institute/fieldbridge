@@ -8,7 +8,7 @@ version = "0.1.0"
 description = "No-LLM mechanism translation across scientific fields."
 readme = "README.md"
 requires-python = ">=3.10"
-license = { text = "MIT" }
+license = { text = "PolyForm-Noncommercial-1.0.0" }
 authors = [
   { name = "FieldBridge contributors" }
 ]
@@ -19,6 +19,7 @@ dependencies = []
 pdf = ["pdfplumber>=0.11"]
 construction = ["sympy>=1.12,<2", "numpy>=1.24,<3"]
 memory = ["sympy>=1.12,<2", "numpy>=1.24,<3", "scipy>=1.10", "matplotlib>=3.7"]
+stochastic = ["sympy>=1.12,<2", "numpy>=1.24,<3", "scipy>=1.10", "matplotlib>=3.7", "torch>=2,<3"]
 
 [project.scripts]
 fieldbridge = "fieldbridge.cli:main"

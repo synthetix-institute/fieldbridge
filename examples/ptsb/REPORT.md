@@ -42,8 +42,9 @@ The answer has seven parts.
 8. DFT on two radical additions to methylallene gives what those rows contain in a real molecule. Slow couplings have g near 1,
    as in the model, but the passage takes 30 fs, so almost every mode stays behind or lags. Staying behind does not delay the
    instability, which starts at the same bond length on the trajectory as on the relaxed path. The sweep hardly amplifies anything.
-   The product follows the side of a perpendicular torsion on which the molecule starts, and a thermal width at TS1 then gives
-   shares of 0.81 to 0.91 and 0.67 to 0.81, against 0.956 and 0.823 counted by Wu et al. (no ensemble was run).
+   Thermal ensembles then showed that the torsion at TS1 does not decide the product, as I had inferred from chosen starts. The
+   product is mostly settled 30 to 60 fs later, on the side of the perpendicular torsion the molecule has reached by then. The first-well Z
+   shares are 0.79 to 0.81 and 0.74, against 0.956 and 0.823 counted by Wu et al.
 
 The transfer is partly prior art. Tao, Qiu and Subotnik (2023) gave the overdamped Gaussian ratio of a biased mean to
 the thermal width before the VRI. The swept-pitchfork law along the path, its inertial and conservative forms, and the
@@ -676,7 +677,9 @@ Slow modes do stay behind. By bond formation the undisplaced trajectory has move
 
 The surfaces separate only at bond formation. On the IRC the turn stops being a soft single direction there: the lowest curvature is +22 cm-1 at the pseudo-minimum of entry 32, and in entry 31 the turn mixes with other motions and is lost among them at R below 1.6 angstrom. On the trajectory the turn stays unstable through bond formation (-111 and -92 cm-1, then -207 and -107 at 40 fs with less clean directions). The trajectories do not stop at the pseudo-minimum. They reach the Z geometry in about 90 and 105 fs and swing about it, which agrees with the sequence reported by Yamaki et al. and Wu et al., bond first, then torsion.
 
-### The product is set by the starting torsion, and the sweep plays almost no part
+### What chosen starting torsions showed, and the sweep plays almost no part
+
+The ensembles in the next section refute one inference of this section: the side of the perpendicular torsion at TS1 does not decide the product once the other modes move. The trajectories below had all other modes at rest.
 
 ![turn of the molecules](figures/molecule_turn.png)
 
@@ -704,6 +707,35 @@ This gives a share of Phi(d / sigma), with d the distance from TS1 to the bounda
 
 The order and the rough size agree, but the estimate is lower than the counted share in both reactions. The difference may lie in other slow modes, which I did not displace and which would widen the spread and lower the estimate further, or in the anharmonic potential along the turn, in the zero-point energy of quasiclassical sampling, or in their level of theory. Two reactions cannot establish a relation, and I have no control for this comparison.
 
+### Thermal ensembles from TS1
+
+I ran 100 draws per set from the dividing surface at TS1, forward and backward, with the same functional and basis on a slightly coarser grid. There were two samplings. In the classical one, positions are resampled by their DFT energy with truncated weights, and momenta are Maxwell-Boltzmann. In the quasiclassical one, each mode has its zero-point energy plus a Boltzmann level and a random phase. The predictions were fixed beforehand in [molecules/ENSEMBLE_PREDICTIONS.md](molecules/ENSEMBLE_PREDICTIONS.md), and most of them failed.
+
+| Reaction and sampling | First-well Z share | Wu et al. | Width of the change at TS1 (spread 27-29 degrees) | Boundary at 30 fs, and its width |
+|---|---|---|---|---|
+| CH3, classical | 0.792 (0.747-0.830) | 0.956 +- 0.018 | 23 degrees | -91, 10 degrees |
+| CH3, quasiclassical | 0.813 (0.769-0.851) | | 57 degrees | -93, 17 degrees |
+| CH2F, classical | 0.742 (0.693-0.785) | 0.823 +- 0.036 | 34 degrees | -88, 16 degrees |
+| CH2F, quasiclassical | 0.739 (0.689-0.783) | | 140 degrees | -90, 17 degrees |
+
+The torsion at TS1 is a weak guide to the fate of a single trajectory, because the molecule keeps turning while the bond forms. The bond takes about 30 fs to reach 1.8 angstrom, and the turn continues over that time at a typical rate of 1.3 to 2.0 degrees per fs. Only when the bond has formed does the side of the perpendicular torsion hold. The torsion at 30 fs separates the products better than the torsion at TS1 in all four sets, as the table below shows. Its value is mostly fixed in advance by the slow modes at TS1: a linear fit to the positions and rates of the modes below 300 cm-1 accounts for 84 and 89 per cent of its variance in the classical sets and for 74 and 66 per cent in the quasiclassical sets. Modes above 300 cm-1 add nothing to a linear fit, so what they contribute is not a simple harmonic addition.
+
+| Area under the ROC curve (cross-validated) | CH3, classical | CH3, quasiclassical | CH2F, classical | CH2F, quasiclassical |
+|---|---|---|---|---|
+| Torsion at TS1 | 0.88 | 0.73 | 0.83 | 0.57 |
+| Positions and rates of the six softest modes at TS1 | 0.93 | 0.78 | 0.90 | 0.84 |
+| Torsion at 30 fs | 0.96 | 0.88 | 0.93 | 0.90 |
+| Z share of starts with torsion below -110 degrees | 0.98 | 0.95 | 0.95 | 0.84 |
+| Z share of starts with torsion above -70 degrees | 0.25 | 0.70 | 0.29 | 0.64 |
+
+Zero-point energy has opposite effects on individual trajectories and on the share. Quasiclassical starts carry about 75 kcal/mol in the modes, against 22 kcal/mol for classical ones, and their fate is much harder to foresee from TS1. The shares nevertheless agree within error between the two samplings, at most 0.02 apart. With zero-point energy, starts on the far side of the boundary reach E more often and starts on the near side reach Z more often, so the changes partly cancel in the total. The ensemble does not separate the cause, and a series with scaled zero-point energy would be needed for that. I did not run one, because the shares give no effect to explain.
+
+The difference between the two reactions is consistent with the position of TS1 relative to the perpendicular torsion. The mean torsion at the starts is 4 to 7 degrees nearer perpendicular in CH2F, and its share is 0.05 to 0.07 lower. A boundary and width fitted in one classical set predict the share of the other within error (0.76 against 0.74, and 0.77 against 0.79). This is weak evidence, because the two reactions are nearly the same.
+
+The first product well is not always the last. I continued the first 6 Z and the first 6 E trajectories of each set to 400 fs. In that time 4 of 24 E trajectories moved to Z, and none of 24 Z trajectories moved to E (Fisher exact test, two-sided, p = 0.11). This has the direction needed to bring the shares towards the published ones: an E-to-Z fraction of 0.17 would raise the shares by about 0.03 to 0.05. It does not close the gap in entry 31, and the sample is small. If this goes on, the share in the gas phase depends on when it is read, as Carpenter (2023) found for other reactions. The share in solution would then depend on the cooling rate.
+
+Whether this is new science: I judged that it does not justify a manuscript. Trajectory fates predicted from transition-state data, zero-point effects on ratios and later hopping between wells are all published in other reactions (see [PRIOR_ART.md](PRIOR_ART.md), rows 31 to 36). The write law gives only the general form of a Gaussian share, whose width here is fitted and not predicted. What is specific to this study is small: the time at which the torsion takes hold, and the loss of predictability without a change in the share, in two nearly identical reactions without a control. A claim would also need the level of theory and counting rule of Wu et al. and an out-of-sample reaction.
+
 ### The law and the model against the molecule
 
 I integrated the linear equation of the law, y'' = -k(t) y + f(t), with k and f from the exact Hessians and forces at the frames, up to 40 fs. In that range it is right. It gives y of -0.090 and +0.037 widths at 40 fs against -0.065 and +0.045 on the trajectory, including the opposite signs of the two reactions, and a velocity against position ratio of 0.45 and 0.46 against the measured 0.40 and 0.34. But at this point the boundary implied by the law is 0.08 and 0.04 widths, compared with the 1.0 to 1.5 and 0.5 to 1.0 found. The law's linear stage ends before the push that decides the product, so it cannot give the numerator here. Its form with a Gaussian denominator survives, with the mean set by the place of the ridge.
@@ -721,11 +753,12 @@ The molecules also lie outside the range of the model surface, in the direction 
 ### Limits and pitfalls
 
 - These are two very similar reactions with a torsional bifurcation and a very soft turn. They do not represent cycloadditions, whose transverse modes may be stiffer and whose products differ by bonds. The conclusions about a sudden passage should not be carried over without a calculation.
-- I displaced one coordinate. Other slow modes were left at rest and no thermal velocity was given to them.
+- The chosen starts displaced one coordinate, with other slow modes at rest and no thermal velocity. The ensembles replace them for the question of what decides the product.
+- The ensembles have 100 draws per set, which gives shares to about 0.04. The classical starts rest on truncated weights with effective sizes of 247 and 338 out of 10000 and 3000 candidates. A second hundred was started and stopped, and the extra forward trajectories enter only the fits of the torsion, not the shares. The comparison with Wu et al. rests on an abstract.
 - Each row of the mode table comes from one trajectory with every mode at rest. Thermal motion would change F, in particular for the low modes.
 - The curvature along a fixed direction is misleading. An earlier scan of y'Hy along y fixed near the valley-ridge transition stayed positive in entry 31 and suggested a wider ridge in the fluoro system. Exact Hessians show the opposite (-154 against -121 cm-1 at most). The scan reads +44 cm-1 at s = 1.15, while the lowest curvature at s = 1.25 is -65 cm-1 in a direction with overlap 0.96 with y. The remaining 4 per cent of y lies in stiffer modes, which dominate its curvature. I withdraw that suggestion, and results/scan_*.npz is kept only as a record of it.
 - The curvature of the turn past bond formation depends on recognizing the direction by its overlap with a rigid turn, which falls below 0.7 there. The values at 40 fs and later are less certain.
-- The geometries in molecules/yamaki_geometries.py come from the supporting information of the paper, which is under CC BY-NC-ND. This should be checked before the branch is published.
+- The geometries in molecules/yamaki_geometries.py come from the supporting information of the paper, which is under CC BY-NC-ND 4.0. They are kept unchanged and credited, and they are excepted from the license of the repository, with a notice in that file and in the README. The same TS1 structures are in results/ts_31.npz and results/ts_32.npz.
 
 ## Summary: where the law holds and where it fails
 
@@ -763,8 +796,9 @@ The molecules also lie outside the range of the model surface, in the direction 
   ratio depends on which modes are coupled (0.06 to 0.46 at one strength). Modes stiffening on one side give a bias that grows with
   temperature, and there the law holds to 0.003.
 - **Two radical additions to methylallene** are a sudden case the model surface does not reach. The law's linear equation with DFT
-  curvatures and forces is right up to 40 fs, but the push that decides the product comes later. The product follows the side of the
-  perpendicular torsion on which the molecule starts, and the Gaussian denominator holds with the spread of the turn at TS1.
+  curvatures and forces is right up to 40 fs, but the push that decides the product comes later. Thermal ensembles show that the torsion
+  at TS1 is a weak guide to the product, with a boundary near the perpendicular geometry only from about 30 fs on, when the bond has formed.
+  Zero-point energy blurs the fate of single trajectories without moving the share within error.
 - **Not tested:** a law with modes on a curved path, three transverse modes or more, curved paths in more than two dimensions, and
   molecules other than entries 31 and 32. Entries 29 and 30 of Yamaki et al. are tripericyclic reactions with three products of
   different connectivity, and I have not compared them with either two-mode case.
@@ -814,6 +848,8 @@ would need:
 | Cubic coupling | `python anharm_scan.py traj --backend torch --part k/4 --out results/anharm_traj_k.json` for k = 0 to 3 (1,269 points, about 50 minutes on four RTX 3090), `python anharm_scan.py merge --out results/anharm_traj.json`, `python anharm_scan.py law --workers 16 --out results/anharm_law.json` (about 2 minutes), `python anharm_analyse.py` |
 | Molecules, on a GPU node with pyscf, gpu4pyscf and pyscf-dispersion (from examples/ptsb/molecules, E = 31, 32) | `python qm.py hess E`, then `irc`, `vrt`, `traj`, `hessat E --k ...` and `hessframe E --k 10,15,20,25,30,40,50,60`, `trajy E --k=-2,-1,1,2`, `trajy 31 --k=1.5 --tend=200`, `trajy 32 --k=-1.5,-0.5,-1 --tend=200`, `trajy E --k=0 --vy=1 --tend=110` and the same with `--vy=-1` (about 4 s per gradient, 6 to 8 minutes per Hessian, 20 minutes per 130 fs on one RTX 3090) |
 | Molecules, analysis (no GPU; the results are in molecules/results) | `python modes.py E`, `python curvature.py E`, `python checks.py E`, `python displaced.py`, `python law_molecule.py`, `python analyse_molecules.py` |
+| Molecules, ensembles, on a GPU node (from examples/ptsb/molecules) | `python ensemble.py init`, `energy --gpu g` on each GPU, `select 200`, `work 100 --gpu g --set 31cl,32cl` and `--set 31qc,32qc` (about 7 forward trajectories an hour per RTX 3090), `late 6 --gpu g --set 31cl,32cl,31qc,32qc --t-end 400` |
+| Molecules, ensembles, analysis (no GPU; ens/ is not in the repository) | `python analyse_ensemble.py`, `python analyse_decision.py`, `python analyse_phase_space.py`, `python analyse_late.py` |
 | FieldBridge | `fieldbridge memory noise-ratio ptsb_transverse_overdamped.json --out-dir fieldbridge_noise_ratio --gammas 0.05,1`, and `fieldbridge memory codiscover ptsb_transverse_overdamped.json --target symmetric-write --out-dir fieldbridge_codiscover` |
 
 Seed 20261030, NumPy 1.24 and torch 2.0.1 on the GPU node; laws with SciPy 1.14 on the laptop. The molecular calculations are deterministic and use a Python 3.9 environment on the GPU node.
