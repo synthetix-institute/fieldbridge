@@ -872,6 +872,11 @@ def cmd_record(args) -> int:
     out = Path(args.out_dir)
     if args.from_records:   # no derivation: the tables of an existing records file
         records = rc.load_records(args.from_records)
+        if getattr(args, "learning_library", None):
+            from .learning import MoveLibrary, retain_record
+            library = MoveLibrary(args.learning_library)
+            for record in records:
+                retain_record(library, record, source=str(args.from_records))
         stem = Path(args.from_records).stem
         out.mkdir(parents=True, exist_ok=True)
         table = rc.predictions_markdown(records, intro=args.intro or "") + f"\n{BOUNDARY}\n"
@@ -913,6 +918,11 @@ def cmd_record(args) -> int:
         for r in records:
             fh.write(json.dumps(r) + "\n")
     if not args.only_step:
+        if getattr(args, "learning_library", None):
+            from .learning import MoveLibrary, retain_record
+            library = MoveLibrary(args.learning_library)
+            for path, record in zip(paths, records):
+                retain_record(library, {**record, "spec": json.loads(path.read_text())}, source=str(path))
         (out / "records.md").write_text(rc.markdown(records) + f"\n{BOUNDARY}\n", encoding="utf-8")
         # the table of the write targets and completions, a view of the records
         table = rc.predictions_markdown(records) + f"\n{BOUNDARY}\n"
@@ -1209,9 +1219,115 @@ def cmd_catalog(args) -> int:
     return 0
 
 
+def cmd_learn(args):
+    from .learning import cmd_learn as run
+    return run(args)
+
+
+def cmd_departures(args):
+    from .learning import cmd_departures as run
+    return run(args)
+
+
+def cmd_repair(args):
+    from .learning import MoveLibrary, Policy
+    from .repair_families import FamilyLibrary, construct, repair_departures
+    policy = Policy(max_degree=args.max_degree, max_added_coordinates=args.max_added_coordinates)
+    evaluations = MoveLibrary(args.library)
+    families = FamilyLibrary(Path(args.families), frozen=bool(args.task))
+    if args.task:
+        report = construct(json.loads(Path(args.task).read_text()), families, policy,
+                           evaluation_library=evaluations, strategy=args.strategy)
+    else:
+        report = {"campaigns": repair_departures(evaluations, families, policy),
+                  "family_library_sha256": families.digest()}
+    out = Path(args.out_dir)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "repair.json").write_text(json.dumps(report, indent=2, allow_nan=False) + "\n")
+    if args.task:
+        print(json.dumps({"status": report["status"], "candidate_evaluations": report["candidate_evaluations"],
+                          "output": str(out / "repair.json")}))
+    else:
+        from collections import Counter
+        print(json.dumps({"campaigns": dict(Counter(r["status"] for r in report["campaigns"])),
+                          "output": str(out / "repair.json")}))
+    if args.task:
+        return 0 if report["status"] in {"verified_extension", "already_closed"} else 2
+    return 0 if all(r["status"] in {"verified_extension", "already_closed"} or
+                    (r["status"] == "already_processed" and r["previous_status"] in {
+                        "verified_extension", "already_closed"}) for r in report["campaigns"]) else 2
+
+
+def cmd_investigate(args):
+    from . import investigation
+    report=investigation.write_report(args.records,args.out_dir)
+    print(json.dumps({"calculations":len(report["cases"]),"state_questions":len(report["questions"]),
+                      "repeatable_departures":report["repeatable_departures"],
+                      "output":str(Path(args.out_dir)/"investigation.json")}))
+    return 0
+
+
+def cmd_passage(args):
+    from . import stochastic_passage as sp
+    out=Path(args.out_dir)
+    if args.stage=="verify":
+        commitment=json.loads((out/"prediction.json").read_text())
+        seed=commitment["repaired_prediction"]["seed"]+2
+        report=sp.verify_prediction(out,seed,device=args.device)
+        print(json.dumps({"repair_verified":report["repair_verified"],"output":str(out/"comparison.json")}))
+        return 0 if report["repair_verified"] else 2
+    if not args.task:
+        raise ValueError("--task is required for the prediction stage")
+    if args.rule:
+        policy=sp.Policy(**json.loads(Path(args.rule).read_text())["policy"])
+        if args.n is not None and args.n!=policy.n_prediction:
+            raise ValueError("A frozen rule fixes its sampling policy")
+    else:
+        policy=sp.Policy(n_prediction=args.n or 4096,n_reference=args.n or 4096)
+    report=sp.prepare_prediction(json.loads(Path(args.task).read_text()),policy,args.seed,out,
+                                 device=args.device,frozen_rule=args.rule)
+    print(json.dumps({**report,"output":str(out/"prediction.json")}))
+    return 0 if report["prediction_valid"] else 2
+
+
 def add_parser(sub) -> None:
     memory = sub.add_parser("memory", help="Build, predict and transfer memory on any carrier (needs the memory extra).")
     msub = memory.add_subparsers(required=True)
+
+    p=msub.add_parser("investigate",help="Follow signed probability departures, including accepted predictions.")
+    p.add_argument("records",nargs="+",help="Comparison JSON files with their adjacent prediction records")
+    p.add_argument("--out-dir",required=True)
+    p.set_defaults(func=cmd_investigate)
+
+    p = msub.add_parser("learn", help="Derive and reuse equation corrections tested on withheld interventions.")
+    p.add_argument("task", help="fieldbridge-learning/1 JSON task")
+    p.add_argument("--library", required=True, help="Persistent SQLite move and failure library")
+    p.add_argument("--out-dir", required=True)
+    p.add_argument("--max-degree", type=int, default=6)
+    p.add_argument("--max-added-coordinates", type=int, default=2)
+    p.set_defaults(func=cmd_learn)
+    p = msub.add_parser("departures", help="Retain every outcome of existing constructor JSONL records.")
+    p.add_argument("records", nargs="+")
+    p.add_argument("--library", required=True)
+    p.set_defaults(func=cmd_departures)
+    p = msub.add_parser("repair", help="Repair recorded equation tasks and retain verified conditional recipes.")
+    p.add_argument("--library", required=True, help="SQLite records and once-only evaluation registry")
+    p.add_argument("--families", required=True, help="JSON family library")
+    p.add_argument("--task", help="Evaluate one task with a frozen library instead of learning from recorded departures")
+    p.add_argument("--strategy", choices=("families", "symbolic"), default="families")
+    p.add_argument("--max-degree", type=int, default=6)
+    p.add_argument("--max-added-coordinates", type=int, default=2)
+    p.add_argument("--out-dir", required=True)
+    p.set_defaults(func=cmd_repair)
+    p=msub.add_parser("passage",help="Predict a polynomial diffusion passage, then verify its committed probabilities (requires PyTorch).")
+    p.add_argument("--stage",choices=("predict","verify"),default="predict")
+    p.add_argument("--task",help="fieldbridge-stochastic-passage/1 JSON task")
+    p.add_argument("--rule",help="Frozen conditional passage rule")
+    p.add_argument("--out-dir",required=True)
+    p.add_argument("--seed",type=int,default=2026102800)
+    p.add_argument("--n",type=int)
+    p.add_argument("--device",default="cpu",help="cpu or an explicit CUDA device")
+    p.set_defaults(func=cmd_passage)
 
     def common(p, spec_arg=True):
         if spec_arg:
@@ -1367,6 +1483,8 @@ def add_parser(sub) -> None:
     p.add_argument("--from-records", default=None, metavar="FILE", help="No derivation: write the table of the write "
                    "targets and completions (<stem>.md, <stem>.json in --out-dir) from an existing records.jsonl or records.json.")
     p.add_argument("--intro", default=None, help="With --from-records: a sentence placed before the counts of the table.")
+    p.add_argument("--learning-library", default=None, help="Also retain outcomes and equations for subsequent "
+                   "constructor learning; never promotes a target label or failed solver into a physical result.")
     p.add_argument("--only-step", default=None, choices=list(STEPS_FOR_PARSER), help=argparse.SUPPRESS)
     p.set_defaults(func=cmd_record)
     p = msub.add_parser("predictions", help="What the rules predict for every specification in a directory: for "
