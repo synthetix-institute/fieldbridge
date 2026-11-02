@@ -5,6 +5,12 @@
   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
   "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
  },
+ "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "reached",
@@ -13,8 +19,8 @@
    "class": "S(reflection) C R(pitchfork) K L",
    "word": "SCRKL",
    "law_constant": {
-    "constant": 1.2483985836948812,
-    "stderr": 0.11120624537592073,
+    "constant": 1.248398583694881,
+    "stderr": 0.11120624537592072,
     "expected": 1.3313353638003897,
     "replicates": 8,
     "signature": [
@@ -36,13 +42,13 @@
      0.006427426712,
      0.01807975275,
      -0.01661128189,
-     0.01304477191,
-     8.746891767e-08,
-     0.01304477191,
-     -6.711757699e-08,
-     0.01304477191,
-     -2.345354918e-07,
-     0.0006021848966
+     0.01302109232,
+     8.731013924e-08,
+     0.01302109232,
+     -6.699574143e-08,
+     0.01302109232,
+     -2.3410975e-07,
+     0.000600000642
     ]
    }
   },
@@ -53,8 +59,8 @@
    "class": "S C R(pitchfork) W R(fold) K L",
    "word": "SCRWRKL",
    "law_constant": {
-    "constant": 1.018792387603176,
-    "stderr": 1.4785049606835798e-06,
+    "constant": 1.0187923876031757,
+    "stderr": 1.4785049613497137e-06,
     "expected": 1.018792971647471
    }
   },
@@ -68,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 6.1,
-  "threshold-write": 3.8,
-  "phase-locking": 0.7,
-  "completion": 61.9,
-  "changes": 34.5
+  "symmetric-write": 10.5,
+  "threshold-write": 6.6,
+  "phase-locking": 2.0,
+  "completion": 77.8,
+  "changes": 70.3
  },
  "completion": {
   "write_points": [
@@ -91,12 +97,14 @@
      "status": "derived",
      "law_kind": "linear stage and outcome map",
      "critical_dimension": 1,
+     "dynamical_critical_dimension": 1,
+     "second_rate": 0.5000001000000077,
      "rate": 0.02,
      "sweep_end": 56.568542494923804,
-     "noise": 0.0006021848966286383,
+     "noise": 0.000600000642000941,
      "noise_rule": "Gamma = 0.05",
-     "noise_along_critical": 0.003010922315278702,
-     "bias_floor": 0.015499575572052591,
+     "noise_along_critical": 0.0030000010500035278,
+     "bias_floor": 0.0154714398818927,
      "stable_states": [
       [
        -1.1918148313259034,
@@ -115,6 +123,7 @@
        -1.1918145931156545
       ]
      ],
+     "map_regime": "linear at the mapping time",
      "rows": [
       {
        "bias_floors": 0.5,
@@ -126,25 +135,34 @@
         0.31525
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.6693165277736924,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        5.17984881913341
+        5.170446069956691
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
         0.68475,
         0.31525
        ],
        "certificate": [
-        0.684,
-        0.316
+        0.69125,
+        0.30875
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.10202806892599839,
-       "deviation": 0.0007500000000000284
+       "deviation_sigma": 0.8898612534251632,
+       "deviation": 0.006500000000000061
       },
       {
        "bias_floors": 0.5,
@@ -152,29 +170,38 @@
         -1.0
        ],
        "linear_stage_law": [
-        0.3055,
-        0.6945
+        0.305625,
+        0.694375
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.6693165277732211,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        -5.179848819107757
+        -5.1704460699310335
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
-        0.3055,
-        0.6945
+        0.305625,
+        0.694375
        ],
        "certificate": [
-        0.31875,
-        0.68125
+        0.297,
+        0.703
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 1.7983222578212583,
-       "deviation": 0.013249999999999984
+       "deviation_sigma": 1.1938045017200603,
+       "deviation": 0.008624999999999994
       },
       {
        "bias_floors": 1.0,
@@ -182,29 +209,38 @@
         1.0
        ],
        "linear_stage_law": [
-        0.837125,
-        0.162875
+        0.838,
+        0.162
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.7642911066167064,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        10.35969763825397
+        10.340892139900525
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
-        0.837125,
-        0.162875
+        0.838,
+        0.162
        ],
        "certificate": [
-        0.83575,
-        0.16425
+        0.83475,
+        0.16525
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.23471552262363737,
-       "deviation": 0.001375000000000015
+       "deviation_sigma": 0.5534321807273695,
+       "deviation": 0.003250000000000003
       },
       {
        "bias_floors": 1.0,
@@ -212,29 +248,38 @@
         -1.0
        ],
        "linear_stage_law": [
-        0.153,
-        0.847
+        0.153125,
+        0.846875
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.7642911066162354,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        -10.35969763822833
+        -10.340892139874887
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
-        0.153,
-        0.847
+        0.153125,
+        0.846875
        ],
        "certificate": [
-        0.1605,
-        0.8395
+        0.15375,
+        0.84625
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 1.2922406259949102,
-       "deviation": 0.007500000000000007
+       "deviation_sigma": 0.10958550414665992,
+       "deviation": 0.0006250000000000977
       },
       {
        "bias_floors": 2.0,
@@ -246,24 +291,33 @@
         0.025625
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.9542402643027355,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        20.719395276495202
+        20.68178427978825
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
         0.974375,
         0.025625
        ],
        "certificate": [
-        0.9755,
-        0.0245
+        0.97325,
+        0.02675
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.46024156635016517,
+       "deviation_sigma": 0.4409693644971046,
        "deviation": 0.0011250000000000426
       },
       {
@@ -272,29 +326,38 @@
         -1.0
        ],
        "linear_stage_law": [
-        0.02375,
-        0.97625
+        0.024,
+        0.976
        ],
        "t_star": 50.65000000000746,
+       "sector_law": null,
+       "regime": "linear at the mapping time",
        "t_cross": 28.284271247461902,
        "t_map": 38.290000000001136,
        "linear_stage_ended_by": "growth",
        "growth": 5.001142207504833,
        "linear_size_before_crossing": true,
+       "spread_at_map": 0.9542402643022636,
+       "written_amplitude_at_map": 0.7491875941680066,
        "mean_critical": [
-        -20.719395276469555
+        -20.68178427976256
+       ],
+       "cov_critical": [
+        [
+         108.62751337528292
+        ]
        ],
        "law": [
-        0.02375,
-        0.97625
+        0.024,
+        0.976
        ],
        "certificate": [
-        0.023,
-        0.977
+        0.024,
+        0.976
        ],
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.316431754453854,
-       "deviation": 0.0007500000000000284
+       "deviation_sigma": 0.0,
+       "deviation": 0.0
       }
      ],
      "one_direction": {
@@ -302,50 +365,51 @@
        {
         "bias_floors": 0.5,
         "P_toward_plus": 0.68475,
-        "P_toward_minus": 0.6945,
-        "response_constant": 1.3175823439015957,
-        "offset": -0.013811663608184838
+        "P_toward_minus": 0.694375,
+        "response_constant": 1.3171076335981484,
+        "offset": -0.01363338009061485
        },
        {
         "bias_floors": 1.0,
-        "P_toward_plus": 0.837125,
-        "P_toward_minus": 0.847,
-        "response_constant": 1.3355701370068598,
-        "offset": -0.020470465225692847
+        "P_toward_plus": 0.838,
+        "P_toward_minus": 0.846875,
+        "response_constant": 1.337588413277329,
+        "offset": -0.018425526490694122
        },
        {
         "bias_floors": 2.0,
         "P_toward_plus": 0.974375,
-        "P_toward_minus": 0.97625,
-        "response_constant": 1.3084347533559522,
-        "offset": -0.016217020483766498
+        "P_toward_minus": 0.976,
+        "response_constant": 1.3069549323868515,
+        "offset": -0.013993957821514136
        }
       ],
       "certificate": [
        {
         "bias_floors": 0.5,
-        "P_toward_plus": 0.684,
-        "P_toward_minus": 0.68125,
-        "response_constant": 1.2649161333196628,
-        "offset": 0.0038583244411452555
+        "P_toward_plus": 0.69125,
+        "P_toward_minus": 0.703,
+        "response_constant": 1.374530713716626,
+        "offset": -0.01682594554081543
        },
        {
         "bias_floors": 1.0,
-        "P_toward_plus": 0.83575,
-        "P_toward_minus": 0.8395,
-        "response_constant": 1.311062250386742,
-        "offset": -0.00763265515406214
+        "P_toward_plus": 0.83475,
+        "P_toward_minus": 0.84625,
+        "response_constant": 1.3270678263179,
+        "offset": -0.023687291313197467
        },
        {
         "bias_floors": 2.0,
-        "P_toward_plus": 0.9755,
-        "P_toward_minus": 0.977,
-        "response_constant": 1.319348346147024,
-        "offset": -0.013400820490614973
+        "P_toward_plus": 0.97325,
+        "P_toward_minus": 0.976,
+        "response_constant": 1.300791669178735,
+        "offset": -0.023252726687269076
        }
       ]
      },
-     "certified": true
+     "certified": true,
+     "write_class": "linear-stage write"
     }
    }
   ]
@@ -362,7 +426,7 @@
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 1.6,
+    "seconds": 1.2,
     "class": "reached"
    }
   },
@@ -374,13 +438,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -395,13 +459,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.8,
+      "seconds": 5.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.4,
+      "seconds": 6.8,
       "class": "reached"
      }
     },
@@ -416,13 +480,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.8,
+      "seconds": 1.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.3,
       "class": "reached"
      }
     },
@@ -437,13 +501,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.3,
+      "seconds": 2.3,
       "class": "reached"
      }
     },
@@ -458,13 +522,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.5,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -479,13 +543,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 2.9,
+      "seconds": 4.4,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 4.7,
+      "seconds": 6.5,
       "class": "oscillation"
      }
     },
@@ -500,13 +564,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.3,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -527,7 +591,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.3,
       "class": "single stable state"
      }
     },

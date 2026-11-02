@@ -1,0 +1,306 @@
+{
+ "implementation_sha256": "942550ff6f31a2d2e31c7f9647a684836f6d0f465a8354e48667dcaabe536236",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
+ "law": 1.3313353638003897,
+ "rate": 0.02,
+ "start_of_the_check": 28.284271247461902,
+ "linear": [
+  {
+   "damping": 0.05,
+   "from_rest_4": 1.1720412084112184,
+   "from_rest_8": 1.345397803302304,
+   "from_rest_16": 1.3548117416548693,
+   "no_noise_on_the_phase_8": 1.3513502974457887
+  },
+  {
+   "damping": 0.1,
+   "from_rest_4": 1.1693964113709183,
+   "from_rest_8": 1.3319221817954203,
+   "from_rest_16": 1.3230745392534105,
+   "no_noise_on_the_phase_8": 1.3384441522928179
+  },
+  {
+   "damping": 0.2,
+   "from_rest_4": 1.3104901952236854,
+   "from_rest_8": 1.3235847896104875,
+   "from_rest_16": 1.3249772023579822,
+   "no_noise_on_the_phase_8": 1.3299325870241592
+  },
+  {
+   "damping": 0.3,
+   "from_rest_4": 1.325593877664333,
+   "from_rest_8": 1.325342104741015,
+   "from_rest_16": 1.3252699025928976,
+   "no_noise_on_the_phase_8": 1.331407798342748
+  },
+  {
+   "damping": 0.5,
+   "from_rest_4": 1.3262518259086422,
+   "from_rest_8": 1.3260413405416531,
+   "from_rest_16": 1.326041679046969,
+   "no_noise_on_the_phase_8": 1.3313349435862307
+  },
+  {
+   "damping": 1.0,
+   "from_rest_4": 1.3280140962248057,
+   "from_rest_8": 1.3280194184582037,
+   "from_rest_16": 1.3280194194843504,
+   "no_noise_on_the_phase_8": 1.331335321719502
+  },
+  {
+   "damping": 2.0,
+   "from_rest_4": 1.3300052729943828,
+   "from_rest_8": 1.3300059898256862,
+   "from_rest_16": 1.330005992926563,
+   "no_noise_on_the_phase_8": 1.3313353365188965
+  }
+ ],
+ "full": [
+  {
+   "damping": 0.1,
+   "start_before_crossing_sqrt_r": 4.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.1764575898565688,
+   "stderr": 0.010976520044239976
+  },
+  {
+   "damping": 0.1,
+   "start_before_crossing_sqrt_r": 8.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.3323244272664871,
+   "stderr": 0.011302846913232677
+  },
+  {
+   "damping": 0.1,
+   "start_before_crossing_sqrt_r": 16.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.321894796902449,
+   "stderr": 0.011279350482737153
+  },
+  {
+   "damping": 0.2,
+   "start_before_crossing_sqrt_r": 4.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.3214731867176874,
+   "stderr": 0.0112784058138926
+  },
+  {
+   "damping": 0.2,
+   "start_before_crossing_sqrt_r": 8.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.316140890368254,
+   "stderr": 0.011266492626384053
+  },
+  {
+   "damping": 0.2,
+   "start_before_crossing_sqrt_r": 16.0,
+   "noise_ratio": 0.05,
+   "trajectories": 40000,
+   "constant": 1.3293587965192926,
+   "stderr": 0.011296140788167519
+  },
+  {
+   "damping": 0.1,
+   "start_before_crossing_sqrt_r": 4.0,
+   "noise_ratio": 0.003,
+   "trajectories": 40000,
+   "constant": 1.1784191358857055,
+   "stderr": 0.010980305563439383
+  },
+  {
+   "damping": 0.1,
+   "start_before_crossing_sqrt_r": 4.0,
+   "noise_ratio": 0.0008,
+   "trajectories": 40000,
+   "constant": 1.1785499700363078,
+   "stderr": 0.010980558338327328
+  }
+ ],
+ "measured": [
+  {
+   "damping": 0.2,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.327164052478473,
+   "stderr": 0.014114100645293174,
+   "offset": -0.008148390287758822
+  },
+  {
+   "damping": 0.2,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3201316919756305,
+   "stderr": 0.014094376525677844,
+   "offset": -0.008556954934567762
+  },
+  {
+   "damping": 0.2,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3027209964824582,
+   "stderr": 0.018138381760795533,
+   "offset": -0.017610800408578542
+  },
+  {
+   "damping": 0.2,
+   "seed": 4,
+   "word": "SCRURKL",
+   "constant": 1.2894671222456449,
+   "stderr": 0.014904316657981236,
+   "offset": 0.012955752889533656
+  },
+  {
+   "damping": 0.2,
+   "seed": 5,
+   "word": "SCRURKL",
+   "constant": 1.317631504996129,
+   "stderr": 0.01819843032492261,
+   "offset": 0.023884340220873934
+  },
+  {
+   "damping": 0.2,
+   "seed": 6,
+   "word": "SCRURKL",
+   "constant": 1.293317498100262,
+   "stderr": 0.015897931003650678,
+   "offset": 0.0034617273609062194
+  },
+  {
+   "damping": 0.1,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.1553905507554616,
+   "stderr": 0.013670580573473465,
+   "offset": -0.009302997533271018
+  },
+  {
+   "damping": 0.1,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.1580013309190982,
+   "stderr": 0.013676612414827,
+   "offset": -0.0006074482534745851
+  },
+  {
+   "damping": 0.1,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.145706221681098,
+   "stderr": 0.01648487379164607,
+   "offset": -0.00966434896007251
+  },
+  {
+   "damping": 0.5,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.3499681166620257,
+   "stderr": 0.014178947906816215,
+   "offset": 0.0008917175583365022
+  },
+  {
+   "damping": 0.5,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3267236410077652,
+   "stderr": 0.014112860533640153,
+   "offset": -0.008146487510263256
+  },
+  {
+   "damping": 0.5,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3192456168369446,
+   "stderr": 0.016477304810070974,
+   "offset": -0.006359887023880684
+  },
+  {
+   "damping": 1.0,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.3384557325951247,
+   "stderr": 0.014146250343410284,
+   "offset": 0.012850228734300084
+  },
+  {
+   "damping": 1.0,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3457898741581955,
+   "stderr": 0.014296105204619648,
+   "offset": -0.014013028501090319
+  },
+  {
+   "damping": 1.0,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3102646943940965,
+   "stderr": 0.0149862095193785,
+   "offset": 0.00043654772561751987
+  },
+  {
+   "damping": 2.0,
+   "seed": 1,
+   "word": "SCRURKL",
+   "constant": 1.337133086370626,
+   "stderr": 0.015681315837230432,
+   "offset": 0.013726747849736376
+  },
+  {
+   "damping": 2.0,
+   "seed": 2,
+   "word": "SCRURKL",
+   "constant": 1.3384347276417854,
+   "stderr": 0.014389853795753466,
+   "offset": -0.009305219674956011
+  },
+  {
+   "damping": 2.0,
+   "seed": 3,
+   "word": "SCRURKL",
+   "constant": 1.3098365722440084,
+   "stderr": 0.01511122674175347,
+   "offset": 0.005673852371088639
+  }
+ ],
+ "mean_by_damping": {
+  "0.1": {
+   "runs": 3,
+   "constant": 1.1538826398153474,
+   "stderr": 0.008340025108547195,
+   "chi_squared": 0.3488684705980261
+  },
+  "0.2": {
+   "runs": 6,
+   "constant": 1.3091715586860093,
+   "stderr": 0.006379519054441444,
+   "chi_squared": 5.314702668237474
+  },
+  "0.5": {
+   "runs": 3,
+   "constant": 1.3331628942287976,
+   "stderr": 0.008550427139859797,
+   "chi_squared": 2.3263407954270123
+  },
+  "1.0": {
+   "runs": 3,
+   "constant": 1.3322058800106986,
+   "stderr": 0.008349992185149396,
+   "chi_squared": 3.2416124235138586
+  },
+  "2.0": {
+   "runs": 3,
+   "constant": 1.3286019751272211,
+   "stderr": 0.008679187074328607,
+   "chi_squared": 2.3049970953502674
+  }
+ }
+}

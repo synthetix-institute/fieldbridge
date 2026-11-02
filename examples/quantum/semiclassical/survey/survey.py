@@ -7,7 +7,8 @@ model; the results are written to OUT/<model>.json and collected by report.py.
 
     python3 -B examples/quantum/semiclassical/survey/survey.py examples/quantum/semiclassical/kerr_cat_kpo.json --out examples/quantum/semiclassical/survey/results
 
-The full survey of the 31 models takes about two hours on 16 cores; the laws at the obstructions take most of it.
+The full survey of the 31 models takes about two hours on eight cores; the laws at the obstructions take most of it, and
+the longest of them, the parametric-oscillator triangle, about two hours by itself.
 """
 from __future__ import annotations
 
@@ -24,7 +25,7 @@ ROOT = Path(__file__).resolve().parents[4]
 if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
-from fieldbridge.memory import changes, codiscovery, completion, spec  # noqa: E402
+from fieldbridge.memory import changes, codiscovery, completion, record, spec  # noqa: E402
 
 SEED = 20260923
 TARGETS = ("symmetric-write", "threshold-write", "phase-locking")
@@ -83,6 +84,7 @@ def survey(path: Path, trajectories: int = 400, replicates: int = 8, samples: in
     after `derive_budget` seconds and is then recorded as not derived."""
     real = spec.load(path)
     out = {"model": path.stem, "name": real.spec.get("name"), "provenance": real.spec.get("provenance"),
+           "implementation_sha256": record.implementation_hash(), "versions": record.versions(),
            "derivations": {}, "seconds": {}}
     for t in TARGETS:
         t0 = time.time()
