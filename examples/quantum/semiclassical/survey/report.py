@@ -44,7 +44,7 @@ def law_rows(comp: dict):
                 mid = next((x for x in xs if x["bias_floors"] == 1.0), xs[0] if xs else None)
                 if mid:
                     row[src] = (round(mid["response_constant"], 2), round(mid["offset"], 2))
-            if (L.get("critical_dimension") or 1) > 1 and L.get("rows"):
+            if max(L.get("critical_dimension") or 1, L.get("dynamical_critical_dimension") or 1) > 1 and L.get("rows"):
                 row["states"] = len(L.get("stable_states", []))
                 row["deviation"] = round(max(r.get("deviation", 0) for r in L["rows"]), 3)
             yield row
