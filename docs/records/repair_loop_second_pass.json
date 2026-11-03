@@ -1,0 +1,1194 @@
+{
+ "schema": "fieldbridge-repair-loop-second-pass/1",
+ "policy": {
+  "max_order": 7,
+  "orders": [],
+  "radii": [
+   1.0,
+   0.5,
+   0.25,
+   0.125,
+   0.0625,
+   0.03125
+  ],
+  "per_radius": 3,
+  "prediction_tolerance": 0.01,
+  "development_margin": 0.5,
+  "refinement_tolerance": 1e-05,
+  "minimum_omission": 0.1,
+  "minimum_relative_improvement": 0.9,
+  "identity_tolerance": 1e-06,
+  "power_factor": 1.25,
+  "max_monomials": 4000,
+  "rate": 0.02,
+  "denominator_floor": 1e-09
+ },
+ "implementation_sha256": "849ef38ca9b09bf12ab98420377c2fd5351faacc6d199ea353752635e47f8079",
+ "campaign": [
+  {
+   "departure": "25276034f3ef6ed69cc1113c838510238baf908e705d93c4351289f51aedb74f",
+   "engine": "polynomial-intertwining-modulo-order/1",
+   "status": "no_order_passes_development",
+   "input_sha256": "30a9fd9a900dccbbe3c9de118c096f245923aa507cf04c8cf6cfe74ec0ef1762",
+   "novelty_established": false,
+   "validation_scope": "deterministic drift with the noise of the specification set to zero, on the declared interventions; the selection probabilities of the failed law are not re-derived",
+   "failed_law": {
+    "target": "completion/0/unfolding/0",
+    "write_class": "equilibrium write",
+    "certified": false,
+    "law_kind": "reduced (one coordinate along the moving branch)",
+    "obstruction": "the law differs from the full dynamics by up to 0.102 (17.3 errors), and the written states at the end of the sweep do not retain the choice: 30 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+    "one_direction": {
+     "law": [
+      {
+       "bias_floors": 1.0,
+       "response_constant": 0.6075506668804113,
+       "offset": 0.46762689189428086
+      }
+     ],
+     "certificate": [
+      {
+       "bias_floors": 1.0,
+       "response_constant": 0.7924232595298599,
+       "offset": 0.8407988756831313
+      }
+     ]
+    }
+   },
+   "write_point": {
+    "state": [
+     -2.236067976670304,
+     1.2909944491417171
+    ],
+    "parameters": {
+     "F": 1.721325931793725,
+     "Delta": 0.5773502692549121
+    },
+    "swept": [
+     "F",
+     "Delta"
+    ],
+    "direction": {
+     "F": -0.9128709291227376,
+     "Delta": -0.4082482905813445
+    },
+    "sweep_end_factor": 0.8000064318809759,
+    "scale": {
+     "scale": 0.25,
+     "kind": "a quarter of the base length (no written state found)",
+     "stable_critical_coordinates": [],
+     "end_parameters": {
+      "F": 0.9910233170183725,
+      "Delta": 0.25074901098542285
+     }
+    },
+    "note": "",
+    "cusp_change_from_record": 1.3442469359858933e-10
+   },
+   "other_spectrum": [
+    [
+     -0.6666666654889821,
+     0.0
+    ]
+   ],
+   "smallest_denominator": 0.6666666653759028,
+   "lambda_critical": -1.1307933017121535e-10,
+   "resonance_at_order": null,
+   "g_low_orders": {
+    "(0, 0, 0)": -6.661338157988874e-16,
+    "(1, 0, 0)": -1.1307910178295901e-10,
+    "(0, 1, 0)": 2.0000000030738363,
+    "(0, 0, 1)": -4.472135959834637,
+    "(2, 0, 0)": 3.9683074565277596e-10,
+    "(1, 1, 0)": -3.5714760724776915e-09,
+    "(1, 0, 1)": -1.7320508057941966,
+    "(0, 2, 0)": 1.7428425224682427,
+    "(0, 1, 1)": -2.307682352297193e-08,
+    "(0, 0, 2)": -3.872983349956747,
+    "(3, 0, 0)": -0.10000000092215121,
+    "(2, 1, 0)": 1.3500000126445197,
+    "(2, 0, 1)": -0.6708204000876317,
+    "(1, 2, 0)": -6.0750000702290325,
+    "(1, 1, 1)": 6.037383635685773,
+    "(1, 0, 2)": -1.5000000244314262,
+    "(0, 3, 0)": 12.150000151554151,
+    "(0, 2, 1)": -27.168226285617443,
+    "(0, 1, 2)": 13.500000194173086,
+    "(0, 0, 3)": 3.4135197440487175e-09
+   },
+   "development_evaluations": [
+    {
+     "radius": 1.0,
+     "order": 1,
+     "passed": false,
+     "max_error": 7.734071084157022
+    },
+    {
+     "radius": 1.0,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.0078425521312235
+    },
+    {
+     "radius": 1.0,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 5,
+     "passed": false,
+     "max_error": 1.0000085422569964
+    },
+    {
+     "radius": 1.0,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 1,
+     "passed": false,
+     "max_error": 6.438924130574506
+    },
+    {
+     "radius": 0.5,
+     "order": 2,
+     "passed": false,
+     "max_error": 2004658.1934928785
+    },
+    {
+     "radius": 0.5,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.0061430227616872
+    },
+    {
+     "radius": 0.5,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 5,
+     "passed": false,
+     "max_error": 1.000007951440116
+    },
+    {
+     "radius": 0.5,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 1,
+     "passed": false,
+     "max_error": 3.6888069743399066
+    },
+    {
+     "radius": 0.25,
+     "order": 2,
+     "passed": false,
+     "max_error": 313.9121746843924
+    },
+    {
+     "radius": 0.25,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.0047840241634685
+    },
+    {
+     "radius": 0.25,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 5,
+     "passed": false,
+     "max_error": 1.0000072270809743
+    },
+    {
+     "radius": 0.25,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 7,
+     "passed": false,
+     "max_error": 1.0000000061865906
+    },
+    {
+     "radius": 0.125,
+     "order": 1,
+     "passed": false,
+     "max_error": 5.465751974341533
+    },
+    {
+     "radius": 0.125,
+     "order": 2,
+     "passed": false,
+     "max_error": 20.914128100112972
+    },
+    {
+     "radius": 0.125,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.004640334580807
+    },
+    {
+     "radius": 0.125,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 5,
+     "passed": false,
+     "max_error": 1.0000091116747774
+    },
+    {
+     "radius": 0.125,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 7,
+     "passed": false,
+     "max_error": 1.0000000106676261
+    },
+    {
+     "radius": 0.0625,
+     "order": 1,
+     "passed": false,
+     "max_error": 1.0116463705439585
+    },
+    {
+     "radius": 0.0625,
+     "order": 2,
+     "passed": false,
+     "max_error": 3.319919142785022
+    },
+    {
+     "radius": 0.0625,
+     "order": 3,
+     "passed": false,
+     "max_error": 0.5849561107371053
+    },
+    {
+     "radius": 0.0625,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 5,
+     "passed": false,
+     "max_error": 0.9353942806716027
+    },
+    {
+     "radius": 0.0625,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 7,
+     "passed": false,
+     "max_error": 0.9976644603173025
+    },
+    {
+     "radius": 0.03125,
+     "order": 1,
+     "passed": false,
+     "max_error": 0.8838016317975251
+    },
+    {
+     "radius": 0.03125,
+     "order": 2,
+     "passed": false,
+     "max_error": 1.0732565932295002
+    },
+    {
+     "radius": 0.03125,
+     "order": 3,
+     "passed": false,
+     "max_error": 0.5750607089702194
+    },
+    {
+     "radius": 0.03125,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.03125,
+     "order": 5,
+     "passed": false,
+     "max_error": 0.36500682838903625
+    },
+    {
+     "radius": 0.03125,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.03125,
+     "order": 7,
+     "passed": false,
+     "max_error": 0.5770749529023176
+    }
+   ],
+   "candidate_evaluations": 42,
+   "seconds": 20.022,
+   "implementation_sha256": "849ef38ca9b09bf12ab98420377c2fd5351faacc6d199ea353752635e47f8079",
+   "learning_sha256": "bba095b7eb724a153064c5040b051e4a295fbcc54f7031d568d2eb62dd8c4c08",
+   "attempt_id": "daa49507efbc45a093525b7a80ac600e",
+   "earlier_report": {
+    "status": "unsupported_or_resonant",
+    "reason": "ValueError: resonance at order 7: the homological operator is singular",
+    "attempt_id": "1dad40be11224cfea6274774cd6ac9cc"
+   }
+  },
+  {
+   "departure": "27baa8dec36474e7ce587f3f0e43f2b829760b88d90f73098c3b17badbd937e0",
+   "engine": "polynomial-intertwining-modulo-order/1",
+   "status": "no_order_passes_development",
+   "input_sha256": "911abb58653f3c5699488b70708bfbb2e495d26361f4bc4ccdda51bc6f1d338a",
+   "novelty_established": false,
+   "validation_scope": "deterministic drift with the noise of the specification set to zero, on the declared interventions; the selection probabilities of the failed law are not re-derived",
+   "failed_law": {
+    "target": "completion/0/unfolding/0",
+    "write_class": "nonlinear stage",
+    "certified": false,
+    "law_kind": "linear stage and outcome map",
+    "obstruction": "the law differs from the full dynamics by up to 0.021 (6.6 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (2 % change state during a hold of 42.4 time units)",
+    "one_direction": {
+     "law": [
+      {
+       "bias_floors": 1.0,
+       "response_constant": 1.8919413432177944e-14,
+       "offset": 3.719016485455694
+      }
+     ],
+     "certificate": [
+      {
+       "bias_floors": 1.0,
+       "response_constant": 0.272037790926545,
+       "offset": 2.2280445247597074
+      }
+     ]
+    }
+   },
+   "write_point": {
+    "state": [
+     65.80369878126665,
+     -37.99178528401034,
+     0.5773502522318636,
+     1.7180589765918013e-12
+    ],
+    "parameters": {
+     "Ein": 43.869133721141885,
+     "Dl": -0.8660254026234557
+    },
+    "swept": [
+     "Ein",
+     "Dl"
+    ],
+    "direction": {
+     "Ein": 0.9996537697552297,
+     "Dl": -0.02631236618319288
+    },
+    "sweep_end_factor": 37.44965664628771,
+    "scale": {
+     "scale": 59.574810187299406,
+     "kind": "distance to the one state at the end of the sweep",
+     "stable_critical_coordinates": [
+      59.574810187299406
+     ],
+     "end_parameters": {
+      "Ein": 81.30582416364238,
+      "Dl": -1.851414481735421
+     }
+    },
+    "note": "",
+    "cusp_change_from_record": 1.9767082903854316e-07
+   },
+   "other_spectrum": [
+    [
+     -0.07926514370189394,
+     2.068284050778369
+    ],
+    [
+     -0.07926514370189394,
+     -2.068284050778369
+    ],
+    [
+     -0.9414697119339404,
+     0.0
+    ]
+   ],
+   "smallest_denominator": 0.15853028674151698,
+   "lambda_critical": -6.622709090647673e-10,
+   "resonance_at_order": null,
+   "g_low_orders": {
+    "(0, 0, 0)": -1.9080601292499026e-10,
+    "(1, 0, 0)": -6.622709690160511e-10,
+    "(0, 1, 0)": -1.1451905838798746,
+    "(0, 0, 1)": -43.5078348152556,
+    "(2, 0, 0)": -3.6574613677564876e-10,
+    "(1, 1, 0)": 0.00012455506117333586,
+    "(1, 0, 1)": -0.5678466937144903,
+    "(0, 2, 0)": -0.004337230809722045,
+    "(0, 1, 1)": -0.06679941735887267,
+    "(0, 0, 2)": 22.87326452201836,
+    "(3, 0, 0)": -5.725457550540043e-05,
+    "(2, 1, 0)": 8.046908841030523e-05,
+    "(2, 0, 1)": 0.006980524474387589,
+    "(1, 2, 0)": -3.646538923185726e-05,
+    "(1, 1, 1)": -0.005690665689612582,
+    "(1, 0, 2)": -0.2863552698550474,
+    "(0, 3, 0)": -2.0534461848888632e-05,
+    "(0, 2, 1)": -0.0008757872057539539,
+    "(0, 1, 2)": -0.08935557638475103,
+    "(0, 0, 3)": 8.665760851902885
+   },
+   "development_evaluations": [
+    {
+     "radius": 1.0,
+     "order": 1,
+     "passed": false,
+     "max_error": 24.549784037546356
+    },
+    {
+     "radius": 1.0,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 3,
+     "passed": false,
+     "max_error": 0.9676493978300291
+    },
+    {
+     "radius": 1.0,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 5,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 1.0,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 1,
+     "passed": false,
+     "max_error": 34.943982227328235
+    },
+    {
+     "radius": 0.5,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 3,
+     "passed": false,
+     "max_error": 0.9455023555954072
+    },
+    {
+     "radius": 0.5,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 5,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.5,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 1,
+     "passed": false,
+     "max_error": 29.139024007530434
+    },
+    {
+     "radius": 0.25,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.0170417541454666
+    },
+    {
+     "radius": 0.25,
+     "order": 4,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 5,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.25,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 1,
+     "passed": false,
+     "max_error": 30.38275787610437
+    },
+    {
+     "radius": 0.125,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 3,
+     "passed": false,
+     "max_error": 2.3526977726659464
+    },
+    {
+     "radius": 0.125,
+     "order": 4,
+     "passed": false,
+     "max_error": 1.0185278780577527
+    },
+    {
+     "radius": 0.125,
+     "order": 5,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.125,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 1,
+     "passed": false,
+     "max_error": 45.3570723613172
+    },
+    {
+     "radius": 0.0625,
+     "order": 2,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 3,
+     "passed": false,
+     "max_error": 1.9891394899826706
+    },
+    {
+     "radius": 0.0625,
+     "order": 4,
+     "passed": false,
+     "max_error": 1.010772305021288
+    },
+    {
+     "radius": 0.0625,
+     "order": 5,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 6,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.0625,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    },
+    {
+     "radius": 0.03125,
+     "order": 1,
+     "passed": false,
+     "max_error": 17.76041553347597
+    },
+    {
+     "radius": 0.03125,
+     "order": 2,
+     "passed": false,
+     "max_error": 1.8177220402257566
+    },
+    {
+     "radius": 0.03125,
+     "order": 3,
+     "passed": false,
+     "max_error": 0.3356660317177069
+    },
+    {
+     "radius": 0.03125,
+     "order": 4,
+     "passed": false,
+     "max_error": 1.8156324291921682
+    },
+    {
+     "radius": 0.03125,
+     "order": 5,
+     "passed": false,
+     "max_error": 1.3711310543701278
+    },
+    {
+     "radius": 0.03125,
+     "order": 6,
+     "passed": false,
+     "max_error": 1.2551503131427917
+    },
+    {
+     "radius": 0.03125,
+     "order": 7,
+     "passed": false,
+     "max_error": "inf"
+    }
+   ],
+   "candidate_evaluations": 42,
+   "seconds": 30.345,
+   "implementation_sha256": "849ef38ca9b09bf12ab98420377c2fd5351faacc6d199ea353752635e47f8079",
+   "learning_sha256": "bba095b7eb724a153064c5040b051e4a295fbcc54f7031d568d2eb62dd8c4c08",
+   "attempt_id": "91ab68e80b5848b098cfa6742b5e4dc3",
+   "earlier_report": {
+    "status": "unsupported_or_resonant",
+    "reason": "ValueError: resonance at order 4: the homological operator is singular",
+    "attempt_id": "1dc84612a4e34d6283f6ef21d53fcd3a"
+   }
+  }
+ ],
+ "certified_laws": [],
+ "exact_baseline": [
+  {
+   "source": "examples/quantum/semiclassical/rydberg_bistability.json",
+   "target": "completion/0/unfolding/0",
+   "search": {
+    "status": "search_budget_exhausted",
+    "candidate_evaluations": 20,
+    "reason": null,
+    "description": {
+     "verdict": "no_candidate"
+    },
+    "outcomes": {
+     "no_polynomial_closure": 20
+    },
+    "seconds": 9.93
+   },
+   "symbolic": {
+    "status": "search_budget_exhausted",
+    "candidate_evaluations": 20,
+    "reason": null,
+    "description": {
+     "verdict": "no_candidate"
+    },
+    "outcomes": {
+     "no_polynomial_closure": 20
+    },
+    "seconds": 8.25
+   }
+  }
+ ],
+ "audit_of_first_pass": [
+  {
+   "departure": "1a63c007ca5a9b937a1b46273bb9e1c90d90ace43c4079f3729d98834f2ce1a5",
+   "source": "examples/quantum/semiclassical/jba_resonator.json",
+   "target": "completion/0/unfolding/0",
+   "status": "verified_smaller_description",
+   "passed": true,
+   "order": 7,
+   "residual_by_order": [
+    5.036605856433084e-17,
+    5.715165967846257e-17,
+    7.726230740236393e-17,
+    2.307770994334331e-16,
+    2.502375597335524e-16,
+    1.1576581667287154e-15,
+    1.4158741366758109e-14,
+    1.4022469611434873e-14,
+    6.525572420983417
+   ],
+   "side_size_by_order": [
+    5.036605856282589e-17,
+    0.9031917528417235,
+    0.30914155178427155,
+    0.22320784984373396,
+    0.16592419146616738,
+    0.5399934925054891,
+    0.29566770148009275,
+    4.036947155341502,
+    4.583778227837951
+   ],
+   "limit_by_order": [
+    1e-09,
+    9.031917528417235e-07,
+    3.0914155178427155e-07,
+    2.2320784984373394e-07,
+    1.6592419146616736e-07,
+    5.399934925054891e-07,
+    2.9566770148009274e-07,
+    4.036947155341502e-06
+   ],
+   "first_omitted_order": 8,
+   "first_omitted_residual": 6.525572420983417
+  },
+  {
+   "departure": "3278f525f3ad065b00ec35401ec54b0531e035e6cd466d246eb4c03456df24ca",
+   "source": "examples/quantum/semiclassical/ion_duffing.json",
+   "target": "completion/1/unfolding/0",
+   "status": "verified_smaller_description",
+   "passed": true,
+   "order": 7,
+   "residual_by_order": [
+    1.6975185787364748e-16,
+    4.507382998932839e-16,
+    1.4353860336829687e-16,
+    5.09710937856732e-16,
+    1.5883199759582263e-16,
+    6.149249497301686e-15,
+    6.6928856270310894e-15,
+    9.85881748452913e-15,
+    16.725887254027455
+   ],
+   "side_size_by_order": [
+    1.6975185787634047e-16,
+    1.685638076663221,
+    0.8796813138795941,
+    0.6080419018627373,
+    0.6159612058241896,
+    2.860079726297285,
+    2.984000039190633,
+    40.78163052483736,
+    19.20757646569443
+   ],
+   "limit_by_order": [
+    1e-09,
+    1.685638076663221e-06,
+    8.796813138795941e-07,
+    6.080419018627373e-07,
+    6.159612058241895e-07,
+    2.8600797262972847e-06,
+    2.9840000391906328e-06,
+    4.078163052483736e-05
+   ],
+   "first_omitted_order": 8,
+   "first_omitted_residual": 16.725887254027455
+  },
+  {
+   "departure": "388c2f71bf569d19bc11ae9cee08d6e06b42208d8dd226926bb80d534da2ebda",
+   "source": "examples/quantum/semiclassical/kpo_pair.json",
+   "target": "completion/0/law",
+   "status": "insufficient_excitation",
+   "passed": true,
+   "order": 2,
+   "residual_by_order": [
+    6.81932906221651e-65,
+    7.32194379274542e-17,
+    1.1232790580533264e-16,
+    1.719474601952747
+   ],
+   "side_size_by_order": [
+    6.9916357867544295e-65,
+    6.790322245848015e-08,
+    0.4007325088480594,
+    1.719474601952747
+   ],
+   "limit_by_order": [
+    1e-09,
+    1e-09,
+    4.0073250884805935e-07
+   ],
+   "first_omitted_order": 3,
+   "first_omitted_residual": 1.719474601952747
+  },
+  {
+   "departure": "4a4f71577651fefd40a6997ba3488c2eb088c8e8606b0efceaf9e96573c102f5",
+   "source": "examples/quantum/semiclassical/ion_duffing.json",
+   "target": "completion/0/unfolding/0",
+   "status": "verified_smaller_description",
+   "passed": true,
+   "order": 7,
+   "residual_by_order": [
+    1.5360723893272604e-16,
+    7.74673857208e-17,
+    2.257171744456717e-16,
+    9.408044864253691e-16,
+    1.065843751851863e-16,
+    6.118190126106336e-15,
+    1.042582889306261e-14,
+    3.30020227073704e-14,
+    16.725886731733855
+   ],
+   "side_size_by_order": [
+    2.5639502491708125e-16,
+    1.685638076505288,
+    0.8796813142918091,
+    0.6080419021848774,
+    0.6159612073418507,
+    2.8600797291811473,
+    2.9840000606955104,
+    40.78163053463373,
+    19.207576279524897
+   ],
+   "limit_by_order": [
+    1e-09,
+    1.685638076505288e-06,
+    8.79681314291809e-07,
+    6.080419021848774e-07,
+    6.159612073418506e-07,
+    2.8600797291811473e-06,
+    2.98400006069551e-06,
+    4.078163053463372e-05
+   ],
+   "first_omitted_order": 8,
+   "first_omitted_residual": 16.725886731733855
+  },
+  {
+   "departure": "550023ea31b702fcf00c4723f04fd1fd2254063aef4ba3a27f47324ece081596",
+   "source": "examples/quantum/semiclassical/rydberg_bistability.json",
+   "target": "completion/0/unfolding/0",
+   "status": "verified_smaller_description",
+   "passed": true,
+   "order": 6,
+   "residual_by_order": [
+    7.155071431354673e-17,
+    7.110839775507489e-16,
+    6.854126991372547e-16,
+    5.445846729170687e-16,
+    1.0197358930462249e-15,
+    1.3652157391132534e-15,
+    4.3322430757780754e-15,
+    3.449612072196026
+   ],
+   "side_size_by_order": [
+    5.4633754971229936e-17,
+    0.23155467815822245,
+    0.08684422865222342,
+    0.4180257575855404,
+    0.7247135391119116,
+    0.38448707520763586,
+    0.9553204825734177,
+    3.107493254169489
+   ],
+   "limit_by_order": [
+    1e-09,
+    2.3155467815822243e-07,
+    8.684422865222342e-08,
+    4.180257575855404e-07,
+    7.247135391119116e-07,
+    3.8448707520763583e-07,
+    9.553204825734178e-07
+   ],
+   "first_omitted_order": 7,
+   "first_omitted_residual": 3.449612072196026
+  },
+  {
+   "departure": "652863b247bbfd8f766eceb901011c0ea9c12fd68686070edf9069c54fa72207",
+   "source": "examples/quantum/semiclassical/magnon_kerr.json",
+   "target": "completion/0/unfolding/0",
+   "status": "withheld_failed",
+   "passed": true,
+   "order": 5,
+   "residual_by_order": [
+    4.0200764338438056e-17,
+    6.129954912525083e-10,
+    7.218861050150889e-10,
+    1.9155374684510008e-08,
+    4.447942611853343e-08,
+    1.853668013395485e-14,
+    17.706481417157736
+   ],
+   "side_size_by_order": [
+    1.1071760735545464e-09,
+    1.0380453011044286,
+    0.7207433298036643,
+    0.9658594147178908,
+    1.6620828915721464,
+    15.749759602869627,
+    25.083043600414264
+   ],
+   "limit_by_order": [
+    1e-09,
+    1.0380453011044285e-06,
+    7.207433298036642e-07,
+    9.658594147178908e-07,
+    1.6620828915721462e-06,
+    1.5749759602869626e-05
+   ],
+   "first_omitted_order": 6,
+   "first_omitted_residual": 17.706481417157736
+  },
+  {
+   "departure": "668221e1f5d3cae7d347530e0c2a20ee2df7cf66acfc58b4ce702feafd4910bf",
+   "source": "examples/quantum/semiclassical/jba_resonator.json",
+   "target": "completion/1/unfolding/0",
+   "status": "verified_smaller_description",
+   "passed": true,
+   "order": 5,
+   "residual_by_order": [
+    6.772147725444564e-17,
+    1.6633204743232689e-16,
+    1.5499061157788244e-16,
+    1.0918448989980006e-16,
+    3.0749624977175533e-16,
+    3.3641943119307743e-16,
+    0.5084607600074854
+   ],
+   "side_size_by_order": [
+    1.2819757647025868e-16,
+    0.9031916304609132,
+    0.3091414768607358,
+    0.22320780290398765,
+    0.16592409607790162,
+    0.5399933452229568,
+    0.28348362999446414
+   ],
+   "limit_by_order": [
+    1e-09,
+    9.031916304609132e-07,
+    3.0914147686073575e-07,
+    2.2320780290398765e-07,
+    1.6592409607790162e-07,
+    5.399933452229568e-07
+   ],
+   "first_omitted_order": 6,
+   "first_omitted_residual": 0.5084607600074854
+  },
+  {
+   "departure": "8f2f97ea0e4599a9d653e265f3ade267367d8d13e3afaeaa538f3462bd6dfd23",
+   "source": "examples/quantum/semiclassical/rfsquid_pair.json",
+   "target": "completion/1/law",
+   "status": "insufficient_excitation",
+   "passed": true,
+   "order": 5,
+   "residual_by_order": [
+    4.238248872239371e-17,
+    1.1941026952774644e-15,
+    1.9115132520931973e-14,
+    2.362003819784437e-13,
+    3.2124072560528966e-12,
+    2.7522394833188456e-11,
+    35019.83371050977
+   ],
+   "side_size_by_order": [
+    8.341112848805746e-17,
+    1.1744130753873835e-07,
+    2.184765300947117,
+    52.1001474629495,
+    737.3048456268949,
+    6937.090827452477,
+    18211.56584109533
+   ],
+   "limit_by_order": [
+    1e-09,
+    1e-09,
+    2.184765300947117e-06,
+    5.21001474629495e-05,
+    0.0007373048456268949,
+    0.006937090827452477
+   ],
+   "first_omitted_order": 6,
+   "first_omitted_residual": 35019.83371050977
+  },
+  {
+   "departure": "a6a6488d8ad2dd12e367699f696d6d9ebe86a87027e5f96525bceeb0fc7d4170",
+   "source": "examples/quantum/semiclassical/transmon_driven.json",
+   "target": "completion/0/unfolding/0",
+   "status": "no_test_power",
+   "passed": true,
+   "order": 7,
+   "residual_by_order": [
+    9.135009632990261e-18,
+    9.629875402628771e-17,
+    5.275901035583287e-16,
+    1.6899770864428456e-15,
+    6.497454379985109e-15,
+    1.7742113895389134e-13,
+    9.506273896011824e-13,
+    8.258429842317915e-12,
+    13956.637714276076
+   ],
+   "side_size_by_order": [
+    8.012344526548837e-17,
+    1.1164842341910128,
+    0.5232476474023073,
+    1.6281967440131007,
+    0.6860180241987781,
+    25.64810917111985,
+    50.45430610814823,
+    3130.828353370719,
+    15073.060658295988
+   ],
+   "limit_by_order": [
+    1e-09,
+    1.1164842341910127e-06,
+    5.232476474023073e-07,
+    1.6281967440131006e-06,
+    6.860180241987781e-07,
+    2.5648109171119846e-05,
+    5.045430610814823e-05,
+    0.003130828353370719
+   ],
+   "first_omitted_order": 8,
+   "first_omitted_residual": 13956.637714276076
+  },
+  {
+   "departure": "ee57750201978bd1d598fdb471575e9a952ce1ab939f9f9fdcde900f4d0900f2",
+   "source": "examples/quantum/semiclassical/transmon_driven.json",
+   "target": "completion/1/unfolding/0",
+   "status": "no_test_power",
+   "passed": true,
+   "order": 5,
+   "residual_by_order": [
+    1.1040178179409117e-17,
+    7.04403075132325e-17,
+    2.7035814523329137e-16,
+    3.029219325705781e-15,
+    2.2288062236655868e-14,
+    3.222981093772449e-14,
+    83.47931290431393
+   ],
+   "side_size_by_order": [
+    1.0718831249715171e-16,
+    1.1164842341793062,
+    0.5232476473555076,
+    1.6281967439791047,
+    0.68601802395162,
+    25.6481091703489,
+    76.5823600712939
+   ],
+   "limit_by_order": [
+    1e-09,
+    1.116484234179306e-06,
+    5.232476473555075e-07,
+    1.6281967439791047e-06,
+    6.8601802395162e-07,
+    2.5648109170348897e-05
+   ],
+   "first_omitted_order": 6,
+   "first_omitted_residual": 83.47931290431393
+  },
+  {
+   "departure": "f24cff1dd74c403b5d744c68f562fcb429ac56001425a67233c05f9673f9eb55",
+   "source": "examples/quantum/semiclassical/kerr_cat_kpo.json",
+   "target": "completion/0/law",
+   "status": "insufficient_excitation",
+   "passed": true,
+   "order": 3,
+   "residual_by_order": [
+    6.979246778944438e-65,
+    8.933038315387065e-18,
+    5.179994839698636e-17,
+    4.880834597892553e-16,
+    1.0045660958915938
+   ],
+   "side_size_by_order": [
+    6.847351279395792e-65,
+    9.497142961878113e-08,
+    0.40777008472094683,
+    1.572020602754278e-07,
+    0.746435929640278
+   ],
+   "limit_by_order": [
+    1e-09,
+    1e-09,
+    4.077700847209468e-07,
+    1e-09
+   ],
+   "first_omitted_order": 4,
+   "first_omitted_residual": 1.0045660958915938
+  }
+ ]
+}

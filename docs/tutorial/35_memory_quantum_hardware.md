@@ -50,7 +50,8 @@ For each model, `survey.py` runs the three derivations of Modules 9–11 with th
 certificate of 4 000 trajectories per bias), and the single changes of Module 14 (`memory changes`). Each of the
 three derivations is stopped after 30 minutes and then recorded as not derived. The results of the full survey are
 saved in [examples/quantum/semiclassical/survey/results](../../examples/quantum/semiclassical/survey/results), each with the stamp of the code that
-produced it, and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
+produced it (they were computed with limits of 60 s per change and 30 minutes per derivation, `--budget 60
+--derive-budget 1800`; the defaults of `survey.py` are now 300 s and 2 hours, about 25 core-hours in all), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
 [records](../records/quantum_semiclassical.md) of `memory record` measure the same quantities at another seed, and the laws at the obstructions with
 fewer trajectories; this module says so where they are the source. Each step is also a command of its own:
 
@@ -77,7 +78,8 @@ Pol oscillator and the optomechanical self-oscillator. The first two have the ha
 fit is not a measurement, because the slip frequency outside the locking range cannot be read and the fitted centre
 lies outside the range, and no constant is recorded. The phase-locking derivations of the driven Jaynes-Cummings
 resonator at high power and of the spin ensemble did not finish within their 30 minutes and are recorded as not
-derived.
+derived; run without the limit, that of the spin ensemble finds no oscillation at any of its 11 drive strengths after
+4 hours.
 
 These results are expected. A universal law returns its constant on every carrier whose dynamics reduce to its
 normal form; what the survey adds is the device's own scales, which set how weak a signal the element can write.
@@ -133,8 +135,9 @@ tolerance; the full dynamics are the reference. Other cusps have offsets of thei
 polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it writes the same state whatever
 the bias, where the full dynamics give a response of 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
-the optomechanical element the law departs from the full dynamics by up to 0.28, and 13 % of the written states
-change during a hold, so only the full dynamics give the write.
+the bistable optomechanical element the law departs from the full dynamics by up to 0.28: three directions relax
+slowly during the passage, and 13 % of the final states have not yet left the unwritten branch at the end of the
+sweep, so the write is not settled there.
 
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
@@ -171,7 +174,7 @@ oscillators or three rf-SQUID annealer qubits on an antiferromagnetic triangle h
 stability together. The law of the plane, the linear-stage write applied in both directions and read as the sector
 in which the state lands, gives the probabilities of the frustrated configurations to within 0.024 of the full
 dynamics on the coherent Ising machine and on the rf-SQUID triangle, whose eight written states include the two
-configurations of equal phases, and to within 0.039 and 0.044 at the two upper write points of the
+configurations of equal phases (0.4 % of its trajectories change state during a hold), and to within 0.039 and 0.044 at the two upper write points of the
 parametric-oscillator triangle. Only on the coherent Ising machine in the survey does the difference stay within the
 statistical error, and the law is certified there; the record, at another seed, does not certify it.
 
@@ -187,15 +190,32 @@ pitchfork: 1.35 from the law and 1.32 from the full dynamics, certified. Module 
 
 **Where the cubic term vanishes, the vacuum decides.** The Kerr-cat qubit at zero detuning, and the in-phase mode of
 two coupled Kerr parametric oscillators, have no cubic term in the reduced equation, and the leading term is of fifth
-order. The law of the completed model gives 1.35, but in the full dynamics the response almost vanishes, 0.08 and
-0.07, and the written states do not keep the choice: in the [records](../records/quantum_semiclassical.md) about half
-of them change during a hold of 56.6 time units. Here the
-classical image is not enough, and the quantum dynamics decide ([the quantum write](30_quantum_write.md)). The
-phase-locked parametric oscillator used to measure qubits has a vanishing cubic term too, with the leading term
-$-5.76 \times 10^{-4}\, s^5 = -K^2 s^5/\kappa$, but at many photons, where the written states are kept; there the
-[record](../records/quantum_semiclassical.md) gives 1.31 from the law and 1.27 from the full dynamics, certified. A
-noise-free flow from the size the linear stage gives the samples follows the Kerr rotation to either state and had
-read 0.78; in one direction only the sign of a sample counts.
+order. The full dynamics give a response of only 0.08 and 0.07, against 1.33 for the pitchfork, and about half of the
+trajectories change state during a hold at the end of the sweep (50 % and 53 %): with the noise of the vacuum the
+written states do not retain the choice. The law keeps the pitchfork's sign rule and
+gives 1.35 for both, so it is not certified and the class is an equilibrium write; the
+[records](../records/quantum_semiclassical.md), with fewer samples and one bias, read the same (1.30 against 0.05, and
+1.31 against 0.06). Here the classical image is not enough, and the quantum dynamics decide
+([the quantum write](30_quantum_write.md)).
+
+The phase-locked parametric oscillator used to measure qubits has the same form of equations, with a vanishing cubic
+term and the leading term $-5.76 \times 10^{-4}\, s^5 = -K^2 s^5/\kappa$, but with a much smaller Kerr coefficient,
+K = 12 `gnl` = 0.024, and many photons. Its full dynamics keep the constant of the pitchfork at every bias (1.34, 1.33
+and 1.33 at 0.5, 1 and 2 noise floors) and its states retain the choice. The law gives 1.34, 1.35 and 1.31, certified
+(the record, at one bias, 1.31 against 1.27). At the mapping time the spread of the linear stage is 4.2 times the
+written amplitude there: the deviation has saturated, and the sign of each sample decides. Changing `gnl` in the
+specification shows where the law ends, with the settings of the survey:
+
+| K = 12 `gnl` | 0.006 | 0.012 | 0.024 | 0.048 | 0.096 | 0.19 | 0.6 | 1.2 | 5 |
+| ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| Full dynamics | 1.33 | 1.34 | 1.33 | 1.33 | 1.26 | 0.90 | 0.35 | 0.19 | 0.02 |
+| Law | 1.35 | 1.35 | 1.35 | 1.35 | 1.35 | 1.35 | 1.35 | 1.35 | 1.35 |
+| Certified | yes | yes | yes | yes | yes | no | no | no | no |
+
+The law does not depend on K, since K does not enter the linear stage. From K = 0.19 the certificate rejects it and the
+class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈ 0.1 and K = 5 the full dynamics lose
+the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
+classification as an equilibrium write records and does not answer.
 
 In all, 18 laws at obstructions are certified and 24 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
