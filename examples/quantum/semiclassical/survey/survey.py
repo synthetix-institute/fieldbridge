@@ -7,7 +7,8 @@ model; the results are written to OUT/<model>.json and collected by report.py.
 
     python3 -B examples/quantum/semiclassical/survey/survey.py examples/quantum/semiclassical/kerr_cat_kpo.json --out examples/quantum/semiclassical/survey/results
 
-The full survey of the 31 models takes about two hours on 16 cores; the laws at the obstructions take most of it.
+The full survey of the 31 models takes about 25 core-hours, four hours at ten processes on a shared 32-core machine;
+the laws at the obstructions take most of it.
 """
 from __future__ import annotations
 
@@ -77,7 +78,7 @@ def derive_limited(path: Path, target: str, trajectories: int, replicates: int, 
 
 
 def survey(path: Path, trajectories: int = 400, replicates: int = 8, samples: int = 8000, certificate: int = 4000,
-           budget: int = 60, save=None, derive_budget: int = 1800) -> dict:
+           budget: int = 300, save=None, derive_budget: int = 7200) -> dict:
     """The three derivations, the laws at the obstructions and the single changes of one model; `save` is called
     with the partial result after each stage. Each derivation with its law runs in a child process that is stopped
     after `derive_budget` seconds and is then recorded as not derived."""
@@ -111,8 +112,8 @@ def main() -> int:
     ap.add_argument("--replicates", type=int, default=8)
     ap.add_argument("--samples", type=int, default=8000, help="Samples of the linear stage of a law at an obstruction.")
     ap.add_argument("--certificate", type=int, default=4000, help="Trajectories of its certificate per bias.")
-    ap.add_argument("--budget", type=int, default=60, help="Time limit of a derivation after a change, in seconds.")
-    ap.add_argument("--derive-budget", type=int, default=1800,
+    ap.add_argument("--budget", type=int, default=300, help="Time limit of a derivation after a change, in seconds.")
+    ap.add_argument("--derive-budget", type=int, default=7200,
                     help="Wall-clock seconds of each of the three derivations with its law (0: no limit).")
     args = ap.parse_args()
     args.out.mkdir(parents=True, exist_ok=True)
