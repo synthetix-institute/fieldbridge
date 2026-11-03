@@ -195,7 +195,7 @@ def _rk4_step(f, q, t, h):
 
 # ------------------------------------------------------------------------------------------------ the law
 def branch_step(real: Realization, q: np.ndarray, q_prev: Optional[np.ndarray], over: Dict[str, float],
-                crossing: Tuple[np.ndarray, np.ndarray]) -> Tuple[np.ndarray, bool]:
+                crossing: Tuple[np.ndarray, np.ndarray], max_step: Optional[float] = None) -> Tuple[np.ndarray, bool]:
     """One step along the unwritten branch: Newton from the secant predictor through the last two points.
 
     Near a pitchfork the Jacobian is singular along the crossing direction, and the written branches leave the unwritten
@@ -204,16 +204,20 @@ def branch_step(real: Realization, q: np.ndarray, q_prev: Optional[np.ndarray], 
     the followed branch then slides onto a written state. The secant predictor lies on the unwritten branch to second
     order in the step, and a correction larger than BRANCH_SMOOTH times the branch's own motion over the last step keeps
     only its part across the crossing directions, since along them it would be a step onto a written branch. Returns the
-    new point and whether Newton converged within the usual bound on a step."""
+    new point and whether Newton converged within the bound on a step, `max_step` (a tenth of the base length by
+    default, for the fine step of the reference; a coarse grid on which the branch moves further between points passes
+    its own)."""
     Rx, Lx = crossing
     pred = q if q_prev is None else q + real.carrier.diff(q_prev, q)
     q_next, ok = an.newton(real, pred, over)
     q_next = np.asarray(q_next, float)
-    if not (ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q, q_next)) <= 0.1 * an.base_length(real)):
+    bound = 0.1 * an.base_length(real) if max_step is None else max_step
+    if not (ok and np.all(np.isfinite(q_next)) and np.linalg.norm(real.carrier.diff(q, q_next)) <= bound):
         return q_next, False
     own = 0.0 if q_prev is None else float(np.linalg.norm(real.carrier.diff(q_prev, q)))
     move = real.carrier.diff(pred, q_next)
-    if q_prev is not None and float(np.linalg.norm(move)) > BRANCH_SMOOTH * own + 1e-9 * an.base_length(real):
+    # a branch that has not yet moved gives no scale for its motion, and a correction there is the branch setting off
+    if q_prev is not None and own > 0.0 and float(np.linalg.norm(move)) > BRANCH_SMOOTH * own + 1e-9 * an.base_length(real):
         q_next = pred + move - Rx @ (Lx.T @ move)
     return q_next, True
 
@@ -469,7 +473,9 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     if crossing is None:
         crossing = (np.zeros((q0.size, 0)), np.zeros((q0.size, 0)))
     for i, t in enumerate(ts_all):
-        qn, ok = branch_step(real, q, q_prev, sweep.over(t), crossing)
+        # the grid is coarse, and the branch moves between its points by more than the bound meant for the reference's
+        # step: only the guard against a step onto a written branch applies here
+        qn, ok = branch_step(real, q, q_prev, sweep.over(t), crossing, max_step=np.inf)
         q, q_prev = (qn, q) if ok else (q, None)
         nf = an.normal_form(real, q, sweep.param, sweep.value(t))
         if nf.get("hopf") or "mode" not in nf:

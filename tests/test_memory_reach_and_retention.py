@@ -177,3 +177,17 @@ def test_a_start_that_does_not_relax_is_reported():
     real = real_of(["s", "w"], {"p": 0.0, "al": 0.5}, {"s": "p*s - s**3", "w": "-(p + 0.3)*(w - al*p) + (w - al*p)**3"}, "p")
     law = law_at_zero(real)
     assert law["status"].startswith("the start of the sweep does not relax")
+
+
+def test_the_reduced_law_follows_a_branch_that_sets_off_after_its_first_point():
+    # on the reduced law's grid the branch does not move over the first step, which gave version 4's guard no scale, so that it refused every later step
+    real = real_of(["x"], {"d": 0.0, "p": 6.0}, {"x": "p/(1 + (d - x)**2) - x"}, "d", -2.0, 12.0)
+    sweep_q = []
+    q, q_prev = np.array([0.5]), None
+    R = np.ones((1, 1))
+    for d in np.linspace(0.0, 1.0, 11):
+        q_next, ok = cm.branch_step(real, q, q_prev, {"d": float(d)}, (R, R), max_step=np.inf)
+        assert ok
+        q, q_prev = q_next, q
+        sweep_q.append(float(q[0]))
+    assert np.max(np.abs([real.F(np.array([[x]]), d=float(d))[0, 0] for x, d in zip(sweep_q, np.linspace(0.0, 1.0, 11))])) < 1e-8
