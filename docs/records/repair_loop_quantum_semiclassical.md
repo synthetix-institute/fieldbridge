@@ -5,6 +5,30 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+## At origin/main 9cc1abc, 2026-11-03
+
+origin/main 9cc1abc reads the outcome map by the flow in two or more directions. The k the outcome map uses is the dynamical
+critical dimension, so a static one-direction write point can take the two-direction path. All 31 completions were regenerated
+on the laptop (`--steps completion`, seed 0, 4000 samples, 2000 trajectories), and 29 are unchanged. Two moved and are spliced
+into the records (22ffa90):
+
+- `optomech_bistable` unfolding 0 has one static and three dynamical critical directions. Its class goes from equilibrium write
+  to "not settled at the end of the sweep" (deviation 0.143 -> 0.142, switching 0.1391 -> 0.13905), so it leaves the campaign set,
+  which takes the nonlinear-stage and equilibrium-write classes. In the campaign below it was "no order passes development".
+- `rfsquid_triangle` 0: deviation 0.031 -> 0.030, class unchanged. Rerun alone with a fresh library, the same rule and 3600 s
+  (`repair_loop_rfsquid_triangle_at_9cc1abc.json`): the same verified candidate (sha256 e4d783f9...), order 5, radius 0.0625,
+  and withheld error 0.0026. Its task differs only in the text of the record.
+
+No completion of a certified-control law moved, so the control was not rerun.
+
+**9 of the 22 failed laws (18 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, and 0 of the 22 at
+the scale of the written states**, against 9 of 23 below. The certified control stays at 8 of 18. The 21 other rows are those of
+86e4e4a (`repair_loop_fixed_records_campaign.json`), not rerun.
+
+Law record regenerated with /usr/local/bin/python3.11 (5586 s) once all `memory/*.py` was final. Against origin/main 9cc1abc,
+1 of 1261 leaves differs, the implementation hash (that of the spliced records); every constant, error, word, class and
+signature is identical.
+
 ## On the corrected records, 2026-11-03
 
 Commit 86e4e4a (origin/main 70f8590 merged in), run on the cluster with fresh libraries and 3600 s per law, under the rule of
