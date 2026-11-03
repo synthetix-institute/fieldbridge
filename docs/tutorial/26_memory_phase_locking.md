@@ -62,9 +62,9 @@ targets. The command takes about 15 minutes on a laptop, or 2 minutes with `--no
 | van der Pol oscillator | electronics | RKL | bias $= 0$ | 1:1 | 0.2674 | 0.9998 ± 0.0015 |
 | Brusselator | chemical kinetics | RKL | $b = 3$ | 1:1 | 0.5120 | 1.0000 ± 0.0025 |
 | Goodwin clock | chronobiology | RKL | $\mathrm{tr} = 10$ | 1:1 | 0.1579 | 0.9998 ± 0.0042 |
-| FitzHugh–Nagumo neuron | neuroscience | CRKL | current $= 0.7$ | 1:1 | 0.2128 | 0.9999 ± 0.0032 |
-| Rosenzweig–MacArthur predator and prey | ecology | CRKL | capacity $= 3.25$ | 1:1 | 0.0591 | 0.9993 ± 0.0072 |
-| overdamped Josephson junction | superconductivity | CRKL | current $= 1.6$ | 1:1 | 0.4003 | 1.0009 ± 0.0010 |
+| FitzHugh–Nagumo neuron | neuroscience | CRKL | current $= 0.9$ | 1:1 | 0.2080 | 0.9999 ± 0.0027 |
+| Rosenzweig–MacArthur predator and prey | ecology | CRKL | capacity $= 4$ | 1:1 | 0.0417 | 0.9994 ± 0.0072 |
+| overdamped Josephson junction | superconductivity | CRKL | current $= 1.6$ | 1:1 | 0.4003 | 1.0003 ± 0.0004 |
 | pumped oscillator (parametron principle) | computing hardware | SRKL | $k = 1$ | 2:1 | 0.2542 | 0.9998 ± 0.0015 |
 | ring of 3 repressors | synthetic biology | SRKL | $\alpha = 10$ | 3:1 | 0.0165 | 0.997 ± 0.019 |
 | Lotka–Volterra predator and prey | ecology | R | stops at R: a family of neutral cycles | — | — | — |
@@ -74,10 +74,12 @@ targets. The command takes about 15 minutes on a laptop, or 2 minutes with `--no
 
 Eight models from eight fields reach the target by four classes of derivation. Three oscillate as specified (R K L).
 Three must first be moved into oscillation (C R K L). The FitzHugh–Nagumo neuron is excitable without current and
-fires periodically for currents between about 0.33 and 1.42; the constructor takes 0.7, the middle of the
-oscillating grid values. The Rosenzweig–MacArthur equilibrium loses stability when the carrying capacity exceeds
+fires periodically for currents between about 0.33 and 1.42; the constructor takes 0.9, the oscillating value of its
+grid whose cycle contracts most per period. The Rosenzweig–MacArthur equilibrium loses stability when the carrying capacity exceeds
 $1 + 2x^*$, where $x^* = 2/3$ is the prey density at equilibrium (enrichment destabilizes the equilibrium; Rosenzweig,
-1971). The junction carries no voltage below its critical current and rotates above it. Two models reach the target
+1971), and the constructor takes the capacity 4 by the same rule. The junction carries no voltage below its critical
+current and rotates above it; it has no transverse direction to contract, so the constructor takes the oscillating
+value nearest the middle of the run. Two models reach the target
 through a symmetry and lock at a higher ratio (S R K L).
 
 ![Derivations of phase locking, the averaged drift of the phase and the locking law](figures/memory/m9_phase.png)
@@ -122,7 +124,7 @@ In the Lotka–Volterra model the quantity $x - \ln x + y - g\ln y$ is conserved
 every orbit around the centre is a cycle. A transverse Floquet multiplier equals 1, and the amplitude is as flat as
 the phase. A periodic drive moves the orbit across the family without a restoring force; there is no isolated phase
 to fix. In the Rosenzweig–MacArthur model of the same field, logistic prey growth and saturating predation make the
-cycle attracting ($\kappa = 0.12$), and it locks. The capillary rotors and the in-plane dipoles stop because their
+cycle attracting ($\kappa = 0.17$), and it locks. The capillary rotors and the in-plane dipoles stop because their
 control multiplies the whole drift: modulating it changes only the rate of time, so $Z_p$ is constant and has no
 harmonic. The models of the write targets stop at C, since none oscillates in its control range.
 
@@ -132,10 +134,13 @@ The phase gained over one period in the driven model agrees with $TK\cos(n\psi-\
 of $K$ at $K = 0.01\min(\omega_0, 2\kappa)$ (Figure 1c); the deviation is of first order in the drive. In units of
 $K$ the measured relaxation rates and slip frequencies lie on the circle and the hyperbola of Eq. (1) (Figure 1d). A
 joint fit of both gives the half-width and the centre of the locking range. Extrapolated linearly in the amplitude
-from the two drives, the half-width is $1.0003 \pm 0.0007$ in units of $K$ ($\chi^2 = 0.88$ for 8 values), and no
+from the two drives, the half-width is $1.0002 \pm 0.0004$ in units of $K$ ($\chi^2 = 0.63$ for 8 values), and no
 model deviates from 1 by more than $3.2 \times 10^{-3}$. The largest uncertainty belongs to the ring of three, whose
 third harmonic is small ($\lvert Z_3\rvert = 0.033$), so that its drive must be strong and the second-order
-corrections are large. The centre moves in proportion to the amplitude, from $0.012K$ to $0.006K$ for the van der Pol
+corrections are large. The smallest belongs to the junction, whose half-width approaches 1 quadratically in the drive
+(0.99951 and 0.99990), so that the linear extrapolation lies $3 \times 10^{-4}$ above 1, within its error. The angle of
+the rotating junction is kept within half a period of zero and integrated with an absolute tolerance, because a
+relative tolerance on an unwrapped angle would make its constant depend on the number of turns, and so on the seed. The centre moves in proportion to the amplitude, from $0.012K$ to $0.006K$ for the van der Pol
 oscillator when $K$ is halved: a frequency pull of second order in the drive.
 
 ## 8. Memory in the locked phase
@@ -191,7 +196,7 @@ stops at R, the cycles form a neutral family.
   from eight fields by four classes of derivation.
 - A symmetry that maps the cycle onto itself $1/m$ of a period later sets the ratio $m:1$ (the parametron, the ring
   of three).
-- The half-width of the locking range is $1.0003 \pm 0.0007$ in units of $K = \varepsilon\lvert Z_n\rvert/2$.
+- The half-width of the locking range is $1.0002 \pm 0.0004$ in units of $K = \varepsilon\lvert Z_n\rvert/2$.
 - A family of neutral cycles, a control that only rescales time, and a control range without oscillation stop the
   derivation, each at a named letter.
 - Within the locking range the drive restores the phase, and the phase is lost only by slips.
@@ -201,7 +206,7 @@ stops at R, the cycles form a neutral family.
 | Result | Function | Test |
 | --- | --- | --- |
 | Phase locking: cycle, phase response, ratio, Adler form | [`phase_locking.derive`](../../fieldbridge/memory/phase_locking.py), `find_cycle`, `floquet`, `phase_response`, `drive_symmetry`, `averaged_drift` | `test_the_symmetry_of_the_cycle_sets_the_locking_ratio`, `test_phase_locking_obstructions_name_their_reason` |
-| Locking law | `phase_locking.adler_law`, `locked_rate`, `slip_frequency` | `test_the_junction_has_a_one_harmonic_phase_response_and_the_adler_width` |
+| Locking law | `phase_locking.adler_law`, `locked_rate`, `slip_frequency` | `test_the_junction_has_a_one_harmonic_phase_response_and_the_adler_width`, `test_whole_turns_of_a_rotating_angle_do_not_enter_the_relaxation_rate`, `test_the_locking_constant_of_the_junction_moves_with_the_seed_by_less_than_its_error` |
 | Report and figure | [`cli.cmd_codiscover`](../../fieldbridge/memory/cli.py), [`visual.codiscovery_figure`](../../fieldbridge/memory/visual.py) | `test_codiscover_command_writes_report_and_figure` |
 
 Sources: R. Adler, Proc. IRE 34, 351 (1946); B. van der Pol, Phil. Mag. 2, 978 (1926); I. Prigogine and R. Lefever,

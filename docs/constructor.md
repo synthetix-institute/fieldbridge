@@ -101,12 +101,20 @@ law is checked. Where the symmetric write is obstructed, the completion rung of 
 specification: it keeps what the obstruction names (a second parameter that cancels a bias, the full critical space,
 the next order, the distant branch) and derives the law of the completed model with its certificate. Where the
 certificate deviates, a hold at the end value of the control tells an equilibrium write (the noise exchanges the
-choice between shallow written states) from a failure in the nonlinear stage. A sweep through a cusp found by the
-second parameter is read on a window narrowed until the quartic term of the drift no longer appears as a quadratic one,
-and its law is refused when the sweep is not a pitchfork; with `--curvature`, `memory complete` also finds the curvature
+choice between shallow written states) from a failure in the nonlinear stage. The law of a sweep through a cusp found by
+the second parameter is refused when the sweep is not a pitchfork; with `--curvature`, `memory complete` also finds the curvature
 of the sweep at which its intrinsic offset vanishes (tutorial Module 15). The report lists, per specification,
 the status of each target and the completion with its law, class, response constant and offset; `--workers` runs
 the specifications in parallel processes.
+
+The coefficients of the reduced drift at a write point are not fitted. `analysis.series_reduction` closes the centre
+manifold of the critical direction order by order at the point, to order 7, in the truncated-series arithmetic of
+`memory/series.py`, which runs through the compiled drift, and the kind of the write point is read from that series. It
+covers one critical direction and every function of a specification; several critical directions, and a drift without a
+power series at the point (`abs` at a kink), are reported as not covered in `nf["series"]`, and the kind is then read from
+the cubic fitted on the window, which is kept beside the series as `nf["fit"]`. The coefficient $a_2$ does not depend on
+the coordinate along the slow manifold, and $a_3$ does not where $a_2$ vanishes; at a fold, $a_3$ is that of the
+coordinate $s = w \cdot (x - q)$ and is not an invariant of the write point.
 
 The first set run this way is the thirty-one elements of quantum-computing hardware written as semiclassical drift
 equations in [examples/quantum/semiclassical](../examples/quantum/semiclassical/README.md). Their records
@@ -126,32 +134,43 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
-The linear stage of the completion is taken about the state the sweep really follows: the deterministic flow of the
-drift along the directions that relax, and the static branch, followed by Newton through the crossing, along the
-directions that cross. A constant lag only delays the crossing. A lag that changes along the sweep changes the rate at
-which the critical rate grows, and the constant of the swept write scales as that rate to the power -1/4. In the coherent
-Ising machine of two oscillators the antiphase amplitude relaxes at 2 (a - e), which falls with the pump, so that
-the critical rate grows at r (1 - 3 r / (8 e^2)), 19 % below the declared rate at r = 0.02, e = 0.2, and the constant is
-about 1.40. The record reports both numbers as `lag_at_crossing` and `rate_at_crossing`. The reduced one-coordinate
-law along a moving branch, reported for a sweep through a cusp, still takes its coefficients on the static branch.
-
-The outcome map of the completion starts one e-fold after the crossing (the mapping time). The Gaussian of the linear
-stage is carried back to that time by the linear propagator of the critical space, so that each sample has there the
-size and the direction the linear stage gives it. In one direction only the sign of a sample counts. In two or more,
-its direction keeps turning toward the fastest mode for as long as the dynamics is linear, and two regimes follow,
-told apart by the pulled-back spread against the written amplitude at the mapping time (`map_regime`, `spread_at_map`,
+The outcome map of the completion starts one e-fold after the crossing (the mapping time). In two or more directions
+the Gaussian of the linear stage is carried back to that time by the linear propagator of the critical space, so that
+each sample has there the size and the direction the linear stage gives it, and its direction keeps turning toward the
+fastest mode for as long as the dynamics is linear. In any number of directions two regimes follow, told apart by the
+pulled-back spread against the written amplitude at the mapping time (`map_regime`, `spread_at_map`,
 `written_amplitude_at_map`). Where the spread is still a small fraction of that amplitude, the full nonlinear drift
 carries each sample forward and stops the turning at its own saturation. Where the deviation has already reached the
 written amplitude, as it has for every pitchfork under the noise rule of the rung, the choice is made there, and each
 sample goes to the written state nearest in direction: the sector law of the critical space at the mapping time
-(`sector_law`, `sector_certified`). On populations of two, three and four pitchforks coupled at a third of the passage
+(`sector_law`, `sector_certified`), in one direction the sign of the sample. A flow from samples of that size does not
+keep the sign: on the phase-locked oscillator, with a spread four times the amplitude, it crosses along the Kerr
+rotation to the other state, 60 % of the samples above two written amplitudes and none below, and reads a response of
+0.79 at a bias of one noise floor where the full dynamics gives 1.29. In one direction the flow, where it is the map,
+therefore starts from samples rescaled to a small size, which keeps the sign (at a quarter of that Kerr rate, where no
+written amplitude is defined at the mapping time, the unscaled flow read 1.18 at two floors against 1.34). Written
+states in the same direction from the unwritten one have no sector law, and the flow is the map there (past a fold
+with a slow second direction, on the rf-SQUID phase qubit with a damping of 0.1, the sector law gave a deviation of 1.0
+from the full dynamics and the flow none). On populations of two, three and four pitchforks coupled at a third of the passage
 scale this law holds to a few percent, where the sector law read at the end of the linear stage misses by a tenth
 (the slow modes decay for another three e-folds there) and a flow from samples rescaled to a small size misses by a
 quarter (it lengthens the nonlinear stage). On the frustrated triangles with one asymmetric part the law holds where the
 splitting of the critical rates is smallest (the coherent Ising machine, splitting below 0.015, three to four errors)
 and deviates by six to twenty-five errors on the rf-SQUID parts (splitting 0.017 to 0.09), where the pulled-back spread
 is between a quarter and two thirds of the written amplitude at the mapping time and the direction still turns during
-the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage.
+the nonlinear stage: that intermediate regime has no law yet, and the rung reports it as the nonlinear stage. The window of the sweep ends four scaled times after
+the crossing, and at very weak noise (Gamma below about 1.4e-4) the fluctuation has not saturated by then. In two or more
+directions the rung then runs the sweep one scaled time past the saturation time, which it reports as
+`sweep_extended_for_saturation`. Where more than 5% of the final states are still at the unwritten state, `unsettled_at_end`
+is set, the class says so and nothing is certified: their labels come from where the noise left them, and a law and a
+certificate can agree on such labels while both are wrong.
+
+The certificate compares probabilities with a tolerance of 0.02, so that it cannot test a law whose response is close to
+zero: at a constant of 0.04 every probability lies within 0.02 of one half. The rung has no such law. The linear stage
+with this map gives the constant of the pitchfork at a bias of one noise floor, a probability of 0.84, and where the full
+dynamics lose that response the difference is far above the tolerance and the hold names the class. On the Kerr-cat qubit
+the law is 1.30 and the full dynamics 0.05, with 53 % of the trajectories changing state during a hold: an equilibrium
+write. No separate test near zero response is therefore applied. A future law that can predict such a response needs one.
 
 ## The record of a specification
 
@@ -172,7 +191,7 @@ table from an existing records file without a derivation.
 
 `memory audit SPEC` derives the symmetric write of a specification with its law and then asks, for each assumption
 that the derivation does not test, what error would follow if the assumption failed, and runs the one test that
-decides it. Six checks are implemented: the class of the reduced equation read on half the window of the fit; the law
+decides it. Six checks are implemented: the class of the reduced equation read on half the window; the law
 measured with the bias toward either state, so that an offset of the write separates from the response; the noise
 ratio at the element's own noise, where the constant is c(Γ) of the noise-ratio law rather than π^(1/4); the law
 measured again with half the time step; for a semiclassical description of a quantum element, the number of quanta

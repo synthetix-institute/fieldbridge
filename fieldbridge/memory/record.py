@@ -201,7 +201,10 @@ def _write_points(real, rng) -> Dict[str, object]:
         out["points"] = []
         return out
     out["control"] = {"name": real.control, "range": list(real.control_range)}
-    events = an.locate_writes(real, rng, n_starts=24 if real.carrier.dim <= 4 else 12)
+    events, aside = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24 if real.carrier.dim <= 4 else 12))
+    if aside:
+        out["set_aside"] = [{"control_value": float(e["v"]), "state": list(map(float, e["q"])), "reason": e["reason"]}
+                            for e in aside]
     points = []
     for ev in events:
         nf = an.normal_form(real, ev["q"], real.control, ev["v"])
@@ -214,6 +217,8 @@ def _write_points(real, rng) -> Dict[str, object]:
              "critical_block_rank": nf.get("critical_block_rank"),
              "dynamical_critical_dimension": an.dynamical_critical_dimension(nf, cm.RATE_DEFAULT, cm.SLOW_FACTOR),
              "obstruction": ob.get("terms", {}), "completion": cm.completion_kind(nf, ob)}
+        if ev.get("samples"):
+            p["samples"] = int(ev["samples"])
         if nf.get("leading_term"):
             p["leading_term"] = nf["leading_term"]
         points.append(p)

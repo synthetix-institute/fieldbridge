@@ -5,6 +5,7 @@ Statistical thresholds only (the probabilities are Monte Carlo estimates on a fe
 residual is pinned."""
 from __future__ import annotations
 
+import json
 from math import pi
 from pathlib import Path
 
@@ -114,23 +115,30 @@ def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     assert L["hold"]["switching_fraction"] <= completion.SWITCHING_EQUILIBRIUM
 
 
-def test_the_sweep_through_the_kerr_cusp_reads_as_a_pitchfork_on_the_narrowed_window():
-    """At the cusp of a driven Kerr resonator the quartic term of the drift appears as a quadratic one on the default
-    window, which reads as transcritical and would refuse the law; the completion reads the sweep on the narrowed
-    window of construct.sweep_normal_form, where it is a pitchfork."""
-    import json
-    from pathlib import Path
-    from fieldbridge.memory import analysis as an, construct, spec as mspec
-    root = Path(__file__).resolve().parents[1]
-    real = mspec.load(json.loads((root / "examples/quantum/semiclassical/jba_resonator.json").read_text()))
-    ev = an.locate_writes(real, np.random.default_rng(0), n_starts=24)[0]
-    nf = an.normal_form(real, ev["q"], real.control, ev["v"])
-    c = construct.cancel_asymmetry(real, nf, "chi")
-    assert c.get("success")
-    path = construct.along_path(real, {real.control: c["control"], "chi": c["value"]}, c["direction"])
-    assert "transcritical" in an.normal_form(path, np.asarray(c["state"]), "t", 0.0)["kind"]
-    narrowed = construct.sweep_normal_form(path, np.asarray(c["state"]))
-    assert "pitchfork" in narrowed["kind"] and narrowed["window_halvings"] >= 1
+def test_the_sector_law_in_one_direction_is_the_sign_of_the_sample():
+    z = np.array([[0.3], [-2.0], [5.0]])
+    assert completion._sector_labels(z, np.array([[1.0], [-1.0]])).tolist() == [0, 1, 0]
+    # a state near the unwritten one is no sector
+    assert completion._sector_labels(z, np.array([[1.0], [0.1], [-1.0]])).tolist() == [0, 2, 0]
+
+
+def test_written_states_in_one_direction_have_no_sector_law():
+    """The direction of a sample does not tell apart two written states on the same side of the unwritten one."""
+    assert completion._sector_labels(np.array([[1.0]]), np.array([[1.0], [1.6]])) is None
+    plane = np.array([[10.75, -1.07], [16.38, -1.62], [-10.0, 0.0]])
+    assert completion._sector_labels(np.array([[1.0, 0.0]]), plane) is None
+    assert completion._sector_labels(np.array([[1.0, 0.0]]), np.array([[1.0], [-1.0]]) * np.array([[1.0, 0.0]])) is not None
+
+
+def test_a_saturated_deviation_in_one_direction_keeps_the_law_of_the_sign():
+    """The phase-locked oscillator: at the mapping time the pulled-back spread is several times the written amplitude,
+    and a flow from samples of that size crosses to the other state along the Kerr rotation (response 0.81 at a bias of
+    one floor, where the full dynamics gives 1.33). The sign of the sample decides, and the law is the pitchfork's."""
+    real = spec.load(EX.parent / "quantum" / "semiclassical" / "pplo_oscillator.json")
+    nf = an.normal_form(real, np.zeros(2), real.control, 1.0)
+    L = completion.law_at(real, nf, np.random.default_rng(0), n_samples=4000, certify=False)
+    assert L["map_regime"] == "saturated at the mapping time"
+    assert abs(L["one_direction"]["law"][0]["response_constant"] - pi ** 0.25) < 0.1
 
 
 def test_the_curved_sweep_moves_the_parameters_along_a_parabola():
@@ -159,3 +167,164 @@ def test_the_curved_sweep_moves_the_parameters_along_a_parabola():
     straight = construct.along_curved_path(real, origin, d, 0.0)
     straight.drift(np.zeros((1, 2)), {**straight.params, "t": t})
     assert abs(seen["F"] - (2.0 + t * 0.6)) < 1e-12
+
+
+QUANTUM = EX.parents[0] / "quantum" / "semiclassical"
+
+
+def test_the_one_direction_law_keeps_its_constant_at_every_bias():
+    """The phase-locked parametric oscillator: the full dynamics keep the constant of the pitchfork at 0.5, 1 and 2 noise
+    floors. At the mapping time the linear stage gives the samples up to four written amplitudes, where no trajectory is,
+    and a noise-free flow from that size follows the amplitude-dependent rotation of the Kerr term to either state: the
+    law read from it fell with the bias (1.03, 0.79, 0.21). Only the sign of a sample counts in one direction."""
+    real = spec.load(QUANTUM / "pplo_oscillator.json")
+    rng = np.random.default_rng(0)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24))
+    nf = an.normal_form(real, events[0]["q"], real.control, events[0]["v"])
+    L = completion.law_at(real, nf, rng, floors=(0.5, 1.0, 2.0), n_samples=3000, certify=False)
+    assert L["dynamical_critical_dimension"] == 1
+    for row in L["one_direction"]["law"]:
+        assert abs(row["response_constant"] - pi ** 0.25) < 0.15, row
+
+
+def test_a_flow_in_one_direction_starts_at_a_size_that_keeps_the_sign():
+    """At a Kerr rate a quarter of that of the phase-locked oscillator no written amplitude is defined at the mapping
+    time, the deviation is not counted as saturated and the flow is the map. Started at the size the linear stage gives
+    the samples it read 1.18 at two noise floors, where the full dynamics give 1.34; started small it keeps the sign."""
+    source = json.loads((QUANTUM / "pplo_oscillator.json").read_text(encoding="utf-8"))
+    source["parameters"]["gnl"] = 0.0005
+    real = spec.load(source)
+    rng = np.random.default_rng(1)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24))
+    nf = an.normal_form(real, events[0]["q"], real.control, events[0]["v"])
+    L = completion.law_at(real, nf, rng, floors=(2.0,), n_samples=8000, certify=False)
+    assert L["rows"][0]["regime"] == "linear at the mapping time"
+    assert abs(L["one_direction"]["law"][0]["response_constant"] - pi ** 0.25) < 0.08
+
+
+def test_the_kerr_cat_qubit_is_not_certified_by_a_response_near_zero():
+    """At the Kerr strength of the Kerr-cat qubit a flow from the size the linear stage gives the samples scrambles them,
+    and the law fell to the 0.05 of the full dynamics: every probability within 0.02 of one half, certified, while half of
+    the trajectories change state during a hold. The law of the linear stage keeps its constant, and the rung names the
+    difference an equilibrium write."""
+    real = spec.load(QUANTUM / "kerr_cat_kpo.json")
+    rng = np.random.default_rng(0)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24))
+    nf = an.normal_form(real, events[0]["q"], real.control, events[0]["v"])
+    L = completion.law_at(real, nf, rng, n_samples=1000, n_traj=500)
+    assert abs(L["one_direction"]["law"][0]["response_constant"] - pi ** 0.25) < 0.25
+    assert L["certified"] is False and L["write_class"] == "equilibrium write"
+
+
+def test_past_a_fold_there_is_no_choice_to_saturate():
+    """A fold with a slow second mode has two directions that take part, but at the mapping time the unwritten branch is
+    gone, and the written states do not lie in distinct directions from it. The sector law gave them probabilities they
+    do not have (deviation 1.0), while the deterministic motion after the fold ends in one state."""
+    source = json.loads((QUANTUM / "phase_qubit_rfsquid.json").read_text(encoding="utf-8"))
+    source["parameters"]["gam"] = 0.1
+    real = spec.load(source)
+    rng = np.random.default_rng(0)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=24))
+    nf = an.normal_form(real, events[0]["q"], real.control, events[0]["v"])
+    assert "fold" in nf["kind"] and an.dynamical_critical_dimension(nf, 0.02, completion.SLOW_FACTOR) == 2
+    L = completion.law_at(real, nf, rng, n_samples=500, n_traj=200, floors=(1.0,))
+    if L["status"].startswith("the sweep does not reach the write point"):
+        # the sweep starts in another well and never comes to the fold: nothing is chosen, and there is no law to saturate
+        return
+    assert "saturated at the mapping time" not in {r["regime"] for r in L["rows"]}
+    assert max(r["deviation"] for r in L["rows"]) < 0.1
+
+
+def test_the_swept_seeds_reach_every_frustrated_state_of_a_triangle():
+    """The axes of the critical plane are 30 degrees from two of the six frustrated states of the rf-SQUID triangle and
+    lead to the four others; the two left were found only when a random start fell into their basin. Where it did not,
+    their trajectories were counted to the state of equal phases, and the law differed from the full dynamics by 0.355."""
+    real = spec.load(QUANTUM / "rfsquid_triangle.json")
+    rng = np.random.default_rng(0)
+    events, _ = an.distinct_write_points(real, an.locate_writes(real, rng, n_starts=12))
+    nf = an.normal_form(real, events[0]["q"], real.control, events[0]["v"])
+    R, _ = completion.critical_space(real, nf, 2)
+    sweep = completion.Sweep(real, nf, 0.02)
+    q0 = completion._relaxed(real, np.asarray(nf["state"], float), sweep.over(0.0))
+    seeds = completion.swept_seeds(real, sweep, q0, R, sweep.T)
+    found = an.zeros_from(real, seeds, sweep.over(sweep.T))
+    stable = [q for q, kap in found if an.n_unstable(kap) == 0]
+    frustrated = {tuple(np.sign(q[::2]).astype(int)) for q in stable if len(set(np.sign(q[::2]))) == 2}
+    assert len(frustrated) == 6, frustrated
+
+
+def _pair():
+    """Two pitchforks coupled through their mean."""
+    base = json.loads((EX / "pitchfork.json").read_text())
+    base.pop("potential", None)
+    base["carrier"] = {"kind": "euclid", "name": "2 copies", "variables": ["x_1", "x_2"], "scale": 2}
+    base["parameters"] = {"eps": 1.0, "g_pop": 0.05}
+    base["drift"] = {"x_1": "eps*x_1 - x_1**3 + g_pop*((x_1 + x_2)/2 - x_1)",
+                     "x_2": "eps*x_2 - x_2**3 + g_pop*((x_1 + x_2)/2 - x_2)"}
+    return spec.load(base)
+
+
+def test_the_saturation_time_grows_at_weak_noise_and_is_absent_at_strong_noise():
+    assert completion.saturation_time(0.05) == pytest.approx(1.46, abs=0.02)
+    assert completion.saturation_time(1e-9) == pytest.approx(4.58, abs=0.02)
+    assert completion.saturation_time(0.2) is None
+
+
+def test_final_states_still_at_the_unwritten_state_are_unsettled():
+    real = spec.load(EX / "pitchfork.json")
+    stable = [np.array([1.0]), np.array([-1.0])]
+    reference = np.array([0.0])
+    assert completion.unsettled_fraction(real, np.array([[0.1], [-0.2], [0.9], [-1.1]]), stable, reference) == 0.5
+    assert completion.unsettled_fraction(real, np.array([[0.9], [-1.1], [np.nan]]), stable, reference) == 0.0
+
+
+def test_a_sweep_too_short_for_very_weak_noise_is_extended_and_gets_the_share_right():
+    """Two directions at Gamma = 1e-9: the fluctuation saturates at tau = 4.6, after the window of tau = 4. Over the old
+    window every trajectory is still at the unwritten state, and the mixed states, which take about 0.12 of the
+    trajectories, would take about a half of them by the labels."""
+    real = _pair()
+    nf = an.normal_form(real, np.zeros(2), real.control, 0.0)
+    a3 = abs(nf["a3"])
+    _, L = completion.critical_space(real, nf, 2)
+    D = 1e-9 * 0.02 / (a3 * float(np.mean(np.diag(L.T @ L))))
+    sweep = completion.Sweep(real, nf, 0.02)
+    rng = np.random.default_rng(1)
+    q0 = completion._relaxed(real, np.zeros(2), sweep.over(0.0))
+    R, _ = completion.critical_space(real, nf, 2)
+    stable = completion.stable_states(real, rng, sweep.over(sweep.T), seeds=completion.swept_seeds(real, sweep, q0, R, sweep.T))
+    old = completion.certificate(real, sweep, q0, [q0 + np.array([1.0, 0.0]) * 1e3], [0.0], D, 200, rng)[0]
+    assert completion.unsettled_fraction(real, old, stable, np.zeros(2)) > 0.9
+
+    r = completion.law_at(real, nf, np.random.default_rng(5), rate=0.02, noise=D, n_samples=200, certify=False)
+    assert r["sweep_extended_for_saturation"]["saturation_time"] == pytest.approx(4.58, abs=0.02)
+    assert "unsettled_at_end" not in r
+    st = np.array(r["stable_states"])
+    mixed = [i for i, s in enumerate(st) if len({x > 0 for x in s}) > 1]
+    assert np.mean([sum(row["law"][i] for i in mixed) for row in r["rows"]]) < 0.25
+
+
+def test_the_standard_noise_rule_stays_inside_the_window_of_the_sweep():
+    # Gamma = 0.05 saturates at tau = 1.46 and the window ends at tau = 4, so reference records keep their sweep
+    assert completion.saturation_time(0.05) + completion.SETTLE_MARGIN < 4.0
+
+
+def test_the_crossover_reads_the_flow_until_the_spread_reaches_the_written_amplitude():
+    """At Gamma = 0.002 the pulled-back spread of the pair at x = 0.35 is about two thirds of the written amplitude at
+    the mapping time. The sector law there puts the mixed states at about 0.37, the full dynamics at about 0.26; the
+    flow from the mapping time follows the full dynamics. At the reference noise the spread exceeds the amplitude and
+    the sector law is kept."""
+    real = _pair()
+    nf = an.normal_form(real, np.zeros(2), real.control, 0.0)
+    a3 = abs(nf["a3"])
+    _, L = completion.critical_space(real, nf, 2)
+    dfac = float(np.mean(np.diag(L.T @ L)))
+    weak = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, noise=0.002 * 0.02 / (a3 * dfac),
+                             n_samples=1000, certify=False)
+    assert weak["map_regime"] == "linear at the mapping time"
+    st = np.array(weak["stable_states"])
+    mixed = [i for i, s in enumerate(st) if len({x > 0 for x in s}) > 1]
+    share = np.mean([sum(row["law"][i] for i in mixed) for row in weak["rows"]])
+    sector = np.mean([sum(row["sector_law"][i] for i in mixed) for row in weak["rows"]])
+    assert share < sector - 0.05
+    ref = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, n_samples=400, certify=False)
+    assert ref["map_regime"] == "saturated at the mapping time"

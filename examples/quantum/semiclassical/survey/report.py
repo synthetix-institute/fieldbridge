@@ -44,7 +44,7 @@ def law_rows(comp: dict):
                 mid = next((x for x in xs if x["bias_floors"] == 1.0), xs[0] if xs else None)
                 if mid:
                     row[src] = (round(mid["response_constant"], 2), round(mid["offset"], 2))
-            if (L.get("critical_dimension") or 1) > 1 and L.get("rows"):
+            if max(L.get("critical_dimension") or 1, L.get("dynamical_critical_dimension") or 1) > 1 and L.get("rows"):
                 row["states"] = len(L.get("stable_states", []))
                 row["deviation"] = round(max(r.get("deviation", 0) for r in L["rows"]), 3)
             yield row
@@ -72,8 +72,11 @@ def main() -> int:
     res = {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted(args.results.glob("*.json"))
            if not p.name.endswith(".partial.json")}
     cov = Counter(e["classical_write"] for e in census["census"])
+    stamps = sorted({(r.get("implementation_sha256", "")[:8] or "none", json.dumps(r.get("versions", {}))) for r in res.values()})
+    stamp_text = "; ".join(f"code stamp {h}, versions {v}" for h, v in stamps)
     lines = ["# Mechanisms of quantum-computing hardware", "",
-             "Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py`.", "",
+             "Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py` "
+             f"({stamp_text}).", "",
              f"The census lists {len(census['census'])} hardware elements described in reviews of superconducting, "
              f"semiconductor, trapped-ion, neutral-atom, photonic and optomechanical platforms: {cov['yes']} have a "
              f"classical write, {cov['partly']} have one in part and {cov['no']} have none (gates, codes and linear "

@@ -9,8 +9,8 @@
 3. read the observable that characterizes the new state from the critical direction at the transition;
 4. compare the results with the values that the equations give exactly, and recognize what the calculation does not
    cover;
-5. tell which predictions of the equations survive in a finite population of agents, and why the rate of a rare
-   switch needs more than a constant noise.
+5. tell which predictions of the equations survive in a finite population of agents, and obtain the rate of a rare
+   switch from the birth and death rates, which neither a constant noise nor a noise of each state replaces.
 
 **Prerequisites.** [Modules 1](15_memory_first_card.md) and [2](16_memory_specification.md) for the card and the
 specification, [Module 16](36_memory_chaos_and_blow_up.md) for the chaos test. **Time.** About 30 minutes of reading;
@@ -149,20 +149,53 @@ constant noise, which gives ΔV/D instead. Taking D from the rates at the state 
 | --- | --- | --- | --- |
 | Budworm, low state to outbreak, k = 8 | 0.0259 | 0.0259 | 0.0393 |
 | Budworm, outbreak to low state, k = 8 | 0.2032 | 0.2032 | 0.1272 |
+| Budworm, low state to extinction, k = 8 | 0.5817 | 0.4624 | 0.0848 |
 | Master sequence lost, q = 0.8 | 0.1725 | 0.1706 | 0.1166 |
 
 The error is not a matter of choosing D. Fluctuations in a population grow with its density, so that the outbreak state
 is noisier than the low state, and no single D gives the ratio of the two exponents: for a constant D that ratio is
 0.048, and the rates give 0.127. The capacity at which the two states are equally occupied, which does not depend on the
 value of D, also moves: it is k = 6.95 with constant noise, and 7.13 from the rates, the value to which the stationary
-distribution of the chain converges (7.17, 7.14, 7.13 at N = 100, 300, 1000). The table also shows the remedy. Keeping
-the dependence of the noise on the state recovers the exponent almost entirely in these examples, without the full
-chain.
+distribution of the chain converges (7.17, 7.14, 7.13 at N = 100, 300, 1000). The constant-noise value also depends on
+the unit of time. The agents of the error threshold are normalized by the mean fitness and the equation of section 4 is
+not; their exponents from the rates are the same, 0.1725, whereas constant noise gives 0.1166 for one and 0.0938 for
+the other.
+
+A noise that depends on the state is not a general remedy. It gives 2(d − b)/(d + b) in place of ln(d/b), and the two
+agree only when births and deaths nearly balance along the path, as Doering, Sargsyan and Sander showed for extinction.
+They balance on the paths between the two budworm states, and they do not on the way to extinction in the table above.
+For an epidemic with b = R<sub>0</sub>x(1 − x) and d = x, where the slope of the exact chain tests each value:
+
+| R<sub>0</sub> | Slope of the exact chain | S from the rates | S with D(x) | S with constant noise |
+| --- | --- | --- | --- | --- |
+| 1.5 | 0.0712 | 0.0721 | 0.0716 | 0.0278 |
+| 3 | 0.428 | 0.432 | 0.409 | 0.222 |
+| 10 | 1.399 | 1.403 | 1.118 | 1.350 |
+| 30 | 2.431 | 2.435 | 1.568 | 4.672 |
+
+The constant-noise exponent is too small near the threshold and too large far from it, so that its agreement near
+R<sub>0</sub> = 10 is a coincidence. The rates are the description to use, and a specification can declare them:
+
+```json
+"rates": {"birth": "r*u", "death": "r*u**2/k + u**2/(1 + u**2)", "upper": "k + 2",
+          "scale": "number of budworms at u = 1 in the habitat"}
+```
+
+The difference of the two rates has to equal the drift, and the command checks it.
+
+```bash
+python3 -B -m fieldbridge memory escape examples/memory/populations/spruce_budworm.json --size 100 --out-dir build/pop_escape
+```
+
+This reports each way out of each state with the three exponents, the exact mean time of the chain at the given N, and
+the control value of equal occupation. `memory card` adds the same table when a specification declares rates. The
+retention time of the card itself remains a simulation at the constant noise of the file, and the gallery shows that
+value. The rates cover one variable; a population of several variables needs a treatment of its most probable escape
+path, which this package does not provide.
 
 The predictions of a card therefore fall into two groups for a population. The location and kind of each transition,
 the order parameter, the relaxation rate, the phase diffusion and the delay at a fold are properties of the drift, and
-the agents reproduce them. The rates of rare switches depend on the noise, so the activation times of a card with
-constant noise are not quantitative for a population, in value or in which state is preferred.
+the agents reproduce them. The rates of rare switches depend on the noise, so they come from the birth and death rates.
 
 ## 8. What the calculation does not cover
 
@@ -173,7 +206,7 @@ constant noise are not quantitative for a population, in value or in which state
 - **Rotations in the structural predictions.** `memory predict` looks for continuous symmetries that are translations,
   so it does not see the rotation of z, and its retention prediction for the oscillators disagrees with the calculation.
 - **Finite populations.** The noise intensities of these files are constant and chosen for the examples. Section 7 shows
-  what this leaves out: the activation times of a population need a noise that depends on the state.
+  what this leaves out: the activation times of a population come from its birth and death rates (`memory escape`).
 
 ## 9. Applying this to another population
 

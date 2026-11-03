@@ -63,8 +63,7 @@ from typing import Dict, List, Optional, Sequence, Tuple
 import numpy as np
 
 from . import analysis as an
-from .construct import (along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check,
-                        sweep_normal_form)
+from .construct import along_path, cancel_asymmetry, obstruction, same_equations, swept_write_check
 from .discovery import card_rng
 from .identity import Realization
 
@@ -172,11 +171,12 @@ def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> 
     write then carries an offset that one sign of the bias cannot separate from the response."""
     if not real.control or not nf.get("kappa_slope"):
         return True
-    from .construct import sweep_ends
+    from .construct import sweep_ends, sweep_half_time
     # a generator of its own: the confirmation must not advance the caller's stream, so that the law check that follows
     # draws the same noise as before this check existed and the recorded constants move only where the method changed
     gen = np.random.default_rng(20261023)
-    return all(reversing_symmetry(real, gen, mode, over={real.control: v}) is not None for v in sweep_ends(nf))
+    ends = sweep_ends(nf, t_half=sweep_half_time(real, nf))
+    return all(reversing_symmetry(real, gen, mode, over={real.control: v}) is not None for v in ends)
 
 
 def describe_symmetry(real: Realization, sym: Dict[str, object]) -> str:
@@ -432,7 +432,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                     "steps": steps}
         path = along_path(real, {real.control: unfolded["control"], unfolded["second"]: unfolded["value"]},
                           unfolded["direction"])
-        nf_path = sweep_normal_form(path, np.asarray(unfolded["state"]))
+        nf_path = an.normal_form(path, np.asarray(unfolded["state"]), "t", 0.0)
         nf_path["obstruction"] = obstruction(nf_path)
         word += ["U", "R"]
         steps.append({"letter": "U", "second": unfolded["second"], "cusp": {unfolded["second"]: unfolded["value"],
@@ -440,9 +440,7 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
                       "sweep_direction": unfolded["direction"]})
         steps.append({"letter": "R", "value": 0.0, "a0": nf_path["a0"], "a2": nf_path["a2"], "a3": nf_path["a3"],
                       "kind": nf_path["kind"].split(":")[0], "along": "the sweep through the cusp",
-                      "eliminated_directions": real.carrier.dim - 1,
-                      **({"window": nf_path["half"], "window_halvings": nf_path["window_halvings"]}
-                         if "window_halvings" in nf_path else {})})
+                      "eliminated_directions": real.carrier.dim - 1})
         target_real, target_nf = path, nf_path
         out["status"] = "reached after unfolding"
     canon = canonical_form(target_nf)

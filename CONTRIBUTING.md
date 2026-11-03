@@ -71,6 +71,7 @@ carrier by what the variables are:
 | `parameters` | Every constant of the drift, with the values stated in the source |
 | `control` | The parameter an experiment varies, with its range; write points are searched along it |
 | `closure` | What is specified or discarded to obtain closed equations: the bath (`noise`), boundaries, imposed conservation |
+| `rates` | Optional, for a population of one variable: `birth`, `death` (their difference must be the drift), `upper` and `scale`. The time to leave a state then comes from these rates (`memory escape`, [Module 17](docs/tutorial/42_memory_populations.md)), because a constant `noise` does not give it. |
 | `observable` | What an experiment measures |
 | `assumptions` | Every modelling choice a reader could dispute |
 
@@ -187,4 +188,4 @@ python3 -B -m pytest -q -p no:cacheprovider
 ```
 
 By contributing you agree that your contribution is released under the
-[MIT license](LICENSE).
+[PolyForm Noncommercial License 1.0.0](LICENSE).

@@ -13,8 +13,7 @@
                   realization names further material parameters, the point at which the quadratic term vanishes
                   (a cusp) is solved for, within the bounds the specification declares for the parameters, together
                   with the direction of a sweep through it that carries no bias;
-                  the normal form along that sweep is then recomputed, on a window over which the quartic term of
-                  the drift does not read as a quadratic one (sweep_normal_form).
+                  the normal form along that sweep is then recomputed.
 
 For a write point that realizes the generator, the swept-write law of the source,
 P = Phi(pi^{1/4} h_s / (sqrt(D_s) r^{1/4})) (Kondepudi and Nelson), is transferred with h_s and D_s projected on
@@ -34,7 +33,6 @@ from . import analysis as an
 from .identity import Realization
 
 TOL = 0.1
-SWEEP_WINDOW_HALVINGS = 3  # at a cusp, the window of the reduction is narrowed at most to an eighth
 
 
 def obstruction(nf: Dict) -> Dict[str, object]:
@@ -131,28 +129,6 @@ def along_curved_path(real: Realization, origin: Dict[str, float], direction: Di
 
     return replace(real, name=real.name + f" along a curved sweep (curvature {curvature:g})", drift=drift,
                    potential=None, params={**real.params, **origin, "t": 0.0}, control="t", control_range=(-1.0, 1.0))
-
-
-def sweep_normal_form(path: Realization, q) -> Dict:
-    """The normal form at a cusp along the sweep through it (a realization of along_path, at t = 0).
-
-    The quadratic coefficient vanishes at the cusp, where cancel_asymmetry solves for it. A cubic fitted over a window
-    of half-width w also takes up the quartic term of the drift, a2 = (6/7) a4 w^2 to leading order, which gives an
-    asymmetry that falls in proportion to w. Where the quartic term is comparable to the cubic one over the default
-    window (at the cusp of a driven Kerr resonator it is 0.6 s times the cubic term, and the asymmetry is 0.12), the
-    write reads as one-sided. The window is then halved, at most SWEEP_WINDOW_HALVINGS times, until it does not. A quadratic
-    term grows relative to the cubic one as the window narrows (|a2| w^2 against |a3| w^3), so the halving removes only
-    an even part of higher order; where it does not remove the asymmetry, the normal form of the default window is
-    returned. window_halvings records a narrowed window."""
-    nf = an.normal_form(path, q, "t", 0.0)
-    if not obstruction(nf)["asymmetric"]:
-        return nf
-    for k in range(1, SWEEP_WINDOW_HALVINGS + 1):
-        narrow = an.normal_form(path, q, "t", 0.0, half=nf["half"] / 2 ** k)
-        if not obstruction(narrow)["asymmetric"]:
-            narrow["window_halvings"] = k
-            return narrow
-    return nf
 
 
 def _null_vectors(J):
@@ -418,9 +394,8 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
         d = -d
     d = d / max(np.linalg.norm(d), 1e-300)
     path = along_path(real, {param: v, second: pv}, {param: float(d[0]), second: float(d[1])})
-    nf_path = sweep_normal_form(path, q)
-    keys = ("kind", "a2", "a3", "asymmetry", "bias", "kappa_slope") + (
-        ("half", "window_halvings") if "window_halvings" in nf_path else ())
+    nf_path = an.normal_form(path, q, "t", 0.0)
+    keys = ("kind", "a2", "a3", "asymmetry", "bias", "kappa_slope")
     out.update(success=True, state=q.tolist(), control=v, value=pv,
                direction={param: float(d[0]), second: float(d[1])},
                normal_form_along_sweep={k: nf_path[k] for k in keys if k in nf_path},
@@ -432,13 +407,35 @@ def _phi(x: float) -> float:
     return 0.5 * (1.0 + erf(x / sqrt(2.0)))
 
 
-def sweep_ends(nf: Dict, rate: float = 0.02) -> "tuple[float, float]":
+# e-folds that an oscillation of the state gets to decay on each side of the crossing. An element started from rest with
+# the bias on rings at half its damping, and with fewer e-folds the constant of its write depends on the phase of that
+# ringing: 1 % low at a damping of 0.2 and 12 % at 0.1, with 4/sqrt(rate) (examples/quantum/semiclassical/survey/phase_qubit_start.py)
+RING_EFOLDS = 6.0
+RING_LONGEST = 8.0  # the longest sweep, in units of 4/sqrt(rate): an element that rings longer is undamped on this time
+
+
+def sweep_half_time(real: Realization, nf: Dict, rate: float = 0.02) -> float:
+    """The time for which the write check's sweep runs on each side of the crossing: 4/sqrt(rate), in which the critical
+    mode itself gets rate t^2 / 2 = 8 e-folds, or longer where the state rings at the start of the sweep. A pair that
+    grows there is no ringing to wait for: a sweep that starts beyond another instability does not end by waiting."""
+    t_half = 4.0 / sqrt(rate)
+    g = abs(nf["kappa_slope"])
+    if g <= 0:
+        return t_half
+    start = nf["value"] - np.sign(-nf["kappa_slope"]) * rate / g * t_half
+    ev = np.linalg.eigvals(an.jacobian(real, np.asarray(nf["state"], float), {nf["param"]: float(start)}))
+    scale = max(float(np.max(np.abs(ev))), 1e-300)
+    decay = [-z.real for z in ev if z.real < -1e-9 * scale and abs(z.imag) > 1e-6 * scale]   # a pair undamped to rounding does not decay
+    return min(max(t_half, RING_EFOLDS / min(decay)), RING_LONGEST * t_half) if decay else t_half
+
+
+def sweep_ends(nf: Dict, rate: float = 0.02, t_half: Optional[float] = None) -> "tuple[float, float]":
     """The values of the control at which the write check's sweep starts and ends: the control is swept through the
-    write point so that the linear coefficient of the critical mode grows at `rate`, for 4/sqrt(rate) on each side,
-    toward the side where the state loses stability."""
+    write point so that the linear coefficient of the critical mode grows at `rate`, for t_half (sweep_half_time;
+    4/sqrt(rate) if not given) on each side, toward the side where the state loses stability."""
     g = abs(nf["kappa_slope"])
     dv = float(np.sign(-nf["kappa_slope"]) * rate / g)
-    t_half = 4.0 / sqrt(rate)
+    t_half = 4.0 / sqrt(rate) if t_half is None else t_half
     return float(nf["value"] - dv * t_half), float(nf["value"] + dv * t_half)
 
 
@@ -483,9 +480,9 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
         return {}
     target = targets[1]
     rv = rate / g
-    t_half = 4.0 / sqrt(rate)
+    t_half = sweep_half_time(real, nf, rate)
     dv = np.sign(-nf["kappa_slope"]) * rv
-    v_start, _ = sweep_ends(nf, rate)
+    v_start, _ = sweep_ends(nf, rate, t_half)
     path = lambda t: v_start + dv * t
     z = NormalDist().inv_cdf(target_p)
 

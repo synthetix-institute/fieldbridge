@@ -28,11 +28,14 @@ def test_extinction_time_of_a_pure_death_chain():
     assert np.exp(log_tau) == pytest.approx(1 + 1 / 2 + 1 / 3 + 1 / 4)
 
 
-def test_constant_noise_misses_the_exponent_and_a_state_dependent_noise_recovers_it():
+def test_constant_noise_misses_the_exponent_and_a_state_noise_holds_only_while_births_and_deaths_balance():
     actions = compare.part_actions(None, True)
-    for escape in actions.values():
-        assert escape["diffusion"] == pytest.approx(escape["rates"], rel=0.02)
-        assert abs(escape["constant"] / escape["rates"] - 1) > 0.3
+    for name in ("budworm_up", "budworm_down", "error"):
+        assert actions[name]["diffusion"] == pytest.approx(actions[name]["rates"], rel=0.02)
+        assert abs(actions[name]["constant"] / actions[name]["rates"] - 1) > 0.3
+    assert actions["budworm_extinction"]["diffusion"] < 0.85 * actions["budworm_extinction"]["rates"]
+    far = actions["epidemic"][-1]
+    assert far["rates"] == pytest.approx(far["exact_slope"], rel=0.01) and far["diffusion"] < 0.7 * far["rates"]
 
 
 def test_saved_agents_agree_with_the_equations():

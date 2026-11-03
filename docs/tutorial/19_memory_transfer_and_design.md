@@ -104,8 +104,8 @@ followed from the high branch stops at $\kappa = 0$ and the cusp at positive los
 | Realization | Free parameter | Fold (obstruction) | Cusp | Sweep direction | Kind along the sweep |
 | --- | --- | --- | --- | --- | --- |
 | Schlögl reactor | autocatalytic feed $a$ | $b = 1.49$ and $2.26$; $a_2 = \mp 1.73$ | $a = 4.153$, $b = 2.654$, $x = 1.384$ | $db/da = -1.917$ | supercritical pitchfork |
-| Two tubes of unequal length | length $L_2$ | $\mu = 1.213$; $a_2 = 0.59$ | $L_2 = 1.000 = L_1$, $\mu = 1.383$ | along $\mu$ | subcritical pitchfork |
-| Toggle with unequal promoters | promoter ratio $\gamma$ | $\alpha = 3.273$; $a_2 = -0.19$ | $\gamma = 1.000$, $\alpha = 2.000$ | along $\alpha$ | supercritical pitchfork |
+| Two tubes of unequal length | length $L_2$ | $\mu = 1.213$; $a_2 = 0.64$ | $L_2 = 1.000 = L_1$, $\mu = 1.383$ | along $\mu$ | subcritical pitchfork |
+| Toggle with unequal promoters | promoter ratio $\gamma$ | $\alpha = 3.273$; $a_2 = -0.20$ | $\gamma = 1.000$, $\alpha = 2.000$ | along $\alpha$ | supercritical pitchfork |
 
 Two results can be checked by hand. For the reactor, the drift $-x^3 + a x^2 - k_3 x + b$ has a triple root when
 $x = a/3$, $k_3 = a^2/3$ and $b = a^3/27$; with $k_3 = 5.75$ this gives $a = 4.153$, $b = 2.654$ and
