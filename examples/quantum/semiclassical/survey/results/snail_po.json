@@ -5,7 +5,7 @@
   "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
   "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
  },
- "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
+ "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -74,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 9.2,
-  "threshold-write": 7.8,
-  "phase-locking": 3.0,
-  "completion": 66.5,
-  "changes": 63.8
+  "symmetric-write": 6.6,
+  "threshold-write": 5.0,
+  "phase-locking": 2.3,
+  "completion": 44.9,
+  "changes": 52.6
  },
  "completion": {
   "write_points": [
@@ -457,7 +457,7 @@
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 3.7,
+    "seconds": 3.0,
     "class": "reached"
    }
   },
@@ -475,7 +475,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.5,
+      "seconds": 3.0,
       "class": "reached"
      }
     },
@@ -490,13 +490,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.3,
+      "seconds": 3.1,
       "class": "reached"
      }
     },
@@ -511,13 +511,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.3,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.2,
+      "seconds": 3.3,
       "class": "reached"
      }
     },
@@ -532,13 +532,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.9,
+      "seconds": 1.3,
       "class": "reached"
      }
     },
@@ -553,13 +553,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.7,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -574,13 +574,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.7,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -595,7 +595,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
@@ -616,13 +616,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.5,
       "class": "reached"
      }
     },

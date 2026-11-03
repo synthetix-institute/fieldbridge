@@ -5,7 +5,7 @@
   "source": "Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
+ "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 1.7,
-  "threshold-write": 2.4,
-  "phase-locking": 2.0,
-  "completion": 0.7,
-  "changes": 77.0
+  "symmetric-write": 1.2,
+  "threshold-write": 1.7,
+  "phase-locking": 1.4,
+  "completion": 0.4,
+  "changes": 47.9
  },
  "completion": {
   "write_points": []
@@ -53,13 +53,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "no write point along the control",
-    "seconds": 0.6,
+    "seconds": 0.4,
     "class": "no write point"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 1.4,
+    "seconds": 1.1,
     "class": "single stable state"
    }
   },
@@ -71,13 +71,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.000167 s^5, so the canonical form is not the pitchfork and the swept-write",
-      "seconds": 0.7,
+      "seconds": 0.5,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.5,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -97,13 +97,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.0,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -118,13 +118,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0001 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 0.7,
+      "seconds": 0.4,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.7,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -144,13 +144,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0001 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 0.7,
+      "seconds": 0.3,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.5,
+      "seconds": 0.8,
       "class": "single stable state"
      }
     },
@@ -170,13 +170,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0001 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 0.6,
+      "seconds": 0.3,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.5,
+      "seconds": 0.9,
       "class": "single stable state"
      }
     },
@@ -196,13 +196,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.9,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -217,13 +217,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.9,
+      "seconds": 1.1,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.9,
+      "seconds": 2.5,
       "class": "reached"
      }
     },
@@ -240,13 +240,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.0,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -261,13 +261,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0002 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 1.4,
+      "seconds": 0.8,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.6,
+      "seconds": 2.4,
       "class": "reached"
      }
     },

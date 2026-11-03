@@ -1,6 +1,6 @@
 # Mechanisms of quantum-computing hardware
 
-Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py` (code stamp 1369e51d, versions {"python": "3.11.3", "numpy": "1.26.0", "scipy": "1.14.1"}).
+Written by `python3 -B examples/quantum/semiclassical/survey/report.py` from the results of `survey.py` (code stamp a4e57ad0, versions {"python": "3.11.3", "numpy": "1.26.0", "scipy": "1.14.1"}).
 
 The census lists 60 hardware elements described in reviews of superconducting, semiconductor, trapped-ion, neutral-atom, photonic and optomechanical platforms: 21 have a classical write, 15 have one in part and 24 have none (gates, codes and linear amplifiers store or process information without a write). 31 models represent the elements with a write; the status of every element is in `census.json`.
 

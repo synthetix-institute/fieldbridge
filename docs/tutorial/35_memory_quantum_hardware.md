@@ -133,7 +133,7 @@ tolerance; the full dynamics are the reference. Other cusps have offsets of thei
 polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it writes the same state whatever
 the bias, where the full dynamics give a response of 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
-the optomechanical element the law departs from the full dynamics by up to 0.30, and 13 % of the written states
+the optomechanical element the law departs from the full dynamics by up to 0.28, and 13 % of the written states
 change during a hold, so only the full dynamics give the write.
 
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where

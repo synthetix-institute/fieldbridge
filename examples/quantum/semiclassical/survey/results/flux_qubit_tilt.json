@@ -5,7 +5,7 @@
   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Chiorescu, I., Nakamura, Y., Harmans, C. J. P. M., Mooij, J. E., 'Coherent quantum dynamics of a superconducting flux qubit', Science 299, 1869 (2003), arXiv:cond-mat/0305461 (full text)",
   "kind": "classical image of census entry 2: Persistent-current (three-junction) flux qubit and capacitively shunted flux qubit"
  },
- "implementation_sha256": "1369e51d48830b3daf32a1cd646b0b072d8b3d34372d901540e3392c9fb059fb",
+ "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 18.5,
-  "threshold-write": 8.4,
-  "phase-locking": 3.1,
-  "completion": 249.7,
-  "changes": 154.6
+  "symmetric-write": 13.7,
+  "threshold-write": 4.4,
+  "phase-locking": 2.0,
+  "completion": 154.1,
+  "changes": 95.1
  },
  "completion": {
   "write_points": [
@@ -915,13 +915,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 7.0,
+    "seconds": 3.3,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 6.1,
+    "seconds": 3.1,
     "class": "reached"
    }
   },
@@ -933,13 +933,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 0.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.3,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -954,13 +954,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.8,
+      "seconds": 0.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.0,
+      "seconds": 1.1,
       "class": "reached"
      }
     },
@@ -975,13 +975,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 13.5,
+      "seconds": 8.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 13.8,
+      "seconds": 9.3,
       "class": "reached"
      }
     },
@@ -996,13 +996,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 11.6,
+      "seconds": 8.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 13.6,
+      "seconds": 6.6,
       "class": "reached"
      }
     },
@@ -1017,13 +1017,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 12.5,
+      "seconds": 7.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 10.6,
+      "seconds": 8.2,
       "class": "reached"
      }
     },
@@ -1038,13 +1038,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 6.3,
+      "seconds": 3.4,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.9,
+      "seconds": 4.7,
       "class": "oscillation"
      }
     },
@@ -1059,13 +1059,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.0,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -1080,13 +1080,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.8,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
