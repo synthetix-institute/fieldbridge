@@ -5,6 +5,11 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+**Out of date since 7372e89 (2026-11-03).** The records were regenerated with the longer sweep of the write check (3855cd3),
+which waits for a ringing to decay. The two completions of the rf-SQUID phase qubit are now certified, so the records hold
+16 nonlinear-stage failed laws, not the 18 counted below; tests/test_repair_loop.py expects 16. The campaign below has not
+been rerun on these records.
+
 ## At origin/main 9cc1abc, 2026-11-03
 
 origin/main 9cc1abc reads the outcome map by the flow in two or more directions. The k the outcome map uses is the dynamical
