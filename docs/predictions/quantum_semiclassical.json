@@ -1,7 +1,7 @@
 {
  "command": "record",
  "derived_from": "docs/records/quantum_semiclassical.jsonl",
- "implementation_sha256": "10d701be8a6e8d24c3207f4861110ee2e99ad8034e1b9c4e3c6cdf59c11a90ba",
+ "implementation_sha256": "86354fe703cdf708c8541023059f7b21731974970b716e78b9574336cf439ea3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -27,7 +27,6 @@
     "ion_phonon_laser",
     "kerr_cat_kpo",
     "kpo_pair",
-    "optomech_bistable",
     "rfsquid_pair"
    ],
    "linear-stage write": [
@@ -57,6 +56,9 @@
     "rfsquid_triangle",
     "rydberg_bistability",
     "transmon_driven"
+   ],
+   "not settled at the end of the sweep": [
+    "optomech_bistable"
    ]
   }
  },
@@ -2158,23 +2160,24 @@
          "second_rate": 0.0792651404309104,
          "slow_modes": "2 direction(s) with a rate below 1 sqrt(rate) = 0.141 at the write point relax less than once during the passage: the write takes place in 3 directions, and the law is the 3-dimensional linear stage with the outcome map",
          "certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.143 (25.8 errors), and the written states at the end of the sweep do not retain the choice: 14 % of the trajectories change state during a hold of 42.4 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
-         "write_class": "equilibrium write",
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.142 (25.6 errors), and the written states at the end of the sweep do not retain the choice: 14 % of the trajectories change state during a hold of 42.4 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+         "write_class": "not settled at the end of the sweep",
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 25.75761392738034,
+         "flow_map_deviation_sigma_max": 25.577490753062996,
          "hold": {
           "hold_time": 42.42640687119285,
-          "switching_fraction": 0.1391
+          "switching_fraction": 0.13905
          }
         }
        }
       ]
      }
     ],
-    "seconds": 1140.5
+    "seconds": 2122.8
    },
    "spec_sha256": "3d52775718f4ec3fe2c8ebc76cb76ab2accab6b0cc8f539d0a3efc27c57245f4",
-   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: equilibrium write"
+   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: not settled at the end of the sweep"
   },
   {
    "spec": "optomech_selfosc.json",
@@ -3074,10 +3077,10 @@
        "second_rate": 0.2500000000000001,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.031 (5.3 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.030 (5.2 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
        "stable_states": 7,
-       "flow_map_deviation_sigma_max": 5.269795188055467,
+       "flow_map_deviation_sigma_max": 5.226951324737943,
        "sector_deviation_sigma_max": 5.269795188055467,
        "hold": {
         "hold_time": 56.568542494923804,
@@ -3086,7 +3089,7 @@
       }
      }
     ],
-    "seconds": 449.9
+    "seconds": 202.7
    },
    "spec_sha256": "81e8696e72ff6b78f5e2789d5d4d7c08b675e995a83a706b0c9fd7241abd08f6",
    "summary": "reaches threshold-write; completions: critical space: nonlinear stage"

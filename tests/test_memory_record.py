@@ -94,7 +94,8 @@ def test_the_table_of_the_write_targets_is_a_view_of_the_records(tmp_path):
     assert rows[0]["targets"] is records[0]["targets"] and rows[0]["rule"] == "write point"
     counts = rc.predictions_counts(records)
     assert counts["specifications"] == 31 and counts["reached"]["symmetric-write"] + counts["obstructed_symmetric"] <= 31
-    assert set(counts["write_classes"]) <= {"linear-stage write", "equilibrium write", "nonlinear stage"}
+    assert set(counts["write_classes"]) <= {"linear-stage write", "equilibrium write", "nonlinear stage",
+                                          "not settled at the end of the sweep"}
     assert "rfsquid_pair" in counts["write_classes"]["equilibrium write"]
     md = rc.predictions_markdown(records, intro="Intro sentence.")
     assert md.startswith("# The write rules on the recorded specifications\n\nIntro sentence. Derived from the records")
