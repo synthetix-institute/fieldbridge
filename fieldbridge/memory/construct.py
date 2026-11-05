@@ -411,6 +411,7 @@ def _phi(x: float) -> float:
 # the bias on rings at half its damping, and with fewer e-folds the constant of its write depends on the phase of that
 # ringing: 1 % low at a damping of 0.2 and 12 % at 0.1, with 4/sqrt(rate) (examples/quantum/semiclassical/survey/phase_qubit_start.py)
 RING_EFOLDS = 6.0
+RUN_UP_STEPS = 200  # Newton steps along the unwritten state over the longest run-up
 RING_LONGEST = 8.0  # the longest sweep, in units of 4/sqrt(rate): an element that rings longer is undamped on this time
 
 
@@ -426,7 +427,35 @@ def sweep_half_time(real: Realization, nf: Dict, rate: float = 0.02) -> float:
     ev = np.linalg.eigvals(an.jacobian(real, np.asarray(nf["state"], float), {nf["param"]: float(start)}))
     scale = max(float(np.max(np.abs(ev))), 1e-300)
     decay = [-z.real for z in ev if z.real < -1e-9 * scale and abs(z.imag) > 1e-6 * scale]   # a pair undamped to rounding does not decay
-    return min(max(t_half, RING_EFOLDS / min(decay)), RING_LONGEST * t_half) if decay else t_half
+    if not decay:
+        return t_half
+    t_want = min(max(t_half, RING_EFOLDS / min(decay)), RING_LONGEST * t_half)
+    return t_half if t_want <= t_half else _stable_run_up(real, nf, rate, t_half, t_want)
+
+
+def _stable_run_up(real: Realization, nf: Dict, rate: float, t_half: float, t_want: float) -> float:
+    """The longest run-up, between t_half and t_want, over which the unwritten state stays stable. The state is followed
+    back from the write point by Newton steps; where an eigenvalue of its Jacobian turns positive (a Hopf point of the
+    ringing pair, or a mode that loses stability), the run-up ends at the last step before it. A sweep lengthened past
+    that point would start on a state that the noise leaves, and no start on the unwritten branch would exist."""
+    g = abs(nf["kappa_slope"])
+    sgn = np.sign(-nf["kappa_slope"])
+    q = np.asarray(nf["state"], float)
+    ts = np.linspace(0.0, t_want, RUN_UP_STEPS + 1)[1:]
+    last = t_half
+    for t in ts:
+        over = {nf["param"]: float(nf["value"] - sgn * rate / g * t)}
+        qn, ok = an.newton(real, q, over)
+        if not ok or not np.all(np.isfinite(qn)):
+            break
+        q = np.asarray(qn, float)
+        if t <= t_half:
+            continue
+        ev = np.linalg.eigvals(an.jacobian(real, q, over))
+        if float(np.max(ev.real)) >= -1e-9 * max(float(np.max(np.abs(ev))), 1e-300):
+            break
+        last = float(t)
+    return last
 
 
 def sweep_ends(nf: Dict, rate: float = 0.02, t_half: Optional[float] = None) -> "tuple[float, float]":

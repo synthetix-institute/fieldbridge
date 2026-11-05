@@ -104,6 +104,9 @@ CURVATURES = (-0.15, -0.1, -0.05, 0.0, 0.05)  # curvatures of the sweep through 
                             # is close to linear in the curvature over this range)
 CURVATURE_REFINEMENTS = 3       # secant steps after the first check of the zero-offset curvature
 CURVATURE_TOLERANCE = 0.1       # an offset below this (or three standard errors) counts as cancelled
+REDUCED_REACH = 1.25          # the reduced law tabulates its drift out to this multiple of the farthest written state
+REDUCED_POINTS = 81           # amplitudes at which the reduced law's drift is tabulated
+REDUCED_TRANSVERSE = 1e-6     # a slow manifold whose transverse drift stays above this (relative) is not solved
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -532,14 +535,18 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
                 crossing: Optional[Tuple[np.ndarray, np.ndarray]] = None) -> List[List[float]]:
     """The one-coordinate law along the moving branch, for a write point whose completion keeps a second parameter.
 
-    The unwritten branch q*(t) is followed through the crossing; at n_grid times its reduction to the slow direction
-    (the window fit of analysis.normal_form: s' = a1 s + a2 s^2 + a3 s^3, left vector w; this cubic is integrated up to
-    the written amplitude, where the Taylor coefficients of the series reduction do not hold) and the projections of the lag
-    beta = -w.dq*/dt, of the bias and of the noise D_s = D w.w give
-        ds/dt = a1(t) s + a2(t) s^2 + a3(t) s^3 + beta(t) + h_s(t) + sqrt(2 D_s(t)) xi,
+    The unwritten branch q*(t) is followed through the crossing; at n_grid times the drift along the slow direction is
+    taken on the slow manifold to all orders (analysis._slow_manifold_drift: the relaxing directions are eliminated at
+    each amplitude s, out to beyond the written states), and the projections of the lag beta = -w.dq*/dt, of the bias and
+    of the noise D_s = D w.w give
+        ds/dt = f(s, t) + beta(t) + h_s(t) + sqrt(2 D_s(t)) xi,
     which is solved from s = 0. The final s is assigned to the stable state whose coordinate along w is nearest. The
     lag of the state behind the moving branch, which a linear stage overestimates near the crossing, is limited here by
-    the quadratic and cubic terms."""
+    the nonlinear drift. A cubic truncation of f misses the terms beyond the cubic about the moving branch, and on a steep
+    feedback these move the offset of the write by several per cent. Where the slow
+    manifold cannot be solved at a time of the grid (a transverse drift that does not vanish), the window fit of
+    analysis.normal_form, s' = a1 s + a2 s^2 + a3 s^3, stands in at that time, and beyond the amplitudes tabulated the
+    cubic continues the tabulated drift."""
     ts_all = np.linspace(0.0, sweep.T, n_grid)
     qs, coef, real_from = [], [], None
     q, q_prev = q0.copy(), None
@@ -578,6 +585,27 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     beta = -np.einsum("ij,ij->i", W, dq)
     Ds = D * np.einsum("ij,ij->i", W, W)
     s_states = [float(W[-1] @ real.carrier.diff(qs[-1], st)) for st in stable]
+    # the drift on the slow manifold at every time of the grid, out to beyond the written states
+    span = REDUCED_REACH * max(max(abs(v) for v in s_states), 1e-9)
+    s_grid = np.linspace(-span, span, REDUCED_POINTS)
+    table = np.empty((len(ts), s_grid.size))
+    for i in range(len(ts)):
+        f, transverse = an._slow_manifold_drift(real, qs[i], V[i], W[i], s_grid, sweep.over(float(ts[i])))
+        if np.all(np.isfinite(f)) and transverse < REDUCED_TRANSVERSE:
+            table[i] = f - np.interp(0.0, s_grid, f)          # the branch is a state: no drift at s = 0
+        else:
+            table[i] = a1[i] * s_grid + a2[i] * s_grid ** 2 + a3[i] * s_grid ** 3
+
+    def drift(x, t):
+        j = int(np.clip(np.searchsorted(ts, t) - 1, 0, len(ts) - 2))
+        u = float(np.clip((t - ts[j]) / max(ts[j + 1] - ts[j], 1e-300), 0.0, 1.0))
+        row = (1 - u) * table[j] + u * table[j + 1]
+        y = np.interp(x, s_grid, row)
+        c1, c2, c3 = ((1 - u) * c[j] + u * c[j + 1] for c in (a1, a2, a3))
+        cubic = lambda z: c1 * z + c2 * z * z + c3 * z ** 3    # noqa: E731
+        edge = np.clip(x, -span, span)
+        return y + np.where(np.abs(x) > span, cubic(x) - cubic(edge), 0.0)
+
     dt = 0.25 * an.safe_dt(real)
     out = []
     for target, h in zip(targets, strengths):
@@ -588,8 +616,8 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
         t = float(ts[0])
         while t < sweep.T - 1e-12:
             st = min(dt, sweep.T - t)
-            c1, c2, c3, b, hh, d = (np.interp(t, ts, y) for y in (a1, a2, a3, beta, hs, Ds))
-            x = x + st * (c1 * x + c2 * x * x + c3 * x ** 3 + b + hh) + np.sqrt(2 * d * st) * rng.standard_normal(n_traj)
+            b, hh, d = (np.interp(t, ts, y) for y in (beta, hs, Ds))
+            x = x + st * (drift(x, t) + b + hh) + np.sqrt(2 * d * st) * rng.standard_normal(n_traj)
             x = np.clip(x, -1e3, 1e3)
             t += st
         lab = np.argmin(np.abs(x[:, None] - np.array(s_states)[None, :]), axis=1)
