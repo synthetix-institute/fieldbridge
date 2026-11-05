@@ -134,6 +134,14 @@ these exceed the critical ones. Found on the rf-SQUID triangle: a weak asymmetry
 rates by 0.018 against sqrt(r) = 0.14, the swept write then responds to the bias with about half the constant of the
 one-dimensional law, and the two-dimensional linear stage with the outcome map is the law that describes it.
 
+The linear stage of the completion is taken about the state the sweep really follows. Along the directions that relax, that state is the deterministic flow of the drift. Along the directions that cross, it is the unwritten branch, followed by Newton from a secant predictor through the crossing, so that it does not slide onto a written state where the Jacobian is singular. The hold along the crossing directions begins 1.5 passage times before the crossing. A constant lag only delays the crossing. A lag that changes along the sweep changes the rate at which the critical rate grows, and the constant of the swept write scales as that rate to the power -1/4. In the coherent Ising machine of two oscillators the critical rate grows 19 % below the declared rate at r = 0.02, and the constant is about 1.40. The record reports both numbers as `lag_at_crossing` and `rate_at_crossing`.
+
+The moments are stepped to second order. The forcing of a moving branch enters the mean once: the outcome map takes out of a sample the part of the forcing that falls after the mapping time, since the drift applies it again on the way forward.
+
+A sweep starts on the unwritten branch, followed back from the write point, wherever that branch is stable at the start. A sweep whose start lies on another stable state never comes to the write point, and it is reported as such, with no law. A start that does not relax at all is also reported.
+
+The class of a completed write reads the hold first: a choice that the noise exchanges during a hold is an equilibrium write, even where the law agrees with its certificate.
+
 The outcome map of the completion starts one e-fold after the crossing (the mapping time). In two or more directions
 the Gaussian of the linear stage is carried back to that time by the linear propagator of the critical space, so that
 each sample has there the size and the direction the linear stage gives it, and its direction keeps turning toward the

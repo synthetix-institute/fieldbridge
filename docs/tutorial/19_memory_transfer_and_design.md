@@ -188,9 +188,9 @@ took. If more than a tenth of the trajectories change state during that hold, th
 choice: the noise exchanges it, and the full dynamics gives the steady-state selection under the bias. This is the
 equilibrium write of Module 30, here on a classical carrier. The Kerr parametric oscillator of
 `examples/quantum/semiclassical` at the vacuum noise κ/8 exchanges its wells in this way, since the sweep ends with a
-fifth of a photon in each well and half of the trajectories change state during the hold; there the outcome map agrees
-with the certificate that the bias hardly chooses, so the hold is not consulted and the record reports the class of a
-law that holds. If the states retain the choice, the deviation belongs to the nonlinear stage proper (noise while the
+fifth of a photon in each well and half of the trajectories change state during the hold. The hold is read first: a
+choice that the noise exchanges is an equilibrium write even where the law agrees with its certificate, since nothing is
+retained. If the states retain the choice, the deviation belongs to the nonlinear stage proper (noise while the
 state is still small, or a further mode), and the report says so. The class is reported as `write_class`: linear-stage
 write, equilibrium write, or nonlinear stage.
 
