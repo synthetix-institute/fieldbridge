@@ -61,6 +61,9 @@ NEWTON_RESIDUAL = 1e-6   # above this (in units of the carrier scale) the strobo
 CENTRE_MAX = 0.5         # the fitted centre of the locking range, in half-widths, beyond which the fit is not a measurement
 EXTRAPOLATION_MAX = 0.5  # the largest relative move of the half-width by the extrapolation to zero drive
 ANGLE_RTOL = 1e-13       # relative tolerance on an angle, so small that the absolute tolerance sets the local error
+SETTLED_DRIFT = 1e-7     # |F| below this (in units of the median |F| of the carrier) marks a settled state
+NEAR_DRIFT = 1e-2        # below this the state is tested by Newton steps for a stable state next to it
+SETTLED_DISTANCE = 1e-6  # in units of the carrier scale: a stable state this close to the end of a chunk is reached
 ANGLE_DIFFERENCE = 1e-4  # step of the central differences of the stroboscopic map in an angle, in radians
 
 
@@ -176,6 +179,31 @@ def _unwound(real: Realization, q) -> np.ndarray:
 
 
 # ------------------------------------------------------------------------------------------------ the cycle
+def _at_stable_state(real: Realization, over: Dict, q: np.ndarray) -> bool:
+    """Whether a stable state lies within SETTLED_DISTANCE of q: Newton steps from q, then the eigenvalues of the
+    Jacobian there. Near a fast stable spiral the error of the integration keeps |F| above SETTLED_DRIFT at a state
+    that has settled to far better than the scale, and the drift alone would let the start run to its time limit."""
+    c = _compiled(real)
+    pv = c.values(over)
+    scale = an.base_length(real)
+    x = np.asarray(q, float)
+    with np.errstate(all="ignore"):
+        for _ in range(8):
+            try:
+                dx = np.linalg.solve(c.jac(x, pv), -c.f(x, pv))
+            except np.linalg.LinAlgError:
+                return False
+            x = x + dx
+            if not np.all(np.isfinite(x)):
+                return False
+            if np.linalg.norm(dx) < 1e-12 * scale:
+                break
+        if float(real.carrier.distance(x, q)) > SETTLED_DISTANCE * scale:
+            return False
+        ev = np.linalg.eigvals(c.jac(x, pv))
+    return bool(np.all(np.isfinite(ev)) and ev.real.max() < 0.0)
+
+
 def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: float = 100.0,
                t_max: float = 3000.0) -> Optional[Dict[str, object]]:
     """A stable periodic orbit reached from random starts, or None if every start settles on a stable state or the
@@ -200,7 +228,8 @@ def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: flo
             q, t = sol.y[:, -1], t + chunk
             if sect is not None and sect[2]:
                 q = _unwound(real, q)
-            if np.linalg.norm(real.F(q, **over)) < 1e-7 * f_ref:
+            drift = float(np.linalg.norm(real.F(q, **over)))
+            if drift < SETTLED_DRIFT * f_ref or (drift < NEAR_DRIFT * f_ref and _at_stable_state(real, over, q)):
                 break  # settled on a stable state
             Y = sol.y[:, sol.t >= 0.5 * chunk]
             if Y.shape[1] < 8:
