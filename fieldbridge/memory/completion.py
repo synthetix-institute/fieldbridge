@@ -107,8 +107,9 @@ CURVATURE_TOLERANCE = 0.1       # an offset below this (or three standard errors
 REDUCED_REACH = 1.25          # the reduced law tabulates its drift out to this multiple of the farthest written state
 REDUCED_POINTS = 81           # amplitudes at which the reduced law's drift is tabulated
 REDUCED_TRANSVERSE = 1e-6     # a slow manifold whose transverse drift stays above this (relative) is not solved
-REDUCED_SLOW = 0.5            # the reduction to one coordinate holds where the rate of the drift along the slow manifold
-                              # stays below this fraction of the slowest relaxation of the eliminated directions
+REDUCED_SLOW = 1.0            # the reduction to one coordinate holds where the rate of the drift along the slow manifold
+                              # stays below the slowest relaxation of the eliminated directions (reductions that hold have
+                              # ratios up to 0.48, failed ones from 2 up)
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -639,18 +640,22 @@ def reduction_validity(real: Realization, sweep: Sweep, ts: np.ndarray, V: np.nd
     """Whether the one-coordinate reduction holds over the amplitudes that the write crosses.
 
     Eliminating the relaxing directions assumes that they relax fast against the motion along the slow manifold. That
-    motion has the local rate |df/ds|. The eliminated directions relax at the slowest rate of the Jacobian restricted to
-    them, at the same state on the manifold. Before the crossing the state stays near the branch, and the comparison is
-    made at s = 0; from the crossing on it is made at every amplitude from the branch out to the first stable zero of
-    the drift on each side, the written state of that time, or to the end of the table. A phase particle with inertia
-    is the example where it fails: its voltage is eliminated as if the phase were overdamped, ph' = -U'(ph) / gamma, and
-    at the written states that drift relaxes faster than the damping gamma that the elimination assumes. The reduction
-    holds where the largest ratio of the two rates stays below REDUCED_SLOW; an eliminated direction that does not
-    relax (a ratio without bound) breaks it at once."""
+    motion has the local rate |df/ds|. The eliminated directions relax at the rates of the eigenvalues of the Jacobian at
+    the same state on the manifold, other than the one that continues the slow direction, the eigenvalue nearest df/ds;
+    the slowest of them is compared. The Jacobian of a light mass or of a fast intermediate is far from normal, and its compression onto
+    the directions orthogonal to the slow one is not a relaxation rate: for m x'' + x' = F(x) it turns positive where the
+    spring is stiff, although the velocity relaxes at 1/m everywhere. Where the eigenvalue that continues the slow
+    direction is one of a complex pair, the slow coordinate exchanges with an eliminated one as both decay, and the
+    decay of the pair, -Re mu, is compared: on a phase particle with inertia it is gamma / 2 at the written states,
+    far below the drift there, while on a light mass it is 1 / (2 m), far above it.
+
+    Before the crossing the state stays near the branch, and the comparison is made at s = 0; from the crossing on it is
+    made at every amplitude from the branch out to the first stable zero of the drift on each side, the written state of
+    that time, or to the end of the table. The reduction holds where the largest ratio of the two rates stays below
+    REDUCED_SLOW; an eliminated direction that does not relax breaks it at once."""
     n = points[0].shape[1]
     if n == 1:
         return {"slow": True, "ratio": 0.0, "limit": REDUCED_SLOW, "where": None}
-    from scipy.linalg import null_space
     mid = int(np.argmin(np.abs(s_grid)))
     worst = (0.0, None)
     for i, t in enumerate(ts):
@@ -667,15 +672,20 @@ def reduction_validity(real: Realization, sweep: Sweep, ts: np.ndarray, V: np.nd
                     if j != mid and step * f[j] <= 0 and df[j] < 0:
                         break
                     j += step
-        C = null_space(V[i][None, :])
         over = sweep.over(float(t))
         for j in sorted(set(idx)):
-            mu = np.linalg.eigvals(C.T @ an.jacobian(real, points[i][j], over) @ C)
-            relax = float(np.min(-mu.real))
+            mu = np.linalg.eigvals(an.jacobian(real, points[i][j], over))
+            # the eigenvalue that continues the slow direction is the one nearest the drift's own rate on the manifold
+            # (the eigenvectors of a light mass are nearly parallel, and the direction does not tell them apart); where
+            # it is one of a complex pair, its partner stays among the others, and the decay of the pair, -Re mu, is
+            # what the drift is compared with
+            others = np.delete(mu, int(np.argmin(np.abs(mu - df[j]))))
+            relax = float(np.min(-others.real))
             ratio = np.inf if relax <= 0 else float(abs(df[j]) / relax)
+            kind = "an eliminated direction does not relax" if relax <= 0 else "rate ratio"
             if ratio > worst[0]:
                 worst = (ratio, {"t": float(t), "s": float(s_grid[j]), "drift_rate": float(abs(df[j])),
-                                 "eliminated_relaxation": relax})
+                                 "eliminated_relaxation": relax, "kind": kind})
     return {"slow": bool(worst[0] < REDUCED_SLOW), "ratio": float(worst[0]), "limit": REDUCED_SLOW, "where": worst[1]}
 
 
@@ -888,9 +898,10 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         if not validity["slow"]:
             w_ = validity["where"] or {}
             out["reduction_not_slow"] = (
+                (f"{w_.get('kind')} at s = {w_.get('s', float('nan')):.3g}: " if w_.get("kind") != "rate ratio" else "") +
                 f"the drift along the slow manifold varies at the rate {w_.get('drift_rate', float('nan')):.3g} at s = "
                 f"{w_.get('s', float('nan')):.3g}, against the relaxation {w_.get('eliminated_relaxation', float('nan')):.3g} of the "
-                f"eliminated directions there (ratio {validity['ratio']:.3g}, above {REDUCED_SLOW:g}): the one-coordinate "
+                f"eliminated directions there (ratio {validity['ratio']:.3g}, at or above {REDUCED_SLOW:g}): the one-coordinate "
                 "reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the "
                 "outcome map")
     unsettled = max([unsettled_fraction(real, r["final"], stable, r["reference_end"]) for r in lin]
