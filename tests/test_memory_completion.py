@@ -328,3 +328,17 @@ def test_the_crossover_reads_the_flow_until_the_spread_reaches_the_written_ampli
     assert share < sector - 0.05
     ref = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, n_samples=400, certify=False)
     assert ref["map_regime"] == "saturated at the mapping time"
+
+
+def test_written_states_closer_than_the_merge_tolerance_are_found_at_the_mapping_time():
+    # a pitchfork shortly after the crossing on a carrier of large scale: the written states at +-0.1 lie closer to the
+    # unwritten branch than the tolerance within which stored states are one, and the branch is found first
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                      "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x"], "scale": 4.0}, "parameters": {"a": 0.01},
+                      "drift": {"x": "a*x - x**3"}, "noise": 0.001, "control": {"name": "a", "range": [-1.0, 1.0]}})
+    seeds = np.array([[0.001], [0.12], [-0.12]])
+    rng = np.random.default_rng(0)
+    assert completion.stable_states(real, rng, {}, n_starts=0, seeds=seeds) == []
+    found = sorted(float(q[0]) for q in completion.stable_zeros(real, rng, {}, n_starts=0, seeds=seeds))
+    assert found == pytest.approx([-0.1, 0.1], abs=1e-6)
