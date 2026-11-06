@@ -48,10 +48,10 @@ python3 -B examples/quantum/semiclassical/survey/report.py --results results/har
 For each model, `survey.py` runs the three derivations of Modules 9–11 with their law constants
 (`memory codiscover`), the law at every obstruction (`memory complete`, with 8 000 samples of the linear stage and a
 certificate of 4 000 trajectories per bias), and the single changes of Module 14 (`memory changes`). Each of the
-three derivations is stopped after 30 minutes and then recorded as not derived. The results of the full survey are
+three derivations can be stopped after a time limit and is then recorded as not derived. The results of the full survey are
 saved in [examples/quantum/semiclassical/survey/results](../../examples/quantum/semiclassical/survey/results), each with the stamp of the code that
-produced it (they were computed with limits of 60 s per change and 30 minutes per derivation, `--budget 60
---derive-budget 1800`; the defaults of `survey.py` are now 300 s and 2 hours, about 25 core-hours in all), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
+produced it (they were computed with a limit of 60 s per change and none per derivation, `--budget 60
+--derive-budget 0`, about 18 core-hours in all; the defaults of `survey.py` are 300 s and 2 hours), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
 [records](../records/quantum_semiclassical.md) of `memory record` measure the same quantities at another seed, and the laws at the obstructions with
 fewer trajectories; this module says so where they are the source. Each step is also a command of its own:
 
@@ -77,9 +77,12 @@ Phase locking is reached in the three self-sustained oscillators: the trapped-io
 Pol oscillator and the optomechanical self-oscillator. The first two have the half-width $1.000$. In the third the
 fit is not a measurement, because the slip frequency outside the locking range cannot be read and the fitted centre
 lies outside the range, and no constant is recorded. The phase-locking derivations of the driven Jaynes-Cummings
-resonator at high power and of the spin ensemble did not finish within their 30 minutes and are recorded as not
-derived; run without the limit, that of the spin ensemble finds no oscillation at any of its 11 drive strengths after
-4 hours.
+resonator at high power and of the spin ensemble were run without the limit (`--derive-budget 0`), and both find no
+oscillation at any of their 11 drive strengths. At a strong drive the stable state of both is a fast spiral, and the
+error of the integration keeps the drift above the threshold that marks a settled state; the search for a cycle
+therefore also tests for a stable state next to the end of each stretch of integration. With that test the spin
+ensemble takes 9 minutes instead of 5 hours on the shared machine, and the resonator 3 hours instead of 20, the time
+its stiff integration at a strong drive takes.
 
 These results are expected. A universal law returns its constant on every carrier whose dynamics reduce to its
 normal form; what the survey adds is the device's own scales, which set how weak a signal the element can write.
