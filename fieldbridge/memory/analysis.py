@@ -732,16 +732,19 @@ def locate_writes(real: Realization, rng, param: Optional[str] = None, values: O
     return sorted(out, key=lambda e: e["v"])
 
 
-def _slow_manifold_drift(real, q, vec, w, s, over):
+def _slow_manifold_drift(real, q, vec, w, s, over, points: bool = False):
     """Drift along vec on the slow manifold: for each s, the transverse coordinates are solved so that the
     drift has no component off vec (adiabatic elimination of the relaxing directions). Returns the drift and
-    the largest remaining transverse drift relative to the largest drift along the grid."""
+    the largest remaining transverse drift relative to the largest drift along the grid, and with points=True also
+    the states on the manifold at the amplitudes s."""
     n = q.size
     if n == 1:
-        return np.array([float(w[0] * real.F(real.carrier.wrap(q + si * vec), **over)[0]) for si in s]), 0.0
+        f = np.array([float(w[0] * real.F(real.carrier.wrap(q + si * vec), **over)[0]) for si in s])
+        return (f, 0.0, np.array([real.carrier.wrap(q + si * vec) for si in s])) if points else (f, 0.0)
     from scipy.linalg import null_space
     C = null_space(vec[None, :])
     f = np.empty(len(s))
+    X = np.empty((len(s), n))
     z_side = {1: np.zeros(n - 1), -1: np.zeros(n - 1)}
     trans, total = 0.0, 0.0
     cap = 0.5 * float(np.max(np.abs(s)))
@@ -758,11 +761,12 @@ def _slow_manifold_drift(real, q, vec, w, s, over):
             z = z - (dz * cap / nz if nz > cap else dz)
         z_side[side] = z
         x = real.carrier.wrap(q + s[j] * vec + C @ z)
+        X[j] = x
         Fx = real.F(x, **over)
         f[j] = float(w @ Fx)
         trans = max(trans, float(np.linalg.norm(C.T @ Fx)))
         total = max(total, float(np.linalg.norm(Fx)))
-    return f, trans / max(total, 1e-300)
+    return (f, trans / max(total, 1e-300), X) if points else (f, trans / max(total, 1e-300))
 
 
 def leading_order(real, q, vec, w, over, half: float, rate: float, scale: float,

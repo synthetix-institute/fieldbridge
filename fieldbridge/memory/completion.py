@@ -107,6 +107,8 @@ CURVATURE_TOLERANCE = 0.1       # an offset below this (or three standard errors
 REDUCED_REACH = 1.25          # the reduced law tabulates its drift out to this multiple of the farthest written state
 REDUCED_POINTS = 81           # amplitudes at which the reduced law's drift is tabulated
 REDUCED_TRANSVERSE = 1e-6     # a slow manifold whose transverse drift stays above this (relative) is not solved
+REDUCED_SLOW = 0.5            # the reduction to one coordinate holds where the rate of the drift along the slow manifold
+                              # stays below this fraction of the slowest relaxation of the eliminated directions
 
 
 # ------------------------------------------------------------------------------------------------ the completion
@@ -546,7 +548,9 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     feedback these move the offset of the write by several per cent. Where the slow
     manifold cannot be solved at a time of the grid (a transverse drift that does not vanish), the window fit of
     analysis.normal_form, s' = a1 s + a2 s^2 + a3 s^3, stands in at that time, and beyond the amplitudes tabulated the
-    cubic continues the tabulated drift."""
+    cubic continues the tabulated drift. The reduction holds only where the eliminated directions relax fast against the
+    drift along the manifold (reduction_validity); where they do not, no law is integrated, and (None, validity) is
+    returned. Otherwise the probabilities of the stable states for each bias are returned with the validity."""
     ts_all = np.linspace(0.0, sweep.T, n_grid)
     qs, coef, real_from = [], [], None
     q, q_prev = q0.copy(), None
@@ -589,12 +593,17 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     span = REDUCED_REACH * max(max(abs(v) for v in s_states), 1e-9)
     s_grid = np.linspace(-span, span, REDUCED_POINTS)
     table = np.empty((len(ts), s_grid.size))
+    points = []
     for i in range(len(ts)):
-        f, transverse = an._slow_manifold_drift(real, qs[i], V[i], W[i], s_grid, sweep.over(float(ts[i])))
+        f, transverse, X = an._slow_manifold_drift(real, qs[i], V[i], W[i], s_grid, sweep.over(float(ts[i])), points=True)
+        points.append(X)
         if np.all(np.isfinite(f)) and transverse < REDUCED_TRANSVERSE:
             table[i] = f - np.interp(0.0, s_grid, f)          # the branch is a state: no drift at s = 0
         else:
             table[i] = a1[i] * s_grid + a2[i] * s_grid ** 2 + a3[i] * s_grid ** 3
+    validity = reduction_validity(real, sweep, ts, V, s_grid, table, points)
+    if not validity["slow"]:
+        return None, validity
 
     def drift(x, t):
         j = int(np.clip(np.searchsorted(ts, t) - 1, 0, len(ts) - 2))
@@ -622,7 +631,52 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
             t += st
         lab = np.argmin(np.abs(x[:, None] - np.array(s_states)[None, :]), axis=1)
         out.append([float(np.mean(lab == j)) for j in range(len(stable))])
-    return out
+    return out, validity
+
+
+def reduction_validity(real: Realization, sweep: Sweep, ts: np.ndarray, V: np.ndarray, s_grid: np.ndarray,
+                       table: np.ndarray, points: List[np.ndarray]) -> Dict[str, object]:
+    """Whether the one-coordinate reduction holds over the amplitudes that the write crosses.
+
+    Eliminating the relaxing directions assumes that they relax fast against the motion along the slow manifold. That
+    motion has the local rate |df/ds|. The eliminated directions relax at the slowest rate of the Jacobian restricted to
+    them, at the same state on the manifold. Before the crossing the state stays near the branch, and the comparison is
+    made at s = 0; from the crossing on it is made at every amplitude from the branch out to the first stable zero of
+    the drift on each side, the written state of that time, or to the end of the table. A phase particle with inertia
+    is the example where it fails: its voltage is eliminated as if the phase were overdamped, ph' = -U'(ph) / gamma, and
+    at the written states that drift relaxes faster than the damping gamma that the elimination assumes. The reduction
+    holds where the largest ratio of the two rates stays below REDUCED_SLOW; an eliminated direction that does not
+    relax (a ratio without bound) breaks it at once."""
+    n = points[0].shape[1]
+    if n == 1:
+        return {"slow": True, "ratio": 0.0, "limit": REDUCED_SLOW, "where": None}
+    from scipy.linalg import null_space
+    mid = int(np.argmin(np.abs(s_grid)))
+    worst = (0.0, None)
+    for i, t in enumerate(ts):
+        f = table[i]
+        df = np.gradient(f, s_grid)
+        if t < sweep.t_cross:
+            idx = [mid]
+        else:
+            idx = []
+            for step in (1, -1):
+                j = mid
+                while 0 <= j < len(s_grid):
+                    idx.append(j)
+                    if j != mid and step * f[j] <= 0 and df[j] < 0:
+                        break
+                    j += step
+        C = null_space(V[i][None, :])
+        over = sweep.over(float(t))
+        for j in sorted(set(idx)):
+            mu = np.linalg.eigvals(C.T @ an.jacobian(real, points[i][j], over) @ C)
+            relax = float(np.min(-mu.real))
+            ratio = np.inf if relax <= 0 else float(abs(df[j]) / relax)
+            if ratio > worst[0]:
+                worst = (ratio, {"t": float(t), "s": float(s_grid[j]), "drift_rate": float(abs(df[j])),
+                                 "eliminated_relaxation": relax})
+    return {"slow": bool(worst[0] < REDUCED_SLOW), "ratio": float(worst[0]), "limit": REDUCED_SLOW, "where": worst[1]}
 
 
 def certificate(real: Realization, sweep: Sweep, q0: np.ndarray, targets, strengths, D: float, n_traj: int,
@@ -775,11 +829,11 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             per = float(np.linalg.norm(L.T @ real.write_force(q0, tgt, 1.0)))
             targets.append(tgt); strengths.append(c * floor / max(per, 1e-12)); keys.append((c, e))
     lin = linear_stage_law(real, sweep, q0, R, L, targets, strengths, D, stable, n_samples, rng, crossing=crossing)
-    reduced = None
+    reduced, validity = None, None
     if k == 1 and reduce_one:
         try:
-            reduced = reduced_law(real, sweep, q0, targets, strengths, D, stable, n_samples, rng,
-                                  crossing=critical_space(real, nf, k_static))
+            reduced, validity = reduced_law(real, sweep, q0, targets, strengths, D, stable, n_samples, rng,
+                                            crossing=critical_space(real, nf, k_static))
         except (ValueError, np.linalg.LinAlgError):
             reduced = None
     rows = []
@@ -829,6 +883,16 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
            "rows": rows}
     if extended is not None:
         out["sweep_extended_for_saturation"] = extended
+    if validity is not None:
+        out["reduction_validity"] = validity
+        if not validity["slow"]:
+            w_ = validity["where"] or {}
+            out["reduction_not_slow"] = (
+                f"the drift along the slow manifold varies at the rate {w_.get('drift_rate', float('nan')):.3g} at s = "
+                f"{w_.get('s', float('nan')):.3g}, against the relaxation {w_.get('eliminated_relaxation', float('nan')):.3g} of the "
+                f"eliminated directions there (ratio {validity['ratio']:.3g}, above {REDUCED_SLOW:g}): the one-coordinate "
+                "reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the "
+                "outcome map")
     unsettled = max([unsettled_fraction(real, r["final"], stable, r["reference_end"]) for r in lin]
                     + [unsettled_fraction(real, qf, stable, r["reference_end"]) for qf, r in zip(sims, lin)], default=0.0)
     if k > k_static:

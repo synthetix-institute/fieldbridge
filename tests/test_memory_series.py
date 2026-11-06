@@ -152,25 +152,18 @@ def test_a_fold_with_large_higher_terms_is_read_as_a_fold():
     assert nf["asymmetry"] > construct.TOL and nf["bias"] > construct.TOL and nf["kind"].startswith("saddle-node")
 
 
-def test_the_reduced_law_integrates_the_fit_and_not_the_taylor_cubic(monkeypatch):
-    """The reduced law integrates its cubic up to the written amplitude. At the fluxonium cusp a3 is -0.556 by the series
-    and -0.320 over the window; the local cubic saturates too early, and the law gives 1.16 against 1.36 of the full
-    dynamics, where the fit gives 1.30."""
+def test_the_reduced_law_is_withdrawn_where_the_eliminated_voltage_is_not_fast():
+    """Fluxonium is a phase with inertia, ph' = v, v' = -0.3 v - U'(ph). Eliminating the voltage gives the overdamped drift
+    -U'/0.3, which at the written states varies faster than the damping it assumes (ratio about 1.8, above
+    REDUCED_SLOW). The one-coordinate law, which there reads 1.09 against 1.32 of the full dynamics, is withdrawn, and the
+    linear stage with its outcome map is reported and certified."""
     from fieldbridge.memory import completion as cm
     real = load(QUANTUM + "fluxonium.json")
-    used, read = [], an.normal_form
-
-    def spy(*args, **kwargs):
-        nf = read(*args, **kwargs)
-        if "mode" in nf:
-            used.append(nf)
-        return nf
-
-    monkeypatch.setattr(cm.an, "normal_form", spy)
     entry = cm.complete(real, np.random.default_rng(1), n_samples=2000, n_traj=2000)["write_points"][0]
-    law = next(u["law"] for u in entry["unfoldings"] if u.get("law", {}).get("law_kind", "").startswith("reduced"))
+    law = next(u["law"] for u in entry["unfoldings"] if "reduction_validity" in u.get("law", {}))
+    assert not law["reduction_validity"]["slow"] and law["reduction_validity"]["ratio"] > 1.0
+    assert law["law_kind"] == "linear stage and outcome map" and "reduction_not_slow" in law
     assert law["certified"] and law["write_class"] == "linear-stage write"
-    assert any(abs(nf["fit"]["a3"] - nf["a3"]) > 0.1 * abs(nf["a3"]) for nf in used)
 
 
 @pytest.mark.parametrize("path, value, coefficient", [(QUANTUM + "kerr_cat_kpo.json", 0.5, -25.0),
