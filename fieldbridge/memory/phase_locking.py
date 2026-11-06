@@ -39,6 +39,7 @@ the attraction of the cycle.
 """
 from __future__ import annotations
 
+from collections import deque
 from dataclasses import replace
 from fractions import Fraction
 from math import atan2, log, pi, sqrt
@@ -62,9 +63,40 @@ CENTRE_MAX = 0.5         # the fitted centre of the locking range, in half-width
 EXTRAPOLATION_MAX = 0.5  # the largest relative move of the half-width by the extrapolation to zero drive
 ANGLE_RTOL = 1e-13       # relative tolerance on an angle, so small that the absolute tolerance sets the local error
 ANGLE_DIFFERENCE = 1e-4  # step of the central differences of the stroboscopic map in an angle, in radians
+CHUNK_STEPS = 250_000    # accepted steps in one chunk of the cycle search (the examples need at most 13 000)
+STEP_WINDOW = 1000       # steps over which the mean step is compared with the floor below
+STEP_FLOOR = 1e-12       # mean step, in units of the chunk, below which the trajectory runs away in finite time
 
 
 # ------------------------------------------------------------------------------------------------ integration
+class _Abandoned(Exception):
+    """A run of the cycle search that cannot finish: its step budget is spent, its step has collapsed onto a finite-time
+    singularity, or the Jacobian is not finite."""
+
+
+def _budget(length: float, bad: List[bool]):
+    """An event that never crosses zero and stops the run instead. solve_ivp calls it in Python once per accepted step
+    (and at earlier times while it locates another event), so the count of calls with a time not below the last one is
+    the count of steps. LSODA keeps every step and continues when t + h = t, so near a blow-up a run otherwise grows
+    without bound in time and memory; an exception raised in the drift or the Jacobian, inside the Fortran solver,
+    aborts the interpreter."""
+    times = deque(maxlen=STEP_WINDOW)
+
+    def ev(t, q):
+        if bad[0]:
+            raise _Abandoned("the Jacobian is not finite")
+        if not times or t >= times[-1]:
+            times.append(t)
+            ev.steps += 1
+            if ev.steps > CHUNK_STEPS:
+                raise _Abandoned(f"more than {CHUNK_STEPS} steps")
+            if len(times) == STEP_WINDOW and times[-1] - times[0] < STEP_WINDOW * STEP_FLOOR * length:
+                raise _Abandoned("the step collapsed")
+        return 1.0
+    ev.steps = 0
+    return ev
+
+
 class _Compiled:
     """The drift of an equations realization and its exact Jacobian, compiled for one state at a time with the math
     module (single-state integration spends most of its time in the drift); network realizations use F and a
@@ -112,23 +144,37 @@ def _compiled(real: Realization) -> _Compiled:
 
 
 def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, dense: bool = False,
-           rtol: float = 1e-10, atol: Optional[float] = None):
+           rtol: float = 1e-10, atol: Optional[float] = None, budget: bool = False):
     """solve_ivp on the realization; drive = (name, p1, eps, omega_f) modulates a parameter as p1 + eps cos(omega_f t).
     Angles are integrated without wrapping; the drift is periodic in them. A relative tolerance on an angle would
     loosen with its winding number, which depends on where a run began and has no physical meaning, so on a torus rtol
-    becomes an absolute tolerance in units of the radian."""
+    becomes an absolute tolerance in units of the radian.
+
+    A Jacobian with a non-finite entry ends the run: LSODA gets zeros in its place (a NaN in LAPACK's factorization
+    crashes the process, and an exception cannot leave the Fortran solver) and a non-finite drift from then on, so it
+    stops with a failed status. With budget, such a Jacobian, more than CHUNK_STEPS steps or a collapsed step raise
+    _Abandoned."""
     from scipy.integrate import solve_ivp
     atol = 1e-12 * an.base_length(real) if atol is None else atol
     if real.carrier.kind == "torus":
         atol, rtol = max(atol, rtol * an.base_length(real)), ANGLE_RTOL
     c = _compiled(real)
     pv = c.values(over)
+    bad = [False]
+    stop = np.full(len(np.atleast_1d(q0)), np.nan)
+
+    def finite(J):
+        if np.all(np.isfinite(J)):
+            return J
+        bad[0] = True
+        return np.zeros_like(J)
+
     if drive is None:
         def f(t, q):
-            return c.f(q, pv)
+            return stop if bad[0] else c.f(q, pv)
 
         def jac(t, q):
-            return c.jac(q, pv)
+            return finite(c.jac(q, pv))
     else:
         name, p1, eps, wf = drive
         k = c.names.index(name)
@@ -139,18 +185,25 @@ def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, d
             return v
 
         def f(t, q):
-            return c.f(q, at(t))
+            return stop if bad[0] else c.f(q, at(t))
 
         def jac(t, q):
-            return c.jac(q, at(t))
+            return finite(c.jac(q, at(t)))
+
+    def guarded(length, ev):
+        if not budget:
+            return ev
+        return [ev, _budget(length, bad)] if ev is not None else _budget(length, bad)
     q0 = np.asarray(q0, float)
     if events is not None and abs(events(t_span[0], q0)) < 1e-9 * an.base_length(real):
         # a start on the section leaves the sign of the event function at t0 to rounding, and the root bracket of the
         # first step can fail: begin a short step later
         t1 = t_span[0] + 1e-6 * (t_span[1] - t_span[0])
-        q0 = solve_ivp(f, (t_span[0], t1), q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol).y[:, -1]
+        q0 = solve_ivp(f, (t_span[0], t1), q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol,
+                       events=guarded(t1 - t_span[0], None)).y[:, -1]
         t_span = (t1, t_span[1])
-    return solve_ivp(f, t_span, q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol, events=events, dense_output=dense)
+    return solve_ivp(f, t_span, q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol,
+                     events=guarded(t_span[1] - t_span[0], events), dense_output=dense)
 
 
 def _event(j: int, level: float, torus: bool):
@@ -179,7 +232,9 @@ def _unwound(real: Realization, q) -> np.ndarray:
 def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: float = 100.0,
                t_max: float = 3000.0) -> Optional[Dict[str, object]]:
     """A stable periodic orbit reached from random starts, or None if every start settles on a stable state or the
-    motion does not become periodic. The section is the mid-level of the coordinate with the largest excursion."""
+    motion does not become periodic. The section is the mid-level of the coordinate with the largest excursion. A start
+    whose trajectory runs away (a chunk over its step budget, a collapsed step, a non-finite Jacobian or state) is
+    abandoned."""
     scale = an.base_length(real)
     probe = real.carrier.sample(rng, 16)
     with np.errstate(all="ignore"):
@@ -189,8 +244,11 @@ def find_cycle(real: Realization, over: Dict, rng, n_starts: int = 3, chunk: flo
         t, sect, times, states, silent = 0.0, None, [], [], 0
         while t < t_max:
             ev = _event(*sect) if sect is not None else None
-            with np.errstate(all="ignore"):
-                sol = _solve(real, over, (0.0, chunk), q, events=ev, rtol=1e-9, atol=1e-11 * scale)
+            try:
+                with np.errstate(all="ignore"):
+                    sol = _solve(real, over, (0.0, chunk), q, events=ev, rtol=1e-9, atol=1e-11 * scale, budget=True)
+            except _Abandoned:
+                break
             if sol.status < 0 or not np.all(np.isfinite(sol.y)):
                 break
             if ev is not None and sol.t_events[0].size:
