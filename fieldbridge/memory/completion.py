@@ -159,6 +159,23 @@ def stable_states(real: Realization, rng, over: Dict, n_starts: int = 40, seeds=
     return out
 
 
+def stable_zeros(real: Realization, rng, over: Dict, n_starts: int = 40, seeds=None) -> List[np.ndarray]:
+    """Every stable zero of the drift that damped Newton reaches from random starts and from the seeds, each taken by
+    itself. stable_states merges zeros that lie closer than the tolerance of stored states, keeping the first one found;
+    shortly after a crossing the written states lie closer than that to the unwritten branch, which is found first from
+    the seeds of a sweep, and they are merged into it (on an underdamped mass at the mapping time the written states lay
+    0.19 from the branch against a tolerance of 0.28, and none was found)."""
+    starts = real.carrier.sample(rng, n_starts)
+    if seeds is not None and len(seeds):
+        starts = np.concatenate([np.atleast_2d(np.asarray(seeds, float)), starts])
+    out = []
+    for q in starts:
+        q, ok = an.newton(real, q, over)
+        if ok and np.all(np.isfinite(q)) and an.n_unstable(an.kappa_spectrum(real, q, over)) == 0:
+            out.append(np.asarray(q, float))
+    return out
+
+
 def _space_directions(k: int) -> List[np.ndarray]:
     """Directions in the critical space: +-each axis for k = 1; 8 directions on the unit circle of the first two axes
     and +-each further axis otherwise."""
@@ -470,10 +487,11 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
         z_map = (z - mf_end[None]) @ P.T + mf_map[None]
         spread_map = 3 * sqrt(max(float(np.max(np.linalg.eigvalsh(C_map))), 0.0)) + float(np.linalg.norm(P @ mb + mf_map + hist_d[i_map]))
         # the written amplitude at the mapping time: the distance from the unwritten branch to the nearest state
-        # stable at that value of the control (the states grow along the sweep; none may exist yet)
+        # stable at that value of the control (the states grow along the sweep; none may exist yet). The zeros are
+        # not merged: at the mapping time the written states can lie closer to the branch than the merge tolerance
         key = round(t_map, 9)
         if key not in amplitude_at:
-            st_map = stable_states(real, rng, sweep.over(t_map), seeds=swept_seeds(real, sweep, q0, R, t_map))
+            st_map = stable_zeros(real, rng, sweep.over(t_map), seeds=swept_seeds(real, sweep, q0, R, t_map))
             amplitude_at[key] = min((float(np.linalg.norm(real.carrier.diff(hist_b[i_map], s_))) for s_ in st_map),
                                     default=float("nan"))
         ell_map = amplitude_at[key]
