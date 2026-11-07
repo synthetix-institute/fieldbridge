@@ -323,3 +323,18 @@ def test_the_crossover_reads_the_flow_until_the_spread_reaches_the_written_ampli
     assert share < sector - 0.05
     ref = completion.law_at(real, nf, np.random.default_rng(3), rate=0.02, n_samples=400, certify=False)
     assert ref["map_regime"] == "saturated at the mapping time"
+
+
+def test_the_sign_in_one_direction_is_read_from_the_unwritten_branch_at_the_mapping_time():
+    """The magnon-Kerr element: the sweep through the unfolded cusp moves the unwritten branch by more than the distance
+    to the written states, and from the state at the write point both states lie on one side (critical coordinates
+    0.35 and 2.85; -1.39 and 1.10 from the branch at the mapping time). Read from the write point there was no sector
+    law, and the flow from small samples sent every sample to one state (a response of 0, where the full dynamics give
+    1.26); read from the branch, the sign of the sample gives the response of the pitchfork."""
+    real = spec.load(QUANTUM / "magnon_kerr.json")
+    rep = completion.complete(real, np.random.default_rng(0), n_samples=1000, certify=False)
+    laws = [u["law"] for e in rep["write_points"] for u in e.get("unfoldings", []) if u["law"].get("status") == "derived"]
+    assert laws
+    for L in laws:
+        assert L["map_regime"] == "saturated at the mapping time"
+        assert abs(L["one_direction"]["law"][0]["response_constant"] - pi ** 0.25) < 0.2

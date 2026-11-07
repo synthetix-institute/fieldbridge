@@ -136,8 +136,11 @@ of the qubit is the bias of this write, so the offset is a systematic error of t
 sweep must cancel. The reduced law overestimates the offset by about a quarter and is not certified at the strict
 tolerance; the full dynamics are the reference. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
 polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
-an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it writes the same state whatever
-the bias, where the full dynamics give a response of 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
+an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
+than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
+from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
+a response of 1.34 and 1.28 in the record, where the full dynamics give 1.26 and 1.28, but overestimates the offset
+(1.63 against 1.02) and is not certified. Both of its write points along the drive are folds and unfold at the same cusp. In
 the bistable optomechanical element the law departs from the full dynamics by up to 0.28: three directions relax
 slowly during the passage, and 13 % of the final states have not yet left the unwritten branch at the end of the
 sweep, so the write is not settled there.

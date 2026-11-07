@@ -1,7 +1,7 @@
 {
  "command": "record",
  "derived_from": "docs/records/quantum_semiclassical.jsonl",
- "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
+ "implementation_sha256": "5b6106bf816e9ea62769d8db822fcbad1c03739e01c08a16640e2bbe5d962c52",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -962,10 +962,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999999177334,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.084 (7.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 7.7159949671746455,
+         "sector_deviation_sigma_max": 11.585440514511484,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -1016,10 +1018,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999999177334,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.051 (4.6 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 4.6171888636736425,
+         "sector_deviation_sigma_max": 9.097909090982537,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00025
@@ -1045,7 +1049,7 @@
       ]
      }
     ],
-    "seconds": 213.2
+    "seconds": 106.1
    },
    "spec_sha256": "d104cdbc6895954d55b39c5c659e28415a38bd45f8c4f4457c6ac4430252cce4",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage; second parameter: nonlinear stage"
@@ -1221,10 +1225,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999996573528,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.080 (7.3 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 7.252410769323629,
+         "sector_deviation_sigma_max": 9.110841028962804,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -1275,10 +1281,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999998708098,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.085 (7.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 7.709595965041354,
+         "sector_deviation_sigma_max": 9.251515158049624,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -1304,7 +1312,7 @@
       ]
      }
     ],
-    "seconds": 336.3
+    "seconds": 366.5
    },
    "spec_sha256": "7eb12dc1703e581dac905b0d6dad20063530f051eea0a44935c9dacadfe44308",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage; second parameter: nonlinear stage"
@@ -1861,10 +1869,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.49013331994883336,
          "certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.471 (42.2 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.205 (18.4 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 42.198558464524965,
+         "flow_map_deviation_sigma_max": 18.389074575039807,
+         "sector_deviation_sigma_max": 18.389074575039807,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00125
@@ -1873,8 +1883,8 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.8919413432177944e-14,
-            "offset": -3.719016485455694
+            "response_constant": 1.335207925793321,
+            "offset": -1.6286266654620087
            }
           ],
           "certificate": [
@@ -1917,10 +1927,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.4901333198415654,
          "certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.477 (42.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.225 (20.1 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 42.666606972260055,
+         "flow_map_deviation_sigma_max": 20.12449090664312,
+         "sector_deviation_sigma_max": 20.12449090664312,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00125
@@ -1929,8 +1941,8 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.8919413432177944e-14,
-            "offset": -3.719016485455694
+            "response_constant": 1.2810931094566522,
+            "offset": -1.6312546704375244
            }
           ],
           "certificate": [
@@ -1946,7 +1958,7 @@
       ]
      }
     ],
-    "seconds": 478.4
+    "seconds": 257.8
    },
    "spec_sha256": "2ccaa0f4a734f5717743840ad13fa9562fd82e9e3511bea399a6e1036cad6b9d",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage; second parameter: nonlinear stage"
@@ -2013,9 +2025,11 @@
          "dynamical_critical_dimension": 1,
          "second_rate": null,
          "certified": true,
+         "sector_certified": true,
          "write_class": "linear-stage write",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 0.5,
+         "sector_deviation_sigma_max": 1.0689904935581134,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -2065,9 +2079,11 @@
          "dynamical_critical_dimension": 1,
          "second_rate": null,
          "certified": true,
+         "sector_certified": true,
          "write_class": "linear-stage write",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 1.44445942410133,
+         "sector_deviation_sigma_max": 1.1555675392810858,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0005
@@ -2093,7 +2109,7 @@
       ]
      }
     ],
-    "seconds": 131.9
+    "seconds": 144.3
    },
    "spec_sha256": "dba09a964776c0da70c75224ff84874b69ef9d761eb27caf7263c7965222b387",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -3447,10 +3463,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999999831162,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.085 (7.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 7.7467601728481466,
+         "sector_deviation_sigma_max": 9.615096449829172,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.001
@@ -3501,10 +3519,12 @@
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999999831162,
          "certified": false,
+         "sector_certified": false,
          "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.046 (4.2 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
          "write_class": "nonlinear stage",
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 4.195239467143391,
+         "sector_deviation_sigma_max": 7.082285982166804,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -3530,7 +3550,7 @@
       ]
      }
     ],
-    "seconds": 187.9
+    "seconds": 358.4
    },
    "spec_sha256": "cae1f5aa266b1f772483c4dc04841e9baea46f50efee200889d5cda78d5501d9",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage; second parameter: nonlinear stage"

@@ -267,17 +267,23 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     where no trajectory is). Written states that lie in the same direction from the unwritten one are not told apart by
     the direction of a sample, and have no sector law (SAME_DIRECTION; on the rf-SQUID phase qubit, past a fold with a
     slow second direction, the sector law gave the states on one side probabilities they do not have, a deviation of 1.0
-    from the full dynamics, where the flow gives none). Under the noise rule of law_at every pitchfork is
-    in the saturated regime. Found on populations of pitchforks: at a coupling of a third of the passage scale the
-    sector law at the mapping time holds to a few percent with two, three and four units, where the sector law at the
-    end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter. Where the spread reaches
-    LINEAR_FRACTION of the distance to the nearest written state before the crossing, the noise is too strong for the
-    deviation to stay linear through the crossing (recorded as linear_size_before_crossing); the certificate then
-    decides whether the law still holds."""
+    from the full dynamics, where the flow gives none). In one direction the sign of a sample is read from the
+    unwritten branch at the mapping time, where the samples are: on the magnon-Kerr element the sweep through the
+    unfolded cusp moves the branch by more than the distance to the written states (1.7 against 1.1 and 1.4), both
+    states lie on one side of the state at the write point, and the flow from small samples, overtaken by the moving
+    separatrix, sent every sample to one state (a response of 0, where the full dynamics give 1.26). In two or more
+    directions the directions are taken from the write point (from the branch at the mapping time, the sector law
+    replaced the flow on the optomechanical element, whose deviation is dominated by its two slow directions, and
+    differed from the full dynamics by 0.79 where the flow differs by 0.14). Under the noise rule of law_at every
+    pitchfork is in the saturated regime. Found on populations of pitchforks: at a coupling of a third of the
+    passage scale the sector law at the mapping time holds to a few percent with two, three and four units, where
+    the sector law at the end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter.
+    Where the spread reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing, the
+    noise is too strong for the deviation to stay linear through the crossing (recorded as
+    linear_size_before_crossing); the certificate then decides whether the law still holds."""
     dt = dt or 0.5 * an.safe_dt(real)
     n = q0.size
     ell = min(float(np.linalg.norm(s - q0)) for s in stable) if stable else an.base_length(real)
-    coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if len(stable) >= 2 else None
     amplitude_at: Dict[float, float] = {}
     results = []
     for target, h in zip(targets, strengths):
@@ -343,7 +349,11 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
             amplitude_at[key] = min((float(np.linalg.norm(real.carrier.diff(hist_q[i_map], s_))) for s_ in st_map),
                                     default=float("nan"))
         ell_map = amplitude_at[key]
-        sector = _sector_labels(z_map, coords_arr) if coords_arr is not None else None
+        # the directions of the written states: in one direction from the unwritten branch at the mapping time, where
+        # the samples are (their sign is read there); in two or more from the write point
+        origin = hist_q[i_map] if R.shape[1] == 1 else q0
+        sector = (_sector_labels(z_map, np.array([L.T @ real.carrier.diff(origin, s_) for s_ in stable]))
+                  if len(stable) >= 2 else None)
         if sector is not None and np.isfinite(ell_map) and spread_map >= (SATURATION_FRACTION if R.shape[1] >= 2 else SATURATION_FRACTION_ONE) * ell_map:
             # saturated: the deviation has reached the written amplitude by the mapping time; the choice is made
             # there, and each sample goes to the written state nearest in direction
