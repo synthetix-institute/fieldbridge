@@ -273,6 +273,10 @@ def _follow_fold(real, param, second, q0, v0, p0, h, max_steps: int = 400, stops
     return None
 
 
+# a sweep direction whose cosine with the growth gradient of the critical mode is at most this crosses no critical line
+TANGENT_COSINE = 1e-3
+
+
 def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, object]:
     """Cancel a one-sided write by a second material parameter. The write point (F = 0, det J = 0) is followed
     as the second parameter changes until its quadratic coefficient a2 vanishes: the cusp, where the write becomes
@@ -390,6 +394,13 @@ def cancel_asymmetry(real: Realization, nf: Dict, second: str) -> Dict[str, obje
     g = np.array([float(w @ dF[param]), float(w @ dF[second])])
     grow = np.array([float(w @ dJ[param] @ vec), float(w @ dJ[second] @ vec)])
     d = np.array([-g[1], g[0]]) if np.linalg.norm(g) > 1e-9 * max(1.0, np.linalg.norm(grow)) else grow.copy()
+    if abs(float(d @ grow)) <= TANGENT_COSINE * np.linalg.norm(d) * np.linalg.norm(grow):
+        # the direction that keeps the bias zero runs along the critical line, so that the critical mode never grows
+        # along it: the bias gradient is parallel to the growth gradient. At a cusp of a symmetric realization the
+        # bias gradient vanishes, and what is left of it is the distance of the refined cusp from the symmetric point
+        # (1e-6 in the control); its normal is then a direction of rounding. The sweep crosses the critical line along
+        # the growth gradient instead, and the normal form along it tells whether a bias is left.
+        d = grow.copy()
     if float(d @ grow) < 0:
         d = -d
     d = d / max(np.linalg.norm(d), 1e-300)
@@ -439,6 +450,38 @@ def sweep_ends(nf: Dict, rate: float = 0.02, t_half: Optional[float] = None) -> 
     return float(nf["value"] - dv * t_half), float(nf["value"] + dv * t_half)
 
 
+RESOLVED_SAMPLES = 400   # values of the control tested on each side of the crossing
+RESOLVED_STEP = 0.3      # the largest rate times the time step that an explicit step resolves (the bound of safe_dt)
+
+
+def sweep_window(real: Realization, nf: Dict, path, t_half: float,
+                 n: int = RESOLVED_SAMPLES) -> Optional["tuple[float, float]"]:
+    """The times between which the write check moves its control, or None where it moves it over the whole sweep.
+
+    The sweep runs for t_half on each side of the crossing whatever the realization, and can leave the range of the
+    control in which the drift is regular. A temperature swept through zero is the example: as T -> 0+ the rates near
+    the critical state grow as 1/T, and beyond it 1/T changes sign, the state that lost its stability regains it and
+    the choice is erased. The time step of the check is resolved (safe_dt) over the declared range of the control,
+    not beyond it. From the crossing outward on each side, the control is moved only while the Jacobian at the
+    critical state is finite and its fastest rate times the time step stays at most RESOLVED_STEP; beyond the last
+    such sample the control is held. A realization regular along its whole sweep is swept as before."""
+    qc = np.asarray(nf["state"], float)
+    dt = an.safe_dt(real)
+    ends = []
+    with np.errstate(all="ignore"):
+        for side in (-1, 1):
+            end = None
+            for k in range(1, n + 1):
+                J = an.jacobian(real, qc, {real.control: path(t_half * (1.0 + side * k / n))})
+                if not np.all(np.isfinite(J)) or dt * float(np.max(np.abs(np.linalg.eigvals(J)))) > RESOLVED_STEP:
+                    end = t_half * (1.0 + side * (k - 1) / n)
+                    break
+            ends.append(end)
+    if ends == [None, None]:
+        return None
+    return (0.0 if ends[0] is None else ends[0], 2.0 * t_half if ends[1] is None else ends[1])
+
+
 def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, rate: float = 0.02,
                       gamma: float = 0.05, n_traj: int = 400, replicates: int = 1,
                       signs: Sequence[int] = (1,)) -> Dict[str, float]:
@@ -483,7 +526,9 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
     t_half = sweep_half_time(real, nf, rate)
     dv = np.sign(-nf["kappa_slope"]) * rv
     v_start, _ = sweep_ends(nf, rate, t_half)
-    path = lambda t: v_start + dv * t
+    window = sweep_window(real, nf, lambda t: v_start + dv * t, t_half)
+    path = ((lambda t: v_start + dv * t) if window is None
+            else (lambda t: v_start + dv * min(max(t, window[0]), window[1])))
     z = NormalDist().inv_cdf(target_p)
 
     def run(sg, D, gen, n):
@@ -534,6 +579,11 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
            "measured": first["measured"], "stderr": first["stderr"], "gamma": first["gamma"],
            "h_along_mode": first["h_along_mode"], "D_along_mode": first["D_along_mode"],
            "at_material_noise": own[1], "signature": [float(f"{v:.10g}") for v in signature], **extra[1]}
+    if window is not None:
+        # the control is held outside the window: the values it is held at and those the whole sweep would reach
+        out["control_held"] = {"window": [float(window[0]), float(window[1])],
+                               "values": [float(path(0.0)), float(path(2 * t_half))],
+                               "unheld": [float(v_start), float(v_start + dv * 2 * t_half)]}
     if len(signs) > 1:
         mean = lambda key, rows: float(np.mean([r[key] for r in rows]))
         rows = [inside[sg] for sg in signs]
