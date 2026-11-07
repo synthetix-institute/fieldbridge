@@ -5,6 +5,12 @@
   "source": "Mirrahimi et al., New J. Phys. 16, 045014 (2014); Lescanne et al., Nat. Phys. 16, 509 (2020)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "reached",
@@ -68,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 16.1,
-  "threshold-write": 5.7,
-  "phase-locking": 1.2,
-  "completion": 594.3,
-  "changes": 81.3
+  "symmetric-write": 6.7,
+  "threshold-write": 2.3,
+  "phase-locking": 0.7,
+  "completion": 345.6,
+  "changes": 74.6
  },
  "completion": {
   "write_points": [
@@ -1489,7 +1495,7 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 0.9,
+    "seconds": 1.0,
     "class": "reached"
    },
    "threshold-write": {
@@ -1513,7 +1519,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.7,
+      "seconds": 1.0,
       "class": "reached"
      }
     },
@@ -1534,7 +1540,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.8,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -1549,13 +1555,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 1.0,
+      "seconds": 1.2,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.9,
+      "seconds": 1.4,
       "class": "reached"
      }
     },
@@ -1570,13 +1576,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 0.9,
       "class": "reached"
      }
     },
@@ -1591,13 +1597,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.1,
+      "seconds": 1.0,
       "class": "reached"
      }
     },
@@ -1612,13 +1618,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 5.6,
+      "seconds": 5.7,
       "class": "single stable state"
      }
     },
@@ -1633,13 +1639,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.1,
+      "seconds": 1.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.7,
+      "seconds": 1.3,
       "class": "reached"
      }
     },
@@ -1654,13 +1660,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 0.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 6.0,
+      "seconds": 6.1,
       "class": "reached"
      }
     },
@@ -1681,7 +1687,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.3,
       "class": "reached"
      }
     },

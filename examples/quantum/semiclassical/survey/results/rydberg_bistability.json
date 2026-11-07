@@ -5,6 +5,12 @@
   "source": "Carr, C., Ritter, R., Wade, C. G., Adams, C. S., Weatherill, K. J., 'Nonequilibrium phase transition in a dilute Rydberg ensemble', Phys. Rev. Lett. 111, 113901 (2013), arXiv:1302.6621 (full text of arXiv v3; the arXiv abstract page lists the title 'Cooperative non-equilibrium phase transition in a dilute Rydberg ensemble'; journal title checked against Crossref); Marcuzzi, M., Levi, E., Diehl, S., Garrahan, J. P., Lesanovsky, I., 'Universal nonequilibrium properties of dissipative Rydberg gases', Phys. Rev. Lett. 113, 210401 (2014), arXiv:1406.1015 (full text); Saffman, M., Walker, T. G., Molmer, K., 'Quantum information with Rydberg atoms', Rev. Mod. Phys. 82, 2313 (2010), arXiv:0909.4777 (full text)",
   "kind": "classical image of census entry 50: Driven-dissipative Rydberg ensemble (optical bistability of a Rydberg gas)"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "reached after unfolding",
@@ -95,11 +101,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 74.8,
-  "threshold-write": 23.1,
-  "phase-locking": 24.2,
-  "completion": 883.3,
-  "changes": 376.0
+  "symmetric-write": 14.3,
+  "threshold-write": 4.7,
+  "phase-locking": 5.3,
+  "completion": 365.8,
+  "changes": 176.3
  },
  "completion": {
   "write_points": [
@@ -527,13 +533,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 8.9,
+    "seconds": 5.1,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 6.7,
+    "seconds": 2.7,
     "class": "reached"
    }
   },
@@ -545,13 +551,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.4,
+      "seconds": 1.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 4.2,
+      "seconds": 1.8,
       "class": "single stable state"
      }
     },
@@ -566,13 +572,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.0,
+      "seconds": 1.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 5.4,
+      "seconds": 2.7,
       "class": "single stable state"
      }
     },
@@ -587,13 +593,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.7,
+      "seconds": 2.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 6.0,
+      "seconds": 3.1,
       "class": "single stable state"
      }
     },
@@ -608,13 +614,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.0,
+      "seconds": 5.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.4,
+      "seconds": 2.7,
       "class": "reached"
      }
     },
@@ -629,13 +635,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 7.0,
+      "seconds": 4.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -650,13 +656,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.7,
+      "seconds": 1.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 7.3,
+      "seconds": 4.6,
       "class": "single stable state"
      }
     },
@@ -671,13 +677,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
-      "seconds": 19.2,
+      "seconds": 10.8,
       "class": "unclassified"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 26.3,
+      "seconds": 11.4,
       "class": "oscillation"
      }
     },
@@ -692,13 +698,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.8,
+      "seconds": 4.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.1,
+      "seconds": 3.5,
       "class": "reached"
      }
     },
@@ -713,13 +719,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.6,
+      "seconds": 2.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 9.3,
+      "seconds": 2.3,
       "class": "single stable state"
      }
     },
@@ -734,13 +740,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 8.1,
+      "seconds": 4.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 8.4,
+      "seconds": 4.0,
       "class": "single stable state"
      }
     },
@@ -755,13 +761,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.9,
+      "seconds": 1.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 5.9,
+      "seconds": 3.5,
       "class": "single stable state"
      }
     },
@@ -776,13 +782,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 7.9,
+      "seconds": 3.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 7.8,
+      "seconds": 4.5,
       "class": "single stable state"
      }
     },

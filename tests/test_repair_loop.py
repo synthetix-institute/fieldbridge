@@ -306,7 +306,7 @@ def test_every_retained_outcome_of_the_records_gets_a_row(tmp_path):
     assert len(rows) == len(library.departures()) >= 227
     assert not [r for r in rows if r["status"] == "needs_equation_task"]
     failed = [r for r in rows if r["status"] == "outside_this_campaign"]
-    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 18
+    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 16   # the phase qubit is certified with the longer sweep
     assert sum(r["write_class"] == "equilibrium write" for r in failed) == 4
 
 

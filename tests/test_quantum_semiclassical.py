@@ -2,14 +2,17 @@
 write rules over a directory of drift specifications (memory predictions)."""
 from __future__ import annotations
 
+import importlib.util
 import json
 import re
 import subprocess
 import sys
 from pathlib import Path
 
+import numpy as np
 import pytest
 
+from fieldbridge.memory import codiscovery, construct
 from fieldbridge.memory import spec as mspec
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -116,3 +119,126 @@ def test_a_child_that_outruns_its_time_limit_keeps_the_steps_it_had_written(tmp_
     assert row["targets"]["threshold-write"]["status"].startswith("reached")
     assert "stopped at the time limit" in row["completion"]["note"] and row["completion"]["write_points"] == []
     assert "stopped at the time limit" in (out / "predictions.md").read_text(encoding="utf-8")
+
+
+# ------------------------------------------------------------------------------------------------ the survey and Module 15
+def _survey_script(name: str):
+    spec = importlib.util.spec_from_file_location(f"survey_{name}", FOLDER / "survey" / f"{name}.py")
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _survey_results():
+    return {p.stem: json.loads(p.read_text(encoding="utf-8")) for p in sorted((FOLDER / "survey" / "results").glob("*.json"))}
+
+
+def _records():
+    lines = (ROOT / "docs" / "records" / "quantum_semiclassical.jsonl").read_text(encoding="utf-8").splitlines()
+    return {Path(r["source"]).stem: r for r in map(json.loads, lines)}
+
+
+def test_the_records_and_the_survey_are_of_the_current_specifications_and_of_one_code():
+    records, results = _records(), _survey_results()
+    assert sorted(records) == CARRIERS and sorted(results) == CARRIERS
+    for name in CARRIERS:
+        spec = json.loads((FOLDER / f"{name}.json").read_text(encoding="utf-8"))
+        assert records[name]["spec_sha256"] == mspec.input_hash(spec), name
+    assert len({r["implementation_sha256"] for r in records.values()}) == 1
+    assert len({r["implementation_sha256"] for r in results.values()}) == 1
+
+
+def test_module_15_states_the_counts_of_the_survey():
+    report = _survey_script("report")
+    results = _survey_results()
+    text = " ".join((ROOT / "docs" / "tutorial" / "35_memory_quantum_hardware.md").read_text(encoding="utf-8").split())
+    cells = {t: [report.derivation_cell(t, r["derivations"][t]) for r in results.values()] for t in report.EXPECTED}
+
+    def known(t):
+        return sum(c.startswith("known law") for c in cells[t])
+
+    def reached(t):
+        return sum(c.startswith(("known law", "law differs", "reached")) for c in cells[t])
+
+    assert f"reached in {reached('symmetric-write')} of the 31 models. In {known('symmetric-write')} of them" in text
+    assert f"reached in {reached('threshold-write')} models, and in {known('threshold-write')} of them" in text
+    laws = [x for r in results.values() for x in report.law_rows(r["completion"]) if x["status"].startswith("derived")]
+    certified = sum(bool(x.get("certified")) for x in laws)
+    assert f"{certified} laws at obstructions are certified and {len(laws) - certified} are derived" in text
+    changed = sum(any(s["reaches"] for s in r["changes"]["singles"]) for r in results.values())
+    assert f"In {changed} of the 31 models a single change" in text
+
+
+@pytest.mark.parametrize("name", ["phase_qubit_rfsquid", "magnon_kerr"])
+def test_the_write_points_counted_once_at_a_fold_are_folds_in_the_records_and_the_survey(name):
+    """At a fold the growth along the branch diverges; it once took every eigenvalue of these two elements into the
+    critical count, and the records read a degenerate critical mode."""
+    record = _records()[name]
+    assert record["write_points"]["points"]
+    for point in record["write_points"]["points"]:
+        assert point["kind"].startswith("saddle-node") and point["critical_dimension"] == 1
+    assert {e["completion"] for e in record["completion"]["write_points"]} == {"second parameter"}
+    assert {e["completion"] for e in _survey_results()[name]["completion"]["write_points"]} == {"second parameter"}
+
+
+def test_the_phase_qubit_reaches_the_symmetric_write_through_its_cusp_and_the_threshold_write_along_the_flux():
+    targets = _records()["phase_qubit_rfsquid"]["targets"]
+    assert targets["symmetric-write"]["status"] == "reached after unfolding" and targets["symmetric-write"]["word"] == "SCRURKL"
+    assert targets["threshold-write"]["status"] == "reached" and targets["threshold-write"]["word"] == "CRKL"
+
+
+def test_a_start_from_rest_lowers_the_constant_of_a_weakly_damped_element_until_the_ringing_has_decayed():
+    """The linear stage alone, integrated exactly: from rest 4/sqrt(r) before the crossing, the ringing of the phase
+    particle lowers the constant where the damping is weak, and RING_EFOLDS of decay remove it at every damping."""
+    start = _survey_script("phase_qubit_start")
+    assert start.linear_constant(0.1) == pytest.approx(1.169, abs=0.005)
+    assert start.linear_constant(0.2) == pytest.approx(1.311, abs=0.005)
+    assert start.linear_constant(1.0) == pytest.approx(start.linear_constant(1.0, before=8.0), abs=0.001)
+    for damping in (0.05, 0.1, 0.2, 0.3):
+        before = max(4.0, 2.0 * construct.RING_EFOLDS / damping * start.math.sqrt(start.RATE))
+        assert start.linear_constant(damping, before=before) == pytest.approx(1.325, abs=0.0015), damping
+    # with no noise on the phase itself the law of one coordinate holds to 0.2 %
+    assert start.linear_constant(0.2, before=8.0, noise_on_phase=False) == pytest.approx(start.math.pi ** 0.25, rel=0.002)
+
+
+def _symmetric_write_point(name: str, **parameters):
+    """The realization and the normal form that the symmetric-write derivation hands to its law check."""
+    data = json.loads((FOLDER / f"{name}.json").read_text(encoding="utf-8"))
+    data["parameters"].update(parameters)
+    passed = []
+    real_check = codiscovery.swept_write_check
+    codiscovery.swept_write_check = lambda real, nf, rng, **kw: passed.append((real, nf)) or {}
+    try:
+        codiscovery.derive_symmetric_write(mspec.load(data), np.random.default_rng(0), check_law=True, n_traj=2)
+    finally:
+        codiscovery.swept_write_check = real_check
+    return passed[-1]
+
+
+@pytest.mark.parametrize("name, half_time", [("phase_qubit_rfsquid", 60.0), ("fluxonium", 40.0),
+                                             ("rfsquid_annealer", 4.0 / 0.02 ** 0.5), ("qfp_latch", 4.0 / 0.02 ** 0.5),
+                                             ("optomech_bistable", 4.0 / 0.02 ** 0.5),
+                                             ("dissipative_cat", 4.0 / 0.02 ** 0.5)])
+def test_the_sweep_of_the_check_waits_only_for_a_ringing_that_decays(name, half_time):
+    """Half the damping of a phase particle at 0.1 and 0.15 needs the longer sweep, and at 0.25 and above it does not.
+    The optomechanical pair grows at the start of the sweep and the slow mode of the cat does not ring: neither is
+    waited for."""
+    assert construct.sweep_half_time(*_symmetric_write_point(name)) == pytest.approx(half_time, rel=1e-6)
+
+
+def test_the_longest_sweep_of_the_check_is_bounded():
+    """An oscillation that hardly decays cannot be waited for: a phase particle with a damping of 0.001 at the bottom of
+    a well would need 12,000 time units."""
+    data = json.loads((FOLDER / "phase_qubit_rfsquid.json").read_text(encoding="utf-8"))
+    data["parameters"]["gam"] = 1e-3
+    nf = {"value": 0.0, "kappa_slope": 1.0, "state": [0.0, 0.0], "param": data["control"]["name"]}
+    assert construct.sweep_half_time(mspec.load(data), nf) == pytest.approx(construct.RING_LONGEST * 4.0 / 0.02 ** 0.5)
+
+
+def test_the_constant_of_a_weakly_damped_element_returns_to_the_law_with_the_longer_sweep():
+    """At a damping of 0.1 the check gave 1.154 +- 0.008 from a start 4/sqrt(r) before the crossing. The error here,
+    0.03, tells the two apart."""
+    real, nf = _symmetric_write_point("phase_qubit_rfsquid", gam=0.1)
+    law = construct.swept_write_check(real, nf, np.random.default_rng(1), n_traj=3200, replicates=4, signs=(1, -1))
+    const = codiscovery.law_constant(law)
+    assert const["stderr"] < 0.05 and abs(const["constant"] - 1.3313) < 3.5 * const["stderr"], const

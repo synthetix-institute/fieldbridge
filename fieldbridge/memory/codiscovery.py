@@ -171,11 +171,12 @@ def symmetry_along_sweep(real: Realization, rng, nf: Dict, mode: np.ndarray) -> 
     write then carries an offset that one sign of the bias cannot separate from the response."""
     if not real.control or not nf.get("kappa_slope"):
         return True
-    from .construct import sweep_ends
+    from .construct import sweep_ends, sweep_half_time
     # a generator of its own: the confirmation must not advance the caller's stream, so that the law check that follows
     # draws the same noise as before this check existed and the recorded constants move only where the method changed
     gen = np.random.default_rng(20261023)
-    return all(reversing_symmetry(real, gen, mode, over={real.control: v}) is not None for v in sweep_ends(nf))
+    ends = sweep_ends(nf, t_half=sweep_half_time(real, nf))
+    return all(reversing_symmetry(real, gen, mode, over={real.control: v}) is not None for v in ends)
 
 
 def describe_symmetry(real: Realization, sym: Dict[str, object]) -> str:

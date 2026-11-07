@@ -5,6 +5,12 @@
   "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
   "kind": "classical image of census entry 24: Josephson parametric oscillator measurement, amplitude-encoded (qubit coupled directly to the JPO)"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "obstructed",
@@ -32,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 5.8,
-  "threshold-write": 5.0,
-  "phase-locking": 19.9,
-  "completion": 329.1,
-  "changes": 230.2
+  "symmetric-write": 1.8,
+  "threshold-write": 1.8,
+  "phase-locking": 3.9,
+  "completion": 106.2,
+  "changes": 74.2
  },
  "completion": {
   "write_points": [
@@ -411,13 +417,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-    "seconds": 1.9,
+    "seconds": 0.5,
     "class": "distant branch"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 2.3,
+    "seconds": 0.6,
     "class": "single stable state"
    }
   },
@@ -429,13 +435,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 1.8,
+      "seconds": 0.4,
       "class": "distant branch"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.0,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -450,13 +456,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.9,
       "class": "single stable state"
      }
     },
@@ -476,7 +482,96 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
+      "seconds": 0.6,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 1.0,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {
+     "symmetric-write": [
+      "distant branch",
+      "no write point"
+     ]
+    },
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove 'eps*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
       "seconds": 0.4,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.9,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- (delta + chi)*y' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.8,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.9,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
+      "seconds": 0.7,
+      "class": "distant branch"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.8,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove 'eps*x' from dy/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
@@ -497,107 +592,18 @@
    },
    {
     "kind": "remove",
-    "what": "remove 'eps*y' from dx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 2.0,
-      "class": "distant branch"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.4,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '- (delta + chi)*y' from dx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 1.9,
-      "class": "distant branch"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.4,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '- x' from dx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 2.1,
-      "class": "distant branch"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.3,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove 'eps*x' from dy/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 1.8,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.7,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {
-     "symmetric-write": [
-      "distant branch",
-      "no write point"
-     ]
-    },
-    "step": true
-   },
-   {
-    "kind": "remove",
     "what": "remove '+ (delta + chi)*x' from dy/dt",
     "judged": {
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 1.5,
+      "seconds": 0.3,
       "class": "distant branch"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 10.3,
+      "seconds": 3.1,
       "class": "oscillation"
      }
     },
@@ -617,13 +623,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.1,
+      "seconds": 0.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.2,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -640,13 +646,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 2.3,
+      "seconds": 0.8,
       "class": "distant branch"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.2,
+      "seconds": 0.7,
       "class": "single stable state"
      }
     },

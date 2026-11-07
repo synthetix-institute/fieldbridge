@@ -5,6 +5,12 @@
   "source": "Vink, I. T., Nowack, K. C., Koppens, F. H. L., Danon, J., Nazarov, Yu. V., Vandersypen, L. M. K., 'Locking electron spins into magnetic resonance by electron-nuclear feedback', Nat. Phys. 5, 764 (2009), arXiv:0902.2659 (full text); Gullans, M., Krich, J. J., Taylor, J. M., Bluhm, H., Halperin, B. I., Marcus, C. M., Stopa, M., Yacoby, A., Lukin, M. D., 'Dynamic nuclear polarization in double quantum dots', Phys. Rev. Lett. 104, 226807 (2010), arXiv:1003.4508 (abstract only); Bluhm, H., Foletti, S., Mahalu, D., Umansky, V., Yacoby, A., 'Enhancing the coherence of a spin qubit by operating it as a feedback loop that controls its nuclear spin bath', Phys. Rev. Lett. 105, 216803 (2010), arXiv:1003.4031 (abstract only); Burkard, G., Ladd, T. D., Pan, A., Nichol, J. M., Petta, J. R., 'Semiconductor spin qubits', Rev. Mod. Phys. 95, 025003 (2023), arXiv:2112.08863 (full text of the arXiv HTML and ar5iv renderings, read through summarising fetches in 100k-character windows; eqs. 1, 2, 4, 5, 22 and the Pauli-blockade window quoted verbatim in this session; equation numbers are those of the arXiv rendering)",
   "kind": "classical image of census entry 37: Dynamically polarised nuclear-spin bath in GaAs dots (Overhauser-field feedback)"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "reached after unfolding",
@@ -36,11 +42,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 36.1,
-  "threshold-write": 8.1,
-  "phase-locking": 3.1,
-  "completion": 679.2,
-  "changes": 274.8
+  "symmetric-write": 16.4,
+  "threshold-write": 5.8,
+  "phase-locking": 1.7,
+  "completion": 307.5,
+  "changes": 75.5
  },
  "completion": {
   "write_points": [
@@ -794,13 +800,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 9.3,
+    "seconds": 3.4,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 8.8,
+    "seconds": 2.3,
     "class": "reached"
    }
   },
@@ -812,70 +818,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 8.1,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 8.2,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of d wider: [-142, 152]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 4.1,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 3.2,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of d above: [12, 152]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 1.2,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.4,
-      "class": "single stable state"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of d below: [-142, -2]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 1.8,
+      "seconds": 2.3,
       "class": "no write point"
      },
      "threshold-write": {
@@ -890,19 +833,82 @@
     "step": false
    },
    {
+    "kind": "range",
+    "what": "range of d wider: [-142, 152]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 0.9,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 1.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of d above: [12, 152]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.3,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.5,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of d below: [-142, -2]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.4,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "obstructed",
+      "obstruction": "a single stable state: there is no second state to switch to",
+      "seconds": 0.3,
+      "class": "single stable state"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
     "kind": "remove",
     "what": "remove 'p/(1 + (d - x)**2)' from dx/dt",
     "judged": {
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.1,
+      "seconds": 0.2,
       "class": "single stable state"
      }
     },
@@ -917,13 +923,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 63.3,
+      "seconds": 17.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 68.1,
+      "seconds": 19.1,
       "class": "oscillation"
      }
     },

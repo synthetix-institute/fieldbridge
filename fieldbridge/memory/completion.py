@@ -180,7 +180,7 @@ def swept_seeds(real: Realization, sweep: "Sweep", q0: np.ndarray, R: np.ndarray
 # ------------------------------------------------------------------------------------------------ the sweep
 class Sweep:
     """The control swept through the write point so that the critical rate grows at `rate` (as in
-    construct.swept_write_check), from 4/sqrt(rate) before the crossing to as long after it."""
+    construct.swept_write_check), from construct.sweep_half_time before the crossing to as long after it."""
 
     def __init__(self, real: Realization, nf: Dict, rate: float):
         g = abs(nf["kappa_slope"])
@@ -188,7 +188,7 @@ class Sweep:
             raise ValueError("the critical rate does not change along the control")
         self.real, self.param, self.vc, self.rate = real, nf["param"], float(nf["value"]), rate
         self.dv = float(np.sign(-nf["kappa_slope"]) * rate / g)
-        self.t_cross = 4.0 / sqrt(rate)
+        self.t_cross = construct.sweep_half_time(real, nf, rate)
         self.T = 2 * self.t_cross
 
     def value(self, t: float) -> float:

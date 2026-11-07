@@ -1,0 +1,676 @@
+{
+ "command": "python3 -B -m fieldbridge memory complete SPEC --curvature --gamma NOISE_RATIO --out-dir DIR, for each row; the entries of `zero_offset_curvature` in complete.json",
+ "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1",
+  "sympy": "1.12",
+  "matplotlib": "3.11.2"
+ },
+ "rows": [
+  {
+   "model": "ion_duffing",
+   "noise_ratio": 0.05,
+   "second_parameter": "k",
+   "cusp": {
+    "Delta": 0.8660254038299088,
+    "k": 1.961887304332397
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": 0.06938112337196428,
+   "offset_at_curvature": -0.022203935447969947,
+   "offset_error": 0.03406644987112474,
+   "response_at_curvature": 1.3617507376067661,
+   "last_curvature_tried": 0.06938112337196428,
+   "last_offset": -0.022203935447969947,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     -2.5864114221981414
+    ],
+    [
+     -0.1,
+     -1.9704085854180988
+    ],
+    [
+     -0.05,
+     -1.2288085012472207
+    ],
+    [
+     0.0,
+     -0.8024160428065968
+    ],
+    [
+     0.05,
+     -0.22414921473528926
+    ]
+   ]
+  },
+  {
+   "model": "ion_duffing",
+   "noise_ratio": 0.05,
+   "second_parameter": "k",
+   "cusp": {
+    "Delta": 0.866025403856847,
+    "k": 1.9618873043781664
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": 0.07447482399269997,
+   "offset_at_curvature": 0.0770530895188089,
+   "offset_error": 0.03391986296127226,
+   "response_at_curvature": 1.3416798907312142,
+   "last_curvature_tried": 0.07447482399269997,
+   "last_offset": 0.0770530895188089,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     -2.3477991459007788
+    ],
+    [
+     -0.1,
+     -1.994290199841283
+    ],
+    [
+     -0.05,
+     -1.269872632073436
+    ],
+    [
+     0.0,
+     -0.7500307504380507
+    ],
+    [
+     0.05,
+     -0.24648424288835263
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.0125,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.387263816584092,
+    "chi": -1.1339745963641488
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.12369380665083266,
+   "offset_at_curvature": -0.051093156777423876,
+   "offset_error": 0.03445179490078472,
+   "response_at_curvature": 1.3974620289885173,
+   "last_curvature_tried": -0.12369380665083266,
+   "last_offset": -0.051093156777423876,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.2628971432379333
+    ],
+    [
+     -0.1,
+     -0.40238406693578915
+    ],
+    [
+     -0.05,
+     -1.2058694294520906
+    ],
+    [
+     0.0,
+     -1.745597195695857
+    ],
+    [
+     0.05,
+     -2.6185368020961017
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.0125,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.13098879718898956,
+   "offset_at_curvature": 0.049496366855351026,
+   "offset_error": 0.034315045988966224,
+   "response_at_curvature": 1.3843926208230017,
+   "last_curvature_tried": -0.13098879718898956,
+   "last_offset": 0.049496366855351026,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.2686502555896084
+    ],
+    [
+     -0.1,
+     -0.43790749948840835
+    ],
+    [
+     -0.05,
+     -1.130617010581768
+    ],
+    [
+     0.0,
+     -1.8433870455920154
+    ],
+    [
+     0.05,
+     -2.6286076720198865
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.025,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.387263816584092,
+    "chi": -1.1339745963641488
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.12172269074071188,
+   "offset_at_curvature": 0.07851553818034424,
+   "offset_error": 0.033992110575020704,
+   "response_at_curvature": 1.3487822864225716,
+   "last_curvature_tried": -0.12172269074071188,
+   "last_offset": 0.07851553818034424,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.2856422867488683
+    ],
+    [
+     -0.1,
+     -0.21943102862509106
+    ],
+    [
+     -0.05,
+     -0.7531771128284394
+    ],
+    [
+     0.0,
+     -1.21643181223818
+    ],
+    [
+     0.05,
+     -1.859911416018643
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.025,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.11961756900946391,
+   "offset_at_curvature": 0.002154061717765554,
+   "offset_error": 0.034302912037233804,
+   "response_at_curvature": 1.3855663791839625,
+   "last_curvature_tried": -0.11961756900946391,
+   "last_offset": 0.002154061717765554,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.2927950616926337
+    ],
+    [
+     -0.1,
+     -0.18905423763406798
+    ],
+    [
+     -0.05,
+     -0.762610650359537
+    ],
+    [
+     0.0,
+     -1.203916138180963
+    ],
+    [
+     0.05,
+     -1.6023269578436061
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.05,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.387263816584092,
+    "chi": -1.1339745963641488
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.1038758203234143,
+   "offset_at_curvature": 0.0471147997876174,
+   "offset_error": 0.03395553001448262,
+   "response_at_curvature": 1.3489131136416568,
+   "last_curvature_tried": -0.1038758203234143,
+   "last_offset": 0.0471147997876174,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.34251417744598156
+    ],
+    [
+     -0.1,
+     -0.028781507211857627
+    ],
+    [
+     -0.05,
+     -0.44181526047378383
+    ],
+    [
+     0.0,
+     -0.800134999743646
+    ],
+    [
+     0.05,
+     -1.1904862025050418
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.05,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.09838759801207145,
+   "offset_at_curvature": -0.018768525794284063,
+   "offset_error": 0.03388424136915036,
+   "response_at_curvature": 1.3434835593651655,
+   "last_curvature_tried": -0.09838759801207145,
+   "last_offset": -0.018768525794284063,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.3648442683651529
+    ],
+    [
+     -0.1,
+     0.014816564440827573
+    ],
+    [
+     -0.05,
+     -0.44463971729764445
+    ],
+    [
+     0.0,
+     -0.7372936096263092
+    ],
+    [
+     0.05,
+     -1.140457479381948
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.1,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.387263816584092,
+    "chi": -1.1339745963641488
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.06873227037095042,
+   "offset_at_curvature": 0.0,
+   "offset_error": 0.033960770985425895,
+   "response_at_curvature": 1.3516009949311634,
+   "last_curvature_tried": -0.06873227037095042,
+   "last_offset": 0.0,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.46221223809529927
+    ],
+    [
+     -0.1,
+     0.18057524878462616
+    ],
+    [
+     -0.05,
+     -0.10818132376943129
+    ],
+    [
+     0.0,
+     -0.41184614052867136
+    ],
+    [
+     0.05,
+     -0.699775289386926
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.1,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.06950152213432452,
+   "offset_at_curvature": 0.012929778816210546,
+   "offset_error": 0.03327857522701763,
+   "response_at_curvature": 1.2796583811136248,
+   "last_curvature_tried": -0.06950152213432452,
+   "last_offset": 0.012929778816210546,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.49313711957236306
+    ],
+    [
+     -0.1,
+     0.2296385278413649
+    ],
+    [
+     -0.05,
+     -0.1468368635744992
+    ],
+    [
+     0.0,
+     -0.42044942199637286
+    ],
+    [
+     0.05,
+     -0.7525582212080703
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.2,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.387263816584092,
+    "chi": -1.1339745963641488
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.022988244161404416,
+   "offset_at_curvature": 0.00628166971792421,
+   "offset_error": 0.033933866282460465,
+   "response_at_curvature": 1.3488370299510342,
+   "last_curvature_tried": -0.022988244161404416,
+   "last_offset": 0.00628166971792421,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.6840244832642134
+    ],
+    [
+     -0.1,
+     0.4855578463088792
+    ],
+    [
+     -0.05,
+     0.15566659854077614
+    ],
+    [
+     0.0,
+     -0.1324794210496143
+    ],
+    [
+     0.05,
+     -0.4391406660396844
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.2,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.021192262053197037,
+   "offset_at_curvature": -0.026607912865373173,
+   "offset_error": 0.03316706850119078,
+   "response_at_curvature": 1.2668220118581122,
+   "last_curvature_tried": -0.021192262053197037,
+   "last_offset": -0.026607912865373173,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.6736209013199352
+    ],
+    [
+     -0.1,
+     0.5514065742771106
+    ],
+    [
+     -0.05,
+     0.15895471822316865
+    ],
+    [
+     0.0,
+     -0.11693420876703464
+    ],
+    [
+     0.05,
+     -0.44909238049287187
+    ]
+   ]
+  },
+  {
+   "model": "magnon_kerr",
+   "noise_ratio": 0.05,
+   "second_parameter": "Dm",
+   "cusp": {
+    "eps": 0.3891475972018894,
+    "Dm": -0.06856483770797912
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": 0.20500611106016392,
+   "offset_at_curvature": -0.06156128492666274,
+   "offset_error": 0.03392611810056187,
+   "response_at_curvature": 1.3444032249933449,
+   "last_curvature_tried": 0.20500611106016392,
+   "last_offset": -0.06156128492666274,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     -1.7929996663456782
+    ],
+    [
+     -0.1,
+     -1.5328309108691647
+    ],
+    [
+     -0.05,
+     -1.281452747910503
+    ],
+    [
+     0.0,
+     -1.062878823841041
+    ],
+    [
+     0.05,
+     -0.8427185718706327
+    ]
+   ]
+  },
+  {
+   "model": "nuclear_bath",
+   "noise_ratio": 0.05,
+   "second_parameter": "p",
+   "cusp": {
+    "d": 1.7320508074771155,
+    "p": 1.5396007177073907
+   },
+   "status": "the zero lies outside the curvatures that can be reached from those tried",
+   "cancelled": false,
+   "curvature": 0.5223339239786889,
+   "offset_at_curvature": null,
+   "offset_error": null,
+   "response_at_curvature": null,
+   "last_curvature_tried": null,
+   "last_offset": null,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     -2.4725773169215013
+    ],
+    [
+     -0.1,
+     -2.861835473610402
+    ],
+    [
+     -0.05,
+     -2.7207001878541996
+    ],
+    [
+     0.0,
+     -2.4988621028878066
+    ],
+    [
+     0.05,
+     -1.7370566987472873
+    ]
+   ]
+  },
+  {
+   "model": "nuclear_bath",
+   "noise_ratio": 0.05,
+   "second_parameter": "p",
+   "cusp": {
+    "d": 1.7320508075651242,
+    "p": 1.5396007178339979
+   },
+   "status": "not cancelled: the offset does not pass through zero cleanly near the curvatures tried",
+   "cancelled": false,
+   "curvature": 0.44164194734101925,
+   "offset_at_curvature": -0.37312926437719784,
+   "offset_error": 0.031096206616343998,
+   "response_at_curvature": 0.8409466917324219,
+   "last_curvature_tried": 0.44164194734101925,
+   "last_offset": -0.37312926437719784,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     -2.517719906272207
+    ],
+    [
+     -0.1,
+     -2.8438040773211513
+    ],
+    [
+     -0.05,
+     -2.746699197900333
+    ],
+    [
+     0.0,
+     -2.5031435242818247
+    ],
+    [
+     0.05,
+     -1.7367592047728984
+    ]
+   ]
+  },
+  {
+   "model": "transmon_driven",
+   "noise_ratio": 0.05,
+   "second_parameter": "Delta",
+   "cusp": {
+    "F": 0.3102016196991318,
+    "Delta": -0.8660254037786015
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": 0.08093035415514757,
+   "offset_at_curvature": 0.01145632703650623,
+   "offset_error": 0.033867095276372314,
+   "response_at_curvature": 1.3419478256672575,
+   "last_curvature_tried": 0.08093035415514757,
+   "last_offset": 0.01145632703650623,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     1.5907895041345435
+    ],
+    [
+     -0.1,
+     1.8640819516339677
+    ],
+    [
+     -0.05,
+     1.245434582132255
+    ],
+    [
+     0.0,
+     0.8057938067086052
+    ],
+    [
+     0.05,
+     0.3079621741150681
+    ]
+   ]
+  },
+  {
+   "model": "transmon_driven",
+   "noise_ratio": 0.05,
+   "second_parameter": "Delta",
+   "cusp": {
+    "F": 0.31020161970263677,
+    "Delta": -0.8660254037916486
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": 0.08450731174318032,
+   "offset_at_curvature": -0.039739331696986846,
+   "offset_error": 0.033599367891122195,
+   "response_at_curvature": 1.312737526934932,
+   "last_curvature_tried": 0.08450731174318032,
+   "last_offset": -0.039739331696986846,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     1.5452723283823997
+    ],
+    [
+     -0.1,
+     1.9605928133638255
+    ],
+    [
+     -0.05,
+     1.2113113462078549
+    ],
+    [
+     0.0,
+     0.7081227370761938
+    ],
+    [
+     0.05,
+     0.2891514537225147
+    ]
+   ]
+  }
+ ]
+}

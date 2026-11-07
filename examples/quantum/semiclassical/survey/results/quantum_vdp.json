@@ -5,6 +5,12 @@
   "source": "Lee & Sadeghpour, PRL 111, 234101 (2013); Walter, Nunnenkamp & Bruder, PRL 112, 094102 (2014)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "obstructed",
@@ -36,11 +42,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 5.7,
-  "threshold-write": 20.6,
-  "phase-locking": 154.5,
-  "completion": 1.6,
-  "changes": 528.2
+  "symmetric-write": 1.1,
+  "threshold-write": 7.4,
+  "phase-locking": 43.7,
+  "completion": 0.4,
+  "changes": 151.9
  },
  "completion": {
   "write_points": []
@@ -51,13 +57,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "no write point along the control",
-    "seconds": 1.5,
+    "seconds": 0.8,
     "class": "no write point"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-    "seconds": 20.3,
+    "seconds": 6.0,
     "class": "oscillation"
    }
   },
@@ -69,13 +75,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.6,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 18.7,
+      "seconds": 4.7,
       "class": "oscillation"
      }
     },
@@ -90,13 +96,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.4,
+      "seconds": 1.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 20.7,
+      "seconds": 5.6,
       "class": "oscillation"
      }
     },
@@ -111,13 +117,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.3,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 19.2,
+      "seconds": 4.6,
       "class": "oscillation"
      }
     },
@@ -132,13 +138,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 32.2,
+      "seconds": 8.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 29.7,
+      "seconds": 10.9,
       "class": "reached"
      }
     },
@@ -156,13 +162,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 24.4,
+      "seconds": 6.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 42.1,
+      "seconds": 12.8,
       "class": "oscillation"
      }
     },
@@ -177,13 +183,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 28.1,
+      "seconds": 12.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 27.7,
+      "seconds": 8.4,
       "class": "reached"
      }
     },
@@ -201,13 +207,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.7,
+      "seconds": 1.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 7.4,
+      "seconds": 2.0,
       "class": "reached"
      }
     },
@@ -224,13 +230,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.8,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 10.8,
+      "seconds": 2.4,
       "class": "reached"
      }
     },
@@ -247,13 +253,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 11.1,
+      "seconds": 3.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 14.9,
+      "seconds": 3.5,
       "class": "reached"
      }
     },
@@ -270,13 +276,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.8,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 4.2,
+      "seconds": 1.7,
       "class": "single stable state"
      }
     },
@@ -296,13 +302,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.5,
+      "seconds": 0.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 19.4,
+      "seconds": 4.0,
       "class": "oscillation"
      }
     },

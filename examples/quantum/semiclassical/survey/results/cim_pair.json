@@ -5,6 +5,12 @@
   "source": "Yamamoto, Y., Aihara, K., Leleu, T., Kawarabayashi, K., Kako, S., Fejer, M., Inoue, K., Takesue, H., 'Coherent Ising machines - optical neural networks operating at the quantum limit', npj Quantum Inf. 3, 49 (2017) (full text of the nature.com page through summarising fetches; equation numbers as returned there); Marandi, A., Wang, Z., Takata, K., Byer, R. L., Yamamoto, Y., 'Network of time-multiplexed optical parametric oscillators as a coherent Ising machine', Nat. Photonics 8, 937 (2014), DOI 10.1038/nphoton.2014.249, arXiv:1407.2871 (ar5iv full text through a summarising fetch)",
   "kind": "classical image of census entry 56: Coherent Ising machine with optical (delay-line) coupling"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "reached",
@@ -68,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 11.4,
-  "threshold-write": 5.1,
-  "phase-locking": 1.8,
-  "completion": 304.2,
-  "changes": 96.3
+  "symmetric-write": 3.9,
+  "threshold-write": 2.4,
+  "phase-locking": 0.9,
+  "completion": 127.7,
+  "changes": 57.1
  },
  "completion": {
   "write_points": [
@@ -1171,13 +1177,13 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 1.1,
+    "seconds": 0.9,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 2.0,
+    "seconds": 1.6,
     "class": "reached"
    }
   },
@@ -1189,7 +1195,49 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.3,
+      "seconds": 1.0,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 1.9,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of a wider: [-21, 21]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 1.0,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 1.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "range",
+    "what": "range of a above: [1, 21]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 1.1,
       "class": "no write point"
      },
      "threshold-write": {
@@ -1205,60 +1253,18 @@
    },
    {
     "kind": "range",
-    "what": "range of a wider: [-21, 21]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 1.3,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached by a write field",
-      "obstruction": "",
-      "seconds": 3.1,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
-    "what": "range of a above: [1, 21]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 2.5,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "reached by a write field",
-      "obstruction": "",
-      "seconds": 3.7,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "range",
     "what": "range of a below: [-21, -1]",
     "judged": {
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.8,
+      "seconds": 0.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.9,
+      "seconds": 1.0,
       "class": "reached"
      }
     },
@@ -1273,13 +1279,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.9,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.7,
+      "seconds": 1.4,
       "class": "reached"
      }
     },
@@ -1294,13 +1300,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 7.5,
+      "seconds": 4.6,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.4,
+      "seconds": 2.5,
       "class": "reached"
      }
     },
@@ -1315,13 +1321,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.4,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.9,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -1336,13 +1342,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 9.8,
+      "seconds": 4.4,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.4,
+      "seconds": 2.2,
       "class": "reached"
      }
     },

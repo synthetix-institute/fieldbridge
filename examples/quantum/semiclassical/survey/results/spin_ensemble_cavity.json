@@ -5,6 +5,12 @@
   "source": "Angerer et al., Sci. Adv. 3, e1701626 (2017)",
   "kind": "classical image of a corpus-census class"
  },
+ "implementation_sha256": "c04bf95b572b17890f62e884319216e81764032160f887e341a457d5fea83bb1",
+ "versions": {
+  "python": "3.11.3",
+  "numpy": "1.26.0",
+  "scipy": "1.14.1"
+ },
  "derivations": {
   "symmetric-write": {
    "status": "obstructed",
@@ -36,11 +42,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 7.9,
-  "threshold-write": 13.9,
-  "phase-locking": 14241.8,
-  "completion": 8.2,
-  "changes": 869.5
+  "symmetric-write": 8.5,
+  "threshold-write": 13.5,
+  "phase-locking": 622.0,
+  "completion": 6.5,
+  "changes": 1130.5
  },
  "completion": {
   "write_points": [
@@ -80,13 +86,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 10.0,
+    "seconds": 8.3,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 8.4,
+    "seconds": 8.1,
     "class": "reached"
    }
   },
@@ -98,13 +104,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.2,
+      "seconds": 9.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 25.8,
+      "seconds": 38.9,
       "class": "oscillation"
      }
     },
@@ -119,14 +125,14 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.1,
+      "seconds": 7.5,
       "class": "no write point"
      },
      "threshold-write": {
-      "status": "obstructed",
-      "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 73.1,
-      "class": "oscillation"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      }
     },
     "reaches": [],
@@ -140,13 +146,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.0,
+      "seconds": 6.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 25.2,
+      "seconds": 33.1,
       "class": "oscillation"
      }
     },
@@ -161,13 +167,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.6,
+      "seconds": 7.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 24.7,
+      "seconds": 33.1,
       "class": "oscillation"
      }
     },
@@ -182,13 +188,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.9,
+      "seconds": 9.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 23.6,
+      "seconds": 50.0,
       "class": "oscillation"
      }
     },
@@ -203,13 +209,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.9,
+      "seconds": 12.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 24.0,
+      "seconds": 54.0,
       "class": "oscillation"
      }
     },
@@ -224,13 +230,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 9.1,
+      "seconds": 19.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.9,
+      "seconds": 17.6,
       "class": "reached"
      }
     },
@@ -245,13 +251,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 8.0,
+      "seconds": 18.0,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.2,
+      "seconds": 17.9,
       "class": "reached"
      }
     },
@@ -266,13 +272,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 13.0,
+      "seconds": 26.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.9,
+      "seconds": 15.1,
       "class": "reached"
      }
     },
@@ -285,16 +291,16 @@
     "what": "remove '-0.5*kappa*y' from dy/dt",
     "judged": {
      "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 112.7,
-      "class": "reached"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      },
      "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 107.8,
-      "class": "reached"
+      "status": "not derived",
+      "obstruction": "stopped at the time limit of 60 s",
+      "seconds": 60.0,
+      "class": "not derived"
      }
     },
     "reaches": [],
@@ -308,13 +314,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 6.3,
+      "seconds": 17.5,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.0,
+      "seconds": 13.4,
       "class": "reached"
      }
     },
@@ -329,13 +335,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.0,
+      "seconds": 10.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 23.9,
+      "seconds": 45.9,
       "class": "oscillation"
      }
     },
@@ -350,13 +356,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.8,
+      "seconds": 3.7,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 19.3,
+      "seconds": 41.2,
       "class": "single stable state"
      }
     },
@@ -371,13 +377,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.6,
+      "seconds": 5.1,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 20.9,
+      "seconds": 42.8,
       "class": "oscillation"
      }
     },
@@ -392,13 +398,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 10.3,
+      "seconds": 19.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.4,
+      "seconds": 14.5,
       "class": "reached"
      }
     },
@@ -413,13 +419,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 10.9,
+      "seconds": 19.1,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.7,
+      "seconds": 11.4,
       "class": "reached"
      }
     },
@@ -434,13 +440,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.8,
+      "seconds": 15.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.5,
+      "seconds": 8.7,
       "class": "reached"
      }
     },
@@ -455,13 +461,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 5.8,
+      "seconds": 8.6,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 24.6,
+      "seconds": 34.0,
       "class": "oscillation"
      }
     },
