@@ -338,3 +338,30 @@ def test_the_sign_in_one_direction_is_read_from_the_unwritten_branch_at_the_mapp
     for L in laws:
         assert L["map_regime"] == "saturated at the mapping time"
         assert abs(L["one_direction"]["law"][0]["response_constant"] - pi ** 0.25) < 0.2
+
+
+def _slow_fast(c=0.7, k=2.0, m=1.0):
+    return spec.load({"schema": "fieldbridge-memory/1", "name": "slow and fast", "kind": "equations", "question": "test",
+                      "provenance": {"source": "test", "kind": "authored example"}, "closure": "test", "observable": "x", "assumptions": ["test"],
+                      "field": "test", "carrier": {"kind": "euclid", "name": "plane", "variables": ["x", "y"], "scale": 2},
+                      "parameters": {"eps": 0.0, "c": c, "k": k, "m": m},
+                      "drift": {"x": "eps*x - x**3 + c*y**2", "y": "-k*y + m*x"},
+                      "control": {"name": "eps", "range": [-0.5, 0.5]}, "noise": 0.05, "dt": 0.01})
+
+
+def test_the_noise_of_the_fast_direction_gives_the_slow_coordinate_the_drift_of_its_curvature():
+    """x' = eps x - x^3 + c y^2, y' = -k y + m x at eps = 0: the slow direction is v = (1, m/k), its left vector
+    w = (1, 0). With y = (m/k) x + z, z' = -k z + xi_y - (m/k) xi_x: <z^2> = D (1 + (m/k)^2)/k and <x z> = -2 D m/k^2,
+    and c y^2 gives x the drift c <z^2> + 2 c (m/k) <x z> = c D (1 - 3 (m/k)^2)/k beside its own (m/k)^2 c x^2.
+    Leaving it out made the offset of the write at a Kerr cusp 1.00 where the full dynamics give 0.78; the fast part
+    alone, c D (1 + (m/k)^2)/k, broke the law of the phonon laser, where the slow and the fast rate come close."""
+    c, k, m, D = 0.7, 2.0, 1.0, 0.05
+    real = _slow_fast(c, k, m)
+    q = np.zeros(2)
+    v = np.array([1.0, m / k]); v /= np.linalg.norm(v)
+    w = np.array([1.0, 0.0]); w /= w @ v
+    b = completion.fast_noise_drift(real, q, {"eps": 0.0}, v, w, D)
+    assert abs(float(b[0]) - c * D * (1 - 3 * (m / k) ** 2) / k) < 1e-6 and abs(float(b[1])) < 1e-9
+    assert np.allclose(completion.fast_noise_drift(real, q, {"eps": 0.0}, v, w, 0.0), 0.0)
+    one = spec.load(EX / "pitchfork.json")
+    assert np.allclose(completion.fast_noise_drift(one, np.zeros(1), {"eps": 0.0}, np.ones(1), np.ones(1), D), 0.0)

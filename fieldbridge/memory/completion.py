@@ -406,13 +406,24 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     The unwritten branch q*(t) is followed through the crossing; at n_grid times its reduction to the slow direction
     (the window fit of analysis.normal_form: s' = a1 s + a2 s^2 + a3 s^3, left vector w; this cubic is integrated up to
     the written amplitude, where the Taylor coefficients of the series reduction do not hold) and the projections of the lag
-    beta = -w.dq*/dt, of the bias and of the noise D_s = D w.w give
-        ds/dt = a1(t) s + a2(t) s^2 + a3(t) s^3 + beta(t) + h_s(t) + sqrt(2 D_s(t)) xi,
+    beta = -w.dq*/dt, of the bias, of the noise D_s = D w.w and of the drift b_D = w.fast_noise_drift that the noise of
+    the relaxing directions gives the slow coordinate give
+        ds/dt = a1(t) s + a2(t) s^2 + a3(t) s^3 + beta(t) + b_D(t) + h_s(t) + sqrt(2 D_s(t)) xi,
     which is solved from s = 0. The final s is assigned to the stable state whose coordinate along w is nearest. The
     lag of the state behind the moving branch, which a linear stage overestimates near the crossing, is limited here by
-    the quadratic and cubic terms."""
+    the quadratic and cubic terms. Without b_D the offset of the write at the cusp of a driven Kerr resonator was 0.97
+    to 1.01 where the full dynamics give 0.77 to 0.78 (Josephson bifurcation amplifier; 0.92 to 0.94 against 0.75 to
+    0.79 for the driven transmon); with the noise of the fast direction removed, the full dynamics give 0.95 to 0.98,
+    the law without b_D, and with b_D the law gives 0.78 and 0.84 (transmon 0.75 and 0.74).
+
+    The reduction needs the slow rate to be separated from the others. On the phonon laser of a trapped ion it starts
+    where a spiral becomes a node (rates -0.42 and -0.21, |w| = 6.4; the series gives a3 = 520 there), only about one
+    e-fold of the slow rate before the crossing: at frozen control the full dynamics give the slow coordinate a mean of
+    +0.34, the total curvature drift 1/2 w.F''[C]/|a1| predicts 0.30, and the one-coordinate model gives +0.04 without
+    b_D, -0.47 with it and -0.29 with the series coefficients. The one-coordinate reduction holds there in no form; its
+    law, an equilibrium write that is not certified with or without b_D, writes one state (deviation 0.92)."""
     ts_all = np.linspace(0.0, sweep.T, n_grid)
-    qs, coef, real_from = [], [], None
+    qs, coef, fast, real_from = [], [], [], None
     q = q0.copy()
     for i, t in enumerate(ts_all):
         qn, ok = an.newton(real, q, sweep.over(t))
@@ -423,11 +434,12 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
             # reduction exists only from the point where the slow direction becomes a real line
             if real_from is not None and t > sweep.t_cross:
                 raise ValueError("the slow direction along the sweep is not a real line after the crossing")
-            qs, coef, real_from = [], [], None
+            qs, coef, fast, real_from = [], [], [], None
             continue
         if real_from is None:
             real_from = i
         qs.append(q.copy())
+        fast.append(fast_noise_drift(real, q, sweep.over(t), np.asarray(nf["mode"]), np.asarray(nf["left_mode"]), D))
         fit = nf["fit"]
         coef.append((fit["a1"], fit["a2"], fit["a3"], np.asarray(nf["mode"]), np.asarray(nf["left_mode"])))
     if real_from is None or ts_all[real_from] > sweep.t_cross:
@@ -442,7 +454,7 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     for i in range(1, len(ts)):
         if V[i] @ V[i - 1] < 0:
             V[i] = -V[i]; W[i] = -W[i]; a2[i] = -a2[i]
-    beta = -np.einsum("ij,ij->i", W, dq)
+    beta = -np.einsum("ij,ij->i", W, dq) + np.einsum("ij,ij->i", W, np.array(fast))
     Ds = D * np.einsum("ij,ij->i", W, W)
     s_states = [float(W[-1] @ real.carrier.diff(qs[-1], st)) for st in stable]
     dt = 0.25 * an.safe_dt(real)
@@ -461,6 +473,44 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
             t += st
         lab = np.argmin(np.abs(x[:, None] - np.array(s_states)[None, :]), axis=1)
         out.append([float(np.mean(lab == j)) for j in range(len(stable))])
+    return out
+
+
+def fast_noise_drift(real: Realization, q: np.ndarray, over: Dict, v: np.ndarray, w: np.ndarray, D: float) -> np.ndarray:
+    """The drift that the noise outside the slow direction gives the state at a point q of the branch, 1/2 F''[C]:
+    C is the stationary covariance of the linear drift under the noise 2D, from the modes of the Jacobian (right
+    vectors r_i, left vectors l_i, eigenvalues lambda_i),
+        C = sum_(i,j) r_i r_j^H 2D (l_i . l_j^*) / -(lambda_i + lambda_j^*),
+    without the pair of the slow mode with itself (the variance of the slow coordinate, which the reduction carries
+    with its own a2 s^2 term). It holds the covariance of the relaxing directions and their correlation with the slow
+    coordinate, which share the same noise: with x slow and y = (m/k) x + z fast, a curvature c y^2 gives the slow
+    coordinate c <z^2> + 2 c (m/k) <x z>, and where the slow and a fast rate come close (a spiral turning into a node)
+    the two parts nearly cancel. A reduction that keeps only the noise along w leaves this drift out, although it is
+    of the order of the terms it keeps. A pair whose rates do not sum to a decay contributes nothing; zero in one
+    dimension or without noise."""
+    q = np.asarray(q, float)
+    n = q.size
+    if n == 1 or D <= 0:
+        return np.zeros(n)
+    J = an.jacobian(real, q, over)
+    ev, VR = np.linalg.eig(J)
+    VL = np.linalg.inv(VR)
+    s = int(np.argmax(np.abs(VR.conj().T @ v) / np.linalg.norm(VR, axis=0)))
+    C = np.zeros((n, n), complex)
+    for i in range(n):
+        for j in range(n):
+            den = -(ev[i] + np.conj(ev[j]))
+            if (i == s and j == s) or den.real <= 0:
+                continue
+            C += np.outer(VR[:, i], VR[:, j].conj()) * 2.0 * D * (VL[i] @ VL[j].conj()) / den
+    lam, U = np.linalg.eigh(0.5 * (C.real + C.real.T))
+    f0 = np.asarray(real.F(q, **over), float)
+    eps = 1e-3 * an.base_length(real)
+    out = np.zeros(n)
+    for l_, u in zip(lam, U.T):
+        fp = np.asarray(real.F(real.carrier.wrap(q + eps * u), **over), float)
+        fm = np.asarray(real.F(real.carrier.wrap(q - eps * u), **over), float)
+        out += 0.5 * l_ * (fp + fm - 2.0 * f0) / eps ** 2
     return out
 
 
