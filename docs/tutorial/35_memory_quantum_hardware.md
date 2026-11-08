@@ -124,18 +124,25 @@ write resolve. Two write points of an element unfold at the same cusp and give t
 
 | Element | Offset, full dynamics | Offset, reduced law |
 | --- | ---: | ---: |
-| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 1.02, 1.03 |
-| strongly driven transmon | 0.81, 0.81 | 0.98, 0.96 |
-| driven trapped ion | 0.78, 0.79 | 0.95, 0.92 |
+| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 0.81, 0.84 |
+| strongly driven transmon | 0.81, 0.80 | 0.78, 0.77 |
+| driven trapped ion | 0.78, 0.79 | 0.76, 0.73 |
 
 The three elements share the Kerr normal form and therefore the size of the offset and the state it favours: averaged
 over the two signs of a bias of one noise floor, the state of smaller amplitude is written with probability 0.68 to
 0.69 in all three. The report prints these offsets with a sign, which is only the orientation that the eigensolver
 gave the critical direction and has no meaning of its own. When the resonator measures a qubit, the dispersive shift
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
-sweep must cancel. The reduced law overestimates the offset by about a quarter and is not certified at the strict
-tolerance; the full dynamics are the reference. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
-polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
+sweep must cancel. The reduced law of one coordinate gives the offset only with
+the drift that the noise of the fast directions gives the slow coordinate, half the curvature of the drift along the
+stationary covariance of those directions; without it the law overestimated the offset by about a quarter (0.92 to
+1.03). With it the law is certified for the transmon and the trapped ion and, for the bifurcation amplifier, departs
+from the full dynamics by up to 0.044 (5.7 errors) and is not certified at the strict tolerance. The reduction needs
+a slow direction well separated from the others: on the trapped-ion phonon laser it starts where a spiral becomes a
+node, with rates of -0.42 and -0.21 and a cubic coefficient of 520 in the series there, and holds in no form; its law
+writes one state whatever the bias and is not certified. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
+polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble, where the law, with
+the same drift, gives 0.05 and is certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
 from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
@@ -148,9 +155,9 @@ sweep, so the write is not settled there.
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
 cusp at $\ell = 1$ and a flux of an odd multiple of $\pi$. The reflection of the potential about that flux makes the
-sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.32
-to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.23 at one of three equivalent
-cusps and 1.21 at the other two, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
+sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.28
+to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.24 at one of three equivalent
+cusps and 1.21 and 1.22 at the other two, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
 The two eigenvalues of the phase particle are complex for all but the last 2.5 time units before the crossing, and no
 single coordinate describes that motion.
 
@@ -223,7 +230,7 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 18 laws at obstructions are certified and 24 are derived but not certified; the remaining
+In all, 23 laws at obstructions are certified and 19 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 
