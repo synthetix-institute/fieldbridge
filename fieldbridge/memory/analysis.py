@@ -1128,6 +1128,12 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
             # zero on the other eigenvectors.
             w = np.real(np.linalg.inv(R)[i])
         w = w / np.dot(w, vec)
+    # the sign of an eigenvector is arbitrary and differs between LAPACK builds: orient the critical direction so that
+    # its largest component is positive. +mode then names the same state on every machine, and the random streams
+    # of a test assigned to the bias toward +mode drive the same state.
+    k_max = int(np.argmax(np.abs(vec)))
+    if vec[k_max] < 0:
+        vec, w = -vec, -w
     if half is None:
         half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
     if real.carrier.kind == "orthant":

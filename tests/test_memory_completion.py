@@ -95,6 +95,23 @@ def test_a_degenerate_critical_pair_keeps_a_left_vector_dual_to_its_mode():
     assert completion.completion_kind(nf, construct.obstruction(nf)) == "critical space"
 
 
+def test_the_critical_direction_does_not_depend_on_the_sign_the_eigensolver_gives(monkeypatch):
+    """The sign of an eigenvector is arbitrary, and two LAPACK builds returned opposite signs at the cusp of the driven
+    trapped ion. The swept-write check gives the bias toward +mode its own random streams, so the two machines
+    measured independent samples (law constants 1.47 and 0.90) and offsets of opposite sign. The critical direction
+    is oriented so that its largest component is positive."""
+    real = spec.load(Path(__file__).resolve().parents[1] / "examples" / "quantum" / "semiclassical" / "ion_duffing.json")
+    q, v = np.array([2.752267826816943, -1.806257226422566]), 1.3037475667148828   # its first fold in the record
+    nf = an.normal_form(real, q, "Delta", v)
+    eig = np.linalg.eig
+    monkeypatch.setattr(np.linalg, "eig", lambda M: (lambda e, V: (e, -V))(*eig(M)))
+    flipped = an.normal_form(real, q, "Delta", v)
+    k = int(np.argmax(np.abs(nf["mode"])))
+    assert nf["mode"][k] > 0
+    for key in ("mode", "left_mode", "a2", "bias_along_mode"):
+        assert np.allclose(flipped[key], nf[key], rtol=0, atol=1e-12), key
+
+
 def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     """The pitchfork swept at the standard rate with a noise far above the depth of the wells at the end of the sweep:
     the linear-stage law predicts the usual response, the full dynamics loses the choice to hopping, and the rung names
