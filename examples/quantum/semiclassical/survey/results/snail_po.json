@@ -74,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 10.8,
-  "threshold-write": 9.3,
-  "phase-locking": 2.5,
-  "completion": 69.9,
-  "changes": 82.9
+  "symmetric-write": 6.8,
+  "threshold-write": 5.4,
+  "phase-locking": 4.5,
+  "completion": 43.0,
+  "changes": 44.6
  },
  "completion": {
   "write_points": [
@@ -451,13 +451,13 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 0.7,
+    "seconds": 0.3,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 5.2,
+    "seconds": 1.6,
     "class": "reached"
    }
   },
@@ -469,13 +469,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.7,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.6,
+      "seconds": 1.6,
       "class": "reached"
      }
     },
@@ -490,49 +490,7 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached by a write field",
-      "obstruction": "",
-      "seconds": 4.9,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "control",
-    "what": "control = K over [0.0025, 0.04]",
-    "judged": {
-     "symmetric-write": {
-      "status": "obstructed",
-      "obstruction": "no write point along the control",
-      "seconds": 1.4,
-      "class": "no write point"
-     },
-     "threshold-write": {
-      "status": "reached by a write field",
-      "obstruction": "",
-      "seconds": 5.5,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "remove",
-    "what": "remove '-0.5*kappa*x' from dx/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "reached"
      },
      "threshold-write": {
@@ -547,19 +505,61 @@
     "step": false
    },
    {
+    "kind": "control",
+    "what": "control = K over [0.0025, 0.04]",
+    "judged": {
+     "symmetric-write": {
+      "status": "obstructed",
+      "obstruction": "no write point along the control",
+      "seconds": 0.9,
+      "class": "no write point"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 3.5,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "remove",
+    "what": "remove '-0.5*kappa*x' from dx/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 0.3,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached by a write field",
+      "obstruction": "",
+      "seconds": 1.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
     "kind": "remove",
     "what": "remove '- (D + 2*g)*y' from dx/dt",
     "judged": {
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.2,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -574,13 +574,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.7,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.7,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -601,7 +601,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -622,7 +622,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.1,
       "class": "reached"
      }
     },

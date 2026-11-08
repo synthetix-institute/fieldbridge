@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 1.6,
-  "threshold-write": 5.8,
-  "phase-locking": 8.2,
-  "completion": 304.6,
-  "changes": 94.2
+  "symmetric-write": 1.9,
+  "threshold-write": 5.5,
+  "phase-locking": 25.7,
+  "completion": 191.2,
+  "changes": 60.3
  },
  "completion": {
   "write_points": [
@@ -460,13 +460,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test,",
-    "seconds": 0.9,
+    "seconds": 0.6,
     "class": "vanishing cubic"
    },
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 2.5,
+    "seconds": 1.8,
     "class": "reached"
    }
   },
@@ -478,13 +478,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.8,
+      "seconds": 1.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.3,
+      "seconds": 3.1,
       "class": "reached"
      }
     },
@@ -504,13 +504,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.4,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 2.9,
       "class": "reached"
      }
     },
@@ -536,7 +536,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.1,
+      "seconds": 2.8,
       "class": "reached"
      }
     },
@@ -562,7 +562,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.3,
+      "seconds": 3.2,
       "class": "reached"
      }
     },
@@ -577,13 +577,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.2,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.2,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -603,13 +603,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -25 s^5, so the canonical form is not the pitchfork and the swept-write test,",
-      "seconds": 0.7,
+      "seconds": 0.6,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 2.3,
       "class": "reached"
      }
     },
@@ -624,13 +624,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.4,
+      "seconds": 0.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.1,
+      "seconds": 3.9,
       "class": "oscillation"
      }
     },
@@ -650,13 +650,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -50 s^5, so the canonical form is not the pitchfork and the swept-write test,",
-      "seconds": 1.7,
+      "seconds": 0.8,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.5,
+      "seconds": 2.9,
       "class": "oscillation"
      }
     },
