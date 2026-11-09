@@ -12,7 +12,7 @@
 **Prerequisites.** [Module 9](23_memory_codiscovery.md), [Module 10](25_memory_threshold_write.md),
 [Module 13](33_memory_noise_ratio.md) and [Module 14](34_memory_changes.md); the
 [quantum write](30_quantum_write.md) for the exact dynamics of one oscillator.
-**Time.** About 45 minutes of reading; the full survey of the 31 models takes about two hours on eight cores.
+**Time.** About 45 minutes of reading; the full survey of the 31 models takes about an hour and a quarter on eight cores.
 
 ## 1. The question
 
@@ -51,7 +51,7 @@ certificate of 4 000 trajectories per bias), and the single changes of Module 14
 three derivations can be stopped after a time limit and is then recorded as not derived. The results of the full survey are
 saved in [examples/quantum/semiclassical/survey/results](../../examples/quantum/semiclassical/survey/results), each with the stamp of the code that
 produced it (they were computed with a limit of 60 s per change and none per derivation, `--budget 60
---derive-budget 0`, about 18 core-hours in all; the defaults of `survey.py` are 300 s and 2 hours), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
+--derive-budget 0`, about 6 core-hours in all; the defaults of `survey.py` are 300 s and 2 hours), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
 [records](../records/quantum_semiclassical.md) of `memory record` measure the same quantities at another seed, and the laws at the obstructions with
 fewer trajectories; this module says so where they are the source. Each step is also a command of its own:
 
@@ -146,8 +146,9 @@ the same drift, gives 0.05 and is certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
 from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
-a response of 1.34 and 1.28 in the record, where the full dynamics give 1.26 and 1.28, but overestimates the offset
-(1.63 against 1.02) and is not certified. Both of its write points along the drive are folds and unfold at the same cusp. In
+a response of 1.23 and 1.24 in the survey and 1.34 and 1.28 in the record, where the full dynamics give 1.30 and 1.31
+and 1.26 and 1.28, but overestimates the offset (1.55 and 1.60 against 1.03 in the survey, 1.63 against 1.02 in the
+record) and is not certified. Both of its write points along the drive are folds and unfold at the same cusp. In
 the bistable optomechanical element the law departs from the full dynamics by up to 0.28: three directions relax
 slowly during the passage, and 13 % of the final states have not yet left the unwritten branch at the end of the
 sweep, so the write is not settled there.
@@ -155,9 +156,9 @@ sweep, so the write is not settled there.
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
 cusp at $\ell = 1$ and a flux of an odd multiple of $\pi$. The reflection of the potential about that flux makes the
-sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.28
-to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.24 at one of three equivalent
-cusps and 1.21 and 1.22 at the other two, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
+sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.27
+to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.23 at one of three equivalent
+cusps and 1.21 at the other two, certified at none of them, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
 The two eigenvalues of the phase particle are complex for all but the last 2.5 time units before the crossing, and no
 single coordinate describes that motion.
 

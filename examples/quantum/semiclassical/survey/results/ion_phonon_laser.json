@@ -93,11 +93,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 8.0,
-  "threshold-write": 2.7,
-  "phase-locking": 12.6,
-  "completion": 170.4,
-  "changes": 120.0
+  "symmetric-write": 15.1,
+  "threshold-write": 4.9,
+  "phase-locking": 25.4,
+  "completion": 127.7,
+  "changes": 116.7
  },
  "completion": {
   "write_points": [
@@ -111,7 +111,7 @@
     },
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "obstruction": {
-     "quadratic a2": -0.04660774685573123,
+     "quadratic a2": -0.04660774685573122,
      "bias per unit control": 1.0537157111731024
     },
     "completion": "second parameter",
@@ -120,44 +120,44 @@
       "second": "Delta",
       "success": true,
       "cusp": {
-       "F": 1.7213259316593004,
-       "Delta": 0.5773502691825616
+       "F": 1.721325931793725,
+       "Delta": 0.5773502692549121
       },
       "direction": {
-       "F": -0.9128709292124632,
-       "Delta": -0.40824829038071186
+       "F": -0.9128709291227376,
+       "Delta": -0.4082482905813445
       },
       "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
-      "asymmetry_at_fold": 0.9872659170382408,
-      "asymmetry_along_sweep": 6.535905128408382e-09,
+      "asymmetry_at_fold": 0.987265917038241,
+      "asymmetry_along_sweep": 1.5873235679133856e-08,
       "law": {
        "status": "derived",
        "law_kind": "reduced (one coordinate along the moving branch)",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.6666666674111117,
+       "second_rate": 0.6666666657606513,
        "rate": 0.02,
        "sweep_end": 29.46278254943948,
-       "noise": 0.002500000014979727,
+       "noise": 0.002499999971443395,
        "noise_rule": "Gamma = 0.05",
-       "noise_along_critical": 0.010000000037970204,
-       "bias_floor": 0.028246850511737576,
+       "noise_along_critical": 0.009999999907784902,
+       "bias_floor": 0.028246850327871335,
        "stable_states": [
         [
-         -2.6347599897017817,
-         0.9801951482807306
+         -2.6347585236480726,
+         0.980196650398868
         ],
         [
-         -1.8039205384883776,
-         1.468529815222431
+         -1.8039222721424812,
+         1.4685293667237311
         ]
        ],
        "stable_critical_coordinates": [
         [
-         0.6215985997398888
+         0.6215955981698051
         ],
         [
-         -0.3550707332100433
+         -0.3550698355548058
         ]
        ],
        "map_regime": "linear at the mapping time",
@@ -177,16 +177,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.6972426515938333,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 1.6972435237529568,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          0.4216411198776903
+          0.421640322063611
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -220,16 +220,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.455538138592438,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 1.4555380408017042,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          0.17993660687629487
+          0.17993483911235847
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -263,16 +263,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.8181337636110784,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 1.8181351206298315,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          0.5425322318949354
+          0.5425319189404858
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -306,16 +306,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.3347247376082874,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 1.3347241547273263,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          0.05912320589214425
+          0.05912095303798055
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -349,16 +349,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 2.0599159876455704,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 2.059918314383583,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          0.7843144559294273
+          0.7843151126942371
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -392,16 +392,16 @@
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819522740658239,
+         "growth": 0.013819414150260017,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.4581051277922987,
-         "written_amplitude_at_map": 0.45424359191752284,
+         "spread_at_map": 1.4581100208001212,
+         "written_amplitude_at_map": 0.4542419156514811,
          "mean_critical": [
-          -0.18250359607615574
+          -0.1825068191107755
          ],
          "cov_critical": [
           [
-           0.1807954741907301
+           0.1807959475733455
           ]
          ],
          "reduced_law": [
@@ -522,13 +522,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 1.9,
+    "seconds": 2.9,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 2.2,
+    "seconds": 2.3,
     "class": "reached"
    }
   },
@@ -546,7 +546,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.4,
+      "seconds": 2.1,
       "class": "oscillation"
      }
     },
@@ -561,13 +561,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.7,
+      "seconds": 2.8,
       "class": "oscillation"
      }
     },
@@ -588,7 +588,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 1.9,
+      "seconds": 2.4,
       "class": "oscillation"
      }
     },
@@ -603,13 +603,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.9,
+      "seconds": 8.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.9,
+      "seconds": 6.5,
       "class": "reached"
      }
     },
@@ -624,13 +624,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.2,
+      "seconds": 6.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 7.9,
+      "seconds": 7.5,
       "class": "oscillation"
      }
     },
@@ -645,13 +645,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.9,
+      "seconds": 3.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.5,
+      "seconds": 3.7,
       "class": "reached"
      }
     },
@@ -666,13 +666,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.5,
+      "seconds": 3.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 4.9,
       "class": "reached"
      }
     },
@@ -687,13 +687,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.8,
+      "seconds": 2.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.4,
+      "seconds": 4.3,
       "class": "reached"
      }
     },
@@ -708,13 +708,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.4,
+      "seconds": 5.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.1,
+      "seconds": 5.7,
       "class": "reached"
      }
     },
@@ -729,7 +729,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.0,
+      "seconds": 3.1,
       "class": "no write point"
      },
      "threshold-write": {
@@ -756,7 +756,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.2,
+      "seconds": 2.3,
       "class": "oscillation"
      }
     },

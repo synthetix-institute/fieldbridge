@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 29.6,
-  "threshold-write": 8.3,
-  "phase-locking": 4.6,
-  "completion": 298.2,
-  "changes": 331.2
+  "symmetric-write": 18.9,
+  "threshold-write": 5.0,
+  "phase-locking": 8.3,
+  "completion": 289.9,
+  "changes": 137.1
  },
  "completion": {
   "write_points": [
@@ -101,14 +101,14 @@
     "write_point": {
      "F": 0.6102150678634644,
      "state": [
-      -0.09920611415695282,
-      -1.2123118839665645
+      -0.09920611415694403,
+      -1.212311883966566
      ]
     },
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "obstruction": {
-     "quadratic a2": -1.18683601055107,
-     "bias per unit control": 6.034239482482887
+     "quadratic a2": -1.1868360105510725,
+     "bias per unit control": 6.03423948251422
     },
     "completion": "second parameter",
     "unfoldings": [
@@ -116,44 +116,44 @@
       "second": "Delta",
       "success": true,
       "cusp": {
-       "F": 0.3102016197019624,
-       "Delta": -0.8660254037890521
+       "F": 0.3102016196991318,
+       "Delta": -0.8660254037786015
       },
       "direction": {
-       "F": 0.25944369060904837,
-       "Delta": -0.9657582365184136
+       "F": 0.2594436906062386,
+       "Delta": -0.9657582365191686
       },
       "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
-      "asymmetry_at_fold": 0.7076698273118456,
-      "asymmetry_along_sweep": 1.1199441316998443e-11,
+      "asymmetry_at_fold": 0.7076698273119717,
+      "asymmetry_along_sweep": 1.9497506191204287e-11,
       "law": {
        "status": "derived",
        "law_kind": "reduced (one coordinate along the moving branch)",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.9999999999831162,
+       "second_rate": 0.9999999999732445,
        "rate": 0.02,
        "sweep_end": 56.568542494923804,
-       "noise": 0.0006495190528453562,
+       "noise": 0.0006495190528411376,
        "noise_rule": "Gamma = 0.05",
-       "noise_along_critical": 0.000866025403777307,
-       "bias_floor": 0.008312570594809892,
+       "noise_along_critical": 0.0008660254037720223,
+       "bias_floor": 0.008312570594784529,
        "stable_states": [
         [
-         -0.32383461665662977,
-         -0.1001960104612994
+         -0.32383462507190924,
+         -0.10019603655769692
         ],
         [
-         0.46087266859024534,
-         -0.914595251678853
+         0.4608725054423742,
+         -0.9145952145727888
         ]
        ],
        "stable_critical_coordinates": [
         [
-         0.4215885786828444
+         0.4215885485464408
         ],
         [
-         -0.5187986635914724
+         -0.5187986207544313
         ]
        ],
        "map_regime": "saturated at the mapping time",
@@ -167,25 +167,25 @@
           0.935875,
           0.064125
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.935875,
           0.064125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.972865581907422,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 4.972860494436295,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          90.75792068634685
+          90.75772078246764
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -215,25 +215,25 @@
           0.692375,
           0.307625
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.692375,
           0.307625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.8825755089246297,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 3.8825713738414067,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          31.336915320817507
+          31.336830740862126
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -263,25 +263,25 @@
           0.977875,
           0.022125
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.977875,
           0.022125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 5.518059196134815,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 5.518053632416093,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          120.47107086447338
+          120.47081329288312
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -311,25 +311,25 @@
           0.5025,
           0.4975
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.5025,
           0.4975
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.3374790501692426,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 3.3374753912263126,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          1.6290601334153756
+          1.629033209671872
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -359,25 +359,25 @@
           0.9985,
           0.0015
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.9985,
           0.0015
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 6.60844642458962,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 6.608439908375683,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          179.89737122072748
+          179.89699831371368
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -407,25 +407,25 @@
           0.162875,
           0.837125
          ],
-         "t_star": 53.17857503084984,
+         "t_star": 53.178575029722175,
          "sector_law": [
           0.162875,
           0.837125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797460309,
+         "t_map": 38.71762797378016,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584664581215,
+         "growth": 5.000583263563217,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.367890142016561,
-         "written_amplitude_at_map": 0.34706652732812054,
+         "spread_at_map": 4.367886455014284,
+         "written_amplitude_at_map": 0.34706647019942316,
          "mean_critical": [
-          -57.78665024138913
+          -57.78656185270864
          ],
          "cov_critical": [
           [
-           3610.573723262934
+           3610.5590369767788
           ]
          ],
          "reduced_law": [
@@ -506,14 +506,14 @@
     "write_point": {
      "F": 1.4586436015367499,
      "state": [
-      -0.6993835695522576,
-      -0.1786030635285025
+      -0.6993835695522524,
+      -0.17860306352849967
      ]
     },
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "obstruction": {
-     "quadratic a2": 8.088948473514805,
-     "bias per unit control": 2.0962242790807175
+     "quadratic a2": 8.088948473516501,
+     "bias per unit control": 2.0962242790106256
     },
     "completion": "second parameter",
     "unfoldings": [
@@ -521,44 +521,44 @@
       "second": "Delta",
       "success": true,
       "cusp": {
-       "F": 0.3102016197036241,
-       "Delta": -0.8660254037953239
+       "F": 0.31020161970263677,
+       "Delta": -0.8660254037916486
       },
       "direction": {
-       "F": 0.25944369060904837,
-       "Delta": -0.9657582365184136
+       "F": 0.2594436906059012,
+       "Delta": -0.9657582365192592
       },
       "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
-      "asymmetry_at_fold": 0.6611117280080242,
-      "asymmetry_along_sweep": 9.186386820200586e-13,
+      "asymmetry_at_fold": 0.6611117280070025,
+      "asymmetry_along_sweep": 1.9433476115421546e-11,
       "law": {
        "status": "derived",
        "law_kind": "reduced (one coordinate along the moving branch)",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.9999999999831162,
+       "second_rate": 0.9999999999633729,
        "rate": 0.02,
        "sweep_end": 56.568542494923804,
-       "noise": 0.0006495190528424601,
+       "noise": 0.0006495190528428175,
        "noise_rule": "Gamma = 0.05",
-       "noise_along_critical": 0.000866025403783854,
-       "bias_floor": 0.008312570594841312,
+       "noise_along_critical": 0.0008660254037968137,
+       "bias_floor": 0.00831257059490351,
        "stable_states": [
         [
-         -0.3238346241654089,
-         -0.10019603374110009
+         -0.32383461789355233,
+         -0.10019601430310031
         ],
         [
-         0.46087252306321164,
-         -0.9145952185764586
+         0.46087264455888527,
+         -0.9145952462175808
         ]
        ],
        "stable_critical_coordinates": [
         [
-         0.4215885518070387
+         0.4215885742594805
         ],
         [
-         -0.5187986253683781
+         -0.5187986572975759
         ]
        ],
        "map_regime": "saturated at the mapping time",
@@ -572,25 +572,25 @@
           0.929,
           0.071
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.929,
           0.071
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.972861040040932,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 4.97286483235658,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          90.75774221376945
+          90.7578911901398
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -620,25 +620,25 @@
           0.686375,
           0.313625
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.686375,
           0.313625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.882571817414274,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 3.8825748997140916,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          31.336839819094052
+          31.336902846228142
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -668,25 +668,25 @@
           0.97925,
           0.02075
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.97925,
           0.02075
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 5.5180542290423595,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 5.5180583764059215,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          120.47084090133548
+          120.47103285660936
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -716,25 +716,25 @@
           0.5045,
           0.4955
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.5045,
           0.4955
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.337475783789052,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 3.337478511120952,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          1.6290361119852599
+          1.629056168786432
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -764,25 +764,25 @@
           0.998875,
           0.001125
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.998875,
           0.001125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 6.608440607045228,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 6.608445464504613,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          179.8970382764684
+          179.897316189549
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -812,25 +812,25 @@
           0.162375,
           0.837625
          ],
-         "t_star": 53.17857502605728,
+         "t_star": 53.17857502928324,
          "sector_law": [
           0.162375,
           0.837625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.717627971105664,
+         "t_map": 38.7176279734682,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583413441862,
+         "growth": 5.000584457485828,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.367886849924089,
-         "written_amplitude_at_map": 0.3470664763235337,
+         "spread_at_map": 4.367889598704315,
+         "written_amplitude_at_map": 0.3470665189089638,
          "mean_critical": [
-          -57.78657130223211
+          -57.78663718609678
          ],
          "cov_critical": [
           [
-           3610.5606106533105
+           3610.5715558728166
           ]
          ],
          "reduced_law": [
@@ -915,13 +915,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 8.5,
+    "seconds": 4.0,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 6.6,
+    "seconds": 3.2,
     "class": "reached"
    }
   },
@@ -933,13 +933,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 11.6,
+      "seconds": 5.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 8.4,
+      "seconds": 5.0,
       "class": "reached"
      }
     },
@@ -954,13 +954,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 9.4,
+      "seconds": 6.0,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.0,
+      "seconds": 5.1,
       "class": "reached"
      }
     },
@@ -975,13 +975,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 13.1,
+      "seconds": 7.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 8.1,
+      "seconds": 4.4,
       "class": "reached"
      }
     },
@@ -996,13 +996,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 3.2,
+      "seconds": 5.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.3,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -1017,13 +1017,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.8,
+      "seconds": 0.7,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 8.5,
+      "seconds": 4.4,
       "class": "reached"
      }
     },
@@ -1038,13 +1038,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 15.3,
+      "seconds": 6.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 15.6,
+      "seconds": 6.5,
       "class": "reached"
      }
     },
@@ -1059,13 +1059,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 15.0,
+      "seconds": 3.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 13.0,
+      "seconds": 2.0,
       "class": "reached"
      }
     },
@@ -1080,13 +1080,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 21.9,
+      "seconds": 3.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 26.2,
+      "seconds": 4.3,
       "class": "single stable state"
      }
     },
@@ -1101,13 +1101,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 12.9,
+      "seconds": 4.6,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 10.5,
+      "seconds": 3.5,
       "class": "reached"
      }
     },
