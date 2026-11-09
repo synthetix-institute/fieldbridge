@@ -5,7 +5,7 @@
   "source": "Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "9b651e12ce63c08a414f1e749da8880d5f8eb079c81d0126cebcd5a2b6ecf592",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -19,22 +19,22 @@
    "class": "C R(fold) U R(pitchfork) K L",
    "word": "CRURKL",
    "law_constant": {
-    "constant": 1.1559897118226834,
-    "stderr": 0.13298817642922,
+    "constant": 1.3793052179641472,
+    "stderr": 0.15336911377304277,
     "expected": 1.3313353638003897,
-    "offset": -0.9171760419455574,
-    "offset_stderr": 0.13298817642922,
+    "offset": 1.0801444568051521,
+    "offset_stderr": 0.15336911377304277,
     "offset_resolved": true,
     "by_sign": [
      {
       "sign": 1,
-      "constant": 0.23881366987712602,
-      "stderr": 0.18190393758140683
+      "constant": 2.4594496747692993,
+      "stderr": 0.22446119297692194
      },
      {
       "sign": -1,
-      "constant": 2.0731657537682406,
-      "stderr": 0.1940473596116604
+      "constant": 0.29916076115899526,
+      "stderr": 0.20905863552001663
      }
     ],
     "replicates": 8,
@@ -57,12 +57,12 @@
      0.03106800838,
      2.057903761,
      -0.02673903162,
-     -0.01564384894,
-     -0.02709539376,
-     -0.01564429225,
-     -0.02709513781,
-     -0.0156427385,
-     -0.02709603486,
+     0.01564337493,
+     0.02709566743,
+     0.01564293158,
+     0.02709592339,
+     0.01564448535,
+     0.02709502631,
      0.01299038105
     ]
    }
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 30.9,
-  "threshold-write": 7.4,
-  "phase-locking": 3.6,
-  "completion": 448.2,
-  "changes": 143.4
+  "symmetric-write": 27.7,
+  "threshold-write": 7.5,
+  "phase-locking": 3.9,
+  "completion": 498.0,
+  "changes": 191.1
  },
  "completion": {
   "write_points": [
@@ -107,8 +107,8 @@
     },
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "obstruction": {
-     "quadratic a2": -0.20684503537591192,
-     "bias per unit control": 3.8831771276794367
+     "quadratic a2": 0.20684503537591192,
+     "bias per unit control": -3.8831771276794367
     },
     "completion": "second parameter",
     "unfoldings": [
@@ -189,12 +189,12 @@
           ]
          ],
          "reduced_law": [
-          0.6135,
-          0.3865
+          0.6345,
+          0.3655
          ],
          "law": [
-          0.6135,
-          0.3865
+          0.6345,
+          0.3655
          ],
          "certificate": [
           0.6135,
@@ -203,8 +203,8 @@
          "sector_deviation": 0.083125,
          "sector_deviation_sigma": 10.796416277840361,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.0,
-         "deviation": 0.0
+         "deviation_sigma": 2.7275156912438834,
+         "deviation": 0.02100000000000002
         },
         {
          "bias_floors": 0.5,
@@ -237,12 +237,12 @@
           ]
          ],
          "reduced_law": [
-          0.908875,
-          0.091125
+          0.901375,
+          0.098625
          ],
          "law": [
-          0.908875,
-          0.091125
+          0.901375,
+          0.098625
          ],
          "certificate": [
           0.887,
@@ -251,8 +251,8 @@
          "sector_deviation": 0.050875000000000004,
          "sector_deviation_sigma": 10.16326819644155,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 4.3699556127205685,
-         "deviation": 0.021875000000000006
+         "deviation_sigma": 2.871685116930664,
+         "deviation": 0.014375000000000027
         },
         {
          "bias_floors": 1.0,
@@ -285,12 +285,12 @@
           ]
          ],
          "reduced_law": [
-          0.435375,
-          0.564625
+          0.423375,
+          0.576625
          ],
          "law": [
-          0.435375,
-          0.564625
+          0.423375,
+          0.576625
          ],
          "certificate": [
           0.4045,
@@ -299,8 +299,8 @@
          "sector_deviation": 0.111875,
          "sector_deviation_sigma": 14.416601637400799,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 3.9786598932268107,
-         "deviation": 0.030874999999999986
+         "deviation_sigma": 2.4322981533491816,
+         "deviation": 0.018874999999999975
         },
         {
          "bias_floors": 1.0,
@@ -333,12 +333,12 @@
           ]
          ],
          "reduced_law": [
-          0.962875,
-          0.037125
+          0.963375,
+          0.036625
          ],
          "law": [
-          0.962875,
-          0.037125
+          0.963375,
+          0.036625
          ],
          "certificate": [
           0.9625,
@@ -347,8 +347,8 @@
          "sector_deviation": 0.014875,
          "sector_deviation_sigma": 4.95188975253005,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.12483755678647661,
-         "deviation": 0.0003750000000000142
+         "deviation_sigma": 0.2912876325017679,
+         "deviation": 0.0008750000000000008
         },
         {
          "bias_floors": 2.0,
@@ -381,12 +381,12 @@
           ]
          ],
          "reduced_law": [
-          0.118375,
-          0.881625
+          0.124375,
+          0.875625
          ],
          "law": [
-          0.118375,
-          0.881625
+          0.124375,
+          0.875625
          ],
          "certificate": [
           0.10625,
@@ -395,8 +395,8 @@
          "sector_deviation": 0.07237500000000008,
          "sector_deviation_sigma": 14.854090844232818,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 2.4885091742497205,
-         "deviation": 0.012125000000000052
+         "deviation_sigma": 3.7199363944970005,
+         "deviation": 0.018125000000000058
         },
         {
          "bias_floors": 2.0,
@@ -429,12 +429,12 @@
           ]
          ],
          "reduced_law": [
-          0.99775,
-          0.00225
+          0.9975,
+          0.0025
          ],
          "law": [
-          0.99775,
-          0.00225
+          0.9975,
+          0.0025
          ],
          "certificate": [
           0.99525,
@@ -443,32 +443,32 @@
          "sector_deviation": 0.0030000000000000027,
          "sector_deviation_sigma": 2.759550540314066,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 2.299625450261767,
-         "deviation": 0.0025000000000000577
+         "deviation_sigma": 2.069662905235621,
+         "deviation": 0.0022500000000000853
         }
        ],
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.3865,
-          "P_toward_minus": 0.908875,
-          "response_constant": 1.3917862593852939,
-          "offset": -0.811156109494323
+          "P_toward_plus": 0.3655,
+          "P_toward_minus": 0.901375,
+          "response_constant": 1.2589512803582257,
+          "offset": -0.8166108455307464
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.564625,
-          "P_toward_minus": 0.962875,
-          "response_constant": 1.2965713189409436,
-          "offset": -0.8111819361375426
+          "P_toward_plus": 0.576625,
+          "P_toward_minus": 0.963375,
+          "response_constant": 1.321041941432252,
+          "offset": -0.7990015144725526
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.881625,
-          "P_toward_minus": 0.99775,
-          "response_constant": 1.3393077237995359,
-          "offset": -0.8288272313731397
+          "P_toward_plus": 0.875625,
+          "P_toward_minus": 0.9975,
+          "response_constant": 1.3181633337966283,
+          "offset": -0.8268214647603791
          }
         ],
         "certificate": [
@@ -495,48 +495,9 @@
          }
         ]
        },
-       "certified": false,
+       "certified": true,
        "sector_certified": false,
-       "hold": {
-        "hold_time": 56.568542494923804,
-        "switching_fraction": 0.0004583333333333334,
-        "switching_by_row": [
-         0.001,
-         0.00075,
-         0.0005,
-         0.0,
-         0.0005,
-         0.0
-        ],
-        "after_hold": [
-         [
-          0.6125,
-          0.3875
-         ],
-         [
-          0.88625,
-          0.11375
-         ],
-         [
-          0.404,
-          0.596
-         ],
-         [
-          0.9625,
-          0.0375
-         ],
-         [
-          0.10575,
-          0.89425
-         ],
-         [
-          0.99525,
-          0.00475
-         ]
-        ]
-       },
-       "write_class": "nonlinear stage",
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.022 (4.4 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)"
+       "write_class": "linear-stage write"
       }
      }
     ]
@@ -608,13 +569,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.6985,
-          0.3015
+          0.70125,
+          0.29875
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.6985,
-          0.3015
+          0.70125,
+          0.29875
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -633,22 +594,22 @@
           ]
          ],
          "reduced_law": [
-          0.618,
-          0.382
+          0.627125,
+          0.372875
          ],
          "law": [
-          0.618,
-          0.382
+          0.627125,
+          0.372875
          ],
          "certificate": [
-          0.61525,
-          0.38475
+          0.61175,
+          0.38825
          ],
-         "sector_deviation": 0.08325000000000005,
-         "sector_deviation_sigma": 10.821790257560087,
+         "sector_deviation": 0.08950000000000002,
+         "sector_deviation_sigma": 11.614761859325807,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.3574765550545412,
-         "deviation": 0.00275000000000003
+         "deviation_sigma": 1.995273336169101,
+         "deviation": 0.015375000000000028
         },
         {
          "bias_floors": 0.5,
@@ -656,13 +617,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.932375,
-          0.067625
+          0.93575,
+          0.06425
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.932375,
-          0.067625
+          0.93575,
+          0.06425
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -681,22 +642,22 @@
           ]
          ],
          "reduced_law": [
-          0.904125,
-          0.095875
+          0.899375,
+          0.100625
          ],
          "law": [
-          0.904125,
-          0.095875
+          0.899375,
+          0.100625
          ],
          "certificate": [
-          0.89675,
-          0.10325
+          0.90625,
+          0.09375
          ],
-         "sector_deviation": 0.03562499999999999,
-         "sector_deviation_sigma": 7.40464336004291,
+         "sector_deviation": 0.0295,
+         "sector_deviation_sigma": 6.4009194741804505,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.5328910815527417,
-         "deviation": 0.007374999999999993
+         "deviation_sigma": 1.4917397079657844,
+         "deviation": 0.006875000000000006
         },
         {
          "bias_floors": 1.0,
@@ -704,13 +665,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.513375,
-          0.486625
+          0.510875,
+          0.489125
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.513375,
-          0.486625
+          0.510875,
+          0.489125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -729,22 +690,22 @@
           ]
          ],
          "reduced_law": [
-          0.435625,
-          0.564375
+          0.431625,
+          0.568375
          ],
          "law": [
-          0.435625,
-          0.564375
+          0.431625,
+          0.568375
          ],
          "certificate": [
-          0.39175,
-          0.60825
+          0.42325,
+          0.57675
          ],
-         "sector_deviation": 0.12162500000000004,
-         "sector_deviation_sigma": 15.758224652121562,
+         "sector_deviation": 0.08762500000000001,
+         "sector_deviation_sigma": 11.216716456995044,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 5.6846216370962654,
-         "deviation": 0.043875
+         "deviation_sigma": 1.0720684773447502,
+         "deviation": 0.008375000000000021
         },
         {
          "bias_floors": 1.0,
@@ -752,13 +713,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.975875,
-          0.024125
+          0.977875,
+          0.022125
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.975875,
-          0.024125
+          0.977875,
+          0.022125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -777,22 +738,22 @@
           ]
          ],
          "reduced_law": [
-          0.967875,
-          0.032125
+          0.96575,
+          0.03425
          ],
          "law": [
-          0.967875,
-          0.032125
+          0.96575,
+          0.03425
          ],
          "certificate": [
-          0.9615,
-          0.0385
+          0.96825,
+          0.03175
          ],
-         "sector_deviation": 0.014375000000000027,
-         "sector_deviation_sigma": 4.725337578473245,
+         "sector_deviation": 0.009625000000000002,
+         "sector_deviation_sigma": 3.471883278738245,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 2.0955844913229202,
-         "deviation": 0.0063750000000000195
+         "deviation_sigma": 0.9017878646073577,
+         "deviation": 0.0025000000000000577
         },
         {
          "bias_floors": 2.0,
@@ -800,13 +761,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.1685,
-          0.8315
+          0.16275,
+          0.83725
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.1685,
-          0.8315
+          0.16275,
+          0.83725
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -825,22 +786,22 @@
           ]
          ],
          "reduced_law": [
-          0.124,
-          0.876
+          0.112625,
+          0.887375
          ],
          "law": [
-          0.124,
-          0.876
+          0.112625,
+          0.887375
          ],
          "certificate": [
-          0.112,
-          0.888
+          0.106,
+          0.894
          ],
-         "sector_deviation": 0.05650000000000001,
-         "sector_deviation_sigma": 11.3308619740924,
+         "sector_deviation": 0.05675000000000001,
+         "sector_deviation_sigma": 11.659345435854066,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 2.4065547555594495,
-         "deviation": 0.01200000000000001
+         "deviation_sigma": 1.361113013436709,
+         "deviation": 0.006625000000000006
         },
         {
          "bias_floors": 2.0,
@@ -848,13 +809,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.99825,
-          0.00175
+          0.99875,
+          0.00125
          ],
          "t_star": 53.17749999998788,
          "sector_law": [
-          0.99825,
-          0.00175
+          0.99875,
+          0.00125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -873,114 +834,75 @@
           ]
          ],
          "reduced_law": [
-          0.9975,
-          0.0025
+          0.99725,
+          0.00275
          ],
          "law": [
-          0.9975,
-          0.0025
+          0.99725,
+          0.00275
          ],
          "certificate": [
           0.998,
           0.002
          ],
-         "sector_deviation": 0.00025,
-         "sector_deviation_sigma": 0.353907475199386,
+         "sector_deviation": 0.0007500000000000284,
+         "sector_deviation_sigma": 1.0617224255981976,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.707814950398772,
-         "deviation": 0.0005
+         "deviation_sigma": 1.0617224255981976,
+         "deviation": 0.0007500000000000284
         }
        ],
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.382,
-          "P_toward_minus": 0.904125,
-          "response_constant": 1.3382414847825497,
-          "offset": -0.8028259413221547
+          "P_toward_plus": 0.372875,
+          "P_toward_minus": 0.899375,
+          "response_constant": 1.2697610990437755,
+          "offset": -0.8011233744045042
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.564375,
-          "P_toward_minus": 0.967875,
-          "response_constant": 1.3396642156375107,
-          "offset": -0.844185085893473
+          "P_toward_plus": 0.568375,
+          "P_toward_minus": 0.96575,
+          "response_constant": 1.3273027169876368,
+          "offset": -0.8247324358820607
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.876,
-          "P_toward_minus": 0.9975,
-          "response_constant": 1.3187724223179758,
-          "offset": -0.8259064608659301
+          "P_toward_plus": 0.887375,
+          "P_toward_minus": 0.99725,
+          "response_constant": 1.3276329399122646,
+          "offset": -0.781752305690069
          }
         ],
         "certificate": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.38475,
-          "P_toward_minus": 0.89675,
-          "response_constant": 1.2916871410616166,
-          "offset": -0.7781385843671279
+          "P_toward_plus": 0.38825,
+          "P_toward_minus": 0.90625,
+          "response_constant": 1.3767709625328661,
+          "offset": -0.8009469778855257
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.60825,
-          "P_toward_minus": 0.9615,
-          "response_constant": 1.360042446087778,
-          "offset": -0.746801801459047
+          "P_toward_plus": 0.57675,
+          "P_toward_minus": 0.96825,
+          "response_constant": 1.3641263874589515,
+          "offset": -0.8310440973443034
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.888,
+          "P_toward_plus": 0.894,
           "P_toward_minus": 0.998,
-          "response_constant": 1.3626624034332409,
-          "offset": -0.8311006596940821
+          "response_constant": 1.3733544880178201,
+          "offset": -0.8150384639839675
          }
         ]
        },
-       "certified": false,
+       "certified": true,
        "sector_certified": false,
-       "hold": {
-        "hold_time": 56.568542494923804,
-        "switching_fraction": 0.00020833333333333335,
-        "switching_by_row": [
-         0.00075,
-         0.0,
-         0.00025,
-         0.0,
-         0.00025,
-         0.0
-        ],
-        "after_hold": [
-         [
-          0.6145,
-          0.3855
-         ],
-         [
-          0.89675,
-          0.10325
-         ],
-         [
-          0.3915,
-          0.6085
-         ],
-         [
-          0.9615,
-          0.0385
-         ],
-         [
-          0.11175,
-          0.88825
-         ],
-         [
-          0.998,
-          0.002
-         ]
-        ]
-       },
-       "write_class": "nonlinear stage",
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.044 (5.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)"
+       "write_class": "linear-stage write"
       }
      }
     ]
@@ -993,13 +915,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 3.3,
+    "seconds": 6.0,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 3.0,
+    "seconds": 5.5,
     "class": "reached"
    }
   },
@@ -1011,13 +933,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 6.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.0,
+      "seconds": 4.7,
       "class": "reached"
      }
     },
@@ -1032,13 +954,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 1.3,
+      "seconds": 2.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -1053,13 +975,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 4.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.3,
+      "seconds": 4.0,
       "class": "reached"
      }
     },
@@ -1074,13 +996,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.8,
+      "seconds": 1.2,
       "class": "single stable state"
      }
     },
@@ -1095,13 +1017,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 16.9,
+      "seconds": 17.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 12.0,
+      "seconds": 17.4,
       "class": "reached"
      }
     },
@@ -1116,13 +1038,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 4.0,
+      "seconds": 7.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 5.8,
+      "seconds": 7.5,
       "class": "single stable state"
      }
     },
@@ -1137,13 +1059,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 13.3,
+      "seconds": 20.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 20.1,
+      "seconds": 20.8,
       "class": "reached"
      }
     },
@@ -1158,13 +1080,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 6.3,
+      "seconds": 7.1,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 5.6,
       "class": "reached"
      }
     },
@@ -1179,13 +1101,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.2,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -1200,13 +1122,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 3.8,
+      "seconds": 7.0,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.6,
+      "seconds": 6.1,
       "class": "reached"
      }
     },

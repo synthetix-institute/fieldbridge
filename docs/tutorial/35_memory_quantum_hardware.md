@@ -64,10 +64,12 @@ python3 -m fieldbridge memory changes examples/quantum/semiclassical/cim_triangl
 ## 4. Known laws carried to the hardware
 
 In most models a derivation of Modules 9–11 reaches its mechanism, and the law carries its constant. The symmetric
-write is reached in 18 of the 31 models. In 15 of them its constant lies within three standard errors or 3 % of
+write is reached in 18 of the 31 models. In 14 of them its constant lies within three standard errors or 3 % of
 $\pi^{1/4}$, among them the persistent-current flux qubit, the rf-SQUID annealer qubit, the quantum flux parametron
-latch and the SNAIL parametric oscillator. These constants carry standard errors of 0.11 to 0.22 at the default 400
-trajectories and 8 replicates, so the count cannot see a deviation of a few per cent. The threshold write is reached
+latch and the SNAIL parametric oscillator. These constants carry standard errors of 0.11 to 0.19 at the default 400
+trajectories and 8 replicates, so the count cannot see a deviation of a few per cent. The driven trapped ion gives
+$0.90 \pm 0.14$ at the seed of the survey and lies outside the count; ten seeds give a mean of 1.34 with a scatter of 0.20,
+and the seed of the survey gives the lowest of the ten. The threshold write is reached
 in 23 models, and in 19 of them the derivation measures the Airy constant $1.019$. Three of the other four, the
 Kerr-cat qubit and the pair and the triangle of Kerr parametric oscillators, carry that constant in the records: the
 derivation starts from a random state, and from some starts the branch of its slowest sweep does not end at the fold.
@@ -124,25 +126,25 @@ write resolve. Two write points of an element unfold at the same cusp and give t
 
 | Element | Offset, full dynamics | Offset, reduced law |
 | --- | ---: | ---: |
-| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 0.81, 0.84 |
+| Kerr resonator of a bifurcation amplifier | 0.77, 0.83 | 0.80, 0.82 |
 | strongly driven transmon | 0.81, 0.80 | 0.78, 0.77 |
-| driven trapped ion | 0.78, 0.79 | 0.76, 0.73 |
+| driven trapped ion | 0.78, 0.79 | 0.76, 0.75 |
 
 The three elements share the Kerr normal form and therefore the size of the offset and the state it favours: averaged
 over the two signs of a bias of one noise floor, the state of smaller amplitude is written with probability 0.68 to
-0.69 in all three. The report prints these offsets with a sign, which is only the orientation that the eigensolver
-gave the critical direction and has no meaning of its own. When the resonator measures a qubit, the dispersive shift
+0.70 in all three. The report prints these offsets with a sign, which follows the orientation of the critical direction (its largest
+component, the first of near-equal ones, is taken positive) and has no physical meaning of its own. When the resonator measures a qubit, the dispersive shift
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
 sweep must cancel. The reduced law of one coordinate gives the offset only with
 the drift that the noise of the fast directions gives the slow coordinate, half the curvature of the drift along the
 stationary covariance of those directions; without it the law overestimated the offset by about a quarter (0.92 to
-1.03). With it the law is certified for the transmon and the trapped ion and, for the bifurcation amplifier, departs
-from the full dynamics by up to 0.044 (5.7 errors) and is not certified at the strict tolerance. The reduction needs
+1.03). With it the law is certified for all three elements; for the bifurcation amplifier it departs from the full
+dynamics by up to 0.021 (3.7 errors). The reduction needs
 a slow direction well separated from the others: on the trapped-ion phonon laser it starts where a spiral becomes a
 node, with rates of -0.42 and -0.21 and a cubic coefficient of 520 in the series there, and holds in no form; its law
 writes one state whatever the bias and is not certified. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
 polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble, where the law, with
-the same drift, gives 0.05 and is certified. The magnonic element has
+the same drift, gives 0.06 and is certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
 from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
@@ -171,15 +173,15 @@ it by secant steps until the offset is below 0.1 or three standard errors:
 python3 -m fieldbridge memory complete examples/quantum/semiclassical/jba_resonator.json --curvature --out-dir results/jba_curvature
 ```
 
-For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.124 to −0.131, −0.120 to −0.122, −0.098
-to −0.104, −0.069 to −0.070 and −0.021 to −0.023 for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
-numbers are its two write points), with the response staying at 1.27 to 1.40. The curvature has a
+For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.130 to −0.131, −0.119 to −0.120, −0.098
+to −0.104, −0.068 at both and −0.021 to −0.023 for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
+numbers are its two write points), with the response staying at 1.27 to 1.41. The curvature has a
 part that does not depend on the noise, the curvature of the line on which the two written states are mirror images,
 and a part that grows with the noise ratio, which compensates the drift that the quadratic term of the reduced
-equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.081 to
-0.085 and at 0.069 to 0.074 in the coordinates of their own second parameters, and the magnon element at 0.205, where
-an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at one write point
-its zero lies beyond the curvatures that the sweep can reach, and at the other the offset is still 0.37 at c2 = 0.44. The equation of this
+equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.079 to
+0.084 and at 0.070 to 0.073 in the coordinates of their own second parameters, and the magnon element at 0.205, where
+an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at both write points
+its zero, placed at c2 = 0.50 and 0.51 by the curvatures tried, lies beyond the curvatures that the sweep can reach. The equation of this
 element near the cusp differs from the Kerr form. These runs are collected in
 [curvature.json](../../examples/quantum/semiclassical/survey/curvature.json).
 
@@ -231,7 +233,7 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 23 laws at obstructions are certified and 19 are derived but not certified; the remaining
+In all, 25 laws at obstructions are certified and 17 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 

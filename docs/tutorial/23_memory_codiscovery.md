@@ -225,7 +225,7 @@ constant is the larger of the scatter of the runs and the binomial error of the 
 draws these streams from its own generator, set by the seed and the name of the material, so adding or removing a
 specification leaves the constants of the other realizations unchanged. With 2000 trajectories per realization and
 the default seed, the seven models have a weighted mean of $1.334 \pm 0.018$, against $\pi^{1/4} = 1.331$, with
-$\chi^2 = 6.5$ for 7 values. The seeds 11 to 14 give weighted means of 1.330, 1.354, 1.302 and 1.322. The offsets
+$\chi^2 = 6.5$ for 7 values. The seeds 11 to 14 give weighted means of 1.330, 1.353, 1.296 and 1.328. The offsets
 of the two unfolded models are $+0.027 \pm 0.053$ (Schlögl reactor) and $+0.013 \pm 0.050$ (toggle with unequal
 promoters), and lie between $-0.029$ and $+0.062$ with errors of 0.05 to 0.06 for the seeds 11 to 14: neither sweep
 offsets the write at this precision. For the toggle none is expected: its sweep keeps the promoters equal, so it
@@ -239,8 +239,8 @@ The record of the [web page](https://synthetix-institute.github.io/fieldbridge/)
 realization in eight runs of 3200, for which the error of one constant is 0.014 to 0.021. Eleven realizations reach
 the target. Besides the two toggles and the two sweeps of the Schlögl reactor, the normal form continued from below its
 write point simulates the equations of the normal form, so they are eight models. Their constants lie between 1.306
-and 1.343 (the convection roll gives $1.333 \pm 0.014$, the two-component normal form with split rates of Section 5
-$1.306 \pm 0.021$), with a weighted mean of $1.329 \pm 0.005$ and $\chi^2 = 3.9$ for 8 values: the scatter between
+and 1.343 (the convection roll gives $1.336 \pm 0.021$, the two-component normal form with split rates of Section 5
+$1.306 \pm 0.021$), with a weighted mean of $1.329 \pm 0.005$ and $\chi^2 = 4.0$ for 8 values: the scatter between
 models is that of the statistical error. The offsets of the two unfolded models are $-0.005 \pm 0.015$ (Schlögl
 reactor) and $+0.005 \pm 0.015$ (toggle with unequal promoters), and that of the sweep through the cusp is
 $+0.023 \pm 0.016$. With 2000 trajectories and the default seed that sweep gives $-0.121 \pm 0.055$, and the report

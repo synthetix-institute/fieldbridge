@@ -5,7 +5,7 @@
   "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., Nat. Commun. 8, 15785 (2017)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "9b651e12ce63c08a414f1e749da8880d5f8eb079c81d0126cebcd5a2b6ecf592",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 3.3,
-  "threshold-write": 12.4,
-  "phase-locking": 29.2,
-  "completion": 906.6,
-  "changes": 180.9
+  "symmetric-write": 3.4,
+  "threshold-write": 10.6,
+  "phase-locking": 28.4,
+  "completion": 1000.5,
+  "changes": 208.7
  },
  "completion": {
   "write_points": [
@@ -1210,7 +1210,7 @@
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 7.4,
+    "seconds": 7.1,
     "class": "reached"
    }
   },
@@ -1254,7 +1254,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.4,
+      "seconds": 6.5,
       "class": "reached"
      }
     },
@@ -1274,13 +1274,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.1,
+      "seconds": 2.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 7.1,
       "class": "reached"
      }
     },
@@ -1306,7 +1306,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 7.1,
+      "seconds": 7.3,
       "class": "reached"
      }
     },
@@ -1326,13 +1326,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 3 directions become critical together at the write point; the critical eigenspace is 3-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 1.9,
+      "seconds": 2.2,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.9,
+      "seconds": 6.2,
       "class": "reached"
      }
     },
@@ -1358,7 +1358,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 4.5,
       "class": "reached"
      }
     },
@@ -1378,13 +1378,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -6.25 s^5, so the canonical form is not the pitchfork and the swept-write tes",
-      "seconds": 0.6,
+      "seconds": 1.0,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 4.3,
       "class": "reached"
      }
     },
@@ -1399,13 +1399,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.5,
+      "seconds": 3.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.1,
+      "seconds": 3.4,
       "class": "reached"
      }
     },
@@ -1422,13 +1422,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.1,
+      "seconds": 3.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 3.7,
       "class": "reached"
      }
     },
@@ -1445,13 +1445,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.1,
+      "seconds": 3.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.2,
+      "seconds": 3.8,
       "class": "reached"
      }
     },
@@ -1468,13 +1468,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 3.9,
+      "seconds": 6.6,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.0,
+      "seconds": 5.1,
       "class": "reached"
      }
     },
@@ -1494,13 +1494,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.1,
+      "seconds": 3.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.0,
+      "seconds": 3.8,
       "class": "reached"
      }
     },
@@ -1517,13 +1517,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.5,
+      "seconds": 3.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.7,
+      "seconds": 3.4,
       "class": "reached"
      }
     },
@@ -1540,13 +1540,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.7,
+      "seconds": 3.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.9,
+      "seconds": 3.5,
       "class": "reached"
      }
     },
@@ -1563,13 +1563,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 4.6,
+      "seconds": 5.5,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.9,
+      "seconds": 4.7,
       "class": "reached"
      }
     },

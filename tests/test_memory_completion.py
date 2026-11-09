@@ -99,15 +99,14 @@ def test_the_critical_direction_does_not_depend_on_the_sign_the_eigensolver_give
     """The sign of an eigenvector is arbitrary, and two LAPACK builds returned opposite signs at the cusp of the driven
     trapped ion. The swept-write check gives the bias toward +mode its own random streams, so the two machines
     measured independent samples (law constants 1.47 and 0.90) and offsets of opposite sign. The critical direction
-    is oriented so that its largest component is positive."""
+    is oriented so that its largest component (the first of near-equal ones) is positive."""
     real = spec.load(Path(__file__).resolve().parents[1] / "examples" / "quantum" / "semiclassical" / "ion_duffing.json")
     q, v = np.array([2.752267826816943, -1.806257226422566]), 1.3037475667148828   # its first fold in the record
     nf = an.normal_form(real, q, "Delta", v)
     eig = np.linalg.eig
     monkeypatch.setattr(np.linalg, "eig", lambda M: (lambda e, V: (e, -V))(*eig(M)))
     flipped = an.normal_form(real, q, "Delta", v)
-    k = int(np.argmax(np.abs(nf["mode"])))
-    assert nf["mode"][k] > 0
+    assert nf["mode"][an.orientation_index(nf["mode"])] > 0
     for key in ("mode", "left_mode", "a2", "bias_along_mode"):
         assert np.allclose(flipped[key], nf[key], rtol=0, atol=1e-12), key
 
@@ -382,3 +381,10 @@ def test_the_noise_of_the_fast_direction_gives_the_slow_coordinate_the_drift_of_
     assert np.allclose(completion.fast_noise_drift(real, q, {"eps": 0.0}, v, w, 0.0), 0.0)
     one = spec.load(EX / "pitchfork.json")
     assert np.allclose(completion.fast_noise_drift(one, np.zeros(1), {"eps": 0.0}, np.ones(1), np.ones(1), D), 0.0)
+
+
+def test_a_symmetric_critical_direction_is_oriented_by_its_first_component_not_by_rounding():
+    from fieldbridge.memory import analysis as an
+    assert an.orientation_index(np.array([0.7071067811865475, -0.7071067811865476])) == 0
+    assert an.orientation_index(np.array([-0.7071067811865476, 0.7071067811865475])) == 0
+    assert an.orientation_index(np.array([0.3, -0.9, 0.2])) == 1

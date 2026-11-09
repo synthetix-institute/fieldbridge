@@ -5,7 +5,7 @@
   "source": "Carr, C., Ritter, R., Wade, C. G., Adams, C. S., Weatherill, K. J., 'Nonequilibrium phase transition in a dilute Rydberg ensemble', Phys. Rev. Lett. 111, 113901 (2013), arXiv:1302.6621 (full text of arXiv v3; the arXiv abstract page lists the title 'Cooperative non-equilibrium phase transition in a dilute Rydberg ensemble'; journal title checked against Crossref); Marcuzzi, M., Levi, E., Diehl, S., Garrahan, J. P., Lesanovsky, I., 'Universal nonequilibrium properties of dissipative Rydberg gases', Phys. Rev. Lett. 113, 210401 (2014), arXiv:1406.1015 (full text); Saffman, M., Walker, T. G., Molmer, K., 'Quantum information with Rydberg atoms', Rev. Mod. Phys. 82, 2313 (2010), arXiv:0909.4777 (full text)",
   "kind": "classical image of census entry 50: Driven-dissipative Rydberg ensemble (optical bistability of a Rydberg gas)"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "9b651e12ce63c08a414f1e749da8880d5f8eb079c81d0126cebcd5a2b6ecf592",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -19,22 +19,22 @@
    "class": "C R(fold) U R(pitchfork) K L",
    "word": "CRURKL",
    "law_constant": {
-    "constant": 1.4243783167305866,
-    "stderr": 0.13118916123769103,
+    "constant": 1.329100159968693,
+    "stderr": 0.12744009787153524,
     "expected": 1.3313353638003897,
-    "offset": 0.1487247549524553,
-    "offset_stderr": 0.13118916123769103,
+    "offset": -0.21182133911490597,
+    "offset_stderr": 0.12744009787153524,
     "offset_resolved": false,
     "by_sign": [
      {
       "sign": 1,
-      "constant": 1.5731030716830419,
-      "stderr": 0.1771986342014048
+      "constant": 1.117278820853787,
+      "stderr": 0.1923262172731697
      },
      {
       "sign": -1,
-      "constant": 1.2756535617781313,
-      "stderr": 0.19350201069278922
+      "constant": 1.5409214990835989,
+      "stderr": 0.16725591269494608
      }
     ],
     "replicates": 8,
@@ -66,15 +66,15 @@
      0.03648102166,
      0.0260128277,
      -0.196487103,
-     -0.004064941452,
-     -0.001005924466,
-     -0.004927594076,
-     -0.00406499332,
-     -0.001005808486,
-     -0.004927574963,
-     -0.004065345909,
-     -0.001006279206,
-     -0.004927187961,
+     0.004065082294,
+     0.001006064869,
+     0.004927449222,
+     0.004065030421,
+     0.00100618085,
+     0.004927468335,
+     0.00406467779,
+     0.001005710107,
+     0.00492785532,
      0.0005913710665
     ]
    }
@@ -101,11 +101,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 9.6,
-  "threshold-write": 2.9,
-  "phase-locking": 12.3,
-  "completion": 158.0,
-  "changes": 98.1
+  "symmetric-write": 16.4,
+  "threshold-write": 5.1,
+  "phase-locking": 15.4,
+  "completion": 185.6,
+  "changes": 112.6
  },
  "completion": {
   "write_points": [
@@ -201,20 +201,20 @@
           ]
          ],
          "reduced_law": [
-          0.715125,
-          0.284875
+          0.705875,
+          0.294125
          ],
          "law": [
-          0.715125,
-          0.284875
+          0.705875,
+          0.294125
          ],
          "certificate": [
           0.72125,
           0.27875
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.8639442879326704,
-         "deviation": 0.0061249999999999916
+         "deviation_sigma": 2.1686764778718124,
+         "deviation": 0.015375000000000028
         },
         {
          "bias_floors": 0.5,
@@ -244,20 +244,20 @@
           ]
          ],
          "reduced_law": [
-          0.3235,
-          0.6765
+          0.318,
+          0.682
          ],
          "law": [
-          0.3235,
-          0.6765
+          0.318,
+          0.682
          ],
          "certificate": [
           0.3405,
           0.6595
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 2.268887481800359,
-         "deviation": 0.017000000000000015
+         "deviation_sigma": 3.0029393141475413,
+         "deviation": 0.022500000000000075
         },
         {
          "bias_floors": 1.0,
@@ -287,20 +287,20 @@
           ]
          ],
          "reduced_law": [
-          0.850375,
-          0.149625
+          0.855,
+          0.145
          ],
          "law": [
-          0.850375,
-          0.149625
+          0.855,
+          0.145
          ],
          "certificate": [
           0.86975,
           0.13025
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 3.6407061058429657,
-         "deviation": 0.01937500000000003
+         "deviation_sigma": 2.771634325738519,
+         "deviation": 0.01475000000000004
         },
         {
          "bias_floors": 1.0,
@@ -330,20 +330,20 @@
           ]
          ],
          "reduced_law": [
-          0.172375,
-          0.827625
+          0.171625,
+          0.828375
          ],
          "law": [
-          0.172375,
-          0.827625
+          0.171625,
+          0.828375
          ],
          "certificate": [
           0.18075,
           0.81925
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.3764721644957205,
-         "deviation": 0.008375000000000021
+         "deviation_sigma": 1.499738328480407,
+         "deviation": 0.009124999999999994
         },
         {
          "bias_floors": 2.0,
@@ -373,20 +373,20 @@
           ]
          ],
          "reduced_law": [
-          0.980375,
-          0.019625
+          0.981875,
+          0.018125
          ],
          "law": [
-          0.980375,
-          0.019625
+          0.981875,
+          0.018125
          ],
          "certificate": [
           0.9785,
           0.0215
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.8175825673359916,
-         "deviation": 0.0018749999999999982
+         "deviation_sigma": 1.4716486212047946,
+         "deviation": 0.003375000000000017
         },
         {
          "bias_floors": 2.0,
@@ -416,44 +416,44 @@
           ]
          ],
          "reduced_law": [
-          0.026125,
-          0.973875
+          0.025625,
+          0.974375
          ],
          "law": [
-          0.026125,
-          0.973875
+          0.025625,
+          0.974375
          ],
          "certificate": [
           0.02925,
           0.97075
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.1729064715513684,
-         "deviation": 0.0031250000000000444
+         "deviation_sigma": 1.360571506999569,
+         "deviation": 0.0036250000000000032
         }
        ],
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.715125,
-          "P_toward_minus": 0.6765,
-          "response_constant": 1.3664207483368107,
-          "offset": 0.0552429605176884
+          "P_toward_plus": 0.705875,
+          "P_toward_minus": 0.682,
+          "response_constant": 1.350869475746825,
+          "offset": 0.034037459803265446
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.850375,
-          "P_toward_minus": 0.827625,
-          "response_constant": 1.3199288849348336,
-          "offset": 0.04661077591075852
+          "P_toward_plus": 0.855,
+          "P_toward_minus": 0.828375,
+          "response_constant": 1.3352527211793017,
+          "offset": 0.05517919049067804
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.980375,
-          "P_toward_minus": 0.973875,
-          "response_constant": 1.332208895212054,
-          "offset": 0.06024401719210892
+          "P_toward_plus": 0.981875,
+          "P_toward_minus": 0.974375,
+          "response_constant": 1.3458111600559597,
+          "offset": 0.07236576814913931
          }
         ],
         "certificate": [
@@ -494,7 +494,7 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 2.8,
+    "seconds": 2.5,
     "class": "reached"
    },
    "threshold-write": {
@@ -512,7 +512,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 1.2,
       "class": "no write point"
      },
      "threshold-write": {
@@ -560,7 +560,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.6,
+      "seconds": 1.7,
       "class": "single stable state"
      }
     },
@@ -581,7 +581,7 @@
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.3,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -596,13 +596,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 1.3,
+      "seconds": 2.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.1,
+      "seconds": 1.3,
       "class": "reached"
      }
     },
@@ -623,7 +623,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.2,
+      "seconds": 2.3,
       "class": "single stable state"
      }
     },
@@ -638,13 +638,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "the drift vanishes along the critical direction: the write point is a line of states and no state is chosen",
-      "seconds": 5.9,
+      "seconds": 5.5,
       "class": "unclassified"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 7.7,
+      "seconds": 8.5,
       "class": "oscillation"
      }
     },
@@ -680,13 +680,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.1,
+      "seconds": 2.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.3,
+      "seconds": 2.7,
       "class": "single stable state"
      }
     },
@@ -701,13 +701,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.5,
+      "seconds": 2.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.2,
+      "seconds": 2.5,
       "class": "single stable state"
      }
     },
@@ -722,7 +722,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 1.0,
       "class": "no write point"
      },
      "threshold-write": {
@@ -749,7 +749,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.4,
+      "seconds": 2.7,
       "class": "single stable state"
      }
     },
