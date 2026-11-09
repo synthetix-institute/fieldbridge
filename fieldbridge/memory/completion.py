@@ -176,6 +176,26 @@ def stable_zeros(real: Realization, rng, over: Dict, n_starts: int = 40, seeds=N
     return out
 
 
+ROOT_MERGE = 1e-4   # zeros of the drift closer than this times the base length (times sqrt of the coordinates) are one
+                    # root: the accuracy of a damped-Newton zero, not the size of a stored state
+
+
+def end_states(real: Realization, rng, over: Dict, n_starts: int = 40, seeds=None) -> List[np.ndarray]:
+    """The stable states at the end of the sweep, among which the final states are assigned: the stable zeros that damped
+    Newton reaches from random starts and from the seeds, with zeros merged only where they are the same root to within
+    ROOT_MERGE of the base length. stable_states merges zeros within the tolerance of stored states, 0.05 of the base
+    length; where the written states at the end of the sweep lie closer together than that, as on a narrow pitchfork
+    (states at +-0.023 on a carrier of scale 3, against a tolerance of 0.15), they are taken as one state and the write
+    is reported as having no choice."""
+    tol = ROOT_MERGE * an.base_length(real) * np.sqrt(real.carrier.dim)
+    out: List[np.ndarray] = []
+    for q in stable_zeros(real, rng, over, n_starts, seeds):
+        c = an._canon(real, q)
+        if not any(real.carrier.distance(c, an._canon(real, s)) < tol for s in out):
+            out.append(q)
+    return out
+
+
 def _space_directions(k: int) -> List[np.ndarray]:
     """Directions in the critical space: +-each axis for k = 1; 8 directions on the unit circle of the first two axes
     and +-each further axis otherwise."""
@@ -797,12 +817,12 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
         return {"status": "the start of the sweep does not relax: the write point lies outside the basin of every state at "
                           "the start, and the unwritten branch does not reach the start as a stable state",
                 "write_point": qc.tolist()}
-    stable = stable_states(real, rng, sweep.over(sweep.T), seeds=swept_seeds(real, sweep, q0, R, sweep.T))
+    stable = end_states(real, rng, sweep.over(sweep.T), seeds=swept_seeds(real, sweep, q0, R, sweep.T))
     if len(stable) < 2:
         # the sweep leaves the range in which a choice exists (a cusp sweep that crosses the far fold): it ends at the
         # latest time after the crossing at which two or more states are stable
         for t_end in np.linspace(sweep.T, sweep.t_cross, 25)[1:-1]:
-            st = stable_states(real, rng, sweep.over(float(t_end)),
+            st = end_states(real, rng, sweep.over(float(t_end)),
                                seeds=swept_seeds(real, sweep, q0, R, float(t_end)))
             if len(st) >= 2:
                 sweep.T, stable = float(t_end), st
@@ -842,7 +862,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     tau_s = saturation_time(D_s * a3 / rate) if (a3 > 0 and k >= 2) else None
     if tau_s is not None and sweep.t_cross + (tau_s + SETTLE_MARGIN) / sqrt(rate) > sweep.T:
         t_end = sweep.t_cross + (tau_s + SETTLE_MARGIN) / sqrt(rate)
-        st = stable_states(real, rng, sweep.over(t_end), seeds=swept_seeds(real, sweep, q0, R, t_end))
+        st = end_states(real, rng, sweep.over(t_end), seeds=swept_seeds(real, sweep, q0, R, t_end))
         if len(st) >= 2:
             extended = {"from": float(sweep.T), "to": float(t_end), "saturation_time": tau_s}
             sweep.T, stable = t_end, st
