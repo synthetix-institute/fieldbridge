@@ -88,7 +88,7 @@ input. The integral of the rate of $\phi$ over the response equals the change of
 as a calibration of the simulation. The report `regulation.md` states the class, the integrator, the clamps and the
 steps, and `regulation.json` holds a certificate (Section 7).
 
-The published models in [`examples/regulation`](../../examples/regulation) come from five fields (32 parameter points,
+The published models in [`examples/regulation`](../../examples/regulation) come from six fields (32 parameter points,
 default seed):
 
 | Model | Field | Class | Integrator | G/G_open | Final / peak after the first step |
@@ -100,6 +100,7 @@ default seed):
 | incoherent feedforward loop with a proportioner node (IFFLP) | biochemical networks | partial-adaptation | none found | 0.00295 | -0.00314 |
 | negative feedback loop with a buffer node (NFBLB) | biochemical networks | partial-adaptation | none found | 0.308 | 0.812 |
 | negative feedback loop with a buffer node, enzymes on B closer to saturation (NFBLB) | biochemical networks | partial-adaptation | none found | 0.0497 | 0.161 |
+| dilute concentration held by phase coexistence (droplets with turnover) | soft matter | partial-adaptation | none found | 0.668 | 0.613 |
 | quasi-integral control in a growing cell (type II) | synthetic biology | partial-adaptation | none found | 0.0216 | 0.167 |
 
 Every model with an integrator returned exactly at every sampled parameter point with a stable steady state. In the
@@ -119,6 +120,8 @@ Each published model has a control that must change the class:
 | chemotaxis with a methylation rate that also depends on the methylation level (control) | a turnover -kd (m - m0) added to F(a): the rate no longer depends on the activity alone | partial-adaptation |
 | cruise control with a proportional controller only (control) | the integral term removed: u = kp (vr - v) | no-adaptation |
 | EnvZ-OmpR with a second phosphatase of OmpR-P (control) | an added reaction Yp -> Y (k12 = 0.05) that does not pass through XD | partial-adaptation |
+| dilute concentration without droplets (control) | the droplets removed: u = j/kappa1 follows the supply | no-adaptation |
+| dilute concentration held by droplets that divide (control) | droplets divide above r_div, so their number follows the supply at fixed size | perfect-adaptation |
 | leaky integral control in a growing cell (type II, eps = 1; control) | controller reactions as slow as in the leaky controller of Eq. (2.4): eps = 1 | partial-adaptation |
 | ideal antithetic integral control without dilution (type II, gamma = 0; control) | dilution of the controller species removed (Eq. 2.2) | perfect-adaptation |
 
@@ -138,6 +141,26 @@ saturation, the smaller the remaining fraction.
 A leak does not always leave a residual. When the controller is autocatalytic, $dz/dt = k z (y - y_0) - \delta z$, the
 logarithm $\ln z$ integrates $y - y_0 - \delta/k$: dilution moves the set point to $y_0 + \delta/k$ and the return is
 still exact (benchmark `autocatalytic_diluted`; compare Ruoff et al., 2019).
+
+A material can integrate without a controller molecule. In a solution in which a species forms droplets, the droplets
+grow while the surrounding concentration exceeds its value at their interface and shrink below it (Lifshitz and
+Slyozov, 1961). The amount in the droplets therefore integrates the deviation of the dilute concentration from
+saturation, and turnover of the material inside the droplets makes the integrator leak (Zwicker, Hyman and Jülicher,
+2015). In units of the saturation concentration, with droplets of radius $r$ and a supply $j$
+(`phase_coexistence_droplets`), the steady dilute concentration is
+
+$$
+u^* = 1 + \frac{\varepsilon}{r} + \frac{\kappa_2 r^2}{3} :
+$$
+
+saturation, plus a capillary offset that falls with the size of the droplets, plus a turnover offset that grows with
+it. More supply makes larger droplets and a larger offset, so the return is partial. The relative sensitivity is 0.04,
+against 1 without droplets (control 1), where the dilute phase alone removes the supply and $u = j/\kappa_1$. Clamping
+$r$ leaves two thirds of the change: exchange with droplets of fixed size already absorbs most of a step, and their
+growth removes a third of what remains. When droplets divide above a radius $r_{\rm div}$ (Zwicker et al., 2017),
+their number follows the supply at fixed size, and the dilute concentration returns exactly (control 2). The search
+reports no integrator there, as it should in its coordinates: $\ln n$ integrates $r - r_{\rm div}$, not the output.
+The output is held because at steady state it is a function of the radius alone.
 
 ## 7. Certificates
 
@@ -214,12 +237,14 @@ variable, a parameter off a cancellation. `regulation survey` compares each spec
 The tables of Sections 4 and 5 are those of
 `python3 -B -m fieldbridge regulation survey examples/regulation examples/regulation/controls --out-dir build/regulation`.
 
-Sources: B. A. Francis and W. M. Wonham, Automatica 12, 457 (1976); N. Barkai and S. Leibler, Nature 387, 913
-(1997); T.-M. Yi, Y. Huang, M. I. Simon and J. Doyle, PNAS 97, 4649 (2000); E. D. Sontag, Syst. Control Lett. 50, 119
-(2003); Y. Tu, T. S. Shimizu and H. C. Berg, PNAS 105, 14855 (2008); W. Ma, A. Trusina, H. El-Samad, W. A. Lim and
-C. Tang, Cell 138, 760 (2009); G. Shinar and M. Feinberg, Science 327, 1389 (2010); D. F. Anderson, G. A. Enciso and
-M. D. Johnston, J. R. Soc. Interface 11, 20130943 (2014); C. Briat, A. Gupta and M. Khammash, Cell Syst. 2, 15
-(2016); R. P. Araujo and L. A. Liotta, Nat. Commun. 9, 1757 (2018); Y. Qian and D. Del Vecchio, J. R. Soc. Interface
-15, 20170902 (2018); P. Ruoff, O. Agafonov, D. M. Tveit, K. Thorsen and T. Drengstig, PLoS ONE 14, e0207831 (2019);
-D. Cappelletti, A. Gupta and M. Khammash, J. R. Soc. Interface 17, 20200437 (2020); K. J. Åström and R. M. Murray,
+Sources: I. M. Lifshitz and V. V. Slyozov, J. Phys. Chem. Solids 19, 35 (1961); B. A. Francis and W. M. Wonham,
+Automatica 12, 457 (1976); N. Barkai and S. Leibler, Nature 387, 913 (1997); T.-M. Yi, Y. Huang, M. I. Simon and J.
+Doyle, PNAS 97, 4649 (2000); E. D. Sontag, Syst. Control Lett. 50, 119 (2003); Y. Tu, T. S. Shimizu and H. C. Berg,
+PNAS 105, 14855 (2008); W. Ma, A. Trusina, H. El-Samad, W. A. Lim and C. Tang, Cell 138, 760 (2009); G. Shinar and M.
+Feinberg, Science 327, 1389 (2010); D. F. Anderson, G. A. Enciso and M. D. Johnston, J. R. Soc. Interface 11, 20130943
+(2014); D. Zwicker, A. A. Hyman and F. Jülicher, Phys. Rev. E 92, 012317 (2015); C. Briat, A. Gupta and M. Khammash,
+Cell Syst. 2, 15 (2016); D. Zwicker, R. Seyboldt, C. A. Weber, A. A. Hyman and F. Jülicher, Nat. Phys. 13, 408 (2017);
+R. P. Araujo and L. A. Liotta, Nat. Commun. 9, 1757 (2018); Y. Qian and D. Del Vecchio, J. R. Soc. Interface 15,
+20170902 (2018); P. Ruoff, O. Agafonov, D. M. Tveit, K. Thorsen and T. Drengstig, PLoS ONE 14, e0207831 (2019); D.
+Cappelletti, A. Gupta and M. Khammash, J. R. Soc. Interface 17, 20200437 (2020); K. J. Åström and R. M. Murray,
 *Feedback Systems*, 2nd ed. (Princeton, 2021).
