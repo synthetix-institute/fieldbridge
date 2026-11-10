@@ -362,17 +362,23 @@ def start_of_sweep(real: Realization, sweep: Sweep, qc: np.ndarray, crossing: Tu
 
 
 def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.ndarray, D: float) -> np.ndarray:
-    """The drift 1/2 F''[C] that the noise outside the critical space gives the mean state through the curvature of the
-    drift, at a point q of the path: C is the stationary covariance of the linear drift under the noise 2D, from the
-    modes of the Jacobian, without the pairs of modes that both lie in the critical space (the k modes of largest overlap
-    with R), as fast_noise_drift does for one slow mode. It keeps the covariance of the relaxing modes and their
-    correlation with the critical ones; a pair whose rates do not sum to a decay contributes nothing. A linear stage
-    carries the noise to first order and leaves this drift out: on the driven Kerr resonators, where the second
-    quadrature relaxes slowly and the reduced law is withdrawn, its omission put the offset of the write about 0.2 from
-    the full dynamics, the shift between the noise of the fast direction on and off. (The covariance that the linear
-    stage itself carries does not serve: where the relaxing direction is slow, its correlation with the critical mode
-    grows after the crossing, and the drift from it sent every sample to one state.) Zero in one dimension or without
-    noise."""
+    """The drift 1/2 F''[C_perp] that the fluctuations across the critical space give the mean state through the
+    curvature of the drift, at a point q of the path. C is the stationary covariance of the linear drift under the noise
+    2D, from the modes of the Jacobian, without the pairs of modes that both lie in the critical space (the k modes of
+    largest overlap with R), as fast_noise_drift does for one slow mode; C_perp is its part in the directions orthogonal to
+    the critical space. A linear stage carries the noise to first order and leaves this drift out: on the driven Kerr
+    resonators, where the second quadrature relaxes slowly and the reduced law is withdrawn, its omission put the offset
+    of the write about 0.2 from the full dynamics, the shift between the noise of the fast direction on and off.
+
+    Only the fluctuations across the critical space enter. The linear stage also leaves out the curvature along the
+    critical direction itself (a2 <s^2>), and where the modes are far from orthogonal the part of the critical coordinate's
+    own fluctuation that a split by modes assigns to a relaxing mode is not separable from it: on weakly damped masses,
+    whose relaxing mode (1, -g) lies almost along the critical one (1, 0), the covariance of the relaxing modes and its
+    correlation with the critical one, bent by the force along x, moved the offset of the underdamped Gaussian trap to
+    -1.52 (all pairs but the critical one) or +0.17 (the relaxing pairs alone) against -0.70; across the critical space
+    the velocity fluctuations meet no curvature, and the offset is -0.70. (The covariance that the linear stage itself
+    carries does not serve either: where the relaxing direction is slow, its correlation with the critical mode grows after
+    the crossing, and the drift from it sent every sample to one state.) Zero in one dimension or without noise."""
     q = np.asarray(q, float)
     n, k = q.size, R.shape[1]
     if n <= k or D <= 0:
@@ -390,7 +396,9 @@ def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.nd
             if (i in crit and j in crit) or den.real <= 0:
                 continue
             C += np.outer(VR[:, i], VR[:, j].conj()) * 2.0 * D * (VL[i] @ VL[j].conj()) / den
-    lam, U = np.linalg.eigh(0.5 * (C.real + C.real.T))
+    Pp = np.eye(n) - Qr @ Qr.T
+    Cp = Pp @ (0.5 * (C.real + C.real.T)) @ Pp
+    lam, U = np.linalg.eigh(0.5 * (Cp + Cp.T))
     f0 = np.asarray(real.F(q, **over), float)
     eps = 1e-3 * an.base_length(real)
     out = np.zeros(n)
