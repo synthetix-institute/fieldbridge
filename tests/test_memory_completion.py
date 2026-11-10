@@ -342,3 +342,17 @@ def test_written_states_closer_than_the_merge_tolerance_are_found_at_the_mapping
     assert completion.stable_states(real, rng, {}, n_starts=0, seeds=seeds) == []
     found = sorted(float(q[0]) for q in completion.stable_zeros(real, rng, {}, n_starts=0, seeds=seeds))
     assert found == pytest.approx([-0.1, 0.1], abs=1e-6)
+
+
+def test_written_states_closer_than_the_merge_tolerance_are_kept_at_the_end_of_the_sweep():
+    # a pitchfork whose written states at +-0.05 lie closer together than the tolerance of stored states (0.2 on a carrier
+    # of scale 4): stable_states keeps one of them, end_states keeps both and merges only zeros that are the same root
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                      "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x"], "scale": 4.0}, "parameters": {"a": 0.0025},
+                      "drift": {"x": "a*x - x**3"}, "noise": 0.001, "control": {"name": "a", "range": [-1.0, 1.0]}})
+    seeds = np.array([[0.06], [0.07], [-0.06]])
+    rng = np.random.default_rng(0)
+    assert len(completion.stable_states(real, rng, {}, n_starts=0, seeds=seeds)) == 1
+    found = sorted(float(q[0]) for q in completion.end_states(real, rng, {}, n_starts=0, seeds=seeds))
+    assert found == pytest.approx([-0.05, 0.05], abs=1e-6)
