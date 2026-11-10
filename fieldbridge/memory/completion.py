@@ -361,27 +361,40 @@ def start_of_sweep(real: Realization, sweep: Sweep, qc: np.ndarray, crossing: Tu
     return _relaxed(real, qc, sweep.over(0.0)), "relaxed from the write point"
 
 
-def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, C: np.ndarray, R: np.ndarray, L: np.ndarray) -> np.ndarray:
-    """The drift 1/2 F''[C_x] that the fluctuations outside the critical space give the mean state through the curvature
-    of the drift, at q, from the covariance C of the deviation that the linear stage carries: C_x is C without its block
-    inside the critical space (R, L), whose curvature is the nonlinear stage itself, and keeps the covariance of the
-    relaxing directions and their correlation with the critical ones. A linear stage carries the noise to first order and
-    leaves this drift out; on the driven Kerr resonators, where the second quadrature relaxes slowly and the reduced law is
-    withdrawn, its omission put the offset of the write about 0.2 from the full dynamics (the shift that the full dynamics
-    show between the noise of the fast direction on and off). Zero in one dimension."""
-    n = q.size
-    if n == 1:
+def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.ndarray, D: float) -> np.ndarray:
+    """The drift 1/2 F''[C] that the noise outside the critical space gives the mean state through the curvature of the
+    drift, at a point q of the path: C is the stationary covariance of the linear drift under the noise 2D, from the
+    modes of the Jacobian, without the pairs of modes that both lie in the critical space (the k modes of largest overlap
+    with R), as fast_noise_drift does for one slow mode. It keeps the covariance of the relaxing modes and their
+    correlation with the critical ones; a pair whose rates do not sum to a decay contributes nothing. A linear stage
+    carries the noise to first order and leaves this drift out: on the driven Kerr resonators, where the second
+    quadrature relaxes slowly and the reduced law is withdrawn, its omission put the offset of the write about 0.2 from
+    the full dynamics, the shift between the noise of the fast direction on and off. (The covariance that the linear
+    stage itself carries does not serve: where the relaxing direction is slow, its correlation with the critical mode
+    grows after the crossing, and the drift from it sent every sample to one state.) Zero in one dimension or without
+    noise."""
+    q = np.asarray(q, float)
+    n, k = q.size, R.shape[1]
+    if n <= k or D <= 0:
         return np.zeros(n)
-    P = R @ L.T
-    Cx = C - P @ C @ P.T
-    Cx = 0.5 * (Cx + Cx.T)
-    lam, U = np.linalg.eigh(Cx)
+    J = an.jacobian(real, q, over)
+    ev, VR = np.linalg.eig(J)
+    VL = np.linalg.inv(VR)
+    Qr, _ = np.linalg.qr(R)
+    overlap = np.linalg.norm(Qr.T @ VR, axis=0) / np.linalg.norm(VR, axis=0)
+    crit = set(np.argsort(-overlap)[:k].tolist())
+    C = np.zeros((n, n), complex)
+    for i in range(n):
+        for j in range(n):
+            den = -(ev[i] + np.conj(ev[j]))
+            if (i in crit and j in crit) or den.real <= 0:
+                continue
+            C += np.outer(VR[:, i], VR[:, j].conj()) * 2.0 * D * (VL[i] @ VL[j].conj()) / den
+    lam, U = np.linalg.eigh(0.5 * (C.real + C.real.T))
     f0 = np.asarray(real.F(q, **over), float)
     eps = 1e-3 * an.base_length(real)
     out = np.zeros(n)
     for l_, u in zip(lam, U.T):
-        if abs(l_) <= 1e-14 * max(float(np.max(np.abs(lam))), 1e-300):
-            continue
         fp = np.asarray(real.F(real.carrier.wrap(q + eps * u), **over), float)
         fm = np.asarray(real.F(real.carrier.wrap(q - eps * u), **over), float)
         out += 0.5 * l_ * (fp + fm - 2.0 * f0) / eps ** 2
@@ -420,7 +433,7 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
     lag_at_crossing, rate_at_crossing = None, None
     J, b = an.jacobian(real, q_ref, sweep.over(t)), bias(q_ref)
     Jc = L.T @ J @ R
-    g = np.zeros(n)                                 # no covariance yet at the start
+    g = noise_curvature_drift(real, q_ref, sweep.over(t), R, D)
     kappa = float(np.max(np.linalg.eigvals(Jc).real))
     path: Dict[str, List] = {"t": [t], "q": [q_ref.copy()], "branch": [q_branch.copy()], "Phi": [Phi.copy()], "grown": [0.0], "cov": [np.zeros((k, k))],
                              "forced": [np.zeros(k)], "biased": [np.zeros((len(targets), k))], "d": [np.zeros(k)]}
@@ -445,11 +458,11 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         kappa_next = float(np.max(np.linalg.eigvals(Jc_next).real))
         # the deterministic forcing acts through the step: half of it before the flow of the step and half after. The
         # mean is also pushed by the drift that the fluctuations outside the critical space give it through the
-        # curvature (noise_curvature_drift), from the covariance at both ends of the step
+        # curvature (noise_curvature_drift), at both ends of the step
         d1 = J @ C + C @ J.T + 2 * D * I
         C_pred = C + dt * d1
         C_next = C + 0.5 * dt * (d1 + J_next @ C_pred + C_pred @ J_next.T + 2 * D * I)
-        g_next = noise_curvature_drift(real, q_new, sweep.over(t_next), C_next, R, L)
+        g_next = noise_curvature_drift(real, q_new, sweep.over(t_next), R, D)
         mf = mf + 0.5 * impulse
         d1 = J @ mf + g
         mf = mf + 0.5 * dt * (d1 + J_next @ (mf + dt * d1) + g_next) + 0.5 * impulse
