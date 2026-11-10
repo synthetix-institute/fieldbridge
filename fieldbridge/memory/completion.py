@@ -361,6 +361,33 @@ def start_of_sweep(real: Realization, sweep: Sweep, qc: np.ndarray, crossing: Tu
     return _relaxed(real, qc, sweep.over(0.0)), "relaxed from the write point"
 
 
+def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, C: np.ndarray, R: np.ndarray, L: np.ndarray) -> np.ndarray:
+    """The drift 1/2 F''[C_x] that the fluctuations outside the critical space give the mean state through the curvature
+    of the drift, at q, from the covariance C of the deviation that the linear stage carries: C_x is C without its block
+    inside the critical space (R, L), whose curvature is the nonlinear stage itself, and keeps the covariance of the
+    relaxing directions and their correlation with the critical ones. A linear stage carries the noise to first order and
+    leaves this drift out; on the driven Kerr resonators, where the second quadrature relaxes slowly and the reduced law is
+    withdrawn, its omission put the offset of the write about 0.2 from the full dynamics (the shift that the full dynamics
+    show between the noise of the fast direction on and off). Zero in one dimension."""
+    n = q.size
+    if n == 1:
+        return np.zeros(n)
+    P = R @ L.T
+    Cx = C - P @ C @ P.T
+    Cx = 0.5 * (Cx + Cx.T)
+    lam, U = np.linalg.eigh(Cx)
+    f0 = np.asarray(real.F(q, **over), float)
+    eps = 1e-3 * an.base_length(real)
+    out = np.zeros(n)
+    for l_, u in zip(lam, U.T):
+        if abs(l_) <= 1e-14 * max(float(np.max(np.abs(lam))), 1e-300):
+            continue
+        fp = np.asarray(real.F(real.carrier.wrap(q + eps * u), **over), float)
+        fm = np.asarray(real.F(real.carrier.wrap(q - eps * u), **over), float)
+        out += 0.5 * l_ * (fp + fm - 2.0 * f0) / eps ** 2
+    return out
+
+
 def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
                    targets: Sequence[np.ndarray], strengths: Sequence[float], dt: float, D: float) -> Dict[str, object]:
     """The state the sweep really follows, with no bias and no noise, and the moments of the deviation from it: the
@@ -393,6 +420,7 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
     lag_at_crossing, rate_at_crossing = None, None
     J, b = an.jacobian(real, q_ref, sweep.over(t)), bias(q_ref)
     Jc = L.T @ J @ R
+    g = np.zeros(n)                                 # no covariance yet at the start
     kappa = float(np.max(np.linalg.eigvals(Jc).real))
     path: Dict[str, List] = {"t": [t], "q": [q_ref.copy()], "branch": [q_branch.copy()], "Phi": [Phi.copy()], "grown": [0.0], "cov": [np.zeros((k, k))],
                              "forced": [np.zeros(k)], "biased": [np.zeros((len(targets), k))], "d": [np.zeros(k)]}
@@ -415,22 +443,26 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         J_next, b_next = an.jacobian(real, q_new, sweep.over(t_next)), bias(q_new)
         Jc_next = L.T @ J_next @ R
         kappa_next = float(np.max(np.linalg.eigvals(Jc_next).real))
-        # the deterministic forcing acts through the step: half of it before the flow of the step and half after
-        mf = mf + 0.5 * impulse
-        d1 = J @ mf
-        mf = mf + 0.5 * dt * (d1 + J_next @ (mf + dt * d1)) + 0.5 * impulse
-        d1 = mb @ J.T + b
-        mb = mb + 0.5 * dt * (d1 + (mb + dt * d1) @ J_next.T + b_next)
+        # the deterministic forcing acts through the step: half of it before the flow of the step and half after. The
+        # mean is also pushed by the drift that the fluctuations outside the critical space give it through the
+        # curvature (noise_curvature_drift), from the covariance at both ends of the step
         d1 = J @ C + C @ J.T + 2 * D * I
         C_pred = C + dt * d1
-        C = C + 0.5 * dt * (d1 + J_next @ C_pred + C_pred @ J_next.T + 2 * D * I)
+        C_next = C + 0.5 * dt * (d1 + J_next @ C_pred + C_pred @ J_next.T + 2 * D * I)
+        g_next = noise_curvature_drift(real, q_new, sweep.over(t_next), C_next, R, L)
+        mf = mf + 0.5 * impulse
+        d1 = J @ mf + g
+        mf = mf + 0.5 * dt * (d1 + J_next @ (mf + dt * d1) + g_next) + 0.5 * impulse
+        d1 = mb @ J.T + b
+        mb = mb + 0.5 * dt * (d1 + (mb + dt * d1) @ J_next.T + b_next)
+        C = C_next
         d1 = Jc @ Phi
         Phi = Phi + 0.5 * dt * (d1 + Jc_next @ (Phi + dt * d1))
         if t > sweep.t_cross:
             grown += 0.5 * dt * (max(kappa, 0.0) + max(kappa_next, 0.0))
         if rate_at_crossing is None and t_next >= t_hold and kappa < 0.0 <= kappa_next:
             rate_at_crossing = (kappa_next - kappa) / dt
-        q_ref, J, Jc, kappa, b, t = q_new, J_next, Jc_next, kappa_next, b_next, t_next
+        q_ref, J, Jc, kappa, b, g, t = q_new, J_next, Jc_next, kappa_next, b_next, g_next, t_next
         path["t"].append(t); path["q"].append(q_ref.copy()); path["branch"].append(q_branch.copy())
         path["Phi"].append(Phi.copy()); path["grown"].append(grown if t > sweep.t_cross else 0.0); path["cov"].append(L.T @ C @ L)
         path["forced"].append(L.T @ mf); path["biased"].append(mb @ L); path["d"].append(L.T @ real.carrier.diff(q_branch, q_ref))
