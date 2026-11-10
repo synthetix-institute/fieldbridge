@@ -467,13 +467,22 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     where no trajectory is). Written states that lie in the same direction from the unwritten one are not told apart by
     the direction of a sample, and have no sector law (SAME_DIRECTION; on the rf-SQUID phase qubit, past a fold with a
     slow second direction, the sector law gave the states on one side probabilities they do not have, a deviation of 1.0
-    from the full dynamics, where the flow gives none). Under the noise rule of law_at every pitchfork is
-    in the saturated regime. Found on populations of pitchforks: at a coupling of a third of the passage scale the
-    sector law at the mapping time holds to a few percent with two, three and four units, where the sector law at the
-    end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter. Where the spread reaches
-    LINEAR_FRACTION of the distance to the nearest written state before the crossing, the noise is too strong for the
-    deviation to stay linear through the crossing (recorded as linear_size_before_crossing); the certificate then
-    decides whether the law still holds."""
+    from the full dynamics, where the flow gives none). In one direction the sign of a sample is read against
+    the unwritten branch, at the end of the linear stage (the sample's deviation plus the lag of the reference behind
+    the branch), and a positive sign goes to the written state of largest critical coordinate, a negative one to that of
+    smallest. On the magnon-Kerr element the sweep through the unfolded cusp moves the branch by more than the distance
+    to the written states (1.7 against 1.1 and 1.4), and both states lie on one side of the state at the write point;
+    sectors read in direction from the write point gave every sample to one state (a response of 0, where the full
+    dynamics give 1.26). Read against the branch, the sign separates them. In two or more
+    directions the directions are taken from the write point (from the branch at the mapping time, the sector law
+    replaced the flow on the optomechanical element, whose deviation is dominated by its two slow directions, and
+    differed from the full dynamics by 0.79 where the flow differs by 0.14). Under the noise rule of law_at every
+    pitchfork is in the saturated regime. Found on populations of pitchforks: at a coupling of a third of the
+    passage scale the sector law at the mapping time holds to a few percent with two, three and four units, where
+    the sector law at the end of the linear stage and the flow from a rescaled start fail by a tenth and a quarter.
+    Where the spread reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing, the
+    noise is too strong for the deviation to stay linear through the crossing (recorded as
+    linear_size_before_crossing); the certificate then decides whether the law still holds."""
     dt = dt or 0.5 * an.safe_dt(real)
     ell = min(float(np.linalg.norm(s - q0)) for s in stable) if stable else an.base_length(real)
     k = R.shape[1]
@@ -579,8 +588,9 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     The unwritten branch q*(t) is followed through the crossing; at n_grid times the drift along the slow direction is
     taken on the slow manifold to all orders (analysis._slow_manifold_drift: the relaxing directions are eliminated at
     each amplitude s, out to beyond the written states), and the projections of the lag beta = -w.dq*/dt, of the bias and
-    of the noise D_s = D w.w give
-        ds/dt = f(s, t) + beta(t) + h_s(t) + sqrt(2 D_s(t)) xi,
+    of the noise D_s = D w.w and of the drift b_D = w.fast_noise_drift that the noise of the relaxing directions gives the
+    slow coordinate give
+        ds/dt = f(s, t) + beta(t) + b_D(t) + h_s(t) + sqrt(2 D_s(t)) xi,
     which is solved from s = 0. The final s is assigned to the stable state whose coordinate along w is nearest. The
     lag of the state behind the moving branch, which a linear stage overestimates near the crossing, is limited here by
     the nonlinear drift. A cubic truncation of f misses the terms beyond the cubic about the moving branch, and on a steep
@@ -589,9 +599,22 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     analysis.normal_form, s' = a1 s + a2 s^2 + a3 s^3, stands in at that time, and beyond the amplitudes tabulated the
     cubic continues the tabulated drift. The reduction holds only where the eliminated directions relax fast against the
     drift along the manifold (reduction_validity); where they do not, no law is integrated, and (None, validity) is
-    returned. Otherwise the probabilities of the stable states for each bias are returned with the validity."""
+    returned. Otherwise the probabilities of the stable states for each bias are returned with the validity.
+
+    Measured with the cubic fit in place of the slow-manifold drift (main, 7d287e4): without b_D the offset of the
+    write at the cusp of a driven Kerr resonator was 0.97
+    to 1.01 where the full dynamics give 0.77 to 0.78 (Josephson bifurcation amplifier; 0.92 to 0.94 against 0.75 to
+    0.79 for the driven transmon); with the noise of the fast direction removed, the full dynamics give 0.95 to 0.98,
+    the law without b_D, and with b_D the law gives 0.78 and 0.84 (transmon 0.75 and 0.74).
+
+    The reduction needs the slow rate to be separated from the others. On the phonon laser of a trapped ion it starts
+    where a spiral becomes a node (rates -0.42 and -0.21, |w| = 6.4; the series gives a3 = 520 there), only about one
+    e-fold of the slow rate before the crossing: at frozen control the full dynamics give the slow coordinate a mean of
+    +0.34, the total curvature drift 1/2 w.F''[C]/|a1| predicts 0.30, and the one-coordinate model gives +0.04 without
+    b_D, -0.47 with it and -0.29 with the series coefficients. The one-coordinate reduction holds there in no form; its
+    law, an equilibrium write that is not certified with or without b_D, writes one state (deviation 0.92)."""
     ts_all = np.linspace(0.0, sweep.T, n_grid)
-    qs, coef, real_from = [], [], None
+    qs, coef, fast, real_from = [], [], [], None
     q, q_prev = q0.copy(), None
     if crossing is None:
         crossing = (np.zeros((q0.size, 0)), np.zeros((q0.size, 0)))
@@ -606,11 +629,12 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
             # reduction exists only from the point where the slow direction becomes a real line
             if real_from is not None and t > sweep.t_cross:
                 raise ValueError("the slow direction along the sweep is not a real line after the crossing")
-            qs, coef, real_from = [], [], None
+            qs, coef, fast, real_from = [], [], [], None
             continue
         if real_from is None:
             real_from = i
         qs.append(q.copy())
+        fast.append(fast_noise_drift(real, q, sweep.over(t), np.asarray(nf["mode"]), np.asarray(nf["left_mode"]), D))
         fit = nf["fit"]
         coef.append((fit["a1"], fit["a2"], fit["a3"], np.asarray(nf["mode"]), np.asarray(nf["left_mode"])))
     if real_from is None or ts_all[real_from] > sweep.t_cross:
@@ -625,7 +649,7 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
     for i in range(1, len(ts)):
         if V[i] @ V[i - 1] < 0:
             V[i] = -V[i]; W[i] = -W[i]; a2[i] = -a2[i]
-    beta = -np.einsum("ij,ij->i", W, dq)
+    beta = -np.einsum("ij,ij->i", W, dq) + np.einsum("ij,ij->i", W, np.array(fast))
     Ds = D * np.einsum("ij,ij->i", W, W)
     s_states = [float(W[-1] @ real.carrier.diff(qs[-1], st)) for st in stable]
     # the drift on the slow manifold at every time of the grid, out to beyond the written states
@@ -725,6 +749,44 @@ def reduction_validity(real: Realization, sweep: Sweep, ts: np.ndarray, V: np.nd
                 worst = (ratio, {"t": float(t), "s": float(s_grid[j]), "drift_rate": float(abs(df[j])),
                                  "eliminated_relaxation": relax, "kind": kind})
     return {"slow": bool(worst[0] < REDUCED_SLOW), "ratio": float(worst[0]), "limit": REDUCED_SLOW, "where": worst[1]}
+
+
+def fast_noise_drift(real: Realization, q: np.ndarray, over: Dict, v: np.ndarray, w: np.ndarray, D: float) -> np.ndarray:
+    """The drift that the noise outside the slow direction gives the state at a point q of the branch, 1/2 F''[C]:
+    C is the stationary covariance of the linear drift under the noise 2D, from the modes of the Jacobian (right
+    vectors r_i, left vectors l_i, eigenvalues lambda_i),
+        C = sum_(i,j) r_i r_j^H 2D (l_i . l_j^*) / -(lambda_i + lambda_j^*),
+    without the pair of the slow mode with itself (the variance of the slow coordinate, which the reduction carries
+    with its own a2 s^2 term). It holds the covariance of the relaxing directions and their correlation with the slow
+    coordinate, which share the same noise: with x slow and y = (m/k) x + z fast, a curvature c y^2 gives the slow
+    coordinate c <z^2> + 2 c (m/k) <x z>, and where the slow and a fast rate come close (a spiral turning into a node)
+    the two parts nearly cancel. A reduction that keeps only the noise along w leaves this drift out, although it is
+    of the order of the terms it keeps. A pair whose rates do not sum to a decay contributes nothing; zero in one
+    dimension or without noise."""
+    q = np.asarray(q, float)
+    n = q.size
+    if n == 1 or D <= 0:
+        return np.zeros(n)
+    J = an.jacobian(real, q, over)
+    ev, VR = np.linalg.eig(J)
+    VL = np.linalg.inv(VR)
+    s = int(np.argmax(np.abs(VR.conj().T @ v) / np.linalg.norm(VR, axis=0)))
+    C = np.zeros((n, n), complex)
+    for i in range(n):
+        for j in range(n):
+            den = -(ev[i] + np.conj(ev[j]))
+            if (i == s and j == s) or den.real <= 0:
+                continue
+            C += np.outer(VR[:, i], VR[:, j].conj()) * 2.0 * D * (VL[i] @ VL[j].conj()) / den
+    lam, U = np.linalg.eigh(0.5 * (C.real + C.real.T))
+    f0 = np.asarray(real.F(q, **over), float)
+    eps = 1e-3 * an.base_length(real)
+    out = np.zeros(n)
+    for l_, u in zip(lam, U.T):
+        fp = np.asarray(real.F(real.carrier.wrap(q + eps * u), **over), float)
+        fm = np.asarray(real.F(real.carrier.wrap(q - eps * u), **over), float)
+        out += 0.5 * l_ * (fp + fm - 2.0 * f0) / eps ** 2
+    return out
 
 
 def certificate(real: Realization, sweep: Sweep, q0: np.ndarray, targets, strengths, D: float, n_traj: int,

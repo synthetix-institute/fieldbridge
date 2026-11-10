@@ -5,10 +5,28 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
-**Out of date since 7372e89 (2026-11-03).** The records were regenerated with the longer sweep of the write check (3855cd3),
-which waits for a ringing to decay. The two completions of the rf-SQUID phase qubit are now certified, so the records hold
-16 nonlinear-stage failed laws, not the 18 counted below; tests/test_repair_loop.py expects 16. The campaign below has not
-been rerun on these records.
+## On the records of the longer sweep, 2026-11-04
+
+Commit 1b74ee9 (main), on the records regenerated with the longer sweep of the write check (3855cd3, records merged as
+7372e89). Run on the cluster with fresh libraries, 3600 s per law, under the rule of d2e1c9a and the code of dd530a8. Results:
+`repair_loop_longer_sweep_campaign.json` and `repair_loop_longer_sweep_certified_control.json`. This supersedes the counts below.
+
+**9 of the 20 failed laws (16 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, and 0 of the 20 at the
+scale of the written states**, against 9 of 22 at 9cc1abc. The 20 laws in both sets keep their outcome and frozen candidate.
+The two unfoldings of `phase_qubit_rfsquid` left the failed set, because their completions are now certified. They were withheld
+failures, and in the certified control they fail their withheld test again (radius 0.03125). The equilibrium-write count stays at 4.
+
+| Control | Result |
+|---|---|
+| exact identity | 0 of 20 |
+| certified laws | 8 of 20 (40 %, against 45 % on failed laws), median radius 0.1875 against 0.0625; fluxonium unchanged |
+| plain critical coordinate within the tolerance | 4 of 9 |
+| strongest nonlinear term scaled by 1.25 | rejected on all 9 |
+| memory hint against the direct ladder | 673 against 699 development checks on 19 laws |
+
+The nine and the other outcomes are those of the table at 86e4e4a: 4 insufficient excitation, 3 no order passes development,
+2 no test power, 1 withheld failed (`magnon_kerr` 0), and `kpo_triangle` 1 timed out. Of the 230 retained outcomes, 20 get a
+task, 209 are `no_failed_law` and one (`optomech_bistable`, not settled at the end of the sweep) is outside the campaign classes.
 
 ## At origin/main 9cc1abc, 2026-11-03
 

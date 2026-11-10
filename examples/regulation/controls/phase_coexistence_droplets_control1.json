@@ -1,0 +1,48 @@
+{
+  "schema": "fieldbridge-regulation/1",
+  "kind": "equations",
+  "name": "dilute concentration without droplets (control)",
+  "field": "soft matter",
+  "question": "Does the dilute concentration of a droplet-forming species return to its set point after a step of its supply, and through which variable?",
+  "provenance": {
+    "source": "droplet growth by Gibbs-Thomson exchange with the dilute phase: I. M. Lifshitz and V. V. Slyozov, J. Phys. Chem. Solids 19, 35 (1961); C. Wagner, Z. Elektrochem. 65, 581 (1961); turnover of the droplet material inside the droplets: D. Zwicker, A. A. Hyman and F. Juelicher, Phys. Rev. E 92, 012317 (2015); mean field for identical droplets",
+    "kind": "published model"
+  },
+  "assumptions": [
+    "dimensionless: u = c/c_sat, r = R/R0, time in rho R0^2/(D c_sat), j the supply, kappa1 the removal in the dilute phase, kappa2 the turnover inside the droplets, Gamma = 4 pi n R0^3 rho/c_sat, eps the capillary length over R0",
+    "no dense phase: the supply is removed only in the dilute phase",
+    "the step of the input: the supply j from 0.12 to 0.18 and 0.24 (2 to 4 kappa1)"
+  ],
+  "carrier": {
+    "kind": "orthant",
+    "name": "state",
+    "variables": [
+      "u"
+    ]
+  },
+  "parameters": {
+    "j": 0.12,
+    "kappa1": 0.06
+  },
+  "drift": {
+    "u": "j - kappa1*u"
+  },
+  "noise": 0.0,
+  "observable": "dilute concentration u relative to saturation",
+  "regulation": {
+    "input": "j",
+    "output": "u",
+    "steps": [
+      0.12,
+      0.18,
+      0.24
+    ],
+    "initial": {
+      "u": 2.0
+    },
+    "fixed": [],
+    "expect": "no-adaptation",
+    "control_of": "phase_coexistence_droplets.json",
+    "change": "the droplets removed: u = j/kappa1 follows the supply"
+  }
+}

@@ -12,7 +12,7 @@
 **Prerequisites.** [Module 9](23_memory_codiscovery.md), [Module 10](25_memory_threshold_write.md),
 [Module 13](33_memory_noise_ratio.md) and [Module 14](34_memory_changes.md); the
 [quantum write](30_quantum_write.md) for the exact dynamics of one oscillator.
-**Time.** About 45 minutes of reading; the full survey of the 31 models takes about two hours on eight cores.
+**Time.** About 45 minutes of reading; the full survey of the 31 models takes about an hour and a quarter on eight cores.
 
 ## 1. The question
 
@@ -48,10 +48,10 @@ python3 -B examples/quantum/semiclassical/survey/report.py --results results/har
 For each model, `survey.py` runs the three derivations of Modules 9–11 with their law constants
 (`memory codiscover`), the law at every obstruction (`memory complete`, with 8 000 samples of the linear stage and a
 certificate of 4 000 trajectories per bias), and the single changes of Module 14 (`memory changes`). Each of the
-three derivations is stopped after 30 minutes and then recorded as not derived. The results of the full survey are
+three derivations can be stopped after a time limit and is then recorded as not derived. The results of the full survey are
 saved in [examples/quantum/semiclassical/survey/results](../../examples/quantum/semiclassical/survey/results), each with the stamp of the code that
-produced it (they were computed with limits of 60 s per change and 30 minutes per derivation, `--budget 60
---derive-budget 1800`; the defaults of `survey.py` are now 300 s and 2 hours, about 25 core-hours in all), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
+produced it (they were computed with a limit of 60 s per change and none per derivation, `--budget 60
+--derive-budget 0`, about 6 core-hours in all; the defaults of `survey.py` are 300 s and 2 hours), and `report.py` collects them into [REPORT.md](../../examples/quantum/semiclassical/survey/REPORT.md), whose table this module reads. The
 [records](../records/quantum_semiclassical.md) of `memory record` measure the same quantities at another seed, and the laws at the obstructions with
 fewer trajectories; this module says so where they are the source. Each step is also a command of its own:
 
@@ -77,9 +77,12 @@ Phase locking is reached in the three self-sustained oscillators: the trapped-io
 Pol oscillator and the optomechanical self-oscillator. The first two have the half-width $1.000$. In the third the
 fit is not a measurement, because the slip frequency outside the locking range cannot be read and the fitted centre
 lies outside the range, and no constant is recorded. The phase-locking derivations of the driven Jaynes-Cummings
-resonator at high power and of the spin ensemble did not finish within their 30 minutes and are recorded as not
-derived; run without the limit, that of the spin ensemble finds no oscillation at any of its 11 drive strengths after
-4 hours.
+resonator at high power and of the spin ensemble were run without the limit (`--derive-budget 0`), and both find no
+oscillation at any of their 11 drive strengths. At a strong drive the stable state of both is a fast spiral, and the
+error of the integration keeps the drift above the threshold that marks a settled state; the search for a cycle
+therefore also tests for a stable state next to the end of each stretch of integration. With that test the spin
+ensemble takes 9 minutes instead of 5 hours on the shared machine, and the resonator 3 hours instead of 20, the time
+its stiff integration at a strong drive takes.
 
 These results are expected. A universal law returns its constant on every carrier whose dynamics reduce to its
 normal form; what the survey adds is the device's own scales, which set how weak a signal the element can write.
@@ -121,20 +124,31 @@ write resolve. Two write points of an element unfold at the same cusp and give t
 
 | Element | Offset, full dynamics | Offset, reduced law |
 | --- | ---: | ---: |
-| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 1.02, 1.03 |
-| strongly driven transmon | 0.81, 0.81 | 0.98, 0.96 |
-| driven trapped ion | 0.78, 0.79 | 0.95, 0.92 |
+| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 0.81, 0.84 |
+| strongly driven transmon | 0.81, 0.80 | 0.78, 0.77 |
+| driven trapped ion | 0.78, 0.79 | 0.76, 0.73 |
 
 The three elements share the Kerr normal form and therefore the size of the offset and the state it favours: averaged
 over the two signs of a bias of one noise floor, the state of smaller amplitude is written with probability 0.68 to
 0.69 in all three. The report prints these offsets with a sign, which is only the orientation that the eigensolver
 gave the critical direction and has no meaning of its own. When the resonator measures a qubit, the dispersive shift
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
-sweep must cancel. The reduced law overestimates the offset by about a quarter and is not certified at the strict
-tolerance; the full dynamics are the reference. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
-polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble. The magnonic element has
-an offset of 1.03 toward its state of smaller amplitude, and its reduced law fails: it writes the same state whatever
-the bias, where the full dynamics give a response of 1.30. Both of its write points along the drive are folds and unfold at the same cusp. In
+sweep must cancel. The reduced law of one coordinate gives the offset only with
+the drift that the noise of the fast directions gives the slow coordinate, half the curvature of the drift along the
+stationary covariance of those directions; without it the law overestimated the offset by about a quarter (0.92 to
+1.03). With it the law is certified for the transmon and the trapped ion and, for the bifurcation amplifier, departs
+from the full dynamics by up to 0.044 (5.7 errors) and is not certified at the strict tolerance. The reduction needs
+a slow direction well separated from the others: on the trapped-ion phonon laser it starts where a spiral becomes a
+node, with rates of -0.42 and -0.21 and a cubic coefficient of 520 in the series there, and holds in no form; its law
+writes one state whatever the bias and is not certified. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
+polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble, where the law, with
+the same drift, gives 0.05 and is certified. The magnonic element has
+an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
+than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
+from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
+a response of 1.23 and 1.24 in the survey and 1.34 and 1.28 in the record, where the full dynamics give 1.30 and 1.31
+and 1.26 and 1.28, but overestimates the offset (1.55 and 1.60 against 1.03 in the survey, 1.63 against 1.02 in the
+record) and is not certified. Both of its write points along the drive are folds and unfold at the same cusp. In
 the bistable optomechanical element the law departs from the full dynamics by up to 0.28: three directions relax
 slowly during the passage, and 13 % of the final states have not yet left the unwritten branch at the end of the
 sweep, so the write is not settled there.
@@ -142,9 +156,9 @@ sweep, so the write is not settled there.
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
 cusp at $\ell = 1$ and a flux of an odd multiple of $\pi$. The reflection of the potential about that flux makes the
-sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.32
+sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.27
 to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.23 at one of three equivalent
-cusps and 1.21 at the other two, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
+cusps and 1.21 at the other two, certified at none of them, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
 The two eigenvalues of the phase particle are complex for all but the last 2.5 time units before the crossing, and no
 single coordinate describes that motion.
 
@@ -217,7 +231,7 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 18 laws at obstructions are certified and 24 are derived but not certified; the remaining
+In all, 23 laws at obstructions are certified and 19 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 

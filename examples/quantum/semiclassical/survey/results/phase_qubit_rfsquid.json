@@ -5,7 +5,7 @@
   "source": "Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Martinis, J. M., 'Superconducting phase qubits', Quantum Inf. Process. 8, 81 (2009) (full text, author manuscript from the UCSB group web page)",
   "kind": "classical image of census entry 13: Phase qubit (current-biased Josephson junction / flux-biased rf-SQUID) with tunnelling measurement"
  },
- "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
+ "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 18.5,
+  "symmetric-write": 22.2,
   "threshold-write": 5.3,
-  "phase-locking": 4.9,
-  "completion": 721.1,
-  "changes": 139.3
+  "phase-locking": 8.3,
+  "completion": 652.5,
+  "changes": 129.7
  },
  "completion": {
   "write_points": [
@@ -189,12 +189,12 @@
           ]
          ],
          "reduced_law": [
-          0.535,
-          0.465
+          0.533875,
+          0.466125
          ],
          "law": [
-          0.535,
-          0.465
+          0.533875,
+          0.466125
          ],
          "certificate": [
           0.69,
@@ -203,8 +203,8 @@
          "sector_deviation": 0.008000000000000007,
          "sector_deviation_sigma": 1.0939931189758594,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 21.19611668015726,
-         "deviation": 0.15500000000000003
+         "deviation_sigma": 21.349959462513237,
+         "deviation": 0.156125
         },
         {
          "bias_floors": 0.5,
@@ -237,12 +237,12 @@
           ]
          ],
          "reduced_law": [
-          0.475,
-          0.525
+          0.47375,
+          0.52625
          ],
          "law": [
-          0.475,
-          0.525
+          0.47375,
+          0.52625
          ],
          "certificate": [
           0.31125,
@@ -251,8 +251,8 @@
          "sector_deviation": 0.0032500000000000306,
          "sector_deviation_sigma": 0.44394367276911173,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 22.367931204905027,
-         "deviation": 0.16374999999999995
+         "deviation_sigma": 22.197183638455375,
+         "deviation": 0.16249999999999998
         },
         {
          "bias_floors": 1.0,
@@ -285,12 +285,12 @@
           ]
          ],
          "reduced_law": [
-          0.571875,
-          0.428125
+          0.57025,
+          0.42975
          ],
          "law": [
-          0.571875,
-          0.428125
+          0.57025,
+          0.42975
          ],
          "certificate": [
           0.84175,
@@ -299,8 +299,8 @@
          "sector_deviation": 0.008375000000000021,
          "sector_deviation_sigma": 1.4512805987670223,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 46.76589272743273,
-         "deviation": 0.269875
+         "deviation_sigma": 47.04748448540246,
+         "deviation": 0.2715
         },
         {
          "bias_floors": 1.0,
@@ -333,12 +333,12 @@
           ]
          ],
          "reduced_law": [
-          0.4365,
-          0.5635
+          0.435125,
+          0.564875
          ],
          "law": [
-          0.4365,
-          0.5635
+          0.435125,
+          0.564875
          ],
          "certificate": [
           0.15725,
@@ -347,8 +347,8 @@
          "sector_deviation": 0.0008749999999999869,
          "sector_deviation_sigma": 0.15201741422615053,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 48.51527191160363,
-         "deviation": 0.27925
+         "deviation_sigma": 48.27638740353395,
+         "deviation": 0.277875
         },
         {
          "bias_floors": 2.0,
@@ -381,12 +381,12 @@
           ]
          ],
          "reduced_law": [
-          0.654125,
-          0.345875
+          0.653,
+          0.347
          ],
          "law": [
-          0.654125,
-          0.345875
+          0.653,
+          0.347
          ],
          "certificate": [
           0.976,
@@ -395,8 +395,8 @@
          "sector_deviation": 0.002874999999999999,
          "sector_deviation_sigma": 1.1880571025677797,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 133.01074083095796,
-         "deviation": 0.321875
+         "deviation_sigma": 133.4756327406584,
+         "deviation": 0.32299999999999995
         },
         {
          "bias_floors": 2.0,
@@ -429,12 +429,12 @@
           ]
          ],
          "reduced_law": [
-          0.358125,
-          0.641875
+          0.356625,
+          0.643375
          ],
          "law": [
-          0.358125,
-          0.641875
+          0.356625,
+          0.643375
          ],
          "certificate": [
           0.02475,
@@ -443,32 +443,32 @@
          "sector_deviation": 0.0014999999999999979,
          "sector_deviation_sigma": 0.6106265361167651,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 135.71174765195124,
-         "deviation": 0.33337500000000003
+         "deviation_sigma": 135.10112111583447,
+         "deviation": 0.33187500000000003
         }
        ],
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.535,
-          "P_toward_minus": 0.525,
-          "response_constant": 0.20043469024386562,
-          "offset": 0.012569029976328992
+          "P_toward_plus": 0.533875,
+          "P_toward_minus": 0.52625,
+          "response_constant": 0.20084641342983348,
+          "offset": 0.009583891992690996
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.571875,
-          "P_toward_minus": 0.5635,
-          "response_constant": 0.22699189786991675,
-          "offset": 0.010650382538864078
+          "P_toward_plus": 0.57025,
+          "P_toward_minus": 0.564875,
+          "response_constant": 0.2265610755158965,
+          "offset": 0.006834869591135301
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.654125,
-          "P_toward_minus": 0.641875,
-          "response_constant": 0.25293921229915145,
-          "offset": 0.016503093466587765
+          "P_toward_plus": 0.653,
+          "P_toward_minus": 0.643375,
+          "response_constant": 0.25326237384060585,
+          "offset": 0.012968917223948884
          }
         ],
         "certificate": [
@@ -536,7 +536,7 @@
         ]
        },
        "write_class": "nonlinear stage",
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.333 (135.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 120 time units)"
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.332 (135.1 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 120 time units)"
       }
      }
     ]
@@ -681,12 +681,12 @@
           ]
          ],
          "reduced_law": [
-          0.324625,
-          0.675375
+          0.3245,
+          0.6755
          ],
          "law": [
-          0.324625,
-          0.675375
+          0.3245,
+          0.6755
          ],
          "certificate": [
           0.311,
@@ -695,8 +695,8 @@
          "sector_deviation": 0.0003750000000000142,
          "sector_deviation_sigma": 0.05123555652647335,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.8615585537951276,
-         "deviation": 0.013624999999999998
+         "deviation_sigma": 1.8444800349529724,
+         "deviation": 0.013500000000000012
         },
         {
          "bias_floors": 1.0,
@@ -896,9 +896,9 @@
          {
           "bias_floors": 0.5,
           "P_toward_plus": 0.666,
-          "P_toward_minus": 0.675375,
-          "response_constant": 1.1764995362690605,
-          "offset": -0.012954923297223614
+          "P_toward_minus": 0.6755,
+          "response_constant": 1.1769621707485836,
+          "offset": -0.01312867158488365
          },
          {
           "bias_floors": 1.0,
@@ -1437,13 +1437,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 3.9,
+    "seconds": 3.2,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 2.7,
+    "seconds": 2.8,
     "class": "reached"
    }
   },
@@ -1455,13 +1455,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.0,
+      "seconds": 5.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.0,
+      "seconds": 5.0,
       "class": "reached"
      }
     },
@@ -1476,13 +1476,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.9,
+      "seconds": 1.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.6,
+      "seconds": 2.0,
       "class": "reached"
      }
     },
@@ -1497,13 +1497,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 15.5,
+      "seconds": 9.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 14.3,
+      "seconds": 16.5,
       "class": "reached"
      }
     },
@@ -1518,13 +1518,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 14.5,
+      "seconds": 15.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 13.0,
+      "seconds": 13.7,
       "class": "reached"
      }
     },
@@ -1539,13 +1539,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 12.9,
+      "seconds": 10.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 11.1,
+      "seconds": 7.3,
       "class": "reached"
      }
     },
@@ -1560,13 +1560,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 2.1,
+      "seconds": 2.3,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 3.8,
+      "seconds": 4.4,
       "class": "oscillation"
      }
     },
@@ -1581,13 +1581,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 2.3,
       "class": "reached"
      }
     },
@@ -1602,13 +1602,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.2,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.9,
+      "seconds": 1.0,
       "class": "single stable state"
      }
     },

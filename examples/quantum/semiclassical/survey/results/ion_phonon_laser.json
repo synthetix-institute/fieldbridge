@@ -5,7 +5,7 @@
   "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
   "kind": "classical image of census entry 46: Trapped-ion phonon laser and its injection locking"
  },
- "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
+ "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -93,11 +93,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 11.7,
-  "threshold-write": 4.1,
-  "phase-locking": 19.2,
-  "completion": 162.6,
-  "changes": 127.5
+  "symmetric-write": 15.1,
+  "threshold-write": 4.9,
+  "phase-locking": 25.4,
+  "completion": 127.7,
+  "changes": 116.7
  },
  "completion": {
   "write_points": [
@@ -190,20 +190,20 @@
           ]
          ],
          "reduced_law": [
-          0.756,
-          0.244
+          0.0,
+          1.0
          ],
          "law": [
-          0.756,
-          0.244
+          0.0,
+          1.0
          ],
          "certificate": [
           0.86,
           0.14
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 18.956148030988714,
-         "deviation": 0.10399999999999998
+         "deviation_sigma": 156.75276256394517,
+         "deviation": 0.86
         },
         {
          "bias_floors": 0.5,
@@ -233,20 +233,20 @@
           ]
          ],
          "reduced_law": [
-          0.5875,
-          0.4125
+          0.0,
+          1.0
          ],
          "law": [
-          0.5875,
-          0.4125
+          0.0,
+          1.0
          ],
          "certificate": [
           0.68025,
           0.31975
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 12.577790657989047,
-         "deviation": 0.09275
+         "deviation_sigma": 92.24843229215148,
+         "deviation": 0.68025
         },
         {
          "bias_floors": 1.0,
@@ -276,20 +276,20 @@
           ]
          ],
          "reduced_law": [
-          0.819625,
-          0.180375
+          0.0,
+          1.0
          ],
          "law": [
-          0.819625,
-          0.180375
+          0.0,
+          1.0
          ],
          "certificate": [
           0.91925,
           0.08075
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 23.12651780416489,
-         "deviation": 0.099625
+         "deviation_sigma": 213.390730152859,
+         "deviation": 0.91925
         },
         {
          "bias_floors": 1.0,
@@ -319,20 +319,20 @@
           ]
          ],
          "reduced_law": [
-          0.4785,
-          0.5215
+          0.0,
+          1.0
          ],
          "law": [
-          0.4785,
-          0.5215
+          0.0,
+          1.0
          ],
          "certificate": [
           0.5925,
           0.4075
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 14.673268450494213,
-         "deviation": 0.11400000000000005
+         "deviation_sigma": 76.26238207822648,
+         "deviation": 0.5925
         },
         {
          "bias_floors": 2.0,
@@ -362,20 +362,20 @@
           ]
          ],
          "reduced_law": [
-          0.915,
-          0.085
+          0.0,
+          1.0
          ],
          "law": [
-          0.915,
-          0.085
+          0.0,
+          1.0
          ],
          "certificate": [
           0.98,
           0.02
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 29.36400684442067,
-         "deviation": 0.065
+         "deviation_sigma": 442.71887242357315,
+         "deviation": 0.98
         },
         {
          "bias_floors": 2.0,
@@ -405,44 +405,44 @@
           ]
          ],
          "reduced_law": [
-          0.317,
-          0.683
+          0.0,
+          1.0
          ],
          "law": [
-          0.317,
-          0.683
+          0.0,
+          1.0
          ],
          "certificate": [
           0.40525,
           0.59475
          ],
          "certificate_diverged": 0.0,
-         "deviation_sigma": 11.368835239576995,
-         "deviation": 0.08825000000000005
+         "deviation_sigma": 52.20646437210849,
+         "deviation": 0.40525
         }
        ],
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.756,
-          "P_toward_minus": 0.4125,
-          "response_constant": 0.628889054255518,
-          "offset": 0.45730602964042993
+          "P_toward_plus": 0.0001,
+          "P_toward_minus": 0.9999,
+          "response_constant": 3.783882686435589e-14,
+          "offset": -3.719016485455694
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.819625,
-          "P_toward_minus": 0.5215,
-          "response_constant": 0.6442701454637358,
-          "offset": 0.43000914174868243
+          "P_toward_plus": 0.0001,
+          "P_toward_minus": 0.9999,
+          "response_constant": 1.8919413432177944e-14,
+          "offset": -3.719016485455694
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.915,
-          "P_toward_minus": 0.683,
-          "response_constant": 0.6151795216220303,
-          "offset": 0.4480497027546656
+          "P_toward_plus": 0.0001,
+          "P_toward_minus": 0.9999,
+          "response_constant": 9.459706716088972e-15,
+          "offset": -3.719016485455694
          }
         ],
         "certificate": [
@@ -509,7 +509,7 @@
         ]
        },
        "write_class": "equilibrium write",
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.114 (29.4 errors), and the written states at the end of the sweep do not retain the choice: 32 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)"
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.980 (442.7 errors), and the written states at the end of the sweep do not retain the choice: 32 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)"
       }
      }
     ]
@@ -522,13 +522,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 3.1,
+    "seconds": 2.9,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 2.5,
+    "seconds": 2.3,
     "class": "reached"
    }
   },
@@ -540,13 +540,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.5,
+      "seconds": 2.1,
       "class": "oscillation"
      }
     },
@@ -561,7 +561,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.6,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
@@ -588,7 +588,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.1,
+      "seconds": 2.4,
       "class": "oscillation"
      }
     },
@@ -603,7 +603,7 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 6.0,
+      "seconds": 8.1,
       "class": "reached"
      },
      "threshold-write": {
@@ -630,7 +630,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 6.9,
+      "seconds": 7.5,
       "class": "oscillation"
      }
     },
@@ -645,13 +645,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.7,
+      "seconds": 3.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.0,
+      "seconds": 3.7,
       "class": "reached"
      }
     },
@@ -666,13 +666,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.5,
+      "seconds": 3.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 6.1,
+      "seconds": 4.9,
       "class": "reached"
      }
     },
@@ -687,13 +687,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.7,
+      "seconds": 2.3,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.4,
+      "seconds": 4.3,
       "class": "reached"
      }
     },
@@ -708,13 +708,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.0,
+      "seconds": 5.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.6,
+      "seconds": 5.7,
       "class": "reached"
      }
     },
@@ -735,7 +735,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.7,
+      "seconds": 3.6,
       "class": "single stable state"
      }
     },
