@@ -398,3 +398,21 @@ def test_the_noise_of_the_fast_direction_gives_the_slow_coordinate_the_drift_of_
     assert np.allclose(completion.fast_noise_drift(real, q, {"eps": 0.0}, v, w, 0.0), 0.0)
     one = spec.load(EX / "pitchfork.json")
     assert np.allclose(completion.fast_noise_drift(one, np.zeros(1), {"eps": 0.0}, np.ones(1), np.ones(1), D), 0.0)
+
+
+def test_the_noise_across_the_critical_space_pushes_the_mean_through_the_curvature():
+    # x' = e x - x^3 + c y^2, y' = -k y: the fluctuations of y give x the mean force c D / k; a weakly damped mass,
+    # whose relaxing mode lies almost along the critical one, gets none from its velocity, which the force does not bend
+    def load(drift, variables, parameters):
+        return spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                          "assumptions": [], "provenance": {"source": "test"},
+                          "carrier": {"kind": "euclid", "variables": variables, "scale": 3.0},
+                          "parameters": parameters, "drift": drift, "noise": 0.001,
+                          "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D = 0.01
+    pumped = load({"x": "e*x - x**3 + c*y**2", "y": "-k*y"}, ["x", "y"], {"e": 0.0, "c": 3.0, "k": 2.0})
+    g = completion.noise_curvature_drift(pumped, np.zeros(2), {}, np.array([[1.0], [0.0]]), D)
+    assert g == pytest.approx([3.0 * D / 2.0, 0.0], rel=1e-3, abs=1e-9)
+    mass = load({"x": "v", "v": "-g*v + e*x - x**3 + 2*x**2"}, ["x", "v"], {"e": 0.0, "g": 0.3})
+    g = completion.noise_curvature_drift(mass, np.zeros(2), {}, np.array([[1.0], [0.0]]), D)
+    assert g == pytest.approx([0.0, 0.0], abs=1e-9)
