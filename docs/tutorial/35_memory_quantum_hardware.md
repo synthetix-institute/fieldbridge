@@ -118,49 +118,48 @@ model from the sweep itself, with a certificate from the full stochastic dynamic
 amplifier, the strongly driven transmon and the driven trapped ion lose their state at a fold: the write is
 one-sided. A second
 parameter (the dispersive shift, the detuning or the anharmonicity) unfolds the fold at a cusp, and a sweep through
-the cusp writes symmetrically. Its response to a bias keeps the constant of the pitchfork, 1.32 to 1.37 in the full
+the cusp writes symmetrically. Its response to a bias keeps the constant of the pitchfork, 1.30 to 1.36 in the full
 dynamics, but the sweep also writes with an intrinsic offset, in units of the smallest bias that the noise lets the
 write resolve. Two write points of an element unfold at the same cusp and give the two numbers of a row:
 
-| Element | Offset, full dynamics | Offset, reduced law |
+| Element | Offset, full dynamics | Offset, law |
 | --- | ---: | ---: |
-| Kerr resonator of a bifurcation amplifier | 0.77, 0.75 | 0.81, 0.84 |
-| strongly driven transmon | 0.81, 0.80 | 0.78, 0.77 |
-| driven trapped ion | 0.78, 0.79 | 0.76, 0.73 |
+| Kerr resonator of a bifurcation amplifier | 0.79, 0.79 | 0.80, 0.81 |
+| strongly driven transmon | 0.78, 0.80 | 0.78, 0.78 |
+| driven trapped ion | 0.78, 0.78 | 0.80, 0.80 |
 
 The three elements share the Kerr normal form and therefore the size of the offset and the state it favours: averaged
 over the two signs of a bias of one noise floor, the state of smaller amplitude is written with probability 0.68 to
 0.69 in all three. The report prints these offsets with a sign, which is only the orientation that the eigensolver
 gave the critical direction and has no meaning of its own. When the resonator measures a qubit, the dispersive shift
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
-sweep must cancel. The reduced law of one coordinate gives the offset only with
-the drift that the noise of the fast directions gives the slow coordinate, half the curvature of the drift along the
-stationary covariance of those directions; without it the law overestimated the offset by about a quarter (0.92 to
-1.03). With it the law is certified for the transmon and the trapped ion and, for the bifurcation amplifier, departs
-from the full dynamics by up to 0.044 (5.7 errors) and is not certified at the strict tolerance. The reduction needs
-a slow direction well separated from the others: on the trapped-ion phonon laser it starts where a spiral becomes a
-node, with rates of -0.42 and -0.21 and a cubic coefficient of 520 in the series there, and holds in no form; its law
-writes one state whatever the bias and is not certified. Other cusps have offsets of their own: 2.2 to 2.3 for the dynamically
-polarised nuclear-spin bath, where the law is certified, and 0.11 for the Rydberg ensemble, where the law, with
-the same drift, gives 0.05 and is certified. The magnonic element has
+sweep must cancel. On these resonators the second quadrature relaxes slowly against the drift at the written
+states, so the reduced law of one coordinate does not hold and is withdrawn; the law is the linear stage with its
+outcome map. Its mean carries the drift that the fluctuations across the critical direction give the state through
+the curvature of the drift, half that curvature along their stationary covariance; without it the law put the offset
+about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. The phonon laser of a trapped ion, where a
+spiral becomes a node only shortly before the crossing, is an equilibrium write: the noise exchanges its states during
+the hold, and its law (response 0.74, offset 0.31 against 0.72 and 0.80) is not certified. Other cusps have offsets of
+their own: 2.1 to 2.3 for the dynamically polarised nuclear-spin bath, where the law is certified, and 0.06 for the
+Rydberg ensemble, where the law gives 0.14 and is not certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
-than the distance to the written states, so the sign of a sample is read from the branch at the mapping time; read
-from the write point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives
-a response of 1.23 and 1.24 in the survey and 1.34 and 1.28 in the record, where the full dynamics give 1.30 and 1.31
-and 1.26 and 1.28, but overestimates the offset (1.55 and 1.60 against 1.03 in the survey, 1.63 against 1.02 in the
-record) and is not certified. Both of its write points along the drive are folds and unfold at the same cusp. In
-the bistable optomechanical element the law departs from the full dynamics by up to 0.28: three directions relax
-slowly during the passage, and 13 % of the final states have not yet left the unwritten branch at the end of the
-sweep, so the write is not settled there.
+than the distance to the written states, so the sign of a sample is read against the branch; read from the write
+point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives a response of
+1.37 at both write points in the survey and 1.35 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
+and an offset of 1.15 and 1.13 in the survey and 1.13 in the record against 1.03 and 1.02. It is certified in the
+record and not in the survey. Both of its write points along the drive are folds and unfold at the same cusp; in the
+record the cusp search from the first of them found no cusp. In the bistable optomechanical element the law departs
+from the full dynamics by up to 0.30: three directions relax slowly during the passage, and 13 % of the final states
+have not yet left the unwritten branch at the end of the sweep, so the write is not settled there.
 
 The flux-biased rf-SQUID phase qubit shows the case without an offset. Along the flux it loses a well at folds, where
 $\cos\varphi = -\ell$, and it carries the threshold write there. The inductance ratio $\ell$ unfolds each fold at a
 cusp at $\ell = 1$ and a flux of an odd multiple of $\pi$. The reflection of the potential about that flux makes the
-sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.27
-to 1.34. The reduced law of one coordinate is not reliable here: in the survey it gives 0.23 at one of three equivalent
-cusps and 1.21 at the other two, certified at none of them, and in the record, at another seed, 1.23 at both of its cusps, where it is certified.
-The two eigenvalues of the phase particle are complex for all but the last 2.5 time units before the crossing, and no
-single coordinate describes that motion.
+sweep through the cusp a pitchfork, so the offset in the full dynamics stays at 0.04 or less, with a response of 1.30
+to 1.37. The reduced law of one coordinate does not hold here: the two eigenvalues of the phase particle are complex
+for all but the last 2.5 time units before the crossing, no single coordinate describes that motion, and the law is
+the linear stage. It gives 1.31, 1.34 and 1.31 at the three equivalent cusps of the survey and 1.26 and 1.30 at the two
+of the record, certified at all of them; the reduced law gave 0.23 at one cusp of the survey.
 
 **The curvature of the sweep that cancels the offset.** `memory complete --curvature` curves the sweep through the
 cusp, p = cusp + t d + c2 t² n with n normal to the sweep direction d in the plane of the two parameters, reads the
@@ -231,7 +230,7 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 23 laws at obstructions are certified and 19 are derived but not certified; the remaining
+In all, 29 laws at obstructions are certified and 13 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 

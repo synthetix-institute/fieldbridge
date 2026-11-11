@@ -5,7 +5,7 @@
   "source": "Castellanos-Beltran et al., Nat. Phys. 4, 929 (2008)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -39,10 +39,10 @@
  },
  "seconds": {
   "symmetric-write": 1.1,
-  "threshold-write": 1.4,
-  "phase-locking": 1.8,
+  "threshold-write": 1.6,
+  "phase-locking": 1.9,
   "completion": 0.4,
-  "changes": 48.4
+  "changes": 47.7
  },
  "completion": {
   "write_points": []
@@ -59,7 +59,7 @@
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 1.0,
+    "seconds": 1.1,
     "class": "single stable state"
    }
   },
@@ -144,13 +144,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0001 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 0.7,
+      "seconds": 0.4,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.9,
+      "seconds": 1.0,
       "class": "single stable state"
      }
     },
@@ -170,13 +170,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0001 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 0.2,
+      "seconds": 0.4,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.1,
+      "seconds": 1.0,
       "class": "single stable state"
      }
     },
@@ -217,13 +217,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.1,
+      "seconds": 1.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.8,
+      "seconds": 2.5,
       "class": "reached"
      }
     },
@@ -261,13 +261,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.0002 s^5, so the canonical form is not the pitchfork and the swept-write t",
-      "seconds": 1.0,
+      "seconds": 0.9,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.9,
+      "seconds": 2.3,
       "class": "reached"
      }
     },

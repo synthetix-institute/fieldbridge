@@ -1,13 +1,13 @@
 {
  "command": "record",
  "derived_from": "docs/records/quantum_semiclassical.jsonl",
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
  "versions": {
-  "python": "3.11.3",
-  "numpy": "1.26.0",
-  "scipy": "1.14.1",
-  "sympy": "1.12",
-  "matplotlib": "3.10.0"
+  "python": "3.11.0",
+  "numpy": "1.26.4",
+  "scipy": "1.15.2",
+  "sympy": "1.13.3",
+  "matplotlib": "3.10.3"
  },
  "novelty_established": false,
  "source_alignment_verified": false,
@@ -20,14 +20,15 @@
    "phase-locking": 3
   },
   "obstructed_symmetric": 13,
-  "completions_certified": 27,
+  "completions_certified": 30,
   "stopped": 2,
   "write_classes": {
    "equilibrium write": [
     "ion_phonon_laser",
     "kerr_cat_kpo",
     "kpo_pair",
-    "rfsquid_pair"
+    "rfsquid_pair",
+    "spin_ensemble_cavity"
    ],
    "linear-stage write": [
     "cim_dopo",
@@ -38,24 +39,22 @@
     "ion_duffing",
     "jba_resonator",
     "kpo_pair",
+    "magnon_kerr",
     "nuclear_bath",
     "phase_qubit_rfsquid",
     "po_amplitude_oscillator",
     "pplo_oscillator",
     "qfp_latch",
     "rfsquid_annealer",
-    "rfsquid_pair",
-    "rydberg_bistability",
+    "rfsquid_triangle",
     "snail_po",
     "transmon_driven"
    ],
    "nonlinear stage": [
-    "cim_pair",
     "cim_triangle",
     "kpo_triangle",
-    "magnon_kerr",
     "rfsquid_pair",
-    "rfsquid_triangle"
+    "rydberg_bistability"
    ],
    "not settled at the end of the sweep": [
     "optomech_bistable"
@@ -99,11 +98,11 @@
       "write_point": {
        "xi": 6.574086481770778,
        "state": [
-        6.47275616479744,
-        -5.433575863022923,
-        -0.38572985502593166,
-        -0.32363780823987204,
-        -0.14895082394392198
+        6.472756164682647,
+        -5.433575862371266,
+        -0.3857298550585145,
+        -0.32363780823413235,
+        -0.14895082395914877
        ]
       },
       "unfoldings": [
@@ -123,11 +122,11 @@
       "write_point": {
        "xi": 7.30461580546883,
        "state": [
-        3.6688101213675237,
-        -0.9892500413458678,
-        -0.6809990784795896,
-        -0.1834405060683762,
-        -0.4640150320039252
+        3.6688101217149383,
+        -0.9892500415477933,
+        -0.6809990784694934,
+        -0.1834405060857469,
+        -0.4640150319531029
        ]
       },
       "unfoldings": [
@@ -142,7 +141,7 @@
       ]
      }
     ],
-    "seconds": 13.0
+    "seconds": 9.1
    },
    "spec_sha256": "55c920f0321cc3ec981b4eeb240125cd77ef7207dec29e432eac86a8b10eb4e4",
    "summary": "reaches threshold-write"
@@ -205,9 +204,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.0079999984682375,
+       "rate_at_crossing": 0.019999996590712082,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 0.8560841922281663,
-       "sector_deviation_sigma_max": 0.8560841922281663,
+       "flow_map_deviation_sigma_max": 0.9172330631016068,
+       "sector_deviation_sigma_max": 0.9172330631016068,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -216,8 +218,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3016105695791043,
-          "offset": 0.0075796711276914785
+          "response_constant": 1.2995988624748365,
+          "offset": 0.008073057283893403
          }
         ],
         "certificate": [
@@ -231,7 +233,7 @@
       }
      }
     ],
-    "seconds": 77.8
+    "seconds": 55.9
    },
    "spec_sha256": "8ef48efdda56101aadb449ac924843f00ef172c8d743b63c89b10c28143c44d6",
    "summary": "reaches symmetric-write; completions: none: linear-stage write"
@@ -284,8 +286,8 @@
       "write_point": {
        "a": -0.19999989999899365,
        "state": [
-        -9.497673960222462e-15,
-        -9.754147678404403e-15
+        -9.497705408330911e-15,
+        -9.75418132014434e-15
        ]
       },
       "law": {
@@ -297,9 +299,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 1.8135585571200133e-16,
+       "rate_at_crossing": 0.019999999999990983,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 0.6250442932568606,
-       "sector_deviation_sigma_max": 0.6250442932568606,
+       "flow_map_deviation_sigma_max": 0.41669619550457376,
+       "sector_deviation_sigma_max": 0.41669619550457376,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -308,8 +313,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3056357908708056,
-          "offset": 0.005574904411488502
+          "response_constant": 1.2995988624748365,
+          "offset": 0.008073057283893403
          }
         ],
         "certificate": [
@@ -341,9 +346,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.03223833955651945,
+       "rate_at_crossing": 0.017083739284328138,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 3.2441096351147327,
-       "sector_deviation_sigma_max": 3.2441096351147327,
+       "flow_map_deviation_sigma_max": 1.8022831306192977,
+       "sector_deviation_sigma_max": 1.8022831306192977,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.00125
@@ -352,8 +360,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3111301530392827,
-          "offset": -0.012721737503249841
+          "response_constant": 1.3749403303551364,
+          "offset": -0.011215617325323168
          }
         ],
         "certificate": [
@@ -382,13 +390,15 @@
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
        "second_rate": 0.39999990000122443,
-       "certified": false,
-       "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.033 (4.3 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
-       "write_class": "nonlinear stage",
+       "certified": true,
+       "sector_certified": true,
+       "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.03223833955651945,
+       "rate_at_crossing": 0.017083739284328138,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 4.285992079975475,
-       "sector_deviation_sigma_max": 4.285992079975475,
+       "flow_map_deviation_sigma_max": 2.45381225952795,
+       "sector_deviation_sigma_max": 2.45381225952795,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.00075
@@ -397,8 +407,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3141138956310852,
-          "offset": -0.02396981279697097
+          "response_constant": 1.3843897127171125,
+          "offset": -0.019368641818168553
          }
         ],
         "certificate": [
@@ -412,10 +422,10 @@
       }
      }
     ],
-    "seconds": 144.4
+    "seconds": 98.6
    },
    "spec_sha256": "186033208af7fe6d0f7b0f95118da02e0af4032baf34333b533f9424095f3453",
-   "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write; distant branch: linear-stage write; distant branch: nonlinear stage"
+   "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write; distant branch: linear-stage write; distant branch: linear-stage write"
   },
   {
    "spec": "cim_triangle.json",
@@ -462,9 +472,9 @@
       "write_point": {
        "a": -0.19999989999899365,
        "state": [
-        8.205383164474265e-15,
-        -1.6757743216197437e-14,
-        7.752123533630402e-15
+        8.205399340225257e-15,
+        -1.6757717741888312e-14,
+        7.752083918136526e-15
        ]
       },
       "law": {
@@ -475,11 +485,14 @@
        "second_rate": 0.5999998999999937,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.047 (4.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.045 (4.0 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
+       "rate": 0.02,
+       "lag_at_crossing": 4.620155944722934e-16,
+       "rate_at_crossing": 0.01999999999999183,
        "stable_states": 6,
-       "flow_map_deviation_sigma_max": 4.7172940144128725,
-       "sector_deviation_sigma_max": 4.7172940144128725,
+       "flow_map_deviation_sigma_max": 4.015431686183819,
+       "sector_deviation_sigma_max": 4.015431686183819,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0015625
@@ -487,7 +500,7 @@
       }
      }
     ],
-    "seconds": 161.5
+    "seconds": 77.0
    },
    "spec_sha256": "7b0ad1a47d7edb075c11cc9de69300b588b2b3b3cf97e249baf9570fa2065a82",
    "summary": "reaches threshold-write; completions: critical space: nonlinear stage"
@@ -540,8 +553,8 @@
       "write_point": {
        "A": 0.025000100001012986,
        "state": [
-        5.813697132484464e-12,
-        -9.772005029977642e-12
+        5.813697037616774e-12,
+        -9.772005111292805e-12
        ]
       },
       "law": {
@@ -554,9 +567,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 7.090159401765847e-09,
+       "rate_at_crossing": 0.019999999999997534,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 2.7155768570103955,
-       "sector_deviation_sigma_max": 2.7155768570103955,
+       "flow_map_deviation_sigma_max": 2.3809692354029077,
+       "sector_deviation_sigma_max": 2.3809692354029077,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -564,7 +580,7 @@
       }
      }
     ],
-    "seconds": 212.8
+    "seconds": 79.8
    },
    "spec_sha256": "c112999f2728c6c7060d19cd1222c658b87456c3852136d68743f10794d8dfed",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -620,8 +636,8 @@
       "write_point": {
        "eps": -0.35333437999710443,
        "state": [
-        0.8964904542434852,
-        1.4981397884853199e-27
+        0.8964904542436947,
+        -1.5078801032029095e-27
        ]
       },
       "unfoldings": [
@@ -629,22 +645,25 @@
         "second": "beta",
         "success": true,
         "cusp": {
-         "eps": -3.4681341069305096e-20,
+         "eps": -4.8620708687096854e-23,
          "beta": 1.0000000000001668
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.5,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 2.3568563044896197e-22,
+         "rate_at_crossing": 0.020000000000043865,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 3.5068560300768397,
-         "sector_deviation_sigma_max": 1.7221168004841625,
+         "flow_map_deviation_sigma_max": 0.4819364555963862,
+         "sector_deviation_sigma_max": 0.4819364555963862,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00025
@@ -653,15 +672,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2314002317606996,
-            "offset": -0.0019223432805318685
+            "response_constant": 1.2868993536082536,
+            "offset": 0.0084985122286792
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3657207092938743,
-            "offset": 0.010605678138380648
+            "response_constant": 1.3063233080405858,
+            "offset": 0.007098928939920812
            }
           ]
          }
@@ -675,8 +694,8 @@
       "write_point": {
        "eps": 0.35333437999710443,
        "state": [
-        -0.8964904542434852,
-        -1.256149002088997e-27
+        -0.8964904542436947,
+        9.926815110658942e-27
        ]
       },
       "unfoldings": [
@@ -684,39 +703,42 @@
         "second": "beta",
         "success": true,
         "cusp": {
-         "eps": -4.686073907996744e-24,
+         "eps": 4.861202584797174e-23,
          "beta": 1.0000000000001668
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.5,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 2.359443343453525e-22,
+         "rate_at_crossing": 0.020000000000086213,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 2.1804532882728145,
-         "sector_deviation_sigma_max": 1.8156048518413284,
+         "flow_map_deviation_sigma_max": 0.8821838155040678,
+         "sector_deviation_sigma_max": 0.8821838155040678,
          "hold": {
           "hold_time": 56.568542494923804,
-          "switching_fraction": 0.00025
+          "switching_fraction": 0.0
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2030004326885613,
-            "offset": -0.01366788540927677
+            "response_constant": 1.2949491156742328,
+            "offset": -0.011565600881120963
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2742709799356606,
-            "offset": 0.002972230453854696
+            "response_constant": 1.330871662735963,
+            "offset": -0.009295408071938682
            }
           ]
          }
@@ -725,7 +747,7 @@
       ]
      }
     ],
-    "seconds": 143.3
+    "seconds": 65.6
    },
    "spec_sha256": "515e718d32a2cf51fb327361379597b4f938ff8a53faeb86e1eeee3016b4661e",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -782,7 +804,7 @@
        "phe": 5.701097118757174,
        "state": [
         -10.936254698687137,
-        -5.685909298654863e-26
+        -5.749395613258719e-26
        ]
       },
       "unfoldings": [
@@ -791,21 +813,24 @@
         "success": true,
         "cusp": {
          "phe": -9.42477796076938,
-         "ell": 0.9999999999998332
+         "ell": 0.9999999999998334
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.3,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 1.893172396355827e-15,
+         "rate_at_crossing": 0.019999999999916796,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 1.276046498349643,
-         "sector_deviation_sigma_max": 1.1545182604115825,
+         "flow_map_deviation_sigma_max": 1.7774509398615024,
+         "sector_deviation_sigma_max": 1.7774509398615024,
          "hold": {
           "hold_time": 80.00000000000001,
           "switching_fraction": 0.0
@@ -814,15 +839,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2743410325658713,
-            "offset": 0.01089874395848106
+            "response_constant": 1.2783043665051563,
+            "offset": 0.010929891708203743
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3117077729504583,
-            "offset": -0.0030545198028404386
+            "response_constant": 1.350371852096471,
+            "offset": 0.015722522020434893
            }
           ]
          }
@@ -837,7 +862,7 @@
        "phe": 11.984281907558444,
        "state": [
         -4.6531116367263365,
-        -1.3840511823511714e-25
+        -1.2242493769368706e-25
        ]
       },
       "unfoldings": [
@@ -851,16 +876,19 @@
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.3,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 1.837424940567662e-15,
+         "rate_at_crossing": 0.020000000000128554,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 0.59880507909221,
-         "sector_deviation_sigma_max": 1.7942789117600473,
+         "flow_map_deviation_sigma_max": 1.0382088364895545,
+         "sector_deviation_sigma_max": 1.0382088364895545,
          "hold": {
           "hold_time": 80.0,
           "switching_fraction": 0.0
@@ -869,15 +897,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2929658964346964,
-            "offset": 0.013055247512211099
+            "response_constant": 1.3037858534485742,
+            "offset": 0.017208105124108253
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2822026727184341,
-            "offset": 0.0009964267468964838
+            "response_constant": 1.3322012445054523,
+            "offset": 0.004135420954673563
            }
           ]
          }
@@ -886,7 +914,7 @@
       ]
      }
     ],
-    "seconds": 240.2
+    "seconds": 75.9
    },
    "spec_sha256": "c0396b76f89c53ec39ad8a7a171925dde3e71497a7d4980e3a078b2a931b6cd5",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -951,22 +979,25 @@
         "second": "k",
         "success": true,
         "cusp": {
-         "Delta": 0.8660254038030117,
-         "k": 1.9618873042866978
+         "Delta": 0.866025403685057,
+         "k": 1.9618873040862874
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999999177334,
+         "second_rate": 0.9999999997203011,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.10594319755723403,
+         "rate_at_crossing": 0.02098306776752018,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 2.1932654033650807,
-         "sector_deviation_sigma_max": 11.585440514511484,
+         "flow_map_deviation_sigma_max": 1.2039088446287345,
+         "sector_deviation_sigma_max": 1.2039088446287345,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -975,15 +1006,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3357493769119086,
-            "offset": -0.7532025260102497
+            "response_constant": 1.2889142232372002,
+            "offset": -0.7796558972953208
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.4239329313380373,
-            "offset": -0.7967433451252623
+            "response_constant": 1.2945819320825047,
+            "offset": -0.7499903316627422
            }
           ]
          }
@@ -997,8 +1028,8 @@
       "write_point": {
        "Delta": 1.8354239048652383,
        "state": [
-        0.8363005390778555,
-        -5.881076432227783
+        0.836300539077913,
+        -5.881076432227766
        ]
       },
       "unfoldings": [
@@ -1006,22 +1037,25 @@
         "second": "k",
         "success": true,
         "cusp": {
-         "Delta": 0.8660254038051806,
-         "k": 1.961887304290383
+         "Delta": 0.866025403856847,
+         "k": 1.9618873043781664
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.9999999999177334,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.10594334852128129,
+         "rate_at_crossing": 0.020983096163729176,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 3.6124371349542517,
-         "sector_deviation_sigma_max": 9.097909090982537,
+         "flow_map_deviation_sigma_max": 1.3769161071824763,
+         "sector_deviation_sigma_max": 1.3769161071824763,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00025
@@ -1030,15 +1064,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3145051178669882,
-            "offset": -0.7080393379123409
+            "response_constant": 1.3234798115496829,
+            "offset": -0.7742649302335465
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.396371746436645,
-            "offset": -0.8174452551404198
+            "response_constant": 1.364992099307446,
+            "offset": -0.8131432354651261
            }
           ]
          }
@@ -1047,7 +1081,7 @@
       ]
      }
     ],
-    "seconds": 279.8
+    "seconds": 123.5
    },
    "spec_sha256": "d104cdbc6895954d55b39c5c659e28415a38bd45f8c4f4457c6ac4430252cce4",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -1107,38 +1141,43 @@
         "second": "Delta",
         "success": true,
         "cusp": {
-         "F": 1.7213259316593004,
-         "Delta": 0.5773502691825616
+         "F": 1.721325931793725,
+         "Delta": 0.5773502692549121
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.6666666674111117,
+         "second_rate": 0.6666666657606513,
          "certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.920 (152.2 errors), and the written states at the end of the sweep do not retain the choice: 31 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.171 (18.9 errors), and the written states at the end of the sweep do not retain the choice: 32 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
          "write_class": "equilibrium write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 152.1750068322736,
+         "flow_map_deviation_sigma_max": 18.916273999147503,
+         "sector_deviation_sigma_max": 18.916273999147503,
          "hold": {
           "hold_time": 29.46278254943948,
-          "switching_fraction": 0.3145
+          "switching_fraction": 0.3165
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.8919413432177944e-14,
-            "offset": -3.719016485455694
+            "response_constant": 0.7166287110317732,
+            "offset": 0.34979763035062084
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 0.8218426158790084,
-            "offset": 0.7911357948182752
+            "response_constant": 0.7932829571441864,
+            "offset": 0.840153134844495
            }
           ]
          }
@@ -1147,10 +1186,10 @@
       ]
      }
     ],
-    "seconds": 269.9
+    "seconds": 147.3
    },
    "spec_sha256": "52a0b66708cf283856baf97772fcebaf0bfdf5ca9544cafc9b10aaf970c87e73",
-   "summary": "reaches symmetric-write, threshold-write, phase-locking; completions: second parameter: equilibrium write; motion without a stable state: cycle"
+   "summary": "reaches symmetric-write, threshold-write, phase-locking; completions: second parameter: equilibrium write"
   },
   {
    "spec": "jba_resonator.json",
@@ -1203,8 +1242,8 @@
       "write_point": {
        "F": 2.217937808748292,
        "state": [
-        0.5692203337616056,
-        -4.361588044937164
+        0.5692203337608283,
+        -4.3615880449373705
        ]
       },
       "unfoldings": [
@@ -1212,39 +1251,42 @@
         "second": "chi",
         "success": true,
         "cusp": {
-         "F": 1.3872638166244615,
-         "chi": -1.1339745963315542
+         "F": 1.387263816584092,
+         "chi": -1.1339745963641488
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999996573528,
+         "second_rate": 0.9999999998387605,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.07491408400182142,
+         "rate_at_crossing": 0.02098379349153301,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 0.7705686442406406,
-         "sector_deviation_sigma_max": 9.110841028962804,
+         "flow_map_deviation_sigma_max": 1.0247092693434146,
+         "sector_deviation_sigma_max": 1.0247092693434146,
          "hold": {
           "hold_time": 56.568542494923804,
-          "switching_fraction": 0.0
+          "switching_fraction": 0.00025
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2764548277809724,
-            "offset": -0.7747606763399078
+            "response_constant": 1.2867917521417047,
+            "offset": -0.7812501395525359
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3101289433296675,
-            "offset": -0.7783389819846126
+            "response_constant": 1.2663730768286463,
+            "offset": -0.7441925434434744
            }
           ]
          }
@@ -1258,8 +1300,8 @@
       "write_point": {
        "F": 3.6877187730359777,
        "state": [
-        2.5167709772777673,
-        -0.9923275960573393
+        2.5167709772777953,
+        -0.9923275960573654
        ]
       },
       "unfoldings": [
@@ -1267,39 +1309,42 @@
         "second": "chi",
         "success": true,
         "cusp": {
-         "F": 1.387263816538837,
-         "chi": -1.1339745964018173
+         "F": 1.3872638169206537,
+         "chi": -1.1339745960840089
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999998708098,
+         "second_rate": 0.9999999999806817,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.0749127060877024,
+         "rate_at_crossing": 0.020983483241286682,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 1.7913472977596123,
-         "sector_deviation_sigma_max": 9.251515158049624,
+         "flow_map_deviation_sigma_max": 1.1130477997510944,
+         "sector_deviation_sigma_max": 1.1130477997510944,
          "hold": {
           "hold_time": 56.568542494923804,
-          "switching_fraction": 0.0
+          "switching_fraction": 0.00025
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3252700517594156,
-            "offset": -0.8362298412093075
+            "response_constant": 1.3554929655796444,
+            "offset": -0.8271127249660916
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.308764055083556,
-            "offset": -0.7734718905611329
+            "response_constant": 1.345661420159253,
+            "offset": -0.7883574399553803
            }
           ]
          }
@@ -1308,7 +1353,7 @@
       ]
      }
     ],
-    "seconds": 421.5
+    "seconds": 203.7
    },
    "spec_sha256": "7eb12dc1703e581dac905b0d6dad20063530f051eea0a44935c9dacadfe44308",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -1355,12 +1400,12 @@
       "write_point": {
        "Ein": 1.0,
        "state": [
-        2.8409050252664055e-06,
-        2.6392193696177067e-06,
-        2.840905025266406e-06,
-        -2.6392193696177067e-06,
+        2.840916824880314e-06,
+        2.6391758617228025e-06,
+        2.840916824880314e-06,
+        -2.6391758617228025e-06,
         0.49999999999535355,
-        2.485213259420854e-22
+        -1.4394679414591616e-22
        ]
       },
       "law": {
@@ -1369,7 +1414,7 @@
       }
      }
     ],
-    "seconds": 44.6
+    "seconds": 27.4
    },
    "spec_sha256": "4207228fe207c9348909a0897d4927c129424c203fd86e9fbf2ef6187c0ac2de",
    "summary": "reaches no write target"
@@ -1419,8 +1464,8 @@
       "write_point": {
        "p": 0.5000000999999569,
        "state": [
-        3.0456643507096865e-12,
-        2.794262079425639e-12
+        3.0456643416036885e-12,
+        2.7942621914860383e-12
        ]
       },
       "law": {
@@ -1431,35 +1476,38 @@
        "second_rate": 1.0000000999999568,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.327 (29.3 errors), and the written states at the end of the sweep do not retain the choice: 53 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.327 (29.3 errors), and the written states at the end of the sweep do not retain the choice: 49 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
        "write_class": "equilibrium write",
+       "rate": 0.02,
+       "lag_at_crossing": 1.7776816487708225e-13,
+       "rate_at_crossing": 0.01999999999999804,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 29.2870420255676,
-       "sector_deviation_sigma_max": 29.2870420255676,
+       "flow_map_deviation_sigma_max": 29.265989986754885,
+       "sector_deviation_sigma_max": 29.265989986754885,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.5304110239961987
+        "switching_fraction": 0.49020518776616334
        },
        "one_direction": {
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3016105695791043,
-          "offset": 0.0075796711276914785
+          "response_constant": 1.2995988624748365,
+          "offset": 0.008073057283893403
          }
         ],
         "certificate": [
          {
           "bias_floors": 1.0,
-          "response_constant": 0.049319058859412186,
-          "offset": 0.020526998803435288
+          "response_constant": 0.04887364458212749,
+          "offset": 0.02086156084497321
          }
         ]
        }
       }
      }
     ],
-    "seconds": 112.8
+    "seconds": 91.0
    },
    "spec_sha256": "a8c03d852becbf9ffc02370c12b161e2ac9bb346e7d5eb6f1bc6a465a6e0add5",
    "summary": "reaches threshold-write; completions: leading order: equilibrium write"
@@ -1509,10 +1557,10 @@
       "write_point": {
        "p": 0.5000000999999569,
        "state": [
-        1.514169684452371e-19,
-        1.0501495932480891e-19,
-        1.603032917180275e-19,
-        1.104849282656089e-19
+        1.5141486670851705e-19,
+        1.0501492764286174e-19,
+        1.6030198987549747e-19,
+        1.1048129959070708e-19
        ]
       },
       "law": {
@@ -1523,21 +1571,24 @@
        "second_rate": 0.5,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.330 (29.5 errors), and the written states at the end of the sweep do not retain the choice: 47 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.330 (29.5 errors), and the written states at the end of the sweep do not retain the choice: 45 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
        "write_class": "equilibrium write",
+       "rate": 0.02,
+       "lag_at_crossing": 4.8672718138925844e-20,
+       "rate_at_crossing": 0.020000000000025553,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 29.540282979720615,
-       "sector_deviation_sigma_max": 29.540282979720615,
+       "flow_map_deviation_sigma_max": 29.517918009850103,
+       "sector_deviation_sigma_max": 29.517918009850103,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.4700854700854701
+        "switching_fraction": 0.45317725752508364
        },
        "one_direction": {
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.305737759393491,
-          "offset": 0.013684897756882863
+          "response_constant": 1.303723728296817,
+          "offset": 0.014170723927905249
          }
         ],
         "certificate": [
@@ -1554,12 +1605,12 @@
       "completion": "distant branch",
       "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
       "write_point": {
-       "p": 1.5811388063630432,
+       "p": 1.5811388063594052,
        "state": [
-        0.3121444536417236,
-        0.05065407237250405,
-        -0.31214445368015387,
-        -0.050654072378740415
+        -0.31214445346437103,
+        -0.050654072343785106,
+        0.31214445385628997,
+        0.050654072407384794
        ]
       },
       "law": {
@@ -1567,30 +1618,33 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.4999999999831529,
+       "second_rate": 0.49999999998662276,
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.0009066165250527212,
+       "rate_at_crossing": 0.01987573255623175,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 1.943967234787284,
-       "sector_deviation_sigma_max": 1.943967234787284,
+       "flow_map_deviation_sigma_max": 2.1409832230248695,
+       "sector_deviation_sigma_max": 2.1409832230248695,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.0
+        "switching_fraction": 0.00025
        },
        "one_direction": {
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3131560777101494,
-          "offset": -0.012231196778175302
+          "response_constant": 1.3138432104893707,
+          "offset": -0.012747319761087728
          }
         ],
         "certificate": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3643621778573303,
-          "offset": 0.013772955548645438
+          "response_constant": 1.3562677480986138,
+          "offset": 0.026322348927576344
          }
         ]
        }
@@ -1600,12 +1654,12 @@
       "completion": "distant branch",
       "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
       "write_point": {
-       "p": 1.5811388063650895,
+       "p": 1.5811388063648053,
        "state": [
-        -0.3121444539213526,
-        -0.05065407241785086,
-        0.3121444534011331,
-        0.05065407233343087
+        0.31214445345201086,
+        0.0506540723417179,
+        -0.31214445386986667,
+        -0.05065407240952657
        ]
       },
       "law": {
@@ -1613,16 +1667,19 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.49999999999703026,
+       "second_rate": 0.4999999999866226,
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.0009066170629793711,
+       "rate_at_crossing": 0.019875727419084117,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 1.648261448027653,
-       "sector_deviation_sigma_max": 1.648261448027653,
+       "flow_map_deviation_sigma_max": 1.3284011978002879,
+       "sector_deviation_sigma_max": 1.3284011978002879,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.00025
+        "switching_fraction": 0.0005
        },
        "one_direction": {
         "law": [
@@ -1635,15 +1692,15 @@
         "certificate": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3393508814102757,
-          "offset": -0.01974936132665578
+          "response_constant": 1.3446539357988867,
+          "offset": -0.005218113573161376
          }
         ]
        }
       }
      }
     ],
-    "seconds": 737.3
+    "seconds": 414.3
    },
    "spec_sha256": "24df4a6d1f0bc08bb972647fe083d24e0792dba06e448ebbb93a1577ee50aa98",
    "summary": "reaches threshold-write; completions: leading order: equilibrium write; distant branch: linear-stage write; distant branch: linear-stage write"
@@ -1693,12 +1750,12 @@
       "write_point": {
        "p": 0.5000000999999569,
        "state": [
-        -1.0484731624102292e-21,
-        -8.874137272413057e-22,
-        3.1308597204183865e-21,
-        2.8115515447331987e-21,
-        -2.2004473682695352e-21,
-        -2.0335238026483067e-21
+        -1.0484369155566263e-21,
+        -8.873831850733552e-22,
+        3.130836828250455e-21,
+        2.8114940605632344e-21,
+        -2.2004632346324142e-21,
+        -2.033522905769592e-21
        ]
       },
       "law": {
@@ -1709,11 +1766,14 @@
        "second_rate": 0.49999999999999933,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.423 (846.5 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.427 (854.5 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
+       "rate": 0.02,
+       "lag_at_crossing": 2.941390359311478e-22,
+       "rate_at_crossing": 0.020000000000012647,
        "stable_states": 6,
-       "flow_map_deviation_sigma_max": 846.5,
-       "sector_deviation_sigma_max": 18928315.42953572,
+       "flow_map_deviation_sigma_max": 854.5,
+       "sector_deviation_sigma_max": 19107200.867735703,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -1724,14 +1784,14 @@
       "completion": "critical space",
       "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
       "write_point": {
-       "p": 2.304886110138087,
+       "p": 2.304886108535837,
        "state": [
-        0.3849857502688776,
-        0.04226074388260846,
-        0.38498575257020334,
-        0.042260744135230115,
-        0.3849857508951626,
-        0.04226074395135716
+        0.38498575330453555,
+        0.0422607442457914,
+        0.384985747313974,
+        0.042260743588194115,
+        0.38498575184818407,
+        0.04226074408592446
        ]
       },
       "law": {
@@ -1739,17 +1799,20 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 2,
        "dynamical_critical_dimension": 2,
-       "second_rate": 0.4999999999912481,
+       "second_rate": 0.5000000000051256,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.050 (4.6 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.049 (4.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
+       "rate": 0.02,
+       "lag_at_crossing": 0.00023235339833398171,
+       "rate_at_crossing": 0.012762299405430886,
        "stable_states": 6,
-       "flow_map_deviation_sigma_max": 4.59941123964139,
-       "sector_deviation_sigma_max": 19286086.305935685,
+       "flow_map_deviation_sigma_max": 4.68150207599413,
+       "sector_deviation_sigma_max": 20348218.595248085,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.0
+        "switching_fraction": 0.000125
        }
       }
      },
@@ -1757,14 +1820,14 @@
       "completion": "critical space",
       "kind": "degenerate critical mode: 2 directions become critical together; the critical eigenspace is 2-dimensional, not a line",
       "write_point": {
-       "p": 2.304886110138087,
+       "p": 2.304886108535837,
        "state": [
-        -0.3849857502688776,
-        -0.04226074388260846,
-        -0.38498575257020334,
-        -0.042260744135230115,
-        -0.3849857508951626,
-        -0.04226074395135716
+        -0.38498575330453555,
+        -0.0422607442457914,
+        -0.384985747313974,
+        -0.042260743588194115,
+        -0.38498575184818407,
+        -0.04226074408592446
        ]
       },
       "law": {
@@ -1772,14 +1835,17 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 2,
        "dynamical_critical_dimension": 2,
-       "second_rate": 0.4999999999912481,
+       "second_rate": 0.5000000000051256,
        "certified": false,
        "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.047 (5.4 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.052 (5.0 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
+       "rate": 0.02,
+       "lag_at_crossing": 0.00023235339833398171,
+       "rate_at_crossing": 0.012762299405430886,
        "stable_states": 6,
-       "flow_map_deviation_sigma_max": 5.44545367041055,
-       "sector_deviation_sigma_max": 19330807.66548568,
+       "flow_map_deviation_sigma_max": 5.008821476679249,
+       "sector_deviation_sigma_max": 20370579.275023084,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -1787,7 +1853,7 @@
       }
      }
     ],
-    "seconds": 3127.1
+    "seconds": 960.8
    },
    "spec_sha256": "37e42b34bcc5ab25996015ad920808f35ba5fc49790bbf01e1cc8a07937287ac",
    "summary": "reaches threshold-write; completions: critical space: nonlinear stage; critical space: nonlinear stage; critical space: nonlinear stage"
@@ -1843,10 +1909,29 @@
       "write_point": {
        "eps": 1.1119974978889027,
        "state": [
-        -0.8192606490150328,
-        -0.07056605592896854,
-        4.113944759057405,
-        0.14801511739108453
+        -0.8192606490150275,
+        -0.07056605592901022,
+        4.11394475905739,
+        0.1480151173912942
+       ]
+      },
+      "unfoldings": [
+       {
+        "second": "Dm",
+        "success": false
+       }
+      ]
+     },
+     {
+      "completion": "second parameter",
+      "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
+      "write_point": {
+       "eps": 5.431687665327141,
+       "state": [
+        -0.03298506595466631,
+        -0.4763744701607593,
+        0.2840189473135214,
+        2.37362608431513
        ]
       },
       "unfoldings": [
@@ -1854,8 +1939,8 @@
         "second": "Dm",
         "success": true,
         "cusp": {
-         "eps": 0.3891475971675204,
-         "Dm": -0.06856483765292003
+         "eps": 0.38914759722776177,
+         "Dm": -0.06856483774946599
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
@@ -1863,14 +1948,16 @@
          "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.49013331994883336,
-         "certified": false,
-         "sector_certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.205 (18.4 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
-         "write_class": "nonlinear stage",
+         "second_rate": 0.49013331994890397,
+         "certified": true,
+         "sector_certified": true,
+         "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.1699965056198442,
+         "rate_at_crossing": 0.024908521974889707,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 18.389074575039807,
-         "sector_deviation_sigma_max": 18.389074575039807,
+         "flow_map_deviation_sigma_max": 2.649625033945902,
+         "sector_deviation_sigma_max": 2.649625033945902,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.00125
@@ -1879,8 +1966,8 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.335207925793321,
-            "offset": -1.6286266654620087
+            "response_constant": 1.3538849637617936,
+            "offset": -1.1337609808001725
            }
           ],
           "certificate": [
@@ -1894,70 +1981,12 @@
         }
        }
       ]
-     },
-     {
-      "completion": "second parameter",
-      "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
-      "write_point": {
-       "eps": 5.431687665327141,
-       "state": [
-        -0.03298506595467336,
-        -0.47637447016079626,
-        0.28401894731356586,
-        2.3736260843153136
-       ]
-      },
-      "unfoldings": [
-       {
-        "second": "Dm",
-        "success": true,
-        "cusp": {
-         "eps": 0.38914759720721115,
-         "Dm": -0.06856483771650483
-        },
-        "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
-        "law": {
-         "status": "derived",
-         "law_kind": "linear stage and outcome map",
-         "critical_dimension": 1,
-         "dynamical_critical_dimension": 1,
-         "second_rate": 0.4901333198415654,
-         "certified": false,
-         "sector_certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.225 (20.1 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
-         "write_class": "nonlinear stage",
-         "stable_states": 2,
-         "flow_map_deviation_sigma_max": 20.12449090664312,
-         "sector_deviation_sigma_max": 20.12449090664312,
-         "hold": {
-          "hold_time": 56.568542494923804,
-          "switching_fraction": 0.00125
-         },
-         "one_direction": {
-          "law": [
-           {
-            "bias_floors": 1.0,
-            "response_constant": 1.2810931094566522,
-            "offset": -1.6312546704375244
-           }
-          ],
-          "certificate": [
-           {
-            "bias_floors": 1.0,
-            "response_constant": 1.2829814844975724,
-            "offset": -1.0226200380477484
-           }
-          ]
-         }
-        }
-       }
-      ]
      }
     ],
-    "seconds": 257.8
+    "seconds": 124.8
    },
    "spec_sha256": "2ccaa0f4a734f5717743840ad13fa9562fd82e9e3511bea399a6e1036cad6b9d",
-   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage; second parameter: nonlinear stage"
+   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write"
   },
   {
    "spec": "nuclear_bath.json",
@@ -2023,9 +2052,12 @@
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.0,
+         "rate_at_crossing": 0.020000112677109882,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 0.5,
-         "sector_deviation_sigma_max": 1.0689904935581134,
+         "flow_map_deviation_sigma_max": 0.5897878585148212,
+         "sector_deviation_sigma_max": 1.1795757170296424,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -2034,8 +2066,8 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.4779731558741382,
-            "offset": -2.370613012935711
+            "response_constant": 1.4880321395962413,
+            "offset": -2.3630574533106823
            }
           ],
           "certificate": [
@@ -2064,8 +2096,8 @@
         "second": "p",
         "success": true,
         "cusp": {
-         "d": 1.7320508076286951,
-         "p": 1.5396007179187592
+         "d": 1.7320508075651242,
+         "p": 1.5396007178339979
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
@@ -2077,6 +2109,9 @@
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.0,
+         "rate_at_crossing": 0.019999890632504957,
          "stable_states": 2,
          "flow_map_deviation_sigma_max": 1.44445942410133,
          "sector_deviation_sigma_max": 1.1555675392810858,
@@ -2088,8 +2123,8 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.4871255028066304,
-            "offset": -2.3637384513629107
+            "response_constant": 1.4970151875298272,
+            "offset": -2.3563100565406128
            }
           ],
           "certificate": [
@@ -2105,7 +2140,7 @@
       ]
      }
     ],
-    "seconds": 167.4
+    "seconds": 79.2
    },
    "spec_sha256": "dba09a964776c0da70c75224ff84874b69ef9d761eb27caf7263c7965222b387",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -2156,7 +2191,7 @@
         31.30903314271069,
         -79.51091272969511,
         0.7302240799440547,
-        -2.0510383535746307e-29
+        9.584659998435293e-28
        ]
       },
       "unfoldings": [
@@ -2164,8 +2199,8 @@
         "second": "Dl",
         "success": true,
         "cusp": {
-         "Ein": 43.869133918812715,
-         "Dl": -0.8660254078321865
+         "Ein": 43.869133783383056,
+         "Dl": -0.8660254042663389
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
@@ -2173,14 +2208,17 @@
          "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 3,
-         "second_rate": 0.0792651404309104,
+         "second_rate": 0.07926514418882355,
          "slow_modes": "2 direction(s) with a rate below 1 sqrt(rate) = 0.141 at the write point relax less than once during the passage: the write takes place in 3 directions, and the law is the 3-dimensional linear stage with the outcome map",
          "certified": false,
          "sector_certified": false,
-         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.142 (25.6 errors), and the written states at the end of the sweep do not retain the choice: 14 % of the trajectories change state during a hold of 42.4 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.143 (24.3 errors), and the written states at the end of the sweep do not retain the choice: 14 % of the trajectories change state during a hold of 42.4 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
          "write_class": "not settled at the end of the sweep",
+         "rate": 0.02,
+         "lag_at_crossing": 2.3577356384915706,
+         "rate_at_crossing": 0.023986327046016075,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 25.577490753062996,
+         "flow_map_deviation_sigma_max": 24.31662853284158,
          "hold": {
           "hold_time": 42.42640687119285,
           "switching_fraction": 0.13905
@@ -2190,7 +2228,7 @@
       ]
      }
     ],
-    "seconds": 1806.7
+    "seconds": 800.1
    },
    "spec_sha256": "3d52775718f4ec3fe2c8ebc76cb76ab2accab6b0cc8f539d0a3efc27c57245f4",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: not settled at the end of the sweep"
@@ -2238,7 +2276,7 @@
         3.828325114972837,
         15.508679187821794,
         0.025517520333670867,
-        7.233854500876678e-28
+        6.286235338479938e-28
        ]
       },
       "law": {
@@ -2246,7 +2284,7 @@
       }
      }
     ],
-    "seconds": 1.4
+    "seconds": 1.0
    },
    "spec_sha256": "3e0e2baa2763e369b6baaaa2b5a3521e1e75a964904b483b86a0b343af369c90",
    "summary": "reaches phase-locking"
@@ -2287,7 +2325,7 @@
    "completion": {
     "status": "derived",
     "write_points": [],
-    "seconds": 0.6
+    "seconds": 0.4
    },
    "spec_sha256": "6f54f4695d3d9bd55670d47e42284259d830db16ae803ad1566c5099b59b2a33",
    "summary": "reaches no write target"
@@ -2344,7 +2382,7 @@
        "phe": 0.945533355077108,
        "state": [
         10.895822573124272,
-        -1.7679064174769733e-27
+        8.810150132741764e-27
        ]
       },
       "unfoldings": [
@@ -2353,21 +2391,24 @@
         "success": true,
         "cusp": {
          "phe": 9.42477796076938,
-         "ell": 0.9999999999998335
+         "ell": 0.9999999999998334
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.19999999999999896,
+         "second_rate": 0.2,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 1.265556278791297e-14,
+         "rate_at_crossing": 0.020000000000022663,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 1.8603095140581398,
-         "sector_deviation_sigma_max": 1.0368938275078174,
+         "flow_map_deviation_sigma_max": 2.2825900775861214,
+         "sector_deviation_sigma_max": 2.2825900775861214,
          "hold": {
           "hold_time": 120.0,
           "switching_fraction": 0.0
@@ -2376,15 +2417,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.230175611696736,
-            "offset": 0.009603567056622409
+            "response_constant": 1.2638141173842004,
+            "offset": 0.00983355020491411
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3077382165440268,
-            "offset": 0.012182303290507901
+            "response_constant": 1.3559670457700932,
+            "offset": 0.01578982050403155
            }
           ]
          }
@@ -2399,7 +2440,7 @@
        "phe": 5.3376478004455565,
        "state": [
         -4.613225200245387,
-        -3.101018054988385e-26
+        3.639976952375135e-27
        ]
       },
       "unfoldings": [
@@ -2413,33 +2454,36 @@
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
          "second_rate": 0.2,
          "certified": true,
          "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 5.895717373412989e-15,
+         "rate_at_crossing": 0.020000000000022663,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 2.526593278188879,
-         "sector_deviation_sigma_max": 1.2330604188236551,
+         "flow_map_deviation_sigma_max": 2.0639601347385286,
+         "sector_deviation_sigma_max": 2.0639601347385286,
          "hold": {
-          "hold_time": 119.99999999999997,
+          "hold_time": 120.0,
           "switching_fraction": 0.0
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2250593466515174,
-            "offset": -0.008612633687947013
+            "response_constant": 1.2963598278575312,
+            "offset": -0.015604516100064525
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2925610714180573,
-            "offset": -0.04015868961873875
+            "response_constant": 1.3690773156739775,
+            "offset": -0.029772673534558702
            }
           ]
          }
@@ -2448,7 +2492,7 @@
       ]
      }
     ],
-    "seconds": 309.8
+    "seconds": 119.3
    },
    "spec_sha256": "f68cc4781f1b2933d1500d4ff8269db1e1a147ee086ec91974792fa5ce4bc3c6",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -2495,8 +2539,8 @@
       "write_point": {
        "eps": 5.432826170603978,
        "state": [
-        -1.0388312632032444e-16,
-        -9.741766592368845e-18
+        -1.0412236655484148e-16,
+        -9.76411939666461e-18
        ]
       },
       "law": {
@@ -2504,13 +2548,16 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 2.000000099999849,
+       "second_rate": 2.0000000999998466,
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 1.0583822512438797e-18,
+       "rate_at_crossing": 0.020000000001015317,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 0.2744718955167752,
-       "sector_deviation_sigma_max": 0.2744718955167752,
+       "flow_map_deviation_sigma_max": 0.3659625273557003,
+       "sector_deviation_sigma_max": 0.3659625273557003,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -2519,8 +2566,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3016105695791043,
-          "offset": 0.0075796711276914785
+          "response_constant": 1.2962494625592262,
+          "offset": 0.008556612006281772
          }
         ],
         "certificate": [
@@ -2534,7 +2581,7 @@
       }
      }
     ],
-    "seconds": 37.1
+    "seconds": 37.2
    },
    "spec_sha256": "92d02c95fa410c03333eb93893dc0f3486417318f820d26fe0e712ac42074944",
    "summary": "reaches no write target; completions: distant branch: linear-stage write"
@@ -2581,8 +2628,8 @@
       "write_point": {
        "p": 1.0,
        "state": [
-        0.0010718868931237848,
-        0.0010718870041580765
+        -0.00043248138153964457,
+        -0.00043248138397496843
        ]
       },
       "law": {
@@ -2590,13 +2637,16 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.9999999999998797,
+       "second_rate": 1.0000000000000309,
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 9.058529414084092e-25,
+       "rate_at_crossing": 0.0200000000049424,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 1.2638326526343822,
-       "sector_deviation_sigma_max": 1.2638326526343822,
+       "flow_map_deviation_sigma_max": 1.0580924533683174,
+       "sector_deviation_sigma_max": 1.0580924533683174,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.00025
@@ -2605,8 +2655,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3056357908708056,
-          "offset": 0.005574904411488502
+          "response_constant": 1.2995988624748365,
+          "offset": 0.008073057283893403
          }
         ],
         "certificate": [
@@ -2620,7 +2670,7 @@
       }
      }
     ],
-    "seconds": 32.4
+    "seconds": 29.0
    },
    "spec_sha256": "843a27328ec6aa39ebec54dfe394ff94206885c4e318b7a2d6aeee690d485351",
    "summary": "reaches no write target; completions: leading order: linear-stage write"
@@ -2670,8 +2720,8 @@
       "write_point": {
        "f": 0.6386510927175442,
        "state": [
-        -2.323968686584035e-21,
-        1.4849618971766016e-26
+        -2.3239686865802605e-21,
+        -3.698691218946191e-27
        ]
       },
       "law": {
@@ -2683,9 +2733,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 2.6462360656429047e-23,
+       "rate_at_crossing": 0.02000030689837656,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 0.5071775993357808,
-       "sector_deviation_sigma_max": 0.5071775993357808,
+       "flow_map_deviation_sigma_max": 0.29833976431516596,
+       "sector_deviation_sigma_max": 0.29833976431516596,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.00025
@@ -2694,8 +2747,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3056357908708056,
-          "offset": 0.005574904411488502
+          "response_constant": 1.3002762848080898,
+          "offset": 0.008581886502790959
          }
         ],
         "certificate": [
@@ -2709,7 +2762,7 @@
       }
      }
     ],
-    "seconds": 26.8
+    "seconds": 28.1
    },
    "spec_sha256": "87ef140de755fbac7b92f05f24086637de86ad64345314428bf5bb6509605f77",
    "summary": "reaches symmetric-write; completions: none: linear-stage write"
@@ -2753,7 +2806,7 @@
    "completion": {
     "status": "derived",
     "write_points": [],
-    "seconds": 0.6
+    "seconds": 0.4
    },
    "spec_sha256": "8317c0105e6f8d21e95de90f8f65e8cecc1ff66ffa324d1a4c884d922060fd78",
    "summary": "reaches phase-locking; motion without a stable state: cycle"
@@ -2806,8 +2859,8 @@
       "write_point": {
        "beta": 1.0000000500001804,
        "state": [
-        -4.98533368090523e-17,
-        3.3493480587347995e-23
+        -4.9849402909563266e-17,
+        1.0151565983014262e-22
        ]
       },
       "law": {
@@ -2819,9 +2872,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 5.383764821734428e-18,
+       "rate_at_crossing": 0.02000000000001533,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 0.6200163365912406,
-       "sector_deviation_sigma_max": 0.6200163365912406,
+       "flow_map_deviation_sigma_max": 0.5314425742210628,
+       "sector_deviation_sigma_max": 0.5314425742210628,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0005
@@ -2830,8 +2886,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.2915721306426238,
-          "offset": 0.009029061160603591
+          "response_constant": 1.2868993536082536,
+          "offset": 0.0084985122286792
          }
         ],
         "certificate": [
@@ -2845,7 +2901,7 @@
       }
      }
     ],
-    "seconds": 26.6
+    "seconds": 28.1
    },
    "spec_sha256": "1c354bf5adf79447aeec90d941d40c1ffcaba279ca6fdf2677cdc983051ca599",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -2898,10 +2954,10 @@
       "write_point": {
        "beta": 0.9500000500001717,
        "state": [
-        -1.120408183716268e-10,
-        3.3881310003414153e-20,
-        1.7257400560653195e-10,
-        -2.032879358965347e-20
+        -1.1204083380956584e-10,
+        2.03287782240735e-20,
+        1.7257401554887143e-10,
+        -2.7105060635141757e-20
        ]
       },
       "law": {
@@ -2914,6 +2970,9 @@
        "sector_certified": false,
        "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.029 (7.7 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (1 % change state during a hold of 56.6 time units)",
        "write_class": "nonlinear stage",
+       "rate": 0.02,
+       "lag_at_crossing": 6.380683030101374e-20,
+       "rate_at_crossing": 0.019999999999993547,
        "stable_states": 3,
        "flow_map_deviation_sigma_max": 7.659775222490794,
        "sector_deviation_sigma_max": 7.659775222490794,
@@ -2925,8 +2984,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.2963401168535589,
-          "offset": 0.014597558855774129
+          "response_constant": 1.291665744596969,
+          "offset": 0.01504948320700622
          }
         ],
         "certificate": [
@@ -2943,12 +3002,12 @@
       "completion": "distant branch",
       "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
       "write_point": {
-       "beta": 1.1007112421079321,
+       "beta": 1.100711242107938,
        "state": [
-        0.5294631207266071,
-        -2.4772337465368986e-26,
-        0.5294631201464988,
-        -2.2497052110568666e-26
+        -0.5294631204222251,
+        -6.117689890512822e-26,
+        -0.5294631205103318,
+        -3.794475669782787e-26
        ]
       },
       "law": {
@@ -2956,31 +3015,34 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.24999999997943306,
-       "certified": false,
-       "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.032 (4.4 errors), and the written states at the end of the sweep do not retain the choice: 10 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "second_rate": 0.24999999997943345,
+       "certified": true,
+       "sector_certified": true,
+       "obstruction_in_nonlinear_stage": "the law agrees with the full dynamics, but the written states at the end of the sweep do not retain the choice: 10 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
        "write_class": "equilibrium write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.11469307963383522,
+       "rate_at_crossing": 0.011460239285513322,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 4.406741175539158,
-       "sector_deviation_sigma_max": 4.406741175539158,
+       "flow_map_deviation_sigma_max": 1.1761523754700298,
+       "sector_deviation_sigma_max": 1.1761523754700298,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.10375000000000001
+        "switching_fraction": 0.105
        },
        "one_direction": {
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.3888623693495887,
-          "offset": -0.024835470045740826
+          "response_constant": 1.488250178420117,
+          "offset": -0.022824750771763713
          }
         ],
         "certificate": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.544527267123085,
-          "offset": 0.004913037846825619
+          "response_constant": 1.5322652395224692,
+          "offset": -0.031595011746096135
          }
         ]
        }
@@ -2990,12 +3052,12 @@
       "completion": "distant branch",
       "kind": "subcritical pitchfork: symmetric, but the state jumps to a distant branch",
       "write_point": {
-       "beta": 1.1007112421145593,
+       "beta": 1.1007112421138234,
        "state": [
-        -0.5294631196847038,
-        1.938704541411859e-27,
-        -0.5294631212775819,
-        -9.440413334501031e-27
+        0.5294631212536454,
+        7.386464380779346e-26,
+        0.5294631197086411,
+        4.556224931768569e-26
        ]
       },
       "law": {
@@ -3003,40 +3065,44 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
-       "second_rate": 0.24999999997943334,
+       "second_rate": 0.24999999997943323,
        "certified": true,
        "sector_certified": true,
-       "write_class": "linear-stage write",
+       "obstruction_in_nonlinear_stage": "the law agrees with the full dynamics, but the written states at the end of the sweep do not retain the choice: 11 % of the trajectories change state during a hold of 56.6 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+       "write_class": "equilibrium write",
+       "rate": 0.02,
+       "lag_at_crossing": 0.11469307955372139,
+       "rate_at_crossing": 0.011460228183288899,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 2.0853068919966846,
-       "sector_deviation_sigma_max": 2.0853068919966846,
+       "flow_map_deviation_sigma_max": 1.3331320877861448,
+       "sector_deviation_sigma_max": 1.3331320877861448,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.11349999999999999
+        "switching_fraction": 0.11274999999999999
        },
        "one_direction": {
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.4226702872273989,
-          "offset": -0.002772895192437397
+          "response_constant": 1.5307402984867045,
+          "offset": -0.007888751587574627
          }
         ],
         "certificate": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.4755838248724915,
-          "offset": -0.03474424873001525
+          "response_constant": 1.5086614534038396,
+          "offset": -0.0392968029977927
          }
         ]
        }
       }
      }
     ],
-    "seconds": 141.5
+    "seconds": 149.8
    },
    "spec_sha256": "cc173309c1d7985a663969fa4d22276300707d7bd463000474d180008b0bf325",
-   "summary": "reaches symmetric-write, threshold-write; completions: none: nonlinear stage; distant branch: equilibrium write; distant branch: linear-stage write"
+   "summary": "reaches symmetric-write, threshold-write; completions: none: nonlinear stage; distant branch: equilibrium write; distant branch: equilibrium write"
   },
   {
    "spec": "rfsquid_triangle.json",
@@ -3083,12 +3149,12 @@
       "write_point": {
        "beta": 0.9500000500001717,
        "state": [
-        7.047544709302657e-19,
-        -1.3234889800799813e-23,
-        -1.5956459265895907e-18,
-        4.135903062871897e-24,
-        7.052591783679373e-19,
-        -9.098986738135605e-24
+        7.062646894760229e-19,
+        -2.6469779601589498e-23,
+        -1.598621996348004e-18,
+        -8.271806126430685e-25,
+        7.064329252829839e-19,
+        4.963083675320319e-24
        ]
       },
       "law": {
@@ -3096,25 +3162,27 @@
        "law_kind": "linear stage and outcome map",
        "critical_dimension": 2,
        "dynamical_critical_dimension": 2,
-       "second_rate": 0.2500000000000001,
-       "certified": false,
-       "sector_certified": false,
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.030 (5.2 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
-       "write_class": "nonlinear stage",
+       "second_rate": 0.25,
+       "certified": true,
+       "sector_certified": true,
+       "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 2.2979141813149866e-19,
+       "rate_at_crossing": 0.02000000041082498,
        "stable_states": 7,
-       "flow_map_deviation_sigma_max": 5.226951324737943,
-       "sector_deviation_sigma_max": 5.269795188055467,
+       "flow_map_deviation_sigma_max": 3.8682823713009884,
+       "sector_deviation_sigma_max": 3.8682823713009884,
        "hold": {
         "hold_time": 56.568542494923804,
-        "switching_fraction": 0.0040625
+        "switching_fraction": 0.0045
        }
       }
      }
     ],
-    "seconds": 210.1
+    "seconds": 144.5
    },
    "spec_sha256": "81e8696e72ff6b78f5e2789d5d4d7c08b675e995a83a706b0c9fd7241abd08f6",
-   "summary": "reaches threshold-write; completions: critical space: nonlinear stage"
+   "summary": "reaches threshold-write; completions: critical space: linear-stage write"
   },
   {
    "spec": "rydberg_bistability.json",
@@ -3177,20 +3245,26 @@
         "second": "Om",
         "success": true,
         "cusp": {
-         "Delta": 6.061183036528833,
-         "Om": 2.4490794121595982
+         "Delta": 6.0611830366622,
+         "Om": 2.449079412308958
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999999984817,
-         "certified": true,
-         "write_class": "linear-stage write",
+         "second_rate": 1.00000000002153,
+         "certified": false,
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.037 (4.3 errors): the choice is not complete at the end of the linear stage (noise during the nonlinear stage, or a further mode brought into play), and the written states retain it (0 % change state during a hold of 56.6 time units)",
+         "write_class": "nonlinear stage",
+         "rate": 0.02,
+         "lag_at_crossing": 0.0009802217612352709,
+         "rate_at_crossing": 0.019873619765188706,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 1.053392871942951,
+         "flow_map_deviation_sigma_max": 4.300823379003824,
+         "sector_deviation_sigma_max": 4.300823379003824,
          "hold": {
           "hold_time": 56.568542494923804,
           "switching_fraction": 0.0
@@ -3199,15 +3273,15 @@
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3500773621731654,
-            "offset": 0.05396787967820865
+            "response_constant": 1.305123487331838,
+            "offset": 0.17735530170671765
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3438710931960511,
-            "offset": 0.08448144603585628
+            "response_constant": 1.3351199199250101,
+            "offset": 0.06631195022680864
            }
           ]
          }
@@ -3216,10 +3290,10 @@
       ]
      }
     ],
-    "seconds": 130.8
+    "seconds": 55.5
    },
    "spec_sha256": "6a83ca3b2daa1fcfe82ef67d4ff4bc87813297f8d91f4cf45a4b8afc3880ff12",
-   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write"
+   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: nonlinear stage"
   },
   {
    "spec": "snail_po.json",
@@ -3269,8 +3343,8 @@
       "write_point": {
        "g": 0.29154763761691155,
        "state": [
-        -1.704762365827332e-11,
-        2.490015704659947e-11
+        -1.704759839148332e-11,
+        2.4900105072710525e-11
        ]
       },
       "law": {
@@ -3282,9 +3356,12 @@
        "certified": true,
        "sector_certified": true,
        "write_class": "linear-stage write",
+       "rate": 0.02,
+       "lag_at_crossing": 1.001572544341647e-22,
+       "rate_at_crossing": 0.019999999999989426,
        "stable_states": 2,
-       "flow_map_deviation_sigma_max": 1.1411756112715334,
-       "sector_deviation_sigma_max": 1.1411756112715334,
+       "flow_map_deviation_sigma_max": 1.0826537850524742,
+       "sector_deviation_sigma_max": 1.0826537850524742,
        "hold": {
         "hold_time": 56.568542494923804,
         "switching_fraction": 0.0
@@ -3293,8 +3370,8 @@
         "law": [
          {
           "bias_floors": 1.0,
-          "response_constant": 1.2949216094541554,
-          "offset": 0.009553996392797637
+          "response_constant": 1.292920907496639,
+          "offset": 0.01004216190943763
          }
         ],
         "certificate": [
@@ -3308,7 +3385,7 @@
       }
      }
     ],
-    "seconds": 29.9
+    "seconds": 32.8
    },
    "spec_sha256": "3b0b24cbac11bdb2ddf0f45a476b59fc8843a557e4890a536c4635f02b5b901d",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -3354,11 +3431,11 @@
       "write_point": {
        "eta": 0.34483226835727687,
        "state": [
-        -5.860063421024686e-35,
-        -0.018924404438142917,
-        -0.11179002204606847,
-        4.2084782698973313e-26,
-        -0.4922656985563072
+        1.1326617506249002e-35,
+        -0.01892440443814324,
+        -0.11179002204606842,
+        4.0715320167509637e-26,
+        -0.4922656985562987
        ]
       },
       "unfoldings": [
@@ -3366,13 +3443,46 @@
         "second": "dc",
         "success": true,
         "cusp": {
-         "eta": 0.3727819826768612,
-         "dc": -6.622694489879022
+         "eta": 0.3727819826724592,
+         "dc": 6.62269448953706
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
-         "status": "no choice at the end of the sweep",
-         "stable_states": 1
+         "status": "derived",
+         "law_kind": "linear stage and outcome map",
+         "critical_dimension": 1,
+         "dynamical_critical_dimension": 1,
+         "second_rate": 0.5838013443795034,
+         "certified": false,
+         "sector_certified": false,
+         "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.148 (17.0 errors), and the written states at the end of the sweep do not retain the choice: 22 % of the trajectories change state during a hold of 31.8 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)",
+         "write_class": "equilibrium write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.0070622038014112026,
+         "rate_at_crossing": 0.021553789435119673,
+         "stable_states": 2,
+         "flow_map_deviation_sigma_max": 16.956299445844593,
+         "sector_deviation_sigma_max": 16.956299445844593,
+         "hold": {
+          "hold_time": 31.81980515339464,
+          "switching_fraction": 0.2165
+         },
+         "one_direction": {
+          "law": [
+           {
+            "bias_floors": 1.0,
+            "response_constant": 1.3976260176276647,
+            "offset": -0.8421397081803601
+           }
+          ],
+          "certificate": [
+           {
+            "bias_floors": 1.0,
+            "response_constant": 1.03654112052118,
+            "offset": -0.16575952249514597
+           }
+          ]
+         }
         }
        },
        {
@@ -3382,10 +3492,10 @@
       ]
      }
     ],
-    "seconds": 605.6
+    "seconds": 758.8
    },
    "spec_sha256": "0cef4fae8be0863a2f5f554c1d162239b7947a48fdcfd7a42e8ffcd0f2fbc96b",
-   "summary": "reaches threshold-write"
+   "summary": "reaches threshold-write; completions: second parameter: equilibrium write"
   },
   {
    "spec": "transmon_driven.json",
@@ -3438,8 +3548,8 @@
       "write_point": {
        "F": 0.6102150678634644,
        "state": [
-        -0.09920611415695282,
-        -1.2123118839665645
+        -0.0992061141569563,
+        -1.212311883966564
        ]
       },
       "unfoldings": [
@@ -3447,39 +3557,42 @@
         "second": "Delta",
         "success": true,
         "cusp": {
-         "F": 0.3102016197019624,
-         "Delta": -0.8660254037890521
+         "F": 0.31020161969959026,
+         "Delta": -0.8660254037803082
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999999831162,
+         "second_rate": 0.9999999999692384,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.016750089076460695,
+         "rate_at_crossing": 0.020984813907501378,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 0.8202451947721577,
-         "sector_deviation_sigma_max": 9.615096449829172,
+         "flow_map_deviation_sigma_max": 1.439503202963498,
+         "sector_deviation_sigma_max": 1.439503202963498,
          "hold": {
           "hold_time": 56.568542494923804,
-          "switching_fraction": 0.001
+          "switching_fraction": 0.00025
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2873953029957437,
-            "offset": 0.747160934099219
+            "response_constant": 1.3082731128109024,
+            "offset": 0.7827021837211684
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3194895628980634,
-            "offset": 0.7480953489376346
+            "response_constant": 1.353068279880295,
+            "offset": 0.8220995208244466
            }
           ]
          }
@@ -3493,8 +3606,8 @@
       "write_point": {
        "F": 1.4586436015367499,
        "state": [
-        -0.6993835695522576,
-        -0.1786030635285025
+        -0.6993835695522524,
+        -0.17860306352849967
        ]
       },
       "unfoldings": [
@@ -3502,39 +3615,42 @@
         "second": "Delta",
         "success": true,
         "cusp": {
-         "F": 0.3102016197036241,
-         "Delta": -0.8660254037953239
+         "F": 0.31020161970263677,
+         "Delta": -0.8660254037916486
         },
         "kind_along_sweep": "supercritical pitchfork: symmetric write; a small bias chooses the state",
         "law": {
          "status": "derived",
-         "law_kind": "reduced (one coordinate along the moving branch)",
+         "law_kind": "linear stage and outcome map",
          "critical_dimension": 1,
          "dynamical_critical_dimension": 1,
-         "second_rate": 0.9999999999831162,
+         "second_rate": 0.9999999999633729,
          "certified": true,
-         "sector_certified": false,
+         "sector_certified": true,
          "write_class": "linear-stage write",
+         "rate": 0.02,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
          "stable_states": 2,
-         "flow_map_deviation_sigma_max": 3.1125970240096112,
-         "sector_deviation_sigma_max": 7.082285982166804,
+         "flow_map_deviation_sigma_max": 0.6169173505549015,
+         "sector_deviation_sigma_max": 0.6169173505549015,
          "hold": {
           "hold_time": 56.568542494923804,
-          "switching_fraction": 0.0
+          "switching_fraction": 0.00025
          },
          "one_direction": {
           "law": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.3151802704272857,
-            "offset": 0.7345183935584454
+            "response_constant": 1.4028049162090097,
+            "offset": 0.805508888006278
            }
           ],
           "certificate": [
            {
             "bias_floors": 1.0,
-            "response_constant": 1.2751629307931862,
-            "offset": 0.7928786205786258
+            "response_constant": 1.3774693712255932,
+            "offset": 0.7903543897007972
            }
           ]
          }
@@ -3543,7 +3659,7 @@
       ]
      }
     ],
-    "seconds": 165.3
+    "seconds": 161.2
    },
    "spec_sha256": "cae1f5aa266b1f772483c4dc04841e9baea46f50efee200889d5cda78d5501d9",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"

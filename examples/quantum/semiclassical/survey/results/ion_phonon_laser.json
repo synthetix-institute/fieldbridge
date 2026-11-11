@@ -5,7 +5,7 @@
   "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
   "kind": "classical image of census entry 46: Trapped-ion phonon laser and its injection locking"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -93,11 +93,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 15.1,
-  "threshold-write": 4.9,
-  "phase-locking": 25.4,
-  "completion": 127.7,
-  "changes": 116.7
+  "symmetric-write": 12.6,
+  "threshold-write": 4.4,
+  "phase-locking": 21.3,
+  "completion": 145.4,
+  "changes": 120.4
  },
  "completion": {
   "write_points": [
@@ -132,35 +132,38 @@
       "asymmetry_along_sweep": 1.5873235679133856e-08,
       "law": {
        "status": "derived",
-       "law_kind": "reduced (one coordinate along the moving branch)",
+       "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
        "second_rate": 0.6666666657606513,
        "rate": 0.02,
        "sweep_end": 29.46278254943948,
        "noise": 0.002499999971443395,
+       "start_of_sweep": "the unwritten branch followed back from the write point",
        "noise_rule": "Gamma = 0.05",
        "noise_along_critical": 0.009999999907784902,
        "bias_floor": 0.028246850327871335,
        "stable_states": [
         [
-         -2.6347585236480726,
-         0.980196650398868
+         -2.6347585236480735,
+         0.9801966503988678
         ],
         [
-         -1.8039222721424812,
-         1.4685293667237311
+         -1.8039222721424828,
+         1.468529366723731
         ]
        ],
        "stable_critical_coordinates": [
         [
-         0.6215955981698051
+         0.6215955981698056
         ],
         [
-         -0.3550698355548058
+         -0.35506983555480537
         ]
        ],
-       "map_regime": "linear at the mapping time",
+       "map_regime": "saturated at the mapping time",
+       "lag_at_crossing": 0.03692224374494257,
+       "rate_at_crossing": 0.019758356314429626,
        "rows": [
         {
          "bias_floors": 0.5,
@@ -168,42 +171,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.1025,
-          0.8975
+          0.717,
+          0.283
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.717,
+          0.283
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.6972435237529568,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.5358736015221703,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          0.421640322063611
+          0.2532418990630836
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.717,
+          0.283
          ],
          "certificate": [
-          0.86,
-          0.14
+          0.87225,
+          0.12775
          ],
+         "sector_deviation": 0.15525,
+         "sector_deviation_sigma": 29.414445178703453,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 156.75276256394517,
-         "deviation": 0.86
+         "deviation_sigma": 29.414445178703453,
+         "deviation": 0.15525
         },
         {
          "bias_floors": 0.5,
@@ -211,42 +217,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.06525,
-          0.93475
+          0.515625,
+          0.484375
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.515625,
+          0.484375
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.4555380408017042,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.3022257751509203,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          0.17993483911235847
+          0.01959407269183358
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.515625,
+          0.484375
          ],
          "certificate": [
-          0.68025,
-          0.31975
+          0.6915,
+          0.3085
          ],
+         "sector_deviation": 0.175875,
+         "sector_deviation_sigma": 24.08299135088694,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 92.24843229215148,
-         "deviation": 0.68025
+         "deviation_sigma": 24.08299135088694,
+         "deviation": 0.175875
         },
         {
          "bias_floors": 1.0,
@@ -254,42 +263,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.126625,
-          0.873375
+          0.807625,
+          0.192375
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.807625,
+          0.192375
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.8181351206298315,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.6527301669907453,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          0.5425319189404858
+          0.3700984645316585
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.807625,
+          0.192375
          ],
          "certificate": [
-          0.91925,
-          0.08075
+          0.91125,
+          0.08875
          ],
+         "sector_deviation": 0.103625,
+         "sector_deviation_sigma": 23.045789339215723,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 213.390730152859,
-         "deviation": 0.91925
+         "deviation_sigma": 23.045789339215723,
+         "deviation": 0.103625
         },
         {
          "bias_floors": 1.0,
@@ -297,42 +309,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.049125,
-          0.950875
+          0.405125,
+          0.594875
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.405125,
+          0.594875
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.3347241547273263,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.3798288906699283,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          0.05912095303798055
+          -0.09719718821084153
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.405125,
+          0.594875
          ],
          "certificate": [
-          0.5925,
-          0.4075
+          0.60275,
+          0.39725
          ],
+         "sector_deviation": 0.19762500000000005,
+         "sector_deviation_sigma": 25.542965461595447,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 76.26238207822648,
-         "deviation": 0.5925
+         "deviation_sigma": 25.542965461595447,
+         "deviation": 0.19762500000000005
         },
         {
          "bias_floors": 2.0,
@@ -340,42 +355,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.195375,
-          0.804625
+          0.920875,
+          0.079125
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.920875,
+          0.079125
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 2.059918314383583,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.8864432979278951,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          0.7843151126942371
+          0.6038115954688084
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.920875,
+          0.079125
          ],
          "certificate": [
-          0.98,
-          0.02
+          0.98375,
+          0.01625
          ],
+         "sector_deviation": 0.06287500000000001,
+         "sector_deviation_sigma": 31.4513244210625,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 442.71887242357315,
-         "deviation": 0.98
+         "deviation_sigma": 31.4513244210625,
+         "deviation": 0.06287500000000001
         },
         {
          "bias_floors": 2.0,
@@ -383,133 +401,150 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.010125,
-          0.989875
+          0.216375,
+          0.783625
          ],
          "t_star": 29.464999999998422,
-         "sector_law": null,
-         "regime": "linear at the mapping time",
+         "sector_law": [
+          0.216375,
+          0.783625
+         ],
+         "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
          "t_map": 29.464999999998422,
          "linear_stage_ended_by": "end of the sweep",
-         "growth": 0.013819414150260017,
+         "growth": 0.013551988031895156,
          "linear_size_before_crossing": true,
-         "spread_at_map": 1.4581100208001212,
-         "written_amplitude_at_map": 0.4542419156514811,
+         "lag_at_crossing": 0.03692224374494257,
+         "rate_at_crossing": 0.019758356314429626,
+         "spread_at_map": 1.6134114124752785,
+         "written_amplitude_at_map": 0.45424191565147554,
          "mean_critical": [
-          -0.1825068191107755
+          -0.3307797100161918
          ],
          "cov_critical": [
           [
-           0.1807959475733455
+           0.18279378712812175
           ]
          ],
-         "reduced_law": [
-          0.0,
-          1.0
-         ],
          "law": [
-          0.0,
-          1.0
+          0.216375,
+          0.783625
          ],
          "certificate": [
-          0.40525,
-          0.59475
+          0.41375,
+          0.58625
          ],
+         "sector_deviation": 0.197375,
+         "sector_deviation_sigma": 25.34613288286341,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 52.20646437210849,
-         "deviation": 0.40525
+         "deviation_sigma": 25.34613288286341,
+         "deviation": 0.197375
         }
        ],
+       "reduction_validity": {
+        "slow": false,
+        "ratio": 3.4909496511472082,
+        "limit": 1.0,
+        "where": {
+         "t": 29.46278254943948,
+         "s": -0.5366754748006557,
+         "drift_rate": 0.050121844254312466,
+         "eliminated_relaxation": 0.014357653149721379,
+         "kind": "rate ratio"
+        }
+       },
+       "reduction_not_slow": "the drift along the slow manifold varies at the rate 0.0501 at s = -0.537, against the relaxation 0.0144 of the eliminated directions there (ratio 3.49, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.0001,
-          "P_toward_minus": 0.9999,
-          "response_constant": 3.783882686435589e-14,
-          "offset": -3.719016485455694
+          "P_toward_plus": 0.717,
+          "P_toward_minus": 0.484375,
+          "response_constant": 0.7119666439335635,
+          "offset": 0.3065642520358354
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.0001,
-          "P_toward_minus": 0.9999,
-          "response_constant": 1.8919413432177944e-14,
-          "offset": -3.719016485455694
+          "P_toward_plus": 0.807625,
+          "P_toward_minus": 0.594875,
+          "response_constant": 0.7384125932679207,
+          "offset": 0.3145370341181811
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.0001,
-          "P_toward_minus": 0.9999,
-          "response_constant": 9.459706716088972e-15,
-          "offset": -3.719016485455694
+          "P_toward_plus": 0.920875,
+          "P_toward_minus": 0.783625,
+          "response_constant": 0.7307287921904625,
+          "offset": 0.3132436102782377
          }
         ],
         "certificate": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.86,
-          "P_toward_minus": 0.31975,
-          "response_constant": 0.8146725245887814,
-          "offset": 0.7743586690187673
+          "P_toward_plus": 0.87225,
+          "P_toward_minus": 0.3085,
+          "response_constant": 0.848040604956164,
+          "offset": 0.8185991077253154
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.91925,
-          "P_toward_minus": 0.4075,
-          "response_constant": 0.7762110040313708,
-          "offset": 0.8170125640615074
+          "P_toward_plus": 0.91125,
+          "P_toward_minus": 0.39725,
+          "response_constant": 0.7242603974536166,
+          "offset": 0.8044821104700743
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.98,
-          "P_toward_minus": 0.59475,
-          "response_constant": 0.7633643854351176,
-          "offset": 0.9069839313616241
+          "P_toward_plus": 0.98375,
+          "P_toward_minus": 0.58625,
+          "response_constant": 0.7841949247962345,
+          "offset": 0.9601486608914325
          }
         ]
        },
        "certified": false,
+       "sector_certified": false,
        "hold": {
         "hold_time": 29.46278254943948,
-        "switching_fraction": 0.3152083333333333,
+        "switching_fraction": 0.3143333333333333,
         "switching_by_row": [
-         0.18875,
-         0.428,
-         0.09725,
-         0.5285,
-         0.02,
-         0.62875
+         0.179,
+         0.4325,
+         0.11275,
+         0.522,
+         0.017,
+         0.62275
         ],
         "after_hold": [
          [
-          0.90725,
-          0.09275
+          0.91075,
+          0.08925
          ],
          [
-          0.73525,
-          0.26475
+          0.722,
+          0.278
          ],
          [
-          0.9685,
-          0.0315
+          0.9615,
+          0.0385
          ],
          [
-          0.6965,
-          0.3035
+          0.69775,
+          0.30225
          ],
          [
-          0.9995,
-          0.0005
+          0.99775,
+          0.00225
          ],
          [
-          0.81,
-          0.19
+          0.809,
+          0.191
          ]
         ]
        },
        "write_class": "equilibrium write",
-       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.980 (442.7 errors), and the written states at the end of the sweep do not retain the choice: 32 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)"
+       "obstruction_in_nonlinear_stage": "the law differs from the full dynamics by up to 0.198 (31.5 errors), and the written states at the end of the sweep do not retain the choice: 31 % of the trajectories change state during a hold of 29.5 time units at the end value of the control. The full dynamics gives the steady-state selection under the bias, an equilibrium write, not the linear-stage law; a retained write needs deeper states at the end of the sweep (a longer sweep, or less noise)"
       }
      }
     ]
@@ -522,13 +557,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 2.9,
+    "seconds": 3.1,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 2.3,
+    "seconds": 2.6,
     "class": "reached"
    }
   },
@@ -546,7 +581,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.1,
+      "seconds": 2.4,
       "class": "oscillation"
      }
     },
@@ -561,13 +596,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.8,
+      "seconds": 2.7,
       "class": "oscillation"
      }
     },
@@ -603,13 +638,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 8.1,
+      "seconds": 5.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.5,
+      "seconds": 5.3,
       "class": "reached"
      }
     },
@@ -624,13 +659,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 6.5,
+      "seconds": 5.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 7.5,
+      "seconds": 8.7,
       "class": "oscillation"
      }
     },
@@ -645,13 +680,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 3.7,
+      "seconds": 6.9,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.7,
+      "seconds": 6.5,
       "class": "reached"
      }
     },
@@ -666,13 +701,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.2,
+      "seconds": 5.7,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.9,
+      "seconds": 5.4,
       "class": "reached"
      }
     },
@@ -687,13 +722,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.3,
+      "seconds": 2.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 4.3,
+      "seconds": 3.7,
       "class": "reached"
      }
     },
@@ -708,13 +743,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.2,
+      "seconds": 4.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.7,
+      "seconds": 4.8,
       "class": "reached"
      }
     },
@@ -729,13 +764,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.1,
+      "seconds": 2.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.6,
+      "seconds": 2.2,
       "class": "single stable state"
      }
     },
@@ -750,13 +785,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 2.3,
+      "seconds": 1.5,
       "class": "oscillation"
      }
     },

@@ -5,7 +5,7 @@
   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Blais, A., Grimsmo, A. L., Girvin, S. M., Wallraff, A., 'Circuit quantum electrodynamics', Rev. Mod. Phys. 93, 025005 (2021), arXiv:2005.12667 (full text of arXiv v1, the only arXiv version; equation numbers are those of v1 and may differ from the journal); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Gyenis, A., Di Paolo, A., Koch, J., Blais, A., Houck, A. A., Schuster, D. I., 'Moving beyond the transmon: noise-protected superconducting quantum circuits', PRX Quantum 2, 030101 (2021), arXiv:2106.10296 (full text of the arXiv HTML, read through a summarising fetch; equations not checked symbol by symbol)",
   "kind": "classical image of census entry 0: Transmon (fixed-frequency and flux-tunable SQUID transmon)"
  },
- "implementation_sha256": "ad44bf288b30b9ec55bd3686eb0713a02261f8882e442ce5031ddfc950d601e9",
+ "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 18.9,
-  "threshold-write": 5.0,
-  "phase-locking": 8.3,
-  "completion": 289.9,
-  "changes": 137.1
+  "symmetric-write": 19.1,
+  "threshold-write": 5.3,
+  "phase-locking": 8.1,
+  "completion": 224.4,
+  "changes": 136.9
  },
  "completion": {
   "write_points": [
@@ -128,20 +128,21 @@
       "asymmetry_along_sweep": 1.9497506191204287e-11,
       "law": {
        "status": "derived",
-       "law_kind": "reduced (one coordinate along the moving branch)",
+       "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
        "second_rate": 0.9999999999732445,
        "rate": 0.02,
        "sweep_end": 56.568542494923804,
        "noise": 0.0006495190528411376,
+       "start_of_sweep": "the unwritten branch followed back from the write point",
        "noise_rule": "Gamma = 0.05",
        "noise_along_critical": 0.0008660254037720223,
        "bias_floor": 0.008312570594784529,
        "stable_states": [
         [
-         -0.32383462507190924,
-         -0.10019603655769692
+         -0.32383462507190935,
+         -0.10019603655769696
         ],
         [
          0.4608725054423742,
@@ -150,13 +151,15 @@
        ],
        "stable_critical_coordinates": [
         [
-         0.4215885485464408
+         0.42158854854644073
         ],
         [
          -0.5187986207544313
         ]
        ],
        "map_regime": "saturated at the mapping time",
+       "lag_at_crossing": 0.016750096389716695,
+       "rate_at_crossing": 0.02098482465782539,
        "rows": [
         {
          "bias_floors": 0.5,
@@ -164,47 +167,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.935875,
-          0.064125
+          0.901,
+          0.099
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.935875,
-          0.064125
+          0.901,
+          0.099
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.972860494436295,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 3.5277215836733054,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          90.75772078246764
+          64.85745355463345
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.899875,
-          0.100125
-         ],
          "law": [
-          0.899875,
-          0.100125
+          0.901,
+          0.099
          ],
          "certificate": [
-          0.898,
-          0.102
+          0.9,
+          0.1
          ],
-         "sector_deviation": 0.03787499999999999,
-         "sector_deviation_sigma": 7.914880878201979,
+         "sector_deviation": 0.0010000000000000009,
+         "sector_deviation_sigma": 0.21081851067789217,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.39182578604960044,
-         "deviation": 0.0018749999999999878
+         "deviation_sigma": 0.21081851067789217,
+         "deviation": 0.0010000000000000009
         },
         {
          "bias_floors": 0.5,
@@ -212,47 +213,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.692375,
-          0.307625
+          0.602625,
+          0.397375
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.692375,
-          0.307625
+          0.602625,
+          0.397375
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.8825713738414067,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 2.937781445273645,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          31.336830740862126
+          14.053802539909643
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.604125,
-          0.395875
-         ],
          "law": [
-          0.604125,
-          0.395875
+          0.602625,
+          0.397375
          ],
          "certificate": [
-          0.614,
-          0.386
+          0.598,
+          0.402
          ],
-         "sector_deviation": 0.07837500000000003,
-         "sector_deviation_sigma": 10.181920730566919,
+         "sector_deviation": 0.004625000000000046,
+         "sector_deviation_sigma": 0.5965929462203956,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.2828895338353805,
-         "deviation": 0.009874999999999967
+         "deviation_sigma": 0.5965929462203956,
+         "deviation": 0.004625000000000046
         },
         {
          "bias_floors": 1.0,
@@ -260,47 +259,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.977875,
-          0.022125
+          0.964875,
+          0.035125
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.977875,
-          0.022125
+          0.964875,
+          0.035125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 5.518053632416093,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 3.9924215881197167,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          120.47081329288312
+          90.26150102246143
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.96225,
-          0.03775
-         ],
          "law": [
-          0.96225,
-          0.03775
+          0.964875,
+          0.035125
          ],
          "certificate": [
-          0.96675,
-          0.03325
+          0.96025,
+          0.03975
          ],
-         "sector_deviation": 0.011125000000000052,
-         "sector_deviation_sigma": 3.924434636913488,
+         "sector_deviation": 0.004624999999999997,
+         "sector_deviation_sigma": 1.497204102040299,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.5874117632458968,
-         "deviation": 0.004499999999999997
+         "deviation_sigma": 1.497204102040299,
+         "deviation": 0.004624999999999997
         },
         {
          "bias_floors": 1.0,
@@ -308,47 +305,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.5025,
-          0.4975
+          0.40375,
+          0.59625
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.5025,
-          0.4975
+          0.40375,
+          0.59625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.3374753912263126,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 3.402400159914582,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          1.629033209671872
+          -11.345801006986207
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.41575,
-          0.58425
-         ],
          "law": [
-          0.41575,
-          0.58425
+          0.40375,
+          0.59625
          ],
          "certificate": [
-          0.41425,
-          0.58575
+          0.42325,
+          0.57675
          ],
-         "sector_deviation": 0.08825,
-         "sector_deviation_sigma": 11.330714650699555,
+         "sector_deviation": 0.019500000000000017,
+         "sector_deviation_sigma": 2.4961594397877724,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.19259005072010593,
-         "deviation": 0.0015000000000000013
+         "deviation_sigma": 2.4961594397877724,
+         "deviation": 0.019500000000000017
         },
         {
          "bias_floors": 2.0,
@@ -356,47 +351,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.9985,
-          0.0015
+          0.997375,
+          0.002625
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.9985,
-          0.0015
+          0.997375,
+          0.002625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 6.608439908375683,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 4.921821597012539,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          179.89699831371368
+          141.06959595811736
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.998,
-          0.002
-         ],
          "law": [
-          0.998,
-          0.002
+          0.997375,
+          0.002625
          ],
          "certificate": [
-          0.99775,
-          0.00225
+          0.9975,
+          0.0025
          ],
-         "sector_deviation": 0.0007500000000000284,
-         "sector_deviation_sigma": 1.001126902004136,
+         "sector_deviation": 0.00012500000000004174,
+         "sector_deviation_sigma": 0.15831189671538043,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.33370896733469724,
-         "deviation": 0.0002499999999999998
+         "deviation_sigma": 0.15831189671538043,
+         "deviation": 0.00012500000000004174
         },
         {
          "bias_floors": 2.0,
@@ -404,99 +397,148 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.162875,
-          0.837125
+          0.103875,
+          0.896125
          ],
-         "t_star": 53.178575029722175,
+         "t_star": 52.70517525200947,
          "sector_law": [
-          0.162875,
-          0.837125
+          0.103875,
+          0.896125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.71762797378016,
+         "t_map": 38.53555113619835,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000583263563217,
+         "growth": 5.001290584247177,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.367886455014284,
-         "written_amplitude_at_map": 0.34706647019942316,
+         "lag_at_crossing": 0.016750096389716695,
+         "rate_at_crossing": 0.02098482465782539,
+         "spread_at_map": 4.331637589196457,
+         "written_amplitude_at_map": 0.34432274023950393,
          "mean_critical": [
-          -57.78656185270864
+          -62.14500810077791
          ],
          "cov_critical": [
           [
-           3610.5590369767788
+           2544.362917555995
           ]
          ],
-         "reduced_law": [
-          0.10725,
-          0.89275
-         ],
          "law": [
-          0.10725,
-          0.89275
+          0.103875,
+          0.896125
          ],
          "certificate": [
-          0.108,
-          0.892
+          0.10525,
+          0.89475
          ],
-         "sector_deviation": 0.05487500000000001,
-         "sector_deviation_sigma": 11.181761479187688,
+         "sector_deviation": 0.0013750000000000012,
+         "sector_deviation_sigma": 0.28338103884784627,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.15282589720986028,
-         "deviation": 0.0007500000000000284
+         "deviation_sigma": 0.28338103884784627,
+         "deviation": 0.0013750000000000012
         }
        ],
+       "reduction_validity": {
+        "slow": false,
+        "ratio": Infinity,
+        "limit": 1.0,
+        "where": {
+         "t": 42.42640687119285,
+         "s": -0.7645767846294845,
+         "drift_rate": 0.830160240239822,
+         "eliminated_relaxation": -0.07913824875209963,
+         "kind": "an eliminated direction does not relax"
+        }
+       },
+       "reduction_not_slow": "an eliminated direction does not relax at s = -0.765: the drift along the slow manifold varies at the rate 0.83 at s = -0.765, against the relaxation -0.0791 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.899875,
-          "P_toward_minus": 0.395875,
-          "response_constant": 1.353702870080814,
-          "offset": 0.7724392302105989
+          "P_toward_plus": 0.901,
+          "P_toward_minus": 0.397375,
+          "response_constant": 1.3674452582979386,
+          "offset": 0.77370903102542
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.96225,
-          "P_toward_minus": 0.58425,
-          "response_constant": 1.3248072045784705,
-          "offset": 0.7823183735406214
+          "P_toward_plus": 0.964875,
+          "P_toward_minus": 0.59625,
+          "response_constant": 1.3672466637553196,
+          "offset": 0.7833214409209106
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.998,
-          "P_toward_minus": 0.89275,
-          "response_constant": 1.3710917169243242,
-          "offset": 0.818437714323171
+          "P_toward_plus": 0.997375,
+          "P_toward_minus": 0.896125,
+          "response_constant": 1.3483287643876545,
+          "offset": 0.76575185590727
          }
         ],
         "certificate": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.898,
-          "P_toward_minus": 0.386,
-          "response_constant": 1.3053447914125589,
-          "offset": 0.7799987138110318
+          "P_toward_plus": 0.9,
+          "P_toward_minus": 0.402,
+          "response_constant": 1.375772471992556,
+          "offset": 0.7648626420019566
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.96675,
-          "P_toward_minus": 0.58575,
-          "response_constant": 1.3657265328629435,
-          "offset": 0.8092063142753124
+          "P_toward_plus": 0.96025,
+          "P_toward_minus": 0.57675,
+          "response_constant": 1.2961752365285253,
+          "offset": 0.7800042521046674
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.99775,
-          "P_toward_minus": 0.892,
-          "response_constant": 1.3573091565974431,
-          "offset": 0.8017845593501853
+          "P_toward_plus": 0.9975,
+          "P_toward_minus": 0.89475,
+          "response_constant": 1.3510476218883014,
+          "offset": 0.7774210071659794
          }
         ]
        },
        "certified": true,
-       "sector_certified": false,
+       "sector_certified": true,
+       "hold": {
+        "hold_time": 56.568542494923804,
+        "switching_fraction": 0.0002916666666666667,
+        "switching_by_row": [
+         0.0005,
+         0.001,
+         0.0,
+         0.0,
+         0.0,
+         0.00025
+        ],
+        "after_hold": [
+         [
+          0.8995,
+          0.1005
+         ],
+         [
+          0.597,
+          0.403
+         ],
+         [
+          0.96025,
+          0.03975
+         ],
+         [
+          0.42325,
+          0.57675
+         ],
+         [
+          0.9975,
+          0.0025
+         ],
+         [
+          0.105,
+          0.895
+         ]
+        ]
+       },
        "write_class": "linear-stage write"
       }
      }
@@ -533,23 +575,24 @@
       "asymmetry_along_sweep": 1.9433476115421546e-11,
       "law": {
        "status": "derived",
-       "law_kind": "reduced (one coordinate along the moving branch)",
+       "law_kind": "linear stage and outcome map",
        "critical_dimension": 1,
        "dynamical_critical_dimension": 1,
        "second_rate": 0.9999999999633729,
        "rate": 0.02,
        "sweep_end": 56.568542494923804,
        "noise": 0.0006495190528428175,
+       "start_of_sweep": "the unwritten branch followed back from the write point",
        "noise_rule": "Gamma = 0.05",
        "noise_along_critical": 0.0008660254037968137,
        "bias_floor": 0.00831257059490351,
        "stable_states": [
         [
          -0.32383461789355233,
-         -0.10019601430310031
+         -0.10019601430310034
         ],
         [
-         0.46087264455888527,
+         0.4608726445588853,
          -0.9145952462175808
         ]
        ],
@@ -562,6 +605,8 @@
         ]
        ],
        "map_regime": "saturated at the mapping time",
+       "lag_at_crossing": 0.016750101823921726,
+       "rate_at_crossing": 0.020984831976504352,
        "rows": [
         {
          "bias_floors": 0.5,
@@ -569,47 +614,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.929,
-          0.071
+          0.895,
+          0.105
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.929,
-          0.071
+          0.895,
+          0.105
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.97286483235658,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 3.527723991962132,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          90.7578911901398
+          64.85755582359585
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.895875,
-          0.104125
-         ],
          "law": [
-          0.895875,
-          0.104125
+          0.895,
+          0.105
          ],
          "certificate": [
-          0.90075,
-          0.09925
+          0.887,
+          0.113
          ],
-         "sector_deviation": 0.02825000000000001,
-         "sector_deviation_sigma": 5.975593617224159,
+         "sector_deviation": 0.008000000000000007,
+         "sector_deviation_sigma": 1.5981551955092377,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.0311865091670165,
-         "deviation": 0.004875000000000074
+         "deviation_sigma": 1.5981551955092377,
+         "deviation": 0.008000000000000007
         },
         {
          "bias_floors": 0.5,
@@ -617,47 +660,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.686375,
-          0.313625
+          0.61725,
+          0.38275
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.686375,
-          0.313625
+          0.61725,
+          0.38275
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.8825748997140916,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 2.9377838137206025,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          31.336902846228142
+          14.05382197137607
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.60425,
-          0.39575
-         ],
          "law": [
-          0.60425,
-          0.39575
+          0.61725,
+          0.38275
          ],
          "certificate": [
-          0.61925,
-          0.38075
+          0.6085,
+          0.3915
          ],
-         "sector_deviation": 0.06712499999999999,
-         "sector_deviation_sigma": 8.743017159106612,
+         "sector_deviation": 0.008750000000000036,
+         "sector_deviation_sigma": 1.1338141539750404,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.9537468511970104,
-         "deviation": 0.015000000000000013
+         "deviation_sigma": 1.1338141539750404,
+         "deviation": 0.008750000000000036
         },
         {
          "bias_floors": 1.0,
@@ -665,47 +706,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.97925,
-          0.02075
+          0.963375,
+          0.036625
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.97925,
-          0.02075
+          0.963375,
+          0.036625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 5.5180583764059215,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 3.9924243102077903,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          120.47103285660936
+          90.26164471423473
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.962125,
-          0.037875
-         ],
          "law": [
-          0.962125,
-          0.037875
+          0.963375,
+          0.036625
          ],
          "certificate": [
           0.966,
           0.034
          ],
-         "sector_deviation": 0.013250000000000001,
-         "sector_deviation_sigma": 4.624000285295394,
+         "sector_deviation": 0.0026249999999999954,
+         "sector_deviation_sigma": 0.9160755282188973,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.352301970227897,
-         "deviation": 0.0038749999999999965
+         "deviation_sigma": 0.9160755282188973,
+         "deviation": 0.0026249999999999954
         },
         {
          "bias_floors": 1.0,
@@ -713,47 +752,45 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.5045,
-          0.4955
+          0.41075,
+          0.58925
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.5045,
-          0.4955
+          0.41075,
+          0.58925
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 3.337478511120952,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 3.4024028420898,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          1.629056168786432
+          -11.345822990204809
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.40725,
-          0.59275
-         ],
          "law": [
-          0.40725,
-          0.59275
+          0.41075,
+          0.58925
          ],
          "certificate": [
-          0.4095,
-          0.5905
+          0.414,
+          0.586
          ],
-         "sector_deviation": 0.09500000000000003,
-         "sector_deviation_sigma": 12.218466345019172,
+         "sector_deviation": 0.003250000000000086,
+         "sector_deviation_sigma": 0.41731536780454487,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.2893847292241349,
-         "deviation": 0.0022499999999999742
+         "deviation_sigma": 0.41731536780454487,
+         "deviation": 0.003250000000000086
         },
         {
          "bias_floors": 2.0,
@@ -761,47 +798,45 @@
           1.0
          ],
          "linear_stage_law": [
-          0.998875,
-          0.001125
+          0.99725,
+          0.00275
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.998875,
-          0.001125
+          0.99725,
+          0.00275
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 6.608445464504613,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 4.9218249466991075,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          179.897316189549
+          141.06982249551254
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.997125,
-          0.002875
-         ],
          "law": [
-          0.997125,
-          0.002875
+          0.99725,
+          0.00275
          ],
          "certificate": [
-          0.9975,
-          0.0025
+          0.9965,
+          0.0035
          ],
-         "sector_deviation": 0.0013750000000000001,
-         "sector_deviation_sigma": 1.7414308638685847,
+         "sector_deviation": 0.0007500000000000002,
+         "sector_deviation_sigma": 0.8031905412269562,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.4749356901460007,
-         "deviation": 0.0003750000000000142
+         "deviation_sigma": 0.8031905412269562,
+         "deviation": 0.0007500000000000002
         },
         {
          "bias_floors": 2.0,
@@ -809,99 +844,148 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.162375,
-          0.837625
+          0.104375,
+          0.895625
          ],
-         "t_star": 53.17857502928324,
+         "t_star": 52.70517525157469,
          "sector_law": [
-          0.162375,
-          0.837625
+          0.104375,
+          0.895625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
-         "t_map": 38.7176279734682,
+         "t_map": 38.535551135887985,
          "linear_stage_ended_by": "growth",
-         "growth": 5.000584457485828,
+         "growth": 5.001291832954502,
          "linear_size_before_crossing": true,
-         "spread_at_map": 4.367889598704315,
-         "written_amplitude_at_map": 0.3470665189089638,
+         "lag_at_crossing": 0.016750101823921726,
+         "rate_at_crossing": 0.020984831976504352,
+         "spread_at_map": 4.331640898828194,
+         "written_amplitude_at_map": 0.3443227885220999,
          "mean_critical": [
-          -57.78663718609678
+          -62.14511291336657
          ],
          "cov_critical": [
           [
-           3610.5715558728166
+           2544.371592607379
           ]
          ],
-         "reduced_law": [
-          0.106625,
-          0.893375
-         ],
          "law": [
-          0.106625,
-          0.893375
+          0.104375,
+          0.895625
          ],
          "certificate": [
-          0.10225,
-          0.89775
+          0.10625,
+          0.89375
          ],
-         "sector_deviation": 0.060125000000000095,
-         "sector_deviation_sigma": 12.550924578557602,
+         "sector_deviation": 0.0018750000000000017,
+         "sector_deviation_sigma": 0.38482100632727495,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.9132689402276863,
-         "deviation": 0.004375000000000018
+         "deviation_sigma": 0.38482100632727495,
+         "deviation": 0.0018750000000000017
         }
        ],
+       "reduction_validity": {
+        "slow": false,
+        "ratio": Infinity,
+        "limit": 1.0,
+        "where": {
+         "t": 42.42640687119285,
+         "s": -0.7645769234193505,
+         "drift_rate": 0.830159941918693,
+         "eliminated_relaxation": -0.0791386674502334,
+         "kind": "an eliminated direction does not relax"
+        }
+       },
+       "reduction_not_slow": "an eliminated direction does not relax at s = -0.765: the drift along the slow manifold varies at the rate 0.83 at s = -0.765, against the relaxation -0.0791 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
        "one_direction": {
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.895875,
-          "P_toward_minus": 0.39575,
-          "response_constant": 1.3233856686101277,
-          "offset": 0.761377675096029
+          "P_toward_plus": 0.895,
+          "P_toward_minus": 0.38275,
+          "response_constant": 1.2718236603204052,
+          "offset": 0.7759158188096706
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.962125,
-          "P_toward_minus": 0.59275,
-          "response_constant": 1.3383389291656098,
-          "offset": 0.7706358094477115
+          "P_toward_plus": 0.963375,
+          "P_toward_minus": 0.58925,
+          "response_constant": 1.3425758181293315,
+          "offset": 0.7828268696140179
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.997125,
-          "P_toward_minus": 0.893375,
-          "response_constant": 1.3334607330938562,
-          "offset": 0.7585144686152941
+          "P_toward_plus": 0.99725,
+          "P_toward_minus": 0.895625,
+          "response_constant": 1.3423855723048361,
+          "offset": 0.7595901476137461
          }
         ],
         "certificate": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.90075,
-          "P_toward_minus": 0.38075,
-          "response_constant": 1.3078043544086355,
-          "offset": 0.7946742402028997
+          "P_toward_plus": 0.887,
+          "P_toward_minus": 0.3915,
+          "response_constant": 1.2452185878268065,
+          "offset": 0.743069387911959
          },
          {
           "bias_floors": 1.0,
           "P_toward_plus": 0.966,
-          "P_toward_minus": 0.5905,
-          "response_constant": 1.3671736938949137,
-          "offset": 0.7980877359414391
+          "P_toward_minus": 0.586,
+          "response_constant": 1.3594759135392351,
+          "offset": 0.8038697354022698
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.9975,
-          "P_toward_minus": 0.89775,
-          "response_constant": 1.3565869819390612,
-          "offset": 0.7690994974977503
+          "P_toward_plus": 0.9965,
+          "P_toward_minus": 0.89375,
+          "response_constant": 1.31255180585919,
+          "offset": 0.7250618812492756
          }
         ]
        },
        "certified": true,
-       "sector_certified": false,
+       "sector_certified": true,
+       "hold": {
+        "hold_time": 56.568542494923804,
+        "switching_fraction": 0.0003333333333333333,
+        "switching_by_row": [
+         0.00025,
+         0.0005,
+         0.0,
+         0.00075,
+         0.00025,
+         0.00025
+        ],
+        "after_hold": [
+         [
+          0.88675,
+          0.11325
+         ],
+         [
+          0.608,
+          0.392
+         ],
+         [
+          0.966,
+          0.034
+         ],
+         [
+          0.41325,
+          0.58675
+         ],
+         [
+          0.99625,
+          0.00375
+         ],
+         [
+          0.106,
+          0.894
+         ]
+        ]
+       },
        "write_class": "linear-stage write"
       }
      }
@@ -915,13 +999,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 4.0,
+    "seconds": 4.1,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 3.2,
+    "seconds": 3.3,
     "class": "reached"
    }
   },
@@ -933,49 +1017,7 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.3,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 5.0,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "control",
-    "what": "control = Delta over [-12, -0.75]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 6.0,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
       "seconds": 5.1,
-      "class": "reached"
-     }
-    },
-    "reaches": [],
-    "changed": {},
-    "step": false
-   },
-   {
-    "kind": "control",
-    "what": "control = kappa over [0.25, 4]",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached after unfolding",
-      "obstruction": "",
-      "seconds": 7.3,
       "class": "reached"
      },
      "threshold-write": {
@@ -990,19 +1032,61 @@
     "step": false
    },
    {
+    "kind": "control",
+    "what": "control = Delta over [-12, -0.75]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 5.9,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.3,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
+    "kind": "control",
+    "what": "control = kappa over [0.25, 4]",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached after unfolding",
+      "obstruction": "",
+      "seconds": 8.3,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 4.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [],
+    "changed": {},
+    "step": false
+   },
+   {
     "kind": "range",
     "what": "range of F wider: [-60, 66]",
     "judged": {
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 2.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.5,
+      "seconds": 1.7,
       "class": "reached"
      }
     },
@@ -1017,7 +1101,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.7,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
@@ -1038,13 +1122,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 6.1,
+      "seconds": 6.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 6.5,
+      "seconds": 6.2,
       "class": "reached"
      }
     },
@@ -1059,13 +1143,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 3.2,
+      "seconds": 4.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.0,
+      "seconds": 3.1,
       "class": "reached"
      }
     },
@@ -1080,13 +1164,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 3.2,
+      "seconds": 5.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 4.3,
+      "seconds": 6.9,
       "class": "single stable state"
      }
     },
@@ -1101,13 +1185,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 4.6,
+      "seconds": 3.6,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.5,
+      "seconds": 2.9,
       "class": "reached"
      }
     },
