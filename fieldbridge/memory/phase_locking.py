@@ -39,7 +39,6 @@ the attraction of the cycle.
 """
 from __future__ import annotations
 
-from collections import deque
 from dataclasses import replace
 from fractions import Fraction
 from math import atan2, log, pi, sqrt
@@ -67,7 +66,7 @@ NEAR_DRIFT = 1e-2        # below this the state is tested by Newton steps for a 
 SETTLED_DISTANCE = 1e-6  # in units of the carrier scale: a stable state this close to the end of a chunk is reached
 ANGLE_DIFFERENCE = 1e-4  # step of the central differences of the stroboscopic map in an angle, in radians
 CHUNK_STEPS = 250_000    # accepted steps in one chunk of the cycle search (the examples need at most 13 000)
-STEP_WINDOW = 1000       # steps over which the mean step is compared with the floor below
+STEP_WINDOW = 1000       # calls of the drift over which the span of time is compared with the floor below
 STEP_FLOOR = 1e-12       # mean step, in units of the chunk, below which the trajectory runs away in finite time
 
 
@@ -77,27 +76,43 @@ class _Abandoned(Exception):
     singularity, or the Jacobian is not finite."""
 
 
-def _budget(length: float, bad: List[bool]):
-    """An event that never crosses zero and stops the run instead. solve_ivp calls it in Python once per accepted step
-    (and at earlier times while it locates another event), so the count of calls with a time not below the last one is
-    the count of steps. LSODA keeps every step and continues when t + h = t, so near a blow-up a run otherwise grows
-    without bound in time and memory; an exception raised in the drift or the Jacobian, inside the Fortran solver,
-    aborts the interpreter."""
-    times = deque(maxlen=STEP_WINDOW)
+class _Watch:
+    """The step budget of a run, kept by the drift. LSODA calls the drift in Python at every stage of a step. A call at a
+    later time than any before marks a step; a rejected trial step can run ahead of the steps that follow, so this count
+    can only fall short of the steps taken. The step has collapsed when the times of a block of STEP_WINDOW calls span
+    less than STEP_WINDOW * STEP_FLOOR of the run, in whatever order the calls came. An exception cannot leave the
+    Fortran solver (it aborts the interpreter), so a spent budget or a collapsed step sets the reason, and the drift and
+    its Jacobian are zero from then on: the state stands still, the step grows, the run ends within a few hundred steps
+    and the caller raises; a NaN drift at a collapsed step makes LSODA end the process. LSODA keeps every step and
+    continues when t + h = t, so near a blow-up a run otherwise grows without bound in time and memory. An event called
+    after each step would do the same at twice the cost of a step on long chaotic runs."""
 
-    def ev(t, q):
-        if bad[0]:
-            raise _Abandoned("the Jacobian is not finite")
-        if not times or t >= times[-1]:
-            times.append(t)
-            ev.steps += 1
-            if ev.steps > CHUNK_STEPS:
-                raise _Abandoned(f"more than {CHUNK_STEPS} steps")
-            if len(times) == STEP_WINDOW and times[-1] - times[0] < STEP_WINDOW * STEP_FLOOR * length:
-                raise _Abandoned("the step collapsed")
-        return 1.0
-    ev.steps = 0
-    return ev
+    def __init__(self, length: float):
+        self.floor = STEP_WINDOW * STEP_FLOOR * length
+        self.last = -np.inf
+        self.steps = 0
+        self.calls = 0
+        self.lo, self.hi = np.inf, -np.inf
+        self.reason = None
+
+    def spent(self, t: float) -> bool:
+        if t > self.last:
+            self.last = t
+            self.steps += 1
+            if self.steps > CHUNK_STEPS:
+                self.reason = f"more than {CHUNK_STEPS} steps"
+                return True
+        if t < self.lo:
+            self.lo = t
+        if t > self.hi:
+            self.hi = t
+        self.calls += 1
+        if self.calls == STEP_WINDOW:
+            if self.hi - self.lo < self.floor:
+                self.reason = "the step collapsed"
+                return True
+            self.calls, self.lo, self.hi = 0, np.inf, -np.inf
+        return False
 
 
 class _Compiled:
@@ -172,12 +187,31 @@ def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, d
         bad[0] = True
         return np.zeros_like(J)
 
+    watch = [None]
+    halted = [False]
+    rest = np.zeros(len(np.atleast_1d(q0)))
+
+    def drift(t, value):
+        """The drift, NaN once the Jacobian was not finite, zero once the step budget is spent."""
+        if bad[0]:
+            return stop
+        if halted[0]:
+            return rest
+        w = watch[0]
+        if w is not None and w.spent(t):
+            halted[0] = True
+            return rest
+        return value()
+
+    def jacobian(J):
+        return np.zeros((rest.size, rest.size)) if halted[0] else finite(J)
+
     if drive is None:
         def f(t, q):
-            return stop if bad[0] else c.f(q, pv)
+            return drift(t, lambda: c.f(q, pv))
 
         def jac(t, q):
-            return finite(c.jac(q, pv))
+            return jacobian(c.jac(q, pv))
     else:
         name, p1, eps, wf = drive
         k = c.names.index(name)
@@ -188,25 +222,28 @@ def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, d
             return v
 
         def f(t, q):
-            return stop if bad[0] else c.f(q, at(t))
+            return drift(t, lambda: c.f(q, at(t)))
 
         def jac(t, q):
-            return finite(c.jac(q, at(t)))
+            return jacobian(c.jac(q, at(t)))
 
-    def guarded(length, ev):
-        if not budget:
-            return ev
-        return [ev, _budget(length, bad)] if ev is not None else _budget(length, bad)
+    def run(span, y0, ev, dense_output=False):
+        watch[0] = _Watch(span[1] - span[0]) if budget else None
+        sol = solve_ivp(f, span, y0, method=SOLVER, jac=jac, rtol=rtol, atol=atol, events=ev, dense_output=dense_output)
+        if budget and halted[0]:
+            raise _Abandoned(watch[0].reason)
+        if budget and bad[0]:
+            raise _Abandoned("the Jacobian is not finite")
+        return sol
+
     q0 = np.asarray(q0, float)
     if events is not None and abs(events(t_span[0], q0)) < 1e-9 * an.base_length(real):
         # a start on the section leaves the sign of the event function at t0 to rounding, and the root bracket of the
         # first step can fail: begin a short step later
         t1 = t_span[0] + 1e-6 * (t_span[1] - t_span[0])
-        q0 = solve_ivp(f, (t_span[0], t1), q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol,
-                       events=guarded(t1 - t_span[0], None)).y[:, -1]
+        q0 = run((t_span[0], t1), q0, None).y[:, -1]
         t_span = (t1, t_span[1])
-    return solve_ivp(f, t_span, q0, method=SOLVER, jac=jac, rtol=rtol, atol=atol,
-                     events=guarded(t_span[1] - t_span[0], events), dense_output=dense)
+    return run(t_span, q0, events, dense)
 
 
 def _event(j: int, level: float, torus: bool):
