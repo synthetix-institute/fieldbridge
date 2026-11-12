@@ -180,6 +180,12 @@ BIB = {
                   "short": "Briat, Gupta and Khammash, 2016", "doi": "10.1016/j.cels.2016.01.004"},
     "qian2018": {"cite": "Y. Qian and D. Del Vecchio, J. R. Soc. Interface 15, 20170902 (2018)",
                  "short": "Qian and Del Vecchio, 2018", "doi": "10.1098/rsif.2017.0902"},
+    "lifshitz1961": {"cite": "I. M. Lifshitz and V. V. Slyozov, J. Phys. Chem. Solids 19, 35 (1961)",
+                     "short": "Lifshitz and Slyozov, 1961", "doi": "10.1016/0022-3697(61)90054-3"},
+    "zwicker2015": {"cite": "D. Zwicker, A. A. Hyman and F. Jülicher, Phys. Rev. E 92, 012317 (2015)",
+                    "short": "Zwicker, Hyman and Jülicher, 2015", "doi": "10.1103/PhysRevE.92.012317"},
+    "zwicker2017": {"cite": "D. Zwicker, R. Seyboldt, C. A. Weber, A. A. Hyman and F. Jülicher, Nat. Phys. 13, 408 (2017)",
+                    "short": "Zwicker et al., 2017", "doi": "10.1038/nphys3984"},
     "cappelletti2020": {"cite": "D. Cappelletti, A. Gupta and M. Khammash, J. R. Soc. Interface 17, 20200437 (2020)",
                         "short": "Cappelletti, Gupta and Khammash, 2020", "doi": "10.1098/rsif.2020.0437"},
     "ferrell2016": {"cite": "J. E. Ferrell Jr., Cell Syst. 2, 62 (2016)", "short": "Ferrell, 2016",
@@ -415,7 +421,7 @@ READING: Dict[str, Dict] = {
     "perfect-adaptation": {
         "defined": ("Regulation 1, §3", "an integrator of the error and a stable steady state",
                     R1 + "#3-the-prediction-from-structure"),
-        "derived": [("Regulation 1, §4", "published models from five fields, each with a control",
+        "derived": [("Regulation 1, §4", "published models from six fields, each with a control",
                      R1 + "#4-running-the-command"),
                     ("Regulation 1, §7", "certificates checked without repeating the search", R1 + "#7-certificates")],
         "code": "regulation.integrator.find_integrator, card.card, certificate.check",
@@ -445,12 +451,17 @@ READING: Dict[str, Dict] = {
     "partial-adaptation": {
         "defined": ("Regulation 1, §3", "a leaky integrator leaves the fraction 1/(1 + G) of the step",
                     R1 + "#3-the-prediction-from-structure"),
-        "derived": [("Regulation 1, §6", "leaks: dilution in growing cells, Michaelis constants of a buffer node",
+        "derived": [("Regulation 1, §6", "leaks: dilution in growing cells, Michaelis constants of a buffer node, "
+                                         "turnover inside droplets that hold a dilute concentration",
                      R1 + "#6-leaks")],
         "code": "regulation.gains.clamped_gain, step.step_response",
         "sources": [("qian2018", "dilution makes integral control in growing cells leaky; fast controller reactions "
                                  "make the error small"),
-                    ("ma2009", "near-perfect adaptation when the enzymes on a buffer node are saturated")],
+                    ("ma2009", "near-perfect adaptation when the enzymes on a buffer node are saturated"),
+                    ("lifshitz1961", "droplets grow or shrink with the excess of the surrounding concentration over its "
+                                     "interfacial value"),
+                    ("zwicker2015", "turnover inside droplets sets their stationary size and suppresses ripening"),
+                    ("zwicker2017", "active droplets divide above a critical size")],
         "textbooks": ["astrom2021"],
     },
     "no-adaptation": {
