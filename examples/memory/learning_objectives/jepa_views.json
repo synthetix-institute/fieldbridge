@@ -1,0 +1,41 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Which direction does a one-dimensional spectral JEPA learn when a fraction q of its positive pairs are two observations of one scene and the rest are two corruptions of one observation?",
+  "provenance": {
+    "source": "Balestriero and LeCun, arXiv:2610.39302v1: objective of Proposition 1 in its spectral contrastive form (Appendix A.1), product corruptions of Proposition 4(ii) and Theorem 5, good-view fraction q of Section 4.4",
+    "kind": "authored from the equations of the paper; gradient flow of the population objective on a world of two scenes, each observed with two values of a nuisance"
+  },
+  "field": "machine learning",
+  "kind": "equations",
+  "name": "spectral JEPA with a fraction q of good views",
+  "carrier": {
+    "kind": "euclid",
+    "name": "amplitudes of the embedding on the world direction (w) and on the nuisance direction (u)",
+    "variables": ["w", "u"],
+    "scale": 1
+  },
+  "parameters": {
+    "q": 0.7,
+    "mu": 0.8,
+    "alpha": 0.3,
+    "beta": 0.9
+  },
+  "drift": {
+    "w": "(q*mu + (1 - q)*alpha)*w - (w**2 + u**2)*w",
+    "u": "(1 - q)*beta*u - (w**2 + u**2)*u"
+  },
+  "potential": "-(q*mu + (1 - q)*alpha)*w**2/2 - (1 - q)*beta*u**2/2 + (w**2 + u**2)**2/4",
+  "control": {
+    "name": "q",
+    "range": [0.0, 1.0]
+  },
+  "noise": 0.002,
+  "dt": 0.01,
+  "closure": "gradient flow of the population objective; the noise of finite batches taken as additive",
+  "observable": "sign of w",
+  "assumptions": [
+    "finite world, uniform marginal, injective rendering of (scene, nuisance)",
+    "identity predictor, squared distance, second-order anti-collapse term in its soft (spectral contrastive) form",
+    "corruptions act on scene and nuisance independently"
+  ]
+}

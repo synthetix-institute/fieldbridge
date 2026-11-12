@@ -1,0 +1,54 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "What holds the two-dimensional embedding of a spectral JEPA with shared positives, and what does not?",
+  "provenance": {
+    "source": "Balestriero and LeCun, arXiv:2610.39302v1: Theorem 1 and Proposition 1, objective in its spectral contrastive form (Appendix A.1)",
+    "kind": "authored from the equations of the paper; gradient flow of the population objective on a world of four states, written on the three eigenfunctions of the positive-pair operator orthogonal to the constant"
+  },
+  "field": "machine learning",
+  "kind": "equations",
+  "name": "spectral JEPA, embedding dimension two, shared positives",
+  "carrier": {
+    "kind": "euclid",
+    "name": "coefficients (x_i, y_i) of the two embedding coordinates on eigenfunction i of the positive-pair operator",
+    "variables": [
+      "x1",
+      "y1",
+      "x2",
+      "y2",
+      "x3",
+      "y3"
+    ],
+    "scale": 1
+  },
+  "parameters": {
+    "m1": 0.8,
+    "m2": 0.5,
+    "m3": 0.2
+  },
+  "drift": {
+    "x1": "m1*x1 - (x1*x1 + y1*y1)*x1 - (x1*x2 + y1*y2)*x2 - (x1*x3 + y1*y3)*x3",
+    "y1": "m1*y1 - (x1*x1 + y1*y1)*y1 - (x1*x2 + y1*y2)*y2 - (x1*x3 + y1*y3)*y3",
+    "x2": "m2*x2 - (x2*x1 + y2*y1)*x1 - (x2*x2 + y2*y2)*x2 - (x2*x3 + y2*y3)*x3",
+    "y2": "m2*y2 - (x2*x1 + y2*y1)*y1 - (x2*x2 + y2*y2)*y2 - (x2*x3 + y2*y3)*y3",
+    "x3": "m3*x3 - (x3*x1 + y3*y1)*x1 - (x3*x2 + y3*y2)*x2 - (x3*x3 + y3*y3)*x3",
+    "y3": "m3*y3 - (x3*x1 + y3*y1)*y1 - (x3*x2 + y3*y2)*y2 - (x3*x3 + y3*y3)*y3"
+  },
+  "potential": "-(m1*(x1**2+y1**2) + m2*(x2**2+y2**2) + m3*(x3**2+y3**2))/2 + ((x1**2+x2**2+x3**2)**2 + (y1**2+y2**2+y3**2)**2 + 2*(x1*y1+x2*y2+x3*y3)**2)/4",
+  "control": {
+    "name": "m3",
+    "range": [
+      0.0,
+      0.7
+    ]
+  },
+  "noise": 0.002,
+  "dt": 0.01,
+  "closure": "gradient flow of the population objective; the noise of finite batches taken as additive",
+  "observable": "the embedding of the four world states",
+  "assumptions": [
+    "finite world of four states, uniform marginal, injective rendering",
+    "identity predictor, squared distance, second-order anti-collapse term in its soft (spectral contrastive) form",
+    "m1 > m2 > m3 are the eigenvalues of the normalized positive-pair kernel below the constant"
+  ]
+}
