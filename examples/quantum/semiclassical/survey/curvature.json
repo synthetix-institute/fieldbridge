@@ -1,6 +1,6 @@
 {
  "command": "python3 -B -m fieldbridge memory complete SPEC --curvature --gamma NOISE_RATIO --out-dir DIR, for each row; the entries of `zero_offset_curvature` in complete.json",
- "implementation_sha256": "a4e57ad07350bdecc5731514b4c55ef90a86120721c5dd5394fb6f398cd5352d",
+ "implementation_sha256": "65a678982588e35c93e728d63d29aac179ebed2bccf32c68e403cd04ec921171",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -19,32 +19,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": 0.06938112337196428,
-   "offset_at_curvature": -0.022203935447969947,
-   "offset_error": 0.03406644987112474,
-   "response_at_curvature": 1.3617507376067661,
-   "last_curvature_tried": 0.06938112337196428,
-   "last_offset": -0.022203935447969947,
+   "curvature": 0.0699529577057394,
+   "offset_at_curvature": 0.002154061717765554,
+   "offset_error": 0.034302912037233804,
+   "response_at_curvature": 1.3855663791839625,
+   "last_curvature_tried": 0.0699529577057394,
+   "last_offset": 0.002154061717765554,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     -2.5864114221981414
+     -2.552094046834572
     ],
     [
      -0.1,
-     -1.9704085854180988
+     -1.8966963093392768
     ],
     [
      -0.05,
-     -1.2288085012472207
+     -1.3599428167614245
     ],
     [
      0.0,
-     -0.8024160428065968
+     -0.7696253268350258
     ],
     [
      0.05,
-     -0.22414921473528926
+     -0.21952326390832783
     ]
    ]
   },
@@ -58,32 +58,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": 0.07447482399269997,
-   "offset_at_curvature": 0.0770530895188089,
-   "offset_error": 0.03391986296127226,
-   "response_at_curvature": 1.3416798907312142,
-   "last_curvature_tried": 0.07447482399269997,
-   "last_offset": 0.0770530895188089,
+   "curvature": 0.07335596606807689,
+   "offset_at_curvature": 0.1011058889630268,
+   "offset_error": 0.03438826824882268,
+   "response_at_curvature": 1.3840317308275434,
+   "last_curvature_tried": 0.07335596606807689,
+   "last_offset": 0.1011058889630268,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     -2.3477991459007788
+     -2.2596235177164776
     ],
     [
      -0.1,
-     -1.994290199841283
+     -1.917316045989116
     ],
     [
      -0.05,
-     -1.269872632073436
+     -1.3241932258490121
     ],
     [
      0.0,
-     -0.7500307504380507
+     -0.812605421716552
     ],
     [
      0.05,
-     -0.24648424288835263
+     -0.25872721298133755
     ]
    ]
   },
@@ -97,32 +97,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.12369380665083266,
-   "offset_at_curvature": -0.051093156777423876,
-   "offset_error": 0.03445179490078472,
-   "response_at_curvature": 1.3974620289885173,
-   "last_curvature_tried": -0.12369380665083266,
-   "last_offset": -0.051093156777423876,
+   "curvature": -0.1302870387036693,
+   "offset_at_curvature": 0.10175081928831742,
+   "offset_error": 0.03461687912521072,
+   "response_at_curvature": 1.405778408437279,
+   "last_curvature_tried": -0.1302870387036693,
+   "last_offset": 0.10175081928831742,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.2628971432379333
+     0.2294848797994936
     ],
     [
      -0.1,
-     -0.40238406693578915
+     -0.3525810928106422
     ],
     [
      -0.05,
-     -1.2058694294520906
+     -1.1296579177943245
     ],
     [
      0.0,
-     -1.745597195695857
+     -1.8940585356551276
     ],
     [
      0.05,
-     -2.6185368020961017
+     -2.2967506557875144
     ]
    ]
   },
@@ -136,32 +136,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.13098879718898956,
-   "offset_at_curvature": 0.049496366855351026,
-   "offset_error": 0.034315045988966224,
-   "response_at_curvature": 1.3843926208230017,
-   "last_curvature_tried": -0.13098879718898956,
-   "last_offset": 0.049496366855351026,
+   "curvature": -0.1312852211326248,
+   "offset_at_curvature": 0.07658856626130017,
+   "offset_error": 0.03419827567606998,
+   "response_at_curvature": 1.369650945117875,
+   "last_curvature_tried": -0.1312852211326248,
+   "last_offset": 0.07658856626130017,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.2686502555896084
+     0.25442778135613936
     ],
     [
      -0.1,
-     -0.43790749948840835
+     -0.42532318754169285
     ],
     [
      -0.05,
-     -1.130617010581768
+     -1.1926059670762925
     ],
     [
      0.0,
-     -1.8433870455920154
+     -1.8119542669219875
     ],
     [
      0.05,
-     -2.6286076720198865
+     -2.6306597021470126
     ]
    ]
   },
@@ -175,32 +175,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.12172269074071188,
-   "offset_at_curvature": 0.07851553818034424,
-   "offset_error": 0.033992110575020704,
-   "response_at_curvature": 1.3487822864225716,
-   "last_curvature_tried": -0.12172269074071188,
-   "last_offset": 0.07851553818034424,
+   "curvature": -0.11978320981031379,
+   "offset_at_curvature": 0.02886674810008083,
+   "offset_error": 0.03421480801957329,
+   "response_at_curvature": 1.3761381992501656,
+   "last_curvature_tried": -0.11978320981031379,
+   "last_offset": 0.02886674810008083,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.2856422867488683
+     0.25240116592777107
     ],
     [
      -0.1,
-     -0.21943102862509106
+     -0.16524935939824825
     ],
     [
      -0.05,
-     -0.7531771128284394
+     -0.7216722918549207
     ],
     [
      0.0,
-     -1.21643181223818
+     -1.3032711491486604
     ],
     [
      0.05,
-     -1.859911416018643
+     -1.6313674287990398
     ]
    ]
   },
@@ -214,32 +214,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.11961756900946391,
-   "offset_at_curvature": 0.002154061717765554,
-   "offset_error": 0.034302912037233804,
-   "response_at_curvature": 1.3855663791839625,
-   "last_curvature_tried": -0.11961756900946391,
-   "last_offset": 0.002154061717765554,
+   "curvature": -0.11931248421284968,
+   "offset_at_curvature": 0.0349558003013129,
+   "offset_error": 0.03371084134048225,
+   "response_at_curvature": 1.3247659085593242,
+   "last_curvature_tried": -0.11931248421284968,
+   "last_offset": 0.0349558003013129,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.2927950616926337
+     0.3086588735248806
     ],
     [
      -0.1,
-     -0.18905423763406798
+     -0.19424738266370983
     ],
     [
      -0.05,
-     -0.762610650359537
+     -0.7181317874361886
     ],
     [
      0.0,
-     -1.203916138180963
+     -1.3286762084491301
     ],
     [
      0.05,
-     -1.6023269578436061
+     -1.76720133482249
     ]
    ]
   },
@@ -253,28 +253,67 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.1038758203234143,
-   "offset_at_curvature": 0.0471147997876174,
-   "offset_error": 0.03395553001448262,
-   "response_at_curvature": 1.3489131136416568,
-   "last_curvature_tried": -0.1038758203234143,
-   "last_offset": 0.0471147997876174,
+   "curvature": -0.09818239749777287,
+   "offset_at_curvature": -0.024533076018687816,
+   "offset_error": 0.03418208289844219,
+   "response_at_curvature": 1.37313577259833,
+   "last_curvature_tried": -0.09818239749777287,
+   "last_offset": -0.024533076018687816,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.34251417744598156
+     0.32275008299610275
     ],
     [
      -0.1,
-     -0.028781507211857627
+     0.015461632231210998
     ],
     [
      -0.05,
-     -0.44181526047378383
+     -0.40986877450694165
     ],
     [
      0.0,
-     -0.800134999743646
+     -0.7992925996530992
+    ],
+    [
+     0.05,
+     -1.1442763706869215
+    ]
+   ]
+  },
+  {
+   "model": "jba_resonator",
+   "noise_ratio": 0.05,
+   "second_parameter": "chi",
+   "cusp": {
+    "F": 1.3872638169206537,
+    "chi": -1.1339745960840089
+   },
+   "status": "found",
+   "cancelled": true,
+   "curvature": -0.10409722451053285,
+   "offset_at_curvature": 0.013263975851570131,
+   "offset_error": 0.03360331324748095,
+   "response_at_curvature": 1.314531053013553,
+   "last_curvature_tried": -0.10409722451053285,
+   "last_offset": 0.013263975851570131,
+   "offset_at_curvatures_tried": [
+    [
+     -0.15,
+     0.3763965918107821
+    ],
+    [
+     -0.1,
+     -0.03359669050953218
+    ],
+    [
+     -0.05,
+     -0.37969775728048205
+    ],
+    [
+     0.0,
+     -0.8075700080491179
     ],
     [
      0.05,
@@ -284,45 +323,6 @@
   },
   {
    "model": "jba_resonator",
-   "noise_ratio": 0.05,
-   "second_parameter": "chi",
-   "cusp": {
-    "F": 1.3872638169206537,
-    "chi": -1.1339745960840089
-   },
-   "status": "found",
-   "cancelled": true,
-   "curvature": -0.09838759801207145,
-   "offset_at_curvature": -0.018768525794284063,
-   "offset_error": 0.03388424136915036,
-   "response_at_curvature": 1.3434835593651655,
-   "last_curvature_tried": -0.09838759801207145,
-   "last_offset": -0.018768525794284063,
-   "offset_at_curvatures_tried": [
-    [
-     -0.15,
-     0.3648442683651529
-    ],
-    [
-     -0.1,
-     0.014816564440827573
-    ],
-    [
-     -0.05,
-     -0.44463971729764445
-    ],
-    [
-     0.0,
-     -0.7372936096263092
-    ],
-    [
-     0.05,
-     -1.140457479381948
-    ]
-   ]
-  },
-  {
-   "model": "jba_resonator",
    "noise_ratio": 0.1,
    "second_parameter": "chi",
    "cusp": {
@@ -331,32 +331,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.06873227037095042,
-   "offset_at_curvature": 0.0,
-   "offset_error": 0.033960770985425895,
-   "response_at_curvature": 1.3516009949311634,
-   "last_curvature_tried": -0.06873227037095042,
-   "last_offset": 0.0,
+   "curvature": -0.06771823818192564,
+   "offset_at_curvature": -0.03271628359575807,
+   "offset_error": 0.034047866202801924,
+   "response_at_curvature": 1.3593307085065636,
+   "last_curvature_tried": -0.06771823818192564,
+   "last_offset": -0.03271628359575807,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.46221223809529927
+     0.46076083439097676
     ],
     [
      -0.1,
-     0.18057524878462616
+     0.21497592657681697
     ],
     [
      -0.05,
-     -0.10818132376943129
+     -0.11799215581646377
     ],
     [
      0.0,
-     -0.41184614052867136
+     -0.45893386738289904
     ],
     [
      0.05,
-     -0.699775289386926
+     -0.7464299772450972
     ]
    ]
   },
@@ -370,32 +370,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.06950152213432452,
-   "offset_at_curvature": 0.012929778816210546,
-   "offset_error": 0.03327857522701763,
-   "response_at_curvature": 1.2796583811136248,
-   "last_curvature_tried": -0.06950152213432452,
-   "last_offset": 0.012929778816210546,
+   "curvature": -0.0676529685881378,
+   "offset_at_curvature": -0.028606431252462372,
+   "offset_error": 0.033626236998890155,
+   "response_at_curvature": 1.3163127690067697,
+   "last_curvature_tried": -0.0676529685881378,
+   "last_offset": -0.028606431252462372,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.49313711957236306
+     0.5011327808448338
     ],
     [
      -0.1,
-     0.2296385278413649
+     0.17334529672897625
     ],
     [
      -0.05,
-     -0.1468368635744992
+     -0.09460092455148339
     ],
     [
      0.0,
-     -0.42044942199637286
+     -0.4534844325763917
     ],
     [
      0.05,
-     -0.7525582212080703
+     -0.7258823235806561
     ]
    ]
   },
@@ -526,7 +526,7 @@
    },
    "status": "the zero lies outside the curvatures that can be reached from those tried",
    "cancelled": false,
-   "curvature": 0.5223339239786889,
+   "curvature": 0.5032435669207959,
    "offset_at_curvature": null,
    "offset_error": null,
    "response_at_curvature": null,
@@ -547,11 +547,11 @@
     ],
     [
      0.0,
-     -2.4988621028878066
+     -2.1414494164834172
     ],
     [
      0.05,
-     -1.7370566987472873
+     -1.9286847079759308
     ]
    ]
   },
@@ -563,34 +563,34 @@
     "d": 1.7320508075651242,
     "p": 1.5396007178339979
    },
-   "status": "not cancelled: the offset does not pass through zero cleanly near the curvatures tried",
+   "status": "the zero lies outside the curvatures that can be reached from those tried",
    "cancelled": false,
-   "curvature": 0.44164194734101925,
-   "offset_at_curvature": -0.37312926437719784,
-   "offset_error": 0.031096206616343998,
-   "response_at_curvature": 0.8409466917324219,
-   "last_curvature_tried": 0.44164194734101925,
-   "last_offset": -0.37312926437719784,
+   "curvature": 0.5139685775621361,
+   "offset_at_curvature": null,
+   "offset_error": null,
+   "response_at_curvature": null,
+   "last_curvature_tried": null,
+   "last_offset": null,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     -2.517719906272207
+     -2.390189221847642
     ],
     [
      -0.1,
-     -2.8438040773211513
+     -2.835248129465784
     ],
     [
      -0.05,
-     -2.746699197900333
+     -2.7753452579279445
     ],
     [
      0.0,
-     -2.5031435242818247
+     -2.2625357169548987
     ],
     [
      0.05,
-     -1.7367592047728984
+     -2.0424312382252268
     ]
    ]
   },
@@ -604,32 +604,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": 0.08093035415514757,
-   "offset_at_curvature": 0.01145632703650623,
-   "offset_error": 0.033867095276372314,
-   "response_at_curvature": 1.3419478256672575,
-   "last_curvature_tried": 0.08093035415514757,
-   "last_offset": 0.01145632703650623,
+   "curvature": 0.08417339693313827,
+   "offset_at_curvature": -0.0386799767972561,
+   "offset_error": 0.03358523094194807,
+   "response_at_curvature": 1.3113271702941052,
+   "last_curvature_tried": 0.08417339693313827,
+   "last_offset": -0.0386799767972561,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     1.5907895041345435
+     1.4892423125418492
     ],
     [
      -0.1,
-     1.8640819516339677
+     1.8302634519754348
     ],
     [
      -0.05,
-     1.245434582132255
+     1.2499710503724581
     ],
     [
      0.0,
-     0.8057938067086052
+     0.7648587743396721
     ],
     [
      0.05,
-     0.3079621741150681
+     0.31052355548945454
     ]
    ]
   },
@@ -643,32 +643,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": 0.08450731174318032,
-   "offset_at_curvature": -0.039739331696986846,
-   "offset_error": 0.033599367891122195,
-   "response_at_curvature": 1.312737526934932,
-   "last_curvature_tried": 0.08450731174318032,
-   "last_offset": -0.039739331696986846,
+   "curvature": 0.07850242669854506,
+   "offset_at_curvature": 0.036397543022950674,
+   "offset_error": 0.03385919604671907,
+   "response_at_curvature": 1.3399768215427321,
+   "last_curvature_tried": 0.07850242669854506,
+   "last_offset": 0.036397543022950674,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     1.5452723283823997
+     1.4521233965642548
     ],
     [
      -0.1,
-     1.9605928133638255
+     1.7232027764303617
     ],
     [
      -0.05,
-     1.2113113462078549
+     1.261530313519156
     ],
     [
      0.0,
-     0.7081227370761938
+     0.7951414350090793
     ],
     [
      0.05,
-     0.2891514537225147
+     0.2886975781443231
     ]
    ]
   }

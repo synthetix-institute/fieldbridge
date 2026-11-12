@@ -229,6 +229,10 @@ def _critical_frame(J: np.ndarray) -> CriticalFrame:
     if k == 1:
         v = np.real(R[:, i])
         v = v / np.linalg.norm(v)
+        # the sign of an eigenvector is arbitrary and differs between LAPACK builds: orient each critical direction as
+        # analysis.normal_form does, so that the frame is the same on every machine
+        if v[an.orientation_index(v)] < 0:
+            v = -v
         evl, L = np.linalg.eig(J.T)
         w = np.real(L[:, int(np.argmin(np.abs(evl - ev[i])))])
         w = w / np.dot(w, v)
@@ -238,6 +242,7 @@ def _critical_frame(J: np.ndarray) -> CriticalFrame:
         if S[-k] > 1e-5 * scale:
             raise ValueError(f"The critical eigenvalue has {k} copies but fewer independent directions (a Jordan block)")
         V = Vh[-k:].T
+        V = V * np.array([-1.0 if V[an.orientation_index(V[:, j]), j] < 0 else 1.0 for j in range(k)])
         left = U[:, -k:].T
         M = left @ V
         if np.linalg.cond(M) > 1e8:

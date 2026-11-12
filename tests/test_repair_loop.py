@@ -335,3 +335,17 @@ def test_the_power_control_finds_the_term_that_shapes_the_trajectory():
     c = closure(order=5)
     key = rl._strongest_nonlinear(c, 0.5, 1.0, 0.1)
     assert key == (3, 0)
+
+
+@pytest.mark.parametrize("J", [np.array([[0.0, 1.0, 0.0], [0.0, -1.0, 0.5], [0.0, 0.0, -2.0]]),
+                               np.diag([0.0, 0.0, -1.5]) + np.array([[0, 0, 0.3], [0, 0, -0.2], [0, 0, 0]])])
+def test_the_critical_frame_does_not_depend_on_the_sign_the_eigensolver_gives(J, monkeypatch):
+    plain = rl._critical_frame(J)
+    eig, svd = np.linalg.eig, np.linalg.svd
+    monkeypatch.setattr(np.linalg, "eig", lambda A: (lambda e: (e[0], -e[1]))(eig(A)))
+    monkeypatch.setattr(np.linalg, "svd", lambda A, *a, **k: (lambda u: (-u[0], u[1], -u[2]))(svd(A, *a, **k)))
+    flipped = rl._critical_frame(J)
+    k = plain.V.shape[1]
+    from fieldbridge.memory import analysis as an
+    assert all(plain.V[an.orientation_index(plain.V[:, j]), j] > 0 for j in range(k))
+    assert np.allclose(plain.V, flipped.V, atol=1e-12) and np.allclose(plain.W, flipped.W, atol=1e-12)

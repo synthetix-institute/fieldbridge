@@ -95,6 +95,22 @@ def test_a_degenerate_critical_pair_keeps_a_left_vector_dual_to_its_mode():
     assert completion.completion_kind(nf, construct.obstruction(nf)) == "critical space"
 
 
+def test_the_critical_direction_does_not_depend_on_the_sign_the_eigensolver_gives(monkeypatch):
+    """The sign of an eigenvector is arbitrary, and two LAPACK builds returned opposite signs at the cusp of the driven
+    trapped ion. The swept-write check gives the bias toward +mode its own random streams, so the two machines
+    measured independent samples (law constants 1.47 and 0.90) and offsets of opposite sign. The critical direction
+    is oriented so that its largest component (the first of near-equal ones) is positive."""
+    real = spec.load(Path(__file__).resolve().parents[1] / "examples" / "quantum" / "semiclassical" / "ion_duffing.json")
+    q, v = np.array([2.752267826816943, -1.806257226422566]), 1.3037475667148828   # its first fold in the record
+    nf = an.normal_form(real, q, "Delta", v)
+    eig = np.linalg.eig
+    monkeypatch.setattr(np.linalg, "eig", lambda M: (lambda e, V: (e, -V))(*eig(M)))
+    flipped = an.normal_form(real, q, "Delta", v)
+    assert nf["mode"][an.orientation_index(nf["mode"])] > 0
+    for key in ("mode", "left_mode", "a2", "bias_along_mode"):
+        assert np.allclose(flipped[key], nf[key], rtol=0, atol=1e-12), key
+
+
 def test_a_choice_the_noise_undoes_during_the_hold_is_an_equilibrium_write():
     """The pitchfork swept at the standard rate with a noise far above the depth of the wells at the end of the sweep:
     the linear-stage law predicts the usual response, the full dynamics loses the choice to hopping, and the rung names
@@ -416,3 +432,10 @@ def test_the_noise_across_the_critical_space_pushes_the_mean_through_the_curvatu
     mass = load({"x": "v", "v": "-g*v + e*x - x**3 + 2*x**2"}, ["x", "v"], {"e": 0.0, "g": 0.3})
     g = completion.noise_curvature_drift(mass, np.zeros(2), {}, np.array([[1.0], [0.0]]), D)
     assert g == pytest.approx([0.0, 0.0], abs=1e-9)
+
+
+def test_a_symmetric_critical_direction_is_oriented_by_its_first_component_not_by_rounding():
+    from fieldbridge.memory import analysis as an
+    assert an.orientation_index(np.array([0.7071067811865475, -0.7071067811865476])) == 0
+    assert an.orientation_index(np.array([-0.7071067811865476, 0.7071067811865475])) == 0
+    assert an.orientation_index(np.array([0.3, -0.9, 0.2])) == 1
