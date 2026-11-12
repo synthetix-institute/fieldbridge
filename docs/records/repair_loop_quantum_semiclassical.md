@@ -5,6 +5,42 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+## With the oriented critical frame, 2026-11-09
+
+Commit 9251a99, in which `repair_loop._critical_frame` orients each critical direction (before, it kept the sign that the
+eigensolver returned, and the interventions of a task are displacements along the frame), on the records of that commit (code
+stamp 9b651e12). Run on the cluster with fresh libraries, 3600 s per law, under the rule of d2e1c9a, with the same Python as the
+run of 2026-11-04 (3.9.13, NumPy 1.24.4, SciPy 1.13.1). Results: `repair_loop_oriented_frame_campaign.json` and
+`repair_loop_oriented_frame_certified_control.json`. This supersedes the counts below.
+
+**5 of the 13 failed laws (9 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, and 0 of the 13 at the
+scale of the written states**, against 9 of 20 on 2026-11-04. The records differ from those of 2026-11-04 by the drift that the
+fast noise gives the reduced law (7d287e4), the sign of a sample in one direction read at the mapping time, and the orientation of
+the critical direction at the write point (a8cfb01 and 9251a99), and the frame of this run is oriented; one run does not separate
+these causes.
+
+- Seven laws left the failed set because their completions are now certified: both unfoldings of `ion_duffing`,
+  `jba_resonator` and `transmon_driven`, and the unfolding of `rydberg_bistability`. Five of them were verified on 2026-11-04 and
+  two had no test power. In the certified control they give the same outcomes, except `ion_duffing` 0, verified before and now a
+  withheld failure (order 5, radius 0.0625).
+- Of the 13 laws in both failed sets, 8 keep their outcome and frozen candidate, and 4 of them were verified before against 5 now. `magnon_kerr` 0 goes from withheld failed to
+  verified (order 5 -> 7, radius 0.03125); `magnon_kerr` 1 stays verified with another candidate; `rfsquid_triangle` 0 stays
+  verified at radius 0.0625, order 5 -> 4, with another candidate; `kpo_triangle` 1 goes from timed out to no order passes
+  development. `kpo_triangle` 0 keeps its outcome (insufficient excitation) with another candidate.
+
+| Control | Result |
+|---|---|
+| exact identity | 0 of 13 |
+| certified laws | 12 of 27 (44 %, against 38 % on failed laws), median radius 0.0625 against 0.0625 (before 8 of 20, 0.1875) |
+| plain critical coordinate within the tolerance | 1 of 5 (before 4 of 9) |
+| strongest nonlinear term scaled by 1.25 | rejected on all 5 |
+| memory hint against the direct ladder | 482 against 474 development checks on 13 laws (before 673 against 699 on 19) |
+
+The other outcomes: 4 insufficient excitation and 4 no order passes development. Of the 230 retained outcomes, 13 get a task,
+216 are `no_failed_law` and one (`optomech_bistable`) is outside the campaign classes. In the certified control the outcomes are
+12 verified, 5 withheld failed, 4 no test power, 3 insufficient excitation, 2 timed out (`kpo_pair` 1 and 2, as before) and 1 no
+order passes development. Wall time on the loaded cluster: 30 min for the campaign, 2 h 14 min for the control.
+
 ## On the records of the longer sweep, 2026-11-04
 
 Commit 1b74ee9 (main), on the records regenerated with the longer sweep of the write check (3855cd3, records merged as
