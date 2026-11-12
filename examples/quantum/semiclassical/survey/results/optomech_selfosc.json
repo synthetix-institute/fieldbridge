@@ -5,7 +5,7 @@
   "source": "Aspelmeyer, M., Kippenberg, T. J., Marquardt, F., 'Cavity optomechanics', Rev. Mod. Phys. 86, 1391 (2014), arXiv:1303.0733 (full text)",
   "kind": "classical image of census entry 58: Cavity optomechanical element: static radiation-pressure bistability and self-sustained oscillation"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 1.7,
-  "threshold-write": 14.4,
-  "phase-locking": 794.2,
-  "completion": 1.0,
-  "changes": 379.7
+  "symmetric-write": 2.3,
+  "threshold-write": 18.2,
+  "phase-locking": 810.0,
+  "completion": 0.6,
+  "changes": 389.5
  },
  "completion": {
   "write_points": [
@@ -73,13 +73,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-    "seconds": 1.0,
+    "seconds": 0.8,
     "class": "oscillation"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-    "seconds": 13.7,
+    "seconds": 11.9,
     "class": "oscillation"
    }
   },
@@ -91,13 +91,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 1.1,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 13.2,
+      "seconds": 12.3,
       "class": "oscillation"
      }
     },
@@ -117,13 +117,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 1.1,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 9.5,
+      "seconds": 11.8,
       "class": "oscillation"
      }
     },
@@ -143,13 +143,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 0.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 11.5,
+      "seconds": 12.0,
       "class": "oscillation"
      }
     },
@@ -169,13 +169,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.8,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 11.4,
+      "seconds": 10.7,
       "class": "oscillation"
      }
     },
@@ -195,13 +195,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 1.1,
+      "seconds": 1.2,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 13.9,
+      "seconds": 14.8,
       "class": "oscillation"
      }
     },
@@ -216,13 +216,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.1,
+      "seconds": 1.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 13.9,
+      "seconds": 14.6,
       "class": "oscillation"
      }
     },
@@ -248,7 +248,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 13.1,
+      "seconds": 14.5,
       "class": "oscillation"
      }
     },
@@ -268,13 +268,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 0.9,
+      "seconds": 1.2,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 10.8,
+      "seconds": 13.8,
       "class": "oscillation"
      }
     },
@@ -295,7 +295,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 10.2,
+      "seconds": 13.5,
       "class": "oscillation"
      }
     },
@@ -310,13 +310,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.0,
+      "seconds": 1.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 11.1,
+      "seconds": 13.6,
       "class": "single stable state"
      }
     },
@@ -340,13 +340,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 0.9,
+      "seconds": 1.0,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 12.9,
+      "seconds": 12.6,
       "class": "oscillation"
      }
     },
@@ -397,7 +397,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 13.0,
+      "seconds": 12.9,
       "class": "oscillation"
      }
     },
@@ -412,13 +412,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.7,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 11.4,
+      "seconds": 12.2,
       "class": "oscillation"
      }
     },

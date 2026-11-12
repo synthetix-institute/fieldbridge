@@ -5,7 +5,7 @@
   "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
   "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) measurement, phase-encoded"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 1.6,
-  "threshold-write": 1.8,
-  "phase-locking": 2.6,
-  "completion": 54.9,
-  "changes": 52.4
+  "symmetric-write": 1.9,
+  "threshold-write": 2.0,
+  "phase-locking": 1.5,
+  "completion": 57.9,
+  "changes": 55.0
  },
  "completion": {
   "write_points": [
@@ -474,13 +474,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.000576 s^5, so the canonical form is not the pitchfork and the swept-write",
-    "seconds": 0.8,
+    "seconds": 0.7,
     "class": "vanishing cubic"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 1.1,
+    "seconds": 1.0,
     "class": "single stable state"
    }
   },
@@ -544,13 +544,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -576,7 +576,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "single stable state"
      }
     },
@@ -596,7 +596,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.000576 s^5, so the canonical form is not the pitchfork and the swept-write",
-      "seconds": 0.4,
+      "seconds": 0.6,
       "class": "vanishing cubic"
      },
      "threshold-write": {
@@ -617,13 +617,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -0.00115 s^5, so the canonical form is not the pitchfork and the swept-write ",
-      "seconds": 0.5,
+      "seconds": 0.7,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -646,7 +646,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -666,13 +666,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.9,
+      "seconds": 0.8,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.3,
+      "seconds": 2.2,
       "class": "reached"
      }
     },
@@ -694,7 +694,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
@@ -720,13 +720,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.8,
+      "seconds": 0.7,
       "class": "single stable state"
      }
     },

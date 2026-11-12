@@ -5,7 +5,7 @@
   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
   "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -42,11 +42,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 2.2,
-  "threshold-write": 7.7,
-  "phase-locking": 4.0,
-  "completion": 467.3,
-  "changes": 142.7
+  "symmetric-write": 2.6,
+  "threshold-write": 10.1,
+  "phase-locking": 2.9,
+  "completion": 589.4,
+  "changes": 142.5
  },
  "completion": {
   "write_points": [
@@ -2325,7 +2325,7 @@
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 1.7,
+    "seconds": 1.8,
     "class": "reached"
    }
   },
@@ -2337,13 +2337,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -2363,13 +2363,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 14.6,
+      "seconds": 13.9,
       "class": "distant branch"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 10.0,
+      "seconds": 9.9,
       "class": "reached"
      }
     },
@@ -2395,7 +2395,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.4,
+      "seconds": 2.2,
       "class": "reached"
      }
     },
@@ -2416,7 +2416,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.9,
+      "seconds": 1.6,
       "class": "reached"
      }
     },
@@ -2431,13 +2431,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.3,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.7,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -2463,7 +2463,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.9,
+      "seconds": 1.8,
       "class": "reached"
      }
     },
@@ -2510,7 +2510,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.5,
+      "seconds": 5.3,
       "class": "reached"
      }
     },
@@ -2553,13 +2553,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.4,
+      "seconds": 1.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.8,
       "class": "reached"
      }
     },
@@ -2582,7 +2582,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 3.7,
+      "seconds": 2.9,
       "class": "oscillation"
      }
     },
@@ -2623,13 +2623,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.5,
+      "seconds": 1.4,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 2.1,
       "class": "reached"
      }
     },
@@ -2646,13 +2646,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.4,
+      "seconds": 1.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 2.6,
       "class": "reached"
      }
     },
@@ -2675,7 +2675,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 3.3,
+      "seconds": 2.6,
       "class": "oscillation"
      }
     },
@@ -2696,7 +2696,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.8,
+      "seconds": 1.7,
       "class": "reached"
      }
     },
@@ -2722,7 +2722,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.5,
       "class": "reached"
      }
     },
@@ -2739,13 +2739,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 1.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.2,
+      "seconds": 2.3,
       "class": "reached"
      }
     },

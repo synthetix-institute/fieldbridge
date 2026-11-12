@@ -64,10 +64,12 @@ python3 -m fieldbridge memory changes examples/quantum/semiclassical/cim_triangl
 ## 4. Known laws carried to the hardware
 
 In most models a derivation of Modules 9–11 reaches its mechanism, and the law carries its constant. The symmetric
-write is reached in 18 of the 31 models. In 15 of them its constant lies within three standard errors or 3 % of
+write is reached in 18 of the 31 models. In 14 of them its constant lies within three standard errors or 3 % of
 $\pi^{1/4}$, among them the persistent-current flux qubit, the rf-SQUID annealer qubit, the quantum flux parametron
-latch and the SNAIL parametric oscillator. These constants carry standard errors of 0.11 to 0.22 at the default 400
-trajectories and 8 replicates, so the count cannot see a deviation of a few per cent. The threshold write is reached
+latch and the SNAIL parametric oscillator. These constants carry standard errors of 0.11 to 0.19 at the default 400
+trajectories and 8 replicates, so the count cannot see a deviation of a few per cent. The driven trapped ion gives
+$0.90 \pm 0.14$ at the seed of the survey and lies outside the count; ten seeds give a mean of 1.34 with a scatter of 0.20,
+and the seed of the survey gives the lowest of the ten. The threshold write is reached
 in 23 models, and in 19 of them the derivation measures the Airy constant $1.019$. Three of the other four, the
 Kerr-cat qubit and the pair and the triangle of Kerr parametric oscillators, carry that constant in the records: the
 derivation starts from a random state, and from some starts the branch of its slowest sweep does not end at the fold.
@@ -130,8 +132,8 @@ write resolve. Two write points of an element unfold at the same cusp and give t
 
 The three elements share the Kerr normal form and therefore the size of the offset and the state it favours: averaged
 over the two signs of a bias of one noise floor, the state of smaller amplitude is written with probability 0.68 to
-0.69 in all three. The report prints these offsets with a sign, which is only the orientation that the eigensolver
-gave the critical direction and has no meaning of its own. When the resonator measures a qubit, the dispersive shift
+0.69 in all three. The report prints these offsets with a sign, which follows the orientation of the critical direction (its largest
+component, the first of near-equal ones, is taken positive) and has no physical meaning of its own. When the resonator measures a qubit, the dispersive shift
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
 sweep must cancel. On these resonators the second quadrature relaxes slowly against the drift at the written
 states, so the reduced law of one coordinate does not hold and is withdrawn; the law is the linear stage with its
@@ -170,15 +172,15 @@ it by secant steps until the offset is below 0.1 or three standard errors:
 python3 -m fieldbridge memory complete examples/quantum/semiclassical/jba_resonator.json --curvature --out-dir results/jba_curvature
 ```
 
-For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.124 to −0.131, −0.120 to −0.122, −0.098
-to −0.104, −0.069 to −0.070 and −0.021 to −0.023 for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
-numbers are its two write points), with the response staying at 1.27 to 1.40. The curvature has a
+For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.129 to −0.131, −0.119 to −0.122, −0.101
+to −0.103, −0.070 to −0.072 and −0.024 at both for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
+numbers are its two write points), with the response staying at 1.30 to 1.34. The curvature has a
 part that does not depend on the noise, the curvature of the line on which the two written states are mirror images,
 and a part that grows with the noise ratio, which compensates the drift that the quadratic term of the reduced
-equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.081 to
-0.085 and at 0.069 to 0.074 in the coordinates of their own second parameters, and the magnon element at 0.205, where
-an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at one write point
-its zero lies beyond the curvatures that the sweep can reach, and at the other the offset is still 0.37 at c2 = 0.44. The equation of this
+equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.083 to
+0.086 and at 0.068 to 0.073 in the coordinates of their own second parameters, and the magnon element at 0.205, where
+an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at both write points
+its zero, placed at c2 = 0.46 and 0.48 by the curvatures tried, lies beyond the curvatures that the sweep can reach. The equation of this
 element near the cusp differs from the Kerr form. These runs are collected in
 [curvature.json](../../examples/quantum/semiclassical/survey/curvature.json).
 

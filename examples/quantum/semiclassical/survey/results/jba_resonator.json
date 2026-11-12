@@ -5,7 +5,7 @@
   "source": "Siddiqi et al., PRL 93, 207002 (2004); Vijay, Devoret & Siddiqi, RSI 80, 111101 (2009)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -19,22 +19,22 @@
    "class": "C R(fold) U R(pitchfork) K L",
    "word": "CRURKL",
    "law_constant": {
-    "constant": 1.1559897118226834,
-    "stderr": 0.13298817642922,
+    "constant": 1.3793052179641472,
+    "stderr": 0.15336911377304277,
     "expected": 1.3313353638003897,
-    "offset": -0.9171760419455574,
-    "offset_stderr": 0.13298817642922,
+    "offset": 1.0801444568051521,
+    "offset_stderr": 0.15336911377304277,
     "offset_resolved": true,
     "by_sign": [
      {
       "sign": 1,
-      "constant": 0.23881366987712602,
-      "stderr": 0.18190393758140683
+      "constant": 2.4594496747692993,
+      "stderr": 0.22446119297692194
      },
      {
       "sign": -1,
-      "constant": 2.0731657537682406,
-      "stderr": 0.1940473596116604
+      "constant": 0.29916076115899526,
+      "stderr": 0.20905863552001663
      }
     ],
     "replicates": 8,
@@ -57,12 +57,12 @@
      0.03106800838,
      2.057903761,
      -0.02673903162,
-     -0.01564384894,
-     -0.02709539376,
-     -0.01564429225,
-     -0.02709513781,
-     -0.0156427385,
-     -0.02709603486,
+     0.01564337493,
+     0.02709566743,
+     0.01564293158,
+     0.02709592339,
+     0.01564448535,
+     0.02709502631,
      0.01299038105
     ]
    }
@@ -89,11 +89,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 30.3,
-  "threshold-write": 7.7,
-  "phase-locking": 4.0,
-  "completion": 293.7,
-  "changes": 176.5
+  "symmetric-write": 23.7,
+  "threshold-write": 5.5,
+  "phase-locking": 1.3,
+  "completion": 288.3,
+  "changes": 193.8
  },
  "completion": {
   "write_points": [
@@ -107,8 +107,8 @@
     },
     "kind": "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold",
     "obstruction": {
-     "quadratic a2": -0.20684503537591192,
-     "bias per unit control": 3.8831771276794367
+     "quadratic a2": 0.20684503537591192,
+     "bias per unit control": -3.8831771276794367
     },
     "completion": "second parameter",
     "unfoldings": [
@@ -444,13 +444,13 @@
         "limit": 1.0,
         "where": {
          "t": 38.890872965260115,
-         "s": -3.922140679233613,
-         "drift_rate": 0.7388839715935297,
-         "eliminated_relaxation": -0.19824801813285342,
+         "s": 3.519869840337858,
+         "drift_rate": 0.5040320806119741,
+         "eliminated_relaxation": -0.09698293478000364,
          "kind": "an eliminated direction does not relax"
         }
        },
-       "reduction_not_slow": "an eliminated direction does not relax at s = -3.92: the drift along the slow manifold varies at the rate 0.739 at s = -3.92, against the relaxation -0.198 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
+       "reduction_not_slow": "an eliminated direction does not relax at s = 3.52: the drift along the slow manifold varies at the rate 0.504 at s = 3.52, against the relaxation -0.097 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
        "one_direction": {
         "law": [
          {
@@ -891,13 +891,13 @@
         "limit": 1.0,
         "where": {
          "t": 38.890872965260115,
-         "s": -3.922100317407404,
-         "drift_rate": 0.7388981830927827,
-         "eliminated_relaxation": -0.19824002305433297,
+         "s": 3.519833618186132,
+         "drift_rate": 0.5040457139435917,
+         "eliminated_relaxation": -0.09696629357175779,
          "kind": "an eliminated direction does not relax"
         }
        },
-       "reduction_not_slow": "an eliminated direction does not relax at s = -3.92: the drift along the slow manifold varies at the rate 0.739 at s = -3.92, against the relaxation -0.198 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
+       "reduction_not_slow": "an eliminated direction does not relax at s = 3.52: the drift along the slow manifold varies at the rate 0.504 at s = 3.52, against the relaxation -0.097 of the eliminated directions there (ratio inf, at or above 1): the one-coordinate reduction does not hold over the amplitudes the write crosses, and the law is the linear stage with the outcome map",
        "one_direction": {
         "law": [
          {
@@ -999,13 +999,13 @@
    "symmetric-write": {
     "status": "reached after unfolding",
     "obstruction": "",
-    "seconds": 5.3,
+    "seconds": 5.8,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 4.9,
+    "seconds": 6.1,
     "class": "reached"
    }
   },
@@ -1017,13 +1017,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 5.5,
+      "seconds": 6.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.1,
+      "seconds": 5.6,
       "class": "reached"
      }
     },
@@ -1038,13 +1038,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 2.0,
+      "seconds": 2.1,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.6,
+      "seconds": 1.7,
       "class": "reached"
      }
     },
@@ -1059,7 +1059,7 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 4.6,
+      "seconds": 4.8,
       "class": "reached"
      },
      "threshold-write": {
@@ -1086,7 +1086,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.2,
+      "seconds": 1.1,
       "class": "single stable state"
      }
     },
@@ -1101,13 +1101,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 14.4,
+      "seconds": 17.9,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 17.0,
+      "seconds": 17.5,
       "class": "reached"
      }
     },
@@ -1122,13 +1122,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 5.3,
+      "seconds": 7.4,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 5.6,
+      "seconds": 7.5,
       "class": "single stable state"
      }
     },
@@ -1143,13 +1143,13 @@
      "symmetric-write": {
       "status": "reached after unfolding",
       "obstruction": "",
-      "seconds": 20.4,
+      "seconds": 22.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 20.0,
+      "seconds": 19.5,
       "class": "reached"
      }
     },
@@ -1164,13 +1164,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 6.4,
+      "seconds": 5.7,
       "class": "one-sided write"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.4,
+      "seconds": 5.6,
       "class": "reached"
      }
     },
@@ -1191,7 +1191,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.8,
+      "seconds": 0.9,
       "class": "single stable state"
      }
     },
@@ -1206,7 +1206,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-      "seconds": 6.2,
+      "seconds": 6.1,
       "class": "one-sided write"
      },
      "threshold-write": {

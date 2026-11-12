@@ -5,7 +5,7 @@
   "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
   "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -19,8 +19,8 @@
    "class": "S(reflection) C R(pitchfork) K L",
    "word": "SCRKL",
    "law_constant": {
-    "constant": 1.1687596504390578,
-    "stderr": 0.12911760059116215,
+    "constant": 1.3887177945704532,
+    "stderr": 0.11434201067904975,
     "expected": 1.3313353638003897,
     "replicates": 8,
     "signature": [
@@ -42,12 +42,12 @@
      -0.04643308251,
      -0.0004963381857,
      0.02760464925,
-     0.04781795341,
-     -0.08445603712,
-     0.04781556893,
-     -0.08445738714,
-     0.04781935663,
-     -0.08445524262,
+     -0.04781832774,
+     0.08445582517,
+     -0.04782071213,
+     0.08445447511,
+     -0.04781692445,
+     0.08445661969,
      0.1225490571
     ]
    }
@@ -74,11 +74,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 6.8,
-  "threshold-write": 5.5,
-  "phase-locking": 4.5,
-  "completion": 55.8,
-  "changes": 47.9
+  "symmetric-write": 7.0,
+  "threshold-write": 4.8,
+  "phase-locking": 3.0,
+  "completion": 52.9,
+  "changes": 53.4
  },
  "completion": {
   "write_points": [
@@ -504,13 +504,13 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 0.2,
+    "seconds": 0.3,
     "class": "reached"
    },
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 2.5,
+    "seconds": 3.3,
     "class": "reached"
    }
   },
@@ -522,13 +522,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.6,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.6,
+      "seconds": 2.7,
       "class": "reached"
      }
     },
@@ -543,13 +543,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 2.5,
+      "seconds": 3.0,
       "class": "reached"
      }
     },
@@ -564,13 +564,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.8,
+      "seconds": 0.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 3.1,
+      "seconds": 2.9,
       "class": "reached"
      }
     },
@@ -591,7 +591,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.4,
+      "seconds": 1.6,
       "class": "reached"
      }
     },
@@ -612,7 +612,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -633,7 +633,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.5,
+      "seconds": 1.2,
       "class": "reached"
      }
     },
@@ -654,7 +654,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
