@@ -82,10 +82,13 @@ class _Watch:
     can only fall short of the steps taken. The step has collapsed when the times of a block of STEP_WINDOW calls span
     less than STEP_WINDOW * STEP_FLOOR of the run, in whatever order the calls came. An exception cannot leave the
     Fortran solver (it aborts the interpreter), so a spent budget or a collapsed step sets the reason, and the drift and
-    its Jacobian are zero from then on: the state stands still, the step grows, the run ends within a few hundred steps
-    and the caller raises; a NaN drift at a collapsed step makes LSODA end the process. LSODA keeps every step and
-    continues when t + h = t, so near a blow-up a run otherwise grows without bound in time and memory. An event called
-    after each step would do the same at twice the cost of a step on long chaotic runs."""
+    its Jacobian are zero from then on, and the solver (_halting) ends the run at its next step in Python; the caller
+    raises. The zero drift alone does not end it: where the step has collapsed onto a singularity of the drift, LSODA's
+    step stays below the rounding of t after the drift is set to zero, t does not move, and every return is stored (the
+    Eguchi-Hanson geodesic flow at rho -> 0, over a million calls at one t and gigabytes within minutes). A NaN drift at
+    a collapsed step makes LSODA end the process. LSODA keeps every step and continues when t + h = t, so near a blow-up
+    a run otherwise grows without bound in time and memory. An event called after each step would do the same at twice
+    the cost of a step on long chaotic runs; the check of _halting is one flag per step."""
 
     def __init__(self, length: float):
         self.floor = STEP_WINDOW * STEP_FLOOR * length
@@ -113,6 +116,22 @@ class _Watch:
                 return True
             self.calls, self.lo, self.hi = 0, np.inf, -np.inf
         return False
+
+
+def _halting(halted: List[bool], bad: List[bool]):
+    """The solver SOLVER (LSODA) of a run with a budget, ending the run in Python at the first step after the drift set
+    `halted` or `bad`. The drift cannot end a run from inside the Fortran solver; this check, one flag per step, can.
+    Runs without a budget keep SOLVER itself."""
+    from scipy.integrate import LSODA
+    assert SOLVER == "LSODA"
+
+    class _Halting(LSODA):
+        def _step_impl(self):
+            if halted[0] or bad[0]:
+                return False, "the drift stopped the run"
+            return super()._step_impl()
+
+    return _Halting
 
 
 class _Compiled:
@@ -229,7 +248,8 @@ def _solve(real: Realization, over: Dict, t_span, q0, drive=None, events=None, d
 
     def run(span, y0, ev, dense_output=False):
         watch[0] = _Watch(span[1] - span[0]) if budget else None
-        sol = solve_ivp(f, span, y0, method=SOLVER, jac=jac, rtol=rtol, atol=atol, events=ev, dense_output=dense_output)
+        method = _halting(halted, bad) if budget else SOLVER
+        sol = solve_ivp(f, span, y0, method=method, jac=jac, rtol=rtol, atol=atol, events=ev, dense_output=dense_output)
         if budget and halted[0]:
             raise _Abandoned(watch[0].reason)
         if budget and bad[0]:
