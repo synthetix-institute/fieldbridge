@@ -32,6 +32,17 @@ STIFF = {
     "control": {"name": "k", "range": [1e3, 1e5]},
 }
 
+GEODESIC = {
+    **BASE, "name": "Eguchi-Hanson geodesic flow (test, arXiv:2302.02620)",
+    "carrier": {"kind": "euclid", "name": "radius, radial momentum, angular momenta",
+                "variables": ["rho", "p_rho", "M1", "M2", "M3"], "scale": 1},
+    "parameters": {"ga": 1.0},
+    "drift": {"rho": "(rho**2-ga**2)*p_rho/rho",
+              "p_rho": "(-p_rho**2*(rho**2+ga**2)/rho**2 + (M1**2+M2**2)/rho**2 + M3**2*(rho**2+ga**2)/(rho**2-ga**2)**2)/2",
+              "M1": "-ga**2*M2*M3/(rho*(rho**2-ga**2))", "M2": "ga**2*M3*M1/(rho*(rho**2-ga**2))", "M3": "0"},
+    "control": {"name": "ga", "range": [0.1, 2.0]},
+}
+
 VDP = {
     **BASE, "name": "van der Pol (test)",
     "carrier": {"kind": "euclid", "name": "plane", "variables": ["x", "v"], "scale": 1},
@@ -80,3 +91,21 @@ def test_a_chunk_over_its_step_budget_abandons_the_start(monkeypatch):
     assert pl.find_cycle(real, {}, np.random.default_rng(0)) is not None
     monkeypatch.setattr(pl, "CHUNK_STEPS", 50)  # a chunk of 100 time units of the cycle takes thousands of steps
     assert pl.find_cycle(real, {}, np.random.default_rng(0)) is None
+
+
+def test_a_collapsed_step_that_cannot_grow_again_still_ends_the_run():
+    # from this start rho reaches 0, where the drift has a 1/rho singularity, at t = 0.491; the watch finds the collapsed
+    # step and sets the drift to zero, but LSODA's step stays near 2e-18, below the rounding of t, so t never moves and
+    # solve_ivp stored every return: over a million drift calls at one t, gigabytes within minutes on the cluster
+    real = mspec.load(GEODESIC)
+    q = real.carrier.sample(np.random.default_rng(6), 1)[0]
+    tracemalloc.start()
+    t0 = time.perf_counter()
+    try:
+        with np.errstate(all="ignore"), pytest.raises(pl._Abandoned, match="step collapsed"):
+            pl._solve(real, {}, (0.0, 100.0), q, rtol=1e-9, atol=1e-11, budget=True)
+        peak = tracemalloc.get_traced_memory()[1]
+    finally:
+        tracemalloc.stop()
+    assert time.perf_counter() - t0 < 30.0
+    assert peak < 200 * 2 ** 20

@@ -306,9 +306,8 @@ def test_every_retained_outcome_of_the_records_gets_a_row(tmp_path):
     assert len(rows) == len(library.departures()) >= 227
     assert not [r for r in rows if r["status"] == "needs_equation_task"]
     failed = [r for r in rows if r["status"] == "outside_this_campaign"]
-    # version 12: the phase qubit, the bifurcation amplifier, the magnon and a distant branch of the Ising pair are certified, the Rydberg law is not;
-    # in the record of the merge with the orientation (2026-11-12) the first write point of the rf-SQUID triangle is a nonlinear stage;
-    # with the completion step of version 13 from hysto4GPU (2026-11-13) the Rydberg law is certified, and so is that write point there
+    # version 12: the phase qubit, the bifurcation amplifier, the magnon and a distant branch of the Ising pair are certified;
+    # version 13: the Rydberg law is certified as well
     assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 5
     assert sum(r["write_class"] == "equilibrium write" for r in failed) == 4
 
@@ -320,7 +319,7 @@ def test_a_law_over_its_budget_is_kept_as_timed_out(tmp_path, monkeypatch):
     monkeypatch.setattr(rl, "close_modulo_order", lambda *_: time.sleep(30))
     rows = rl.close_departures(library, root=ROOT, policy=FAST, select={"equilibrium write"}, law_seconds=1)
     timed_out = [r for r in rows if r["status"] == "timed_out"]
-    # four equilibrium writes are not certified; in the record of 2026-11-12 every one of them reaches the law
+    # four equilibrium writes are not certified; in the record of 2026-11-13 every one of them reaches the law
     assert len(timed_out) == 4 and all(r["write_class"] == "equilibrium write" for r in timed_out)
     assert library.campaign(next(k for k, d in library.departures() if d["target"] == timed_out[0]["target"]
                                  and library.campaign(k)))["status"] == "timed_out"

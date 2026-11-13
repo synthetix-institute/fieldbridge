@@ -1,7 +1,7 @@
 {
  "command": "record",
  "derived_from": "docs/records/quantum_semiclassical.jsonl",
- "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
+ "implementation_sha256": "f3e43cfc2219e2772b927e7769c181efca272bf53c2814cbe5dfcd7bb7339bd1",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -15,11 +15,11 @@
  "counts": {
   "specifications": 31,
   "reached": {
-   "symmetric-write": 18,
+   "symmetric-write": 19,
    "threshold-write": 23,
    "phase-locking": 3
   },
-  "obstructed_symmetric": 13,
+  "obstructed_symmetric": 12,
   "completions_certified": 31,
   "stopped": 0,
   "write_classes": {
@@ -76,13 +76,13 @@
      "obstruction_short": "fold; no cusp with a supercritical sweep",
      "word": "CR",
      "class": "C R(fold)",
-     "seconds": 46.3
+     "seconds": 4.2
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRK",
      "class": "C R(fold) K",
-     "seconds": 38.7
+     "seconds": 3.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -90,7 +90,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1748.8
+     "seconds": 601.7
     }
    },
    "completion": {
@@ -167,7 +167,7 @@
       "stderr": 0.10799009991402313,
       "expected": 1.3313353638003897
      },
-     "seconds": 4.5
+     "seconds": 2.2
     },
     "threshold-write": {
      "status": "obstructed",
@@ -175,7 +175,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 2.0
+     "seconds": 1.1
     },
     "phase-locking": {
      "status": "obstructed",
@@ -183,7 +183,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.9
+     "seconds": 0.4
     }
    },
    "completion": {
@@ -259,18 +259,18 @@
       "stderr": 0.10961740685634606,
       "expected": 1.3313353638003897
      },
-     "seconds": 3.0
+     "seconds": 1.6
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(pitchfork) W R(fold) K L",
      "law_constant": {
-      "constant": 1.0187910645233436,
-      "stderr": 1.5977561208746494e-05,
+      "constant": 1.0187910645234348,
+      "stderr": 1.5977561468316637e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 3.8
+     "seconds": 2.0
     },
     "phase-locking": {
      "status": "obstructed",
@@ -278,7 +278,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.0
+     "seconds": 0.4
     }
    },
    "completion": {
@@ -445,18 +445,18 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 2.8
+     "seconds": 1.0
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "CRWRKL",
      "class": "C R(degenerate critical mode) W R(fold) K L",
      "law_constant": {
-      "constant": 1.0186165466164785,
-      "stderr": 0.00040680151119065755,
+      "constant": 1.018616546910569,
+      "stderr": 0.0004068014441205303,
       "expected": 1.018792971647471
      },
-     "seconds": 9.9
+     "seconds": 3.5
     },
     "phase-locking": {
      "status": "obstructed",
@@ -464,7 +464,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.2
+     "seconds": 0.5
     }
    },
    "completion": {
@@ -526,18 +526,18 @@
       "stderr": 0.10619925205367307,
       "expected": 1.3313353638003897
      },
-     "seconds": 4.2
+     "seconds": 2.3
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(pitchfork) W R(fold) K L",
      "law_constant": {
-      "constant": 1.018792959538713,
+      "constant": 1.0187929601497268,
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 3.8
+     "seconds": 1.8
     },
     "phase-locking": {
      "status": "obstructed",
@@ -545,7 +545,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.5
+     "seconds": 0.2
     }
    },
    "completion": {
@@ -609,18 +609,18 @@
       "offset_stderr": 0.11178102128186396,
       "offset_resolved": false
      },
-     "seconds": 7.1
+     "seconds": 3.6
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187939373842185,
-      "stderr": 5.073376518449635e-06,
+      "constant": 1.0187939411948403,
+      "stderr": 5.072983719545121e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 5.5
+     "seconds": 2.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -628,7 +628,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.1
+     "seconds": 0.9
     }
    },
    "completion": {
@@ -776,18 +776,18 @@
       "offset_stderr": 0.10965549597465941,
       "offset_resolved": false
      },
-     "seconds": 6.9
+     "seconds": 3.7
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187998223519015,
-      "stderr": 1.4735931134879365e-05,
+      "constant": 1.018799822144378,
+      "stderr": 1.473599259838032e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 4.0
+     "seconds": 1.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -795,7 +795,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.3
+     "seconds": 1.0
     }
    },
    "completion": {
@@ -936,25 +936,25 @@
      "word": "CRURKL",
      "class": "C R(fold) U R(pitchfork) K L",
      "law_constant": {
-      "constant": 1.3704518428443753,
-      "stderr": 0.13745860249526265,
+      "constant": 1.3704518428443757,
+      "stderr": 0.1374586024952627,
       "expected": 1.3313353638003897,
-      "offset": 1.2314927308913681,
-      "offset_stderr": 0.13745860249526265,
+      "offset": 1.2314927308913686,
+      "offset_stderr": 0.1374586024952627,
       "offset_resolved": true
      },
-     "seconds": 7.6
+     "seconds": 4.3
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187929430840978,
-      "stderr": 9.992525564772592e-07,
+      "constant": 1.0187929431458236,
+      "stderr": 9.992849057116615e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 5.0
+     "seconds": 2.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -962,7 +962,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 3.5
+     "seconds": 1.7
     }
    },
    "completion": {
@@ -1102,29 +1102,29 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 6.4
+     "seconds": 3.3
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187940583437094,
-      "stderr": 5.120710667805284e-05,
+      "constant": 1.0187940583373163,
+      "stderr": 5.12071009999282e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 4.8
+     "seconds": 2.2
     },
     "phase-locking": {
      "status": "reached",
      "word": "RKL",
      "class": "R(phase) K(1:1) L",
      "law_constant": {
-      "constant": 1.0000263455710239,
-      "stderr": 0.00038763248882667245,
+      "constant": 0.9999249164651178,
+      "stderr": 0.0003450109943655688,
       "expected": 1.0
      },
-     "seconds": 23.3
+     "seconds": 12.5
     }
    },
    "completion": {
@@ -1208,25 +1208,25 @@
      "word": "CRURKL",
      "class": "C R(fold) U R(pitchfork) K L",
      "law_constant": {
-      "constant": 1.0930605183090625,
-      "stderr": 0.11862279074391288,
+      "constant": 1.0930605183090623,
+      "stderr": 0.11862279074391287,
       "expected": 1.3313353638003897,
-      "offset": 0.9341874308664793,
-      "offset_stderr": 0.11862279074391288,
+      "offset": 0.934187430866479,
+      "offset_stderr": 0.11862279074391287,
       "offset_resolved": true
      },
-     "seconds": 12.5
+     "seconds": 6.5
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187919768159788,
-      "stderr": 2.8165676595470757e-06,
+      "constant": 1.0187919742288851,
+      "stderr": 2.8155779934202485e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 6.8
+     "seconds": 3.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1234,7 +1234,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.4
+     "seconds": 0.6
     }
    },
    "completion": {
@@ -1376,7 +1376,7 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 16.7
+     "seconds": 9.1
     },
     "threshold-write": {
      "status": "obstructed",
@@ -1384,7 +1384,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 16.7
+     "seconds": 9.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1392,7 +1392,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.0
+     "seconds": 0.5
     }
    },
    "completion": {
@@ -1437,18 +1437,18 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 1.1
+     "seconds": 0.6
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(degenerate cubic) W R(fold) K L",
      "law_constant": {
-      "constant": 1.0187929274542025,
+      "constant": 1.0187929398986786,
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 5.1
+     "seconds": 2.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1456,7 +1456,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 10.9
+     "seconds": 4.8
     }
    },
    "completion": {
@@ -1530,18 +1530,18 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 3.5
+     "seconds": 1.4
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(degenerate cubic) W R(fold) K L",
      "law_constant": {
-      "constant": 1.018792858677842,
+      "constant": 1.018792983750309,
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 18.5
+     "seconds": 5.8
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1549,7 +1549,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 21.9
+     "seconds": 5.9
     }
    },
    "completion": {
@@ -1723,18 +1723,18 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 6.2
+     "seconds": 3.0
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "CRWRKL",
      "class": "C R(degenerate critical mode) W R(fold) K L",
      "law_constant": {
-      "constant": 1.018792994984001,
+      "constant": 1.0187929370029585,
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 30.4
+     "seconds": 12.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1742,7 +1742,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 19.6
+     "seconds": 7.9
     }
    },
    "completion": {
@@ -1882,18 +1882,18 @@
       "offset_stderr": 0.1317537150947734,
       "offset_resolved": true
      },
-     "seconds": 12.2
+     "seconds": 8.7
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187773639272235,
-      "stderr": 3.028280515926518e-05,
+      "constant": 1.0187774040030402,
+      "stderr": 3.027431652391499e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 22.1
+     "seconds": 16.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1901,7 +1901,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 6.3
+     "seconds": 3.9
     }
    },
    "completion": {
@@ -2004,7 +2004,7 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 4.4
+     "seconds": 2.5
     },
     "threshold-write": {
      "status": "reached",
@@ -2015,7 +2015,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 3.0
+     "seconds": 1.5
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2023,7 +2023,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.3
+     "seconds": 0.1
     }
    },
    "completion": {
@@ -2161,18 +2161,18 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 24.0
+     "seconds": 13.4
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187930339862314,
+      "constant": 1.018793029345998,
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 10.1
+     "seconds": 5.8
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2180,7 +2180,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 734.8
+     "seconds": 641.5
     }
    },
    "completion": {
@@ -2251,7 +2251,7 @@
      "obstruction_short": "Hopf: an oscillation, not a write",
      "word": "CR",
      "class": "C R(Hopf)",
-     "seconds": 0.9
+     "seconds": 0.5
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2259,13 +2259,13 @@
      "obstruction_short": "no stable state: the realization oscillates",
      "word": "CR",
      "class": "C R(Hopf)",
-     "seconds": 11.6
+     "seconds": 7.1
     },
     "phase-locking": {
      "status": "reached",
      "word": "CRK",
      "class": "C R(phase) K(1:1)",
-     "seconds": 652.6
+     "seconds": 634.9
     }
    },
    "completion": {
@@ -2307,7 +2307,7 @@
      "obstruction_short": "no write point along the control",
      "word": "",
      "class": "",
-     "seconds": 0.3
+     "seconds": 0.2
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2315,7 +2315,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "",
      "class": "",
-     "seconds": 0.7
+     "seconds": 0.5
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2323,7 +2323,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.4
+     "seconds": 0.3
     }
    },
    "completion": {
@@ -2354,18 +2354,18 @@
       "offset_stderr": 0.10902586357276908,
       "offset_resolved": false
      },
-     "seconds": 7.0
+     "seconds": 5.0
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187964622247534,
-      "stderr": 8.654221181592092e-05,
+      "constant": 1.018796462336701,
+      "stderr": 8.654218088177679e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 3.3
+     "seconds": 2.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2373,7 +2373,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 3.5
+     "seconds": 2.1
     }
    },
    "completion": {
@@ -2515,7 +2515,7 @@
      "obstruction_short": "subcritical: jump to a distant branch",
      "word": "SCR",
      "class": "S(reflection) C R(subcritical pitchfork)",
-     "seconds": 0.3
+     "seconds": 0.2
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2523,7 +2523,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 0.4
+     "seconds": 0.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2531,7 +2531,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.8
+     "seconds": 1.6
     }
    },
    "completion": {
@@ -2604,7 +2604,7 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 0.6
+     "seconds": 0.5
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2612,7 +2612,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(degenerate cubic)",
-     "seconds": 0.8
+     "seconds": 0.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2620,7 +2620,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.7
+     "seconds": 0.4
     }
    },
    "completion": {
@@ -2696,7 +2696,7 @@
       "stderr": 0.11268992586246143,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.7
+     "seconds": 1.3
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2704,7 +2704,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 0.5
+     "seconds": 0.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2712,7 +2712,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.5
+     "seconds": 0.3
     }
    },
    "completion": {
@@ -2785,7 +2785,7 @@
      "obstruction_short": "no write point along the control",
      "word": "",
      "class": "",
-     "seconds": 0.3
+     "seconds": 0.2
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2793,18 +2793,18 @@
      "obstruction_short": "no stable state: the realization oscillates",
      "word": "",
      "class": "",
-     "seconds": 2.9
+     "seconds": 2.3
     },
     "phase-locking": {
      "status": "reached",
      "word": "RKL",
      "class": "R(phase) K(1:1) L",
      "law_constant": {
-      "constant": 0.9998781986617428,
-      "stderr": 0.0001243274786197901,
+      "constant": 0.9999184257664859,
+      "stderr": 0.0001466038539474912,
       "expected": 1.0
      },
-     "seconds": 25.3
+     "seconds": 17.2
     }
    },
    "completion": {
@@ -2832,18 +2832,18 @@
       "stderr": 0.1088923113139296,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.6
+     "seconds": 1.2
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(pitchfork) W R(fold) K L",
      "law_constant": {
-      "constant": 1.01879238671748,
-      "stderr": 1.4788474034244103e-06,
+      "constant": 1.0187923797621703,
+      "stderr": 1.4805209505031058e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 2.4
+     "seconds": 1.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2851,7 +2851,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.2
+     "seconds": 0.6
     }
    },
    "completion": {
@@ -2927,18 +2927,18 @@
       "stderr": 0.11120624537592073,
       "expected": 1.3313353638003897
      },
-     "seconds": 2.8
+     "seconds": 2.1
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(pitchfork) W R(fold) K L",
      "law_constant": {
-      "constant": 1.0187925268767153,
-      "stderr": 7.136026975995691e-07,
+      "constant": 1.01879245338018,
+      "stderr": 1.2432295701803042e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 4.1
+     "seconds": 2.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2946,7 +2946,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.2
+     "seconds": 0.6
     }
    },
    "completion": {
@@ -3122,18 +3122,18 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 0.4
+     "seconds": 0.3
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "CRWRKL",
      "class": "C R(degenerate critical mode) W R(fold) K L",
      "law_constant": {
-      "constant": 1.0187924960596384,
-      "stderr": 7.596476387927709e-07,
+      "constant": 1.0187924857994526,
+      "stderr": 7.620550241949076e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 3.1
+     "seconds": 2.9
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3141,7 +3141,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.3
+     "seconds": 0.7
     }
    },
    "completion": {
@@ -3208,18 +3208,18 @@
       "offset_stderr": 0.11261773988577285,
       "offset_resolved": false
      },
-     "seconds": 4.6
+     "seconds": 3.6
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.018793031940819,
-      "stderr": 2.956770955409027e-06,
+      "constant": 1.018793029714523,
+      "stderr": 2.955065575127591e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 3.0
+     "seconds": 2.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3227,7 +3227,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 4.7
+     "seconds": 2.6
     }
    },
    "completion": {
@@ -3315,18 +3315,18 @@
       "stderr": 0.1086600576712234,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.7
+     "seconds": 1.2
     },
     "threshold-write": {
      "status": "reached by a write field",
      "word": "SCRWRKL",
      "class": "S C R(pitchfork) W R(fold) K L",
      "law_constant": {
-      "constant": 1.015668909686033,
-      "stderr": 0.004052327927520638,
+      "constant": 1.0156689096959644,
+      "stderr": 0.004052327931677091,
       "expected": 1.018792971647471
      },
-     "seconds": 3.4
+     "seconds": 2.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3334,7 +3334,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.5
+     "seconds": 0.9
     }
    },
    "completion": {
@@ -3402,23 +3402,21 @@
    "source": "examples/quantum/semiclassical/spin_ensemble_cavity.json",
    "targets": {
     "symmetric-write": {
-     "status": "obstructed",
-     "obstruction": "one-sided write (fold) and no material parameter reaches a cusp with a supercritical sweep",
-     "obstruction_short": "fold; no cusp with a supercritical sweep",
-     "word": "CR",
-     "class": "C R(fold)",
-     "seconds": 4.8
+     "status": "reached after unfolding",
+     "word": "CRURK",
+     "class": "C R(fold) U R(pitchfork) K",
+     "seconds": 14.5
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0115058002133945,
-      "stderr": 0.032811486984288596,
+      "constant": 1.0115057998258066,
+      "stderr": 0.032811487226625635,
       "expected": 1.018792971647471
      },
-     "seconds": 7.7
+     "seconds": 5.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3426,7 +3424,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 286.8
+     "seconds": 395.4
     }
    },
    "completion": {
@@ -3502,7 +3500,7 @@
     "seconds": 1244.8
    },
    "spec_sha256": "0cef4fae8be0863a2f5f554c1d162239b7947a48fdcfd7a42e8ffcd0f2fbc96b",
-   "summary": "reaches threshold-write; completions: second parameter: equilibrium write"
+   "summary": "reaches symmetric-write, threshold-write; completions: second parameter: equilibrium write"
   },
   {
    "spec": "transmon_driven.json",
@@ -3518,24 +3516,24 @@
      "class": "C R(fold) U R(pitchfork) K L",
      "law_constant": {
       "constant": 1.2793218221656582,
-      "stderr": 0.13172800806609777,
+      "stderr": 0.13172800806609775,
       "expected": 1.3313353638003897,
       "offset": 1.1801278526036412,
-      "offset_stderr": 0.13172800806609777,
+      "offset_stderr": 0.13172800806609775,
       "offset_resolved": true
      },
-     "seconds": 5.7
+     "seconds": 4.2
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRKL",
      "class": "C R(fold) K L",
      "law_constant": {
-      "constant": 1.0187920382858655,
-      "stderr": 2.714001622328155e-06,
+      "constant": 1.0187920437991433,
+      "stderr": 2.715258781149643e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 3.7
+     "seconds": 2.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3543,7 +3541,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.6
+     "seconds": 1.5
     }
    },
    "completion": {
