@@ -382,7 +382,8 @@ def test_the_sign_in_one_direction_is_read_from_the_unwritten_branch_at_the_mapp
     1.26); read from the branch, the sign of the sample gives the response of the pitchfork."""
     real = spec.load(QUANTUM / "magnon_kerr.json")
     rep = completion.complete(real, np.random.default_rng(0), n_samples=1000, certify=False)
-    laws = [u["law"] for e in rep["write_points"] for u in e.get("unfoldings", []) if u["law"].get("status") == "derived"]
+    # an unfolding along a parameter that finds no cusp has no law (on Linux one of the two does not)
+    laws = [u["law"] for e in rep["write_points"] for u in e.get("unfoldings", []) if (u.get("law") or {}).get("status") == "derived"]
     assert laws
     for L in laws:
         assert L["map_regime"] == "saturated at the mapping time"
