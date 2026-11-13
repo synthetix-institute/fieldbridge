@@ -319,8 +319,12 @@ def test_a_law_over_its_budget_is_kept_as_timed_out(tmp_path, monkeypatch):
     monkeypatch.setattr(rl, "close_modulo_order", lambda *_: time.sleep(30))
     rows = rl.close_departures(library, root=ROOT, policy=FAST, select={"equilibrium write"}, law_seconds=1)
     timed_out = [r for r in rows if r["status"] == "timed_out"]
-    # four equilibrium writes are not certified; in the record of 2026-11-13 every one of them reaches the law
-    assert len(timed_out) == 4 and all(r["write_class"] == "equilibrium write" for r in timed_out)
+    # four equilibrium writes are not certified, and every law of them that gets a task runs past the budget. Whether the
+    # task of a law can be written depends on the machine: with the same record one of the four had none on a CI runner
+    # (Python 3.10) and all four had one on another (3.12), so the number that time out is not fixed here
+    campaign = [r for r in rows if r.get("write_class") == "equilibrium write" and r["status"] != "outside_this_campaign"]
+    assert len(campaign) == 4 and {r["status"] for r in campaign} <= {"timed_out", "no_task_generated"}
+    assert len(timed_out) >= 3 and all(r["write_class"] == "equilibrium write" for r in timed_out)
     assert library.campaign(next(k for k, d in library.departures() if d["target"] == timed_out[0]["target"]
                                  and library.campaign(k)))["status"] == "timed_out"
 

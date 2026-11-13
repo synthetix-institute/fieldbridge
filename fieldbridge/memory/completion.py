@@ -506,9 +506,11 @@ def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: 
         s2 = np.zeros((nb, n_mc))
         for i in range(N + 1):
             if w[i] > 0:
+                # (xi + m)^T M (xi + m) for every bias from one product xi M (M is symmetric)
+                xM = xi @ M[i]
+                quad = np.einsum("si,si->s", xM, xi)
                 for j in range(nb):
-                    dlt = xi + m[i, j][None]
-                    s2[j] += w[i] * np.einsum("si,ij,sj->s", dlt, M[i], dlt)
+                    s2[j] += w[i] * (quad + 2.0 * (xM @ m[i, j]) + m[i, j] @ M[i] @ m[i, j])
             if i < N:
                 dt = ts[i + 1] - ts[i]
                 d1 = xi @ Js[i].T
