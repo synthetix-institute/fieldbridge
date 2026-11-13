@@ -477,13 +477,15 @@ def test_the_second_order_shift_is_the_mean_of_the_curvature_among_the_undecided
 
 
 def test_the_terms_of_the_next_order_have_their_closed_forms_on_a_diffusing_coordinate():
-    # The critical coordinate diffuses for a time T, sigma^2 = 2 D T.
-    # (A) x' = a x^2 with a constant forcing b. Among the samples with s1 = s the deviation is a bridge about s t / T,
-    # whatever b: the slopes of the push and of its spread vanish, the third-order mean vanishes at s = 0 and has the
-    # slope (11/30) a^2 D T^3 in s (plus 2 a^2 h^2 sigma^2 T^2 / 15 from its cubic term at the step h sigma), the spread
-    # is that of the square of a bridge, 2 a^2 D T^3 / 45, and only the loss of sharpness is left of the next order.
-    # (B) x' = c x y with y held at f / k by a forcing: the push grows with s1 at the rate c f T / (2 k), and without
-    # the forcing every term vanishes.
+    # The critical coordinate diffuses for a time T, sigma^2 = 2 D T, and x' = a x^2. Among the samples with s1 = 0 let
+    # the deviation have the mean s t / T (a forcing s t / T with a lag -s at the end). Its fluctuation is a bridge
+    # with variance 2 D t (1 - t / T), and by hand:
+    #   push               g = a D T^2 / 3 + a s^2 T / 3
+    #   its spread         v = 4 a^2 D^2 T^4 / 45 + 8 a^2 s^2 D T^3 / 45
+    #   slope of the push  g' = 2 a s T / 3
+    #   third-order mean   (11/30) a^2 D T^3 s + 2 a^2 s^3 T^2 / 15
+    # With a rate modulated by a forced variable, x' = c x y with y held at f / k, the push grows with s1 at the rate
+    # c f T / (2 k); without forcing every term vanishes.
     class Still:
         def over(self, t):
             return {}
@@ -494,22 +496,20 @@ def test_the_terms_of_the_next_order_have_their_closed_forms_on_a_diffusing_coor
                           "carrier": {"kind": "euclid", "variables": variables, "scale": 3.0},
                           "parameters": parameters, "drift": drift, "noise": 0.001,
                           "control": {"name": "e", "range": [-1.0, 1.0]}})
-    D, T, N = 0.01, 5.0, 400
+    D, T, N = 0.01, 5.0, 1000
     ts = np.linspace(0.0, T, N + 1)
-    sigma = np.sqrt(2 * D * T)
-    a, b = 0.4, 0.02
+    var = 2 * D * T
+    sigma = np.sqrt(var)
+    a, s_ = 0.4, 0.15
     one = load({"x": "a*x**2 + 0*e"}, ["x"], {"e": 0.0, "a": a})
     r = completion.next_order_selection(one, Still(), ts, np.zeros((N + 1, 1)), np.zeros((N + 1, 1, 1)), (2 * D * ts)[:, None, None],
-                                        (b * ts)[:, None, None], np.ones(1), 0.0, D, n_mc=4000)["rows"][0]
-    eta = 2 * a ** 2 * D * T ** 3 / 45
-    assert r["Delta"] == pytest.approx(a * D * T ** 2 / (3 * sigma), rel=0.03)
-    assert r["eta"] == pytest.approx(eta, rel=0.15)
-    assert abs(r["g_slope"]) < 0.005 and abs(r["g_slope_closed"]) < 1e-12
-    assert abs(r["v_slope_over_2sigma"]) < 0.003 and abs(r["third_order"]) < 0.004
-    h = completion.NEXT_ORDER_STEP
-    assert r["third_order_slope"] == pytest.approx(11 / 30 * a ** 2 * D * T ** 3 + 2 * a ** 2 * h ** 2 * sigma ** 2 * T ** 2 / 15, rel=0.05)
-    assert r["sharpness"] == pytest.approx(-0.5 * (b * T / sigma) * eta, rel=0.15)
-    assert r["delta2"] == pytest.approx(r["sharpness"], abs=0.006)
+                                        (s_ * ts / T)[:, None, None], np.ones(1), -s_, D)["rows"][0]
+    assert r["Delta"] == pytest.approx((a * D * T ** 2 / 3 + a * s_ ** 2 * T / 3) / sigma, rel=1e-4)
+    assert r["eta"] == pytest.approx((4 * a ** 2 * D ** 2 * T ** 4 / 45 + 8 * a ** 2 * s_ ** 2 * D * T ** 3 / 45) / var, rel=1e-4)
+    assert r["g_slope"] == pytest.approx(2 * a * s_ * T / 3, rel=1e-4)
+    assert r["third_order"] == pytest.approx((11 / 30 * a ** 2 * D * T ** 3 * s_ + 2 * a ** 2 * s_ ** 3 * T ** 2 / 15) / sigma, rel=1e-4)
+    assert r["z0"] == 0.0 and r["sharpness"] == 0.0
+    assert r["delta2"] == pytest.approx(r["third_order"] - r["Delta"] * r["g_slope"] - r["v_slope_over_2sigma"], rel=1e-12)
     c, k, f = 0.7, 2.0, 0.3
     two = load({"x": "c*x*y + 0*e", "y": "-k*y"}, ["x", "y"], {"e": 0.0, "c": c, "k": k})
     J = np.array([[0.0, 0.0], [0.0, -k]])
@@ -519,10 +519,9 @@ def test_the_terms_of_the_next_order_have_their_closed_forms_on_a_diffusing_coor
     m = np.zeros((N + 1, 1, 2))
     m[:, 0, 1] = f / k
     rows = completion.next_order_selection(two, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0), C, m,
-                                           np.array([1.0, 0.0]), 0.0, D, n_mc=4000, null_bias=True)["rows"]
-    assert rows[0]["g_slope"] == pytest.approx(c * f * T / (2 * k), rel=0.02)
-    assert rows[0]["g_slope_closed"] == pytest.approx(c * f * T / (2 * k), rel=1e-3)
-    assert rows[1]["bias"] == "none" and abs(rows[1]["g_slope"]) < 0.005 and abs(rows[1]["delta2"]) < 1e-3
+                                           np.array([1.0, 0.0]), 0.0, D, null_bias=True)["rows"]
+    assert rows[0]["g_slope"] == pytest.approx(c * f * T / (2 * k), rel=1e-3)
+    assert rows[1]["bias"] == "none" and all(abs(rows[1][t]) < 1e-12 for t in ("g_slope", "third_order", "slope_of_spread", "delta2"))
 
 
 def test_a_write_in_one_direction_carries_the_shifts_of_the_second_and_of_the_next_order():

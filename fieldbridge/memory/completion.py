@@ -413,7 +413,8 @@ def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.nd
     return out
 
 
-SECOND_ORDER_SAMPLES = 20000  # samples of the first-order deviation from which that spread is estimated
+SECOND_ORDER_SAMPLES = 0      # samples of the first-order deviation for a sampled check of the shift and of its spread (the
+                              # law takes the spread in closed form from next_order_selection); 0: none
 SECOND_ORDER_SEED = 12345     # their own generator: the estimate does not move the stream of the law or of the certificate
 
 
@@ -530,10 +531,6 @@ def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: 
 
 NEXT_ORDER_LIMIT = 0.1        # the next order of the selection is claimed where the larger of its corrections of the offset and
                               # of the response is below this: an expansion is claimed where its last term is small
-NEXT_ORDER_SAMPLES = 4000     # conditioned samples of the first-order deviation for the terms of the next order
-NEXT_ORDER_SEED = 24680       # their own generator
-NEXT_ORDER_STEP = 0.2         # the conditioning values are -NEXT_ORDER_STEP sigma, 0, +NEXT_ORDER_STEP sigma
-NEXT_ORDER_BATCHES = 10       # the samples are split into this many batches for the sampling errors
 
 
 def _hessian_stencil(n: int):
@@ -578,21 +575,13 @@ def curvature_tensors(real, q: np.ndarray, over: Dict, lam: np.ndarray, eps: flo
     return Hs[0], T
 
 
-def _contract(H2: np.ndarray, a: np.ndarray, b: np.ndarray) -> np.ndarray:
-    """H[a, b] for every sample: out[s, i] = sum_jk H[i, j, k] a[s, j] b[s, k], with H2 = H reshaped (n, n * n)."""
-    n = a.shape[1]
-    outer = (a[:, :, None] * b[:, None, :]).reshape(a.shape[0], n * n)
-    return outer @ H2.T
-
-
 def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np.ndarray, Js: np.ndarray, C: np.ndarray,
-                         m: np.ndarray, ell: np.ndarray, d_end: float, D: float, n_mc: int = NEXT_ORDER_SAMPLES,
-                         seed: int = NEXT_ORDER_SEED, null_bias: bool = False) -> Dict[str, object]:
+                         m: np.ndarray, ell: np.ndarray, d_end: float, D: float, null_bias: bool = False) -> Dict[str, object]:
     """The selection of a write in one direction one order beyond second_order_selection.
 
     With s1, s2, s3 the critical coordinate at the end of the linear stage to first, second and third order in the
     deviation, g(s) = E[s2 | s1 = s] and v(s) = Var(s2 | s1 = s), the statistic is z = mu / sigma + Delta + delta2 with
-        delta2 = E[s3 | s1 = 0] / sigma - Delta g'(0) - v'(0) / (2 sigma) - (1/2) (mu / sigma) eta.
+        delta2 = E[s3 | s1 = 0] / sigma - Delta g'(0) - v'(0) / (2 sigma) - (1/2) (mu / sigma) eta,    eta = v(0) / sigma^2.
     The first term is the mean of the third-order coordinate among undecided samples (the curvature acting on the
     second-order deviation, and the third derivative of the drift on the first). The second corrects where the
     undecided samples are: the second-order push depends on the first-order coordinate, so the samples that end on the
@@ -609,13 +598,21 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
     move; the offset of the magnon swept through its cusp, 0.07 beyond the full dynamics to second order, is repaired
     in part only (0.02 beyond) and not at other strengths of the noise.
 
-    How the terms are computed. Among the samples with s1 = s the first-order deviation is the unconditioned one moved
-    by c(t) (s - s1) / sigma^2 (the conditioning of a Gaussian), so samples conditioned exactly on s1 = s are made from
-    the unconditioned ones in two passes with the same random numbers: the first gives each sample's s1, the second
-    carries the conditioned deviation, the second-order deviation it drives, and the integrals s2 and s3. Three values
-    of s are carried, -h sigma, 0 and +h sigma, with the same noise; g and v are quadratic in s, so their central
-    differences are their slopes at 0. With `null_bias` one more bias is carried, without the forcing of the sweep and
-    without bias, on which every term must vanish. The arguments are those of second_order_selection."""
+    How the terms are computed. Each is a moment of a Gaussian process and is the solution of linear equations along
+    the path; nothing is sampled (the held-out set was run with estimates from samples conditioned on s1, with which
+    these agree within the sampling errors). xi(t) is the first-order deviation without forcing, with covariance C(t)
+    and, for t > t', Cov(xi(t), xi(t')) = Phi(t, t') C(t'); c(t) = C(t) lam(t) is its covariance with s1, var that of
+    s1. Among the samples with s1 = s the deviation has the mean nu(t) + c(t) s / var and a fluctuation with
+    K(t, t') = Phi(t, t') C(t') - c(t) c(t')^T / var. M is half the Hessian of lam . F, L2 = 2 M, H the second
+    derivative of the drift and T the third derivative of lam . F. Then
+        g'(0) = (2 / var) int nu^T M c dt,    v(0) = V0 + 4 Q(nu, nu),    v'(0) = (8 / var) Q(c, nu),
+        Q(a, b) = int [a^T M P_b + b^T M P_a] dt - (int a^T M c)(int c^T M b) / var,    dP_b/dt = J P_b + C M b,
+        V0 = 2 [2 int tr(M Z) dt - (2 / var) 2 int c^T M P_c dt + (int c^T M c dt)^2 / var^2],    dZ/dt = J Z + Z J^T + C M C,
+        E[s3 | s1 = 0] = int { nu^T L2 dbar2 + tr(L2 X) + T[nu, Sigma] / 2 + T[nu, nu, nu] / 6 } dt,
+    with dbar2 the mean of the second-order deviation (d dbar2/dt = J dbar2 + H[Sigma + nu nu^T] / 2) and
+    X = Y - a c^T / var its correlation with the first-order one (dY/dt = J Y + Y J^T + N, N_jd = H_jbc nu_b C_cd;
+    da/dt = J a + H[nu, c]). With `null_bias` one more bias is carried, without the forcing of the sweep and without
+    bias, on which every term vanishes. The arguments are those of second_order_selection."""
     base_length = an.base_length(real)
     ts, qs, Js, C, m, ell = (np.asarray(x, float) for x in (ts, qs, Js, C, m, ell))
     N, n, nb = len(ts) - 1, qs.shape[1], m.shape[1]
@@ -631,97 +628,91 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
     w = np.zeros(N + 1)
     w[:-1] += 0.5 * np.diff(ts)
     w[1:] += 0.5 * np.diff(ts)
-    c = np.einsum("tij,tj->ti", C, lam)                      # Cov(delta1(t), s1)
+    c = np.einsum("tij,tj->ti", C, lam)
     eps, eps3 = 1e-3 * base_length, 1e-2 * base_length
-    # the biases of the law and, last, no forcing and no bias
     means = [m[:, j, :] for j in range(nb)] + ([np.zeros((N + 1, n))] if null_bias else [])
     mus = list(mu) + ([0.0] if null_bias else [])
-    svals = np.array([-NEXT_ORDER_STEP, 0.0, NEXT_ORDER_STEP]) * sigma
-    nB, nS = len(means), len(svals)
-    # pass 1: the first-order critical coordinate of every sample (without forcing)
-    rng = np.random.default_rng(seed)
-    xi = np.zeros((n_mc, n))
-    for i in range(N):
-        dt = ts[i + 1] - ts[i]
-        d1 = xi @ Js[i].T
-        xi = xi + 0.5 * dt * (d1 + (xi + dt * d1) @ Js[i + 1].T) + sqrt(2 * D * dt) * rng.standard_normal((n_mc, n))
-    s1c = xi @ ell
-    # pass 2: the same noise, conditioned; the second-order deviation and the integrals
-    rng = np.random.default_rng(seed)
-    xi = np.zeros((n_mc, n))
-    d2 = np.zeros((nB, nS, n_mc, n))
-    s2 = np.zeros((nB, nS, n_mc))
-    s3 = np.zeros((nB, nS, n_mc))
-    g1_closed = np.zeros(nB)                                  # (2 / sigma^2) int nu^T M c dt
+    nB = len(means)
+    nus = [means[j] - c * (mus[j] / var) for j in range(nB)]
 
-    def conditioned(i, j, k):
-        return means[j][i][None] + xi + c[i][None] * ((svals[k] - mus[j] - s1c) / var)[:, None]
-
-    def tensors(i):
+    def sources(i):
+        """The tensors at step i and the right-hand sides that do not contain the unknowns."""
         H, T = curvature_tensors(real, qs[i], sweep.over(ts[i]), lam[i], eps, eps3)
-        return H.reshape(n, n * n), np.einsum("a,abc->bc", lam[i], H), T.reshape(n, n * n)
-
-    H2, L2, T2 = tensors(0)                                   # L2 = lam . F'' (twice the matrix M of version 13)
-    src = np.zeros((nB, nS, n_mc, n))
-    for j in range(nB):
-        for k in range(nS):
-            dl = conditioned(0, j, k)
-            src[j, k] = 0.5 * _contract(H2, dl, dl)
-    for i in range(N + 1):
+        L2 = np.einsum("a,abc->bc", lam[i], H)
+        M = 0.5 * L2
+        Sig = C[i] - np.outer(c[i], c[i]) / var
+        out = {"H": H, "T": T, "L2": L2, "M": M, "Sig": Sig, "Z": C[i] @ M @ C[i], "Pc": C[i] @ M @ c[i], "bias": []}
         for j in range(nB):
-            nu = means[j][i] - c[i] * mus[j] / var
-            g1_closed[j] += w[i] * 2.0 * float(nu @ (0.5 * L2) @ c[i]) / var
-            for k in range(nS):
-                dl = conditioned(i, j, k)
-                s2[j, k] += w[i] * 0.5 * np.einsum("si,si->s", dl @ L2, dl)
-                cubic = np.einsum("si,si->s", _contract(T2, dl, dl), dl) / 6.0
-                s3[j, k] += w[i] * (np.einsum("si,si->s", dl @ L2, d2[j, k]) + cubic)
+            nu = nus[j][i]
+            out["bias"].append({"P": C[i] @ M @ nu,
+                                "d2": 0.5 * np.einsum("abc,bc->a", H, Sig + np.outer(nu, nu)),
+                                "Y": np.einsum("jbc,b,cd->jd", H, nu, C[i]),
+                                "a": np.einsum("jbc,b,c->j", H, nu, c[i])})
+        return out
+
+    Z, Pc = np.zeros((n, n)), np.zeros(n)
+    st = [{"P": np.zeros(n), "d2": np.zeros(n), "Y": np.zeros((n, n)), "a": np.zeros(n)} for _ in range(nB)]
+    I = {"cMc": 0.0, "Z": 0.0, "cPc": 0.0, "cov": 0.0}
+    Ij = [{"nuMc": 0.0, "nuMnu": 0.0, "cPnu_nuPc": 0.0, "nuPnu": 0.0, "third": 0.0} for _ in range(nB)]
+    s = sources(0)
+    for i in range(N + 1):
+        M, L2, T, Sig = s["M"], s["L2"], s["T"], s["Sig"]
+        I["cMc"] += w[i] * float(c[i] @ M @ c[i])
+        I["Z"] += w[i] * float(np.sum(M * Z))
+        I["cPc"] += w[i] * float(c[i] @ M @ Pc)
+        I["cov"] += w[i] * float(np.sum(M * Sig))
+        for j in range(nB):
+            nu, x = nus[j][i], st[j]
+            X = x["Y"] - np.outer(x["a"], c[i]) / var
+            Ij[j]["nuMc"] += w[i] * float(nu @ M @ c[i])
+            Ij[j]["nuMnu"] += w[i] * float(nu @ M @ nu)
+            Ij[j]["cPnu_nuPc"] += w[i] * float(c[i] @ M @ x["P"] + nu @ M @ Pc)
+            Ij[j]["nuPnu"] += w[i] * float(nu @ M @ x["P"])
+            Ij[j]["third"] += w[i] * float(nu @ L2 @ x["d2"] + np.sum(L2 * X.T) + 0.5 * np.einsum("bcd,b,cd->", T, nu, Sig)
+                                           + np.einsum("bcd,b,c,d->", T, nu, nu, nu) / 6.0)
         if i == N:
             break
         dt = ts[i + 1] - ts[i]
-        d1 = xi @ Js[i].T
-        xi_next = xi + 0.5 * dt * (d1 + (xi + dt * d1) @ Js[i + 1].T) + sqrt(2 * D * dt) * rng.standard_normal((n_mc, n))
-        H2n, L2n, T2n = tensors(i + 1)
-        xi_old, xi = xi, xi_next
+        J0, J1 = Js[i], Js[i + 1]
+        sn = sources(i + 1)
+
+        def heun_vec(y, f0, f1):
+            k1 = J0 @ y + f0
+            return y + 0.5 * dt * (k1 + J1 @ (y + dt * k1) + f1)
+
+        def heun_mat(Y, F0, F1):
+            k1 = J0 @ Y + Y @ J0.T + F0
+            Yp = Y + dt * k1
+            return Y + 0.5 * dt * (k1 + J1 @ Yp + Yp @ J1.T + F1)
+
+        Z = heun_mat(Z, s["Z"], sn["Z"])
+        Pc = heun_vec(Pc, s["Pc"], sn["Pc"])
         for j in range(nB):
-            for k in range(nS):
-                dl = conditioned(i + 1, j, k)
-                src_next = 0.5 * _contract(H2n, dl, dl)
-                k1 = d2[j, k] @ Js[i].T + src[j, k]
-                d2[j, k] = d2[j, k] + 0.5 * dt * (k1 + (d2[j, k] + dt * k1) @ Js[i + 1].T + src_next)
-                src[j, k] = src_next
-        H2, L2, T2 = H2n, L2n, T2n
-    del xi_old
+            b0, b1, x = s["bias"][j], sn["bias"][j], st[j]
+            x["P"] = heun_vec(x["P"], b0["P"], b1["P"])
+            x["d2"] = heun_vec(x["d2"], b0["d2"], b1["d2"])
+            x["a"] = heun_vec(x["a"], b0["a"], b1["a"])
+            x["Y"] = heun_mat(x["Y"], b0["Y"], b1["Y"])
+        s = sn
+    V0 = 2.0 * (2.0 * I["Z"] - (2.0 / var) * (2.0 * I["cPc"]) + I["cMc"] ** 2 / var ** 2)
     rows = []
-    idx = np.array_split(np.arange(n_mc), NEXT_ORDER_BATCHES)
     for j in range(nB):
         z0 = mus[j] / sigma
-
-        def terms(sel):
-            g = s2[j][:, sel].mean(axis=1)
-            v = s2[j][:, sel].var(axis=1)
-            Delta = g[1] / sigma
-            eta = v[1] / var
-            gp = (g[2] - g[0]) / (2 * NEXT_ORDER_STEP * sigma)          # g'(0), per unit of s1
-            vp = (v[2] - v[0]) / (2 * NEXT_ORDER_STEP * sigma)          # v'(0)
-            third = s3[j][1, sel].mean() / sigma
-            third_slope = (s3[j][2, sel].mean() - s3[j][0, sel].mean()) / (2 * NEXT_ORDER_STEP * sigma)
-            parts = {"third_order": third, "slope_of_push": -Delta * gp, "slope_of_spread": -vp / (2 * sigma),
-                     "sharpness": -0.5 * z0 * eta}
-            return {"Delta": Delta, "eta": eta, "g_slope": gp, "v_slope_over_2sigma": vp / (2 * sigma),
-                    "third_order_slope": third_slope, **parts, "delta2": sum(parts.values())}
-
-        full = terms(np.arange(n_mc))
-        per = [terms(ix) for ix in idx]
-        err = {k: float(np.std([p[k] for p in per], ddof=1) / sqrt(NEXT_ORDER_BATCHES)) for k in full}
-        rows.append({"bias": "none" if (null_bias and j == nB - 1) else j, "z0": z0, "g_slope_closed": float(g1_closed[j]),
-                     **{k: float(v) for k, v in full.items()}, "errors": err})
-    out: Dict[str, object] = {"samples": n_mc, "sigma": sigma, "h": NEXT_ORDER_STEP, "rows": rows}
+        Q_nunu = 2.0 * Ij[j]["nuPnu"] - Ij[j]["nuMc"] ** 2 / var
+        Q_cnu = Ij[j]["cPnu_nuPc"] - I["cMc"] * Ij[j]["nuMc"] / var
+        Delta = (I["cov"] + Ij[j]["nuMnu"]) / sigma
+        eta = (V0 + 4.0 * Q_nunu) / var
+        gp = 2.0 * Ij[j]["nuMc"] / var
+        vp_over_2sigma = (8.0 / var) * Q_cnu / (2.0 * sigma)
+        parts = {"third_order": Ij[j]["third"] / sigma, "slope_of_push": -Delta * gp, "slope_of_spread": -vp_over_2sigma,
+                 "sharpness": -0.5 * z0 * eta}
+        rows.append({"bias": "none" if (null_bias and j == nB - 1) else j, "z0": z0, "Delta": Delta, "eta": eta, "g_slope": gp,
+                     "v_slope_over_2sigma": vp_over_2sigma, **parts, "delta2": sum(parts.values())})
+    out: Dict[str, object] = {"sigma": sigma, "rows": [{k: (float(v) if not isinstance(v, (str, int)) else v) for k, v in r.items()} for r in rows]}
     if nb == 2:
         a, b = rows[0], rows[1]
-        out["R_f"] = 0.5 * (a["delta2"] + b["delta2"])
-        out["R_b"] = 0.5 * (a["delta2"] - b["delta2"])
-        out["R_error"] = 0.5 * sqrt(a["errors"]["delta2"] ** 2 + b["errors"]["delta2"] ** 2)
+        out["R_f"] = float(0.5 * (a["delta2"] + b["delta2"]))
+        out["R_b"] = float(0.5 * (a["delta2"] - b["delta2"]))
     return out
 
 
@@ -825,6 +816,7 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
             d2 = [r["delta2"] for r in no["rows"] if r["bias"] != "none"]
             no["Delta_second_order"] = list(so["Delta"])
             no["applied"] = bool(np.all(np.isfinite(d2)))
+            so["eta"] = max(r["eta"] for r in no["rows"] if r["bias"] != "none")
             if no["applied"]:
                 so["Delta"] = [a + b for a, b in zip(so["Delta"], d2)]
             so["next_order"] = no
