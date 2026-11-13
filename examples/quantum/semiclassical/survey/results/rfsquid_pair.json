@@ -5,7 +5,7 @@
   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
   "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -191,10 +191,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 0.9709764726082668,
+       "spread_at_map": 0.9709764726082397,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        7.510034987843228
+        7.510034987842853
        ],
        "cov_critical": [
         [
@@ -241,10 +241,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 0.9709764726082059,
+       "spread_at_map": 0.9709764726082329,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        -7.510034987842498
+        -7.5100349878428725
        ],
        "cov_critical": [
         [
@@ -291,10 +291,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 1.1085447033060227,
+       "spread_at_map": 1.1085447033059959,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        15.020069975686091
+        15.020069975685717
        ],
        "cov_critical": [
         [
@@ -341,10 +341,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 1.1085447033059619,
+       "spread_at_map": 1.108544703305989,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        -15.02006997568536
+        -15.020069975685734
        ],
        "cov_critical": [
         [
@@ -391,10 +391,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 1.3836811647015348,
+       "spread_at_map": 1.383681164701508,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        30.040139951371817
+        30.04013995137144
        ],
        "cov_critical": [
         [
@@ -441,10 +441,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 8.64188039882308e-16,
        "rate_at_crossing": 0.019999999999993547,
-       "spread_at_map": 1.383681164701474,
+       "spread_at_map": 1.383681164701501,
        "written_amplitude_at_map": 1.084938033896726,
        "mean_critical": [
-        -30.040139951371085
+        -30.04013995137146
        ],
        "cov_critical": [
         [
@@ -468,6 +468,89 @@
        "deviation": 0.006500000000000002
       }
      ],
+     "second_order": {
+      "sigma": 15.16562611430123,
+      "mu": [
+       7.510034987842867,
+       -7.510034987842859,
+       15.020069975685729,
+       -15.020069975685724,
+       30.040139951371454,
+       -30.04013995137145
+      ],
+      "d_end": 1.9721522630525295e-31,
+      "Delta_cov": -8.45416344529474e-16,
+      "Delta_mean": [
+       -5.683315952060258e-18,
+       -5.68331595206546e-18,
+       -2.2733263808245985e-17,
+       -2.27332638082565e-17,
+       -9.093305523299514e-17,
+       -9.093305523301475e-17
+      ],
+      "Delta_unconditioned": 1.334893648736484e-14,
+      "Delta": [
+       -8.510996604815342e-16,
+       -8.510996604815395e-16,
+       -8.6814960833772e-16,
+       -8.681496083377304e-16,
+       -9.36349399762469e-16,
+       -9.363493997624888e-16
+      ],
+      "z_linear": [
+       0.4952011167386543,
+       -0.49520111673865375,
+       0.9904022334773083,
+       -0.9904022334773078,
+       1.9808044669546163,
+       -1.980804466954616
+      ],
+      "z": [
+       0.49520111673865347,
+       -0.4952011167386546,
+       0.9904022334773074,
+       -0.9904022334773087,
+       1.9808044669546154,
+       -1.980804466954617
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 15.112689580911617,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": -9.15260808892946e-16,
+         "eta": 1.009816292251561e-29,
+         "eta_unconditional": 6.550903513335717e-28
+        },
+        {
+         "conditional_mean_over_sigma": -8.036405221388539e-16,
+         "eta": 8.330755223820834e-30,
+         "eta_unconditional": 6.402738417400543e-28
+        },
+        {
+         "conditional_mean_over_sigma": -9.690183514674817e-16,
+         "eta": 1.0814802341939979e-29,
+         "eta_unconditional": 1.3067416809679e-27
+        },
+        {
+         "conditional_mean_over_sigma": -8.030863572298036e-16,
+         "eta": 8.504344727324357e-30,
+         "eta_unconditional": 1.2771086617808658e-27
+        },
+        {
+         "conditional_mean_over_sigma": -9.291567868351047e-16,
+         "eta": 1.2306250236716772e-29,
+         "eta_unconditional": 3.8985304899116994e-27
+        },
+        {
+         "conditional_mean_over_sigma": -1.0557614325239293e-15,
+         "eta": 1.7480197269677052e-29,
+         "eta_unconditional": 3.839264451537626e-27
+        }
+       ]
+      },
+      "eta": 1.7480197269677052e-29
+     },
      "one_direction": {
       "law": [
        {
@@ -642,10 +725,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 1.4075423968652618,
+       "spread_at_map": 1.4075429476766692,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        0.22197073824460226
+        0.22197128905600963
        ],
        "cov_critical": [
         [
@@ -688,10 +771,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 1.4075423960734827,
+       "spread_at_map": 1.4075429478979509,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        -0.22197073745282328
+        -0.2219712892772914
        ],
        "cov_critical": [
         [
@@ -734,10 +817,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 1.6295131347139347,
+       "spread_at_map": 1.6295153394642852,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        0.4439414760932752
+        0.4439436808436257
        ],
        "cov_critical": [
         [
@@ -780,10 +863,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 1.6295131339222353,
+       "spread_at_map": 1.629515339715387,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        -0.44394147530157585
+        -0.44394368109472737
        ],
        "cov_critical": [
         [
@@ -826,10 +909,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 2.0734546104112805,
+       "spread_at_map": 2.073463430917491,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        0.8878829517906212
+        0.8878917722968312
        ],
        "cov_critical": [
         [
@@ -872,10 +955,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.11469307960230801,
        "rate_at_crossing": 0.011460239285514208,
-       "spread_at_map": 2.0734546096197404,
+       "spread_at_map": 2.0734634312875384,
        "written_amplitude_at_map": 0.25741608833438095,
        "mean_critical": [
-        -0.887882950999081
+        -0.8878917726668788
        ],
        "cov_critical": [
         [
@@ -897,6 +980,89 @@
        "deviation": 0.003750000000000031
       }
      ],
+     "second_order": {
+      "sigma": 0.39519055287355315,
+      "mu": [
+       0.22197073791271707,
+       -0.22197073778470847,
+       0.44394147576139004,
+       -0.443941475633461,
+       0.887882951458736,
+       -0.8878829513309662
+      ],
+      "d_end": 0.0,
+      "Delta_cov": -4.2931026345813925e-10,
+      "Delta_mean": [
+       1.3950559999694488e-06,
+       -1.3950812325019724e-06,
+       5.580224220856321e-06,
+       -5.5803247090311356e-06,
+       2.2320897325382598e-05,
+       -2.2321298394170984e-05
+      ],
+      "Delta_unconditioned": -1.570603106859856e-09,
+      "Delta": [
+       1.3946266897059906e-06,
+       -1.3955105427654306e-06,
+       5.579794910592863e-06,
+       -5.580754019294594e-06,
+       2.2320468015119138e-05,
+       -2.2321727704434443e-05
+      ],
+      "z_linear": [
+       0.5616802737279496,
+       -0.5616802734040335,
+       1.1233605472938404,
+       -1.1233605469701256,
+       2.246721094425622,
+       -2.2467210941023104
+      ],
+      "z": [
+       0.5616816683546393,
+       -0.5616816689145763,
+       1.123366127088751,
+       -1.123366127724145,
+       2.246743414893637,
+       -2.246743415830015
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 0.39565778156022896,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": 0.0016353310533723426,
+         "eta": 0.032645434254285184,
+         "eta_unconditional": 0.09876121394206863
+        },
+        {
+         "conditional_mean_over_sigma": 0.0010540776481896665,
+         "eta": 0.026501242606602308,
+         "eta_unconditional": 0.09751392759149252
+        },
+        {
+         "conditional_mean_over_sigma": 0.00038804881569694797,
+         "eta": 0.03573345866816474,
+         "eta_unconditional": 0.146071385668719
+        },
+        {
+         "conditional_mean_over_sigma": -0.00022069529473065796,
+         "eta": 0.028281354008508834,
+         "eta_unconditional": 0.14357675509776102
+        },
+        {
+         "conditional_mean_over_sigma": -0.0065775382426385125,
+         "eta": 0.03613739218828318,
+         "eta_unconditional": 0.33406451882250415
+        },
+        {
+         "conditional_mean_over_sigma": -0.0033441247176776044,
+         "eta": 0.05992248374290306,
+         "eta_unconditional": 0.32907502620136536
+        }
+       ]
+      },
+      "eta": 0.05992248374290306
+     },
      "one_direction": {
       "law": [
        {
@@ -1065,10 +1231,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 1.4075543782979019,
+       "spread_at_map": 1.4075549289908067,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        0.22197268677558443
+        0.22197323746848924
        ],
        "cov_critical": [
         [
@@ -1111,10 +1277,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 1.4075543772789585,
+       "spread_at_map": 1.4075549292387148,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        -0.22197268575664114
+        -0.22197323771639754
        ],
        "cov_critical": [
         [
@@ -1157,10 +1323,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 1.6295270645638653,
+       "spread_at_map": 1.6295292692178207,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        0.4439453730415479
+        0.44394757769550336
        ],
        "cov_critical": [
         [
@@ -1203,10 +1369,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 1.6295270635452206,
+       "spread_at_map": 1.62952926950191,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        -0.44394537202290324
+        -0.4439475779795926
        ],
        "cov_critical": [
         [
@@ -1249,10 +1415,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 2.073472437095792,
+       "spread_at_map": 2.0734812575940462,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        0.8878907455734748
+        0.887899566071729
        ],
        "cov_critical": [
         [
@@ -1295,10 +1461,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.11469266330717012,
        "rate_at_crossing": 0.011460211527404104,
-       "spread_at_map": 2.073472436077745,
+       "spread_at_map": 2.0734812580220696,
        "written_amplitude_at_map": 0.25743413507173263,
        "mean_critical": [
-        -0.8878907445554275
+        -0.8878995664997523
        ],
        "cov_critical": [
         [
@@ -1320,6 +1486,89 @@
        "deviation": 0.0012499999999999994
       }
      ],
+     "second_order": {
+      "sigma": 0.39519389717410586,
+      "mu": [
+       0.22197268633630882,
+       -0.22197268619591676,
+       0.4439453726022722,
+       -0.44394537246217897,
+       0.8878907451341992,
+       -0.8878907449947031
+      ],
+      "d_end": -3.469446951953614e-18,
+      "Delta_cov": -4.760645067333918e-10,
+      "Delta_mean": [
+       1.3950628340872724e-06,
+       -1.3950932616448974e-06,
+       5.580251579430747e-06,
+       -5.580372803501422e-06,
+       2.232100680388628e-05,
+       -2.2321490727848733e-05
+      ],
+      "Delta_unconditioned": -1.7330684985362773e-09,
+      "Delta": [
+       1.394586769580539e-06,
+       -1.395569326151631e-06,
+       5.579775514924014e-06,
+       -5.580848868008155e-06,
+       2.2320530739379545e-05,
+       -2.2321966792355467e-05
+      ],
+      "z_linear": [
+       0.5616804508459222,
+       -0.5616804504906737,
+       1.1233609015138422,
+       -1.1233609011593497,
+       2.2467218028496827,
+       -2.246721802496701
+      ],
+      "z": [
+       0.5616818454326918,
+       -0.5616818460599998,
+       1.1233664812893571,
+       -1.1233664820082176,
+       2.246744123380422,
+       -2.2467441244634934
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 0.3956611261735228,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": -0.0016326113711508914,
+         "eta": 0.03264562462790695,
+         "eta_unconditional": 0.09876185002066418
+        },
+        {
+         "conditional_mean_over_sigma": -0.0010565478962807325,
+         "eta": 0.026501187614633562,
+         "eta_unconditional": 0.0975146096881512
+        },
+        {
+         "conditional_mean_over_sigma": -0.0003775159695724393,
+         "eta": 0.03573392836780397,
+         "eta_unconditional": 0.14607221000950543
+        },
+        {
+         "conditional_mean_over_sigma": 0.00021044043737994796,
+         "eta": 0.028281116959916124,
+         "eta_unconditional": 0.14357778721252676
+        },
+        {
+         "conditional_mean_over_sigma": 0.006618557442148429,
+         "eta": 0.03613881382056943,
+         "eta_unconditional": 0.33406667703955306
+        },
+        {
+         "conditional_mean_over_sigma": 0.00330190621278097,
+         "eta": 0.05992262016985598,
+         "eta_unconditional": 0.32907806291778496
+        }
+       ]
+      },
+      "eta": 0.05992262016985598
+     },
      "one_direction": {
       "law": [
        {

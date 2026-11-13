@@ -5,7 +5,7 @@
   "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
   "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -405,6 +405,89 @@
        "deviation": 0.0056250000000000015
       }
      ],
+     "second_order": {
+      "sigma": 240.2601051762338,
+      "mu": [
+       119.44114238253906,
+       -119.44114238253906,
+       238.8822847650781,
+       -238.8822847650781,
+       477.7645695301562,
+       -477.7645695301562
+      ],
+      "d_end": -1.4693679385278594e-38,
+      "Delta_cov": 1.3103494783971699e-17,
+      "Delta_mean": [
+       6.132034313081738e-19,
+       6.132034313081738e-19,
+       2.4528137252326954e-18,
+       2.4528137252326954e-18,
+       9.811254900930781e-18,
+       9.811254900930781e-18
+      ],
+      "Delta_unconditioned": 4.7901212774844714e-14,
+      "Delta": [
+       1.3716698215279873e-17,
+       1.3716698215279873e-17,
+       1.5556308509204393e-17,
+       1.5556308509204393e-17,
+       2.291474968490248e-17,
+       2.291474968490248e-17
+      ],
+      "z_linear": [
+       0.49713264836426957,
+       -0.49713264836426957,
+       0.9942652967285391,
+       -0.9942652967285391,
+       1.9885305934570783,
+       -1.9885305934570783
+      ],
+      "z": [
+       0.49713264836426957,
+       -0.49713264836426957,
+       0.9942652967285391,
+       -0.9942652967285391,
+       1.9885305934570783,
+       -1.9885305934570783
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 240.14506900145753,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": 1.4539315624383784e-17,
+         "eta": 5.748706475049871e-33,
+         "eta_unconditional": 6.7897124983911e-27
+        },
+        {
+         "conditional_mean_over_sigma": 2.7939299491008727e-17,
+         "eta": 2.504022752458217e-32,
+         "eta_unconditional": 6.98288998750432e-27
+        },
+        {
+         "conditional_mean_over_sigma": 5.705052813637412e-18,
+         "eta": 6.410771225169146e-33,
+         "eta_unconditional": 1.342164276999313e-26
+        },
+        {
+         "conditional_mean_over_sigma": 2.5226142576119756e-17,
+         "eta": 2.2402316245108403e-32,
+         "eta_unconditional": 1.3807997748219572e-26
+        },
+        {
+         "conditional_mean_over_sigma": 1.965180364829836e-18,
+         "eta": 5.48504896659116e-32,
+         "eta_unconditional": 4.014254134551448e-26
+        },
+        {
+         "conditional_mean_over_sigma": -1.7223663877047684e-17,
+         "eta": 0.0,
+         "eta_unconditional": 4.091525130196736e-26
+        }
+       ]
+      },
+      "eta": 5.48504896659116e-32
+     },
      "one_direction": {
       "law": [
        {

@@ -137,19 +137,21 @@ component, the first of near-equal ones, is taken positive) and has no physical 
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
 sweep must cancel. On these resonators the second quadrature relaxes slowly against the drift at the written
 states, so the reduced law of one coordinate does not hold and is withdrawn; the law is the linear stage with its
-outcome map. Its mean carries the drift that the fluctuations across the critical direction give the state through
-the curvature of the drift, half that curvature along their stationary covariance; without it the law put the offset
+outcome map, carried to second order in the deviation from the path of the sweep: the curvature of the drift pushes
+the critical coordinate through the fluctuations, and the statistic of the write is shifted by the mean of that push
+among the samples that the first order leaves undecided; without it the law put the offset
 about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. The phonon laser of a trapped ion, where a
 spiral becomes a node only shortly before the crossing, is an equilibrium write: the noise exchanges its states during
-the hold, and its law (response 0.74, offset 0.31 against 0.72 and 0.80) is not certified. Other cusps have offsets of
+the hold, and its law (response 0.84, offset 0.99 against 0.72 and 0.80) is not certified. Other cusps have offsets of
 their own: 2.1 to 2.3 for the dynamically polarised nuclear-spin bath, where the law is certified, and 0.06 for the
-Rydberg ensemble, where the law gives 0.14 and is not certified. The magnonic element has
+Rydberg ensemble, where the law gives 0.07 in the survey and 0.11 in the record and is certified in both; with the
+stationary drift of the fluctuations in place of the second-order shift it gave 0.14 and 0.18 and was not certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read against the branch; read from the write
 point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives a response of
-1.37 at both write points in the survey and 1.35 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
-and an offset of 1.15 and 1.13 in the survey and 1.13 in the record against 1.03 and 1.02. It is certified in the
-record and not in the survey. Both of its write points along the drive are folds and unfold at the same cusp; in the
+1.35 at both write points in the survey and 1.33 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
+and an offset of 1.12 and 1.09 in the survey and 1.10 in the record against 1.03 and 1.02. It is certified in both,
+with an offset that stays 0.06 to 0.09 beyond the full dynamics. Both of its write points along the drive are folds and unfold at the same cusp; in the
 record the cusp search from the first of them found no cusp. In the bistable optomechanical element the law departs
 from the full dynamics by up to 0.30: three directions relax slowly during the passage, and 13 % of the final states
 have not yet left the unwritten branch at the end of the sweep, so the write is not settled there.
@@ -232,7 +234,7 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 29 laws at obstructions are certified and 13 are derived but not certified; the remaining
+In all, 32 laws at obstructions are certified and 10 are derived but not certified; the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 

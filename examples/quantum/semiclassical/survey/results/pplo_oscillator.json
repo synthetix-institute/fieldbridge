@@ -5,7 +5,7 @@
   "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
   "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) measurement, phase-encoded"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -120,10 +120,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 16.84116856361892,
+       "spread_at_map": 16.841168563618194,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        131.2493646979431
+        131.24936469790356
        ],
        "cov_critical": [
         [
@@ -166,10 +166,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 16.841168563618925,
+       "spread_at_map": 16.84116856361965,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -131.2493646979436
+        -131.24936469798314
        ],
        "cov_critical": [
         [
@@ -212,10 +212,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 19.245387079964598,
+       "spread_at_map": 19.245387079963855,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        262.4987293958864
+        262.49872939584577
        ],
        "cov_critical": [
         [
@@ -258,10 +258,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 19.24538707996461,
+       "spread_at_map": 19.245387079965354,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -262.498729395887
+        -262.4987293959276
        ],
        "cov_critical": [
         [
@@ -304,10 +304,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 24.05382411265596,
+       "spread_at_map": 24.053824112655136,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        524.9974587917729
+        524.9974587917279
        ],
        "cov_critical": [
         [
@@ -350,10 +350,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 24.053824112655978,
+       "spread_at_map": 24.053824112656805,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -524.9974587917739
+        -524.9974587918189
        ],
        "cov_critical": [
         [
@@ -375,6 +375,89 @@
        "deviation": 0.00012500000000004174
       }
      ],
+     "second_order": {
+      "sigma": 262.71052443833025,
+      "mu": [
+       131.2493646979433,
+       -131.2493646979434,
+       262.4987293958866,
+       -262.4987293958868,
+       524.9974587917732,
+       -524.9974587917736
+      ],
+      "d_end": 3.9987379079097165e-35,
+      "Delta_cov": -1.4987435481299546e-13,
+      "Delta_mean": [
+       -1.3970424142930356e-15,
+       -1.3970424142930348e-15,
+       -5.588169657172142e-15,
+       -5.588169657172139e-15,
+       -2.235267862868857e-14,
+       -2.2352678628688556e-14
+      ],
+      "Delta_unconditioned": -6.77352819461042e-12,
+      "Delta": [
+       -1.512713972272885e-13,
+       -1.512713972272885e-13,
+       -1.5546252447016761e-13,
+       -1.5546252447016761e-13,
+       -1.7222703344168404e-13,
+       -1.7222703344168402e-13
+      ],
+      "z_linear": [
+       0.49959690415354224,
+       -0.4995969041535427,
+       0.9991938083070845,
+       -0.9991938083070854,
+       1.998387616614169,
+       -1.9983876166141707
+      ],
+      "z": [
+       0.499596904153391,
+       -0.49959690415369395,
+       0.999193808306929,
+       -0.9991938083072408,
+       1.9983876166139967,
+       -1.998387616614343
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 261.0022787832647,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": -1.4917976158272013e-13,
+         "eta": 8.422600221276825e-28,
+         "eta_unconditional": 1.2911231421357734e-22
+        },
+        {
+         "conditional_mean_over_sigma": -1.5066434779302856e-13,
+         "eta": 8.995560278329346e-27,
+         "eta_unconditional": 1.2318281771028882e-22
+        },
+        {
+         "conditional_mean_over_sigma": -1.548997224539781e-13,
+         "eta": 4.924965986514866e-27,
+         "eta_unconditional": 2.5883378106383026e-22
+        },
+        {
+         "conditional_mean_over_sigma": -1.5664701638107912e-13,
+         "eta": 1.2918334785375402e-26,
+         "eta_unconditional": 2.469747880572533e-22
+        },
+        {
+         "conditional_mean_over_sigma": -1.82318848383174e-13,
+         "eta": 6.80221982211827e-26,
+         "eta_unconditional": 7.717901519615532e-22
+        },
+        {
+         "conditional_mean_over_sigma": -1.7603840828914497e-13,
+         "eta": 1.7503082110563116e-26,
+         "eta_unconditional": 7.480721659483997e-22
+        }
+       ]
+      },
+      "eta": 6.80221982211827e-26
+     },
      "one_direction": {
       "law": [
        {

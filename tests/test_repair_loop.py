@@ -307,8 +307,9 @@ def test_every_retained_outcome_of_the_records_gets_a_row(tmp_path):
     assert not [r for r in rows if r["status"] == "needs_equation_task"]
     failed = [r for r in rows if r["status"] == "outside_this_campaign"]
     # version 12: the phase qubit, the bifurcation amplifier, the magnon and a distant branch of the Ising pair are certified, the Rydberg law is not;
-    # in the record of the merge with the orientation (2026-11-12) the first write point of the rf-SQUID triangle is a nonlinear stage
-    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 7
+    # in the record of the merge with the orientation (2026-11-12) the first write point of the rf-SQUID triangle is a nonlinear stage;
+    # with the completion step of version 13 from hysto4GPU (2026-11-13) the Rydberg law is certified, and so is that write point there
+    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 5
     assert sum(r["write_class"] == "equilibrium write" for r in failed) == 4
 
 

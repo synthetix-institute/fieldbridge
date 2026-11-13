@@ -5,7 +5,7 @@
   "source": "Vink, I. T., Nowack, K. C., Koppens, F. H. L., Danon, J., Nazarov, Yu. V., Vandersypen, L. M. K., 'Locking electron spins into magnetic resonance by electron-nuclear feedback', Nat. Phys. 5, 764 (2009), arXiv:0902.2659 (full text); Gullans, M., Krich, J. J., Taylor, J. M., Bluhm, H., Halperin, B. I., Marcus, C. M., Stopa, M., Yacoby, A., Lukin, M. D., 'Dynamic nuclear polarization in double quantum dots', Phys. Rev. Lett. 104, 226807 (2010), arXiv:1003.4508 (abstract only); Bluhm, H., Foletti, S., Mahalu, D., Umansky, V., Yacoby, A., 'Enhancing the coherence of a spin qubit by operating it as a feedback loop that controls its nuclear spin bath', Phys. Rev. Lett. 105, 216803 (2010), arXiv:1003.4031 (abstract only); Burkard, G., Ladd, T. D., Pan, A., Nichol, J. M., Petta, J. R., 'Semiconductor spin qubits', Rev. Mod. Phys. 95, 025003 (2023), arXiv:2112.08863 (full text of the arXiv HTML and ar5iv renderings, read through summarising fetches in 100k-character windows; eqs. 1, 2, 4, 5, 22 and the Pauli-blockade window quoted verbatim in this session; equation numbers are those of the arXiv rendering)",
   "kind": "classical image of census entry 37: Dynamically polarised nuclear-spin bath in GaAs dots (Overhauser-field feedback)"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -133,10 +133,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.267373023869835,
+         "spread_at_map": 2.2657209875889333,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -47.136369888754444
+          -47.046180922453395
          ],
          "cov_critical": [
           [
@@ -183,10 +183,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.763170324043661,
+         "spread_at_map": 2.761718212303513,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -74.20323670909019
+          -74.12396214453518
          ],
          "cov_critical": [
           [
@@ -217,13 +217,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.899625,
-          0.100375
+          0.898375,
+          0.101625
          ],
          "t_star": 50.64500000000746,
          "sector_law": [
-          0.899625,
-          0.100375
+          0.898375,
+          0.101625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -233,10 +233,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.0194743737829217,
+         "spread_at_map": 2.0175436198539907,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -33.60293647858657
+          -33.49753158945366
          ],
          "cov_critical": [
           [
@@ -255,8 +255,8 @@
           0.90575,
           0.09425
          ],
-         "sector_deviation": 0.006125000000000047,
-         "sector_deviation_sigma": 1.3258403680492676,
+         "sector_deviation": 0.00737500000000002,
+         "sector_deviation_sigma": 1.59642003499809,
          "certificate_diverged": 0.0,
          "deviation_sigma": 1.758767835167393,
          "deviation": 0.008125000000000049
@@ -283,10 +283,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 3.0110689741305743,
+         "spread_at_map": 3.0095380692831504,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -87.73667011925806
+          -87.65309403361724
          ],
          "cov_critical": [
           [
@@ -317,13 +317,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.59875,
-          0.40125
+          0.596625,
+          0.403375
          ],
          "t_star": 50.64500000000746,
          "sector_law": [
-          0.59875,
-          0.40125
+          0.596625,
+          0.403375
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -333,10 +333,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 1.5236770736090959,
+         "spread_at_map": 1.5208313736288006,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -6.536069658250824
+          -6.380715479536484
          ],
          "cov_critical": [
           [
@@ -355,8 +355,8 @@
           0.608,
           0.392
          ],
-         "sector_deviation": 0.00924999999999998,
-         "sector_deviation_sigma": 1.1983313059852847,
+         "sector_deviation": 0.011375000000000024,
+         "sector_deviation_sigma": 1.4736236330359644,
          "certificate_diverged": 0.0,
          "deviation_sigma": 0.7287149833694302,
          "deviation": 0.005624999999999991
@@ -383,10 +383,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 3.5068662743044,
+         "spread_at_map": 3.5048202724871196,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -114.80353693959381
+          -114.69184036786363
          ],
          "cov_critical": [
           [
@@ -412,6 +412,89 @@
          "deviation": 0.0
         }
        ],
+       "second_order": {
+        "sigma": 27.12608198253596,
+        "mu": [
+         -47.136369888754444,
+         -74.20323670909019,
+         -33.60293647858657,
+         -87.73667011925806,
+         -6.536069658250824,
+         -114.80353693959381
+        ],
+        "d_end": 0.0,
+        "Delta_cov": 0.002900082113708422,
+        "Delta_mean": [
+         0.00042472411371197893,
+         2.2365905362269275e-05,
+         0.0009856574192170621,
+         0.0001809410025176427,
+         0.0028270324328876755,
+         0.0012175995994888307
+        ],
+        "Delta_unconditioned": 0.0029208026664070044,
+        "Delta": [
+         0.003324806227420401,
+         0.0029224480190706914,
+         0.003885739532925484,
+         0.003081023116226065,
+         0.0057271145465960975,
+         0.004117681713197253
+        ],
+        "z_linear": [
+         -1.7376770415683807,
+         -2.735494081189571,
+         -1.2387685217577855,
+         -3.2344026010001663,
+         -0.24095148213659495,
+         -4.232219640621357
+        ],
+        "z": [
+         -1.7343522353409602,
+         -2.7325716331705006,
+         -1.23488278222486,
+         -3.23132157788394,
+         -0.23522436758999885,
+         -4.22810195890816
+        ],
+        "sampled": {
+         "samples": 20000,
+         "sigma": 27.14086151702069,
+         "rows": [
+          {
+           "conditional_mean_over_sigma": 0.003328238253546237,
+           "eta": 9.705654506613347e-06,
+           "eta_unconditional": 8.262470946986668e-06
+          },
+          {
+           "conditional_mean_over_sigma": 0.002928702337661667,
+           "eta": 7.362926735597484e-06,
+           "eta_unconditional": 8.35751833861034e-06
+          },
+          {
+           "conditional_mean_over_sigma": 0.003884172629580931,
+           "eta": 1.3607395219426398e-05,
+           "eta_unconditional": 1.1799512967924775e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.0030823793878627602,
+           "eta": 9.013523203367665e-06,
+           "eta_unconditional": 1.1989607751172123e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.0057151777427076915,
+           "eta": 2.657549331344679e-05,
+           "eta_unconditional": 2.604272844330086e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.0040898199796791474,
+           "eta": 1.8120417489113497e-05,
+           "eta_unconditional": 2.642291800979556e-05
+          }
+         ]
+        },
+        "eta": 2.657549331344679e-05
+       },
        "reduction_validity": {
         "slow": true,
         "ratio": 0.0,
@@ -594,10 +677,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.2673442724997703,
+         "spread_at_map": 2.2656922026476694,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -47.239066221419165
+          -47.148677364454386
          ],
          "cov_critical": [
           [
@@ -644,10 +727,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.7631398257842736,
+         "spread_at_map": 2.761687686124069,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -74.36527598344071
+          -74.28582580530679
          ],
          "cov_critical": [
           [
@@ -678,13 +761,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.900875,
-          0.099125
+          0.9005,
+          0.0995
          ],
          "t_star": 50.65000000000746,
          "sector_law": [
-          0.900875,
-          0.099125
+          0.9005,
+          0.0995
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -694,10 +777,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.019446495857519,
+         "spread_at_map": 2.017515701714755,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -33.67596134040839
+          -33.57032278319076
          ],
          "cov_critical": [
           [
@@ -716,8 +799,8 @@
           0.88275,
           0.11725
          ],
-         "sector_deviation": 0.01812499999999999,
-         "sector_deviation_sigma": 3.5631386500751097,
+         "sector_deviation": 0.017749999999999988,
+         "sector_deviation_sigma": 3.489418540073556,
          "certificate_diverged": 0.0,
          "deviation_sigma": 1.6464157900347056,
          "deviation": 0.008374999999999994
@@ -744,10 +827,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 3.011037602426525,
+         "spread_at_map": 3.0095066686675542,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -87.92838086445148
+          -87.84461966489555
          ],
          "cov_critical": [
           [
@@ -778,13 +861,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.59025,
-          0.40975
+          0.587375,
+          0.412625
          ],
          "t_star": 50.65000000000746,
          "sector_law": [
-          0.59025,
-          0.40975
+          0.587375,
+          0.412625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -794,10 +877,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 1.5236509425730156,
+         "spread_at_map": 1.520805181459497,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -6.549751578386854
+          -6.394052898988626
          ],
          "cov_critical": [
           [
@@ -816,8 +899,8 @@
           0.597,
           0.403
          ],
-         "sector_deviation": 0.006749999999999978,
-         "sector_deviation_sigma": 0.8703502930027026,
+         "sector_deviation": 0.009624999999999995,
+         "sector_deviation_sigma": 1.241055047429783,
          "certificate_diverged": 0.0,
          "deviation_sigma": 0.17729357820425676,
          "deviation": 0.001375000000000015
@@ -844,10 +927,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 3.5068331557110284,
+         "spread_at_map": 3.504787115365095,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -115.05459062647301
+          -114.94264666239819
          ],
          "cov_critical": [
           [
@@ -873,6 +956,89 @@
          "deviation": 0.0
         }
        ],
+       "second_order": {
+        "sigma": 27.18543252870475,
+        "mu": [
+         -47.239066221419165,
+         -74.36527598344071,
+         -33.67596134040839,
+         -87.92838086445148,
+         -6.549751578386854,
+         -115.05459062647301
+        ],
+        "d_end": 0.0,
+        "Delta_cov": 0.0029001610029190284,
+        "Delta_mean": [
+         0.0004247394513716079,
+         2.236664309277494e-05,
+         0.0009856906239070543,
+         0.0001809450073493874,
+         0.0028271225057700054,
+         0.0012176312726546643
+        ],
+        "Delta_unconditioned": 0.002920876351661918,
+        "Delta": [
+         0.0033249004542906364,
+         0.0029225276460118034,
+         0.0038858516268260824,
+         0.0030811060102684156,
+         0.005727283508689033,
+         0.004117792275573693
+        ],
+        "z_linear": [
+         -1.7376610128067684,
+         -2.735482538485248,
+         -1.2387502499675285,
+         -3.234393301324488,
+         -0.24092872428904907,
+         -4.232214827002967
+        ],
+        "z": [
+         -1.7343361123524779,
+         -2.7325600108392365,
+         -1.2348643983407024,
+         -3.2313121953142194,
+         -0.23520144078036004,
+         -4.228097034727393
+        ],
+        "sampled": {
+         "samples": 20000,
+         "sigma": 27.2002566865745,
+         "rows": [
+          {
+           "conditional_mean_over_sigma": 0.0033283347523437147,
+           "eta": 9.706281483373114e-06,
+           "eta_unconditional": 8.262944322589595e-06
+          },
+          {
+           "conditional_mean_over_sigma": 0.002928786824079508,
+           "eta": 7.363286150519708e-06,
+           "eta_unconditional": 8.35798357392372e-06
+          },
+          {
+           "conditional_mean_over_sigma": 0.003884286310871232,
+           "eta": 1.3608237583943588e-05,
+           "eta_unconditional": 1.1800212549821812e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.0030824697707339923,
+           "eta": 9.013802444842531e-06,
+           "eta_unconditional": 1.1990291052490064e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.005715346325739147,
+           "eta": 2.657700253704459e-05,
+           "eta_unconditional": 2.6044324710084782e-05
+          },
+          {
+           "conditional_mean_over_sigma": 0.004089947776594078,
+           "eta": 1.8120576471688418e-05,
+           "eta_unconditional": 2.6424481715421292e-05
+          }
+         ]
+        },
+        "eta": 2.657700253704459e-05
+       },
        "reduction_validity": {
         "slow": true,
         "ratio": 0.0,

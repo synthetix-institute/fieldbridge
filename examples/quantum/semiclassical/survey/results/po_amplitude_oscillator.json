@@ -5,7 +5,7 @@
   "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
   "kind": "classical image of census entry 24: Josephson parametric oscillator measurement, amplitude-encoded (qubit coupled directly to the JPO)"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -116,10 +116,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 2.6897937233514266,
+       "spread_at_map": 2.68979372338554,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        20.944554906574478
+        20.944554908437798
        ],
        "cov_critical": [
         [
@@ -162,10 +162,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 2.6897937235227114,
+       "spread_at_map": 2.689793723488598,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -20.944554906729568
+        -20.944554904866248
        ],
        "cov_critical": [
         [
@@ -208,10 +208,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.073454434099699,
+       "spread_at_map": 3.073454434135045,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        41.88910981322651
+        41.88910981515713
        ],
        "cov_critical": [
         [
@@ -254,10 +254,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.0734544342709835,
+       "spread_at_map": 3.0734544342356376,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -41.88910981338158
+        -41.889109811450965
        ],
        "cov_critical": [
         [
@@ -300,10 +300,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.8407758555962443,
+       "spread_at_map": 3.8407758556365206,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        83.77821962653059
+        83.77821962873035
        ],
        "cov_critical": [
         [
@@ -346,10 +346,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.840775855767528,
+       "spread_at_map": 3.840775855727251,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -83.7782196266856
+        -83.77821962448583
        ],
        "cov_critical": [
         [
@@ -371,6 +371,89 @@
        "deviation": 0.00012500000000004174
       }
      ],
+     "second_order": {
+      "sigma": 41.964969006164914,
+      "mu": [
+       20.944554906572403,
+       -20.944554906731643,
+       41.88910981322444,
+       -41.88910981338365,
+       83.77821962652851,
+       -83.77821962668767
+      ],
+      "d_end": -1.6155871338926322e-27,
+      "Delta_cov": 4.391677924422843e-11,
+      "Delta_mean": [
+       5.344885312333946e-13,
+       5.344885314393702e-13,
+       2.1379541251395477e-12,
+       2.1379541255515067e-12,
+       8.551816500970138e-12,
+       8.551816501794113e-12
+      ],
+      "Delta_unconditioned": 2.033710488140215e-09,
+      "Delta": [
+       4.4451267775461823e-11,
+       4.44512677756678e-11,
+       4.6054733369367974e-11,
+       4.6054733369779936e-11,
+       5.2468595745198565e-11,
+       5.246859574602254e-11
+      ],
+      "z_linear": [
+       0.4990961605022398,
+       -0.4990961605060344,
+       0.9981923210063772,
+       -0.9981923210101711,
+       1.996384642014652,
+       -1.9963846420184448
+      ],
+      "z": [
+       0.4990961605466911,
+       -0.4990961604615831,
+       0.9981923210524319,
+       -0.9981923209641164,
+       1.9963846420671207,
+       -1.996384641965976
+      ],
+      "sampled": {
+       "samples": 20000,
+       "sigma": 41.68841823598624,
+       "rows": [
+        {
+         "conditional_mean_over_sigma": 4.432214222266554e-11,
+         "eta": 1.0952782627033494e-21,
+         "eta_unconditional": 1.1794363141441394e-17
+        },
+        {
+         "conditional_mean_over_sigma": 4.481699297356237e-11,
+         "eta": 1.665313766868565e-21,
+         "eta_unconditional": 1.1090857745340655e-17
+        },
+        {
+         "conditional_mean_over_sigma": 4.556345590365466e-11,
+         "eta": 1.0134566263013224e-21,
+         "eta_unconditional": 2.3597356270380637e-17
+        },
+        {
+         "conditional_mean_over_sigma": 4.631271356890585e-11,
+         "eta": 1.7299516337362034e-21,
+         "eta_unconditional": 2.219034547817914e-17
+        },
+        {
+         "conditional_mean_over_sigma": 5.1624670969887265e-11,
+         "eta": 1.663444528327795e-21,
+         "eta_unconditional": 7.010582339003688e-17
+        },
+        {
+         "conditional_mean_over_sigma": 5.119963560801384e-11,
+         "eta": 0.0,
+         "eta_unconditional": 6.729180180563381e-17
+        }
+       ]
+      },
+      "eta": 1.7299516337362034e-21
+     },
      "one_direction": {
       "law": [
        {

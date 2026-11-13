@@ -5,7 +5,7 @@
   "source": "Akerman, N., Kotler, S., Glickman, Y., Dallal, Y., Keselman, A., Ozeri, R., 'A single-ion nonlinear mechanical oscillator', Phys. Rev. A 82, 061402 (2010), arXiv:1003.1577 (full text)",
   "kind": "classical image of census entry 47: Driven single-ion Duffing oscillator"
  },
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "48dac7d67e9251fb239c414d5f3125d7dccefc26fd59440a7e706459ba23a4b3",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -167,13 +167,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.609875,
-          0.390125
+          0.607625,
+          0.392375
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.609875,
-          0.390125
+          0.607625,
+          0.392375
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -183,10 +183,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 18.594606559482298,
+         "spread_at_map": 19.291118241470812,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          -88.88295468744175
+          -87.03352963012895
          ],
          "cov_critical": [
           [
@@ -194,18 +194,18 @@
           ]
          ],
          "law": [
-          0.609875,
-          0.390125
+          0.607625,
+          0.392375
          ],
          "certificate": [
           0.60425,
           0.39575
          ],
-         "sector_deviation": 0.005624999999999991,
-         "sector_deviation_sigma": 0.7275012286798824,
+         "sector_deviation": 0.003375000000000017,
+         "sector_deviation_sigma": 0.4365007372079323,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.7275012286798824,
-         "deviation": 0.005624999999999991
+         "deviation_sigma": 0.4365007372079323,
+         "deviation": 0.003375000000000017
         },
         {
          "bias_floors": 0.5,
@@ -213,13 +213,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.905375,
-          0.094625
+          0.902625,
+          0.097375
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.905375,
-          0.094625
+          0.902625,
+          0.097375
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -229,10 +229,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 22.3297644534932,
+         "spread_at_map": 21.59171706196016,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          -410.16868220110337
+          -406.050609111626
          ],
          "cov_critical": [
           [
@@ -240,18 +240,18 @@
           ]
          ],
          "law": [
-          0.905375,
-          0.094625
+          0.902625,
+          0.097375
          ],
          "certificate": [
           0.89725,
           0.10275
          ],
-         "sector_deviation": 0.008125000000000049,
-         "sector_deviation_sigma": 1.692410521177502,
+         "sector_deviation": 0.005375000000000019,
+         "sector_deviation_sigma": 1.1195946524712677,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.692410521177502,
-         "deviation": 0.008125000000000049
+         "deviation_sigma": 1.1195946524712677,
+         "deviation": 0.005375000000000019
         },
         {
          "bias_floors": 1.0,
@@ -259,13 +259,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.4125,
-          0.5875
+          0.411,
+          0.589
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.4125,
-          0.5875
+          0.411,
+          0.589
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -275,10 +275,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 21.53526012637848,
+         "spread_at_map": 22.23096219135555,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          71.73324763515726
+          73.53845204329969
          ],
          "cov_critical": [
           [
@@ -286,18 +286,18 @@
           ]
          ],
          "law": [
-          0.4125,
-          0.5875
+          0.411,
+          0.589
          ],
          "certificate": [
           0.419,
           0.581
          ],
-         "sector_deviation": 0.006500000000000061,
-         "sector_deviation_sigma": 0.8331981071058205,
+         "sector_deviation": 0.008000000000000007,
+         "sector_deviation_sigma": 1.0254745933610012,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.8331981071058205,
-         "deviation": 0.006500000000000061
+         "deviation_sigma": 1.0254745933610012,
+         "deviation": 0.008000000000000007
         },
         {
          "bias_floors": 1.0,
@@ -305,13 +305,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.96575,
-          0.03425
+          0.964375,
+          0.035625
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.96575,
-          0.03425
+          0.964375,
+          0.035625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -321,10 +321,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 25.271394286052978,
+         "spread_at_map": 24.492615368753924,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          -570.8382073921659
+          -564.4954101607534
          ],
          "cov_critical": [
           [
@@ -332,18 +332,18 @@
           ]
          ],
          "law": [
-          0.96575,
-          0.03425
+          0.964375,
+          0.035625
          ],
          "certificate": [
           0.96175,
           0.03825
          ],
-         "sector_deviation": 0.0040000000000000036,
-         "sector_deviation_sigma": 1.3189950623106528,
+         "sector_deviation": 0.0026250000000000023,
+         "sector_deviation_sigma": 0.8655905096413661,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.3189950623106528,
-         "deviation": 0.0040000000000000036
+         "deviation_sigma": 0.8655905096413661,
+         "deviation": 0.0026250000000000023
         },
         {
          "bias_floors": 2.0,
@@ -351,13 +351,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.11475,
-          0.88525
+          0.11075,
+          0.88925
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.11475,
-          0.88525
+          0.11075,
+          0.88925
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -367,10 +367,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 27.416567260170844,
+         "spread_at_map": 28.150559315370852,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          392.96565228035524
+          396.8622260649554
          ],
          "cov_critical": [
           [
@@ -378,18 +378,18 @@
           ]
          ],
          "law": [
-          0.11475,
-          0.88525
+          0.11075,
+          0.88925
          ],
          "certificate": [
           0.1155,
           0.8845
          ],
-         "sector_deviation": 0.0007500000000000284,
-         "sector_deviation_sigma": 0.14840596195134198,
+         "sector_deviation": 0.004750000000000032,
+         "sector_deviation_sigma": 0.9399044256918033,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.14840596195134198,
-         "deviation": 0.0007500000000000284
+         "deviation_sigma": 0.9399044256918033,
+         "deviation": 0.004750000000000032
         },
         {
          "bias_floors": 2.0,
@@ -397,13 +397,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.996625,
-          0.003375
+          0.996375,
+          0.003625
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.996625,
-          0.003375
+          0.996375,
+          0.003625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -413,10 +413,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594319755723403,
          "rate_at_crossing": 0.02098306776752018,
-         "spread_at_map": 31.15465395117253,
+         "spread_at_map": 30.25448645839687,
          "written_amplitude_at_map": 2.1781142856806546,
          "mean_critical": [
-          -892.1772577742912
+          -879.2043113073867
          ],
          "cov_critical": [
           [
@@ -424,20 +424,103 @@
           ]
          ],
          "law": [
-          0.996625,
-          0.003375
+          0.996375,
+          0.003625
          ],
          "certificate": [
           0.99725,
           0.00275
          ],
-         "sector_deviation": 0.0006250000000000001,
-         "sector_deviation_sigma": 0.7548169492703576,
+         "sector_deviation": 0.0008750000000000003,
+         "sector_deviation_sigma": 1.0567437289785009,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.7548169492703576,
-         "deviation": 0.0006250000000000001
+         "deviation_sigma": 1.0567437289785009,
+         "deviation": 0.0008750000000000003
         }
        ],
+       "second_order": {
+        "sigma": 318.9952452123262,
+        "mu": [
+         -149.4899276651388,
+         -470.7756551788005,
+         11.126274657460227,
+         -631.445180369863,
+         332.3586793026583,
+         -952.7842307519883
+        ],
+        "d_end": 1.170440107290188e-17,
+        "Delta_cov": 0.19456462863580684,
+        "Delta_mean": [
+         0.0012263713003781893,
+         0.008338226621778152,
+         0.001087746509463436,
+         0.0153123874449416,
+         0.007643861084355044,
+         0.03609686412602464
+        ],
+        "Delta_unconditioned": -4.885366343898622,
+        "Delta": [
+         0.19579099993618504,
+         0.202902855257585,
+         0.19565237514527029,
+         0.20987701608074844,
+         0.2022084897201619,
+         0.23066149276183148
+        ],
+        "z_linear": [
+         -0.4686274479283756,
+         -1.4758077502548599,
+         0.03487912382535506,
+         -1.9794814808276129,
+         1.0418922673328164,
+         -2.98682894197312
+        ],
+        "z": [
+         -0.27283644799219053,
+         -1.272904894997275,
+         0.23053149897062536,
+         -1.7696044647468645,
+         1.2441007570529783,
+         -2.7561674492112886
+        ],
+        "sampled": {
+         "samples": 20000,
+         "sigma": 317.3872366883032,
+         "rows": [
+          {
+           "conditional_mean_over_sigma": 0.19504966136057622,
+           "eta": 0.0041552367194581845,
+           "eta_unconditional": 69.94970494462837
+          },
+          {
+           "conditional_mean_over_sigma": 0.20263435986524414,
+           "eta": 0.0030215531519537284,
+           "eta_unconditional": 262.89549129365076
+          },
+          {
+           "conditional_mean_over_sigma": 0.1958752925898983,
+           "eta": 0.003801938033638342,
+           "eta_unconditional": 50.223078766383274
+          },
+          {
+           "conditional_mean_over_sigma": 0.21172931760547486,
+           "eta": 0.000568775137883224,
+           "eta_unconditional": 436.1485256557545
+          },
+          {
+           "conditional_mean_over_sigma": 0.20505422621256308,
+           "eta": 0.0030408635903423067,
+           "eta_unconditional": 164.21349098014008
+          },
+          {
+           "conditional_mean_over_sigma": 0.24223280262127433,
+           "eta": 0.0,
+           "eta_unconditional": 936.1998815241885
+          }
+         ]
+        },
+        "eta": 0.0041552367194581845
+       },
        "reduction_validity": {
         "slow": false,
         "ratio": Infinity,
@@ -455,24 +538,24 @@
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.390125,
-          "P_toward_minus": 0.905375,
-          "response_constant": 1.3763448597638137,
-          "offset": -0.795897147468468
+          "P_toward_plus": 0.392375,
+          "P_toward_minus": 0.902625,
+          "response_constant": 1.3626490235816497,
+          "offset": -0.784894520413324
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.5875,
-          "P_toward_minus": 0.96575,
-          "response_constant": 1.3598406683811781,
-          "offset": -0.8002923494258132
+          "P_toward_plus": 0.589,
+          "P_toward_minus": 0.964375,
+          "response_constant": 1.3505426253734447,
+          "offset": -0.7894537064929301
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.88525,
-          "P_toward_minus": 0.996625,
-          "response_constant": 1.3015735892795435,
-          "offset": -0.7536425070703299
+          "P_toward_plus": 0.88925,
+          "P_toward_minus": 0.996375,
+          "response_constant": 1.3006103412648935,
+          "offset": -0.7312940742942841
          }
         ],
         "certificate": [
@@ -614,13 +697,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.6045,
-          0.3955
+          0.601875,
+          0.398125
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.6045,
-          0.3955
+          0.601875,
+          0.398125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -630,10 +713,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 18.594668209560925,
+         "spread_at_map": 19.291182778496307,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          -88.88401050875194
+          -87.03458059767578
          ],
          "cov_critical": [
           [
@@ -641,18 +724,18 @@
           ]
          ],
          "law": [
-          0.6045,
-          0.3955
+          0.601875,
+          0.398125
          ],
          "certificate": [
           0.6115,
           0.3885
          ],
-         "sector_deviation": 0.007000000000000006,
-         "sector_deviation_sigma": 0.9083104138216836,
+         "sector_deviation": 0.009624999999999995,
+         "sector_deviation_sigma": 1.248926819004813,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.9083104138216836,
-         "deviation": 0.007000000000000006
+         "deviation_sigma": 1.248926819004813,
+         "deviation": 0.009624999999999995
         },
         {
          "bias_floors": 0.5,
@@ -660,13 +743,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.900875,
-          0.099125
+          0.899375,
+          0.100625
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.900875,
-          0.099125
+          0.899375,
+          0.100625
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -676,10 +759,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 22.32983560674293,
+         "spread_at_map": 21.591785135026996,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          -410.17204023903093
+          -406.05394221376935
          ],
          "cov_critical": [
           [
@@ -687,18 +770,18 @@
           ]
          ],
          "law": [
-          0.900875,
-          0.099125
+          0.899375,
+          0.100625
          ],
          "certificate": [
           0.89175,
           0.10825
          ],
-         "sector_deviation": 0.009124999999999994,
-         "sector_deviation_sigma": 1.8574937334538217,
+         "sector_deviation": 0.007624999999999993,
+         "sector_deviation_sigma": 1.5521522978175768,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.8574937334538217,
-         "deviation": 0.009124999999999994
+         "deviation_sigma": 1.5521522978175768,
+         "deviation": 0.007624999999999993
         },
         {
          "bias_floors": 1.0,
@@ -706,13 +789,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.416125,
-          0.583875
+          0.413875,
+          0.586125
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.416125,
-          0.583875
+          0.413875,
+          0.586125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -722,10 +805,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 21.535330497871925,
+         "spread_at_map": 22.231035402084082,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          71.73334270794436
+          73.53854917814652
          ],
          "cov_critical": [
           [
@@ -733,18 +816,18 @@
           ]
          ],
          "law": [
-          0.416125,
-          0.583875
+          0.413875,
+          0.586125
          ],
          "certificate": [
           0.419,
           0.581
          ],
-         "sector_deviation": 0.002875000000000072,
-         "sector_deviation_sigma": 0.3685299319891187,
+         "sector_deviation": 0.005125000000000046,
+         "sector_deviation_sigma": 0.6569446613718967,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.3685299319891187,
-         "deviation": 0.002875000000000072
+         "deviation_sigma": 0.6569446613718967,
+         "deviation": 0.005125000000000046
         },
         {
          "bias_floors": 1.0,
@@ -752,13 +835,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.96475,
-          0.03525
+          0.963125,
+          0.036875
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.96475,
-          0.03525
+          0.963125,
+          0.036875
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -768,10 +851,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 25.271474164461324,
+         "spread_at_map": 24.49269202143629,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          -570.8427167526136
+          -564.4998772928238
          ],
          "cov_critical": [
           [
@@ -779,18 +862,18 @@
           ]
          ],
          "law": [
-          0.96475,
-          0.03525
+          0.963125,
+          0.036875
          ],
          "certificate": [
           0.961,
           0.039
          ],
-         "sector_deviation": 0.003750000000000031,
-         "sector_deviation_sigma": 1.2250879440528322,
+         "sector_deviation": 0.0021250000000000435,
+         "sector_deviation_sigma": 0.6942165016299466,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 1.2250879440528322,
-         "deviation": 0.003750000000000031
+         "deviation_sigma": 0.6942165016299466,
+         "deviation": 0.0021250000000000435
         },
         {
          "bias_floors": 2.0,
@@ -798,13 +881,13 @@
           1.0
          ],
          "linear_stage_law": [
-          0.108125,
-          0.891875
+          0.106875,
+          0.893125
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.108125,
-          0.891875
+          0.106875,
+          0.893125
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -814,10 +897,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 27.416655074493924,
+         "spread_at_map": 28.150649971284732,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          392.96804914133696
+          396.8646338997282
          ],
          "cov_critical": [
           [
@@ -825,18 +908,18 @@
           ]
          ],
          "law": [
-          0.108125,
-          0.891875
+          0.106875,
+          0.893125
          ],
          "certificate": [
           0.10575,
           0.89425
          ],
-         "sector_deviation": 0.002375000000000016,
-         "sector_deviation_sigma": 0.4884543112682711,
+         "sector_deviation": 0.0011250000000000426,
+         "sector_deviation_sigma": 0.2313730948112935,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.4884543112682711,
-         "deviation": 0.002375000000000016
+         "deviation_sigma": 0.2313730948112935,
+         "deviation": 0.0011250000000000426
         },
         {
          "bias_floors": 2.0,
@@ -844,13 +927,13 @@
           -1.0
          ],
          "linear_stage_law": [
-          0.99675,
-          0.00325
+          0.9965,
+          0.0035
          ],
          "t_star": 52.70500000000851,
          "sector_law": [
-          0.99675,
-          0.00325
+          0.9965,
+          0.0035
          ],
          "regime": "saturated at the mapping time",
          "t_cross": 28.284271247461902,
@@ -860,10 +943,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.10594334852128129,
          "rate_at_crossing": 0.020983096163729176,
-         "spread_at_map": 31.154751279898115,
+         "spread_at_map": 30.25458017247446,
          "written_amplitude_at_map": 2.178115627041552,
          "mean_critical": [
-          -892.1840697797788
+          -879.2110319973451
          ],
          "cov_critical": [
           [
@@ -871,20 +954,103 @@
           ]
          ],
          "law": [
-          0.99675,
-          0.00325
+          0.9965,
+          0.0035
          ],
          "certificate": [
           0.99675,
           0.00325
          ],
-         "sector_deviation": 0.0,
-         "sector_deviation_sigma": 0.0,
+         "sector_deviation": 0.0002500000000000002,
+         "sector_deviation_sigma": 0.27780189357222185,
          "certificate_diverged": 0.0,
-         "deviation_sigma": 0.0,
-         "deviation": 0.0
+         "deviation_sigma": 0.27780189357222185,
+         "deviation": 0.0002500000000000002
         }
        ],
+       "second_order": {
+        "sigma": 318.9976350078414,
+        "mu": [
+         -149.4914226136914,
+         -470.77945234397043,
+         11.125930603004878,
+         -631.4501288575531,
+         332.36063703639746,
+         -952.7914818847185
+        ],
+        "d_end": 0.0,
+        "Delta_cov": 0.19456454951908422,
+        "Delta_mean": [
+         0.0012263754339499689,
+         0.00833824042984444,
+         0.0010877429300666576,
+         0.015312403214698674,
+         0.007643836325986867,
+         0.03609687806662337
+        ],
+        "Delta_unconditioned": -4.885397556619481,
+        "Delta": [
+         0.19579092495303418,
+         0.20290278994892866,
+         0.1956522924491509,
+         0.2098769527337829,
+         0.2022083858450711,
+         0.2306614275857076
+        ],
+        "z_linear": [
+         -0.46862862356335877,
+         -1.4758085975540165,
+         0.034877783977086185,
+         -1.979482164004229,
+         1.041890599057976,
+         -2.9868292969046544
+        ],
+        "z": [
+         -0.2728376986103246,
+         -1.2729058076050879,
+         0.23053007642623707,
+         -1.7696052112704461,
+         1.2440989849030473,
+         -2.7561678693189466
+        ],
+        "sampled": {
+         "samples": 20000,
+         "sigma": 317.3896147363987,
+         "rows": [
+          {
+           "conditional_mean_over_sigma": 0.19504958338621045,
+           "eta": 0.004155238131343426,
+           "eta_unconditional": 69.95066969389657
+          },
+          {
+           "conditional_mean_over_sigma": 0.20263429595211083,
+           "eta": 0.003021549070221636,
+           "eta_unconditional": 262.89897847956786
+          },
+          {
+           "conditional_mean_over_sigma": 0.19587520555851148,
+           "eta": 0.003801939758231176,
+           "eta_unconditional": 50.22367807955279
+          },
+          {
+           "conditional_mean_over_sigma": 0.21172925858490904,
+           "eta": 0.0005687648357642551,
+           "eta_unconditional": 436.15417026749043
+          },
+          {
+           "conditional_mean_over_sigma": 0.20505411729391257,
+           "eta": 0.0030408630416634145,
+           "eta_unconditional": 164.21515032728018
+          },
+          {
+           "conditional_mean_over_sigma": 0.24223274882671794,
+           "eta": 0.0,
+           "eta_unconditional": 936.2116331695361
+          }
+         ]
+        },
+        "eta": 0.004155238131343426
+       },
        "reduction_validity": {
         "slow": false,
         "ratio": Infinity,
@@ -902,24 +1068,24 @@
         "law": [
          {
           "bias_floors": 0.5,
-          "P_toward_plus": 0.3955,
-          "P_toward_minus": 0.900875,
-          "response_constant": 1.3600137961405387,
-          "offset": -0.7757828339818167
+          "P_toward_plus": 0.398125,
+          "P_toward_minus": 0.899375,
+          "response_constant": 1.3576892249216352,
+          "offset": -0.7681008436926096
          },
          {
           "bias_floors": 1.0,
-          "P_toward_plus": 0.583875,
-          "P_toward_minus": 0.96475,
-          "response_constant": 1.3449825223103218,
-          "offset": -0.7984339788489212
+          "P_toward_plus": 0.586125,
+          "P_toward_minus": 0.963125,
+          "response_constant": 1.3351625529375677,
+          "offset": -0.7852865261436783
          },
          {
           "bias_floors": 2.0,
-          "P_toward_plus": 0.891875,
-          "P_toward_minus": 0.99675,
-          "response_constant": 1.3173536956189622,
-          "offset": -0.7424347377329703
+          "P_toward_plus": 0.893125,
+          "P_toward_minus": 0.9965,
+          "response_constant": 1.3114199480593909,
+          "offset": -0.7267622158615377
          }
         ],
         "certificate": [
