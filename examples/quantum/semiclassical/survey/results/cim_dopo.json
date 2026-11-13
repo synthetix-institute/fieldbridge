@@ -5,7 +5,7 @@
   "source": "Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -71,10 +71,10 @@
  },
  "seconds": {
   "symmetric-write": 11.7,
-  "threshold-write": 2.9,
-  "phase-locking": 2.4,
-  "completion": 98.3,
-  "changes": 60.5
+  "threshold-write": 2.7,
+  "phase-locking": 1.7,
+  "completion": 101.3,
+  "changes": 56.5
  },
  "completion": {
   "write_points": [
@@ -506,7 +506,7 @@
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 2.1,
+    "seconds": 1.8,
     "class": "single stable state"
    }
   },
@@ -524,7 +524,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 1.9,
+      "seconds": 2.0,
       "class": "single stable state"
      }
     },
@@ -539,7 +539,7 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 3.5,
+      "seconds": 2.8,
       "class": "reached"
      },
      "threshold-write": {
@@ -560,7 +560,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.2,
+      "seconds": 2.1,
       "class": "no write point"
      },
      "threshold-write": {
@@ -587,7 +587,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.8,
+      "seconds": 2.5,
       "class": "single stable state"
      }
     },
@@ -602,13 +602,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.9,
+      "seconds": 0.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.8,
+      "seconds": 1.5,
       "class": "reached"
      }
     },
@@ -625,13 +625,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.2,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -646,7 +646,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 0.9,
+      "seconds": 0.8,
       "class": "oscillation"
      },
      "threshold-write": {
@@ -678,7 +678,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.7,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },

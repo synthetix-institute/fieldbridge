@@ -43,6 +43,15 @@ WRITE_RESOLUTION = 2e-3
 SERIES_ORDER = 7  # order of the reduction at a write point; a Kerr parametric oscillator at zero detuning needs 5
 
 
+def orientation_index(v: np.ndarray, rtol: float = 1e-4) -> int:
+    """The component that fixes the sign of a direction: the first one within rtol of the largest in magnitude. The
+    sign of an eigenvector is arbitrary and differs between LAPACK builds; making this component positive gives every
+    machine the same direction. A symmetric direction such as (a, -a) has components equal up to rounding, so the
+    plain largest one would be chosen by rounding: the first within the tolerance is chosen instead."""
+    a = np.abs(np.asarray(v, float))
+    return int(np.flatnonzero(a >= (1.0 - rtol) * a.max())[0])
+
+
 def base_length(real: Realization) -> float:
     return real.carrier.period / (2 * np.pi) if real.carrier.kind == "torus" else real.carrier.scale
 
@@ -1132,6 +1141,11 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
             # zero on the other eigenvectors.
             w = np.real(np.linalg.inv(R)[i])
         w = w / np.dot(w, vec)
+    # the sign of an eigenvector is arbitrary and differs between LAPACK builds: orient the critical direction (see
+    # orientation_index). +mode then names the same state on every machine, and the random streams of a test
+    # assigned to the bias toward +mode drive the same state.
+    if vec[orientation_index(vec)] < 0:
+        vec, w = -vec, -w
     if half is None:
         half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
     if real.carrier.kind == "orthant":

@@ -5,7 +5,7 @@
   "source": "Goto, Sci. Rep. 6, 21686 (2016); frustrated Ising triangle",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 5.1,
-  "threshold-write": 19.5,
-  "phase-locking": 32.3,
-  "completion": 3519.1,
-  "changes": 394.3
+  "symmetric-write": 6.3,
+  "threshold-write": 22.9,
+  "phase-locking": 20.2,
+  "completion": 3943.8,
+  "changes": 578.0
  },
  "completion": {
   "write_points": [
@@ -6045,13 +6045,13 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-    "seconds": 3.1,
+    "seconds": 6.0,
     "class": "several critical directions"
    },
    "threshold-write": {
     "status": "reached by a write field",
     "obstruction": "",
-    "seconds": 9.6,
+    "seconds": 27.1,
     "class": "reached"
    }
   },
@@ -6063,13 +6063,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.1,
+      "seconds": 6.0,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 15.0,
+      "seconds": 12.0,
       "class": "reached"
      }
     },
@@ -6089,13 +6089,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.4,
+      "seconds": 2.7,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 12.8,
+      "seconds": 22.3,
       "class": "reached"
      }
     },
@@ -6115,13 +6115,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 2.1,
+      "seconds": 2.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 12.4,
+      "seconds": 19.2,
       "class": "reached"
      }
     },
@@ -6141,13 +6141,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 3.1,
+      "seconds": 6.4,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 13.8,
+      "seconds": 18.6,
       "class": "reached"
      }
     },
@@ -6162,13 +6162,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 4 directions become critical together at the write point; the critical eigenspace is 4-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 2.9,
+      "seconds": 3.6,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 7.9,
+      "seconds": 11.6,
       "class": "reached"
      }
     },
@@ -6189,7 +6189,7 @@
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.9,
+      "seconds": 8.9,
       "class": "reached"
      }
     },
@@ -6209,13 +6209,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "degenerate critical mode: 2 directions become critical together at the write point; the critical eigenspace is 2-dimensional, so the drift reduced to one critical line, a pitchfork of one component, d",
-      "seconds": 0.9,
+      "seconds": 0.8,
       "class": "several critical directions"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 5.8,
+      "seconds": 5.5,
       "class": "reached"
      }
     },
@@ -6230,13 +6230,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 9.8,
+      "seconds": 16.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 8.3,
+      "seconds": 14.8,
       "class": "reached"
      }
     },
@@ -6253,7 +6253,53 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.4,
+      "seconds": 7.8,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.7,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- 0.5*kappa*x2' from dx2/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 9.7,
+      "class": "reached"
+     },
+     "threshold-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 8.1,
+      "class": "reached"
+     }
+    },
+    "reaches": [
+     "symmetric-write"
+    ],
+    "changed": {},
+    "step": true
+   },
+   {
+    "kind": "remove",
+    "what": "remove '- J*(y3 + y1)' from dx2/dt",
+    "judged": {
+     "symmetric-write": {
+      "status": "reached",
+      "obstruction": "",
+      "seconds": 6.7,
       "class": "reached"
      },
      "threshold-write": {
@@ -6271,64 +6317,18 @@
    },
    {
     "kind": "remove",
-    "what": "remove '- 0.5*kappa*x2' from dx2/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 10.1,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 9.5,
-      "class": "reached"
-     }
-    },
-    "reaches": [
-     "symmetric-write"
-    ],
-    "changed": {},
-    "step": true
-   },
-   {
-    "kind": "remove",
-    "what": "remove '- J*(y3 + y1)' from dx2/dt",
-    "judged": {
-     "symmetric-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 8.2,
-      "class": "reached"
-     },
-     "threshold-write": {
-      "status": "reached",
-      "obstruction": "",
-      "seconds": 7.6,
-      "class": "reached"
-     }
-    },
-    "reaches": [
-     "symmetric-write"
-    ],
-    "changed": {},
-    "step": true
-   },
-   {
-    "kind": "remove",
     "what": "remove '- 0.5*kappa*x3' from dx3/dt",
     "judged": {
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 9.9,
+      "seconds": 8.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 7.7,
+      "seconds": 7.8,
       "class": "reached"
      }
     },
@@ -6345,13 +6345,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.9,
+      "seconds": 8.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.5,
+      "seconds": 7.4,
       "class": "reached"
      }
     },
@@ -6368,13 +6368,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 5.2,
+      "seconds": 13.2,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 4.8,
+      "seconds": 8.3,
       "class": "reached"
      }
     },
@@ -6391,13 +6391,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -6.25 s^5, so the canonical form is not the pitchfork and the swept-write tes",
-      "seconds": 7.0,
+      "seconds": 11.0,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 17.4,
+      "seconds": 29.2,
       "class": "reached"
      }
     },
@@ -6417,13 +6417,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 8.9,
+      "seconds": 9.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 9.4,
+      "seconds": 7.9,
       "class": "reached"
      }
     },
@@ -6440,13 +6440,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -6.25 s^5, so the canonical form is not the pitchfork and the swept-write tes",
-      "seconds": 6.4,
+      "seconds": 7.7,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 15.6,
+      "seconds": 20.8,
       "class": "reached"
      }
     },
@@ -6466,13 +6466,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 10.2,
+      "seconds": 15.5,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 9.6,
+      "seconds": 8.7,
       "class": "reached"
      }
     },
@@ -6489,13 +6489,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "vanishing cubic term: the quadratic and cubic terms of the reduced drift vanish at the write point and the leading term is -6.25 s^5, so the canonical form is not the pitchfork and the swept-write tes",
-      "seconds": 6.2,
+      "seconds": 6.9,
       "class": "vanishing cubic"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 15.3,
+      "seconds": 15.7,
       "class": "reached"
      }
     },

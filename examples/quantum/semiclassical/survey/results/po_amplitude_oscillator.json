@@ -5,7 +5,7 @@
   "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
   "kind": "classical image of census entry 24: Josephson parametric oscillator measurement, amplitude-encoded (qubit coupled directly to the JPO)"
  },
- "implementation_sha256": "d063c3fadc9dbe305c673eecbf0dbc47f810e41e2b6d4937c89a21f03609ea5d",
+ "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -38,11 +38,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 1.1,
-  "threshold-write": 1.1,
-  "phase-locking": 8.8,
-  "completion": 76.6,
-  "changes": 50.3
+  "symmetric-write": 1.2,
+  "threshold-write": 1.2,
+  "phase-locking": 4.3,
+  "completion": 77.8,
+  "changes": 53.2
  },
  "completion": {
   "write_points": [
@@ -470,7 +470,7 @@
    "symmetric-write": {
     "status": "obstructed",
     "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-    "seconds": 0.4,
+    "seconds": 0.3,
     "class": "distant branch"
    },
    "threshold-write": {
@@ -494,7 +494,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -509,13 +509,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.6,
       "class": "single stable state"
      }
     },
@@ -561,7 +561,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "distant branch"
      },
      "threshold-write": {
@@ -582,13 +582,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "positive cubic term: the write is symmetric but jumps to a distant branch (subcritical)",
-      "seconds": 0.4,
+      "seconds": 0.5,
       "class": "distant branch"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "single stable state"
      }
     },
@@ -609,7 +609,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.7,
+      "seconds": 0.5,
       "class": "single stable state"
      }
     },
@@ -624,7 +624,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
@@ -656,7 +656,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 1.9,
+      "seconds": 2.6,
       "class": "oscillation"
      }
     },
@@ -676,13 +676,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.4,
+      "seconds": 0.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.5,
+      "seconds": 0.4,
       "class": "single stable state"
      }
     },
@@ -705,7 +705,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.7,
+      "seconds": 0.8,
       "class": "single stable state"
      }
     },

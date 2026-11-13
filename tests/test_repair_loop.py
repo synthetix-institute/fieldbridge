@@ -306,8 +306,9 @@ def test_every_retained_outcome_of_the_records_gets_a_row(tmp_path):
     assert len(rows) == len(library.departures()) >= 227
     assert not [r for r in rows if r["status"] == "needs_equation_task"]
     failed = [r for r in rows if r["status"] == "outside_this_campaign"]
-    # version 12: the phase qubit, the bifurcation amplifier, the magnon and a distant branch of the Ising pair are certified, the Rydberg law is not
-    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 6
+    # version 12: the phase qubit, the bifurcation amplifier, the magnon and a distant branch of the Ising pair are certified, the Rydberg law is not;
+    # in the record of the merge with the orientation (2026-11-12) the first write point of the rf-SQUID triangle is a nonlinear stage
+    assert sum(r["write_class"] == "nonlinear stage" for r in failed) == 7
     assert sum(r["write_class"] == "equilibrium write" for r in failed) == 4
 
 
@@ -318,8 +319,8 @@ def test_a_law_over_its_budget_is_kept_as_timed_out(tmp_path, monkeypatch):
     monkeypatch.setattr(rl, "close_modulo_order", lambda *_: time.sleep(30))
     rows = rl.close_departures(library, root=ROOT, policy=FAST, select={"equilibrium write"}, law_seconds=1)
     timed_out = [r for r in rows if r["status"] == "timed_out"]
-    # four equilibrium writes are not certified; the unfolding of one gives no learning task and does not reach the law
-    assert len(timed_out) == 3 and all(r["write_class"] == "equilibrium write" for r in timed_out)
+    # four equilibrium writes are not certified; in the record of 2026-11-12 every one of them reaches the law
+    assert len(timed_out) == 4 and all(r["write_class"] == "equilibrium write" for r in timed_out)
     assert library.campaign(next(k for k, d in library.departures() if d["target"] == timed_out[0]["target"]
                                  and library.campaign(k)))["status"] == "timed_out"
 
@@ -335,3 +336,17 @@ def test_the_power_control_finds_the_term_that_shapes_the_trajectory():
     c = closure(order=5)
     key = rl._strongest_nonlinear(c, 0.5, 1.0, 0.1)
     assert key == (3, 0)
+
+
+@pytest.mark.parametrize("J", [np.array([[0.0, 1.0, 0.0], [0.0, -1.0, 0.5], [0.0, 0.0, -2.0]]),
+                               np.diag([0.0, 0.0, -1.5]) + np.array([[0, 0, 0.3], [0, 0, -0.2], [0, 0, 0]])])
+def test_the_critical_frame_does_not_depend_on_the_sign_the_eigensolver_gives(J, monkeypatch):
+    plain = rl._critical_frame(J)
+    eig, svd = np.linalg.eig, np.linalg.svd
+    monkeypatch.setattr(np.linalg, "eig", lambda A: (lambda e: (e[0], -e[1]))(eig(A)))
+    monkeypatch.setattr(np.linalg, "svd", lambda A, *a, **k: (lambda u: (-u[0], u[1], -u[2]))(svd(A, *a, **k)))
+    flipped = rl._critical_frame(J)
+    k = plain.V.shape[1]
+    from fieldbridge.memory import analysis as an
+    assert all(plain.V[an.orientation_index(plain.V[:, j]), j] > 0 for j in range(k))
+    assert np.allclose(plain.V, flipped.V, atol=1e-12) and np.allclose(plain.W, flipped.W, atol=1e-12)
