@@ -413,8 +413,6 @@ def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.nd
     return out
 
 
-SECOND_ORDER_SPREAD = 0.1     # the selection to second order is claimed where the spread of the second-order term among
-                              # the samples the first order leaves undecided is below this fraction of the first-order variance
 SECOND_ORDER_SAMPLES = 20000  # samples of the first-order deviation from which that spread is estimated
 SECOND_ORDER_SEED = 12345     # their own generator: the estimate does not move the stream of the law or of the certificate
 
@@ -465,7 +463,7 @@ def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: 
     of s2 at s1 = 0 over sigma^2, from n_mc samples of the first-order deviation (for a Gaussian first order the
     conditional mean and variance of s2 are quadratic in s1, and both are fitted). On ten carriers held out from the
     development the response constant and the offset were within the gate of the full dynamics at all eight write
-    points with eta below SECOND_ORDER_SPREAD; on the three with eta at or above it (a slow partner at the edge of the
+    points with eta below 0.1; on the three with eta at or above it (a slow partner at the edge of the
     limit, a slow variable that pumps strongly, one that shifts the rate) the offset of two was still right and the
     response constant of all three was 0.07 to 0.12 above the full dynamics: a spread of the push among the undecided
     samples lowers the response to a bias, which no shift of the mean gives.
@@ -527,6 +525,203 @@ def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: 
                                            "eta": float(max(vcoef[0], 0.0)) / var,
                                            "eta_unconditional": float(np.var(s2[j])) / var})
         out["eta"] = max(r["eta"] for r in out["sampled"]["rows"])
+    return out
+
+
+NEXT_ORDER_LIMIT = 0.1        # the next order of the selection is claimed where the larger of its corrections of the offset and
+                              # of the response is below this: an expansion is claimed where its last term is small
+NEXT_ORDER_SAMPLES = 4000     # conditioned samples of the first-order deviation for the terms of the next order
+NEXT_ORDER_SEED = 24680       # their own generator
+NEXT_ORDER_STEP = 0.2         # the conditioning values are -NEXT_ORDER_STEP sigma, 0, +NEXT_ORDER_STEP sigma
+NEXT_ORDER_BATCHES = 10       # the samples are split into this many batches for the sampling errors
+
+
+def _hessian_stencil(n: int):
+    """Offsets (in units of eps) of the points of a central-difference Hessian, and the pairs they belong to."""
+    E = np.eye(n)
+    pts = [np.zeros(n)]
+    for a in range(n):
+        pts += [E[a], -E[a]]
+    pairs = [(a, b) for a in range(n) for b in range(a + 1, n)]
+    for a, b in pairs:
+        pts += [E[a] + E[b], E[a] - E[b], -E[a] + E[b], -E[a] - E[b]]
+    return np.array(pts), pairs
+
+
+def _hessian_from(vals: np.ndarray, n: int, pairs, eps: float) -> np.ndarray:
+    """H[a, b, c] = d^2 F_a / dx_b dx_c from the values of F (points, n) on the stencil."""
+    H = np.zeros((n, n, n))
+    for b in range(n):
+        H[:, b, b] = (vals[1 + 2 * b] + vals[2 + 2 * b] - 2.0 * vals[0]) / eps ** 2
+    base = 1 + 2 * n
+    for i, (b, c) in enumerate(pairs):
+        v = (vals[base + 4 * i] - vals[base + 4 * i + 1] - vals[base + 4 * i + 2] + vals[base + 4 * i + 3]) / (4.0 * eps ** 2)
+        H[:, b, c] = H[:, c, b] = v
+    return H
+
+
+def curvature_tensors(real, q: np.ndarray, over: Dict, lam: np.ndarray, eps: float, eps3: float):
+    """The second derivative of the drift at q, H[a, b, c], and the third derivative of lam . F, T[b, c, d], by central
+    differences (the third from the Hessians at q +- eps3 e_d), in one call of the drift."""
+    n = q.size
+    off, pairs = _hessian_stencil(n)
+    k = len(off)
+    centres = [q] + [q + s * eps3 * np.eye(n)[d] for d in range(n) for s in (1.0, -1.0)]
+    pts = np.concatenate([c[None] + eps * off for c in centres])
+    vals = np.asarray(real.F(real.carrier.wrap(pts), **over), float)
+    Hs = [_hessian_from(vals[i * k:(i + 1) * k], n, pairs, eps) for i in range(len(centres))]
+    T = np.zeros((n, n, n))
+    for d in range(n):
+        T[:, :, d] = np.einsum("a,abc->bc", lam, Hs[1 + 2 * d] - Hs[2 + 2 * d]) / (2.0 * eps3)
+    # symmetrise over the three indices: the mixed differences agree only to the accuracy of the stencil
+    T = (T + T.transpose(0, 2, 1) + T.transpose(1, 0, 2) + T.transpose(1, 2, 0) + T.transpose(2, 0, 1) + T.transpose(2, 1, 0)) / 6.0
+    return Hs[0], T
+
+
+def _contract(H2: np.ndarray, a: np.ndarray, b: np.ndarray) -> np.ndarray:
+    """H[a, b] for every sample: out[s, i] = sum_jk H[i, j, k] a[s, j] b[s, k], with H2 = H reshaped (n, n * n)."""
+    n = a.shape[1]
+    outer = (a[:, :, None] * b[:, None, :]).reshape(a.shape[0], n * n)
+    return outer @ H2.T
+
+
+def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np.ndarray, Js: np.ndarray, C: np.ndarray,
+                         m: np.ndarray, ell: np.ndarray, d_end: float, D: float, n_mc: int = NEXT_ORDER_SAMPLES,
+                         seed: int = NEXT_ORDER_SEED, null_bias: bool = False) -> Dict[str, object]:
+    """The selection of a write in one direction one order beyond second_order_selection.
+
+    With s1, s2, s3 the critical coordinate at the end of the linear stage to first, second and third order in the
+    deviation, g(s) = E[s2 | s1 = s] and v(s) = Var(s2 | s1 = s), the statistic is z = mu / sigma + Delta + delta2 with
+        delta2 = E[s3 | s1 = 0] / sigma - Delta g'(0) - v'(0) / (2 sigma) - (1/2) (mu / sigma) eta.
+    The first term is the mean of the third-order coordinate among undecided samples (the curvature acting on the
+    second-order deviation, and the third derivative of the drift on the first). The second corrects where the
+    undecided samples are: the second-order push depends on the first-order coordinate, so the samples that end on the
+    boundary are not those with s1 = 0. The third is the same for the spread of the push. The fourth is a loss of
+    sharpness: a push that varies among undecided samples widens the distribution of the critical coordinate.
+
+    Every term is odd in the forcing: for a sweep without forcing and without bias delta2 vanishes. It is therefore the
+    sum of a correction of the offset and one of the response, where the shift of second_order_selection, which is
+    even, moves offsets only. On ten carriers held out from its development, the response constant of version 13 was
+    above the full dynamics by 0.034 on average over the eleven write points where the correction is below
+    NEXT_ORDER_LIMIT, and by 0.005 with these terms; three of those points have a spread eta above 0.1 (a rate
+    modulated by a slow oscillator, 0.36). On the one case with a larger correction (two strong slow pumps whose mean
+    pushes cancel, 0.38) the terms overshoot as far as the second order undershoots. The offsets of that set do not
+    move; the offset of the magnon swept through its cusp, 0.07 beyond the full dynamics to second order, is repaired
+    in part only (0.02 beyond) and not at other strengths of the noise.
+
+    How the terms are computed. Among the samples with s1 = s the first-order deviation is the unconditioned one moved
+    by c(t) (s - s1) / sigma^2 (the conditioning of a Gaussian), so samples conditioned exactly on s1 = s are made from
+    the unconditioned ones in two passes with the same random numbers: the first gives each sample's s1, the second
+    carries the conditioned deviation, the second-order deviation it drives, and the integrals s2 and s3. Three values
+    of s are carried, -h sigma, 0 and +h sigma, with the same noise; g and v are quadratic in s, so their central
+    differences are their slopes at 0. With `null_bias` one more bias is carried, without the forcing of the sweep and
+    without bias, on which every term must vanish. The arguments are those of second_order_selection."""
+    base_length = an.base_length(real)
+    ts, qs, Js, C, m, ell = (np.asarray(x, float) for x in (ts, qs, Js, C, m, ell))
+    N, n, nb = len(ts) - 1, qs.shape[1], m.shape[1]
+    lam = np.zeros((N + 1, n))
+    lam[N] = ell
+    for i in range(N - 1, -1, -1):
+        dt = ts[i + 1] - ts[i]
+        d1 = Js[i + 1].T @ lam[i + 1]
+        lam[i] = lam[i + 1] + 0.5 * dt * (d1 + Js[i].T @ (lam[i + 1] + dt * d1))
+    var = float(ell @ C[N] @ ell)
+    sigma = sqrt(var)
+    mu = m[N] @ ell + d_end
+    w = np.zeros(N + 1)
+    w[:-1] += 0.5 * np.diff(ts)
+    w[1:] += 0.5 * np.diff(ts)
+    c = np.einsum("tij,tj->ti", C, lam)                      # Cov(delta1(t), s1)
+    eps, eps3 = 1e-3 * base_length, 1e-2 * base_length
+    # the biases of the law and, last, no forcing and no bias
+    means = [m[:, j, :] for j in range(nb)] + ([np.zeros((N + 1, n))] if null_bias else [])
+    mus = list(mu) + ([0.0] if null_bias else [])
+    svals = np.array([-NEXT_ORDER_STEP, 0.0, NEXT_ORDER_STEP]) * sigma
+    nB, nS = len(means), len(svals)
+    # pass 1: the first-order critical coordinate of every sample (without forcing)
+    rng = np.random.default_rng(seed)
+    xi = np.zeros((n_mc, n))
+    for i in range(N):
+        dt = ts[i + 1] - ts[i]
+        d1 = xi @ Js[i].T
+        xi = xi + 0.5 * dt * (d1 + (xi + dt * d1) @ Js[i + 1].T) + sqrt(2 * D * dt) * rng.standard_normal((n_mc, n))
+    s1c = xi @ ell
+    # pass 2: the same noise, conditioned; the second-order deviation and the integrals
+    rng = np.random.default_rng(seed)
+    xi = np.zeros((n_mc, n))
+    d2 = np.zeros((nB, nS, n_mc, n))
+    s2 = np.zeros((nB, nS, n_mc))
+    s3 = np.zeros((nB, nS, n_mc))
+    g1_closed = np.zeros(nB)                                  # (2 / sigma^2) int nu^T M c dt
+
+    def conditioned(i, j, k):
+        return means[j][i][None] + xi + c[i][None] * ((svals[k] - mus[j] - s1c) / var)[:, None]
+
+    def tensors(i):
+        H, T = curvature_tensors(real, qs[i], sweep.over(ts[i]), lam[i], eps, eps3)
+        return H.reshape(n, n * n), np.einsum("a,abc->bc", lam[i], H), T.reshape(n, n * n)
+
+    H2, L2, T2 = tensors(0)                                   # L2 = lam . F'' (twice the matrix M of version 13)
+    src = np.zeros((nB, nS, n_mc, n))
+    for j in range(nB):
+        for k in range(nS):
+            dl = conditioned(0, j, k)
+            src[j, k] = 0.5 * _contract(H2, dl, dl)
+    for i in range(N + 1):
+        for j in range(nB):
+            nu = means[j][i] - c[i] * mus[j] / var
+            g1_closed[j] += w[i] * 2.0 * float(nu @ (0.5 * L2) @ c[i]) / var
+            for k in range(nS):
+                dl = conditioned(i, j, k)
+                s2[j, k] += w[i] * 0.5 * np.einsum("si,si->s", dl @ L2, dl)
+                cubic = np.einsum("si,si->s", _contract(T2, dl, dl), dl) / 6.0
+                s3[j, k] += w[i] * (np.einsum("si,si->s", dl @ L2, d2[j, k]) + cubic)
+        if i == N:
+            break
+        dt = ts[i + 1] - ts[i]
+        d1 = xi @ Js[i].T
+        xi_next = xi + 0.5 * dt * (d1 + (xi + dt * d1) @ Js[i + 1].T) + sqrt(2 * D * dt) * rng.standard_normal((n_mc, n))
+        H2n, L2n, T2n = tensors(i + 1)
+        xi_old, xi = xi, xi_next
+        for j in range(nB):
+            for k in range(nS):
+                dl = conditioned(i + 1, j, k)
+                src_next = 0.5 * _contract(H2n, dl, dl)
+                k1 = d2[j, k] @ Js[i].T + src[j, k]
+                d2[j, k] = d2[j, k] + 0.5 * dt * (k1 + (d2[j, k] + dt * k1) @ Js[i + 1].T + src_next)
+                src[j, k] = src_next
+        H2, L2, T2 = H2n, L2n, T2n
+    del xi_old
+    rows = []
+    idx = np.array_split(np.arange(n_mc), NEXT_ORDER_BATCHES)
+    for j in range(nB):
+        z0 = mus[j] / sigma
+
+        def terms(sel):
+            g = s2[j][:, sel].mean(axis=1)
+            v = s2[j][:, sel].var(axis=1)
+            Delta = g[1] / sigma
+            eta = v[1] / var
+            gp = (g[2] - g[0]) / (2 * NEXT_ORDER_STEP * sigma)          # g'(0), per unit of s1
+            vp = (v[2] - v[0]) / (2 * NEXT_ORDER_STEP * sigma)          # v'(0)
+            third = s3[j][1, sel].mean() / sigma
+            third_slope = (s3[j][2, sel].mean() - s3[j][0, sel].mean()) / (2 * NEXT_ORDER_STEP * sigma)
+            parts = {"third_order": third, "slope_of_push": -Delta * gp, "slope_of_spread": -vp / (2 * sigma),
+                     "sharpness": -0.5 * z0 * eta}
+            return {"Delta": Delta, "eta": eta, "g_slope": gp, "v_slope_over_2sigma": vp / (2 * sigma),
+                    "third_order_slope": third_slope, **parts, "delta2": sum(parts.values())}
+
+        full = terms(np.arange(n_mc))
+        per = [terms(ix) for ix in idx]
+        err = {k: float(np.std([p[k] for p in per], ddof=1) / sqrt(NEXT_ORDER_BATCHES)) for k in full}
+        rows.append({"bias": "none" if (null_bias and j == nB - 1) else j, "z0": z0, "g_slope_closed": float(g1_closed[j]),
+                     **{k: float(v) for k, v in full.items()}, "errors": err})
+    out: Dict[str, object] = {"samples": n_mc, "sigma": sigma, "h": NEXT_ORDER_STEP, "rows": rows}
+    if nb == 2:
+        a, b = rows[0], rows[1]
+        out["R_f"] = 0.5 * (a["delta2"] + b["delta2"])
+        out["R_b"] = 0.5 * (a["delta2"] - b["delta2"])
+        out["R_error"] = 0.5 * sqrt(a["errors"]["delta2"] ** 2 + b["errors"]["delta2"] ** 2)
     return out
 
 
@@ -624,6 +819,15 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         so = second_order_selection(real, sweep, np.asarray(path["t"], float), np.asarray(path["q"], float), np.array(full["J"]),
                                     np.array(full["C"]), np.array(full["m"]), L[:, 0], float(np.asarray(path["d"][-1], float)[0]), D)
         if np.isfinite(so["sigma"]) and so["sigma"] > 0 and np.all(np.isfinite(so["Delta"])):
+            # the terms of the next order are added to the shift where they are finite
+            no = next_order_selection(real, sweep, np.asarray(path["t"], float), np.asarray(path["q"], float), np.array(full["J"]),
+                                      np.array(full["C"]), np.array(full["m"]), L[:, 0], float(np.asarray(path["d"][-1], float)[0]), D)
+            d2 = [r["delta2"] for r in no["rows"] if r["bias"] != "none"]
+            no["Delta_second_order"] = list(so["Delta"])
+            no["applied"] = bool(np.all(np.isfinite(d2)))
+            if no["applied"]:
+                so["Delta"] = [a + b for a, b in zip(so["Delta"], d2)]
+            so["next_order"] = no
             path["biased"][-1] = np.asarray(path["biased"][-1], float) + so["sigma"] * np.asarray(so["Delta"])[:, None]
         else:
             so["not_applied"] = True
@@ -1185,14 +1389,20 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     so = lin[0].get("second_order") if lin else None
     if so is not None:
         out["second_order"] = so
-        eta = so.get("eta")
-        if reduced is None and eta is not None and not eta < SECOND_ORDER_SPREAD:
-            out["second_order_not_small"] = (
-                f"the second-order term of the critical coordinate varies among the samples that the first order leaves "
-                f"undecided by {eta:.3g} of the first-order variance (at or above {SECOND_ORDER_SPREAD:g}): the curvature "
-                "does not act on the selection as a shift of the mean, the response to a bias is lower than this law gives "
-                "(by 0.07 to 0.12 in the response constant on the cases held out), and the law is not claimed at this "
-                "write point")
+        no = so.get("next_order")
+        if no is not None and no.get("applied"):
+            # the corrections of the offset and of the response, per noise floor of bias, from each pair of opposite biases
+            d2 = {key: r["delta2"] for key, r in zip([(c, float(e[0])) for c, e in keys], no["rows"])}
+            pairs = [{"bias_floors": c, "R_f": 0.5 * (d2[(c, 1.0)] + d2[(c, -1.0)]), "R_b": 0.5 * (d2[(c, 1.0)] - d2[(c, -1.0)]) / c}
+                     for c in sorted({c for c, _ in d2}) if (c, 1.0) in d2 and (c, -1.0) in d2]
+            if pairs:
+                rho = max(max(abs(p["R_f"]), abs(p["R_b"])) for p in pairs)
+                out["next_order"] = {"corrections": pairs, "size": rho, "limit": NEXT_ORDER_LIMIT}
+                if reduced is None and not rho < NEXT_ORDER_LIMIT:
+                    out["next_order_not_small"] = (
+                        f"the terms of the next order change the statistic of the write by {rho:.3g} per noise floor (at or "
+                        f"above {NEXT_ORDER_LIMIT:g}): the expansion in the deviation from the path of the sweep does not hold "
+                        "at this write point, where the terms overshoot on the case held out, and the law is not claimed")
     if extended is not None:
         out["sweep_extended_for_saturation"] = extended
     if validity is not None:

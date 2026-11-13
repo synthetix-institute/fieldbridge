@@ -473,17 +473,66 @@ def test_the_second_order_shift_is_the_mean_of_the_curvature_among_the_undecided
     exact = c * (D / k) * (T - (1 - np.exp(-2 * k * T)) / (2 * k)) / sigma
     assert so["Delta_cov"] == pytest.approx(exact, rel=1e-3)
     assert so["Delta_unconditioned"] == pytest.approx(exact, rel=1e-3)
-    assert 0.0 < so["eta"] < completion.SECOND_ORDER_SPREAD
+    assert 0.0 < so["eta"] < 0.1
 
 
-def test_a_write_in_one_direction_carries_the_second_order_shift_and_its_spread():
-    # a pitchfork whose slow partner pumps it: the law keeps the quantities of the shift, and a spread at or above
-    # the limit withdraws the claim
+def test_the_terms_of_the_next_order_have_their_closed_forms_on_a_diffusing_coordinate():
+    # The critical coordinate diffuses for a time T, sigma^2 = 2 D T.
+    # (A) x' = a x^2 with a constant forcing b. Among the samples with s1 = s the deviation is a bridge about s t / T,
+    # whatever b: the slopes of the push and of its spread vanish, the third-order mean vanishes at s = 0 and has the
+    # slope (11/30) a^2 D T^3 in s (plus 2 a^2 h^2 sigma^2 T^2 / 15 from its cubic term at the step h sigma), the spread
+    # is that of the square of a bridge, 2 a^2 D T^3 / 45, and only the loss of sharpness is left of the next order.
+    # (B) x' = c x y with y held at f / k by a forcing: the push grows with s1 at the rate c f T / (2 k), and without
+    # the forcing every term vanishes.
+    class Still:
+        def over(self, t):
+            return {}
+
+    def load(drift, variables, parameters):
+        return spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                          "assumptions": [], "provenance": {"source": "test"},
+                          "carrier": {"kind": "euclid", "variables": variables, "scale": 3.0},
+                          "parameters": parameters, "drift": drift, "noise": 0.001,
+                          "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D, T, N = 0.01, 5.0, 400
+    ts = np.linspace(0.0, T, N + 1)
+    sigma = np.sqrt(2 * D * T)
+    a, b = 0.4, 0.02
+    one = load({"x": "a*x**2 + 0*e"}, ["x"], {"e": 0.0, "a": a})
+    r = completion.next_order_selection(one, Still(), ts, np.zeros((N + 1, 1)), np.zeros((N + 1, 1, 1)), (2 * D * ts)[:, None, None],
+                                        (b * ts)[:, None, None], np.ones(1), 0.0, D, n_mc=4000)["rows"][0]
+    eta = 2 * a ** 2 * D * T ** 3 / 45
+    assert r["Delta"] == pytest.approx(a * D * T ** 2 / (3 * sigma), rel=0.03)
+    assert r["eta"] == pytest.approx(eta, rel=0.15)
+    assert abs(r["g_slope"]) < 0.005 and abs(r["g_slope_closed"]) < 1e-12
+    assert abs(r["v_slope_over_2sigma"]) < 0.003 and abs(r["third_order"]) < 0.004
+    h = completion.NEXT_ORDER_STEP
+    assert r["third_order_slope"] == pytest.approx(11 / 30 * a ** 2 * D * T ** 3 + 2 * a ** 2 * h ** 2 * sigma ** 2 * T ** 2 / 15, rel=0.05)
+    assert r["sharpness"] == pytest.approx(-0.5 * (b * T / sigma) * eta, rel=0.15)
+    assert r["delta2"] == pytest.approx(r["sharpness"], abs=0.006)
+    c, k, f = 0.7, 2.0, 0.3
+    two = load({"x": "c*x*y + 0*e", "y": "-k*y"}, ["x", "y"], {"e": 0.0, "c": c, "k": k})
+    J = np.array([[0.0, 0.0], [0.0, -k]])
+    C = np.zeros((N + 1, 2, 2))
+    C[:, 0, 0] = 2 * D * ts
+    C[:, 1, 1] = D / k
+    m = np.zeros((N + 1, 1, 2))
+    m[:, 0, 1] = f / k
+    rows = completion.next_order_selection(two, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0), C, m,
+                                           np.array([1.0, 0.0]), 0.0, D, n_mc=4000, null_bias=True)["rows"]
+    assert rows[0]["g_slope"] == pytest.approx(c * f * T / (2 * k), rel=0.02)
+    assert rows[0]["g_slope_closed"] == pytest.approx(c * f * T / (2 * k), rel=1e-3)
+    assert rows[1]["bias"] == "none" and abs(rows[1]["g_slope"]) < 0.005 and abs(rows[1]["delta2"]) < 1e-3
+
+
+def test_a_write_in_one_direction_carries_the_shifts_of_the_second_and_of_the_next_order():
     law = completion.complete(spec.load(EX / "pitchfork.json"), np.random.default_rng(0), n_samples=500,
                               certify=False)["write_points"][0]["law"]
     so = law["second_order"]
-    assert so["eta"] < completion.SECOND_ORDER_SPREAD and "second_order_not_small" not in law
-    assert len(so["Delta"]) == len(law["rows"])
+    assert len(so["Delta"]) == len(law["rows"]) and so["next_order"]["applied"]
+    # a symmetric pitchfork has no forcing but the bias: the terms of the next order are small, and the law is claimed
+    assert law["next_order"]["size"] < completion.NEXT_ORDER_LIMIT and "next_order_not_small" not in law
+    assert abs(law["next_order"]["corrections"][0]["R_f"]) < 0.01
 
 
 def test_a_symmetric_critical_direction_is_oriented_by_its_first_component_not_by_rounding():
