@@ -434,6 +434,57 @@ def test_the_noise_across_the_critical_space_pushes_the_mean_through_the_curvatu
     assert g == pytest.approx([0.0, 0.0], abs=1e-9)
 
 
+def test_the_second_order_shift_is_the_mean_of_the_curvature_among_the_undecided_samples():
+    # Two cases with a closed form. The critical coordinate diffuses (rate zero) for a time T, so sigma^2 = 2 D T.
+    # (1) x' = a x^2: the curvature acts on the critical coordinate itself. Among all samples <x^2> = 2 D t and the
+    # push is a D T^2; among the samples that end at x = 0 the variance is that of a bridge, 2 D t (1 - t / T), and the
+    # push is a third of it. (2) x' = c y^2, y' = -k y: y is not correlated with x, the condition leaves it alone, and
+    # the push is c times the integral of <y^2> = (D / k)(1 - exp(-2 k t)), with or without the condition.
+    class Still:
+        def over(self, t):
+            return {}
+
+    def load(drift, variables, parameters):
+        return spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                          "assumptions": [], "provenance": {"source": "test"},
+                          "carrier": {"kind": "euclid", "variables": variables, "scale": 3.0},
+                          "parameters": parameters, "drift": drift, "noise": 0.001,
+                          "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D, T, N = 0.01, 5.0, 500
+    ts = np.linspace(0.0, T, N + 1)
+    sigma = np.sqrt(2 * D * T)
+    a = 0.4
+    one = load({"x": "a*x**2 + 0*e"}, ["x"], {"e": 0.0, "a": a})
+    so = completion.second_order_selection(one, Still(), ts, np.zeros((N + 1, 1)), np.zeros((N + 1, 1, 1)),
+                                           (2 * D * ts)[:, None, None], np.zeros((N + 1, 1, 1)), np.ones(1), 0.0, D, n_mc=4000)
+    assert so["Delta_unconditioned"] == pytest.approx(a * D * T ** 2 / sigma, rel=1e-3)
+    assert so["Delta_cov"] == pytest.approx(a * D * T ** 2 / (3 * sigma), rel=1e-3)
+    assert so["Delta"][0] == pytest.approx(so["Delta_cov"], abs=1e-12)          # no bias, no forcing
+    assert so["sampled"]["rows"][0]["conditional_mean_over_sigma"] == pytest.approx(so["Delta_cov"], rel=0.1)
+    c, k = 3.0, 2.0
+    two = load({"x": "c*y**2 + 0*e", "y": "-k*y"}, ["x", "y"], {"e": 0.0, "c": c, "k": k})
+    J = np.array([[0.0, 0.0], [0.0, -k]])
+    C = np.zeros((N + 1, 2, 2))
+    C[:, 0, 0] = 2 * D * ts
+    C[:, 1, 1] = (D / k) * (1 - np.exp(-2 * k * ts))
+    so = completion.second_order_selection(two, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0), C,
+                                           np.zeros((N + 1, 1, 2)), np.array([1.0, 0.0]), 0.0, D, n_mc=4000)
+    exact = c * (D / k) * (T - (1 - np.exp(-2 * k * T)) / (2 * k)) / sigma
+    assert so["Delta_cov"] == pytest.approx(exact, rel=1e-3)
+    assert so["Delta_unconditioned"] == pytest.approx(exact, rel=1e-3)
+    assert 0.0 < so["eta"] < completion.SECOND_ORDER_SPREAD
+
+
+def test_a_write_in_one_direction_carries_the_second_order_shift_and_its_spread():
+    # a pitchfork whose slow partner pumps it: the law keeps the quantities of the shift, and a spread at or above
+    # the limit withdraws the claim
+    law = completion.complete(spec.load(EX / "pitchfork.json"), np.random.default_rng(0), n_samples=500,
+                              certify=False)["write_points"][0]["law"]
+    so = law["second_order"]
+    assert so["eta"] < completion.SECOND_ORDER_SPREAD and "second_order_not_small" not in law
+    assert len(so["Delta"]) == len(law["rows"])
+
+
 def test_a_symmetric_critical_direction_is_oriented_by_its_first_component_not_by_rounding():
     from fieldbridge.memory import analysis as an
     assert an.orientation_index(np.array([0.7071067811865475, -0.7071067811865476])) == 0

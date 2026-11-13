@@ -378,7 +378,11 @@ def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.nd
     -1.52 (all pairs but the critical one) or +0.17 (the relaxing pairs alone) against -0.70; across the critical space
     the velocity fluctuations meet no curvature, and the offset is -0.70. (The covariance that the linear stage itself
     carries does not serve either: where the relaxing direction is slow, its correlation with the critical mode grows after
-    the crossing, and the drift from it sent every sample to one state.) Zero in one dimension or without noise."""
+    the crossing, and the drift from it sent every sample to one state.) Zero in one dimension or without noise.
+
+    This drift is the stationary, unconditioned estimate of the second-order shift. A write in one direction takes the
+    shift from second_order_selection instead, which uses the covariance the sweep generates and conditions it on the
+    undecided samples; this drift remains the correction of writes in two or more directions."""
     q = np.asarray(q, float)
     n, k = q.size, R.shape[1]
     if n <= k or D <= 0:
@@ -409,6 +413,121 @@ def noise_curvature_drift(real: Realization, q: np.ndarray, over: Dict, R: np.nd
     return out
 
 
+SECOND_ORDER_SPREAD = 0.1     # the selection to second order is claimed where the spread of the second-order term among
+                              # the samples the first order leaves undecided is below this fraction of the first-order variance
+SECOND_ORDER_SAMPLES = 20000  # samples of the first-order deviation from which that spread is estimated
+SECOND_ORDER_SEED = 12345     # their own generator: the estimate does not move the stream of the law or of the certificate
+
+
+def half_curvature_along(real: Realization, q: np.ndarray, over: Dict, lam: np.ndarray, eps: float) -> np.ndarray:
+    """The matrix M with delta^T M delta = lam . (1/2) F''[delta, delta] at q: half the Hessian of the scalar lam . F,
+    by central differences."""
+    n = q.size
+    E = np.eye(n) * eps
+    pts = [q]
+    for a in range(n):
+        pts += [q + E[a], q - E[a]]
+    pairs = [(a, b) for a in range(n) for b in range(a + 1, n)]
+    for a, b in pairs:
+        pts += [q + E[a] + E[b], q + E[a] - E[b], q - E[a] + E[b], q - E[a] - E[b]]
+    g = np.array([np.asarray(real.F(real.carrier.wrap(p), **over), float) @ lam for p in pts])
+    M = np.zeros((n, n))
+    for a in range(n):
+        M[a, a] = (g[1 + 2 * a] + g[2 + 2 * a] - 2.0 * g[0]) / eps ** 2
+    base = 1 + 2 * n
+    for i, (a, b) in enumerate(pairs):
+        v = (g[base + 4 * i] - g[base + 4 * i + 1] - g[base + 4 * i + 2] + g[base + 4 * i + 3]) / (4.0 * eps ** 2)
+        M[a, b] = M[b, a] = v
+    return 0.5 * M
+
+
+def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np.ndarray, Js: np.ndarray, C: np.ndarray,
+                           m: np.ndarray, ell: np.ndarray, d_end: float, D: float,
+                           n_mc: int = SECOND_ORDER_SAMPLES, seed: int = SECOND_ORDER_SEED) -> Dict[str, object]:
+    """The selection of a write in one direction to second order in the deviation from the path of the sweep.
+
+    To first order the deviation delta is Gaussian, with the mean m (the forcing of the sweep and the bias) and the
+    covariance C that the sweep generates, and the critical coordinate at the end of the linear stage, s1 = l . delta,
+    has the mean mu and the spread sigma: the write goes to one state with the probability Phi(mu / sigma). The
+    curvature of the drift adds to the critical coordinate the second-order term
+        s2 = int lam(t) . (1/2) F''[delta(t), delta(t)] dt,
+    where lam is the adjoint that carries a push at the time t to the critical coordinate at the end
+    (d lam / dt = -J^T lam, lam(t*) = l). The sign of s1 + s2 is decided by the samples whose s1 ends near zero, so the
+    statistic is shifted by the mean of s2 among those samples, not among all:
+        z = mu / sigma + Delta,   Delta = (1 / sigma) int tr(M (Sigma + nu nu^T)) dt,
+    with M = half the Hessian of lam . F, c = C lam the covariance of delta with s1, Sigma = C - c c^T / sigma^2 the
+    covariance of delta given s1, and nu = m - c mu / sigma^2 its mean given s1 = 0. The condition removes the
+    fluctuation along the growing critical direction, which the unconditioned mean (Delta_unconditioned, and the
+    stationary drift of noise_curvature_drift) counts in full: on the Rydberg ensemble the unconditioned shift is -52.9
+    and the conditioned one -0.128, and the offset of the write is 0.087 against 0.086 in the full dynamics.
+
+    A shift of the mean describes the selection where s2 varies little among the undecided samples. eta is the variance
+    of s2 at s1 = 0 over sigma^2, from n_mc samples of the first-order deviation (for a Gaussian first order the
+    conditional mean and variance of s2 are quadratic in s1, and both are fitted). On ten carriers held out from the
+    development the response constant and the offset were within the gate of the full dynamics at all eight write
+    points with eta below SECOND_ORDER_SPREAD; on the three with eta at or above it (a slow partner at the edge of the
+    limit, a slow variable that pumps strongly, one that shifts the rate) the offset of two was still right and the
+    response constant of all three was 0.07 to 0.12 above the full dynamics: a spread of the push among the undecided
+    samples lowers the response to a bias, which no shift of the mean gives.
+
+    ts, qs, Js: the times, states and Jacobians of the path; C[i]: the covariance in all variables; m[i, j]: the mean
+    under bias j; ell: the left critical vector; d_end: the lag of the path behind the branch along it at the end."""
+    N, n, nb = len(ts) - 1, qs.shape[1], m.shape[1]
+    lam = np.zeros((N + 1, n))
+    lam[N] = ell
+    for i in range(N - 1, -1, -1):
+        dt = ts[i + 1] - ts[i]
+        d1 = Js[i + 1].T @ lam[i + 1]
+        lam[i] = lam[i + 1] + 0.5 * dt * (d1 + Js[i].T @ (lam[i + 1] + dt * d1))
+    var = float(ell @ C[N] @ ell)
+    sigma = sqrt(var)
+    mu = m[N] @ ell + d_end                                    # one per bias
+    w = np.zeros(N + 1)
+    w[:-1] += 0.5 * np.diff(ts)
+    w[1:] += 0.5 * np.diff(ts)
+    eps = 1e-3 * an.base_length(real)
+    M = np.array([half_curvature_along(real, qs[i], sweep.over(ts[i]), lam[i], eps) for i in range(N + 1)])
+    c = np.einsum("tij,tj->ti", C, lam)
+    Sig = C - np.einsum("ti,tj->tij", c, c) / var
+    f_sig = np.einsum("tij,tij->t", M, Sig)                     # the part from the covariance given s1
+    f_unc = np.einsum("tij,tij->t", M, C)                       # the same with the covariance of the sweep, unconditioned
+    nu = m - c[:, None, :] * (mu / var)[None, :, None]
+    f_nu = np.einsum("tij,tbi,tbj->tb", M, nu, nu)
+    out: Dict[str, object] = {"sigma": sigma, "mu": mu.tolist(), "d_end": d_end,
+                              "Delta_cov": float(np.sum(w * f_sig)) / sigma,
+                              "Delta_mean": (np.sum(w[:, None] * f_nu, axis=0) / sigma).tolist(),
+                              "Delta_unconditioned": float(np.sum(w * f_unc)) / sigma}
+    out["Delta"] = [out["Delta_cov"] + v for v in out["Delta_mean"]]
+    out["z_linear"] = (mu / sigma).tolist()
+    out["z"] = [z + d for z, d in zip(out["z_linear"], out["Delta"])]
+    if n_mc > 0:
+        rng = np.random.default_rng(seed)
+        xi = np.zeros((n_mc, n))
+        s2 = np.zeros((nb, n_mc))
+        for i in range(N + 1):
+            if w[i] > 0:
+                for j in range(nb):
+                    dlt = xi + m[i, j][None]
+                    s2[j] += w[i] * np.einsum("si,ij,sj->s", dlt, M[i], dlt)
+            if i < N:
+                dt = ts[i + 1] - ts[i]
+                d1 = xi @ Js[i].T
+                xi = xi + 0.5 * dt * (d1 + (xi + dt * d1) @ Js[i + 1].T) + sqrt(2 * D * dt) * rng.standard_normal((n_mc, n))
+        s1c = xi @ ell
+        out["sampled"] = {"samples": n_mc, "sigma": float(np.std(s1c)), "rows": []}
+        for j in range(nb):
+            s1 = s1c + mu[j]
+            X = np.stack([np.ones(n_mc), s1 / sigma, (s1 / sigma) ** 2], axis=1)
+            coef, *_ = np.linalg.lstsq(X, s2[j], rcond=None)
+            res = s2[j] - X @ coef
+            vcoef, *_ = np.linalg.lstsq(X, res ** 2, rcond=None)
+            out["sampled"]["rows"].append({"conditional_mean_over_sigma": float(coef[0]) / sigma,
+                                           "eta": float(max(vcoef[0], 0.0)) / var,
+                                           "eta_unconditional": float(np.var(s2[j])) / var})
+        out["eta"] = max(r["eta"] for r in out["sampled"]["rows"])
+    return out
+
+
 def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
                    targets: Sequence[np.ndarray], strengths: Sequence[float], dt: float, D: float) -> Dict[str, object]:
     """The state the sweep really follows, with no bias and no noise, and the moments of the deviation from it: the
@@ -427,9 +546,14 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
 
     The moments are integrated by Heun's rule with the Jacobians at both ends of each step, until the critical rate
     integrated since the crossing reaches GROWTH_STOP: the fluctuations present then decide the write, and noise added
-    later is amplified less by that factor."""
+    later is amplified less by that factor.
+
+    A write in one direction is carried to second order: the mean is not pushed by noise_curvature_drift along the path,
+    and the shift of second_order_selection is added to the critical mean under each bias at the end of the linear
+    stage (`second_order` holds its quantities). In two or more directions the drift of noise_curvature_drift acts."""
     n = q0.size
     k = R.shape[1]
+    second = k == 1 and D > 0
     Rx, Lx = crossing
     I = np.eye(n)
     F = lambda q, s: real.F(q, **sweep.over(s))    # noqa: E731
@@ -441,7 +565,8 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
     lag_at_crossing, rate_at_crossing = None, None
     J, b = an.jacobian(real, q_ref, sweep.over(t)), bias(q_ref)
     Jc = L.T @ J @ R
-    g = noise_curvature_drift(real, q_ref, sweep.over(t), R, D)
+    g = np.zeros(n) if second else noise_curvature_drift(real, q_ref, sweep.over(t), R, D)
+    full: Dict[str, List] = {"J": [J], "C": [C.copy()], "m": [mf[None] + mb]}
     kappa = float(np.max(np.linalg.eigvals(Jc).real))
     path: Dict[str, List] = {"t": [t], "q": [q_ref.copy()], "branch": [q_branch.copy()], "Phi": [Phi.copy()], "grown": [0.0], "cov": [np.zeros((k, k))],
                              "forced": [np.zeros(k)], "biased": [np.zeros((len(targets), k))], "d": [np.zeros(k)]}
@@ -470,7 +595,7 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         d1 = J @ C + C @ J.T + 2 * D * I
         C_pred = C + dt * d1
         C_next = C + 0.5 * dt * (d1 + J_next @ C_pred + C_pred @ J_next.T + 2 * D * I)
-        g_next = noise_curvature_drift(real, q_new, sweep.over(t_next), R, D)
+        g_next = np.zeros(n) if second else noise_curvature_drift(real, q_new, sweep.over(t_next), R, D)
         mf = mf + 0.5 * impulse
         d1 = J @ mf + g
         mf = mf + 0.5 * dt * (d1 + J_next @ (mf + dt * d1) + g_next) + 0.5 * impulse
@@ -487,10 +612,20 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
         path["t"].append(t); path["q"].append(q_ref.copy()); path["branch"].append(q_branch.copy())
         path["Phi"].append(Phi.copy()); path["grown"].append(grown if t > sweep.t_cross else 0.0); path["cov"].append(L.T @ C @ L)
         path["forced"].append(L.T @ mf); path["biased"].append(mb @ L); path["d"].append(L.T @ real.carrier.diff(q_branch, q_ref))
+        if second:
+            full["J"].append(J); full["C"].append(C.copy()); full["m"].append(mf[None] + mb)
         if t > sweep.t_cross and grown >= GROWTH_STOP:
             t_star, ended_by = t, "growth"
             break
     path.update(t_star=t if t_star is None else t_star, ended_by=ended_by, grown_end=grown, lag_at_crossing=lag_at_crossing, rate_at_crossing=rate_at_crossing)
+    if second and len(path["t"]) > 1:
+        so = second_order_selection(real, sweep, np.asarray(path["t"], float), np.asarray(path["q"], float), np.array(full["J"]),
+                                    np.array(full["C"]), np.array(full["m"]), L[:, 0], float(np.asarray(path["d"][-1], float)[0]), D)
+        if np.isfinite(so["sigma"]) and so["sigma"] > 0 and np.all(np.isfinite(so["Delta"])):
+            path["biased"][-1] = np.asarray(path["biased"][-1], float) + so["sigma"] * np.asarray(so["Delta"])[:, None]
+        else:
+            so["not_applied"] = True
+        path["second_order"] = so
     return path
 
 
@@ -613,7 +748,8 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
                         "spread_at_map": spread_map, "written_amplitude_at_map": ell_map, "regime": regime,
                         "sector_law": _probs(sector, len(stable)) if sector is not None else None,
                         "lag_at_crossing": path["lag_at_crossing"], "rate_at_crossing": path["rate_at_crossing"],
-                        "mean_critical": (mc + hist_d[-1]).tolist(), "cov_critical": Cc.tolist(), "final": q})
+                        "mean_critical": (mc + hist_d[-1]).tolist(), "cov_critical": Cc.tolist(), "final": q,
+                        "second_order": path.get("second_order")})
     return results
 
 
@@ -1044,6 +1180,17 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
            "lag_at_crossing": rows[0]["lag_at_crossing"] if rows else None,
            "rate_at_crossing": rows[0]["rate_at_crossing"] if rows else None,
            "rows": rows}
+    so = lin[0].get("second_order") if lin else None
+    if so is not None:
+        out["second_order"] = so
+        eta = so.get("eta")
+        if reduced is None and eta is not None and not eta < SECOND_ORDER_SPREAD:
+            out["second_order_not_small"] = (
+                f"the second-order term of the critical coordinate varies among the samples that the first order leaves "
+                f"undecided by {eta:.3g} of the first-order variance (at or above {SECOND_ORDER_SPREAD:g}): the curvature "
+                "does not act on the selection as a shift of the mean, the response to a bias is lower than this law gives "
+                "(by 0.07 to 0.12 in the response constant on the cases held out), and the law is not claimed at this "
+                "write point")
     if extended is not None:
         out["sweep_extended_for_saturation"] = extended
     if validity is not None:
