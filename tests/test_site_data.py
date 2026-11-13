@@ -272,8 +272,9 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     assert nodes["toggle"]["facts"]["loss"] == "activation between stored states (Law 3)"
     assert "neutral cycles" in nodes["lotka_volterra"]["facts"]["loss"]  # as on the memory card, not a limit cycle
     # every material of the repository, in the full registry
+    # (the learning objectives are specifications kept outside the catalog: examples/memory/learning_objectives/README.md)
     files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
-             if "fields" not in p.parts}
+             if "fields" not in p.parts and "learning_objectives" not in p.parts}
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
     assert files <= named and len(files) == 34
     # the degenerate write is a material of its own, so that the gallery has its card
@@ -330,7 +331,7 @@ def test_every_material_of_the_page_has_a_card_in_the_gallery():
     gallery = json.loads((ROOT / "examples/gallery/gallery.json").read_text(encoding="utf-8"))
     names = {c["name"] for c in gallery["cards"]}
     specs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "examples/memory").rglob("*.json"))
-             if "fields" not in p.parts]
+             if "fields" not in p.parts and "learning_objectives" not in p.parts]
     missing = sorted(s["name"] for s in specs if s["name"] not in names)
     assert not missing, ("regenerate the gallery: python3 -B -m fieldbridge memory gallery --out-dir examples/gallery "
                          f"--quick (missing: {missing})")
