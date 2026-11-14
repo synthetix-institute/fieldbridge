@@ -529,6 +529,11 @@ def second_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: 
     return out
 
 
+SELECTION_WHOLE_LIMIT = 0.1   # the push is kept whole where each expanded term (third order, slope of the push, slope of the spread)
+                              # corrects the offset and the response (per unit of the first-order response) by less than this
+SELECTION_WRONG_SIGN = 1e-3   # and where the linear form in s1 reverses the decision for less than this fraction of samples
+SELECTION_THETA_NODES = 96    # Gauss-Legendre nodes of the inversion of the characteristic function
+SELECTION_THETA_RANGE = 10.0  # its range in theta sigma
 NEXT_ORDER_LIMIT = 0.1        # the next order of the selection is claimed where the larger of its corrections of the offset and
                               # of the response is below this: an expansion is claimed where its last term is small
 
@@ -669,8 +674,10 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
     I = {"cMc": 0.0, "S": 0.0, "QGcc": 0.0, "cov": 0.0}
     Ij = [{"nuMc": 0.0, "nuMnu": 0.0, "QGcnu": 0.0, "QGnunu": 0.0, "third": 0.0} for _ in range(nB)]
     s = sources(0)
+    Ms = []
     for i in range(N + 1):
         M, L2, T, Sig, wi, ci = s["M"], s["L2"], s["T"], s["Sig"], w[i], c[i]
+        Ms.append(M)
         I["cMc"] += wi * float(ci @ M @ ci)
         I["S"] += 2.0 * wi * float(np.sum(M * Z)) + wi ** 2 * float(np.sum(M * s["CMC"].T))
         I["QGcc"] += 2.0 * wi * float(ci @ M @ Pc) + wi ** 2 * float(ci @ M @ s["CMc"])
@@ -718,7 +725,122 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
         a, b = rows[0], rows[1]
         out["R_f"] = float(0.5 * (a["delta2"] + b["delta2"]))
         out["R_b"] = float(0.5 * (a["delta2"] - b["delta2"]))
+    out["push_kept_whole"] = push_kept_whole(A, dts, D, w, np.array(Ms), lam, c, var, nus[:nb], mus[:nb],
+                                             [rows[j]["third_order"] for j in range(nb)])
     return out
+
+
+def selection_choice(no: Dict, so: Dict) -> Optional[List[float]]:
+    """The shift of the statistic from push_kept_whole, where its regime holds; None where it does not.
+
+    The regime is stated on what push_kept_whole expands: each of the third-order mean, the slope of the push and the
+    slope of the spread corrects the offset and the response, per unit of the first-order response, by less than
+    SELECTION_WHOLE_LIMIT, and the linear form reverses the decision for less than SELECTION_WRONG_SIGN of the
+    samples. The biases come in pairs toward the two sides, as law_at builds them."""
+    pk = no.get("push_kept_whole")
+    rows = [r for r in no.get("rows", []) if r["bias"] != "none"]
+    if not pk or len(rows) < 2 or len(rows) % 2:
+        return None
+    rho = 0.0
+    for f in range(len(rows) // 2):
+        ra, rb = rows[2 * f], rows[2 * f + 1]
+        half = 0.5 * (ra["z0"] - rb["z0"])
+        for term in ("third_order", "slope_of_push", "slope_of_spread"):
+            rho = max(rho, abs(0.5 * (ra[term] + rb[term])), abs(0.5 * (ra[term] - rb[term]) / half) if half else float("inf"))
+    pk["size_expanded"] = rho
+    pk["in_regime"] = bool(rho < SELECTION_WHOLE_LIMIT and max(pk["weight_wrong_sign"]) < SELECTION_WRONG_SIGN
+                           and np.all(np.isfinite(pk["z"])))
+    if not pk["in_regime"]:
+        return None
+    return [float(z) - float(mu) / float(so["sigma"]) for z, mu in zip(pk["z"], so["mu"])]
+
+
+def push_kept_whole(A: np.ndarray, dts: np.ndarray, D: float, w: np.ndarray, Ms: np.ndarray, lam: np.ndarray, c: np.ndarray,
+                    var: float, nus, mus, thirds) -> Dict[str, object]:
+    """The selection of a write in one direction with the part of the second-order push that does not depend on the
+    first-order critical coordinate kept whole.
+
+    Write the first-order deviation as delta1 = nu + c s1 / var + zeta, with zeta the part not correlated with s1 and
+    so, being Gaussian, independent of it. Near the decision boundary s1 + s2 = (1 + V) s1 + W, where
+    W = sum w (nu + zeta)^T M (nu + zeta) is the push on a sample that sits on the boundary and
+    V = (2 / var) sum w (nu + zeta)^T M c says how that push grows with the sample's distance from it; both depend on
+    zeta alone. The probability of a write toward the upper state is
+        P = E_zeta Phi((mu + E[s3 | s1 = 0] + W / (1 + V)) / sigma) = P(X > 0),    X = (1 + V)(s1 + tau) + W,
+    tau = E[s3 | s1 = 0]. Expanding it in the spread of W gives the terms of next_order_selection; kept whole, W acts
+    through its distribution, which is one-sided for a pump and heavy-tailed for a product, and the response to a bias
+    depends on the strength of the bias. On ten carriers held out from its development, at 0.5, 1 and 2 noise floors,
+    this held at every write point inside SELECTION_WHOLE_LIMIT and SELECTION_WRONG_SIGN (27 of 27), including a strong
+    product pump that the expansion misses by 0.12 and oscillating pumps with offsets of 1.7 and 2.7 noise units, and
+    it gave every change of the response or of the offset with the strength of the bias that the full dynamics
+    resolve there (4 of 4).
+
+    Written in the first-order deviation xi of the discrete process (u = l . xi_N its critical coordinate at the end),
+    with a = mu + tau, S_cc = sum w c^T M c and S_cnu = sum w c^T M nu, the products of the running sums with u cancel:
+        X = sum_i w_i [xi_i^T M_i xi_i + 2 (M_i (nu_i + a c_i / var))^T xi_i] + (1 - 2 a S_cc / var^2) u - (S_cc / var^2) u^2
+            + (1 + 2 S_cnu / var) a + sum w nu^T M nu.
+    X is a quadratic form in a Gauss-Markov chain, and its characteristic function E exp(i theta X) follows from a
+    backward Riccati recursion: with the value log E[exp(i theta (rest of X)) | xi_i = x] = x^T P x + p^T x + r and the
+    noise of step i of variance s = 2 D dt,
+        B = (I - 2 s P)^(-1),  P <- A_i^T P B A_i + i theta w_i M_i,  p <- A_i^T B p + i theta (local linear term),
+        r <- r - (1/2) log det(I - 2 s P) + (s/2) p^T B p,
+    from the terminal form at the end to xi_0 = 0. The probability is then
+        P(X > 0) = 1/2 + (1/pi) int_0^inf Im E exp(i theta X) / theta d theta,
+    by Gauss-Legendre quadrature in theta sigma on [0, SELECTION_THETA_RANGE].
+
+    For a sample with 1 + V < 0 the linear form reverses the decision. V is Gaussian; the fraction of such samples is
+    Phi(-(1 + q') / s_V), with q' its mean and s_V its spread, from a backward sum along the path. Where it is not
+    negligible the push multiplies the critical coordinate (a modulated rate or stiffness), and this selection is not
+    used."""
+    N, n = len(dts), A.shape[1]
+    nb = len(nus)
+    sigma = sqrt(var)
+    ell = lam[N]
+    S_cc = float(np.einsum("t,ti,tij,tj->", w, c, Ms, c))
+    a = np.array([float(mus[j]) + sigma * float(thirds[j]) for j in range(nb)])
+    S_cnu = np.array([float(np.einsum("t,ti,tij,tj->", w, c, Ms, nus[j])) for j in range(nb)])
+    q0 = np.array([float(np.einsum("t,ti,tij,tj->", w, nus[j], Ms, nus[j])) for j in range(nb)])
+    qp = 2.0 * S_cnu / var
+    beta = 1.0 - 2.0 * a * S_cc / var ** 2
+    gamma = S_cc / var ** 2
+    const = (1.0 + qp) * a + q0
+    # the local linear terms, for every bias and step: 2 w_i M_i (nu_i + a c_i / var)
+    lin = np.array([2.0 * np.einsum("t,tij,tj->ti", w, Ms, nus[j] + np.outer(np.ones(N + 1), [0.0] * n) + c * (a[j] / var))
+                    for j in range(nb)])                                     # (nb, N + 1, n)
+    # the weight of the wrong sign: V = q' + (2 / var) sum w (M c)^T zeta, Gaussian
+    g = w[:, None] * np.einsum("tij,tj->ti", Ms, c)
+    eta, cov_u, var_lin = g[N].copy(), 0.0, 0.0
+    for i in range(N - 1, -1, -1):
+        si = 2.0 * D * dts[i]
+        var_lin += si * float(eta @ eta)
+        cov_u += si * float(eta @ lam[i + 1])
+        eta = g[i] + A[i].T @ eta
+    s_V = 2.0 / var * sqrt(max(var_lin - cov_u ** 2 / var, 0.0))
+    wrong = [float(ND.cdf(-(1.0 + qp[j]) / s_V)) if s_V > 0 else float(1.0 + qp[j] <= 0) for j in range(nb)]
+    # the characteristic function on a grid of theta, for every bias at once
+    xg, wg = np.polynomial.legendre.leggauss(SELECTION_THETA_NODES)
+    scale = SELECTION_THETA_RANGE / (sigma * max(min(abs(1.0 + qp)), 0.25))
+    th = 0.5 * scale * (xg + 1.0)
+    wth = 0.5 * scale * wg
+    Id = np.eye(n)
+    iT = 1j * th
+    P = iT[:, None, None] * (w[N] * Ms[N] - gamma * np.outer(ell, ell))[None]
+    p = iT[None, :, None] * (lin[:, N, :] + beta[:, None] * ell[None])[:, None, :]
+    r = np.zeros((nb, len(th)), complex)
+    for i in range(N - 1, -1, -1):
+        si = 2.0 * D * dts[i]
+        G = Id[None] - 2.0 * si * P
+        Bm = np.linalg.inv(G)
+        sign, logabs = np.linalg.slogdet(G)
+        r += -0.5 * (np.log(sign) + logabs)[None] + 0.5 * si * np.einsum("bki,kij,bkj->bk", p, Bm, p)
+        p = np.einsum("ji,bkj->bki", A[i], np.einsum("kij,bkj->bki", Bm, p)) + iT[None, :, None] * lin[:, i, None, :]
+        PB = P @ Bm
+        P = np.einsum("ji,kjl,lm->kim", A[i], PB, A[i]) + iT[:, None, None] * (w[i] * Ms[i])[None]
+        P = 0.5 * (P + np.transpose(P, (0, 2, 1)))
+    phi = np.exp(r + iT[None, :] * const[:, None])
+    prob = 0.5 + (1.0 / pi) * np.sum(wth[None] * phi.imag / th[None], axis=1)
+    z = [ND.inv_cdf(min(max(float(pr), 1e-12), 1.0 - 1e-12)) for pr in prob]
+    return {"probability": [float(x) for x in prob], "z": z, "weight_wrong_sign": wrong, "q_slope": qp.tolist(),
+            "spread_of_slope": s_V, "W_mean_over_sigma": [float(x) for x in (q0 + sigma * 0.0) / sigma]}
 
 
 def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarray, L: np.ndarray, crossing: Tuple[np.ndarray, np.ndarray],
@@ -824,8 +946,13 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
             # a spread is a variance: a negative one says that the conditional moments were lost in the subtraction
             no["applied"] = bool(np.all(np.isfinite(d2)) and np.all(np.isfinite(etas)) and min(etas) > -1e-9)
             so["eta"] = max(etas)
-            if no["applied"]:
+            whole = selection_choice(no, so) if no["applied"] else None
+            if whole is not None:
+                so["Delta"] = whole
+                so["selection"] = "push kept whole"
+            elif no["applied"]:
                 so["Delta"] = [a + b for a, b in zip(so["Delta"], d2)]
+                so["selection"] = "expansion to the next order"
             so["next_order"] = no
             path["biased"][-1] = np.asarray(path["biased"][-1], float) + so["sigma"] * np.asarray(so["Delta"])[:, None]
         else:
@@ -1397,7 +1524,10 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
             if pairs:
                 rho = max(max(abs(p["R_f"]), abs(p["R_b"])) for p in pairs)
                 out["next_order"] = {"corrections": pairs, "size": rho, "limit": NEXT_ORDER_LIMIT}
-                if reduced is None and not rho < NEXT_ORDER_LIMIT:
+                out["selection"] = so.get("selection")
+                pk = no.get("push_kept_whole") or {}
+                out["push_kept_whole"] = {k: pk.get(k) for k in ("in_regime", "size_expanded", "weight_wrong_sign")}
+                if reduced is None and not rho < NEXT_ORDER_LIMIT and so.get("selection") != "push kept whole":
                     out["next_order_not_small"] = (
                         f"the terms of the next order change the statistic of the write by {rho:.3g} per noise floor (at or "
                         f"above {NEXT_ORDER_LIMIT:g}): the expansion in the deviation from the path of the sweep does not hold "
