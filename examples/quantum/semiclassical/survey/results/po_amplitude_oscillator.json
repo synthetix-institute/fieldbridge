@@ -5,7 +5,7 @@
   "source": "Krantz, P., Bengtsson, A., Simoen, M., Gustavsson, S., Shumeiko, V., Oliver, W. D., Wilson, C. M., Delsing, P., Bylander, J., 'Single-shot read-out of a superconducting qubit using a Josephson parametric oscillator', Nat. Commun. 7, 11417 (2016), arXiv:1508.02886 (full text and Methods)",
   "kind": "classical image of census entry 24: Josephson parametric oscillator measurement, amplitude-encoded (qubit coupled directly to the JPO)"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -116,10 +116,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 2.690455604172787,
+       "spread_at_map": 2.6904540314334655,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        20.98068787202198
+        20.980602014064285
        ],
        "cov_critical": [
         [
@@ -162,10 +162,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 2.690455604343556,
+       "spread_at_map": 2.6904540316042262,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -20.98068787214689
+        -20.98060201418873
        ],
        "cov_critical": [
         [
@@ -208,10 +208,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.07481014427015,
+       "spread_at_map": 3.074806998791505,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        41.963119857276965
+        41.96294814136148
        ],
        "cov_critical": [
         [
@@ -254,10 +254,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.0748101444409044,
+       "spread_at_map": 3.074806998962251,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -41.963119857401054
+        -41.96294814148508
        ],
        "cov_critical": [
         [
@@ -300,10 +300,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.843742864160755,
+       "spread_at_map": 3.8437365732034996,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        83.94019261997862
+        83.93984918814948
        ],
        "cov_critical": [
         [
@@ -346,10 +346,10 @@
        "linear_size_before_crossing": false,
        "lag_at_crossing": 8.626911607489577e-13,
        "rate_at_crossing": 0.019999999999661018,
-       "spread_at_map": 3.843742864331452,
+       "spread_at_map": 3.8437365733741853,
        "written_amplitude_at_map": 23.148921698063635,
        "mean_critical": [
-        -83.94019262009957
+        -83.93984918826983
        ],
        "cov_critical": [
         [
@@ -393,12 +393,12 @@
       ],
       "Delta_unconditioned": 2.033710488140215e-09,
       "Delta": [
-       0.0008610268589563621,
-       -0.0008610268581383119,
-       0.0017636148865413216,
-       -0.0017636148857046949,
-       0.0038597191249280967,
-       -0.003859719124017321
+       0.0008589809154055938,
+       -0.0008589809145764238,
+       0.0017595229994377126,
+       -0.0017595229985891692,
+       0.0038515353507642125,
+       -0.0038515353498393967
       ],
       "z_linear": [
        0.4990961605022398,
@@ -417,6 +417,7 @@
        -1.996384641965976
       ],
       "eta": 1.4367543988813074e-21,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 41.96514103375533,
        "unconditioned_spread": 7.930862869124365e-18,
@@ -500,6 +501,51 @@
          "delta2": -0.0038597191764859168
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6914466679454476,
+         0.3085533320535083,
+         0.841333093447175,
+         0.15866690655211224,
+         0.9772626164848013,
+         0.022737383515043952
+        ],
+        "z": [
+         0.4999551414176454,
+         -0.4999551414206108,
+         0.9999518440058149,
+         -0.9999518440087602,
+         2.0002361773654163,
+         -2.000236177368284
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         -1.979926607446882e-11,
+         1.9799265940000976e-11,
+         -3.959853208170323e-11,
+         3.959853194723562e-11,
+         -7.919706409617272e-11,
+         7.919706396170611e-11
+        ],
+        "spread_of_slope": 9.971068576825101e-11,
+        "W_mean_over_sigma": [
+         5.344038815342654e-13,
+         5.344038817406803e-13,
+         2.1376155263434606e-12,
+         2.1376155267563078e-12,
+         8.550462105786712e-12,
+         8.550462106612455e-12
+        ],
+        "size_expanded": 0.0019333623718799675,
+        "in_regime": true
+       },
        "Delta_second_order": [
         4.4451267775461823e-11,
         4.44512677756678e-11,
@@ -531,6 +577,19 @@
       ],
       "size": 0.0019298595622363544,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 0.0019333623718799675,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [

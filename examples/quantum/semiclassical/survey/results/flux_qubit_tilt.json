@@ -5,7 +5,7 @@
   "source": "Krantz, P., Kjaergaard, M., Yan, F., Orlando, T. P., Gustavsson, S., Oliver, W. D., 'A quantum engineer's guide to superconducting qubits', Appl. Phys. Rev. 6, 021318 (2019), arXiv:1904.06560 (full text, arXiv v5); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text); Wendin, G., 'Quantum information processing with superconducting circuits: a review', Rep. Prog. Phys. 80, 106001 (2017), arXiv:1610.02208 (full text); Chiorescu, I., Nakamura, Y., Harmans, C. J. P. M., Mooij, J. E., 'Coherent quantum dynamics of a superconducting flux qubit', Science 299, 1869 (2003), arXiv:cond-mat/0305461 (full text)",
   "kind": "classical image of census entry 2: Persistent-current (three-junction) flux qubit and capacitively shunted flux qubit"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -183,10 +183,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.6689466891783445,
+         "spread_at_map": 0.6689465010236958,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          5.162182432140202
+          5.162172160537221
          ],
          "cov_critical": [
           [
@@ -229,10 +229,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.6689466891783444,
+         "spread_at_map": 0.6689465010236959,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          -5.162182432140198
+          -5.162172160537228
          ],
          "cov_critical": [
           [
@@ -275,10 +275,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.7634953114710236,
+         "spread_at_map": 0.7634949351617266,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          10.323712679623773
+          10.323692136417842
          ],
          "cov_critical": [
           [
@@ -321,10 +321,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.7634953114710235,
+         "spread_at_map": 0.7634949351617263,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          -10.323712679623767
+          -10.323692136417822
          ],
          "cov_critical": [
           [
@@ -367,10 +367,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.9525089292820226,
+         "spread_at_map": 0.9525081766634382,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          20.642207881994505
+          20.64216679558315
          ],
          "cov_critical": [
           [
@@ -413,10 +413,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 3.1952082943360563e-22,
          "rate_at_crossing": 0.020000000000043865,
-         "spread_at_map": 0.9525089292820226,
+         "spread_at_map": 0.9525081766634385,
          "written_amplitude_at_map": 0.7490121693653699,
          "mean_critical": [
-          -20.6422078819945
+          -20.64216679558317
          ],
          "cov_critical": [
           [
@@ -460,12 +460,12 @@
         ],
         "Delta_unconditioned": -8.702226695423767e-14,
         "Delta": [
-         -0.0013144659072779998,
-         0.0013144659072783767,
-         -0.002691328945846794,
-         0.0026913289458471877,
-         -0.005881834942018531,
-         0.005881834942018994
+         -0.0013154486328807447,
+         0.001315448632880023,
+         -0.0026932943970492396,
+         0.002693294397051127,
+         -0.005885765844374946,
+         0.00588576584437317
         ],
         "z_linear": [
          0.4952012381427018,
@@ -484,6 +484,7 @@
          -1.980804952570807
         ],
         "eta": 1.3593190457912911e-30,
+        "selection": "push kept whole",
         "next_order": {
          "sigma": 10.45217844797386,
          "unconditioned_spread": 1.470391815877297e-26,
@@ -567,6 +568,51 @@
            "delta2": 0.005881834942018762
           }
          ],
+         "push_kept_whole": {
+          "probability": [
+           0.6893065794823334,
+           0.3106934205176663,
+           0.8383524518082612,
+           0.16164754819173927,
+           0.9758613401703915,
+           0.02413865982960839
+          ],
+          "z": [
+           0.49388578950982104,
+           -0.49388578950982176,
+           0.9877091818883543,
+           -0.9877091818883524,
+           1.9749191867264322,
+           -1.974919186726434
+          ],
+          "weight_wrong_sign": [
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0
+          ],
+          "q_slope": [
+           1.1167923352704727e-15,
+           -1.1167923352704727e-15,
+           2.2335846705409454e-15,
+           -2.2335846705409454e-15,
+           4.467169341081891e-15,
+           -4.467169341081891e-15
+          ],
+          "spread_of_slope": 4.22448727973595e-15,
+          "W_mean_over_sigma": [
+           3.08177863619818e-18,
+           3.08177863619818e-18,
+           1.232711454479272e-17,
+           1.232711454479272e-17,
+           4.930845817917088e-17,
+           4.930845817917088e-17
+          ],
+          "size_expanded": 0.0029694224092557085,
+          "in_regime": true
+         },
          "Delta_second_order": [
           1.8847381406852343e-16,
           1.8847381406852343e-16,
@@ -598,6 +644,19 @@
         ],
         "size": 0.002940917471009381,
         "limit": 0.1
+       },
+       "selection": "push kept whole",
+       "push_kept_whole": {
+        "in_regime": true,
+        "size_expanded": 0.0029694224092557085,
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
        },
        "reduction_validity": {
         "slow": false,
@@ -791,10 +850,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.668946689178346,
+         "spread_at_map": 0.6689465010237002,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          5.162182432140516
+          5.162172160537694
          ],
          "cov_critical": [
           [
@@ -837,10 +896,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.668946689178335,
+         "spread_at_map": 0.6689465010236836,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          -5.162182432139916
+          -5.162172160536789
          ],
          "cov_critical": [
           [
@@ -883,10 +942,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.763495311471026,
+         "spread_at_map": 0.7634949351617331,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          10.323712679624116
+          10.323692136418401
          ],
          "cov_critical": [
           [
@@ -929,10 +988,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.7634953114710147,
+         "spread_at_map": 0.763494935161714,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          -10.323712679623496
+          -10.323692136417357
          ],
          "cov_critical": [
           [
@@ -975,10 +1034,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.9525089292820277,
+         "spread_at_map": 0.952508176663448,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          20.642207881994942
+          20.64216679558385
          ],
          "cov_critical": [
           [
@@ -1021,10 +1080,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 7.552986871178255e-19,
          "rate_at_crossing": 0.020000000000043885,
-         "spread_at_map": 0.9525089292820149,
+         "spread_at_map": 0.952508176663426,
          "written_amplitude_at_map": 0.7490121693653655,
          "mean_critical": [
-          -20.642207881994242
+          -20.642166795582646
          ],
          "cov_critical": [
           [
@@ -1068,12 +1127,12 @@
         ],
         "Delta_unconditioned": 3.4875617600564547e-13,
         "Delta": [
-         -0.0013144659072417554,
-         0.0013144659072991196,
-         -0.0026913289458016126,
-         0.0026913289458609427,
-         -0.00588183494195201,
-         0.005881834942019205
+         -0.0013154486328292303,
+         0.0013154486329158832,
+         -0.0026932943969832923,
+         0.0026932943970832124,
+         -0.005885765844283464,
+         0.005885765844398483
         ],
         "z_linear": [
          0.49520123814270184,
@@ -1092,6 +1151,7 @@
          -1.9808049525707738
         ],
         "eta": 7.51196248290463e-28,
+        "selection": "push kept whole",
         "next_order": {
          "sigma": 10.45217844797375,
          "unconditioned_spread": 2.1336535660194457e-25,
@@ -1175,6 +1235,51 @@
            "delta2": 0.005881834941985607
           }
          ],
+         "push_kept_whole": {
+          "probability": [
+           0.6893065794823516,
+           0.3106934205176789,
+           0.8383524518082774,
+           0.1616475481917471,
+           0.9758613401703967,
+           0.024138659829609832
+          ],
+          "z": [
+           0.4938857895098726,
+           -0.49388578950978596,
+           0.9877091818884204,
+           -0.9877091818883205,
+           1.974919186726524,
+           -1.9749191867264089
+          ],
+          "weight_wrong_sign": [
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0
+          ],
+          "q_slope": [
+           -6.222952681965539e-15,
+           6.222952681965539e-15,
+           -1.2445905363931077e-14,
+           1.2445905363931077e-14,
+           -2.4891810727862155e-14,
+           2.4891810727862155e-14
+          ],
+          "spread_of_slope": 4.9789721421238743e-14,
+          "W_mean_over_sigma": [
+           3.297078203454952e-16,
+           3.2970782034549513e-16,
+           1.3188312813819805e-15,
+           1.3188312813819805e-15,
+           5.275325125527922e-15,
+           5.275325125527922e-15
+          ],
+          "size_expanded": 0.0029694224092389762,
+          "in_regime": true
+         },
          "Delta_second_order": [
           2.868218435650392e-14,
           2.868218435650392e-14,
@@ -1206,6 +1311,19 @@
         ],
         "size": 0.0029409174709928037,
         "limit": 0.1
+       },
+       "selection": "push kept whole",
+       "push_kept_whole": {
+        "in_regime": true,
+        "size_expanded": 0.0029694224092389762,
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
        },
        "reduction_validity": {
         "slow": false,

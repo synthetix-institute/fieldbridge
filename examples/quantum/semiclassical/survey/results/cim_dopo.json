@@ -5,7 +5,7 @@
   "source": "Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -146,10 +146,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 3.367261419549167,
+       "spread_at_map": 3.3671645729482256,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        26.196420001118163
+        26.19113300661395
        ],
        "cov_critical": [
         [
@@ -192,10 +192,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 3.3672649614288535,
+       "spread_at_map": 3.3671683286031904,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        -26.1964367038684
+        -26.191161379662443
        ],
        "cov_critical": [
         [
@@ -222,13 +222,13 @@
         1.0
        ],
        "linear_stage_law": [
-        0.839125,
-        0.160875
+        0.839,
+        0.161
        ],
        "t_star": 51.04499999998982,
        "sector_law": [
-        0.839125,
-        0.160875
+        0.839,
+        0.161
        ],
        "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
@@ -238,10 +238,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 3.8470345921862803,
+       "spread_at_map": 3.8468365153096364,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        52.38792390889866
+        52.37711060881325
        ],
        "cov_critical": [
         [
@@ -249,18 +249,18 @@
         ]
        ],
        "law": [
-        0.839125,
-        0.160875
+        0.839,
+        0.161
        ],
        "certificate": [
         0.8445,
         0.1555
        ],
-       "sector_deviation": 0.005375000000000019,
-       "sector_deviation_sigma": 0.9380876978198206,
+       "sector_deviation": 0.00550000000000006,
+       "sector_deviation_sigma": 0.9599036907923818,
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.9380876978198206,
-       "deviation": 0.005375000000000019
+       "deviation_sigma": 0.9599036907923818,
+       "deviation": 0.00550000000000006
       },
       {
        "bias_floors": 1.0,
@@ -268,13 +268,13 @@
         -1.0
        ],
        "linear_stage_law": [
-        0.151625,
-        0.848375
+        0.15175,
+        0.84825
        ],
        "t_star": 51.04499999998982,
        "sector_law": [
-        0.151625,
-        0.848375
+        0.15175,
+        0.84825
        ],
        "regime": "saturated at the mapping time",
        "t_cross": 28.284271247461902,
@@ -284,10 +284,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 3.847038405352894,
+       "spread_at_map": 3.846840830308262,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        -52.387955421590355
+        -52.37716951723245
        ],
        "cov_critical": [
         [
@@ -295,18 +295,18 @@
         ]
        ],
        "law": [
-        0.151625,
-        0.848375
+        0.15175,
+        0.84825
        ],
        "certificate": [
         0.1515,
         0.8485
        ],
-       "sector_deviation": 0.00012500000000004174,
-       "sector_deviation_sigma": 0.02204995811934893,
+       "sector_deviation": 0.0002500000000000835,
+       "sector_deviation_sigma": 0.04409991623869786,
        "certificate_diverged": 0.0,
-       "deviation_sigma": 0.02204995811934893,
-       "deviation": 0.00012500000000004174
+       "deviation_sigma": 0.04409991623869786,
+       "deviation": 0.0002500000000000835
       },
       {
        "bias_floors": 2.0,
@@ -330,10 +330,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 4.805946628123538,
+       "spread_at_map": 4.805516432570904,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        104.73630387024541
+        104.7128188795446
        ],
        "cov_critical": [
         [
@@ -376,10 +376,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 0.0079999984682375,
        "rate_at_crossing": 0.019999996590712082,
-       "spread_at_map": 4.805951073897745,
+       "spread_at_map": 4.80552268169531,
        "written_amplitude_at_map": 1.0408376366377965,
        "mean_critical": [
-        -104.73636991789073
+        -104.71298337465726
        ],
        "cov_critical": [
         [
@@ -423,12 +423,12 @@
       ],
       "Delta_unconditioned": -0.0017117084136515695,
       "Delta": [
-       -0.0010214747889270308,
-       0.0010214240007309558,
-       -0.0021365310058459003,
-       0.002136431112403022,
-       -0.005025688994350998,
-       0.005025397345620227
+       -0.0011220981253888818,
+       0.0011218252253016314,
+       -0.0023423323040864252,
+       0.0023417110086438875,
+       -0.005472660921257422,
+       0.005470495596920921
       ],
       "z_linear": [
        0.49959796881937696,
@@ -447,6 +447,7 @@
        -1.998402291179695
       ],
       "eta": 0.0048643813606395366,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 52.54251039857925,
        "unconditioned_spread": 0.035365801241079714,
@@ -530,6 +531,51 @@
          "delta2": 0.0050347963498925796
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6909256638884705,
+         0.3090741458506464,
+         0.8405822171107951,
+         0.15941751074812105,
+         0.976864855843558,
+         0.023134972720467162
+        ],
+        "z": [
+         0.4984758706939881,
+         -0.49847641069659304,
+         0.996853622505386,
+         -0.9968547436644267,
+         1.992919265868406,
+         -1.9929223965785017
+        ],
+        "weight_wrong_sign": [
+         7.226513887292896e-09,
+         7.218140418707719e-09,
+         7.23507209698937e-09,
+         7.218315334345249e-09,
+         7.252217992803622e-09,
+         7.2186652211314595e-09
+        ],
+        "q_slope": [
+         -3.578861495710083e-05,
+         -7.332253604567189e-07,
+         -7.157668651060099e-05,
+         -1.4659073173122523e-06,
+         -0.00014315282961760087,
+         -2.9312712310233067e-06
+        ],
+        "spread_of_slope": 0.17642484023821092,
+        "W_mean_over_sigma": [
+         4.688372364361883e-07,
+         -5.119681728834385e-07,
+         1.87518449731322e-06,
+         -2.047717925845499e-06,
+         7.5004090917187086e-06,
+         -8.190562172676613e-06
+        ],
+        "size_expanded": 0.001079602851479145,
+        "in_regime": true
+       },
        "Delta_second_order": [
         -7.315308352255931e-07,
         -1.7124144611279851e-06,
@@ -562,6 +608,19 @@
       "size": 0.002516694640661108,
       "limit": 0.1
      },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 0.001079602851479145,
+      "weight_wrong_sign": [
+       7.226513887292896e-09,
+       7.218140418707719e-09,
+       7.23507209698937e-09,
+       7.218315334345249e-09,
+       7.252217992803622e-09,
+       7.2186652211314595e-09
+      ]
+     },
      "one_direction": {
       "law": [
        {
@@ -573,10 +632,10 @@
        },
        {
         "bias_floors": 1.0,
-        "P_toward_plus": 0.839125,
-        "P_toward_minus": 0.848375,
-        "response_constant": 1.3448863385713932,
-        "offset": -0.01931040208877377
+        "P_toward_plus": 0.839,
+        "P_toward_minus": 0.84825,
+        "response_constant": 1.3441914317129513,
+        "offset": -0.01930022679692628
        },
        {
         "bias_floors": 2.0,

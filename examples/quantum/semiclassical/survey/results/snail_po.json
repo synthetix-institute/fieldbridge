@@ -5,7 +5,7 @@
   "source": "Frattini, N. E., Vool, U., Shankar, S., Narla, A., Sliwa, K. M., Devoret, M. H., '3-wave mixing Josephson dipole element', Appl. Phys. Lett. 110, 222603 (2017), arXiv:1702.00869 (full text); Frattini, N. E., Sivak, V. V., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Optimizing the nonlinearity and dissipation of a SNAIL parametric amplifier for dynamic range', Phys. Rev. Applied 10, 054020 (2018), arXiv:1806.06093 (partial full text); Sivak, V. V., Frattini, N. E., Joshi, V. R., Lingenfelter, A., Shankar, S., Devoret, M. H., 'Kerr-free three-wave mixing in superconducting quantum circuits', Phys. Rev. Applied 11, 054060 (2019), arXiv:1902.10575 (full text); Esposito, M., Ranadive, A., Planat, L., Roch, N., 'Perspective on traveling wave microwave parametric amplifiers', Appl. Phys. Lett. 119, 120501 (2021), arXiv:2107.13033 (full text)",
   "kind": "classical image of census entry 20: SNAIL three-wave-mixing element and SNAIL parametric amplifier (SPA)"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -150,10 +150,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 15.3690367770745,
+       "spread_at_map": 15.36902536332482,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        118.23610083567226
+        118.23547774370536
        ],
        "cov_critical": [
         [
@@ -196,10 +196,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 15.3690367770745,
+       "spread_at_map": 15.36902536332469,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        -118.23610083567226
+        -118.23547774369834
        ],
        "cov_critical": [
         [
@@ -242,10 +242,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 17.53360991714667,
+       "spread_at_map": 17.533587089647312,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        236.403063754973
+        236.40181757103952
        ],
        "cov_critical": [
         [
@@ -288,10 +288,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 17.53360991714667,
+       "spread_at_map": 17.533587089647064,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        -236.403063754973
+        -236.4018175710259
        ],
        "cov_critical": [
         [
@@ -334,10 +334,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 21.853890956860965,
+       "spread_at_map": 21.85384530186248,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        472.25302417897404
+        472.25053181111963
        ],
        "cov_critical": [
         [
@@ -380,10 +380,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 1.8203778596582022e-23,
        "rate_at_crossing": 0.019999999999989426,
-       "spread_at_map": 21.853890956860965,
+       "spread_at_map": 21.853845301861952,
        "written_amplitude_at_map": 5.149583166062611,
        "mean_critical": [
-        -472.253024178974
+        -472.25053181109087
        ],
        "cov_critical": [
         [
@@ -427,12 +427,12 @@
       ],
       "Delta_unconditioned": 4.7901212774844714e-14,
       "Delta": [
-       -0.005015570712344775,
-       0.0050155707123448025,
-       -0.010318904207115705,
-       0.010318904207115736,
-       -0.022939910673640193,
-       0.02293991067364024
+       -0.005018164118213986,
+       0.005018164118243185,
+       -0.010324091018852899,
+       0.01032409101890952,
+       -0.02295028429706214,
+       0.022950284297181822
       ],
       "z_linear": [
        0.49713264836426957,
@@ -451,6 +451,7 @@
        -1.9885305934570783
       ],
       "eta": 1.4190827685155693e-32,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 240.26135855442826,
        "unconditioned_spread": 4.587099024531299e-27,
@@ -534,6 +535,51 @@
          "delta2": 0.022939910673640217
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6886807932747673,
+         0.31131920672524305,
+         0.8374277890295888,
+         0.16257221097042512,
+         0.9753264447489824,
+         0.024673555251024493
+        ],
+        "z": [
+         0.4921144842460556,
+         -0.4921144842460264,
+         0.9839412057096862,
+         -0.9839412057096296,
+         1.9655803091600161,
+         -1.9655803091598965
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         -2.309074349019638e-16,
+         2.309074349019638e-16,
+         -4.618148698039276e-16,
+         4.618148698039276e-16,
+         -9.236297396078551e-16,
+         9.236297396078551e-16
+        ],
+        "spread_of_slope": 7.37752786028776e-16,
+        "W_mean_over_sigma": [
+         6.161332132635174e-19,
+         6.161332132635174e-19,
+         2.4645328530540697e-18,
+         2.4645328530540697e-18,
+         9.858131412216279e-18,
+         9.858131412216279e-18
+        ],
+        "size_expanded": 0.011536171694326823,
+        "in_regime": true
+       },
        "Delta_second_order": [
         1.3716698215279873e-17,
         1.3716698215279873e-17,
@@ -565,6 +611,19 @@
       ],
       "size": 0.011469955336820109,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 0.011536171694326823,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [
