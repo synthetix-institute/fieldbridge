@@ -524,6 +524,60 @@ def test_the_terms_of_the_next_order_have_their_closed_forms_on_a_diffusing_coor
     assert rows[1]["bias"] == "none" and all(abs(rows[1][t]) < 1e-12 for t in ("g_slope", "third_order", "slope_of_spread", "delta2"))
 
 
+def test_the_spread_among_undecided_samples_survives_a_critical_mode_that_grows_a_thousandfold():
+    # The conditional spread is the difference of unconditioned moments that grow with the critical mode. Here the
+    # critical rate crosses zero and the mode grows by exp(8); the spread from the closed forms is compared with the
+    # double sum over the two-time covariance of the conditioned process, written out term by term.
+    class Still:
+        def over(self, t):
+            return {}
+
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                      "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 3.0},
+                      "parameters": {"e": 0.0, "c": 0.8, "q": 0.5, "b": 0.4, "k": 0.6},
+                      "drift": {"x": "c*y**2 + q*x*y + b*x**2 + 0*e", "y": "-k*y"},
+                      "noise": 0.001, "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D, T, N, k = 0.002, 8.0, 320, 0.6
+    ts = np.linspace(0.0, T, N + 1)
+    dt = T / N
+    Js = np.array([[[0.5 * (t - 4.0), 0.3], [0.0, -k]] for t in ts])       # the critical rate crosses zero at t = 4
+    m = np.zeros((N + 1, 1, 2))
+    m[:, 0, 0], m[:, 0, 1] = 1e-3 * ts, 2e-3
+    ell = np.array([1.0, 0.0])
+    out = completion.next_order_selection(real, Still(), ts, np.zeros((N + 1, 2)), Js, np.zeros((N + 1, 2, 2)), m, ell, 0.0, D)
+    row = out["rows"][0]
+    # the discrete process, its covariance at two times and the conditioning, explicitly
+    A = [np.eye(2) + 0.5 * dt * (Js[i] + Js[i + 1]) + 0.5 * dt ** 2 * Js[i + 1] @ Js[i] for i in range(N)]
+    C = [np.zeros((2, 2))]
+    for i in range(N):
+        C.append(A[i] @ C[i] @ A[i].T + 2 * D * dt * np.eye(2))
+    lam = [None] * (N + 1)
+    lam[N] = ell
+    for i in range(N - 1, -1, -1):
+        lam[i] = A[i].T @ lam[i + 1]
+    var = float(ell @ C[N] @ ell)
+    c = [C[i] @ lam[i] for i in range(N + 1)]
+    nu = [m[i, 0] - c[i] * (m[N, 0] @ ell) / var for i in range(N + 1)]
+    M = [lam[i][0] * np.array([[0.4, 0.25], [0.25, 0.8]]) for i in range(N + 1)]      # half the Hessian of lam . F
+    w = np.full(N + 1, dt)
+    w[0] = w[-1] = 0.5 * dt
+    V0 = Q = 0.0
+    for i in range(N + 1):
+        G = C[i].copy()                                        # Cov(xi_j, xi_i) for j >= i, carried forward in j
+        for j in range(i, N + 1):
+            K = G - np.outer(c[j], c[i]) / var
+            f = 1.0 if j == i else 2.0
+            V0 += f * w[i] * w[j] * 2.0 * np.trace(M[j] @ K @ M[i] @ K.T)
+            Q += f * w[i] * w[j] * float(nu[j] @ M[j] @ K @ M[i] @ nu[i])
+            if j < N:
+                G = A[j] @ G
+    eta = (V0 + 4.0 * Q) / var
+    assert row["eta"] == pytest.approx(eta, rel=1e-6) and eta > 0
+    assert out["unconditioned_spread"] > 500 * eta              # the subtraction removes all but about a thousandth
+    assert row["g_slope"] == pytest.approx(2.0 / var * sum(w[i] * float(nu[i] @ M[i] @ c[i]) for i in range(N + 1)), rel=1e-9)
+
+
 def test_a_write_in_one_direction_carries_the_shifts_of_the_second_and_of_the_next_order():
     law = completion.complete(spec.load(EX / "pitchfork.json"), np.random.default_rng(0), n_samples=500,
                               certify=False)["write_points"][0]["law"]
