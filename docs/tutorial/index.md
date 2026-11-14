@@ -137,6 +137,7 @@ field is added (`memory new`, `memory check`).
 | 15 | [Quantum-computing hardware](35_memory_quantum_hardware.md) | Which mechanisms do the hardware elements of quantum computing carry, and which laws appear where a derivation stops? | `memory codiscover`, `memory complete`, `memory changes` |
 | 16 | [Chaos and blow-up](36_memory_chaos_and_blow_up.md) | What does a material without a stable state do with its initial state: lose it at the largest Lyapunov exponent, or carry it to infinity in finite time, and with which exponent? | `memory dynamics` |
 | 17 | [Populations](42_memory_populations.md) | Where do a coupling, a mutation rate or a copying fidelity change the state of a population, is the transition continuous or discontinuous, and which observable characterizes the new state? | `memory card`, `memory dynamics` |
+| 18 | [Two copies that exchange one variable](43_memory_pairs.md) | When two identical copies exchanging one variable become different, what holds the difference: each copy's own nonlinearity or the state they share? | `memory pair` |
 
 **Reviewing a manuscript.** [Reviewing the claims of a manuscript](40_review_checks.md) runs four checks on the claims of a paper: whether each quantity was computed for the system it is claimed for, whether it depends on the protocol, whether each theorem is used inside its hypotheses, and whether novelty and the statements relied on carry a recorded search (`review check`).
 

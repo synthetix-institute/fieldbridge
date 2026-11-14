@@ -1,0 +1,16 @@
+{
+  "schema": "fieldbridge-memory/1",
+  "question": "Do two FitzHugh-Nagumo units that exchange their inhibitor settle apart, and what holds the difference?",
+  "provenance": {"source": "FitzHugh-Nagumo units with the parameter values of arXiv:2003.12311", "kind": "equations from a paper"},
+  "field": "nonlinear dynamics",
+  "kind": "equations",
+  "name": "FitzHugh-Nagumo unit",
+  "carrier": {"kind": "euclid", "name": "activator u, inhibitor v", "variables": ["u", "v"], "scale": 1.0},
+  "parameters": {"a": 0.7, "b": 0.05, "c": 3.625},
+  "drift": {"u": "u - u**3 - v", "v": "c*(u - a*v - b)"},
+  "control": {"name": "a", "range": [0.35, 1.05]},
+  "noise": 0.01, "dt": 0.01,
+  "closure": "deterministic unit; the pair exchanges v",
+  "observable": "the difference of the activators of the two units",
+  "assumptions": ["identical units", "linear exchange of the inhibitor"]
+}

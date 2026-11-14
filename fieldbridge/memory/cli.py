@@ -524,6 +524,22 @@ def cmd_escape(args) -> int:
     return 0
 
 
+def cmd_pair(args) -> int:
+    """memory pair: two copies exchanging one variable; the part of the limit held by their shared state
+    (fieldbridge.memory.shared_state)."""
+    from . import shared_state
+    from .spec import load
+    real = load(args.spec)
+    r = shared_state.report(real, args.exchange, args.rate, args.control)
+    report = {"command": "pair", **_provenance(real.spec), **r}
+    _write(Path(args.out_dir), "pair", report, shared_state.markdown(real.name, r) + f"\n{BOUNDARY}\n")
+    b = r["balance"]
+    print(json.dumps({k: b.get(k) for k in ("growth_rate", "g", "g_own", "g_shared", "free_difference", "held_difference")}
+                     | {"free": r.get("free", {}).get("size"), "held": r.get("held", {}).get("endpoint") if r.get("held", {}).get("endpoint") != "rest" else r["held"]["size"]},
+                     indent=2))
+    return 0
+
+
 def cmd_dynamics(args) -> int:
     """memory dynamics: chaotic loss of the initial state and blow-up in finite time, each with its law
     (fieldbridge.memory.chaos_blowup)."""
@@ -1443,6 +1459,13 @@ def add_parser(sub) -> None:
     common(p)
     p.add_argument("--size", type=int, default=None, help="Population scale N for the exact mean time of the chain.")
     p.set_defaults(func=cmd_escape)
+    p = msub.add_parser("pair", help="Two copies exchanging one variable: whether they settle apart, and the part "
+                                     "of the limit held by their shared state (free pair and shared state held).")
+    common(p)
+    p.add_argument("--exchange", required=True, help="Variable the two copies exchange.")
+    p.add_argument("--rate", type=float, required=True, help="Exchange rate k.")
+    p.add_argument("--control", type=float, default=None, help="Value of the control parameter (default: the file's).")
+    p.set_defaults(func=cmd_pair)
     p = msub.add_parser("dynamics", help="Chaotic loss of the initial state (predictability law) and blow-up in "
                                          "finite time (exponent from the dominant balance).")
     common(p)
