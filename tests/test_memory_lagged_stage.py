@@ -45,7 +45,14 @@ def stage(real, v=0.0, k=None):
     crossing = cm.critical_space(real, nf, k_static) if k > k_static else None
     rows = cm.linear_stage_law(real, sweep, q0, R, L, targets, [floor, floor], D, stable, 200, rng, crossing=crossing)
     z = [float(e @ np.asarray(r["mean_critical"])) / sqrt(float(e @ np.asarray(r["cov_critical"]) @ e)) for r in rows]
-    return {"c": PI4 * 0.5 * (z[0] - z[1]), "z0": 0.5 * (z[0] + z[1]), "t_map": rows[0]["t_map"], "t_cross": rows[0]["t_cross"],
+    c_law = PI4 * 0.5 * (z[0] - z[1])
+    # this file is about the first-order moments of the stage: in one direction the law adds to the mean the shifts of
+    # the second and of the next order (completion.second_order_selection, next_order_selection), which are taken out here
+    so = rows[0].get("second_order")
+    if so is not None and R.shape[1] == 1 and not so.get("not_applied"):
+        sign = 1.0 if float(e[0]) > 0 else -1.0
+        z = [zi - sign * d for zi, d in zip(z, so["Delta"])]
+    return {"c": PI4 * 0.5 * (z[0] - z[1]), "c_law": c_law, "z0": 0.5 * (z[0] + z[1]), "t_map": rows[0]["t_map"], "t_cross": rows[0]["t_cross"],
             "lag": rows[0]["lag_at_crossing"], "rate": rows[0]["rate_at_crossing"], "k": k}
 
 
@@ -65,6 +72,9 @@ def test_a_lag_that_shrinks_along_the_sweep_lowers_the_constant():
 def test_a_state_that_cannot_lag_keeps_the_constant_and_the_declared_rate():
     r = stage(real_of(["s", "y"], {"p": 0.0, "g": 0.3}, {"s": "p*s - s**3 - s*y", "y": "-g*y + s**2"}, "p", -1.0, 1.0))
     assert abs(r["c"] - 1.3303) < 0.01
+    # the slow variable is fed by the square of the critical one and lowers its rate: beyond first order the response to a
+    # bias is lower (at this noise, four times that of the law's rule for this model, by about 0.02)
+    assert 0.005 < r["c"] - r["c_law"] < 0.04
     assert r["lag"] < 1e-9
     assert abs(r["rate"] / RATE - 1) < 0.01
 

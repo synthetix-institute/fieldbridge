@@ -137,21 +137,25 @@ component, the first of near-equal ones, is taken positive) and has no physical 
 of the qubit is the bias of this write, so the offset is a systematic error of the measurement that the shape of the
 sweep must cancel. On these resonators the second quadrature relaxes slowly against the drift at the written
 states, so the reduced law of one coordinate does not hold and is withdrawn; the law is the linear stage with its
-outcome map, carried to second order in the deviation from the path of the sweep: the curvature of the drift pushes
+outcome map, carried beyond first order in the deviation from the path of the sweep: the curvature of the drift pushes
 the critical coordinate through the fluctuations, and the statistic of the write is shifted by the mean of that push
 among the samples that the first order leaves undecided; without it the law put the offset
-about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. The phonon laser of a trapped ion, where a
+about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. One order further, the push depends on
+where a sample is and varies among the undecided ones, which corrects the response to a bias; where that correction
+reaches a tenth of the statistic the law says that it is not claimed. The phonon laser of a trapped ion, where a
 spiral becomes a node only shortly before the crossing, is an equilibrium write: the noise exchanges its states during
-the hold, and its law (response 0.84, offset 0.99 against 0.72 and 0.80) is not certified. Other cusps have offsets of
+the hold, and its law (response 0.68, offset 0.86 against 0.72 and 0.80) is not certified and not claimed: the terms
+of the next order change its statistic by 0.18 per noise floor. Other cusps have offsets of
 their own: 2.1 to 2.3 for the dynamically polarised nuclear-spin bath, where the law is certified, and 0.06 for the
-Rydberg ensemble, where the law gives 0.07 in the survey and 0.11 in the record and is certified in both; with the
+Rydberg ensemble, where the law gives 0.09 in the survey and 0.12 in the record and is certified in both; with the
 stationary drift of the fluctuations in place of the second-order shift it gave 0.14 and 0.18 and was not certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read against the branch; read from the write
 point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives a response of
-1.35 at both write points in the survey and 1.33 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
-and an offset of 1.12 and 1.09 in the survey and 1.10 in the record against 1.03 and 1.02. It is certified in both,
-with an offset that stays 0.06 to 0.09 beyond the full dynamics. Both of its write points along the drive are folds and unfold at the same cusp; in the
+1.32 at both write points in the survey and 1.29 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
+and an offset of 1.07 and 1.04 in the survey and 1.04 in the record against 1.03 and 1.02. It is certified in both.
+To second order alone its offset was 0.06 to 0.09 beyond the full dynamics; the next order closes most of that at
+this noise, and not at a noise four times weaker or stronger. Both of its write points along the drive are folds and unfold at the same cusp; in the
 record the cusp search from the first of them found no cusp. In the bistable optomechanical element the law departs
 from the full dynamics by up to 0.30: three directions relax slowly during the passage, and 13 % of the final states
 have not yet left the unwritten branch at the end of the sweep, so the write is not settled there.
@@ -210,9 +214,11 @@ two coupled Kerr parametric oscillators, have no cubic term in the reduced equat
 order. The full dynamics give a response of only 0.08 and 0.07, against 1.33 for the pitchfork, and about half of the
 trajectories change state during a hold at the end of the sweep (50 % and 53 %): with the noise of the vacuum the
 written states do not retain the choice. The law keeps the pitchfork's sign rule and
-gives 1.35 for both, so it is not certified and the class is an equilibrium write; the
+gives 1.35 for the Kerr-cat qubit, so it is not certified and the class is an equilibrium write. For the pair the terms
+of the next order, through the coupling to the other oscillator, change the statistic by 0.47 per noise floor: the law
+gives 1.98, and it says that it is not claimed there. The
 [records](../records/quantum_semiclassical.md), with fewer samples and one bias, read the same (1.30 against 0.05, and
-1.31 against 0.06). Here the classical image is not enough, and the quantum dynamics decide
+1.95 against 0.06). Here the classical image is not enough, and the quantum dynamics decide
 ([the quantum write](30_quantum_write.md)).
 
 The phase-locked parametric oscillator used to measure qubits has the same form of equations, with a vanishing cubic
