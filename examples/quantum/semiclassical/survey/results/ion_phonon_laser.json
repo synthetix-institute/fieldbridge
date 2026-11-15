@@ -5,7 +5,7 @@
   "source": "Knuenz, S., 'A trapped-ion phonon laser and the detection of ultra-weak forces', PhD thesis, LMU Munich (2010) (full text); Knuenz, S., Herrmann, M., Batteiger, V., Saathoff, G., Haensch, T. W., Vahala, K., Udem, T., 'Injection locking of a trapped-ion phonon laser', Phys. Rev. Lett. 105, 013004 (2010) (abstract only); Vahala, K., Herrmann, M., Knuenz, S., Batteiger, V., Saathoff, G., Haensch, T. W., Udem, T., 'A phonon laser', Nat. Phys. (2009), DOI 10.1038/nphys1367 (not read; MPQ press release read)",
   "kind": "classical image of census entry 46: Trapped-ion phonon laser and its injection locking"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -488,6 +488,7 @@
          -0.14980653380237413
         ],
         "eta": 0.0943451412405652,
+        "selection": "expansion to the next order",
         "next_order": {
          "sigma": 0.4276023475635585,
          "unconditioned_spread": 0.026323986357102508,
@@ -571,6 +572,51 @@
            "delta2": 0.06386363917902842
           }
          ],
+         "push_kept_whole": {
+          "probability": [
+           0.8641612801506411,
+           0.7243286374771114,
+           0.9127557297717193,
+           0.6388757880343316,
+           0.9698723074545319,
+           0.46397306158681395
+          ],
+          "z": [
+           1.0992077944569014,
+           0.5957492897186704,
+           1.3579216699425456,
+           0.3554554371390073,
+           1.8789202375015048,
+           -0.0904292381641963
+          ],
+          "weight_wrong_sign": [
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0
+          ],
+          "q_slope": [
+           0.009113520174440412,
+           0.0057423558425577425,
+           0.010797286354213835,
+           0.004054957690448592,
+           0.01416481871376072,
+           0.0006801613862302152
+          ],
+          "spread_of_slope": 0.05217192290478572,
+          "W_mean_over_sigma": [
+           0.07679068307392567,
+           0.016047112482253365,
+           0.1274669520486854,
+           0.005965609072363372,
+           0.2694190014527761,
+           0.026359508328220677
+          ],
+          "size_expanded": 0.17460321377671675,
+          "in_regime": false
+         },
          "Delta_second_order": [
           0.30950720644075946,
           0.24883648665173727,
@@ -602,6 +648,19 @@
         ],
         "size": 0.18133932921723697,
         "limit": 0.1
+       },
+       "selection": "expansion to the next order",
+       "push_kept_whole": {
+        "in_regime": false,
+        "size_expanded": 0.17460321377671675,
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
        },
        "next_order_not_small": "the terms of the next order change the statistic of the write by 0.181 per noise floor (at or above 0.1): the expansion in the deviation from the path of the sweep does not hold at this write point, where the terms overshoot on the case held out, and the law is not claimed",
        "reduction_validity": {

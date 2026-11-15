@@ -5,7 +5,7 @@
   "source": "Vink, I. T., Nowack, K. C., Koppens, F. H. L., Danon, J., Nazarov, Yu. V., Vandersypen, L. M. K., 'Locking electron spins into magnetic resonance by electron-nuclear feedback', Nat. Phys. 5, 764 (2009), arXiv:0902.2659 (full text); Gullans, M., Krich, J. J., Taylor, J. M., Bluhm, H., Halperin, B. I., Marcus, C. M., Stopa, M., Yacoby, A., Lukin, M. D., 'Dynamic nuclear polarization in double quantum dots', Phys. Rev. Lett. 104, 226807 (2010), arXiv:1003.4508 (abstract only); Bluhm, H., Foletti, S., Mahalu, D., Umansky, V., Yacoby, A., 'Enhancing the coherence of a spin qubit by operating it as a feedback loop that controls its nuclear spin bath', Phys. Rev. Lett. 105, 216803 (2010), arXiv:1003.4031 (abstract only); Burkard, G., Ladd, T. D., Pan, A., Nichol, J. M., Petta, J. R., 'Semiconductor spin qubits', Rev. Mod. Phys. 95, 025003 (2023), arXiv:2112.08863 (full text of the arXiv HTML and ar5iv renderings, read through summarising fetches in 100k-character windows; eqs. 1, 2, 4, 5, 22 and the Pauli-blockade window quoted verbatim in this session; equation numbers are those of the arXiv rendering)",
   "kind": "classical image of census entry 37: Dynamically polarised nuclear-spin bath in GaAs dots (Overhauser-field feedback)"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -133,10 +133,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.2703103855869378,
+         "spread_at_map": 2.270302688946339,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -47.296728120580426
+          -47.296307940910275
          ],
          "cov_critical": [
           [
@@ -183,10 +183,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.7694173157120106,
+         "spread_at_map": 2.769406737914843,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -74.54427626589231
+          -74.54369879637585
          ],
          "cov_critical": [
           [
@@ -233,10 +233,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 2.0209844509731365,
+         "spread_at_map": 2.0209782891560684,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -33.68537552813692
+          -33.685039138483546
          ],
          "cov_critical": [
           [
@@ -283,10 +283,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 3.019295099840709,
+         "spread_at_map": 3.019283151322691,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -88.18575576164761
+          -88.1851034609074
          ],
          "cov_critical": [
           [
@@ -333,10 +333,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 1.522545671099438,
+         "spread_at_map": 1.5225427858965155,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -6.474303446457476
+          -6.474145935710183
          ],
          "cov_critical": [
           [
@@ -383,10 +383,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.020000112677109882,
-         "spread_at_map": 3.5199412777739965,
+         "spread_at_map": 3.5199266185203038,
          "written_amplitude_at_map": 0.4136933990511582,
          "mean_critical": [
-          -115.51733545657427
+          -115.51653516970858
          ],
          "cov_critical": [
           [
@@ -434,12 +434,12 @@
         ],
         "Delta_unconditioned": 0.0029208026664070044,
         "Delta": [
-         -0.005911588408868584,
-         -0.012572385389887128,
-         -0.0030391064070154454,
-         -0.016555492336810015,
-         0.0022770045387723306,
-         -0.02631410306287578
+         -0.0058960985319884696,
+         -0.012551097040289783,
+         -0.0030267054397989934,
+         -0.016531445342458095,
+         0.0022828111549801633,
+         -0.02628460057644144
         ],
         "z_linear": [
          -1.7376770415683807,
@@ -458,6 +458,7 @@
          -4.22810195890816
         ],
         "eta": 2.6997656311011955e-05,
+        "selection": "push kept whole",
         "next_order": {
          "sigma": 27.12624984889275,
          "unconditioned_spread": 7.27835578307399e-06,
@@ -541,6 +542,51 @@
            "delta2": -0.030431784776073032
           }
          ],
+         "push_kept_whole": {
+          "probability": [
+           0.04061677516642709,
+           0.0029975873839114264,
+           0.10715606207644196,
+           0.0005751326914605337,
+           0.4056812558493519,
+           1.028996579538477e-05
+          ],
+          "z": [
+           -1.7435731401003691,
+           -2.748045178229861,
+           -1.2417952271975845,
+           -3.2509340463426244,
+           -0.2386686709816148,
+           -4.258504241197798
+          ],
+          "weight_wrong_sign": [
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0
+          ],
+          "q_slope": [
+           0.0001829637662659724,
+           2.870578621881233e-06,
+           0.0002730103600880154,
+           -8.717601520016367e-05,
+           0.00045310354773210387,
+           -0.00026726920284425267
+          ],
+          "spread_of_slope": 0.00037935042539847944,
+          "W_mean_over_sigma": [
+           0.00042515834694571995,
+           2.2367010588919177e-05,
+           0.0009861181878814227,
+           0.00018053551516782003,
+           0.002827166215267424,
+           0.001216000869840216
+          ],
+          "size_expanded": 0.016957337729962135,
+          "in_regime": true
+         },
          "Delta_second_order": [
           0.003324806227420401,
           0.0029224480190706914,
@@ -572,6 +618,19 @@
         ],
         "size": 0.0169409473919484,
         "limit": 0.1
+       },
+       "selection": "push kept whole",
+       "push_kept_whole": {
+        "in_regime": true,
+        "size_expanded": 0.016957337729962135,
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
        },
        "reduction_validity": {
         "slow": true,
@@ -755,10 +814,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.2702822380779324,
+         "spread_at_map": 2.2702745368888912,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -47.39980963676217
+          -47.39938828552582
          ],
          "cov_critical": [
           [
@@ -805,10 +864,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.7693881126627904,
+         "spread_at_map": 2.7693775276715247,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -74.70713532323731
+          -74.70655619199763
          ],
          "cov_critical": [
           [
@@ -855,10 +914,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 2.020956936891923,
+         "spread_at_map": 2.0209507718520423,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -33.75860133195529
+          -33.758264027266094
          ],
          "cov_critical": [
           [
@@ -905,10 +964,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 3.0192655131690604,
+         "spread_at_map": 3.0192535561336658,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -88.37855035715188
+          -88.37789615796011
          ],
          "cov_critical": [
           [
@@ -955,10 +1014,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 1.5225195389641883,
+         "spread_at_map": 1.52251665319787,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -6.487849668587046
+          -6.487691781123239
          ],
          "cov_critical": [
           [
@@ -1005,10 +1064,10 @@
          "linear_size_before_crossing": true,
          "lag_at_crossing": 0.0,
          "rate_at_crossing": 0.019999890632504957,
-         "spread_at_map": 3.519911308377838,
+         "spread_at_map": 3.519896637940044,
          "written_amplitude_at_map": 0.4136916715600871,
          "mean_critical": [
-          -115.77012893695087
+          -115.76932628075465
          ],
          "cov_critical": [
           [
@@ -1056,12 +1115,12 @@
         ],
         "Delta_unconditioned": 0.002920876351661918,
         "Delta": [
-         -0.005912851126178722,
-         -0.012575092908146217,
-         -0.0030398630391344165,
-         -0.016559217596596097,
-         0.002277025010893024,
-         -0.026320652052245867
+         -0.005897351971037246,
+         -0.01255378990923095,
+         -0.0030274554863454206,
+         -0.01653515326761834,
+         0.002282832807537244,
+         -0.02629112682047463
         ],
         "z_linear": [
          -1.7376610128067684,
@@ -1080,6 +1139,7 @@
          -4.228097034727393
         ],
         "eta": 2.6999227443618718e-05,
+        "selection": "push kept whole",
         "next_order": {
          "sigma": 27.185600907825364,
          "unconditioned_spread": 7.278759220020929e-06,
@@ -1163,6 +1223,51 @@
            "delta2": -0.03043844432781956
           }
          ],
+         "push_kept_whole": {
+          "probability": [
+           0.04061806434995646,
+           0.002997668295059319,
+           0.10715929532462143,
+           0.0005751440030988819,
+           0.40569008839996934,
+           1.0289886975378693e-05
+          ],
+          "z": [
+           -1.7435583647778057,
+           -2.748036328394479,
+           -1.241777705453874,
+           -3.250928454592106,
+           -0.23864589148151183,
+           -4.258505953823442
+          ],
+          "weight_wrong_sign": [
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0,
+           0.0
+          ],
+          "q_slope": [
+           0.0001829721468987557,
+           2.871285547311284e-06,
+           0.0002730225775744793,
+           -8.717914512841136e-05,
+           0.0004531234389259239,
+           -0.00026728000647985653
+          ],
+          "spread_of_slope": 0.00037936627000387637,
+          "W_mean_over_sigma": [
+           0.0004251736911601677,
+           2.2367750735866306e-05,
+           0.0009861513934787383,
+           0.00018053951263013614,
+           0.002827256262328711,
+           0.0012160325006315073
+          ],
+          "size_expanded": 0.01696074243927758,
+          "in_regime": true
+         },
          "Delta_second_order": [
           0.0033249004542906364,
           0.0029225276460118034,
@@ -1194,6 +1299,19 @@
         ],
         "size": 0.016944351412807784,
         "limit": 0.1
+       },
+       "selection": "push kept whole",
+       "push_kept_whole": {
+        "in_regime": true,
+        "size_expanded": 0.01696074243927758,
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ]
        },
        "reduction_validity": {
         "slow": true,

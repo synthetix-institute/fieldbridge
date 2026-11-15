@@ -578,6 +578,79 @@ def test_the_spread_among_undecided_samples_survives_a_critical_mode_that_grows_
     assert row["g_slope"] == pytest.approx(2.0 / var * sum(w[i] * float(nu[i] @ M[i] @ c[i]) for i in range(N + 1)), rel=1e-9)
 
 
+def test_the_push_kept_whole_gives_the_probability_of_the_full_second_order_decision():
+    # A pump, x' = c y^2 with x diffusing and y relaxing: the push does not depend on the critical coordinate, V = 0,
+    # and the probability of s1 + s2 > 0 is computed from the characteristic function. It is compared with a direct
+    # count over samples of the same discrete process, and the spread of the push is large (eta near 0.6).
+    class Still:
+        def over(self, t):
+            return {}
+
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                      "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 3.0},
+                      "parameters": {"e": 0.0, "c": 3.0, "k": 0.4}, "drift": {"x": "c*y**2 + 0*e", "y": "-k*y"},
+                      "noise": 0.001, "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D, T, N = 0.01, 5.0, 200
+    ts = np.linspace(0.0, T, N + 1)
+    dt = T / N
+    J = np.array([[0.0, 0.0], [0.0, -0.4]])
+    m = np.zeros((N + 1, 2, 2))
+    m[:, 0, 0], m[:, 1, 0] = 0.02 * ts, -0.02 * ts
+    out = completion.next_order_selection(real, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0),
+                                          np.zeros((N + 1, 2, 2)), m, np.array([1.0, 0.0]), 0.0, D)
+    pk = out["push_kept_whole"]
+    rng = np.random.default_rng(3)
+    n_mc = 200000
+    A = np.eye(2) + dt * J + 0.5 * dt ** 2 * J @ J
+    xi = np.zeros((n_mc, 2))
+    s2 = np.zeros((2, n_mc))
+    w = np.full(N + 1, dt)
+    w[0] = w[-1] = 0.5 * dt
+    for i in range(N + 1):
+        for j in range(2):
+            s2[j] += w[i] * 3.0 * (xi[:, 1] + m[i, j, 1]) ** 2
+        if i < N:
+            xi = xi @ A.T + np.sqrt(2 * D * dt) * rng.standard_normal((n_mc, 2))
+    for j in range(2):
+        direct = float(np.mean(xi[:, 0] + m[N, j, 0] + s2[j] > 0))
+        assert abs(pk["probability"][j] - direct) < 4 * np.sqrt(direct * (1 - direct) / n_mc)
+    assert out["rows"][0]["eta"] > 0.3 and max(pk["weight_wrong_sign"]) == 0.0
+    # in the limit of a weak push it is the expansion: with c = 0.03 the statistics agree to the cube of the push
+    weak = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations",
+                      "name": "test", "question": "test", "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 3.0},
+                      "parameters": {"e": 0.0, "c": 0.03, "k": 0.4}, "drift": {"x": "c*y**2 + 0*e", "y": "-k*y"},
+                      "noise": 0.001, "control": {"name": "e", "range": [-1.0, 1.0]}})
+    out = completion.next_order_selection(weak, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0),
+                                          np.zeros((N + 1, 2, 2)), m, np.array([1.0, 0.0]), 0.0, D)
+    for r, z in zip(out["rows"], out["push_kept_whole"]["z"]):
+        assert z == pytest.approx(r["z0"] + r["Delta"] + r["delta2"], abs=1e-4)
+
+
+def test_a_push_that_multiplies_the_critical_coordinate_is_not_kept_whole():
+    # x' = c x y: the slope of the push is Gaussian with a spread of order one, the linear form reverses the decision
+    # for a fifth of the samples, and the selection stays the expansion
+    class Still:
+        def over(self, t):
+            return {}
+
+    real = spec.load({"schema": "fieldbridge-memory/1", "kind": "equations", "name": "test", "question": "test",
+                      "assumptions": [], "provenance": {"source": "test"},
+                      "carrier": {"kind": "euclid", "variables": ["x", "y"], "scale": 3.0},
+                      "parameters": {"e": 0.0, "c": 4.0, "k": 0.4}, "drift": {"x": "c*x*y + 0*e", "y": "-k*y"},
+                      "noise": 0.001, "control": {"name": "e", "range": [-1.0, 1.0]}})
+    D, T, N = 0.01, 5.0, 200
+    ts = np.linspace(0.0, T, N + 1)
+    J = np.array([[0.0, 0.0], [0.0, -0.4]])
+    m = np.zeros((N + 1, 2, 2))
+    m[:, 0, 0], m[:, 1, 0] = 0.02 * ts, -0.02 * ts
+    no = completion.next_order_selection(real, Still(), ts, np.zeros((N + 1, 2)), np.repeat(J[None], N + 1, axis=0),
+                                         np.zeros((N + 1, 2, 2)), m, np.array([1.0, 0.0]), 0.0, D)
+    assert 0.1 < min(no["push_kept_whole"]["weight_wrong_sign"]) < 0.3
+    assert completion.selection_choice(no, {"sigma": no["sigma"], "mu": [0.02 * T, -0.02 * T]}) is None
+
+
 def test_a_write_in_one_direction_carries_the_shifts_of_the_second_and_of_the_next_order():
     law = completion.complete(spec.load(EX / "pitchfork.json"), np.random.default_rng(0), n_samples=500,
                               certify=False)["write_points"][0]["law"]

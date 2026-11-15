@@ -5,7 +5,7 @@
   "source": "Goto, Sci. Rep. 6, 21686 (2016); Puri et al., npj Quantum Inf. 3, 18 (2017); Grimm et al., Nature 584, 205 (2020)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -120,10 +120,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 16.84125310274153,
+       "spread_at_map": 16.841249374690204,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        131.24985701886186
+        131.24965349921428
        ],
        "cov_critical": [
         [
@@ -166,10 +166,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 16.84125310274156,
+       "spread_at_map": 16.841249374690275,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        -131.24985701886365
+        -131.24965349921817
        ],
        "cov_critical": [
         [
@@ -212,10 +212,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 19.245474068030692,
+       "spread_at_map": 19.245466611928087,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        262.4997140371483
+        262.49930699785574
        ],
        "cov_critical": [
         [
@@ -258,10 +258,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 19.245474068030727,
+       "spread_at_map": 19.245466611928137,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        -262.4997140371502
+        -262.4993069978584
        ],
        "cov_critical": [
         [
@@ -304,10 +304,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 24.053915998535125,
+       "spread_at_map": 24.053901086330235,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        524.9994280696873
+        524.9986139911196
        ],
        "cov_critical": [
         [
@@ -350,10 +350,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 4.7528411495115325e-21,
        "rate_at_crossing": 0.020000000000007238,
-       "spread_at_map": 24.053915998535174,
+       "spread_at_map": 24.053901086330136,
        "written_amplitude_at_map": 0.31302361478105695,
        "mean_critical": [
-        -524.99942806969
+        -524.9986139911141
        ],
        "cov_critical": [
         [
@@ -397,12 +397,12 @@
       ],
       "Delta_unconditioned": -1.1201013577112135e-11,
       "Delta": [
-       -4.6499336407052955e-11,
-       4.649250780496587e-11,
-       -9.518903331562273e-11,
-       9.518151271803561e-11,
-       -2.079231207619387e-10,
-       2.079128321823515e-10
+       -7.747316196904386e-07,
+       7.747316048689612e-07,
+       -1.5494654197478752e-06,
+       1.5494654096448457e-06,
+       -3.0989483186250055e-06,
+       3.0989483392751538e-06
       ],
       "z_linear": [
        0.49959457234043914,
@@ -421,6 +421,7 @@
        -1.9983782893617617
       ],
       "eta": 3.936742177599133e-28,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 262.7131434518537,
        "unconditioned_spread": 2.535301295095051e-22,
@@ -504,6 +505,51 @@
          "delta2": 2.079179764721451e-10
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6913194369766514,
+         0.30868056302334335,
+         0.8411480880437087,
+         0.15885191195628878,
+         0.9771620003595278,
+         0.022837999640473283
+        ],
+        "z": [
+         0.49959379760881945,
+         -0.49959379760883427,
+         0.9991875952154585,
+         -0.9991875952154686,
+         1.998375190413438,
+         -1.9983751904134173
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         4.2704219182203545e-14,
+         -4.2704219182203545e-14,
+         8.540843836440709e-14,
+         -8.540843836440709e-14,
+         1.7081687672881418e-13,
+         -1.7081687672881418e-13
+        ],
+        "spread_of_slope": 1.354861707990861e-13,
+        "W_mean_over_sigma": [
+         -1.176175920995358e-16,
+         -1.176175920995358e-16,
+         -4.704703683981432e-16,
+         -4.704703683981432e-16,
+         -1.8818814735925726e-15,
+         -1.8818814735925726e-15
+        ],
+        "size_expanded": 1.0404351367447967e-10,
+        "in_regime": true
+       },
        "Delta_second_order": [
         -3.4143010435448077e-15,
         -3.4143010435448077e-15,
@@ -535,6 +581,19 @@
       ],
       "size": 1.0395898823607254e-10,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 1.0404351367447967e-10,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [

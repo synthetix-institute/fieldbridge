@@ -140,20 +140,18 @@ states, so the reduced law of one coordinate does not hold and is withdrawn; the
 outcome map, carried beyond first order in the deviation from the path of the sweep: the curvature of the drift pushes
 the critical coordinate through the fluctuations, and the statistic of the write is shifted by the mean of that push
 among the samples that the first order leaves undecided; without it the law put the offset
-about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. One order further, the push depends on
-where a sample is and varies among the undecided ones, which corrects the response to a bias; where that correction
-reaches a tenth of the statistic the law says that it is not claimed. The phonon laser of a trapped ion, where a
+about 0.2 too far (0.98 to 1.01). With it the law is certified on all three. One order further, the push depends on where a sample is and varies among the undecided ones. The part of it that does not depend on where a sample is, a pump from a variable that does not follow the critical one, is kept whole: the probability of the write is that of a quadratic form in the first-order deviation, and with it the response to a bias depends on the strength of the bias. The part that does depend on it is expanded, and where that expansion reaches a tenth of the statistic the law says that it is not claimed. The phonon laser of a trapped ion, where a
 spiral becomes a node only shortly before the crossing, is an equilibrium write: the noise exchanges its states during
 the hold, and its law (response 0.68, offset 0.86 against 0.72 and 0.80) is not certified and not claimed: the terms
 of the next order change its statistic by 0.18 per noise floor. Other cusps have offsets of
 their own: 2.1 to 2.3 for the dynamically polarised nuclear-spin bath, where the law is certified, and 0.06 for the
-Rydberg ensemble, where the law gives 0.09 in the survey and 0.12 in the record and is certified in both; with the
+Rydberg ensemble, where the law gives 0.08 in the survey and 0.11 in the record and is certified in both; with the
 stationary drift of the fluctuations in place of the second-order shift it gave 0.14 and 0.18 and was not certified. The magnonic element has
 an offset of 1.03 toward its state of smaller amplitude. The sweep through its cusp moves the unwritten branch by more
 than the distance to the written states, so the sign of a sample is read against the branch; read from the write
 point, both states lie on one side and the law wrote the same state whatever the bias. Its law gives a response of
-1.32 at both write points in the survey and 1.29 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
-and an offset of 1.07 and 1.04 in the survey and 1.04 in the record against 1.03 and 1.02. It is certified in both.
+1.28 and 1.29 at the two write points of the survey and 1.28 in the record, where the full dynamics give 1.30 and 1.31 and 1.26,
+and an offset of 1.04 and 1.01 in the survey and 1.03 in the record against 1.03 and 1.02. It is certified in both.
 To second order alone its offset was 0.06 to 0.09 beyond the full dynamics; the next order closes most of that at
 this noise, and not at a noise four times weaker or stronger. Both of its write points along the drive are folds and unfold at the same cusp; in the
 record the cusp search from the first of them found no cusp. In the bistable optomechanical element the law departs
@@ -240,7 +238,8 @@ class is an equilibrium write, as for the Kerr-cat qubit at K = 5. Between K ≈
 the response while the law keeps 1.33 to 1.35; what law the response follows there is an open question, which the
 classification as an equilibrium write records and does not answer.
 
-In all, 32 laws at obstructions are certified and 10 are derived but not certified; the remaining
+In all, 31 laws at obstructions are certified and 11 are derived but not certified (the distant branch of the rf-SQUID pair, an
+equilibrium write, moves across the threshold of the certificate by 0.002 on one of its six rows); the remaining
 write points have no cusp, a continuous family of written states (the non-degenerate parametric converter) or an
 oscillation.
 

@@ -5,7 +5,7 @@
   "source": "Berkley, A. J., Johnson, M. W., Bunyk, P., Harris, R., Johansson, J., Lanting, T., Ladizinsky, E., Tolkacheva, E., Amin, M. H. S., Rose, G., 'A scalable readout system for a superconducting adiabatic quantum optimization system', Supercond. Sci. Technol. 23, 105014 (2010), arXiv:0905.0891 (full text of the ar5iv rendering, read through a summarising fetch; equations and values as returned); Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text)",
   "kind": "classical image of census entry 15: Quantum flux parametron (QFP) latch in annealing processors"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -146,10 +146,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 3.0759553306329104,
+       "spread_at_map": 3.0759537561303865,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        24.148578348926325
+        24.14849230469349
        ],
        "cov_critical": [
         [
@@ -192,10 +192,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 3.075955330632911,
+       "spread_at_map": 3.0759537561303887,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        -24.148578348926343
+        -24.148492304693598
        ],
        "cov_critical": [
         [
@@ -238,10 +238,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 3.5180218946151562,
+       "spread_at_map": 3.51801874561011,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        48.30686185679576
+        48.30668976833018
        ],
        "cov_critical": [
         [
@@ -284,10 +284,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 3.518021894615157,
+       "spread_at_map": 3.5180187456101124,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        -48.30686185679578
+        -48.30668976833031
        ],
        "cov_critical": [
         [
@@ -330,10 +330,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 4.4033981690084225,
+       "spread_at_map": 4.403391870998376,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        96.6913649851363
+        96.69102080820763
        ],
        "cov_critical": [
         [
@@ -376,10 +376,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 9.259944289997149e-19,
        "rate_at_crossing": 0.020000306898376563,
-       "spread_at_map": 4.403398169008423,
+       "spread_at_map": 4.403391870998378,
        "written_amplitude_at_map": 1.3538589985151068,
        "mean_critical": [
-        -96.69136498513632
+        -96.6910208082078
        ],
        "cov_critical": [
         [
@@ -423,12 +423,12 @@
       ],
       "Delta_unconditioned": 1.284460320022789e-14,
       "Delta": [
-       0.0033907403409937815,
-       -0.0033907403409941385,
-       0.006983744774190166,
-       -0.006983744774190486,
-       0.01558560228599945,
-       -0.01558560228599957
+       0.003388947103114215,
+       -0.0033889471031164353,
+       0.006980158298433015,
+       -0.006980158298435679,
+       0.015578429334536903,
+       -0.015578429334540456
       ],
       "z_linear": [
        0.499886980957684,
@@ -447,6 +447,7 @@
        -1.999547923830736
       ],
       "eta": 6.743055637388732e-30,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 47.98278158388452,
        "unconditioned_spread": 2.128413285439565e-27,
@@ -530,6 +531,51 @@
          "delta2": -0.015585602285999471
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6926148558470783,
+         0.307385144152921,
+         0.8429735263448941,
+         0.15702647365510525,
+         0.9780542941860045,
+         0.021945705813995298
+        ],
+        "z": [
+         0.5032759280607982,
+         -0.5032759280608005,
+         1.006754120213801,
+         -1.0067541202138037,
+         2.015126353165273,
+         -2.0151263531652766
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         -4.104111217936375e-16,
+         4.1041112179363456e-16,
+         -8.208222435872682e-16,
+         8.208222435872747e-16,
+         -1.6416444871745406e-15,
+         1.6416444871745396e-15
+        ],
+        "spread_of_slope": 1.2098062981867408e-14,
+        "W_mean_over_sigma": [
+         1.1314670587335939e-17,
+         1.1314670587335943e-17,
+         4.525868234934347e-17,
+         4.5258682349344143e-17,
+         1.810347293973746e-16,
+         1.8103472939737438e-16
+        ],
+        "size_expanded": 0.007794590972525382,
+        "in_regime": true
+       },
        "Delta_second_order": [
         -2.1834205294829263e-16,
         -2.183420529482926e-16,
@@ -561,6 +607,19 @@
       ],
       "size": 0.007792801142999755,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 0.007794590972525382,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [

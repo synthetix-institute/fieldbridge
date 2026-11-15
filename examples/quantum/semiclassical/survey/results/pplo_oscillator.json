@@ -5,7 +5,7 @@
   "source": "Lin, Z. R., Inomata, K., Koshino, K., Oliver, W. D., Nakamura, Y., Tsai, J. S., Yamamoto, T., 'Josephson parametric phase-locked oscillator and its application to dispersive readout of superconducting qubits', Nat. Commun. 5, 4480 (2014), arXiv:1407.7195 (full text and supplement); Yamamoto, T., Inomata, K., Watanabe, M., Matsuba, K., Miyazaki, T., Oliver, W. D., Nakamura, Y., Tsai, J. S., 'Flux-driven Josephson parametric amplifier', Appl. Phys. Lett. 93, 042510 (2008), arXiv:0808.1386 (full text)",
   "kind": "classical image of census entry 23: Josephson parametric phase-locked oscillator (PPLO) measurement, phase-encoded"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -120,10 +120,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 16.841168550669813,
+       "spread_at_map": 16.841153672636597,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        131.249363991035
+        131.24855178016708
        ],
        "cov_critical": [
         [
@@ -166,10 +166,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 16.841168550671302,
+       "spread_at_map": 16.841153672638058,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -131.2493639911162
+        -131.2485517802468
        ],
        "cov_critical": [
         [
@@ -212,10 +212,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 19.245387053432452,
+       "spread_at_map": 19.24535729736602,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        262.4987279474626
+        262.4971035257269
        ],
        "cov_critical": [
         [
@@ -258,10 +258,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 19.245387053434015,
+       "spread_at_map": 19.245357297367548,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -262.4987279475478
+        -262.49710352581025
        ],
        "cov_critical": [
         [
@@ -304,10 +304,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 24.053824054515182,
+       "spread_at_map": 24.053764542382496,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        524.9974556177934
+        524.9942067743319
        ],
        "cov_critical": [
         [
@@ -350,10 +350,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.9200373996231637e-23,
        "rate_at_crossing": 0.020000000006177018,
-       "spread_at_map": 24.05382405451698,
+       "spread_at_map": 24.05376454238433,
        "written_amplitude_at_map": 4.518106047974025,
        "mean_critical": [
-        -524.9974556178915
+        -524.9942067744319
        ],
        "cov_critical": [
         [
@@ -397,12 +397,12 @@
       ],
       "Delta_unconditioned": -6.77352819461042e-12,
       "Delta": [
-       -2.690825927422161e-09,
-       2.6905172584506735e-09,
-       -5.513383898198264e-09,
-       5.513060420153462e-09,
-       -1.2081662087372489e-08,
-       1.2081290122179158e-08
+       -3.0943479631950765e-06,
+       3.094347660159702e-06,
+       -6.188827658015761e-06,
+       6.1888273414911765e-06,
+       -1.2378710172455953e-05,
+       1.2378709793647857e-05
       ],
       "z_linear": [
        0.49959690415354224,
@@ -421,6 +421,7 @@
        -1.998387616614343
       ],
       "eta": 1.2848457865145267e-26,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 262.7121501807816,
        "unconditioned_spread": 9.590421297955648e-23,
@@ -504,6 +505,51 @@
          "delta2": 1.20814623492126e-08
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6913194412715794,
+         0.30868055872831374,
+         0.8411480939196483,
+         0.15885190608027477,
+         0.9771620029319312,
+         0.02283799706804812
+        ],
+        "z": [
+         0.49959380980557905,
+         -0.4995938098058825,
+         0.9991876194794265,
+         -0.9991876194797439,
+         1.9983752379039965,
+         -1.998375237904377
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         7.820375526559217e-14,
+         -7.8203755265594e-14,
+         1.5640751053118434e-13,
+         -1.56407510531188e-13,
+         3.128150210623687e-13,
+         -3.12815021062376e-13
+        ],
+        "spread_of_slope": 3.806507732297761e-13,
+        "W_mean_over_sigma": [
+         -1.3796061572191892e-15,
+         -1.3796061572191993e-15,
+         -5.518424628876757e-15,
+         -5.518424628876797e-15,
+         -2.2073698515507028e-14,
+         -2.207369851550719e-14
+        ],
+        "size_expanded": 6.04564938685209e-09,
+        "in_regime": true
+       },
        "Delta_second_order": [
         -1.512713972272885e-13,
         -1.512713972272885e-13,
@@ -535,6 +581,19 @@
       ],
       "size": 6.040738052387912e-09,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 6.04564938685209e-09,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [

@@ -5,7 +5,7 @@
   "source": "Harris, R. et al., 'Experimental demonstration of a robust and scalable flux qubit', Phys. Rev. B 81, 134510 (2010), arXiv:0909.4321 (full text); Harris, R. et al., 'Experimental investigation of an eight-qubit unit cell in a superconducting optimization processor', Phys. Rev. B 82, 024511 (2010), arXiv:1004.1628 (full text); Hauke, P., Katzgraber, H. G., Lechner, W., Nishimori, H., Oliver, W. D., 'Perspectives of quantum annealing: methods and implementations', Rep. Prog. Phys. 83, 054401 (2020), arXiv:1903.06559 (full text); Kjaergaard, M., Schwartz, M. E., Braumueller, J., Krantz, P., Wang, J. I.-J., Gustavsson, S., Oliver, W. D., 'Superconducting qubits: current state of play', Annu. Rev. Condens. Matter Phys. 11, 369 (2020), arXiv:1905.13641 (full text)",
   "kind": "classical image of census entry 3: rf-SQUID flux qubit with compound (CJJ) or compound-compound (CCJJ) Josephson junction: quantum-annealer qubit"
  },
- "implementation_sha256": "31060997a963fe13306f24f25636206c6da8e60896e9220e5fa001d6b3b05d4f",
+ "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -150,10 +150,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.6689476483486845,
+       "spread_at_map": 0.6689474601935281,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        5.162193549606834
+        5.162183277963443
        ],
        "cov_critical": [
         [
@@ -196,10 +196,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.6689476483486819,
+       "spread_at_map": 0.6689474601935188,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        -5.162193549606693
+        -5.162183277962937
        ],
        "cov_critical": [
         [
@@ -242,10 +242,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.763496355824367,
+       "spread_at_map": 0.7634959795140582,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        10.323734826937699
+        10.323714283651134
        ],
        "cov_critical": [
         [
@@ -288,10 +288,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.7634963558243645,
+       "spread_at_map": 0.7634959795140355,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        -10.323734826937557
+        -10.323714283649888
        ],
        "cov_critical": [
         [
@@ -334,10 +334,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.9525101328697145,
+       "spread_at_map": 0.9525093802491085,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        20.642251475668132
+        20.642210389095638
        ],
        "cov_critical": [
         [
@@ -380,10 +380,10 @@
        "linear_size_before_crossing": true,
        "lag_at_crossing": 2.3801625022283355e-20,
        "rate_at_crossing": 0.019999999999930608,
-       "spread_at_map": 0.9525101328697118,
+       "spread_at_map": 0.9525093802490578,
        "written_amplitude_at_map": 0.7490124846188787,
        "mean_critical": [
-        -20.642251475667983
+        -20.64221038909287
        ],
        "cov_critical": [
         [
@@ -427,12 +427,12 @@
       ],
       "Delta_unconditioned": -1.0626128923552143e-12,
       "Delta": [
-       -0.0013146414209979152,
-       0.0013146414210113621,
-       -0.0026916881842655787,
-       0.002691688184279153,
-       -0.005882619106642516,
-       0.005882619106656563
+       -0.001315624147759542,
+       0.0013156241478080033,
+       -0.0026936536377680786,
+       0.0026936536378873166,
+       -0.005886550013586733,
+       0.0058865500138516325
       ],
       "z_linear": [
        0.4952011167387266,
@@ -451,6 +451,7 @@
        -1.9808044669548992
       ],
       "eta": 2.4361446815565614e-28,
+      "selection": "push kept whole",
       "next_order": {
        "sigma": 10.452207241919403,
        "unconditioned_spread": 2.379363529965805e-24,
@@ -534,6 +535,51 @@
          "delta2": 0.005882619106649547
         }
        ],
+       "push_kept_whole": {
+        "probability": [
+         0.6893064746293893,
+         0.3106935253706278,
+         0.8383523043396515,
+         0.1616476956603778,
+         0.9758612681094057,
+         0.02413873189060939
+        ],
+        "z": [
+         0.49388549259096703,
+         -0.4938854925909186,
+         0.9877085798396851,
+         -0.9877085798395658,
+         1.9749179169413196,
+         -1.9749179169410547
+        ],
+        "weight_wrong_sign": [
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0,
+         0.0
+        ],
+        "q_slope": [
+         1.3782276961419435e-14,
+         -1.378227696141943e-14,
+         2.756455392283887e-14,
+         -2.756455392283886e-14,
+         5.512910784567774e-14,
+         -5.512910784567772e-14
+        ],
+        "spread_of_slope": 5.1679748179682637e-14,
+        "W_mean_over_sigma": [
+         1.3382525713499474e-17,
+         1.3382525713499758e-17,
+         5.3530102853997896e-17,
+         5.353010285399903e-17,
+         2.1412041141599159e-16,
+         2.1412041141599612e-16
+        ],
+        "size_expanded": 0.0029698190199337012,
+        "in_regime": true
+       },
        "Delta_second_order": [
         6.7206465603781396e-15,
         6.7206465603781396e-15,
@@ -565,6 +611,19 @@
       ],
       "size": 0.00294130955332477,
       "limit": 0.1
+     },
+     "selection": "push kept whole",
+     "push_kept_whole": {
+      "in_regime": true,
+      "size_expanded": 0.0029698190199337012,
+      "weight_wrong_sign": [
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0,
+       0.0
+      ]
      },
      "one_direction": {
       "law": [
