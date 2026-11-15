@@ -1,6 +1,6 @@
 {
  "command": "python3 -B -m fieldbridge memory complete SPEC --curvature --gamma NOISE_RATIO --out-dir DIR, for each row; the entries of `zero_offset_curvature` in complete.json",
- "implementation_sha256": "cd3149c7d69d84bf920bcac9ce0eab21c03f1552d8d6b96546740116f8a5be75",
+ "implementation_sha256": "00d68f6dff22a268cabe8185136bb790581c97d7193c6d4b12d052061e111e6d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -58,32 +58,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": 0.0728230842626436,
-   "offset_at_curvature": 0.06506828900413314,
-   "offset_error": 0.03379825165603709,
-   "response_at_curvature": 1.330879488048446,
-   "last_curvature_tried": 0.0728230842626436,
-   "last_offset": 0.06506828900413314,
+   "curvature": 0.07401501511636992,
+   "offset_at_curvature": 0.09535333694883708,
+   "offset_error": 0.03432495484695702,
+   "response_at_curvature": 1.3789672998375029,
+   "last_curvature_tried": 0.07401501511636992,
+   "last_offset": 0.09535333694883708,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     -2.3813020243256466
+     -2.5882191120266795
     ],
     [
      -0.1,
-     -1.8137064571561363
+     -1.9695094960418902
     ],
     [
      -0.05,
-     -1.322493619002608
+     -1.287147544075027
     ],
     [
      0.0,
-     -0.7532369830593477
+     -0.7880059800776026
     ],
     [
      0.05,
-     -0.23606788023563002
+     -0.25567752021127527
     ]
    ]
   },
@@ -175,12 +175,12 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.1194966983672477,
-   "offset_at_curvature": 0.032032556040383964,
-   "offset_error": 0.03377390125930818,
-   "response_at_curvature": 1.3314969904682838,
-   "last_curvature_tried": -0.1194966983672477,
-   "last_offset": 0.032032556040383964,
+   "curvature": -0.12271755188508038,
+   "offset_at_curvature": 0.054993398990609565,
+   "offset_error": 0.034094153342739436,
+   "response_at_curvature": 1.3620655726705861,
+   "last_curvature_tried": -0.12271755188508038,
+   "last_offset": 0.054993398990609565,
    "offset_at_curvatures_tried": [
     [
      -0.15,
@@ -188,19 +188,19 @@
     ],
     [
      -0.1,
-     -0.19692618364571685
+     -0.25654729017383193
     ],
     [
      -0.05,
-     -0.6633723666204362
+     -0.7167117290086958
     ],
     [
      0.0,
-     -1.1814025191860869
+     -1.2338296392708301
     ],
     [
      0.05,
-     -1.7413090462013074
+     -1.7121065810896496
     ]
    ]
   },
@@ -214,32 +214,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.12182428293904937,
-   "offset_at_curvature": 0.06450027834113153,
-   "offset_error": 0.03389123731439853,
-   "response_at_curvature": 1.340490439126686,
-   "last_curvature_tried": -0.12182428293904937,
-   "last_offset": 0.06450027834113153,
+   "curvature": -0.12103701955467515,
+   "offset_at_curvature": 0.044545732050667974,
+   "offset_error": 0.033815888075721265,
+   "response_at_curvature": 1.3348902921239536,
+   "last_curvature_tried": -0.12103701955467515,
+   "last_offset": 0.044545732050667974,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.26439586823818917
+     0.3209281643152766
     ],
     [
      -0.1,
-     -0.2047951512241361
+     -0.2331034984846065
     ],
     [
      -0.05,
-     -0.743996259835732
+     -0.7644865136853828
     ],
     [
      0.0,
-     -1.2242076754950668
+     -1.1929520268712674
     ],
     [
      0.05,
-     -1.7866249928681914
+     -1.7558644352587272
     ]
    ]
   },
@@ -253,12 +253,12 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.10057379102759478,
-   "offset_at_curvature": -0.001020218118456262,
-   "offset_error": 0.0336005927077134,
-   "response_at_curvature": 1.3144161107235177,
-   "last_curvature_tried": -0.10057379102759478,
-   "last_offset": -0.001020218118456262,
+   "curvature": -0.1057013652973545,
+   "offset_at_curvature": 0.016788843671823206,
+   "offset_error": 0.033965363653932545,
+   "response_at_curvature": 1.3517914838201501,
+   "last_curvature_tried": -0.1057013652973545,
+   "last_offset": 0.016788843671823206,
    "offset_at_curvatures_tried": [
     [
      -0.15,
@@ -266,19 +266,19 @@
     ],
     [
      -0.1,
-     -0.0042700218458232575
+     -0.0473393370517215
     ],
     [
      -0.05,
-     -0.3564543226668144
+     -0.4090791913739597
     ],
     [
      0.0,
-     -0.7508376709742937
+     -0.7791988144538711
     ],
     [
      0.05,
-     -1.2268144965737553
+     -1.15275352276675
     ]
    ]
   },
@@ -292,32 +292,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.10313211214324924,
-   "offset_at_curvature": 0.015461632231210998,
-   "offset_error": 0.03373488142131205,
-   "response_at_curvature": 1.3282258004889953,
-   "last_curvature_tried": -0.10313211214324924,
-   "last_offset": 0.015461632231210998,
+   "curvature": -0.10160688515097818,
+   "offset_at_curvature": 0.005121832729560072,
+   "offset_error": 0.03365280090777459,
+   "response_at_curvature": 1.3198767353039604,
+   "last_curvature_tried": -0.10160688515097818,
+   "last_offset": 0.005121832729560072,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.33696022171806944
+     0.39014077457296414
     ],
     [
      -0.1,
-     -0.022518556958676827
+     -0.012954558089684265
     ],
     [
      -0.05,
-     -0.41758847067496085
+     -0.4444335375807649
     ],
     [
      0.0,
-     -0.7458253937677073
+     -0.7768472646773008
     ],
     [
      0.05,
-     -1.2393877472088994
+     -1.1337944540205258
     ]
    ]
   },
@@ -370,12 +370,12 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.07009035561570351,
-   "offset_at_curvature": -0.009276271929685831,
-   "offset_error": 0.03373246025206196,
-   "response_at_curvature": 1.328124192047628,
-   "last_curvature_tried": -0.07009035561570351,
-   "last_offset": -0.009276271929685831,
+   "curvature": -0.0697912427334686,
+   "offset_at_curvature": -0.022792593834112695,
+   "offset_error": 0.03323566879349862,
+   "response_at_curvature": 1.2745963600393524,
+   "last_curvature_tried": -0.0697912427334686,
+   "last_offset": -0.022792593834112695,
    "offset_at_curvatures_tried": [
     [
      -0.15,
@@ -383,19 +383,19 @@
     ],
     [
      -0.1,
-     0.22174844783359704
+     0.23638444677408238
     ],
     [
      -0.05,
-     -0.14894878444446702
+     -0.15486707788889204
     ],
     [
      0.0,
-     -0.43115228819056206
+     -0.47555802681283965
     ],
     [
      0.05,
-     -0.7273872486040065
+     -0.6693083459592444
     ]
    ]
   },
@@ -409,12 +409,12 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.023667615306577332,
-   "offset_at_curvature": -0.027390928605628972,
-   "offset_error": 0.03353538263530782,
-   "response_at_curvature": 1.306780456323085,
-   "last_curvature_tried": -0.023667615306577332,
-   "last_offset": -0.027390928605628972,
+   "curvature": -0.025415002697576856,
+   "offset_at_curvature": -0.03237148509012022,
+   "offset_error": 0.03350194326494975,
+   "response_at_curvature": 1.3029284521921536,
+   "last_curvature_tried": -0.025415002697576856,
+   "last_offset": -0.03237148509012022,
    "offset_at_curvatures_tried": [
     [
      -0.15,
@@ -422,19 +422,19 @@
     ],
     [
      -0.1,
-     0.5110758963817875
+     0.5414236895960886
     ],
     [
      -0.05,
-     0.13293216450834622
+     0.12753782658287494
     ],
     [
      0.0,
-     -0.1194797724582859
+     -0.13184358602013674
     ],
     [
      0.05,
-     -0.4413568397626242
+     -0.4154530820347532
     ]
    ]
   },
@@ -448,32 +448,32 @@
    },
    "status": "found",
    "cancelled": true,
-   "curvature": -0.024233614318116756,
-   "offset_at_curvature": -0.02832166862875357,
-   "offset_error": 0.03349817336645494,
-   "response_at_curvature": 1.3027683819045521,
-   "last_curvature_tried": -0.024233614318116756,
-   "last_offset": -0.02832166862875357,
+   "curvature": -0.017774511525805094,
+   "offset_at_curvature": -0.027282432264845113,
+   "offset_error": 0.03348468215438655,
+   "response_at_curvature": 1.3013848097819334,
+   "last_curvature_tried": -0.017774511525805094,
+   "last_offset": -0.027282432264845113,
    "offset_at_curvatures_tried": [
     [
      -0.15,
-     0.664694322974341
+     0.6473258295660775
     ],
     [
      -0.1,
-     0.5491660521566879
+     0.530944669907834
     ],
     [
      -0.05,
-     0.1415265850038065
+     0.15468657930194135
     ],
     [
      0.0,
-     -0.1331075580054633
+     -0.08531999100312815
     ],
     [
      0.05,
-     -0.41771765621870366
+     -0.4336971344096141
     ]
    ]
   },
@@ -488,11 +488,11 @@
    "status": "found",
    "cancelled": true,
    "curvature": 0.2046813916384932,
-   "offset_at_curvature": -0.06286430281706396,
-   "offset_error": 0.03376718578973559,
-   "response_at_curvature": 1.3279452432962733,
+   "offset_at_curvature": -0.07366001102650155,
+   "offset_error": 0.033165420229014655,
+   "response_at_curvature": 1.2619424048055734,
    "last_curvature_tried": 0.2046813916384932,
-   "last_offset": -0.06286430281706396,
+   "last_offset": -0.07366001102650155,
    "offset_at_curvatures_tried": [
     [
      -0.15,
@@ -644,11 +644,11 @@
    "status": "found",
    "cancelled": true,
    "curvature": 0.08277774956679346,
-   "offset_at_curvature": -0.042737450369060015,
-   "offset_error": 0.03389441164902848,
-   "response_at_curvature": 1.3430853935610203,
+   "offset_at_curvature": 0.019708175554881635,
+   "offset_error": 0.03381722739143296,
+   "response_at_curvature": 1.3365850002030706,
    "last_curvature_tried": 0.08277774956679346,
-   "last_offset": -0.042737450369060015,
+   "last_offset": 0.019708175554881635,
    "offset_at_curvatures_tried": [
     [
      -0.15,

@@ -176,14 +176,14 @@ it by secant steps until the offset is below 0.1 or three standard errors:
 python3 -m fieldbridge memory complete examples/quantum/semiclassical/jba_resonator.json --curvature --out-dir results/jba_curvature
 ```
 
-For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.129 to −0.131, −0.119 to −0.122, −0.101
-to −0.103, −0.070 to −0.072 and −0.024 at both for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
-numbers are its two write points), with the response staying at 1.30 to 1.34. The curvature has a
+For the resonator of the bifurcation amplifier the offset vanishes at c2 = −0.129 to −0.131, −0.121 to −0.123, −0.102
+to −0.106, −0.070 to −0.072, and −0.018 and −0.025 for noise ratios Γ = 0.0125, 0.025, 0.05, 0.1 and 0.2 (the two
+numbers are its two write points), with the response staying at 1.28 to 1.36. The curvature has a
 part that does not depend on the noise, the curvature of the line on which the two written states are mirror images,
 and a part that grows with the noise ratio, which compensates the drift that the quadratic term of the reduced
 equation draws from the fluctuations away from the cusp. The transmon and the trapped ion are cancelled at 0.083 to
-0.086 and at 0.068 to 0.073 in the coordinates of their own second parameters, and the magnon element at 0.205, where
-an offset of $0.06 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at both write points
+0.086 and at 0.068 to 0.074 in the coordinates of their own second parameters, and the magnon element at 0.205, where
+an offset of $0.07 \pm 0.03$ remains. For the nuclear-spin bath no curvature cancels the offset: at both write points
 its zero, placed at c2 = 0.46 and 0.48 by the curvatures tried, lies beyond the curvatures that the sweep can reach. The equation of this
 element near the cusp differs from the Kerr form. These runs are collected in
 [curvature.json](../../examples/quantum/semiclassical/survey/curvature.json).
