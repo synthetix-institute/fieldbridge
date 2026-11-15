@@ -113,6 +113,22 @@
    }
   },
   {
+   "file": "examples/memory/shared_state/fitzhugh_nagumo_units.json",
+   "name": "FitzHugh-Nagumo unit",
+   "field": "nonlinear dynamics",
+   "question": "Do two FitzHugh-Nagumo units that exchange their inhibitor settle apart, and what holds the difference?",
+   "source": "FitzHugh-Nagumo units with the parameter values of arXiv:2003.12311",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "no bifurcation along the control",
+    "constructs": "a single stable state: no write point",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
+   }
+  },
+  {
    "file": "examples/memory/toggle.json",
    "name": "genetic toggle switch",
    "field": "synthetic biology",
@@ -430,6 +446,22 @@
     "constructs": "degenerate critical mode at eps = 0: 2 directions become critical together, and the write chooses a direction in a 2-dimensional critical eigenspace, not one of two states of a pitchfork",
     "holds": "activation between stored states (Law 3)",
     "lock": "field 0.4 x threshold, fixed control: accuracy 0.27, not rewritten; field 1.5 x threshold, fixed control: accuracy 0.40, not rewritten; field 0.4 x threshold, control swept through the write point: accuracy 0.22, not rewritten"
+   }
+  },
+  {
+   "file": "examples/memory/shared_state/second_variable_limit.json",
+   "name": "unit limited through a second variable",
+   "field": "nonlinear dynamics",
+   "question": "Can the shared state alone hold two copies apart when one copy has no cubic term?",
+   "source": "constructed: an activator-inhibitor unit whose only nonlinearity is a quadratic coupling to a relaxing variable s",
+   "contributor": "",
+   "mechanism": "single state: relaxation",
+   "verdict": {
+    "stores": "1 stable state(s)",
+    "writes": "no bifurcation along the control",
+    "constructs": "a single stable state: no write point",
+    "holds": "relaxation to a single state (Law 1)",
+    "lock": "-"
    }
   },
   {

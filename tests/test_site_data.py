@@ -276,7 +276,7 @@ def test_memory_in_model_materials_lists_the_materials_of_the_memory_examples():
     files = {p.relative_to(sd.ROOT).as_posix() for p in (sd.ROOT / "examples/memory").rglob("*.json")
              if "fields" not in p.parts and "learning_objectives" not in p.parts}
     named = {d["spec"] for d in sd.all_defs() if "spec" in d}
-    assert files <= named and len(files) == 34
+    assert files <= named and len(files) == 36
     # the degenerate write is a material of its own, so that the gallery has its card
     assert next(d for d in sd.all_defs() if d["id"] == "amplitude_square")["spec"] in files
     assert reg.SEQUENCES[0]["id"] == "memory-writes"                  # the guided sequences start with memory
