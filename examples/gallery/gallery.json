@@ -1,6 +1,6 @@
 {
   "command": "gallery",
-  "implementation_sha256": "92b9905e013587edbf18d5db3d4710a4e13081ba9626981fa5fc95b366cb2fe9",
+  "implementation_sha256": "00d68f6dff22a268cabe8185136bb790581c97d7193c6d4b12d052061e111e6d",
   "versions": {
     "python": "3.11.3",
     "numpy": "1.26.0",
@@ -73,28 +73,6 @@
     },
     {
       "id": "card05",
-      "name": "spectral JEPA, embedding dimension two, shared positives",
-      "verdict": {
-        "stores": "a continuum of neutral states (zero mode)",
-        "writes": "degenerate at m3 = 0.5",
-        "constructs": "differs from the pitchfork normal form by: vanishing drift along the critical direction",
-        "holds": "a continuum of neutral states: diffusion along the flat directions (Law 2)",
-        "lock": "-"
-      }
-    },
-    {
-      "id": "card06",
-      "name": "spectral JEPA with a fraction q of good views",
-      "verdict": {
-        "stores": "2 stable state(s)",
-        "writes": "degenerate at q = 0.429; a uniform field removes the stable state at h = 0.202",
-        "constructs": "differs from the pitchfork normal form by: vanishing drift along the critical direction",
-        "holds": "activation between stored states (Law 3)",
-        "lock": "field 0.4 x threshold, fixed control: accuracy 0.00, not rewritten; field 1.5 x threshold, fixed control: accuracy 1.00, retention/rewriting time ratio > 38.1"
-      }
-    },
-    {
-      "id": "card07",
       "name": "Brusselator",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -105,7 +83,7 @@
       }
     },
     {
-      "id": "card08",
+      "id": "card06",
       "name": "FitzHugh-Nagumo neuron",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -116,7 +94,7 @@
       }
     },
     {
-      "id": "card09",
+      "id": "card07",
       "name": "Goodwin clock",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -127,7 +105,7 @@
       }
     },
     {
-      "id": "card10",
+      "id": "card08",
       "name": "overdamped Josephson junction",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -138,7 +116,7 @@
       }
     },
     {
-      "id": "card11",
+      "id": "card09",
       "name": "Lotka-Volterra predator and prey",
       "verdict": {
         "stores": "no stable state: a family of neutral cycles, with no restoring force on the amplitude or the phase (Law 2)",
@@ -149,7 +127,7 @@
       }
     },
     {
-      "id": "card12",
+      "id": "card10",
       "name": "pumped oscillator (parametron principle)",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -160,7 +138,7 @@
       }
     },
     {
-      "id": "card13",
+      "id": "card11",
       "name": "Rosenzweig-MacArthur predator and prey",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -171,7 +149,7 @@
       }
     },
     {
-      "id": "card14",
+      "id": "card12",
       "name": "van der Pol oscillator",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -182,7 +160,7 @@
       }
     },
     {
-      "id": "card15",
+      "id": "card13",
       "name": "pitchfork normal form",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -193,7 +171,7 @@
       }
     },
     {
-      "id": "card16",
+      "id": "card14",
       "name": "three strategies in cyclic dominance with mutation",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -204,7 +182,7 @@
       }
     },
     {
-      "id": "card17",
+      "id": "card15",
       "name": "master sequence under mutation (quasispecies, single-peak landscape)",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -215,7 +193,7 @@
       }
     },
     {
-      "id": "card18",
+      "id": "card16",
       "name": "population of phase oscillators (Kuramoto, Ott-Antonsen reduction)",
       "verdict": {
         "stores": "a continuum of neutral states (zero mode)",
@@ -226,7 +204,7 @@
       }
     },
     {
-      "id": "card19",
+      "id": "card17",
       "name": "spruce budworm outbreaks",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -237,7 +215,7 @@
       }
     },
     {
-      "id": "card20",
+      "id": "card18",
       "name": "ring of 3 repressors",
       "verdict": {
         "stores": "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)",
@@ -248,7 +226,7 @@
       }
     },
     {
-      "id": "card21",
+      "id": "card19",
       "name": "ring of 4 repressors",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -259,7 +237,7 @@
       }
     },
     {
-      "id": "card22",
+      "id": "card20",
       "name": "Schl\u00f6gl reactor",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -270,7 +248,7 @@
       }
     },
     {
-      "id": "card23",
+      "id": "card21",
       "name": "Schl\u00f6gl reactor swept through its cusp",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -281,7 +259,7 @@
       }
     },
     {
-      "id": "card24",
+      "id": "card22",
       "name": "FitzHugh-Nagumo unit",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -292,7 +270,7 @@
       }
     },
     {
-      "id": "card25",
+      "id": "card23",
       "name": "unit limited through a second variable",
       "verdict": {
         "stores": "1 stable state(s)",
@@ -303,7 +281,7 @@
       }
     },
     {
-      "id": "card26",
+      "id": "card24",
       "name": "Stoner-Wohlfarth particle",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -314,7 +292,7 @@
       }
     },
     {
-      "id": "card27",
+      "id": "card25",
       "name": "genetic toggle switch",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -325,7 +303,7 @@
       }
     },
     {
-      "id": "card28",
+      "id": "card26",
       "name": "genetic toggle, unequal promoters",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -336,7 +314,7 @@
       }
     },
     {
-      "id": "card29",
+      "id": "card27",
       "name": "adaptive transport network, two tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -347,7 +325,7 @@
       }
     },
     {
-      "id": "card30",
+      "id": "card28",
       "name": "adaptive transport network, unequal tubes",
       "verdict": {
         "stores": "2 stable state(s)",
@@ -358,7 +336,7 @@
       }
     },
     {
-      "id": "card31",
+      "id": "card29",
       "name": "two-component normal form with the symmetry of a square",
       "verdict": {
         "stores": "4 stable state(s)",
@@ -369,7 +347,7 @@
       }
     },
     {
-      "id": "card32",
+      "id": "card30",
       "name": "independent pores filled by capillary condensation",
       "verdict": {
         "stores": "400 elements with two states each",
@@ -380,7 +358,7 @@
       }
     },
     {
-      "id": "card33",
+      "id": "card31",
       "name": "random-field Ising antiferromagnetic chain",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -391,7 +369,7 @@
       }
     },
     {
-      "id": "card34",
+      "id": "card32",
       "name": "random-field Ising antiferromagnet in a uniform field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -402,7 +380,7 @@
       }
     },
     {
-      "id": "card35",
+      "id": "card33",
       "name": "random-field Ising antiferromagnet in a staggered field",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -413,7 +391,7 @@
       }
     },
     {
-      "id": "card36",
+      "id": "card34",
       "name": "random-field Ising ferromagnet",
       "verdict": {
         "stores": "256 elements with two states each",
@@ -424,7 +402,7 @@
       }
     },
     {
-      "id": "card37",
+      "id": "card35",
       "name": "soft spots of an amorphous solid under shear",
       "verdict": {
         "stores": "144 elements with two states each",
