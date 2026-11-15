@@ -1,7 +1,7 @@
 {
  "command": "record",
  "derived_from": "docs/records/quantum_semiclassical.jsonl",
- "implementation_sha256": "df96a4338b3860fdd68d2b039d1f4a96a11d53946b373af27f4de5f6deb405ec",
+ "implementation_sha256": "00d68f6dff22a268cabe8185136bb790581c97d7193c6d4b12d052061e111e6d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -76,13 +76,13 @@
      "obstruction_short": "fold; no cusp with a supercritical sweep",
      "word": "CR",
      "class": "C R(fold)",
-     "seconds": 4.2
+     "seconds": 10.6
     },
     "threshold-write": {
      "status": "reached",
      "word": "CRK",
      "class": "C R(fold) K",
-     "seconds": 3.4
+     "seconds": 6.5
     },
     "phase-locking": {
      "status": "obstructed",
@@ -90,7 +90,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 601.7
+     "seconds": 1514.6
     }
    },
    "completion": {
@@ -145,7 +145,7 @@
       ]
      }
     ],
-    "seconds": 7.0
+    "seconds": 8.2
    },
    "spec_sha256": "55c920f0321cc3ec981b4eeb240125cd77ef7207dec29e432eac86a8b10eb4e4",
    "summary": "reaches threshold-write"
@@ -167,7 +167,7 @@
       "stderr": 0.10799009991402313,
       "expected": 1.3313353638003897
      },
-     "seconds": 2.2
+     "seconds": 11.0
     },
     "threshold-write": {
      "status": "obstructed",
@@ -175,7 +175,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 1.1
+     "seconds": 12.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -183,7 +183,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.4
+     "seconds": 6.1
     }
    },
    "completion": {
@@ -257,7 +257,7 @@
       }
      }
     ],
-    "seconds": 57.8
+    "seconds": 470.2
    },
    "spec_sha256": "8ef48efdda56101aadb449ac924843f00ef172c8d743b63c89b10c28143c44d6",
    "summary": "reaches symmetric-write; completions: none: linear-stage write"
@@ -279,7 +279,7 @@
       "stderr": 0.10961740685634606,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.6
+     "seconds": 15.8
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -290,7 +290,7 @@
       "stderr": 1.5977561468316637e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 2.0
+     "seconds": 24.0
     },
     "phase-locking": {
      "status": "obstructed",
@@ -298,7 +298,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.4
+     "seconds": 3.4
     }
    },
    "completion": {
@@ -506,7 +506,7 @@
       }
      }
     ],
-    "seconds": 105.1
+    "seconds": 490.3
    },
    "spec_sha256": "186033208af7fe6d0f7b0f95118da02e0af4032baf34333b533f9424095f3453",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write; distant branch: linear-stage write; distant branch: linear-stage write"
@@ -525,7 +525,7 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 1.0
+     "seconds": 4.8
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -536,7 +536,7 @@
       "stderr": 0.0004068014441205303,
       "expected": 1.018792971647471
      },
-     "seconds": 3.5
+     "seconds": 41.9
     },
     "phase-locking": {
      "status": "obstructed",
@@ -544,7 +544,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.5
+     "seconds": 1.2
     }
    },
    "completion": {
@@ -584,7 +584,7 @@
       }
      }
     ],
-    "seconds": 62.0
+    "seconds": 428.2
    },
    "spec_sha256": "7b0ad1a47d7edb075c11cc9de69300b588b2b3b3cf97e249baf9570fa2065a82",
    "summary": "reaches threshold-write; completions: critical space: nonlinear stage"
@@ -606,7 +606,7 @@
       "stderr": 0.10619925205367307,
       "expected": 1.3313353638003897
      },
-     "seconds": 2.3
+     "seconds": 20.1
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -617,7 +617,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 1.8
+     "seconds": 14.1
     },
     "phase-locking": {
      "status": "obstructed",
@@ -625,7 +625,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.2
+     "seconds": 0.5
     }
    },
    "completion": {
@@ -664,7 +664,7 @@
       }
      }
     ],
-    "seconds": 66.9
+    "seconds": 475.3
    },
    "spec_sha256": "c112999f2728c6c7060d19cd1222c658b87456c3852136d68743f10794d8dfed",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -689,7 +689,7 @@
       "offset_stderr": 0.11178102128186396,
       "offset_resolved": false
      },
-     "seconds": 3.6
+     "seconds": 13.0
     },
     "threshold-write": {
      "status": "reached",
@@ -700,7 +700,7 @@
       "stderr": 5.072983719545121e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 2.6
+     "seconds": 14.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -708,7 +708,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.9
+     "seconds": 1.8
     }
    },
    "completion": {
@@ -871,7 +871,7 @@
       ]
      }
     ],
-    "seconds": 65.1
+    "seconds": 401.5
    },
    "spec_sha256": "515e718d32a2cf51fb327361379597b4f938ff8a53faeb86e1eeee3016b4661e",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -896,7 +896,7 @@
       "offset_stderr": 0.10965549597465941,
       "offset_resolved": false
      },
-     "seconds": 3.7
+     "seconds": 36.9
     },
     "threshold-write": {
      "status": "reached",
@@ -907,7 +907,7 @@
       "stderr": 1.473599259838032e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 1.7
+     "seconds": 3.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -915,7 +915,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.0
+     "seconds": 14.6
     }
    },
    "completion": {
@@ -1078,7 +1078,7 @@
       ]
      }
     ],
-    "seconds": 83.5
+    "seconds": 542.9
    },
    "spec_sha256": "c0396b76f89c53ec39ad8a7a171925dde3e71497a7d4980e3a078b2a931b6cd5",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -1103,7 +1103,7 @@
       "offset_stderr": 0.1374586024952627,
       "offset_resolved": true
      },
-     "seconds": 4.3
+     "seconds": 57.3
     },
     "threshold-write": {
      "status": "reached",
@@ -1114,7 +1114,7 @@
       "stderr": 9.992849057116615e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 2.7
+     "seconds": 38.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1122,7 +1122,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.7
+     "seconds": 22.5
     }
    },
    "completion": {
@@ -1285,7 +1285,7 @@
       ]
      }
     ],
-    "seconds": 118.8
+    "seconds": 645.5
    },
    "spec_sha256": "d104cdbc6895954d55b39c5c659e28415a38bd45f8c4f4457c6ac4430252cce4",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -1302,7 +1302,7 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 3.3
+     "seconds": 12.1
     },
     "threshold-write": {
      "status": "reached",
@@ -1313,7 +1313,7 @@
       "stderr": 5.12071009999282e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 2.2
+     "seconds": 25.7
     },
     "phase-locking": {
      "status": "reached",
@@ -1324,7 +1324,7 @@
       "stderr": 0.0003450109943655688,
       "expected": 1.0
      },
-     "seconds": 12.5
+     "seconds": 86.4
     }
    },
    "completion": {
@@ -1411,7 +1411,7 @@
       ]
      }
     ],
-    "seconds": 109.6
+    "seconds": 707.5
    },
    "spec_sha256": "52a0b66708cf283856baf97772fcebaf0bfdf5ca9544cafc9b10aaf970c87e73",
    "summary": "reaches symmetric-write, threshold-write, phase-locking; completions: second parameter: equilibrium write; motion without a stable state: cycle"
@@ -1436,7 +1436,7 @@
       "offset_stderr": 0.11862279074391287,
       "offset_resolved": true
      },
-     "seconds": 6.5
+     "seconds": 54.2
     },
     "threshold-write": {
      "status": "reached",
@@ -1447,7 +1447,7 @@
       "stderr": 2.8155779934202485e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 3.6
+     "seconds": 17.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1455,7 +1455,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.6
+     "seconds": 3.0
     }
    },
    "completion": {
@@ -1618,7 +1618,7 @@
       ]
      }
     ],
-    "seconds": 174.5
+    "seconds": 1133.5
    },
    "spec_sha256": "7eb12dc1703e581dac905b0d6dad20063530f051eea0a44935c9dacadfe44308",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -1637,7 +1637,7 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 9.1
+     "seconds": 108.8
     },
     "threshold-write": {
      "status": "obstructed",
@@ -1645,7 +1645,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 9.4
+     "seconds": 112.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1653,7 +1653,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.5
+     "seconds": 4.7
     }
    },
    "completion": {
@@ -1679,7 +1679,7 @@
       }
      }
     ],
-    "seconds": 19.6
+    "seconds": 105.4
    },
    "spec_sha256": "4207228fe207c9348909a0897d4927c129424c203fd86e9fbf2ef6187c0ac2de",
    "summary": "reaches no write target"
@@ -1698,7 +1698,7 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 0.6
+     "seconds": 6.2
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -1709,7 +1709,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 2.7
+     "seconds": 24.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1717,7 +1717,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 4.8
+     "seconds": 49.4
     }
    },
    "completion": {
@@ -1792,7 +1792,7 @@
       }
      }
     ],
-    "seconds": 80.0
+    "seconds": 361.5
    },
    "spec_sha256": "a8c03d852becbf9ffc02370c12b161e2ac9bb346e7d5eb6f1bc6a465a6e0add5",
    "summary": "reaches threshold-write; completions: leading order: equilibrium write"
@@ -1811,7 +1811,7 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 1.4
+     "seconds": 2.8
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -1822,7 +1822,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 5.8
+     "seconds": 50.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -1830,7 +1830,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 5.9
+     "seconds": 66.3
     }
    },
    "completion": {
@@ -2046,7 +2046,7 @@
       }
      }
     ],
-    "seconds": 549.2
+    "seconds": 2367.8
    },
    "spec_sha256": "24df4a6d1f0bc08bb972647fe083d24e0792dba06e448ebbb93a1577ee50aa98",
    "summary": "reaches threshold-write; completions: leading order: equilibrium write; distant branch: linear-stage write; distant branch: linear-stage write"
@@ -2065,7 +2065,7 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 3.0
+     "seconds": 37.4
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -2076,7 +2076,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 12.3
+     "seconds": 131.5
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2084,7 +2084,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 7.9
+     "seconds": 73.1
     }
    },
    "completion": {
@@ -2199,7 +2199,7 @@
       }
      }
     ],
-    "seconds": 895.3
+    "seconds": 6409.8
    },
    "spec_sha256": "37e42b34bcc5ab25996015ad920808f35ba5fc49790bbf01e1cc8a07937287ac",
    "summary": "reaches threshold-write; completions: critical space: nonlinear stage; critical space: nonlinear stage; critical space: nonlinear stage"
@@ -2224,7 +2224,7 @@
       "offset_stderr": 0.1317537150947734,
       "offset_resolved": true
      },
-     "seconds": 8.7
+     "seconds": 108.4
     },
     "threshold-write": {
      "status": "reached",
@@ -2235,7 +2235,7 @@
       "stderr": 3.027431652391499e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 16.4
+     "seconds": 74.9
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2243,7 +2243,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 3.9
+     "seconds": 22.9
     }
    },
    "completion": {
@@ -2349,7 +2349,7 @@
       ]
      }
     ],
-    "seconds": 140.0
+    "seconds": 871.7
    },
    "spec_sha256": "2ccaa0f4a734f5717743840ad13fa9562fd82e9e3511bea399a6e1036cad6b9d",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write"
@@ -2366,7 +2366,7 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 2.5
+     "seconds": 23.3
     },
     "threshold-write": {
      "status": "reached",
@@ -2377,7 +2377,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 1.5
+     "seconds": 8.8
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2385,7 +2385,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.1
+     "seconds": 2.2
     }
    },
    "completion": {
@@ -2546,7 +2546,7 @@
       ]
      }
     ],
-    "seconds": 81.2
+    "seconds": 416.7
    },
    "spec_sha256": "dba09a964776c0da70c75224ff84874b69ef9d761eb27caf7263c7965222b387",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -2563,7 +2563,7 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 13.4
+     "seconds": 82.6
     },
     "threshold-write": {
      "status": "reached",
@@ -2574,7 +2574,7 @@
       "stderr": 5e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 5.8
+     "seconds": 12.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2582,7 +2582,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 641.5
+     "seconds": 1240.6
     }
    },
    "completion": {
@@ -2634,7 +2634,7 @@
       ]
      }
     ],
-    "seconds": 614.3
+    "seconds": 701.0
    },
    "spec_sha256": "3d52775718f4ec3fe2c8ebc76cb76ab2accab6b0cc8f539d0a3efc27c57245f4",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: not settled at the end of the sweep"
@@ -2653,7 +2653,7 @@
      "obstruction_short": "Hopf: an oscillation, not a write",
      "word": "CR",
      "class": "C R(Hopf)",
-     "seconds": 0.5
+     "seconds": 3.2
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2661,13 +2661,13 @@
      "obstruction_short": "no stable state: the realization oscillates",
      "word": "CR",
      "class": "C R(Hopf)",
-     "seconds": 7.1
+     "seconds": 20.3
     },
     "phase-locking": {
      "status": "reached",
      "word": "CRK",
      "class": "C R(phase) K(1:1)",
-     "seconds": 634.9
+     "seconds": 1191.1
     }
    },
    "completion": {
@@ -2690,7 +2690,7 @@
       }
      }
     ],
-    "seconds": 0.6
+    "seconds": 1.0
    },
    "spec_sha256": "3e0e2baa2763e369b6baaaa2b5a3521e1e75a964904b483b86a0b343af369c90",
    "summary": "reaches phase-locking"
@@ -2709,7 +2709,7 @@
      "obstruction_short": "no write point along the control",
      "word": "",
      "class": "",
-     "seconds": 0.2
+     "seconds": 1.8
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2717,7 +2717,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "",
      "class": "",
-     "seconds": 0.5
+     "seconds": 5.1
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2725,13 +2725,13 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.3
+     "seconds": 2.0
     }
    },
    "completion": {
     "status": "derived",
     "write_points": [],
-    "seconds": 0.4
+    "seconds": 1.5
    },
    "spec_sha256": "6f54f4695d3d9bd55670d47e42284259d830db16ae803ad1566c5099b59b2a33",
    "summary": "reaches no write target"
@@ -2756,7 +2756,7 @@
       "offset_stderr": 0.10902586357276908,
       "offset_resolved": false
      },
-     "seconds": 5.0
+     "seconds": 41.0
     },
     "threshold-write": {
      "status": "reached",
@@ -2767,7 +2767,7 @@
       "stderr": 8.654218088177679e-05,
       "expected": 1.018792971647471
      },
-     "seconds": 2.3
+     "seconds": 17.9
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2775,7 +2775,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.1
+     "seconds": 19.8
     }
    },
    "completion": {
@@ -2938,7 +2938,7 @@
       ]
      }
     ],
-    "seconds": 125.5
+    "seconds": 756.1
    },
    "spec_sha256": "f68cc4781f1b2933d1500d4ff8269db1e1a147ee086ec91974792fa5ce4bc3c6",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
@@ -2957,7 +2957,7 @@
      "obstruction_short": "subcritical: jump to a distant branch",
      "word": "SCR",
      "class": "S(reflection) C R(subcritical pitchfork)",
-     "seconds": 0.2
+     "seconds": 1.5
     },
     "threshold-write": {
      "status": "obstructed",
@@ -2965,7 +2965,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 0.3
+     "seconds": 2.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -2973,7 +2973,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.6
+     "seconds": 14.3
     }
    },
    "completion": {
@@ -3047,7 +3047,7 @@
       }
      }
     ],
-    "seconds": 33.6
+    "seconds": 210.2
    },
    "spec_sha256": "92d02c95fa410c03333eb93893dc0f3486417318f820d26fe0e712ac42074944",
    "summary": "reaches no write target; completions: distant branch: linear-stage write"
@@ -3066,7 +3066,7 @@
      "obstruction_short": "vanishing cubic: leading term of order 5",
      "word": "SCR",
      "class": "S(reflection) C R(degenerate cubic)",
-     "seconds": 0.5
+     "seconds": 3.6
     },
     "threshold-write": {
      "status": "obstructed",
@@ -3074,7 +3074,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(degenerate cubic)",
-     "seconds": 0.6
+     "seconds": 6.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3082,7 +3082,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.4
+     "seconds": 4.1
     }
    },
    "completion": {
@@ -3156,7 +3156,7 @@
       }
      }
     ],
-    "seconds": 30.6
+    "seconds": 188.1
    },
    "spec_sha256": "843a27328ec6aa39ebec54dfe394ff94206885c4e318b7a2d6aeee690d485351",
    "summary": "reaches no write target; completions: leading order: linear-stage write"
@@ -3178,7 +3178,7 @@
       "stderr": 0.11268992586246143,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.3
+     "seconds": 10.6
     },
     "threshold-write": {
      "status": "obstructed",
@@ -3186,7 +3186,7 @@
      "obstruction_short": "a single stable state: nothing to switch to",
      "word": "SCR",
      "class": "S C R(pitchfork)",
-     "seconds": 0.4
+     "seconds": 3.7
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3194,7 +3194,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.3
+     "seconds": 1.9
     }
    },
    "completion": {
@@ -3268,7 +3268,7 @@
       }
      }
     ],
-    "seconds": 26.6
+    "seconds": 165.2
    },
    "spec_sha256": "87ef140de755fbac7b92f05f24086637de86ad64345314428bf5bb6509605f77",
    "summary": "reaches symmetric-write; completions: none: linear-stage write"
@@ -3287,7 +3287,7 @@
      "obstruction_short": "no write point along the control",
      "word": "",
      "class": "",
-     "seconds": 0.2
+     "seconds": 1.7
     },
     "threshold-write": {
      "status": "obstructed",
@@ -3295,7 +3295,7 @@
      "obstruction_short": "no stable state: the realization oscillates",
      "word": "",
      "class": "",
-     "seconds": 2.3
+     "seconds": 19.6
     },
     "phase-locking": {
      "status": "reached",
@@ -3306,13 +3306,13 @@
       "stderr": 0.0001466038539474912,
       "expected": 1.0
      },
-     "seconds": 17.2
+     "seconds": 155.3
     }
    },
    "completion": {
     "status": "derived",
     "write_points": [],
-    "seconds": 0.4
+    "seconds": 2.2
    },
    "spec_sha256": "8317c0105e6f8d21e95de90f8f65e8cecc1ff66ffa324d1a4c884d922060fd78",
    "summary": "reaches phase-locking; motion without a stable state: cycle"
@@ -3334,7 +3334,7 @@
       "stderr": 0.1088923113139296,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.2
+     "seconds": 8.8
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -3345,7 +3345,7 @@
       "stderr": 1.4805209505031058e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 1.3
+     "seconds": 9.3
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3353,7 +3353,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.6
+     "seconds": 5.6
     }
    },
    "completion": {
@@ -3427,7 +3427,7 @@
       }
      }
     ],
-    "seconds": 28.1
+    "seconds": 150.0
    },
    "spec_sha256": "1c354bf5adf79447aeec90d941d40c1ffcaba279ca6fdf2677cdc983051ca599",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -3449,7 +3449,7 @@
       "stderr": 0.11120624537592073,
       "expected": 1.3313353638003897
      },
-     "seconds": 2.1
+     "seconds": 14.3
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -3460,7 +3460,7 @@
       "stderr": 1.2432295701803042e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 2.7
+     "seconds": 16.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3468,7 +3468,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.6
+     "seconds": 4.7
     }
    },
    "completion": {
@@ -3685,7 +3685,7 @@
       }
      }
     ],
-    "seconds": 194.0
+    "seconds": 419.2
    },
    "spec_sha256": "cc173309c1d7985a663969fa4d22276300707d7bd463000474d180008b0bf325",
    "summary": "reaches symmetric-write, threshold-write; completions: none: nonlinear stage; distant branch: equilibrium write; distant branch: equilibrium write"
@@ -3704,7 +3704,7 @@
      "obstruction_short": "degenerate critical mode: 2 directions",
      "word": "CR",
      "class": "C R(degenerate critical mode)",
-     "seconds": 0.3
+     "seconds": 2.6
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -3715,7 +3715,7 @@
       "stderr": 7.620550241949076e-07,
       "expected": 1.018792971647471
      },
-     "seconds": 2.9
+     "seconds": 26.2
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3723,7 +3723,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.7
+     "seconds": 5.4
     }
    },
    "completion": {
@@ -3765,7 +3765,7 @@
       }
      }
     ],
-    "seconds": 116.5
+    "seconds": 210.3
    },
    "spec_sha256": "81e8696e72ff6b78f5e2789d5d4d7c08b675e995a83a706b0c9fd7241abd08f6",
    "summary": "reaches threshold-write; completions: critical space: linear-stage write"
@@ -3790,7 +3790,7 @@
       "offset_stderr": 0.11261773988577285,
       "offset_resolved": false
      },
-     "seconds": 3.6
+     "seconds": 23.8
     },
     "threshold-write": {
      "status": "reached",
@@ -3801,7 +3801,7 @@
       "stderr": 2.955065575127591e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 2.2
+     "seconds": 17.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3809,7 +3809,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 2.6
+     "seconds": 18.7
     }
    },
    "completion": {
@@ -3895,7 +3895,7 @@
       ]
      }
     ],
-    "seconds": 57.0
+    "seconds": 100.6
    },
    "spec_sha256": "6a83ca3b2daa1fcfe82ef67d4ff4bc87813297f8d91f4cf45a4b8afc3880ff12",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write"
@@ -3917,7 +3917,7 @@
       "stderr": 0.1086600576712234,
       "expected": 1.3313353638003897
      },
-     "seconds": 1.2
+     "seconds": 3.1
     },
     "threshold-write": {
      "status": "reached by a write field",
@@ -3928,7 +3928,7 @@
       "stderr": 0.004052327931677091,
       "expected": 1.018792971647471
      },
-     "seconds": 2.6
+     "seconds": 6.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -3936,7 +3936,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 0.9
+     "seconds": 1.4
     }
    },
    "completion": {
@@ -4010,7 +4010,7 @@
       }
      }
     ],
-    "seconds": 30.1
+    "seconds": 43.6
    },
    "spec_sha256": "3b0b24cbac11bdb2ddf0f45a476b59fc8843a557e4890a536c4635f02b5b901d",
    "summary": "reaches symmetric-write, threshold-write; completions: none: linear-stage write"
@@ -4027,7 +4027,7 @@
      "status": "reached after unfolding",
      "word": "CRURK",
      "class": "C R(fold) U R(pitchfork) K",
-     "seconds": 14.5
+     "seconds": 25.6
     },
     "threshold-write": {
      "status": "reached",
@@ -4038,7 +4038,7 @@
       "stderr": 0.032811487226625635,
       "expected": 1.018792971647471
      },
-     "seconds": 5.7
+     "seconds": 9.4
     },
     "phase-locking": {
      "status": "obstructed",
@@ -4046,7 +4046,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 395.4
+     "seconds": 1074.9
     }
    },
    "completion": {
@@ -4139,7 +4139,7 @@
       ]
      }
     ],
-    "seconds": 821.0
+    "seconds": 5795.2
    },
    "spec_sha256": "0cef4fae8be0863a2f5f554c1d162239b7947a48fdcfd7a42e8ffcd0f2fbc96b",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: equilibrium write"
@@ -4164,7 +4164,7 @@
       "offset_stderr": 0.13172800806609775,
       "offset_resolved": true
      },
-     "seconds": 4.2
+     "seconds": 7.8
     },
     "threshold-write": {
      "status": "reached",
@@ -4175,7 +4175,7 @@
       "stderr": 2.715258781149643e-06,
       "expected": 1.018792971647471
      },
-     "seconds": 2.3
+     "seconds": 3.6
     },
     "phase-locking": {
      "status": "obstructed",
@@ -4183,7 +4183,7 @@
      "obstruction_short": "no oscillation in the control range",
      "word": "",
      "class": "",
-     "seconds": 1.5
+     "seconds": 3.4
     }
    },
    "completion": {
@@ -4346,7 +4346,7 @@
       ]
      }
     ],
-    "seconds": 144.0
+    "seconds": 415.8
    },
    "spec_sha256": "cae1f5aa266b1f772483c4dc04841e9baea46f50efee200889d5cda78d5501d9",
    "summary": "reaches symmetric-write, threshold-write; completions: second parameter: linear-stage write; second parameter: linear-stage write"
