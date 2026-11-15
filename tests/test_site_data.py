@@ -333,6 +333,10 @@ def test_every_material_of_the_page_has_a_card_in_the_gallery():
     specs = [json.loads(p.read_text(encoding="utf-8")) for p in sorted((ROOT / "examples/memory").rglob("*.json"))
              if "fields" not in p.parts and "learning_objectives" not in p.parts]
     missing = sorted(s["name"] for s in specs if s["name"] not in names)
+    # the learning objectives are kept outside the catalog, and outside the gallery too
+    objectives = {json.loads(p.read_text(encoding="utf-8"))["name"]
+                  for p in (ROOT / "examples/memory/learning_objectives").glob("*.json")}
+    assert objectives and not objectives & names
     assert not missing, ("regenerate the gallery: python3 -B -m fieldbridge memory gallery --out-dir examples/gallery "
                          f"--quick (missing: {missing})")
     assert all((ROOT / "examples/gallery" / f"{c['id']}.png").exists() for c in gallery["cards"])

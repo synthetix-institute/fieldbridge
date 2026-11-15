@@ -1136,11 +1136,14 @@ def cmd_gallery(args) -> int:
     from . import hysterons as hy
     from .visual import hysteron_figure
     # every material under the examples folder, in subfolders too: drift equations and networks get a memory card,
-    # hysterons a card of their return to a turning point; fields have their own command (memory field)
+    # hysterons a card of their return to a turning point; fields have their own command (memory field). The learning
+    # objectives are specifications kept outside the catalog of materials (examples/memory/learning_objectives/README.md)
     reals, hysteron_specs, skipped = [], [], []
     root = Path(args.examples)
     for path in sorted(root.rglob("*.json")):
         rel = path.relative_to(root).as_posix()
+        if "learning_objectives" in path.relative_to(root).parts:
+            continue
         try:
             kind = json.loads(path.read_text(encoding="utf-8")).get("kind")
         except (json.JSONDecodeError, UnicodeDecodeError) as err:
