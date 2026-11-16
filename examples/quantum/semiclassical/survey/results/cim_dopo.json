@@ -5,7 +5,7 @@
   "source": "Drummond, McNeil & Walls, Opt. Acta 28, 211 (1981); Marandi et al., Nat. Photon. 8, 937 (2014)",
   "kind": "authored quantum carrier (mean field + vacuum noise of the loss channel, truncated Wigner)"
  },
- "implementation_sha256": "fff652ab8439676bd2b860ac95f4c6690dae58cee9ef4be3c4b6a891a0c90da0",
+ "implementation_sha256": "00d68f6dff22a268cabe8185136bb790581c97d7193c6d4b12d052061e111e6d",
  "versions": {
   "python": "3.11.3",
   "numpy": "1.26.0",
@@ -70,11 +70,11 @@
   }
  },
  "seconds": {
-  "symmetric-write": 11.7,
-  "threshold-write": 2.7,
-  "phase-locking": 1.7,
-  "completion": 101.3,
-  "changes": 56.5
+  "symmetric-write": 19.3,
+  "threshold-write": 9.1,
+  "phase-locking": 3.1,
+  "completion": 434.6,
+  "changes": 232.6
  },
  "completion": {
   "write_points": [
@@ -720,13 +720,13 @@
    "symmetric-write": {
     "status": "reached",
     "obstruction": "",
-    "seconds": 1.2,
+    "seconds": 1.3,
     "class": "reached"
    },
    "threshold-write": {
     "status": "obstructed",
     "obstruction": "a single stable state: there is no second state to switch to",
-    "seconds": 1.8,
+    "seconds": 7.2,
     "class": "single stable state"
    }
   },
@@ -738,13 +738,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 1.0,
+      "seconds": 0.8,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.0,
+      "seconds": 1.5,
       "class": "single stable state"
      }
     },
@@ -759,13 +759,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 2.8,
+      "seconds": 18.7,
       "class": "reached"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 4.4,
+      "seconds": 4.6,
       "class": "single stable state"
      }
     },
@@ -786,7 +786,7 @@
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 3.0,
+      "seconds": 18.1,
       "class": "single stable state"
      }
     },
@@ -801,13 +801,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 1.9,
+      "seconds": 2.9,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 2.5,
+      "seconds": 3.8,
       "class": "single stable state"
      }
     },
@@ -822,13 +822,13 @@
      "symmetric-write": {
       "status": "reached",
       "obstruction": "",
-      "seconds": 0.5,
+      "seconds": 1.3,
       "class": "reached"
      },
      "threshold-write": {
       "status": "reached by a write field",
       "obstruction": "",
-      "seconds": 1.5,
+      "seconds": 11.5,
       "class": "reached"
      }
     },
@@ -845,7 +845,7 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.2,
+      "seconds": 0.3,
       "class": "no write point"
      },
      "threshold-write": {
@@ -866,13 +866,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "a complex pair crosses: the state oscillates (Hopf), a phase memory rather than a write",
-      "seconds": 0.8,
+      "seconds": 3.5,
       "class": "oscillation"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "no stable state (the realization oscillates): there is no state to leave",
-      "seconds": 4.0,
+      "seconds": 24.9,
       "class": "oscillation"
      }
     },
@@ -892,13 +892,13 @@
      "symmetric-write": {
       "status": "obstructed",
       "obstruction": "no write point along the control",
-      "seconds": 0.5,
+      "seconds": 3.6,
       "class": "no write point"
      },
      "threshold-write": {
       "status": "obstructed",
       "obstruction": "a single stable state: there is no second state to switch to",
-      "seconds": 0.6,
+      "seconds": 1.8,
       "class": "single stable state"
      }
     },
