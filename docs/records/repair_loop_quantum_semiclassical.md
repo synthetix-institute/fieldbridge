@@ -9,9 +9,10 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 
 The records of 94ab84d (2026-11-15, version 15 of the completed write law merged into main, code stamp 00d68f6d), on the cluster
 with fresh libraries, 3600 s per law, under the rule of d2e1c9a, with the Python of the run of 2026-11-09 (3.9.13, NumPy 1.24.4,
-SciPy 1.13.1). The implementation, learning and repair-family hashes are those of 2026-11-09. Results:
-`repair_loop_v15_campaign.json` and `repair_loop_v15_certified_control.json`. This supersedes the counts of 2026-11-09, whose
-records predate version 12.
+SciPy 1.13.1). The learning and repair-family hashes are those of 2026-11-09; the implementation is that of 2026-11-09 with one
+guard (abf6111, below), which ends a reduced integration after 1e6 drift evaluations. Results: `repair_loop_v15_campaign.json`
+and `repair_loop_v15_certified_control.json`, from the run with the guard (18:12 to 18:25, load average 13 to 31). This
+supersedes the counts of 2026-11-09, whose records predate version 12.
 
 **2 of the 9 failed laws (5 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, and 0 of the 9 at the scale
 of the written states**, against 5 of 13 on 2026-11-09. The change comes from the records, not from the loop.
@@ -23,15 +24,25 @@ of the written states**, against 5 of 13 on 2026-11-09. The change comes from th
 - One law joined: the unfolding of `spin_ensemble_cavity` (equilibrium write), on which no order passes development.
 - Of the 8 laws in both sets, 7 keep their outcome, selected order, radius and omission error: `cim_triangle` 0 and
   `rfsquid_pair` 0 verified, `kpo_pair` 0, `kpo_triangle` 0 and `kerr_cat_kpo` 0 insufficient excitation, `kpo_triangle` 1 and
-  `ion_phonon_laser` 0 no order passes development. `kpo_triangle` 2 stopped at the limit of 3600 s, against no order passes
-  development in 989 s on 2026-11-09; the cluster load average was 28 to 43 during this run. A second run of the whole campaign
+  `ion_phonon_laser` 0 no order passes development. `kpo_triangle` 2 ends with no order passes development, as on 2026-11-09,
+  in 148 s with the guard.
+- **The guard.** Without it, `kpo_triangle` 2 stopped at the limit of 3600 s, against 989 s on 2026-11-09; the cluster load
+  average was 28 to 43 during that run. A second run of the whole campaign
   in a fresh library (11:50 to 13:04, load average 21 to 35) gives every outcome, selected order and omission error again, and
   `kpo_triangle` 2 again stops at 3600 s. In that run the other laws take 1.3 to 2.4 times their time in the first, and
   `kpo_triangle` 1 takes at most 2.2 times its 77 s of 2026-11-09; at that factor the 989 s of 2026-11-09 come to about 2200 s.
   A third run with 14400 s per law (13:07 to 17:18, load average 23 to 28) again gives every other outcome, selected order and
   omission error, with `kpo_triangle` 1 in 98 s, and `kpo_triangle` 2 stops at 14400 s, more than 14 times its 989 s of
   2026-11-09. The stop is therefore not the load: the order closure of this law no longer ends within the budget on the records
-  of version 15, whose write point moved with them. Why it does not end is not examined here.
+  of version 15, whose write point moved with them. The cause is in the development check of order 7 at radius 0.5: the map of
+  that order sends the start of each intervention to |z| between 2.5e4 and 1.4e5 (the written states are at a scale of 1.07),
+  where the reduced drift reaches 1e44. On 2 of the 3 interventions the reduced state stays below the bound of 1e8, so the
+  explicit integrator steps at its stability limit: in 120 s one of them reaches t = 0.75 of 56.6 after 6.8e5 evaluations. The
+  records of version 15 give a larger sweep end factor (0.091 against 0.059), which moves the interventions at that radius
+  (p from 2.284 to 2.321 before, 2.273 to 2.330 now); on 2026-11-09 the three left the bound within 6 evaluations. The guard
+  counts as diverged a reduced integration that needs more than 1e6 evaluations, against some 1e4 for one that integrates; the
+  count, not the wall time, ends it, so the outcome does not depend on the load. With the guard every other outcome, selected
+  order, radius and omission error of the campaign and of the certified control are those of the run without it.
 
 | Control | Result |
 |---|---|
@@ -39,13 +50,13 @@ of the written states**, against 5 of 13 on 2026-11-09. The change comes from th
 | certified laws | 14 of 29 (48 %, against 22 % on failed laws), median radius 0.0625 against 0.125 (before 12 of 27, 0.0625) |
 | plain critical coordinate within the tolerance | 1 of 2 (before 1 of 5) |
 | strongest nonlinear term scaled by 1.25 | rejected on both |
-| memory hint against the direct ladder | 287 against 285 development checks on 8 laws, the same selection on all 8 (before 482 against 474 on 13) |
+| memory hint against the direct ladder | 329 against 327 development checks on 9 laws, the same selection on all 9 (before 482 against 474 on 13) |
 
-The other outcomes: 3 insufficient excitation, 3 no order passes development and 1 timed out. Of the 229 retained outcomes, 9
+The other outcomes: 3 insufficient excitation and 4 no order passes development. Of the 229 retained outcomes, 9
 get a task, 219 are `no_failed_law` and one (`optomech_bistable`) is outside the campaign classes. In the certified control the
 outcomes are 14 verified, 4 withheld failed, 4 no test power, 3 insufficient excitation and 4 no order passes development;
-`kpo_pair` 1 and 2, timed out before, now end with no order passes development. Wall time on the loaded cluster: 1 h 10 min for
-the campaign, of which 1 h is the law that timed out, and 15 min for the control.
+`kpo_pair` 1 and 2, timed out before, now end with no order passes development. Wall time with the guard: 13 min for the
+campaign and the control together (without it, 1 h 10 min for the campaign, of which 1 h is the law that timed out).
 
 ## With the oriented critical frame, 2026-11-09
 
