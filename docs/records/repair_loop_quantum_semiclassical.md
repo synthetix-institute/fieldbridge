@@ -28,8 +28,10 @@ of the written states**, against 5 of 13 on 2026-11-09. The change comes from th
   in a fresh library (11:50 to 13:04, load average 21 to 35) gives every outcome, selected order and omission error again, and
   `kpo_triangle` 2 again stops at 3600 s. In that run the other laws take 1.3 to 2.4 times their time in the first, and
   `kpo_triangle` 1 takes at most 2.2 times its 77 s of 2026-11-09; at that factor the 989 s of 2026-11-09 come to about 2200 s.
-  The load alone therefore does not account for the stop, and the change is more likely in the law of the records, whose write
-  point moved with them; a run with a longer budget would decide it.
+  A third run with 14400 s per law (13:07 to 17:18, load average 23 to 28) again gives every other outcome, selected order and
+  omission error, with `kpo_triangle` 1 in 98 s, and `kpo_triangle` 2 stops at 14400 s, more than 14 times its 989 s of
+  2026-11-09. The stop is therefore not the load: the order closure of this law no longer ends within the budget on the records
+  of version 15, whose write point moved with them. Why it does not end is not examined here.
 
 | Control | Result |
 |---|---|
