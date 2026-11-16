@@ -354,3 +354,16 @@ def test_the_critical_frame_does_not_depend_on_the_sign_the_eigensolver_gives(J,
     from fieldbridge.memory import analysis as an
     assert all(plain.V[an.orientation_index(plain.V[:, j]), j] > 0 for j in range(k))
     assert np.allclose(plain.V, flipped.V, atol=1e-12) and np.allclose(plain.W, flipped.W, atol=1e-12)
+
+
+def test_a_stiff_reduced_drift_within_the_numerical_range_ends_on_its_count_of_evaluations():
+    # stiff and bounded: the explicit integrator would step at its stability limit far past the cap
+    stiff = lambda t, z: -1e9 * (z - 1.0)
+    started = time.monotonic()
+    with pytest.raises(ArithmeticError, match="evaluations"):
+        rl._trajectory(stiff, [2.0], 50.0, reduced=True, cap=20_000)
+    assert time.monotonic() - started < 30
+    # a mild drift integrates as before, and the cap does not touch the source trajectories
+    mild = rl._trajectory(lambda t, z: -z, [1.0], 5.0, reduced=True, cap=20_000)
+    assert abs(mild[-1, 0] - np.exp(-5.0)) < 1e-6
+    assert rl._trajectory(stiff, [1.0], 1e-9, cap=1).shape == (81, 1)

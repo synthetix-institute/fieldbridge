@@ -718,7 +718,27 @@ def assess_exact_report(task: Dict, report: Dict, *, seed: int = 20261030) -> Di
     return description_size(len(x), len(obs), rank)
 
 
-def _trajectory(rhs, initial, duration, *, fine=False, reduced=False):
+# a reduced drift can be stiff and still stay below the bound of the state: a high-order map sends the start of an
+# intervention far outside the written states, and the explicit integrator then steps at its stability limit for hours
+# (kpo_triangle 2 on the records of version 15). The count of drift evaluations, not the wall time, ends such a row, so
+# the outcome does not depend on the load of the machine; a row that integrates takes some 1e4 evaluations.
+REDUCED_EVALUATIONS = 1_000_000
+
+
+def _capped(rhs, cap: int):
+    count = [0]
+
+    def capped(t, z):
+        count[0] += 1
+        if count[0] > cap:
+            raise ArithmeticError(f"Reduced drift took more than {cap} evaluations within the numerical range")
+        return rhs(t, z)
+    return capped
+
+
+def _trajectory(rhs, initial, duration, *, fine=False, reduced=False, cap: int = REDUCED_EVALUATIONS):
+    if reduced:
+        rhs = _capped(rhs, cap)
     return ln._trajectory(rhs, np.atleast_1d(np.asarray(initial, float)), duration, fine=fine, reduced=reduced)
 
 
