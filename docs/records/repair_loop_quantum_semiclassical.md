@@ -5,6 +5,42 @@ d2e1c9a, which precedes every campaign run. Machine-readable results: `repair_lo
 `repair_loop_certified_control.json` in this folder. The libraries with all attempts are on the cluster in
 `~/Desktop/Hyperion/repair_loop_20261030/`.
 
+## After version 15 of the completed write law, 2026-11-16
+
+The records of 94ab84d (2026-11-15, version 15 of the completed write law merged into main, code stamp 00d68f6d), on the cluster
+with fresh libraries, 3600 s per law, under the rule of d2e1c9a, with the Python of the run of 2026-11-09 (3.9.13, NumPy 1.24.4,
+SciPy 1.13.1). The implementation, learning and repair-family hashes are those of 2026-11-09. Results:
+`repair_loop_v15_campaign.json` and `repair_loop_v15_certified_control.json`. This supersedes the counts of 2026-11-09, whose
+records predate version 12.
+
+**2 of the 9 failed laws (5 nonlinear-stage, 4 equilibrium-write) get a verified smaller description, and 0 of the 9 at the scale
+of the written states**, against 5 of 13 on 2026-11-09. The change comes from the records, not from the loop.
+
+- Five laws left the failed set: both unfoldings of `magnon_kerr`, `rfsquid_triangle` 0 (all three verified on 2026-11-09),
+  `cim_pair` 2 (no order passes development) and `rfsquid_pair` 1 (insufficient excitation). `magnon_kerr` 1 (verified, order 5,
+  radius 0.03125), `rfsquid_triangle` 0 (verified, order 4, radius 0.0625) and `cim_pair` 2 (no order passes development) are now
+  in the certified control.
+- One law joined: the unfolding of `spin_ensemble_cavity` (equilibrium write), on which no order passes development.
+- Of the 8 laws in both sets, 7 keep their outcome, selected order, radius and omission error: `cim_triangle` 0 and
+  `rfsquid_pair` 0 verified, `kpo_pair` 0, `kpo_triangle` 0 and `kerr_cat_kpo` 0 insufficient excitation, `kpo_triangle` 1 and
+  `ion_phonon_laser` 0 no order passes development. `kpo_triangle` 2 stopped at the limit of 3600 s, against no order passes
+  development in 989 s on 2026-11-09; the cluster load average was 28 to 43 during this run, and one run does not separate the
+  load from a change of the law.
+
+| Control | Result |
+|---|---|
+| exact identity | 0 of 9 |
+| certified laws | 14 of 29 (48 %, against 22 % on failed laws), median radius 0.0625 against 0.125 (before 12 of 27, 0.0625) |
+| plain critical coordinate within the tolerance | 1 of 2 (before 1 of 5) |
+| strongest nonlinear term scaled by 1.25 | rejected on both |
+| memory hint against the direct ladder | 287 against 285 development checks on 8 laws, the same selection on all 8 (before 482 against 474 on 13) |
+
+The other outcomes: 3 insufficient excitation, 3 no order passes development and 1 timed out. Of the 229 retained outcomes, 9
+get a task, 219 are `no_failed_law` and one (`optomech_bistable`) is outside the campaign classes. In the certified control the
+outcomes are 14 verified, 4 withheld failed, 4 no test power, 3 insufficient excitation and 4 no order passes development;
+`kpo_pair` 1 and 2, timed out before, now end with no order passes development. Wall time on the loaded cluster: 1 h 10 min for
+the campaign, of which 1 h is the law that timed out, and 15 min for the control.
+
 ## With the oriented critical frame, 2026-11-09
 
 Commit 9251a99, in which `repair_loop._critical_frame` orients each critical direction (before, it kept the sign that the
