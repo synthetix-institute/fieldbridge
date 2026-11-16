@@ -24,8 +24,12 @@ of the written states**, against 5 of 13 on 2026-11-09. The change comes from th
 - Of the 8 laws in both sets, 7 keep their outcome, selected order, radius and omission error: `cim_triangle` 0 and
   `rfsquid_pair` 0 verified, `kpo_pair` 0, `kpo_triangle` 0 and `kerr_cat_kpo` 0 insufficient excitation, `kpo_triangle` 1 and
   `ion_phonon_laser` 0 no order passes development. `kpo_triangle` 2 stopped at the limit of 3600 s, against no order passes
-  development in 989 s on 2026-11-09; the cluster load average was 28 to 43 during this run, and one run does not separate the
-  load from a change of the law.
+  development in 989 s on 2026-11-09; the cluster load average was 28 to 43 during this run. A second run of the whole campaign
+  in a fresh library (11:50 to 13:04, load average 21 to 35) gives every outcome, selected order and omission error again, and
+  `kpo_triangle` 2 again stops at 3600 s. In that run the other laws take 1.3 to 2.4 times their time in the first, and
+  `kpo_triangle` 1 takes at most 2.2 times its 77 s of 2026-11-09; at that factor the 989 s of 2026-11-09 come to about 2200 s.
+  The load alone therefore does not account for the stop, and the change is more likely in the law of the records, whose write
+  point moved with them; a run with a longer budget would decide it.
 
 | Control | Result |
 |---|---|
