@@ -727,6 +727,10 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
         out["R_b"] = float(0.5 * (a["delta2"] - b["delta2"]))
     out["push_kept_whole"] = push_kept_whole(A, dts, D, w, np.array(Ms), lam, c, var, nus[:nb], mus[:nb],
                                              [rows[j]["third_order"] for j in range(nb)])
+    try:
+        out["consistent"] = consistent_selection(A, dts, D, w, np.array(Ms), lam, c, var, m, nus[:nb], mus[:nb], d_end, rows[:nb])
+    except (ValueError, np.linalg.LinAlgError, FloatingPointError) as e:
+        out["consistent"] = {"applied": False, "reason": f"{type(e).__name__}: {e}"}
     return out
 
 
@@ -753,6 +757,188 @@ def selection_choice(no: Dict, so: Dict) -> Optional[List[float]]:
     if not pk["in_regime"]:
         return None
     return [float(z) - float(mu) / float(so["sigma"]) for z, mu in zip(pk["z"], so["mu"])]
+
+
+CONSISTENT_SEEDS = (1, 2, 3, 4, 5, 6)   # independent sample seeds of formula (9): its value is the mean over them, its error
+                                        # their standard error
+CONSISTENT_SAMPLES = 16000    # samples of the first-order deviation per seed
+CONSISTENT_BATCHES = 10       # generator streams per seed (the samples of a seed are drawn in this many batches)
+CONSISTENT_LIMIT = 0.1        # formula (9) is claimed where each term it expands (third order, slope of the push and of the
+                              # spread from the mean part of the slope) corrects the offset and the response by less than this
+CONSISTENT_KXI = 1e-3         # and where the outside fluctuation's rate factor K_xi is not positive for less than this fraction
+
+
+def _outside_fluctuation_sums(A, Ms, lam, c, var, m, nu, w, D, dts, n_mc, seed, batches=CONSISTENT_BATCHES):
+    """Sums over samples of the first-order deviation along the discrete process, for formula (9) of consistent_selection.
+
+    The deviation is split into the part that enters the critical coordinate (injected along lam_i / |lam_i|^2 at each
+    node) and the outside part xi_perp. For each sample and bias: W = sum w d^T M d, the push on a sample at the
+    boundary; V = 2 sum w d^T M c / var, its slope in the critical coordinate; V_xi = 2 sum w xi_perp^T M c / var, the
+    part of that slope from the zero-mean outside fluctuation; K_xi, the factor by which the outside fluctuation
+    multiplies the growth of the critical coordinate (1 + its rate, propagated); S0, the push that does not depend on s1
+    with the outside fluctuation's rate kept whole; O2, the overlap of that push with the third-order mean, which
+    E[s3 | s1 = 0] already holds. Each sample is drawn twice from the same generator: once for s1 and once for the
+    path."""
+    N, n = A.shape[0], A.shape[1]
+    nb = nu.shape[1]
+    g = c / var
+    injK = np.array([g[i + 1] - A[i] @ g[i] for i in range(N)])
+    lam2 = np.einsum("ti,ti->t", lam, lam)
+    qn = lam / np.where(lam2 > 0, lam2, 1.0)[:, None]
+    mpar = np.zeros_like(m)
+    for i in range(N):
+        f = m[i + 1] - np.einsum("ij,bj->bi", A[i], m[i])
+        mpar[i + 1] = np.einsum("ij,bj->bi", A[i], mpar[i]) + np.outer(f @ lam[i + 1], qn[i + 1])
+    mperp = m - mpar
+    keys = ("Kxi", "Vxi", "V", "S0", "O2", "W")
+    out = {k: [] for k in keys}
+    per = [n_mc // batches + (1 if b < n_mc % batches else 0) for b in range(batches)]
+    ell = lam[N]
+    for b, nm in enumerate(per):
+        noise = [sqrt(2 * D * dts[i]) for i in range(N)]
+        rng = np.random.default_rng([seed, b])
+        xi = np.zeros((nm, n))
+        for i in range(N):
+            xi = xi @ A[i].T + noise[i] * rng.standard_normal((nm, n))
+        s1c = xi @ ell
+        rng = np.random.default_rng([seed, b])
+        xi = np.zeros((nm, n))
+        xpar = np.zeros((nm, n))
+        eK = np.zeros((nb, nm, n)); eB = np.zeros((nb, nm, n)); e1 = np.zeros((nb, nm, n)); e2 = np.zeros((nb, nm, n))
+        Vxi = np.zeros((nb, nm)); V = np.zeros((nb, nm)); W = np.zeros((nb, nm))
+        for i in range(N + 1):
+            zeta = xi - np.outer(s1c / var, c[i])
+            xperp = xi - xpar
+            d = zeta[None] + nu[i][:, None, :]
+            dperp = xperp[None] + mperp[i][:, None, :]
+            dpar = d - dperp
+            if i == 0:
+                eB[:] = dpar
+            Mxi = xperp @ Ms[i]
+            dens = lambda e: 2.0 * np.einsum("si,bsi->bs", Mxi, e)    # noqa: E731
+            dMd = np.einsum("bsi,ij,bsj->bs", d, Ms[i], d)
+            p = dMd - dens(dpar)
+            W += w[i] * dMd
+            V += w[i] * 2.0 * np.einsum("bsi,ij,j->bs", d, Ms[i], g[i])
+            Vxi += w[i] * 2.0 * (Mxi @ g[i])[None, :]
+            # e1 carries the push of the critical part injected so far; O2 is its overlap with the outside fluctuation
+            rK, rB, r1, r2 = dens(eK), dens(eB) + p, dens(dpar) + p, dens(e1)
+            eK += w[i] * rK[..., None] * qn[i]
+            eB += w[i] * rB[..., None] * qn[i]
+            e2 += w[i] * r2[..., None] * qn[i]
+            e1 += w[i] * r1[..., None] * qn[i]
+            if i < N:
+                nz = noise[i] * rng.standard_normal((nm, n))
+                xi_next = xi @ A[i].T + nz
+                xpar = xpar @ A[i].T + np.outer(nz @ lam[i + 1], qn[i + 1])
+                xi = xi_next
+                zeta_n = xi - np.outer(s1c / var, c[i + 1])
+                d_n = zeta_n[None] + nu[i + 1][:, None, :]
+                dpar_n = d_n - ((xi - xpar)[None] + mperp[i + 1][:, None, :])
+                AT = A[i].T
+                eB = eB @ AT + (dpar_n - dpar @ AT)
+                eK = eK @ AT + injK[i]
+                e1 = e1 @ AT
+                e2 = e2 @ AT
+        out["Kxi"].append(eK @ ell); out["Vxi"].append(Vxi); out["V"].append(V)
+        out["S0"].append(eB @ ell); out["O2"].append(e2 @ ell); out["W"].append(W)
+    return {k: np.concatenate(v, axis=1) for k, v in out.items()}
+
+
+def consistent_selection(A: np.ndarray, dts: np.ndarray, D: float, w: np.ndarray, Ms: np.ndarray, lam: np.ndarray,
+                         c: np.ndarray, var: float, m: np.ndarray, nus, mus, d_end: float, rows: List[Dict],
+                         seeds: Sequence[int] = CONSISTENT_SEEDS, n_mc: Optional[int] = None) -> Dict[str, object]:
+    """The selection of a write in one direction by the expansion of next_order_selection with the exact remainders of
+    its two parts that are known whole (formula (9) of the completed write law, version 21; estimated as in version 22):
+
+        z = z14 + (z_B - z_B14),
+        z_B   = Phi^-1( E Phi( (mu + E[s3 | s1 = 0] - O + (d_end + S0) / K_xi) / sigma ) ),
+        z_B14 = mu/sigma + E[s3 | s1 = 0]/sigma + E[W]/sigma - (mu/sigma) Var(W)/(2 sigma^2) - (E[W] E[V_xi] + Cov(W, V_xi))/sigma,
+
+    with z14 the statistic of next_order_selection (its rows). z_B keeps whole the push that does not depend on s1 and
+    the rate from the zero-mean outside fluctuation, the two parts that are exact at second order; z_B14 is its
+    expansion to the order of z14, so the bracket is the remainder beyond that order. Every mean part of the slope
+    (the curvature on the lag, the critical side, a mean the bias drives) keeps the expanded form of z14. On a pump
+    this is formula (3) of push_kept_whole; with no mean slope it is the outside rate kept whole; with neither large
+    push nor outside fluctuation it is next_order_selection.
+
+    Two estimators are equal in expectation: "cv", z14 + z_B - z_B14 with z_B14 from the samples, and "direct",
+    z_B - (E[W] E[V_m] + Cov(W, V_m))/sigma with V_m = V - V_xi, which has no sampled copy of the push terms. Each is
+    computed at every seed of `seeds` from n_mc samples. The biases come in pairs toward the two sides, as law_at builds
+    them; for each pair the half-difference and the mean of the two statistics (the response and the offset) each take
+    the estimator with the smaller standard error over the seeds, and the mean over the seeds. On the development
+    carriers of versions 14 to 22 and four held-out sets (rate modulations, pumps, slaved cells, a magnon swept through
+    its cusp, decoupled slow modulators) this held within four combined errors plus 0.02 at every point inside the
+    regime (CONSISTENT_LIMIT, CONSISTENT_KXI), and on the decoupled slow modulators of the last set at every point
+    outside it too, with a response below the full dynamics by up to 0.03 where the modulation is slow and strong."""
+    from scipy.special import ndtr
+    n_mc = CONSISTENT_SAMPLES if n_mc is None else int(n_mc)    # read at the call, so that a test can lower it
+    nb = len(mus)
+    if nb < 2 or nb % 2:
+        return {"applied": False, "reason": "the biases do not come in pairs"}
+    sigma = sqrt(var)
+    nu = np.stack([np.asarray(x, float) for x in nus[:nb]], axis=1)
+    mu = np.asarray(mus[:nb], float)
+    third = np.array([float(r["third_order"]) for r in rows[:nb]])
+    z14 = np.array([float(r["z0"] + r["Delta"] + r["delta2"]) for r in rows[:nb]])
+    z0 = mu / sigma
+    cv = np.zeros((len(seeds), nb)); direct = np.zeros((len(seeds), nb))
+    first: List[Dict] = []
+    for si, seed in enumerate(seeds):
+        S = _outside_fluctuation_sums(A, Ms, lam, c, var, m, nu, w, D, dts, n_mc, seed)
+        for j in range(nb):
+            Wj, Vj, Vxi, Kxi, S0 = S["W"][j], S["V"][j], S["Vxi"][j], S["Kxi"][j], S["S0"][j]
+            Vm = Vj - Vxi
+            O = float(np.mean(S["O2"][j]))
+            x = (mu[j] + third[j] * sigma - O + (d_end + S0) / Kxi) / sigma
+            zB = ND.inv_cdf(min(max(float(np.mean(ndtr(x))), 1e-12), 1 - 1e-12))
+            zB14 = (z0[j] + third[j] + Wj.mean() / sigma - 0.5 * z0[j] * Wj.var() / var
+                    - (Wj.mean() * Vxi.mean() + np.cov(Wj, Vxi, bias=True)[0, 1]) / sigma)
+            mslope = -(Wj.mean() * Vm.mean() + np.cov(Wj, Vm, bias=True)[0, 1]) / sigma
+            cv[si, j] = z14[j] + zB - zB14
+            direct[si, j] = zB + mslope
+            if si == 0:
+                first.append({"third_order": float(third[j]), "slope_of_push_m": float(-(Wj.mean() / sigma) * Vm.mean()),
+                              "slope_of_spread_m": float(-np.cov(Wj, Vm, bias=True)[0, 1] / sigma),
+                              "weight_Kxi_nonpositive": float(np.mean(Kxi <= 0))})
+    if not (np.all(np.isfinite(cv)) and np.all(np.isfinite(direct))):
+        return {"applied": False, "reason": "a statistic is not finite"}
+    ns = len(seeds)
+    z = np.zeros(nb); pairs = []
+    for f in range(nb // 2):
+        a, b = 2 * f, 2 * f + 1
+        rec = {}
+        for q, fn in (("half_difference", lambda X: 0.5 * (X[:, a] - X[:, b])), ("mean", lambda X: 0.5 * (X[:, a] + X[:, b]))):
+            ests = {e: fn(X) for e, X in (("cv", cv), ("direct", direct))}
+            err = {e: float(v.std(ddof=1) / sqrt(ns)) if ns > 1 else 0.0 for e, v in ests.items()}
+            pick = min(err, key=lambda e: err[e])
+            rec[q] = {"value": float(ests[pick].mean()), "error": err[pick], "estimator": pick,
+                      "values": {e: v.tolist() for e, v in ests.items()}}
+        z[a] = rec["mean"]["value"] + rec["half_difference"]["value"]
+        z[b] = rec["mean"]["value"] - rec["half_difference"]["value"]
+        pairs.append(rec)
+    return {"applied": True, "z": z.tolist(), "z14": z14.tolist(), "pairs": pairs, "seeds": list(seeds), "samples": n_mc,
+            "first_seed_terms": first}
+
+
+def consistent_regime(cs: Dict, floors: Sequence[float]) -> List[Dict]:
+    """For each pair of opposite biases of consistent_selection (at `floors` noise floors, in the order law_at builds
+    them): the response constant and offset with their errors, and whether formula (9) is claimed there."""
+    out = []
+    t = cs["first_seed_terms"]
+    for f, (rec, fl) in enumerate(zip(cs["pairs"], floors)):
+        a, b = t[2 * f], t[2 * f + 1]
+        sizes = {k: max(abs(0.5 * (a[k] + b[k])), abs(0.5 * (a[k] - b[k]) / fl))
+                 for k in ("third_order", "slope_of_push_m", "slope_of_spread_m")}
+        kx = max(a["weight_Kxi_nonpositive"], b["weight_Kxi_nonpositive"])
+        out.append({"bias_floors": float(fl),
+                    "response_constant": pi ** 0.25 * rec["half_difference"]["value"] / fl,
+                    "response_constant_error": pi ** 0.25 * rec["half_difference"]["error"] / fl,
+                    "offset": rec["mean"]["value"], "offset_error": rec["mean"]["error"],
+                    "estimators": {"response_constant": rec["half_difference"]["estimator"], "offset": rec["mean"]["estimator"]},
+                    "sizes": sizes, "weight_Kxi_nonpositive": kx,
+                    "in_regime": bool(max(sizes.values()) < CONSISTENT_LIMIT and kx < CONSISTENT_KXI)})
+    return out
 
 
 def push_kept_whole(A: np.ndarray, dts: np.ndarray, D: float, w: np.ndarray, Ms: np.ndarray, lam: np.ndarray, c: np.ndarray,
@@ -947,7 +1133,12 @@ def reference_path(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndarra
             no["applied"] = bool(np.all(np.isfinite(d2)) and np.all(np.isfinite(etas)) and min(etas) > -1e-9)
             so["eta"] = max(etas)
             whole = selection_choice(no, so) if no["applied"] else None
-            if whole is not None:
+            cs = no.get("consistent") or {}
+            if no["applied"] and cs.get("applied"):
+                # formula (9): the expansion with the exact remainders of the push and of the outside fluctuation
+                so["Delta"] = [float(zj) - float(mj) / float(so["sigma"]) for zj, mj in zip(cs["z"], so["mu"])]
+                so["selection"] = "consistent expansion"
+            elif whole is not None:
                 so["Delta"] = whole
                 so["selection"] = "push kept whole"
             elif no["applied"]:
@@ -1527,7 +1718,21 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
                 out["selection"] = so.get("selection")
                 pk = no.get("push_kept_whole") or {}
                 out["push_kept_whole"] = {k: pk.get(k) for k in ("in_regime", "size_expanded", "weight_wrong_sign")}
-                if reduced is None and not rho < NEXT_ORDER_LIMIT and so.get("selection") != "push kept whole":
+                cs = no.get("consistent") or {}
+                if so.get("selection") == "consistent expansion":
+                    floors_ = [c for c in sorted({c for c, _ in d2}) if (c, 1.0) in d2 and (c, -1.0) in d2]
+                    reg = consistent_regime(cs, floors_) if len(floors_) == len(cs.get("pairs", [])) else []
+                    out["consistent"] = {"per_floor": reg, "seeds": cs.get("seeds"), "samples": cs.get("samples"),
+                                         "limit": CONSISTENT_LIMIT}
+                    outside = [r["bias_floors"] for r in reg if not r["in_regime"]]
+                    if reduced is None and (outside or not reg):
+                        out["next_order_not_small"] = (
+                            "the terms that the selection expands (third order, slope of the push and of the spread from "
+                            f"the mean part of the slope) correct the statistic by {CONSISTENT_LIMIT:g} or more, or the rate "
+                            "factor of the outside fluctuation is not positive for a fraction of the samples, at "
+                            + (", ".join(f"{x:g}" for x in outside) + " noise floor(s) of bias" if outside else "every bias")
+                            + ": the law is not claimed there")
+                elif reduced is None and not rho < NEXT_ORDER_LIMIT and so.get("selection") != "push kept whole":
                     out["next_order_not_small"] = (
                         f"the terms of the next order change the statistic of the write by {rho:.3g} per noise floor (at or "
                         f"above {NEXT_ORDER_LIMIT:g}): the expansion in the deviation from the path of the sweep does not hold "
