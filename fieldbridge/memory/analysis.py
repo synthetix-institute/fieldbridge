@@ -556,7 +556,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     vec /= np.linalg.norm(vec)
     evl, L = np.linalg.eig(J.T)
     w = np.real(L[:, int(np.argmin(np.abs(evl - lam)))])
-    w = w / np.dot(w, vec)
+    overlap = float(np.dot(w, vec))
+    # a critical eigenvalue whose left eigenvector is orthogonal to its right one has no dual direction along the mode:
+    # it is repeated, and where it is defective (a Jordan block, as x' = y, y' = k x at k = 0) no left vector pairs
+    # with the right one. The critical eigenspace is not a line, and there are no coefficients along one
+    with np.errstate(all="ignore"):
+        dual = w / overlap if overlap != 0.0 else np.full(n, np.inf)
+    no_dual = not np.all(np.isfinite(dual))
+    w = np.full(n, np.nan) if no_dual else dual
     half = 0.25 * base_length(real) if real.carrier.kind != "torus" else real.carrier.period / 8
     if real.carrier.kind == "orthant":
         nz = np.abs(vec) > 1e-9
@@ -589,7 +596,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     bias = abs(bias_along) / (abs(bias_along) + abs(growth) * half + 1e-300)
     quad, cub = abs(a2) * half ** 2, abs(a3) * half ** 3
     asym = quad / (quad + cub) if quad + cub > 1e-12 * scale * half else 0.0
-    crit = critical(growth)
+    if no_dual:
+        same = np.flatnonzero(np.abs(ev - lam) <= 1e-6 * max(1.0, float(np.abs(J).max())))
+        crit = {"critical_dimension": int(same.size),
+                "critical_kappa": [[float(-ev[j].real), float(-ev[j].imag)] for j in same]}
+        rank = int(np.linalg.matrix_rank(J - lam.real * np.eye(n), tol=1e-9 * max(1.0, float(np.abs(J).max()))))
+        out["defective"] = bool(n - rank < same.size)  # fewer eigenvectors than repeated eigenvalues
+    else:
+        crit = critical(growth)
     k = crit["critical_dimension"]
     if k > 1:
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
