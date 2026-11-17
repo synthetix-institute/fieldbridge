@@ -932,16 +932,86 @@ def slow_spectrum(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, 
     return out
 
 
-def dynamical_critical_dimension(nf: Dict, rate: float, factor: float = 1.0) -> int:
+SLOW_COUPLING_WINDOW = 3.0   # the passage window, in units of sqrt(rate) / |kappa_slope| on each side of the crossing
+SLOW_COUPLING_TOL = 1e-6     # of max(|J|, sqrt(rate)): the accuracy of the finite-difference Jacobian
+
+
+def _unwritten_branch(real: Realization, q: np.ndarray, over: Dict, steps: int = 30) -> Optional[np.ndarray]:
+    """The unwritten branch at `over`, by Newton from q (unstable after the crossing, which Newton does not mind)."""
+    q = np.array(q, float)
+    for _ in range(steps):
+        f = np.asarray(real.F(q[None], **over))[0]
+        if not np.all(np.isfinite(f)):
+            return None
+        try:
+            dq = np.linalg.lstsq(jacobian(real, q, over), -f, rcond=None)[0]
+        except np.linalg.LinAlgError:
+            return None
+        q = q + dq
+        if np.linalg.norm(dq) < 1e-12 * max(1.0, np.linalg.norm(q)):
+            break
+    return q
+
+
+def slow_coupling(real: Realization, nf: Dict, rate: float, factor: float = 1.0) -> Dict[str, object]:
+    """The slow directions at a write point (rate below factor x sqrt(rate)) and, for each, its largest linear coupling
+    to the critical space over the passage window, in the eigenbasis at the write point, along the unwritten branch.
+
+    A slow direction that is not linearly coupled to the critical space anywhere in the window does not take part in
+    the choice: the critical coordinate then obeys a closed one-dimensional linear equation through the window, and
+    the slow variable enters only at second order, as an outside modulation of the rate or the push, which the law of
+    one direction carries. A coupled slow direction is part of the choice, and so is one whose own rate reaches zero
+    along the branch inside the window: it is then a second critical direction of the same passage, not a modulator."""
+    k_static = max(1, int(nf.get("critical_dimension", 1) or 1))
+    q_c = np.asarray(nf["state"], float)
+    param, v_c = nf["param"], float(nf["value"])
+    J0 = jacobian(real, q_c, {param: v_c})
+    ev, V = np.linalg.eig(J0)
+    order = np.argsort(np.abs(ev.real))
+    crit = list(order[:k_static])
+    slow = [int(j) for j in order[k_static:] if abs(ev[j].real) <= factor * sqrt(rate)]
+    out: Dict[str, object] = {"slow": [], "coupled": 0}
+    if not slow:
+        return out
+    W = np.linalg.inv(V)
+    g = abs(float(nf.get("kappa_slope", 0.0) or 0.0))
+    width = SLOW_COUPLING_WINDOW * sqrt(rate) / g if g > 0 else 0.0
+    scale = max(float(np.max(np.abs(J0))), sqrt(rate))
+    worst = {j: 0.0 for j in slow}
+    top = {j: -np.inf for j in slow}
+    for v in np.linspace(v_c - width, v_c + width, 13):
+        over = {param: float(v)}
+        qb = _unwritten_branch(real, q_c, over)
+        if qb is None:
+            continue
+        M = W @ jacobian(real, qb, over) @ V
+        for j in slow:
+            worst[j] = max(worst[j], float(np.max(np.abs(M[crit, j]))), float(np.max(np.abs(M[j, crit]))))
+            top[j] = max(top[j], float(M[j, j].real))
+    for j in slow:
+        c, crosses = worst[j] / scale, bool(top[j] >= -SLOW_COUPLING_TOL * scale)
+        out["slow"].append({"rate": float(ev[j].real), "coupling": c, "largest_rate_in_window": float(top[j]),
+                            "crosses": crosses, "coupled": bool(c > SLOW_COUPLING_TOL or crosses)})
+    out["coupled"] = sum(1 for x in out["slow"] if x["coupled"])
+    return out
+
+
+def dynamical_critical_dimension(nf: Dict, rate: float, factor: float = 1.0, real: Optional[Realization] = None) -> int:
     """The number of directions that take part in a write swept at `rate`: the critical ones and those whose rate at
     the write point is below factor x sqrt(rate), which relax less than once during the passage (the choice is made
-    over a time of order 1/sqrt(rate) around the crossing)."""
+    over a time of order 1/sqrt(rate) around the crossing).
+
+    With the realization, a slow direction counts only if it is linearly coupled to the critical space somewhere in
+    the passage window (slow_coupling); an independent slow modulator does not make the write two-dimensional. Without
+    it, every slow direction counts."""
     k = int(nf.get("critical_dimension", 1) or 1)
     spec = nf.get("spectrum") or []
     if not spec:
         return k
     slow = sum(1 for re, _ in spec if abs(re) <= factor * sqrt(rate))
-    return max(k, int(slow))
+    if real is None or slow <= k:
+        return max(k, int(slow))
+    return max(k, max(1, k) + int(slow_coupling(real, nf, rate, factor)["coupled"]))
 
 
 def critical_directions(ev: np.ndarray, cand: np.ndarray, lam: complex, slope: float, resolution: float,

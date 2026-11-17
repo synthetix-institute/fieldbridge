@@ -215,7 +215,7 @@ def _write_points(real, rng) -> Dict[str, object]:
              "bias_along_mode": nf.get("bias_along_mode"), "kappa_slope": nf.get("kappa_slope"),
              "second_rate": nf.get("second_rate"), "spectrum": nf.get("spectrum"),
              "critical_block_rank": nf.get("critical_block_rank"),
-             "dynamical_critical_dimension": an.dynamical_critical_dimension(nf, cm.RATE_DEFAULT, cm.SLOW_FACTOR),
+             "dynamical_critical_dimension": an.dynamical_critical_dimension(nf, cm.RATE_DEFAULT, cm.SLOW_FACTOR, real),
              "obstruction": ob.get("terms", {}), "completion": cm.completion_kind(nf, ob)}
         if ev.get("samples"):
             p["samples"] = int(ev["samples"])

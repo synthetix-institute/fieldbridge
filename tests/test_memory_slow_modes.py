@@ -124,3 +124,33 @@ def test_a_direction_neutral_on_both_sides_is_not_counted_with_the_eigenvalue_th
     assert nf["critical_dimension"] == 1 and nf["kind"].startswith("supercritical pitchfork")
     pair = _model(["x", "y"], {"x": "a*x - y**3", "y": "a*y + x**3"}, {"a": 1.0}, {"name": "a", "range": [-1.0, 1.0]})
     assert an.normal_form(pair, np.zeros(2), "a", 0.0)["critical_dimension"] == 2
+
+
+MODULATED = {   # a pitchfork whose rate an independent slow variable modulates: y relaxes at 0.08 < sqrt(0.02) and
+                # enters x's equation only through x*y, which vanishes on the unwritten branch x = 0
+    "schema": "fieldbridge-memory/1", "kind": "equations", "name": "pitchfork with a slow rate modulator (test)",
+    "field": "test", "question": "test", "assumptions": [], "provenance": {"source": "test", "contributor": "test"},
+    "carrier": {"kind": "euclid", "name": "plane", "variables": ["x", "y"], "scale": 1},
+    "parameters": {"a": 0.0, "k": 0.08},
+    "drift": {"x": "a*x + x*y - x**3", "y": "-k*y"},
+    "control": {"name": "a", "range": [-1.0, 1.0]}, "material": ["k"], "noise": 0.002, "dt": 0.01,
+}
+
+
+def test_a_slow_direction_takes_part_only_if_coupled_or_critical_in_the_window():
+    # decoupled and stable through the window: a modulator, not a direction of the choice
+    real = mspec.load(MODULATED)
+    ev = an.locate_writes(real, np.random.default_rng(0), n_starts=12)
+    nf = an.normal_form(real, ev[0]["q"], real.control, ev[0]["v"])
+    assert an.dynamical_critical_dimension(nf, 0.02) == 2                  # every slow direction, without the realization
+    c = an.slow_coupling(real, nf, 0.02)
+    assert c["coupled"] == 0 and c["slow"][0]["coupling"] < 1e-9 and not c["slow"][0]["crosses"]
+    assert an.dynamical_critical_dimension(nf, 0.02, real=real) == 1
+    # decoupled by symmetry but critical itself inside the window: the antisymmetric mode of the pair stays
+    pair = mspec.load(PAIR)
+    ev = an.locate_writes(pair, np.random.default_rng(0), n_starts=12)
+    first = min(ev, key=lambda x: x["v"])
+    nf = an.normal_form(pair, first["q"], pair.control, first["v"])
+    c = an.slow_coupling(pair, nf, 0.02)
+    assert c["slow"][0]["coupling"] < 1e-9 and c["slow"][0]["crosses"]
+    assert an.dynamical_critical_dimension(nf, 0.02, real=pair) == 2

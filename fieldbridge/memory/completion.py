@@ -1390,7 +1390,7 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
     is resolved, and is the material's own noise where it is not (a vanishing cubic)."""
     k_static = max(1, int(nf.get("critical_dimension", 1)))
     # the directions that take part in the write: the critical ones and those too slow to relax during the passage
-    k = max(k_static, an.dynamical_critical_dimension(nf, rate, SLOW_FACTOR))
+    k = max(k_static, an.dynamical_critical_dimension(nf, rate, SLOW_FACTOR, real))
     R, L = critical_space(real, nf, k)
     sweep = Sweep(real, nf, rate)
     qc = np.asarray(nf["state"], float)
@@ -1552,6 +1552,12 @@ def law_at(real: Realization, nf: Dict, rng, rate: float = 0.02, noise: Optional
                              f"{SLOW_FACTOR * sqrt(rate):.3g} at the write point relax less than once during the passage: "
                              f"the write takes place in {k} directions, and the law is the {k}-dimensional linear stage "
                              f"with the outcome map")
+    k_all = max(k_static, an.dynamical_critical_dimension(nf, rate, SLOW_FACTOR))
+    if k_all > k:
+        out["decoupled_slow_modes"] = (f"{k_all - k} direction(s) with a rate below {SLOW_FACTOR:g} sqrt(rate) = "
+                                       f"{SLOW_FACTOR * sqrt(rate):.3g} at the write point are not linearly coupled to the "
+                                       "critical space in the passage window and stay stable there: they modulate the "
+                                       "choice at second order and do not take part in it")
     if k == 1:
         out.update(_one_direction(rows, coords, floor))
     if certify:
