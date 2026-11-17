@@ -236,9 +236,13 @@ def _zero_in_plane(real: Realization, p: np.ndarray, v: np.ndarray, over: Dict, 
     cap = 0.5 * base_length(real)
     for _ in range(iters):
         f = real.F(q, **over)
+        if not np.all(np.isfinite(f)):
+            return q, False  # outside the set where the drift is finite (see newton)
         if np.linalg.norm(f) < tol:
             return q, True
         A = np.vstack([jacobian(real, q, over), v[None]])
+        if not np.all(np.isfinite(A)):
+            return q, False
         step = np.linalg.lstsq(A, np.concatenate([f, [0.0]]), rcond=None)[0]
         n = np.linalg.norm(step)
         if n > cap:
@@ -264,19 +268,30 @@ def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n
 
 
 def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters: int = 80, tol: float = 1e-11):
+    """Damped Newton for a zero of the drift. The search ends as not converged at an iterate where the drift or its
+    central-difference Jacobian is not finite: a start or a step outside the set where the drift is defined (a
+    non-integer power or the square root of a negative value, a pole, a control value that divides the drift), or a
+    zero on the edge of that set, whose difference stencil leaves it. Least squares on such a matrix raised "SVD did
+    not converge", and every caller takes the eigenvalues of the Jacobian at a converged zero."""
     over = over or {}
     q = real.carrier.wrap(np.array(q, float))
     cap = 0.5 * base_length(real)
     for _ in range(iters):
         f = real.F(q, **over)
+        if not np.all(np.isfinite(f)):
+            return q, False
+        J = jacobian(real, q, over)
+        if not np.all(np.isfinite(J)):
+            return q, False
         if np.linalg.norm(f) < tol:
             return q, True
-        step = np.linalg.lstsq(jacobian(real, q, over), f, rcond=None)[0]
+        step = np.linalg.lstsq(J, f, rcond=None)[0]
         n = np.linalg.norm(step)
         if n > cap:
             step *= cap / n
         q = real.carrier.wrap(q - step)
-    return q, bool(np.linalg.norm(real.F(q, **over)) < 1e-8)
+    f = real.F(q, **over)
+    return q, bool(np.linalg.norm(f) < 1e-8 and np.all(np.isfinite(jacobian(real, q, over))))
 
 
 def fixed_points(real: Realization, rng, n_starts: int = 40, over: Optional[Dict] = None, seeds=None):
@@ -375,6 +390,8 @@ def _dq_dv(real: Realization, q: np.ndarray, param: str, v: float) -> np.ndarray
     h = 1e-6 * max(1.0, abs(v))
     J = jacobian(real, q, {param: v})
     dF = (real.F(q, **{param: v + h}) - real.F(q, **{param: v - h})) / (2 * h)
+    if not (np.all(np.isfinite(J)) and np.all(np.isfinite(dF))):
+        return np.full(q.size, np.nan)  # no predictor: track halves its step, as for a corrector that fails
     return -np.linalg.lstsq(J, dF, rcond=None)[0]
 
 
@@ -480,7 +497,10 @@ def _slow_manifold_drift(real, q, vec, w, s, over):
             g = C.T @ real.F(x, **over)
             if np.linalg.norm(g) < 1e-13:
                 break
-            dz = np.linalg.lstsq(C.T @ jacobian(real, x, over) @ C, g, rcond=None)[0]
+            Jc = C.T @ jacobian(real, x, over) @ C
+            if not (np.all(np.isfinite(g)) and np.all(np.isfinite(Jc))):
+                break  # outside the set where the drift is finite: the window of the normal form is halved
+            dz = np.linalg.lstsq(Jc, g, rcond=None)[0]
             nz = np.linalg.norm(dz)
             z = z - (dz * cap / nz if nz > cap else dz)
         z_side[side] = z
