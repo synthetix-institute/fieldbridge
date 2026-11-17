@@ -68,24 +68,95 @@ def safe_dt(real: Realization) -> float:
     return dt
 
 
+# explicit steps a relaxation or a noiseless trajectory may take at the step of the fastest rate (about the engine's time
+# limit of 900 s at 100 microseconds a step); a longer one is integrated by an implicit, adaptive method instead, after an
+# explicit prefix within which most stiff relaxations that settle at all have settled (a fast rate settles in a few
+# hundred steps)
+EXPLICIT_BUDGET = 10_000_000
+EXPLICIT_PREFIX = 100_000
+
+
+def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: Optional[float] = None,
+                   t_eval: Optional[np.ndarray] = None):
+    """Each state of q integrated over (0, T] by backward differentiation (BDF) with the central-difference Jacobian:
+    the step is set by accuracy, not by the fastest rate, so a stiff drift (rates of 1e5 to 1e15 against slow ones) is
+    integrated in a number of steps that does not grow with its stiffness. With tol, a run stops where its speed falls
+    below tol / 2 (the relaxation's criterion); with t_eval, the states at those times are returned as well. The drift
+    is evaluated at the wrapped state (an orthant reflects at zero). A run whose drift or Jacobian stops being finite
+    ends there, with its state NaN, which every caller reads as not converged."""
+    from scipy.integrate import solve_ivp
+
+    def fun(t, y):
+        return real.F(real.carrier.wrap(y)[None], **over)[0]
+
+    def jac(t, y):
+        return jacobian(real, real.carrier.wrap(y), over)
+
+    events = None
+    if tol is not None:
+        def settled(t, y):
+            return float(np.linalg.norm(fun(t, y))) - 0.5 * tol
+        settled.terminal, settled.direction = True, -1.0
+        events = settled
+    atol = 1e-9 * base_length(real)
+    ends = np.full_like(q, np.nan)
+    paths = None if t_eval is None else np.full((len(t_eval),) + q.shape, np.nan)
+    for i, y0 in enumerate(q):
+        try:
+            with np.errstate(all="ignore"):
+                sol = solve_ivp(fun, (0.0, T), y0, method="BDF", jac=jac, rtol=1e-6, atol=atol, events=events,
+                                t_eval=t_eval)
+        except (ValueError, ZeroDivisionError, OverflowError, np.linalg.LinAlgError):
+            continue  # the drift or its Jacobian is not finite along the run (an escape)
+        if sol.status < 0 or not np.all(np.isfinite(sol.y[:, -1])):
+            continue
+        ends[i] = sol.y[:, -1]
+        if paths is not None:
+            paths[:sol.y.shape[1], i] = sol.y.T
+    return real.carrier.wrap(ends), paths
+
+
 def relax(real: Realization, q0: np.ndarray, over: Optional[Dict] = None, max_time: float = 300.0,
           tol: float = 1e-5, dt: Optional[float] = None):
+    """Relax every start by explicit Euler for max_time at the step dt (by default the step of the fastest rate,
+    safe_dt), stopping when every speed is below tol. When the whole time would take more than EXPLICIT_BUDGET steps,
+    Euler runs as before for at most EXPLICIT_PREFIX steps; if the starts have not settled by then, each is integrated
+    over the time that remains by an implicit, adaptive method with the same speed criterion. A relaxation that settles
+    within the prefix, or needs no more than the budget, is unchanged; the states and their stability do not depend on
+    the integrator."""
     over, dt = over or {}, dt or safe_dt(real)
     q = real.carrier.wrap(np.atleast_2d(np.array(q0, float)))
-    for k in range(int(max_time / dt)):
+    n = int(max_time / dt)
+    implicit = n > EXPLICIT_BUDGET
+    for k in range(min(n, EXPLICIT_PREFIX) if implicit else n):
         f = real.F(q, **over)
         q = real.carrier.wrap(q + dt * f)
         if k % 50 == 0 and np.all(np.linalg.norm(f, axis=-1) < tol):
             break
+    else:
+        if implicit:
+            q, _ = _implicit_runs(real, q, over, max_time - EXPLICIT_PREFIX * dt, tol=tol)
+            with np.errstate(all="ignore"):
+                return q, np.linalg.norm(real.F(q, **over), axis=-1)
     return q, np.linalg.norm(real.F(q, **over), axis=-1)
 
 
 def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: Optional[Dict] = None,
               write=None, control_path=None, record=None, n_record: int = 40, dt: Optional[float] = None):
     """Euler-Maruyama; write = (target, h); control_path(t) sets real.control; record(q) -> value."""
+    implicit = dt is None and D == 0.0 and write is None and control_path is None
     over, dt = dict(over or {}), dt or safe_dt(real)
     steps = max(1, int(round(T / dt)))
     every = max(1, steps // n_record)
+    if implicit and steps > EXPLICIT_BUDGET:
+        # a noiseless trajectory longer than the budget: the same samples, integrated by the implicit method of relax
+        times = np.arange(1, steps // every + 1) * every * dt
+        t_end = steps * dt
+        grid = times if times[-1] >= t_end else np.append(times, t_end)
+        q, paths = _implicit_runs(real, real.carrier.wrap(np.atleast_2d(np.array(q, float))), over, float(grid[-1]),
+                                  t_eval=grid)
+        out_v = [record(real.carrier.wrap(x)) for x in paths[:len(times)]] if record is not None else []
+        return q, (times if record is not None else np.array([])), np.array(out_v)
     amp = np.sqrt(2.0 * D * dt)
     out_t, out_v = [], []
     for k in range(steps):
