@@ -727,10 +727,11 @@ def next_order_selection(real: Realization, sweep: Sweep, ts: np.ndarray, qs: np
         out["R_b"] = float(0.5 * (a["delta2"] - b["delta2"]))
     out["push_kept_whole"] = push_kept_whole(A, dts, D, w, np.array(Ms), lam, c, var, nus[:nb], mus[:nb],
                                              [rows[j]["third_order"] for j in range(nb)])
-    try:
-        out["consistent"] = consistent_selection(A, dts, D, w, np.array(Ms), lam, c, var, m, nus[:nb], mus[:nb], d_end, rows[:nb])
-    except (ValueError, np.linalg.LinAlgError, FloatingPointError) as e:
-        out["consistent"] = {"applied": False, "reason": f"{type(e).__name__}: {e}"}
+    if CONSISTENT_EXPANSION:
+        try:
+            out["consistent"] = consistent_selection(A, dts, D, w, np.array(Ms), lam, c, var, m, nus[:nb], mus[:nb], d_end, rows[:nb])
+        except (ValueError, np.linalg.LinAlgError, FloatingPointError) as e:
+            out["consistent"] = {"applied": False, "reason": f"{type(e).__name__}: {e}"}
     return out
 
 
@@ -759,6 +760,10 @@ def selection_choice(no: Dict, so: Dict) -> Optional[List[float]]:
     return [float(z) - float(mu) / float(so["sigma"]) for z, mu in zip(pk["z"], so["mu"])]
 
 
+CONSISTENT_EXPANSION = False   # formula (9) in the law: off by default. It costs minutes per write point (six seeds of
+                               # CONSISTENT_SAMPLES samples) and moves the response only where a slow outside fluctuation or a
+                               # large push is present; with it off the law selects as before (push kept whole or the expansion).
+                               # Read at the call: set completion.CONSISTENT_EXPANSION = True to use it.
 CONSISTENT_SEEDS = (1, 2, 3, 4, 5, 6)   # independent sample seeds of formula (9): its value is the mean over them, its error
                                         # their standard error
 CONSISTENT_SAMPLES = 16000    # samples of the first-order deviation per seed
