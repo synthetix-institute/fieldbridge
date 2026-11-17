@@ -147,6 +147,7 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
             counts.append(1)
         else:
             counts[hit] += 1
+    states, counts = _one_state_per_zero(real, states, counts, over)
     order = np.argsort(counts, kind="stable")[::-1]
     states = [states[i] for i in order]
     counts = [counts[i] for i in order]
@@ -154,9 +155,96 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     keep = [i for i, k in enumerate(spectra) if classify(k)["unstable"] == 0]
     states, counts, spectra = [states[i] for i in keep], [counts[i] for i in keep], [spectra[i] for i in keep]
     n_null = 0 if real.null_modes is None else len(np.atleast_2d(real.null_modes))
-    continuum = bool(len(states) >= max(6, int(conv.sum()) // 2)
-                     and all(classify(k)["flat"] > n_null for k in spectra))
+    flat = all(classify(k)["flat"] > n_null for k in spectra)
+    continuum = bool(len(states) >= max(6, int(conv.sum()) // 2) and flat)
+    if not continuum and flat and len(states) >= 2:
+        continuum = all(_on_a_set_of_equilibria(real, s, over) for s in states)
     return states, counts, spectra, int(np.sum(~conv)), continuum
+
+
+def _one_state_per_zero(real: Realization, states: List[np.ndarray], counts: List[int], over: Optional[Dict]):
+    """Relaxed states that approach one zero of the drift are one state. Where the restoring force vanishes at linear
+    order (a degenerate state, as x' = -x^3), the approach is a power of time, and the relaxation stops where the speed
+    falls below its tolerance, at distances from the zero that differ with the start and from one side to the other.
+    The starts then cluster into two or more states with no barrier between them. Newton from each relaxed state finds
+    the zero it approaches. States whose zeros coincide, at a zero with no growing direction, are counted as one state,
+    placed at that zero, with the starts of all of them. A state whose zero is its own, as every state of a landscape
+    whose states are not degenerate, is kept as it was relaxed."""
+    if len(states) < 2:
+        return states, counts
+    tol = _merge_tol(real)
+    zeros = []
+    for s in states:
+        z, ok = newton(real, s, over)
+        zeros.append(z if ok else None)
+    groups: List[List[int]] = []
+    for i, z in enumerate(zeros):
+        g = None if z is None else next(
+            (g for g in groups if zeros[g[0]] is not None
+             and real.carrier.distance(_canon(real, z), _canon(real, zeros[g[0]])) < tol), None)
+        if g is None:
+            groups.append([i])
+        else:
+            g.append(i)
+    out_states: List[np.ndarray] = []
+    out_counts: List[int] = []
+    for g in groups:
+        if len(g) > 1 and classify(kappa_spectrum(real, zeros[g[0]], over))["unstable"] == 0:
+            out_states.append(zeros[g[0]])
+            out_counts.append(int(sum(counts[i] for i in g)))
+        else:
+            out_states += [states[i] for i in g]
+            out_counts += [counts[i] for i in g]
+    return out_states, out_counts
+
+
+def _on_a_set_of_equilibria(real: Realization, s: np.ndarray, over: Optional[Dict]) -> bool:
+    """Whether a state lies on a connected set of equilibria (a line or a surface of them, as the levels of a conserved
+    total or a variable that does not move). On such a set the relaxed starts merge into fewer clusters than the count
+    of the continuum requires, and were read as separate states with no barrier between them. The zero that the state
+    approaches (Newton) is moved by half the merge tolerance along one of its flat directions beyond the declared
+    symmetries, and corrected within the plane normal to that direction: a set of equilibria crosses the plane, so the
+    correction ends on a zero at that distance; an isolated zero, also a degenerate one (x' = -x^3), does not."""
+    over = over or {}
+    z, ok = newton(real, s, over)
+    if not ok:
+        return False
+    ev, vec = np.linalg.eig(jacobian(real, z, over))
+    basis = None
+    if real.null_modes is not None:
+        basis = np.linalg.qr(np.atleast_2d(np.asarray(real.null_modes, float)).T)[0]
+    delta = 0.5 * _merge_tol(real)
+    for k in np.flatnonzero(np.abs(ev.real) <= 1e-3):
+        for v in (vec[:, k].real, vec[:, k].imag):
+            if basis is not None:
+                v = v - basis @ (basis.T @ v)
+            if np.linalg.norm(v) < 1e-6:
+                continue
+            v = v / np.linalg.norm(v)
+            for sign in (1.0, -1.0):
+                p = real.carrier.wrap(z + sign * delta * v)
+                q, ok = _zero_in_plane(real, p, v, over)
+                if ok and real.carrier.distance(q, z) >= 0.5 * delta and real.carrier.distance(q, p) <= 0.5 * delta:
+                    return True
+    return False
+
+
+def _zero_in_plane(real: Realization, p: np.ndarray, v: np.ndarray, over: Dict, iters: int = 80, tol: float = 1e-11):
+    """Newton for a zero of the drift on the plane through p normal to the unit vector v (minimal-norm steps of the
+    drift's equations together with the condition that the step has no component along v)."""
+    q = np.array(p, float)
+    cap = 0.5 * base_length(real)
+    for _ in range(iters):
+        f = real.F(q, **over)
+        if np.linalg.norm(f) < tol:
+            return q, True
+        A = np.vstack([jacobian(real, q, over), v[None]])
+        step = np.linalg.lstsq(A, np.concatenate([f, [0.0]]), rcond=None)[0]
+        n = np.linalg.norm(step)
+        if n > cap:
+            step *= cap / n
+        q = real.carrier.wrap(q - step)
+    return q, bool(np.linalg.norm(real.F(q, **over)) < 1e-8)
 
 
 def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n_starts: int,
