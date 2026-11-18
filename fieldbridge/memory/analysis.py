@@ -78,6 +78,11 @@ EXPLICIT_PREFIX = 100_000
 # 30): the stiff relaxations of the development data need at most 484 calls of the drift a run, while a run that creeps
 # along a singular line of the drift (an inspiral at |e| -> 1, a < 0) made 1.5e5 calls in 20 s without ending
 IMPLICIT_CALLS = 20_000
+# explicit steps a relaxation may take before it goes to the implicit method (correction 31). The card relaxes 48 starts
+# at once, and more than once; at 1e-4 s a step of 48 starts (2 to 10 variables on the cluster), 3e6 steps take about
+# 300 s, a third of the engine's time limit, where EXPLICIT_BUDGET took about 1000 s. A budget in steps, not in measured
+# time, keeps the records independent of the load of the machine. Noisy and noiseless trajectories keep EXPLICIT_BUDGET
+RELAX_BUDGET = 3_000_000
 
 
 class _Spent(Exception):
@@ -137,15 +142,15 @@ def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: 
 def relax(real: Realization, q0: np.ndarray, over: Optional[Dict] = None, max_time: float = 300.0,
           tol: float = 1e-5, dt: Optional[float] = None):
     """Relax every start by explicit Euler for max_time at the step dt (by default the step of the fastest rate,
-    safe_dt), stopping when every speed is below tol. When the whole time would take more than EXPLICIT_BUDGET steps,
+    safe_dt), stopping when every speed is below tol. When the whole time would take more than RELAX_BUDGET steps,
     Euler runs as before for at most EXPLICIT_PREFIX steps; if the starts have not settled by then, each is integrated
     over the time that remains by an implicit, adaptive method with the same speed criterion. A relaxation that settles
     within the prefix, or needs no more than the budget, is unchanged; the states and their stability do not depend on
-    the integrator."""
+    the integrator. The budget of a relaxation is RELAX_BUDGET (correction 31)."""
     over, dt = over or {}, dt or safe_dt(real)
     q = real.carrier.wrap(np.atleast_2d(np.array(q0, float)))
     n = int(max_time / dt)
-    implicit = n > EXPLICIT_BUDGET
+    implicit = n > RELAX_BUDGET
     for k in range(min(n, EXPLICIT_PREFIX) if implicit else n):
         f = real.F(q, **over)
         q = real.carrier.wrap(q + dt * f)
