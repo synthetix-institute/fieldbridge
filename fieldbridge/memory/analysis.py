@@ -144,7 +144,8 @@ def relax(real: Realization, q0: np.ndarray, over: Optional[Dict] = None, max_ti
 def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: Optional[Dict] = None,
               write=None, control_path=None, record=None, n_record: int = 40, dt: Optional[float] = None):
     """Euler-Maruyama; write = (target, h); control_path(t) sets real.control; record(q) -> value."""
-    implicit = dt is None and D == 0.0 and write is None and control_path is None
+    free = dt is None
+    implicit = free and D == 0.0 and write is None and control_path is None
     over, dt = dict(over or {}), dt or safe_dt(real)
     steps = max(1, int(round(T / dt)))
     every = max(1, steps // n_record)
@@ -157,6 +158,12 @@ def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: O
                                   t_eval=grid)
         out_v = [record(real.carrier.wrap(x)) for x in paths[:len(times)]] if record is not None else []
         return q, (times if record is not None else np.array([])), np.array(out_v)
+    stiff = free and not implicit and steps > EXPLICIT_BUDGET and real.dt > dt
+    if stiff:
+        # a noisy, written or driven trajectory longer than the budget: the drift-implicit step at the declared step
+        dt = float(real.dt)
+        steps = max(1, int(round(T / dt)))
+        every = max(1, steps // n_record)
     amp = np.sqrt(2.0 * D * dt)
     out_t, out_v = [], []
     for k in range(steps):
@@ -165,11 +172,49 @@ def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: O
         f = real.F(q, **over)
         if write is not None:
             f = f + real.write_force(q, write[0], write[1])
-        q = real.carrier.wrap(q + dt * f + amp * rng.standard_normal(q.shape))
+        if stiff:
+            q = real.carrier.wrap(q + _drift_implicit(real, q, over, dt, dt * f + amp * rng.standard_normal(q.shape)))
+        else:
+            q = real.carrier.wrap(q + dt * f + amp * rng.standard_normal(q.shape))
         if record is not None and (k + 1) % every == 0:
             out_t.append((k + 1) * dt)
             out_v.append(record(q))
     return q, np.array(out_t), np.array(out_v)
+
+
+def _drift_implicit(real: Realization, q: np.ndarray, over: Dict, dt: float, kick: np.ndarray) -> np.ndarray:
+    """The linearly implicit (drift-implicit) Euler-Maruyama increment (I - dt J(q))^-1 (dt f + sqrt(2 D dt) xi) for
+    every row of q, with the Jacobian of the drift at q (correction 25 of the discovery engine). A rate lambda with
+    lambda dt >> 1 relaxes within one step instead of making it unstable: the fast variable is slaved to the slow ones,
+    and its fluctuations, of variance D / lambda, are averaged out. Rates with lambda dt << 1 are integrated as by
+    Euler-Maruyama. A row whose Jacobian is not finite becomes NaN, as an escape."""
+    J = _jacobians(real, q, over)
+    n = q.shape[1]
+    A = np.eye(n)[None] - dt * J
+    out = np.full_like(kick, np.nan)
+    ok = np.all(np.isfinite(A), axis=(1, 2)) & np.all(np.isfinite(kick), axis=1)
+    if ok.any():
+        out[ok] = np.linalg.solve(A[ok], kick[ok][..., None])[..., 0]
+    return out
+
+
+def _jacobians(real: Realization, Q: np.ndarray, over: Dict, eps: float = 1e-6) -> np.ndarray:
+    """jacobian() at every row of Q in one evaluation of the drift, with the same arithmetic."""
+    m, n = Q.shape
+    E = eps * np.eye(n)
+    with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+        Fp = real.F((Q[:, None, :] + E[None]).reshape(m * n, n), **over).reshape(m, n, n)
+        Fm = real.F((Q[:, None, :] - E[None]).reshape(m * n, n), **over).reshape(m, n, n)
+    J = ((Fp - Fm) / (2 * eps)).transpose(0, 2, 1)
+    bad = ~np.isfinite(J)
+    if bad.any():
+        with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+            F0 = real.F(Q, **over)
+            fwd = ((Fp - F0[:, None, :]) / eps).transpose(0, 2, 1)
+            bwd = ((F0[:, None, :] - Fm) / eps).transpose(0, 2, 1)
+        J = np.where(bad & np.isfinite(fwd), fwd, J)
+        J = np.where(~np.isfinite(J) & np.isfinite(bwd), bwd, J)
+    return J
 
 
 # ------------------------------------------------------------------------------------------------ spectra
