@@ -303,22 +303,30 @@ def _settled(real: Realization, q: np.ndarray, over: Optional[Dict]) -> bool:
     is shorter than the merge tolerance and accounts for at least half the drift, the start is near a zero and nothing
     changes. Otherwise Newton runs from the start: it has settled if Newton converges to a zero within the merge
     tolerance, or to a zero without a growing direction, which the start approaches slowly. A start that Newton takes to
-    no zero, or to a zero with a growing direction far from it, has not settled."""
+    no zero, or to a zero with a growing direction far from it, has not settled.
+
+    Near a zero the same question is asked (correction 26). The slow branch of a relaxation oscillation can pass within
+    the merge tolerance of its unstable steady state, as the left branch of the Oregonator passes 0.04 from it. A start
+    there relaxes without a growing direction, at the rates of the attracting branch, while the zero it is near grows:
+    it is passing the zero, not settled at it, and it was read as a stable state with a flat direction. A start near a
+    zero with a growing direction whose own rates have none has not settled. A start whose own rates show the growth, as
+    one that stopped near a saddle, is settled as before; it is not kept as a state, since its rates grow."""
     with np.errstate(all="ignore"):
         f = real.F(q[None], **(over or {}))[0]
         J = jacobian(real, q, over)
     tol = _merge_tol(real)
     if np.all(np.isfinite(f)) and np.all(np.isfinite(J)):
         d = np.linalg.lstsq(J, f, rcond=None)[0]
-        if np.linalg.norm(d) < tol and np.linalg.norm(J @ d - f) <= 0.5 * np.linalg.norm(f):
-            return True
+        near = np.linalg.norm(d) < tol and np.linalg.norm(J @ d - f) <= 0.5 * np.linalg.norm(f)
     else:
         return True  # nothing to tell from: as before
     with np.errstate(all="ignore"):
         z, ok = newton(real, q, over)
     if not ok:
-        return False
-    if real.carrier.distance(_canon(real, z), _canon(real, q)) < tol:
+        return near
+    if not near and real.carrier.distance(_canon(real, z), _canon(real, q)) >= tol:
+        return classify(kappa_spectrum(real, z, over))["unstable"] == 0
+    if classify(-np.linalg.eigvals(J))["unstable"] > 0:
         return True
     return classify(kappa_spectrum(real, z, over))["unstable"] == 0
 
