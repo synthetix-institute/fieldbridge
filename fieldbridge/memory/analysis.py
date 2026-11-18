@@ -722,7 +722,16 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     width = (abs(real.control_range[1] - real.control_range[0])
              if real.control_range is not None and param == real.control else max(1.0, abs(v)))
     dv = 1e-5 * width
-    dF = (real.F(q, **{**over, param: v + dv}) - real.F(q, **{**over, param: v - dv})) / (2 * dv)
+    # the derivatives in the control are central differences over v -+ dv. Where the drift is not defined on one side, as
+    # a negative variable under a power whose exponent is the control (correction 28), they are taken on the other side;
+    # where it is defined on neither, they are not defined, and the point is named by its drift along the critical
+    # direction alone. Where every value is finite nothing changes
+    Fp, Fm = real.F(q, **{**over, param: v + dv}), real.F(q, **{**over, param: v - dv})
+    dF = (Fp - Fm) / (2 * dv)
+    if not np.all(np.isfinite(dF)):
+        F0 = real.F(q, **over)
+        dF = ((Fp - F0) / dv if np.all(np.isfinite(Fp)) else (F0 - Fm) / dv if np.all(np.isfinite(Fm))
+              else np.zeros_like(F0))
     out: Dict[str, object] = {"param": param, "value": float(v), "state": q.tolist(),
                               "kappa_critical": [float(-lam.real), float(-lam.imag)]}
 
@@ -735,8 +744,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     # that cannot be told from two real eigenvalues crossing together (where a degenerate pair is not diagonal in the
     # coordinates, rounding gives it imaginary parts of order 1e-13, and when the whole spectrum is critical, 1e-6 of
     # the largest rate is no bound)
-    ev_next = np.linalg.eigvals(jacobian(real, q, {**over, param: v + dv}))
-    slope_re = float((ev_next[np.argmin(np.abs(ev_next - lam))].real - lam.real) / dv)
+    Jn, side = jacobian(real, q, {**over, param: v + dv}), 1.0
+    if not np.all(np.isfinite(Jn)):
+        Jn, side = jacobian(real, q, {**over, param: v - dv}), -1.0
+    if np.all(np.isfinite(Jn)):
+        ev_next = np.linalg.eigvals(Jn)
+        slope_re = float(side * (ev_next[np.argmin(np.abs(ev_next - lam))].real - lam.real) / dv)
+    else:
+        slope_re = 0.0
     if abs(lam.imag) > max(1e-6 * scale, abs(slope_re) * WRITE_RESOLUTION * width):
         # a complex pair: two directions are critical at a simple Hopf point
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
@@ -771,7 +786,9 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     a3, a2, a1, a0 = (float(c) for c in coef)
     Jp = jacobian(real, q, {**over, param: v + dv})
     Jm = jacobian(real, q, {**over, param: v - dv})
-    growth_partial = float(w @ ((Jp - Jm) / (2 * dv)) @ vec)
+    fp, fm = bool(np.all(np.isfinite(Jp))), bool(np.all(np.isfinite(Jm)))
+    dJ = ((Jp - Jm) / (2 * dv) if fp and fm else (Jp - J) / dv if fp else (J - Jm) / dv if fm else np.zeros_like(J))
+    growth_partial = float(w @ dJ @ vec)
     # along the branch the state moves too, dq/dv = -J^+ dF/dv (no component along the critical direction)
     dq = -np.linalg.lstsq(J, dF, rcond=None)[0]
     dq = dq - vec * float(w @ dq)
