@@ -798,7 +798,13 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     if k > 1:
         kind = (f"degenerate critical mode: {k} directions become critical together; the critical eigenspace is "
                 f"{k}-dimensional, not a line")
-    elif cub + quad <= 1e-6 * scale * half:
+    elif cub + quad <= 1e-6 * min(scale, 0.3 / real.dt) * half:
+        # the drift along the critical direction vanishes (a line of states) when its terms over the window are below
+        # 1e-6 of what the rates of the model make over it. Those are the rates the declared step resolves, at most
+        # 0.3 / dt, as in safe_dt (correction 27): a variable slaved at a faster rate is eliminated by the reduction to
+        # the slow manifold, and at the rate 1e6 it put the bound at the order of the reduced drift itself, so that
+        # every fold and pitchfork with a fast variable was read as degenerate. Rounding in the drift of a fast
+        # variable, of order 1e-16 of its rate, stays far below the bound
         kind = "degenerate: the drift vanishes along the critical direction (a line of states)"
     elif bias > 0.1 and asym > 0.1:
         kind = "saddle-node (fold): a state appears or vanishes; written by a pulse past the threshold"
