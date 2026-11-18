@@ -6,7 +6,8 @@ reaches below zero, a control value that divides the drift), least squares raise
 Squares", and the card was not derived. Such an iterate now ends the search as not converged, as a search that
 diverges does; a zero whose stencil leaves the set is not a converged zero, since every caller takes the eigenvalues of
 its Jacobian; the continuation halves its step where its predictor is not finite; and the slow-manifold reduction of the
-normal form stops there, so that its window is halved."""
+normal form stops there, so that its window is halved. Since correction 23 a stencil with one side outside the set takes
+the one-sided difference from the other side, so a zero on the edge of the set is a converged zero."""
 from __future__ import annotations
 
 import numpy as np
@@ -41,22 +42,25 @@ def test_a_start_outside_the_domain_is_not_converged():
     assert ok and q[0] == pytest.approx(1.0)
 
 
-def test_a_stencil_outside_the_domain_is_not_converged():
-    # at x = 0 the drift is finite (g), but the central difference evaluates sqrt(-1e-6)
+def test_a_stencil_outside_the_domain_is_one_sided():
+    # at x = 0 the drift is finite (g), but the central difference evaluates sqrt(-1e-6); since correction 23 that entry
+    # is the one-sided difference from inside the domain, a large finite slope, and Newton from x = 0 reaches x = g^2
     real = spec.load(ROOT)
     with np.errstate(all="ignore"):
         q, ok = an.newton(real, np.array([0.0]))
-    assert not ok and q[0] == 0.0
+    assert ok and q[0] == pytest.approx(1.0)
 
 
-def test_a_zero_on_the_edge_of_the_domain_is_not_converged():
-    # x = 0 is a zero of -g x + x^1.5, but its Jacobian takes (-1e-6)^1.5; the zero x = g^2 inside is found
+def test_a_zero_on_the_edge_of_the_domain_has_its_one_sided_rate():
+    # x = 0 is a zero of -g x + x^1.5, and its Jacobian takes (-1e-6)^1.5; since correction 23 the slope there is the
+    # one-sided difference, -g, so x = 0 is a converged, stable zero beside the unstable zero x = g^2
     real = spec.load(EDGE)
     with np.errstate(all="ignore"):
         q, ok = an.newton(real, np.array([0.0]))
         found = an.fixed_points(real, np.random.default_rng(0), 40)
-    assert not ok
-    assert [round(float(z[0]), 6) for z, _ in found] == [1.0]
+    assert ok and q[0] == 0.0
+    assert an.kappa_spectrum(real, q)[0].real == pytest.approx(1.0, abs=2e-3)
+    assert 1.0 in [round(float(z[0]), 6) for z, _ in found]
 
 
 def test_the_continuation_stops_where_the_control_divides_the_drift():

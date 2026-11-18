@@ -174,12 +174,27 @@ def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: O
 
 # ------------------------------------------------------------------------------------------------ spectra
 def jacobian(real: Realization, q: np.ndarray, over: Optional[Dict] = None, eps: float = 1e-6) -> np.ndarray:
+    """Central differences. Where one side of the stencil leaves the set on which the drift is finite (a state on the
+    edge of an orthant under a non-integer power, x = 0 under sqrt(x)) and the drift at q and on the other side is
+    finite, that entry is the one-sided difference from the side inside the set; where every value is finite the
+    arithmetic is unchanged. At an edge where the one-sided derivative is infinite (sqrt(x) at 0) the difference is a
+    large finite rate of order eps^(-1/2)."""
     over, q = over or {}, np.asarray(q, float)
     n = q.size
     E = eps * np.eye(n)
-    Fp = real.F(q[None] + E, **over)
-    Fm = real.F(q[None] - E, **over)
-    return ((Fp - Fm) / (2 * eps)).T
+    with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+        Fp = real.F(q[None] + E, **over)
+        Fm = real.F(q[None] - E, **over)
+    J = ((Fp - Fm) / (2 * eps)).T
+    bad = ~np.isfinite(J)
+    if bad.any():
+        with np.errstate(invalid="ignore", divide="ignore", over="ignore"):
+            F0 = real.F(q[None], **over)[0]
+            fwd = ((Fp - F0[None]) / eps).T
+            bwd = ((F0[None] - Fm) / eps).T
+        J = np.where(bad & np.isfinite(fwd), fwd, J)
+        J = np.where(~np.isfinite(J) & np.isfinite(bwd), bwd, J)
+    return J
 
 
 def kappa_spectrum(real: Realization, q: np.ndarray, over: Optional[Dict] = None) -> np.ndarray:
@@ -341,9 +356,10 @@ def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n
 def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters: int = 80, tol: float = 1e-11):
     """Damped Newton for a zero of the drift. The search ends as not converged at an iterate where the drift or its
     central-difference Jacobian is not finite: a start or a step outside the set where the drift is defined (a
-    non-integer power or the square root of a negative value, a pole, a control value that divides the drift), or a
-    zero on the edge of that set, whose difference stencil leaves it. Least squares on such a matrix raised "SVD did
-    not converge", and every caller takes the eigenvalues of the Jacobian at a converged zero."""
+    non-integer power or the square root of a negative value, a pole, a control value that divides the drift). Least
+    squares on such a matrix raised "SVD did not converge", and every caller takes the eigenvalues of the Jacobian at a
+    converged zero. Since correction 23 a stencil with one side outside that set takes the one-sided difference, so a
+    zero on the edge of the set converges, with the rate on its inner side."""
     over = over or {}
     q = real.carrier.wrap(np.array(q, float))
     cap = 0.5 * base_length(real)
