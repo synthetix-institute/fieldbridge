@@ -1271,6 +1271,7 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
                    asymmetry=0.0, bias=0.0, a3=0.0, **critical(0.0))
         return out
+    no_dual = False
     if lam.imag != 0.0:
         # a pair below the resolution crosses as two real directions. Its eigenvectors from eig are complex with an
         # arbitrary phase, and their real parts alone depend on that phase (with NumPy 2 the left and right real parts
@@ -1297,8 +1298,20 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
             # rounding, it was for some seeds; the coefficients became NaN and the point read as a subcritical
             # pitchfork with no critical direction). The row of R^-1 is the left vector dual to vec: one on it and
             # zero on the other eigenvectors.
-            w = np.real(np.linalg.inv(R)[i])
-        w = w / np.dot(w, vec)
+            # Where the eigenvalue is defective (a Jordan block, as x' = y, y' = k x at k = 0; a free rigid body at
+            # B = A) there are fewer eigenvectors than repeated eigenvalues, R is singular, and no left vector pairs
+            # with the right one: the critical eigenspace is not a line, and there are no coefficients along one.
+            same = np.flatnonzero(np.abs(ev - lam) <= 1e-6 * max(1.0, float(np.abs(J).max())))
+            rank = int(np.linalg.matrix_rank(J - lam.real * np.eye(n), tol=1e-9 * max(1.0, float(np.abs(J).max()))))
+            no_dual = n - rank < same.size
+            if not no_dual:
+                try:
+                    w = np.real(np.linalg.inv(R)[i])
+                except np.linalg.LinAlgError:
+                    no_dual = True
+        with np.errstate(all="ignore"):
+            w = np.full(n, np.nan) if no_dual else w / np.dot(w, vec)
+        no_dual = no_dual or not np.all(np.isfinite(w))
     # the sign of an eigenvector is arbitrary and differs between LAPACK builds: orient the critical direction (see
     # orientation_index). +mode then names the same state on every machine, and the random streams of a test
     # assigned to the bias toward +mode drive the same state.
@@ -1343,7 +1356,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     # of a cavity magnon and of a phase qubit. There the rate is the part that does not follow the state.
     fold = asym > 0.1 and abs(bias_along) > max(0.1 * abs(growth_partial) * half, 1e-9 * scale)
     crossing = growth_partial if fold else growth
-    crit = critical(crossing)
+    if no_dual:
+        same = np.flatnonzero(np.abs(ev - lam) <= 1e-6 * max(1.0, float(np.abs(J).max())))
+        crit = {"critical_dimension": int(same.size),
+                "critical_kappa": [[float(-ev[j].real), float(-ev[j].imag)] for j in same]}
+        rank = int(np.linalg.matrix_rank(J - lam.real * np.eye(n), tol=1e-9 * max(1.0, float(np.abs(J).max()))))
+        out["defective"] = bool(n - rank < same.size)  # fewer eigenvectors than repeated eigenvalues
+    else:
+        crit = critical(crossing)
     k = crit["critical_dimension"]
     crit.update(slow_spectrum(ev, cand, lam, crossing, WRITE_RESOLUTION * width, scale, J, R))
     series = (series_reduction(real, q, vec, w, over) if k == 1 else
