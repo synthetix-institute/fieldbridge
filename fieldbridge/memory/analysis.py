@@ -420,10 +420,16 @@ def _zero_in_plane(real: Realization, p: np.ndarray, v: np.ndarray, over: Dict, 
     return q, bool(np.linalg.norm(real.F(q, **over)) < 1e-8)
 
 
+NO_STATE = "no stable state: the trajectories do not settle"
+LIMIT_CYCLE = "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)"
+
+
 def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n_starts: int,
              continuum: bool = False, n_null: int = 0) -> str:
     if n_states == 0 and n_unconverged > 0:
-        return "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)"
+        # a start that does not settle oscillates, escapes or blows up in finite time; that it moves on a limit cycle
+        # is read only where the search for a cycle finds one (discovery._cycle_isolation, correction 29)
+        return NO_STATE
     if continuum:
         return "a continuum of neutral states: diffusion along the flat directions (Law 2)"
     flat = max((classify(k)["flat"] - n_null for k in spectra), default=0)

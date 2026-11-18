@@ -153,22 +153,27 @@ def sweep_label(card: Dict, w: Dict) -> str:
 
 
 def _cycle_isolation(real: Realization, rng, card: Dict) -> None:
-    """Without a stable state the trajectories oscillate. The transverse Floquet multiplier of the cycle tells an
-    isolated limit cycle (phase memory) from a family of neutral cycles, as in the Lotka-Volterra model, where the
-    neighbouring orbits are cycles as well and neither the amplitude nor the phase has a restoring force."""
+    """Without a stable state the trajectories oscillate, escape or blow up in finite time. Where the search finds a
+    cycle, its transverse Floquet multiplier tells an isolated limit cycle (phase memory) from a family of neutral
+    cycles, as in the Lotka-Volterra model, where the neighbouring orbits are cycles as well and neither the amplitude nor
+    the phase has a restoring force. Where it finds none, the card reads that no state is stored and that the
+    trajectories do not settle: a runaway, a blow-up or an irregular motion is not a limit cycle (correction 29; the
+    attractor step of the engine measures which it is)."""
     from . import phase_locking as pl
     try:
         cyc = pl.find_cycle(real, {}, rng)
         if cyc is None:
             return
         fl = pl.floquet(real, {}, pl.refine_cycle(real, {}, cyc))
-    except Exception:  # an irregular oscillation: the classification by trajectories stands
+    except Exception:  # an irregular oscillation: no cycle is read
         return
     card["states"]["transverse_floquet_multiplier"] = float(fl["largest_other"])
     if fl["largest_other"] > pl.NEUTRAL:
         card["states"]["neutral_cycles"] = True
         card["loss_law"] = ("no stable state: a family of neutral cycles, with no restoring force on the amplitude or "
                             "the phase (Law 2)")
+    else:
+        card["loss_law"] = an.LIMIT_CYCLE
 
 
 def mechanism_class(card: Dict) -> str:
