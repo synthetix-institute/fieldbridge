@@ -222,6 +222,8 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     q0 = real.carrier.sample(rng, n_starts)
     q, speed = relax(real, q0, over)
     conv = speed < 1e-4
+    for i in np.flatnonzero(conv):
+        conv[i] = _settled(real, q[i], over)
     states: List[np.ndarray] = []
     counts: List[int] = []
     tol = _merge_tol(real)
@@ -246,6 +248,34 @@ def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dic
     if not continuum and flat and len(states) >= 2:
         continuum = all(_on_a_set_of_equilibria(real, s, over) for s in states)
     return states, counts, spectra, int(np.sum(~conv)), continuum
+
+
+def _settled(real: Realization, q: np.ndarray, over: Optional[Dict]) -> bool:
+    """Whether a start whose speed fell below the tolerance has settled near a zero of the drift. A small speed also
+    marks slow motion far from any zero: along the slow manifold of a relaxation oscillation (x' = mu (y - x^3/3 + x),
+    y' = -x / mu, whose speed there is |x| / mu) or a slow drift that no zero ends. Such starts were read as stored
+    states, and their noisy hold time ran at the step of the fast rate. Where one least-squares step of Newton, J d = F,
+    is shorter than the merge tolerance and accounts for at least half the drift, the start is near a zero and nothing
+    changes. Otherwise Newton runs from the start: it has settled if Newton converges to a zero within the merge
+    tolerance, or to a zero without a growing direction, which the start approaches slowly. A start that Newton takes to
+    no zero, or to a zero with a growing direction far from it, has not settled."""
+    with np.errstate(all="ignore"):
+        f = real.F(q[None], **(over or {}))[0]
+        J = jacobian(real, q, over)
+    tol = _merge_tol(real)
+    if np.all(np.isfinite(f)) and np.all(np.isfinite(J)):
+        d = np.linalg.lstsq(J, f, rcond=None)[0]
+        if np.linalg.norm(d) < tol and np.linalg.norm(J @ d - f) <= 0.5 * np.linalg.norm(f):
+            return True
+    else:
+        return True  # nothing to tell from: as before
+    with np.errstate(all="ignore"):
+        z, ok = newton(real, q, over)
+    if not ok:
+        return False
+    if real.carrier.distance(_canon(real, z), _canon(real, q)) < tol:
+        return True
+    return classify(kappa_spectrum(real, z, over))["unstable"] == 0
 
 
 def _one_state_per_zero(real: Realization, states: List[np.ndarray], counts: List[int], over: Optional[Dict]):
