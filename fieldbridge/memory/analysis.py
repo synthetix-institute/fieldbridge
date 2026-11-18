@@ -74,6 +74,14 @@ def safe_dt(real: Realization) -> float:
 # hundred steps)
 EXPLICIT_BUDGET = 10_000_000
 EXPLICIT_PREFIX = 100_000
+# calls of the drift, those of the settling event included, that one implicit run of a relaxation may make (correction
+# 30): the stiff relaxations of the development data need at most 484 calls of the drift a run, while a run that creeps
+# along a singular line of the drift (an inspiral at |e| -> 1, a < 0) made 1.5e5 calls in 20 s without ending
+IMPLICIT_CALLS = 20_000
+
+
+class _Spent(Exception):
+    """An implicit run of a relaxation that has made IMPLICIT_CALLS calls of the drift without settling."""
 
 
 def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: Optional[float] = None,
@@ -83,10 +91,17 @@ def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: 
     integrated in a number of steps that does not grow with its stiffness. With tol, a run stops where its speed falls
     below tol / 2 (the relaxation's criterion); with t_eval, the states at those times are returned as well. The drift
     is evaluated at the wrapped state (an orthant reflects at zero). A run whose drift or Jacobian stops being finite
-    ends there, with its state NaN, which every caller reads as not converged."""
+    ends there, with its state NaN, which every caller reads as not converged. A run of a relaxation (with tol) that has
+    made IMPLICIT_CALLS calls of the drift without settling ends there in the same way: it has not settled (correction
+    30). The noiseless trajectories of integrate (with t_eval) have no such budget."""
     from scipy.integrate import solve_ivp
+    calls = [0]
 
     def fun(t, y):
+        if tol is not None:
+            calls[0] += 1
+            if calls[0] > IMPLICIT_CALLS:
+                raise _Spent()
         return real.F(real.carrier.wrap(y)[None], **over)[0]
 
     def jac(t, y):
@@ -102,12 +117,15 @@ def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: 
     ends = np.full_like(q, np.nan)
     paths = None if t_eval is None else np.full((len(t_eval),) + q.shape, np.nan)
     for i, y0 in enumerate(q):
+        calls[0] = 0
         try:
             with np.errstate(all="ignore"):
                 sol = solve_ivp(fun, (0.0, T), y0, method="BDF", jac=jac, rtol=1e-6, atol=atol, events=events,
                                 t_eval=t_eval)
         except (ValueError, ZeroDivisionError, OverflowError, np.linalg.LinAlgError):
             continue  # the drift or its Jacobian is not finite along the run (an escape)
+        except _Spent:
+            continue  # the budget of the run is spent: it has not settled
         if sol.status < 0 or not np.all(np.isfinite(sol.y[:, -1])):
             continue
         ends[i] = sol.y[:, -1]
