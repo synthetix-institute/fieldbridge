@@ -780,11 +780,17 @@ def basin_of(real: Realization, q: np.ndarray, states: Sequence[np.ndarray], rad
     label = ball(x)
     todo = np.flatnonzero(label < 0)
     x = x[todo]
+    # beyond the explicit step budget the flow takes the drift-implicit step at the declared step, as the trajectories
+    # of integrate do (correction 25 of the discovery engine): at a slaved rate of 1e7 the explicit step is 3e-8, and
+    # t_max is 1e10 such steps; a rate far above 1 / dt relaxes within one implicit step, and the slow flow is as before
+    stiff = t_max / dt > EXPLICIT_BUDGET and real.dt > dt
+    if stiff:
+        dt = float(real.dt)
     for k in range(1, int(t_max / dt) + 1):
         if not todo.size:
             break
         f = real.F(x, **over)
-        x = real.carrier.wrap(x + dt * f)
+        x = real.carrier.wrap(x + (_drift_implicit(real, x, over, dt, dt * f) if stiff else dt * f))
         if k % 10:
             continue
         hit = ball(x)
@@ -1384,7 +1390,9 @@ def _without_neutral(real: Realization, q: np.ndarray, param: str, v: float, ev:
         if not ok or real.carrier.distance(q, qn) > 0.1 * base_length(real):
             return cand
         ev_side, R_side = np.linalg.eig(jacobian(real, qn, side))
-        zero = np.abs(ev_side.real) <= 1e-7 * max(1e-12, float(np.abs(ev_side).max()))
+        # zero against the rates the declared step resolves, at most 0.3 / dt (correction 27 of the discovery engine): at
+        # a slaved rate of 1e6 the bound was 0.1, and the eigenvalue that crosses read as neutral on both sides
+        zero = np.abs(ev_side.real) <= 1e-7 * max(1e-12, min(float(np.abs(ev_side).max()), 0.3 / real.dt))
         if not zero.all():
             moved = min(moved, float(np.abs(ev_side.real[~zero]).min()))
         if neutral is None or zero.sum() < neutral.shape[1]:
