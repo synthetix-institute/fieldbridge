@@ -174,7 +174,15 @@ def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: O
     every = max(1, steps // n_record)
     if implicit and steps > EXPLICIT_BUDGET:
         # a noiseless trajectory longer than the budget: the same samples, integrated by the implicit method of relax
-        times = np.arange(1, steps // every + 1) * every * dt
+        k = np.arange(1, steps // every + 1)
+        if every * int(k[-1]) < 2 ** 62:
+            times = k * every * dt
+        else:
+            # beyond a 64-bit integer the product of the counts would be an array of Python integers, and the grid an
+            # array of objects, which the implicit runs cannot test for finite values: at a step of 2e-36, where the
+            # fastest rate over the control range is 1e35, a trajectory of 200 time units has 1e38 steps (correction 33).
+            # The counts are then multiplied in floating point
+            times = k * float(every) * dt
         t_end = steps * dt
         grid = times if times[-1] >= t_end else np.append(times, t_end)
         q, paths = _implicit_runs(real, real.carrier.wrap(np.atleast_2d(np.array(q, float))), over, float(grid[-1]),
