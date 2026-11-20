@@ -218,7 +218,8 @@ def swept_seeds(real: Realization, sweep: "Sweep", q0: np.ndarray, R: np.ndarray
     (A sweep that itself favours one state carries small displacements to that state; larger ones reach the other. The
     axes of a critical plane alone reach four of the six frustrated states of a triangle, and the others were found only
     by a random start.)"""
-    dt = dt or 0.5 * an.safe_dt(real)
+    # fourth-order Runge-Kutta: the step of the fastest rate (analysis.rate_dt), which keeps a weakly damped focus stable
+    dt = dt or 0.5 * an.rate_dt(real)
     b = an.base_length(real)
     out = []
     for t0 in (sweep.t_cross, 0.5 * (sweep.t_cross + t_end)):
@@ -1199,7 +1200,9 @@ def linear_stage_law(real: Realization, sweep: Sweep, q0: np.ndarray, R: np.ndar
     Where the spread reaches LINEAR_FRACTION of the distance to the nearest written state before the crossing, the
     noise is too strong for the deviation to stay linear through the crossing (recorded as
     linear_size_before_crossing); the certificate then decides whether the law still holds."""
-    dt = dt or 0.5 * an.safe_dt(real)
+    # the reference and the maps are integrated by Runge-Kutta (rate_dt), the moments by Heun's rule, which needs a bound
+    # at a weakly damped focus (heun_dt) far milder than the one safe_dt takes for Euler
+    dt = dt or min(0.5 * an.rate_dt(real), an.heun_dt(real))
     ell = min(float(np.linalg.norm(s - q0)) for s in stable) if stable else an.base_length(real)
     k = R.shape[1]
     coords_arr = np.array([L.T @ real.carrier.diff(q0, s_) for s_ in stable]) if len(stable) >= 2 else None
@@ -1395,7 +1398,9 @@ def reduced_law(real: Realization, sweep: Sweep, q0: np.ndarray, targets, streng
         edge = np.clip(x, -span, span)
         return y + np.where(np.abs(x) > span, cubic(x) - cubic(edge), 0.0)
 
-    dt = 0.25 * an.safe_dt(real)
+    # Euler-Maruyama on the one coordinate of the reduced law: a real rate has no focus, so the step is that of the
+    # fastest rate of the full drift (rate_dt), without the focus bound of safe_dt
+    dt = 0.25 * an.rate_dt(real)
     out = []
     for target, h in zip(targets, strengths):
         hs = np.array([float(W[i] @ real.write_force(qs[i], target, h)) for i in range(len(ts))])

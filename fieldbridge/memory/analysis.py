@@ -123,11 +123,61 @@ def safe_dt(real: Realization) -> float:
     return euler
 
 
+def _heun_keeps_half_the_decay(z: complex) -> bool:
+    """Heun's rule multiplies an eigenvalue l by R(z) = 1 + z + z^2 / 2 with z = l dt; the step keeps at least half of
+    the decay of a stable mode when |R(z)|^2 <= 1 + Re z (the exact flow gives exp(2 Re z) ~ 1 + 2 Re z). This is the
+    criterion of safe_dt: at dt = |a| / |l|^2 Euler gives |1 + z|^2 = 1 + Re z."""
+    R = 1.0 + z + 0.5 * z * z
+    return abs(R) ** 2 <= 1.0 + z.real
+
+
+def heun_dt(real: Realization) -> float:
+    """The largest step, at most rate_dt, at which Heun's rule keeps half the decay of every stable mode of the
+    second moments: the covariance C' = J C + C J^T + 2 D has the eigenvalues l_i + l_j, the fastest of them 2 l at a
+    focus l = a + i b. Heun's rule needs a bound at a weakly damped focus as Euler does, since |R(i y)|^2 = 1 + y^4 / 4
+    on the imaginary axis, but a far milder one: for small dt the criterion reads |l|^4 dt^3 <~ |a| / 2 at 2 l, where
+    Euler needs dt <= |a| / |l|^2. The eigenvalues are those of safe_dt (sampled states and the ends of the control
+    range, real part below -1e-3). The completion's linear stage integrates its moments by Heun's rule; under the
+    focus bound of safe_dt (correction 34 of the discovery engine) its step on the magnon-Kerr element fell by 48."""
+    cached = getattr(real, "_heun_dt", None)
+    if cached is not None:
+        return cached
+    cap = rate_dt(real)
+    rng = np.random.default_rng(12345)
+    overs = [{}]
+    if real.control and real.control_range:
+        overs += [{real.control: real.control_range[0]}, {real.control: real.control_range[1]}]
+    step = cap
+    grid = cap * np.logspace(-6, 0, 241)
+    for over in overs:
+        for q in real.carrier.sample(rng, 6):
+            J = jacobian(real, q, over)
+            if not np.all(np.isfinite(J)):
+                continue
+            for lam in np.linalg.eigvals(J):
+                if lam.real >= -1e-3:
+                    continue
+                mu = 2.0 * complex(lam)
+                bad = [i for i, h in enumerate(grid) if not _heun_keeps_half_the_decay(mu * h)]
+                if not bad:
+                    continue
+                if bad[0] == 0:
+                    step = min(step, float(grid[0]))
+                    continue
+                lo, hi = float(grid[bad[0] - 1]), float(grid[bad[0]])
+                for _ in range(50):
+                    mid = 0.5 * (lo + hi)
+                    lo, hi = (mid, hi) if _heun_keeps_half_the_decay(mu * mid) else (lo, mid)
+                step = min(step, lo)
+    real._heun_dt = step
+    return step
+
+
 def refine_steps(real: Realization, factor: float) -> None:
-    """Divide both explicit steps of a realization by factor: a run at a finer numerical resolution (correction 35;
+    """Divide the explicit steps of a realization by factor: a run at a finer numerical resolution (correction 35;
     before it the engine divided safe_dt alone)."""
-    rate, euler = rate_dt(real), safe_dt(real)
-    real._rate_dt, real._safe_dt = rate / factor, euler / factor
+    rate, euler, heun = rate_dt(real), safe_dt(real), heun_dt(real)
+    real._rate_dt, real._safe_dt, real._heun_dt = rate / factor, euler / factor, heun / factor
 
 
 # explicit steps a relaxation or a noiseless trajectory may take at the step of the fastest rate (about the engine's time
