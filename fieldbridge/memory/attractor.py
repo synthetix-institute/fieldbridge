@@ -6,7 +6,8 @@ modules/discovery, corrections 6 to 10 of PROTOCOL.md), ported here so that the 
 
 Exponents. The two largest Lyapunov exponents are measured by the method of Benettin and colleagues: separations
 started along random orthonormal directions (along the axes they stay inside one of two uncoupled subsystems),
-renormalized by Gram-Schmidt at every step of a fourth-order Runge-Kutta integration at the declared time step, from
+renormalized by Gram-Schmidt at every step of a fourth-order Runge-Kutta integration at the step of the fastest rate
+(analysis.rate_dt: the declared time step, or 0.3 over the fastest rate where that is shorter), from
 STARTS starts that survive a transient; starts that leave every bound are dropped, and the motion is unbounded only
 when no start of CANDIDATES stays bounded. The tolerance on an exponent is TOL of the mean contraction rate per
 direction, |<tr J>| / n, on the attractor, and at least the error of a finite-time exponent over the run, 25 / T.
@@ -57,7 +58,10 @@ def attractor(real: Realization, rng, steps_cap: int = STEPS, spec_steps: int = 
     steps_cap bounds the exponent run and spec_steps the record of the spectrum (the defaults are those of the
     engine; a slow escape that outlasts the run reads as a drift, which the blow-up law of chaos_blowup resolves)."""
     n = real.carrier.dim
-    dt = an.safe_dt(real)
+    # the step of the fastest rate (correction 35 of the discovery engine): Runge-Kutta keeps a weakly damped focus
+    # stable at it, and the bound that safe_dt adds for explicit Euler would shorten the time that the fixed counts of
+    # steps below cover, by the same factor
+    dt = an.rate_dt(real)
     step = lambda X: real.carrier.wrap(X + dt * _rk4(real, X, dt))  # noqa: E731
     period = getattr(real.carrier, "period", None) if real.carrier.kind == "torus" else None
     bound = 1e6 * max(1.0, an.base_length(real))
