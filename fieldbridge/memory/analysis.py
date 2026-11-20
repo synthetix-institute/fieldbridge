@@ -65,14 +65,12 @@ def _canon(real: Realization, q: np.ndarray) -> np.ndarray:
 
 
 # ------------------------------------------------------------------------------------------------ dynamics
-def safe_dt(real: Realization) -> float:
-    """The declared time step, reduced where the fastest local rate would make an explicit Euler step unstable
-    (dt <= 0.3 / max |eigenvalue| over sampled states and the control range)."""
-    cached = getattr(real, "_safe_dt", None)
-    if cached is not None:
-        return cached
+def _explicit_steps(real: Realization) -> Tuple[float, float]:
+    """The step of a fourth-order Runge-Kutta integration and the step of an explicit Euler integration, from the
+    eigenvalues of the Jacobian at sampled states and at the ends of the control range (see rate_dt and safe_dt)."""
     rng = np.random.default_rng(12345)
     rate = 0.0
+    focus = np.inf
     overs = [{}]
     if real.control and real.control_range:
         overs += [{real.control: real.control_range[0]}, {real.control: real.control_range[1]}]
@@ -80,10 +78,56 @@ def safe_dt(real: Realization) -> float:
         for q in real.carrier.sample(rng, 6):
             J = jacobian(real, q, over)
             if np.all(np.isfinite(J)):
-                rate = max(rate, float(np.max(np.abs(np.linalg.eigvals(J)))))
-    dt = float(real.dt if rate <= 0 else min(real.dt, 0.3 / rate))
-    real._safe_dt = dt
-    return dt
+                ev = np.linalg.eigvals(J)
+                rate = max(rate, float(np.max(np.abs(ev))))
+                stable = ev[ev.real < -1e-3]
+                if stable.size:
+                    focus = min(focus, float(np.min(np.abs(stable.real) / np.abs(stable) ** 2)))
+    step = float(real.dt if rate <= 0 else min(real.dt, 0.3 / rate))
+    return step, min(step, focus)
+
+
+def rate_dt(real: Realization) -> float:
+    """The declared time step, reduced to 0.3 / max |eigenvalue| over sampled states and the control range: the step of
+    a fourth-order Runge-Kutta integration (correction 35). Runge-Kutta multiplies an eigenvalue l by R(l dt), with
+    |R(i y)|^2 = 1 - y^6 / 72 + y^8 / 576 on the imaginary axis, so at |l| dt = 0.3 it keeps a stable focus stable
+    however slowly it decays, and needs none of the bound that safe_dt adds for Euler. Under correction 34 the attractor
+    step took safe_dt, and a fixed number of its steps covered a time that fell with that bound, by a factor of 7e-5 in
+    one corpus model."""
+    cached = getattr(real, "_rate_dt", None)
+    if cached is not None:
+        return cached
+    step, euler = _explicit_steps(real)
+    real._rate_dt = step
+    if getattr(real, "_safe_dt", None) is None:
+        real._safe_dt = euler
+    return step
+
+
+def safe_dt(real: Realization) -> float:
+    """The declared time step, reduced where the fastest local rate would make an explicit Euler step unstable
+    (dt <= 0.3 / max |eigenvalue| over sampled states and the control range), and where a stable focus would not stay
+    stable under it (correction 34): Euler multiplies an eigenvalue l = a + i b by |1 + l dt|, which stays below 1 only
+    for dt < 2 |a| / |l|^2. A focus that turns much faster than it decays (b >> |a|) needs a step far below 0.3 / |l|,
+    and at that step the explicit prefix of the relaxation made its starts grow by |1 + i b dt| each step until they
+    were no longer finite. The bound dt <= |a| / |l|^2, half the limit, is taken over the eigenvalues with a < -1e-3 (the
+    card's resolution of rates); for a real eigenvalue it is 1 / |l|, never below 0.3 / |l|, so it binds only on
+    spirals. A Runge-Kutta integration takes rate_dt instead (correction 35)."""
+    cached = getattr(real, "_safe_dt", None)
+    if cached is not None:
+        return cached
+    step, euler = _explicit_steps(real)
+    real._safe_dt = euler
+    if getattr(real, "_rate_dt", None) is None:
+        real._rate_dt = step
+    return euler
+
+
+def refine_steps(real: Realization, factor: float) -> None:
+    """Divide both explicit steps of a realization by factor: a run at a finer numerical resolution (correction 35;
+    before it the engine divided safe_dt alone)."""
+    rate, euler = rate_dt(real), safe_dt(real)
+    real._rate_dt, real._safe_dt = rate / factor, euler / factor
 
 
 # explicit steps a relaxation or a noiseless trajectory may take at the step of the fastest rate (about the engine's time
@@ -92,19 +136,43 @@ def safe_dt(real: Realization) -> float:
 # hundred steps)
 EXPLICIT_BUDGET = 10_000_000
 EXPLICIT_PREFIX = 100_000
+# calls of the drift, those of the settling event included, that one implicit run of a relaxation may make (correction
+# 30): the stiff relaxations of the development data need at most 484 calls of the drift a run, while a run that creeps
+# along a singular line of the drift (an inspiral at |e| -> 1, a < 0) made 1.5e5 calls in 20 s without ending
+IMPLICIT_CALLS = 20_000
+# explicit steps a relaxation may take before it goes to the implicit method (correction 31). The card relaxes 48 starts
+# at once, and more than once; at 1e-4 s a step of 48 starts (2 to 10 variables on the cluster), 3e6 steps take about
+# 300 s, a third of the engine's time limit, where EXPLICIT_BUDGET took about 1000 s. A budget in steps, not in measured
+# time, keeps the records independent of the load of the machine. Noisy and noiseless trajectories keep EXPLICIT_BUDGET
+RELAX_BUDGET = 3_000_000
+
+
+class _Spent(Exception):
+    """An implicit run of a relaxation that has made IMPLICIT_CALLS calls of the drift without settling."""
 
 
 def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: Optional[float] = None,
-                   t_eval: Optional[np.ndarray] = None):
+                   t_eval: Optional[np.ndarray] = None, unfinished: Optional[List] = None):
     """Each state of q integrated over (0, T] by backward differentiation (BDF) with the central-difference Jacobian:
     the step is set by accuracy, not by the fastest rate, so a stiff drift (rates of 1e5 to 1e15 against slow ones) is
     integrated in a number of steps that does not grow with its stiffness. With tol, a run stops where its speed falls
     below tol / 2 (the relaxation's criterion); with t_eval, the states at those times are returned as well. The drift
     is evaluated at the wrapped state (an orthant reflects at zero). A run whose drift or Jacobian stops being finite
-    ends there, with its state NaN, which every caller reads as not converged."""
+    ends there, with its state NaN, which every caller reads as not converged. A run of a relaxation (with tol) that has
+    made IMPLICIT_CALLS calls of the drift without settling ends there in the same way: it has not settled (correction
+    30). The noiseless trajectories of integrate (with t_eval) have no such budget. Given a list as unfinished, the runs
+    of a relaxation that end without settling, at the end of their time or of their budget, are appended to it as
+    (index, last state) (correction 34)."""
     from scipy.integrate import solve_ivp
+    calls = [0]
+    last = [None]
 
     def fun(t, y):
+        if tol is not None:
+            calls[0] += 1
+            if calls[0] > IMPLICIT_CALLS:
+                raise _Spent()
+            last[0] = y
         return real.F(real.carrier.wrap(y)[None], **over)[0]
 
     def jac(t, y):
@@ -120,32 +188,78 @@ def _implicit_runs(real: Realization, q: np.ndarray, over: Dict, T: float, tol: 
     ends = np.full_like(q, np.nan)
     paths = None if t_eval is None else np.full((len(t_eval),) + q.shape, np.nan)
     for i, y0 in enumerate(q):
+        calls[0] = 0
+        last[0] = None
         try:
             with np.errstate(all="ignore"):
                 sol = solve_ivp(fun, (0.0, T), y0, method="BDF", jac=jac, rtol=1e-6, atol=atol, events=events,
                                 t_eval=t_eval)
         except (ValueError, ZeroDivisionError, OverflowError, np.linalg.LinAlgError):
             continue  # the drift or its Jacobian is not finite along the run (an escape)
+        except _Spent:
+            if unfinished is not None and last[0] is not None and np.all(np.isfinite(last[0])):
+                unfinished.append((i, real.carrier.wrap(np.array(last[0], float))))
+            continue  # the budget of the run is spent: it has not settled
         if sol.status < 0 or not np.all(np.isfinite(sol.y[:, -1])):
             continue
         ends[i] = sol.y[:, -1]
+        if unfinished is not None and tol is not None and not len(sol.t_events[0]):
+            unfinished.append((i, real.carrier.wrap(sol.y[:, -1])))
         if paths is not None:
             paths[:sol.y.shape[1], i] = sol.y.T
     return real.carrier.wrap(ends), paths
 
 
+def _zero_of_unfinished_run(real: Realization, start: np.ndarray, end: np.ndarray,
+                            over: Dict) -> Tuple[Optional[np.ndarray], bool]:
+    """The stable zero of the drift near the end of an implicit run of a relaxation that ended without reaching the
+    speed criterion, and whether the run has settled at it; (None, False) where there is none (corrections 34 and 35).
+
+    Newton from the end of the run must converge to a zero that has no growing direction, that attracts in at least one
+    direction (a rate with Re below -1e-3, the resolution of rates), and that is not a center: a pair of rates that turn
+    without decay (|Re| at most the resolution, Im above it), or a zero all of whose rates are flat, as the origin of
+    x'' = -x^3, would let the numerical damping of BDF on a neutral orbit pass for an approach. Where the search capped
+    at half the base length does not converge, Newton runs again without the cap, its steps halved until the drift
+    decreases (correction 35). Such a zero is a stable state by its own rates, whether or not the run reaches it.
+
+    The run has settled at it when it moved towards it (its end is closer to it than the start of the implicit run) and
+    the zero does not turn faster than it decays: no stable rate has |Im| > Re (correction 35). On a zero that turns
+    faster than it decays, BDF damps the turn as well as the decay. On the fast Bautin point of set 30 it carried inwards
+    the runs that start beyond the unstable cycle, which move outwards to the stable cycle, and they were read as settled
+    at the origin. There the endpoints of a run cannot tell an approach from that damping, and the run is settled only
+    by the speed criterion."""
+    with np.errstate(all="ignore"):
+        z, ok = newton(real, end, over)
+        if not ok:
+            z, ok = newton(real, end, over, descent=True)
+        if not ok or not np.all(np.isfinite(z)):
+            return None, False
+        k = kappa_spectrum(real, z, over)
+    if not np.all(np.isfinite(k)):
+        return None, False
+    c = classify(k)
+    if c["unstable"] > 0 or c["stable"] == 0 or np.any((np.abs(k.real) <= 1e-3) & (np.abs(k.imag) > 1e-3)):
+        return None, False
+    stable = k[k.real > 1e-3]
+    turns = bool(np.any(np.abs(stable.imag) > stable.real))
+    closer = real.carrier.distance(_canon(real, end), _canon(real, z)) < real.carrier.distance(_canon(real, start),
+                                                                                                _canon(real, z))
+    return z, bool(closer and not turns)
+
+
 def relax(real: Realization, q0: np.ndarray, over: Optional[Dict] = None, max_time: float = 300.0,
-          tol: float = 1e-5, dt: Optional[float] = None):
+          tol: float = 1e-5, dt: Optional[float] = None, zeros: Optional[List] = None):
     """Relax every start by explicit Euler for max_time at the step dt (by default the step of the fastest rate,
-    safe_dt), stopping when every speed is below tol. When the whole time would take more than EXPLICIT_BUDGET steps,
+    safe_dt), stopping when every speed is below tol. When the whole time would take more than RELAX_BUDGET steps,
     Euler runs as before for at most EXPLICIT_PREFIX steps; if the starts have not settled by then, each is integrated
     over the time that remains by an implicit, adaptive method with the same speed criterion. A relaxation that settles
     within the prefix, or needs no more than the budget, is unchanged; the states and their stability do not depend on
-    the integrator."""
+    the integrator. The budget of a relaxation is RELAX_BUDGET (correction 31). Given a list as zeros, the stable zeros
+    near the ends of implicit runs that have not settled at them are appended to it as (index, zero) (correction 35)."""
     over, dt = over or {}, dt or safe_dt(real)
     q = real.carrier.wrap(np.atleast_2d(np.array(q0, float)))
     n = int(max_time / dt)
-    implicit = n > EXPLICIT_BUDGET
+    implicit = n > RELAX_BUDGET
     for k in range(min(n, EXPLICIT_PREFIX) if implicit else n):
         f = real.F(q, **over)
         q = real.carrier.wrap(q + dt * f)
@@ -153,7 +267,23 @@ def relax(real: Realization, q0: np.ndarray, over: Optional[Dict] = None, max_ti
             break
     else:
         if implicit:
-            q, _ = _implicit_runs(real, q, over, max_time - EXPLICIT_PREFIX * dt, tol=tol)
+            # a run that ends without settling, at the end of its time or of its budget, while it approaches a zero
+            # without a growing direction has settled at that zero (correction 34, second part): a stable focus that
+            # turns much faster than it decays meets the speed criterion only at a distance of order tol / (its rate of
+            # turning), and the implicit runs of an epidemic at the scale of a population ended with the infection
+            # still decaying. Near a zero that turns faster than it decays the run is not settled, and the zero is
+            # kept in zeros (correction 35)
+            q_mid, unfinished = q.copy(), []
+            q, _ = _implicit_runs(real, q, over, max_time - EXPLICIT_PREFIX * dt, tol=tol, unfinished=unfinished)
+            for i, end in unfinished:
+                with np.errstate(all="ignore"):
+                    if float(np.linalg.norm(real.F(end[None], **over)[0])) < 1e-4:
+                        continue  # slow enough to count as settled by stored_states, as before
+                z, settles = _zero_of_unfinished_run(real, q_mid[i], end, over)
+                if settles:
+                    q[i] = z
+                elif z is not None and zeros is not None:
+                    zeros.append((i, z))
             with np.errstate(all="ignore"):
                 return q, np.linalg.norm(real.F(q, **over), axis=-1)
     return q, np.linalg.norm(real.F(q, **over), axis=-1)
@@ -169,7 +299,15 @@ def integrate(real: Realization, q: np.ndarray, T: float, D: float, rng, over: O
     every = max(1, steps // n_record)
     if implicit and steps > EXPLICIT_BUDGET:
         # a noiseless trajectory longer than the budget: the same samples, integrated by the implicit method of relax
-        times = np.arange(1, steps // every + 1) * every * dt
+        k = np.arange(1, steps // every + 1)
+        if every * int(k[-1]) < 2 ** 62:
+            times = k * every * dt
+        else:
+            # beyond a 64-bit integer the product of the counts would be an array of Python integers, and the grid an
+            # array of objects, which the implicit runs cannot test for finite values: at a step of 2e-36, where the
+            # fastest rate over the control range is 1e35, a trajectory of 200 time units has 1e38 steps (correction 33).
+            # The counts are then multiplied in floating point
+            times = k * float(every) * dt
         t_end = steps * dt
         grid = times if times[-1] >= t_end else np.append(times, t_end)
         q, paths = _implicit_runs(real, real.carrier.wrap(np.atleast_2d(np.array(q, float))), over, float(grid[-1]),
@@ -281,16 +419,21 @@ def classify(kappa: np.ndarray, tol: float = 1e-3) -> Dict[str, object]:
 # ------------------------------------------------------------------------------------------------ states
 def stored_states(real: Realization, rng, n_starts: int = 48, over: Optional[Dict] = None):
     """Relax from random starts. Returns states, basin counts, spectra, the number of starts that did not
-    settle, and whether the states form a continuum (flat directions beyond the declared symmetries)."""
+    settle, and whether the states form a continuum (flat directions beyond the declared symmetries).
+
+    A stable zero near the end of an implicit run that has not settled at it is a state as well (correction 35): its
+    own rates make it one, while the run, which turns about it faster than it decays, stays among the starts that did
+    not settle. Its basin count is the number of such runs that end near it."""
     q0 = real.carrier.sample(rng, n_starts)
-    q, speed = relax(real, q0, over)
+    zeros: List = []
+    q, speed = relax(real, q0, over, zeros=zeros)
     conv = speed < 1e-4
     for i in np.flatnonzero(conv):
         conv[i] = _settled(real, q[i], over)
     states: List[np.ndarray] = []
     counts: List[int] = []
     tol = _merge_tol(real)
-    for qi in q[conv]:
+    for qi in list(q[conv]) + [z for i, z in zeros if not conv[i]]:
         ci = _canon(real, qi)
         hit = next((k for k, s in enumerate(states) if real.carrier.distance(ci, _canon(real, s)) < tol), None)
         if hit is None:
@@ -439,10 +582,16 @@ def _zero_in_plane(real: Realization, p: np.ndarray, v: np.ndarray, over: Dict, 
     return q, bool(np.linalg.norm(real.F(q, **over)) < 1e-8)
 
 
+NO_STATE = "no stable state: the trajectories do not settle"
+LIMIT_CYCLE = "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)"
+
+
 def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n_starts: int,
              continuum: bool = False, n_null: int = 0) -> str:
     if n_states == 0 and n_unconverged > 0:
-        return "no stable state: a limit cycle, whose phase diffuses (Law 2 along the cycle)"
+        # a start that does not settle oscillates, escapes or blows up in finite time; that it moves on a limit cycle
+        # is read only where the search for a cycle finds one (discovery._cycle_isolation, correction 29)
+        return NO_STATE
     if continuum:
         return "a continuum of neutral states: diffusion along the flat directions (Law 2)"
     flat = max((classify(k)["flat"] - n_null for k in spectra), default=0)
@@ -455,13 +604,19 @@ def loss_law(n_states: int, spectra: Sequence[np.ndarray], n_unconverged: int, n
         "; part of the trajectories do not settle (oscillation)" if n_unconverged > n_starts // 4 else "")
 
 
-def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters: int = 80, tol: float = 1e-11):
+def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters: int = 80, tol: float = 1e-11,
+           descent: bool = False):
     """Damped Newton for a zero of the drift. The search ends as not converged at an iterate where the drift or its
     central-difference Jacobian is not finite: a start or a step outside the set where the drift is defined (a
     non-integer power or the square root of a negative value, a pole, a control value that divides the drift). Least
     squares on such a matrix raised "SVD did not converge", and every caller takes the eigenvalues of the Jacobian at a
     converged zero. Since correction 23 a stencil with one side outside that set takes the one-sided difference, so a
-    zero on the edge of the set converges, with the rate on its inner side."""
+    zero on the edge of the set converges, with the rate on its inner side.
+
+    Each step is capped at half the base length of the carrier, so 80 steps reach no zero more than 40 base lengths away.
+    With descent the step is not capped: it is halved until the drift decreases, at most 40 times, and the search ends as
+    not converged where no halving decreases it (correction 35). A pendulum that turns at 2e4 on a carrier of scale 1
+    ends its relaxation runs at velocities of order 1e4, from which the capped search reached no zero."""
     over = over or {}
     q = real.carrier.wrap(np.array(q, float))
     cap = 0.5 * base_length(real)
@@ -475,6 +630,19 @@ def newton(real: Realization, q: np.ndarray, over: Optional[Dict] = None, iters:
         if np.linalg.norm(f) < tol:
             return q, True
         step = np.linalg.lstsq(J, f, rcond=None)[0]
+        if descent:
+            size, t = float(np.linalg.norm(f)), 1.0
+            for _ in range(40):
+                trial = real.carrier.wrap(q - t * step)
+                with np.errstate(all="ignore"):
+                    ft = real.F(trial, **over)
+                if np.all(np.isfinite(ft)) and float(np.linalg.norm(ft)) < size:
+                    break
+                t *= 0.5
+            else:
+                return q, False
+            q = trial
+            continue
         n = np.linalg.norm(step)
         if n > cap:
             step *= cap / n
@@ -1449,7 +1617,16 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     width = (abs(real.control_range[1] - real.control_range[0])
              if real.control_range is not None and param == real.control else max(1.0, abs(v)))
     dv = 1e-5 * width
-    dF = (real.F(q, **{**over, param: v + dv}) - real.F(q, **{**over, param: v - dv})) / (2 * dv)
+    # the derivatives in the control are central differences over v -+ dv. Where the drift is not defined on one side, as
+    # a negative variable under a power whose exponent is the control (correction 28), they are taken on the other side;
+    # where it is defined on neither, they are not defined, and the point is named by its drift along the critical
+    # direction alone. Where every value is finite nothing changes
+    Fp, Fm = real.F(q, **{**over, param: v + dv}), real.F(q, **{**over, param: v - dv})
+    dF = (Fp - Fm) / (2 * dv)
+    if not np.all(np.isfinite(dF)):
+        F0 = real.F(q, **over)
+        dF = ((Fp - F0) / dv if np.all(np.isfinite(Fp)) else (F0 - Fm) / dv if np.all(np.isfinite(Fm))
+              else np.zeros_like(F0))
     out: Dict[str, object] = {"param": param, "value": float(v), "state": q.tolist(),
                               "kappa_critical": [float(-lam.real), float(-lam.imag)]}
 
@@ -1462,8 +1639,14 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     # that cannot be told from two real eigenvalues crossing together (where a degenerate pair is not diagonal in the
     # coordinates, rounding gives it imaginary parts of order 1e-13, and when the whole spectrum is critical, 1e-6 of
     # the largest rate is no bound)
-    ev_next = np.linalg.eigvals(jacobian(real, q, {**over, param: v + dv}))
-    slope_re = float((ev_next[np.argmin(np.abs(ev_next - lam))].real - lam.real) / dv)
+    Jn, side = jacobian(real, q, {**over, param: v + dv}), 1.0
+    if not np.all(np.isfinite(Jn)):
+        Jn, side = jacobian(real, q, {**over, param: v - dv}), -1.0
+    if np.all(np.isfinite(Jn)):
+        ev_next = np.linalg.eigvals(Jn)
+        slope_re = float(side * (ev_next[np.argmin(np.abs(ev_next - lam))].real - lam.real) / dv)
+    else:
+        slope_re = 0.0
     if abs(lam.imag) > max(1e-6 * scale, abs(slope_re) * WRITE_RESOLUTION * width):
         # a complex pair: two directions are critical at a simple Hopf point
         out.update(kind="Hopf: the unwritten state starts to oscillate", hopf=True, omega=float(abs(lam.imag)),
@@ -1535,7 +1718,9 @@ def normal_form(real: Realization, q: np.ndarray, param: str, v: float, extra: O
     fit = {"a0": a0, "a1": a1, "a2": a2, "a3": a3}
     Jp = jacobian(real, q, {**over, param: v + dv})
     Jm = jacobian(real, q, {**over, param: v - dv})
-    growth_partial = float(w @ ((Jp - Jm) / (2 * dv)) @ vec)
+    fp, fm = bool(np.all(np.isfinite(Jp))), bool(np.all(np.isfinite(Jm)))
+    dJ = ((Jp - Jm) / (2 * dv) if fp and fm else (Jp - J) / dv if fp else (J - Jm) / dv if fm else np.zeros_like(J))
+    growth_partial = float(w @ dJ @ vec)
     # along the branch the state moves too, dq/dv = -J^+ dF/dv (no component along the critical direction)
     dq = -np.linalg.lstsq(J, dF, rcond=None)[0]
     dq = dq - vec * float(w @ dq)
