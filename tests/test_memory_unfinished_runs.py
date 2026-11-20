@@ -9,7 +9,10 @@ A start has settled when its speed falls below 1e-5. A stable focus that turns a
 meets that criterion only at a distance of order 1e-5 / w from the state, after hundreds of thousands of turns, and its
 implicit runs end at the budget of correction 30 unsettled: the card stored no state. A run that ends unsettled now counts
 as settled at the zero Newton reaches from its end, when that zero has no growing direction, is not a center, and the run
-moved towards it. A run along a cycle around an unstable zero, around a center, or towards no zero is not settled."""
+moved towards it. A run along a cycle around an unstable zero, around a center, or towards no zero is not settled.
+
+Correction 35: a run near a zero that turns faster than it decays is not settled at it, since BDF damps the turn as
+well; the zero is still a stored state, by its own rates (tests/test_memory_turning_zero.py)."""
 from __future__ import annotations
 
 import numpy as np
@@ -43,8 +46,10 @@ def _states(s, n=8):
 
 
 def test_a_fast_turning_stable_focus_is_one_state():
+    # correction 35: the focus is a state by its own rates, while its runs, which turn faster than they decay and which
+    # BDF damps numerically, are settled only by the speed criterion and stay among the starts that did not settle
     states, counts, spectra, unconverged, continuum = _states(FOCUS)
-    assert len(states) == 1 and unconverged == 0
+    assert len(states) == 1 and unconverged == 8
     assert np.linalg.norm(states[0]) < 1e-6
 
 
