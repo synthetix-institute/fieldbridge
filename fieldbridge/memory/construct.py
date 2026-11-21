@@ -490,12 +490,12 @@ def sweep_window(real: Realization, nf: Dict, path, t_half: float,
     The sweep runs for t_half on each side of the crossing whatever the realization, and can leave the range of the
     control in which the drift is regular. A temperature swept through zero is the example: as T -> 0+ the rates near
     the critical state grow as 1/T, and beyond it 1/T changes sign, the state that lost its stability regains it and
-    the choice is erased. The time step of the check is resolved (safe_dt) over the declared range of the control,
-    not beyond it. From the crossing outward on each side, the control is moved only while the Jacobian at the
+    the choice is erased. The time step of the check is resolved (rate_dt, the step of the fastest rate, the criterion
+    tested here) over the declared range of the control, not beyond it. From the crossing outward on each side, the control is moved only while the Jacobian at the
     critical state is finite and its fastest rate times the time step stays at most RESOLVED_STEP; beyond the last
     such sample the control is held. A realization regular along its whole sweep is swept as before."""
     qc = np.asarray(nf["state"], float)
-    dt = an.safe_dt(real)
+    dt = an.rate_dt(real)
     ends = []
     with np.errstate(all="ignore"):
         for side in (-1, 1):
@@ -509,6 +509,42 @@ def sweep_window(real: Realization, nf: Dict, path, t_half: float,
     if ends == [None, None]:
         return None
     return (0.0 if ends[0] is None else ends[0], 2.0 * t_half if ends[1] is None else ends[1])
+
+
+def write_step(real: Realization, nf: Dict, path, t_half: float, n: int = 40) -> float:
+    """The Euler-Maruyama step of the write check: the step of the fastest rate (rate_dt), bounded where a stable focus
+    on the states the write passes through would not keep half its decay under Euler, dt <= |a| / |l|^2 as in safe_dt.
+
+    safe_dt takes that bound over six random states of the carrier and the ends of the control range (correction 34 of
+    the discovery engine); there a focus that turns much faster than it decays may lie far from any trajectory of the
+    write, and it shortened the step of the check by 50 to 100 on the bright-state resonator, the two optomechanical
+    elements and the spin ensemble, and by 48 on the magnon-Kerr element. The states of the write are the critical
+    state at n values of the control along the sweep and n states of each of two noiseless sweeps started from it,
+    displaced by a tenth of the base length along the critical mode either way, which lead to the written states. The
+    pilot sweeps run at the step of the fastest rate on their own random stream, so the check's stream is unchanged; a
+    run at a finer resolution (analysis.refine_steps) divides the bound with the other steps."""
+    step = an.rate_dt(real)
+    qc, vec = np.asarray(nf["state"], float), np.asarray(nf["mode"], float)
+    pairs = [(qc, {real.control: path(t)}) for t in np.linspace(0.0, 2 * t_half, n)]
+    b = an.base_length(real)
+    with np.errstate(all="ignore"):
+        for sg in (1, -1):
+            q0 = real.carrier.wrap(qc + sg * 0.1 * b * vec)[None]
+            _, ts, rec = an.integrate(real, q0, 2 * t_half, 0.0, np.random.default_rng(0), over={},
+                                      control_path=path, record=lambda x: x[0].copy(), n_record=n, dt=step)
+            pairs += [(np.asarray(q, float), {real.control: path(float(t))}) for t, q in zip(ts, rec)]
+        focus = np.inf
+        for q, over in pairs:
+            if not np.all(np.isfinite(q)):
+                continue
+            J = an.jacobian(real, q, over)
+            if not np.all(np.isfinite(J)):
+                continue
+            ev = np.linalg.eigvals(J)
+            stable = ev[ev.real < -1e-3]
+            if stable.size:
+                focus = min(focus, float(np.min(np.abs(stable.real) / np.abs(stable) ** 2)))
+    return float(min(step, focus / getattr(real, "_refined", 1.0)))
 
 
 def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, rate: float = 0.02,
@@ -559,13 +595,15 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
     path = ((lambda t: v_start + dv * t) if window is None
             else (lambda t: v_start + dv * min(max(t, window[0]), window[1])))
     z = NormalDist().inv_cdf(target_p)
+    dt = write_step(real, nf, path, t_half)
 
     def run(sg, D, gen, n):
         D_s = D * float(w @ w)
         h_s = z * sqrt(D_s) * rate ** 0.25 / np.pi ** 0.25
         strength = h_s / h_per[1] if sg > 0 else -h_s / h_per[sg]
         q = np.repeat(qc[None], n, axis=0)
-        q, _, _ = an.integrate(real, q, 2 * t_half, D, gen, over={}, write=(targets[sg], strength), control_path=path)
+        q, _, _ = an.integrate(real, q, 2 * t_half, D, gen, over={}, write=(targets[sg], strength), control_path=path,
+                               dt=dt)
         s = real.carrier.diff(np.repeat(qc[None], n, axis=0), q) @ w
         m = float(np.mean(s > 0 if sg > 0 else s < 0))
         return {"D": float(D), "D_along_mode": D_s, "gamma": D_s * a3 / rate, "h": float(strength),
@@ -604,7 +642,7 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
                                + [inside[1]["h"] * np.asarray(real.write_force(probes, target, 1.0), float).ravel(),
                                   [D_law]])
     first = inside[1]
-    out = {"rate": rate, "sweep_rate_control": float(rv), "predicted": float(target_p),
+    out = {"rate": rate, "sweep_rate_control": float(rv), "predicted": float(target_p), "dt": dt,
            "measured": first["measured"], "stderr": first["stderr"], "gamma": first["gamma"],
            "h_along_mode": first["h_along_mode"], "D_along_mode": first["D_along_mode"],
            "at_material_noise": own[1], "signature": [float(f"{v:.10g}") for v in signature], **extra[1]}

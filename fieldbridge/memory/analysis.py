@@ -178,6 +178,8 @@ def refine_steps(real: Realization, factor: float) -> None:
     before it the engine divided safe_dt alone)."""
     rate, euler, heun = rate_dt(real), safe_dt(real), heun_dt(real)
     real._rate_dt, real._safe_dt, real._heun_dt = rate / factor, euler / factor, heun / factor
+    # steps computed from the states of a run (construct.write_step) divide their bounds by the product of the factors
+    real._refined = getattr(real, "_refined", 1.0) * factor
 
 
 # explicit steps a relaxation or a noiseless trajectory may take at the step of the fastest rate (about the engine's time

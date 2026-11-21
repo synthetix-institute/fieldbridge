@@ -161,7 +161,7 @@ def check_time_step(real, target, nf, rng, base) -> Dict:
         return _item(error, assumption, test, NOT_TESTABLE)
     finer = replace(target)
     try:
-        object.__setattr__(finer, "_safe_dt", an.safe_dt(target) / 2)
+        an.refine_steps(finer, 2.0)
     except (AttributeError, TypeError):
         return _item(error, assumption, test, NOT_TESTABLE, note="the time step cannot be set")
     signs = (1, -1) if const.get("by_sign") else (1,)
@@ -171,7 +171,8 @@ def check_time_step(real, target, nf, rng, base) -> Dict:
         return _item(error, assumption, test, NOT_TESTABLE)
     differs, d = _differs(const, other)
     return _item(error, assumption, test, CONFIRMED if differs else REFUTED, constant=const["constant"],
-                 constant_half_step=other["constant"], difference=d, dt=an.safe_dt(target), dt_half=an.safe_dt(finer))
+                 constant_half_step=other["constant"], difference=d, dt=(base["law"] or {}).get("dt", an.safe_dt(target)),
+                 dt_half=law.get("dt", an.safe_dt(finer)))
 
 
 def _quantum_description(real: Realization) -> bool:
