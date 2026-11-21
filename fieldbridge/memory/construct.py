@@ -481,6 +481,11 @@ def sweep_ends(nf: Dict, rate: float = 0.02, t_half: Optional[float] = None) -> 
 
 RESOLVED_SAMPLES = 400   # values of the control tested on each side of the crossing
 RESOLVED_STEP = 0.3      # the largest rate times the time step that an explicit step resolves (the bound of safe_dt)
+# the most by which a weakly damped focus on the path of the write may shorten the Euler step of the check below the
+# step of the fastest rate; beyond it the check is not run (on the spin-ensemble cavity the focus on the path of the write
+# asks for 200 times the steps, some forty hours of Euler-Maruyama, and at the step of the fastest rate the trajectories
+# grow at that focus)
+MAX_WRITE_REFINEMENT = 20.0
 
 
 def sweep_window(real: Realization, nf: Dict, path, t_half: float,
@@ -596,6 +601,12 @@ def swept_write_check(real: Realization, nf: Dict, rng, target_p: float = 0.8, r
             else (lambda t: v_start + dv * min(max(t, window[0]), window[1])))
     z = NormalDist().inv_cdf(target_p)
     dt = write_step(real, nf, path, t_half)
+    shortening = an.rate_dt(real) / dt
+    if shortening > MAX_WRITE_REFINEMENT:
+        return {"unresolved": (f"the law was not measured: a weakly damped focus on the path of the write needs an Euler "
+                               f"step {shortening:.0f} times shorter than the step of the fastest rate ({dt:.3g}), more "
+                               f"than the {MAX_WRITE_REFINEMENT:.0f} the check takes"),
+                "dt": dt, "rate_dt": an.rate_dt(real)}
 
     def run(sg, D, gen, n):
         D_s = D * float(w @ w)

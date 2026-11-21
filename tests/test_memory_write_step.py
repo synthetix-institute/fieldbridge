@@ -51,3 +51,14 @@ def test_refining_divides_the_write_step():
     w = cs.write_step(real, nf, path, t_half)
     an.refine_steps(real, 2.0)
     assert abs(cs.write_step(real, nf, path, t_half) - w / 2) < 1e-12
+
+
+def test_a_focus_that_needs_too_short_a_step_is_not_run():
+    """Turning at 400 with damping 0.5 the bound is 0.5 / 160000 = 3e-6, against 0.3 / 400 = 7.5e-4 for the rate: the
+    check returns the reason and no measurement."""
+    real = spec.load(dict(FAR_FOCUS, drift=dict(FAR_FOCUS["drift"], u="-g*u + 400*v", v="-400*u - g*v")))
+    nf = an.normal_form(real, np.zeros(4), "eps", 0.0)
+    assert cs.obstruction(nf)["realizes_generator"]
+    law = cs.swept_write_check(real, nf, np.random.default_rng(0), n_traj=20)
+    assert "measured" not in law and "focus" in law["unresolved"]
+    assert law["rate_dt"] / law["dt"] > cs.MAX_WRITE_REFINEMENT

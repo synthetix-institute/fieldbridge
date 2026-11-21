@@ -464,7 +464,9 @@ def derive_symmetric_write(real: Realization, rng, check_law: bool = True, n_tra
             notes.append("the symmetry holds at the write point and not along the sweep (a term that vanishes at the "
                          "write point breaks it as the control moves): both signs of the bias are tested so that the "
                          "offset the passage writes is separated from the response")
-        if law and not const:
+        if law.get("unresolved"):
+            notes.append(law["unresolved"])
+        elif law and not const:
             notes.append("the law was not measured: in a test every trajectory ended on one side")
         elif law:
             word.append("L")
