@@ -125,7 +125,8 @@ SHORT_OBSTRUCTIONS = (("no control parameter", "no control parameter"),
                       ("rate of time", "the control only rescales time"),
                       ("multiplies the whole drift", "the control only rescales the drift"),
                       ("no write point", "no write point along the control"),
-                      ("no stable state", "no stable state: the realization oscillates"),
+                      ("realization oscillates", "no stable state: the realization oscillates"),
+                      ("do not settle", "no stable state: the trajectories do not settle"),
                       ("single stable state", "a single stable state: nothing to switch to"),
                       ("exchange of stability", "the field leaves the state an equilibrium: no fold"),
                       ("Hopf", "Hopf: an oscillation, not a write"),
@@ -135,6 +136,19 @@ SHORT_OBSTRUCTIONS = (("no control parameter", "no control parameter"),
                       ("no oscillation", "no oscillation in the control range"),
                       ("does not act on the phase", "the drive does not act on the phase"),
                       ("only through harmonics above", "the drive acts only through high harmonics"))
+
+
+def _no_state_reason(real: Realization, rng) -> str:
+    """Why a realization without a stable state has no state to leave. Only a periodic orbit found by the cycle search
+    makes it oscillate; a runaway, a blow-up or an irregular motion does not settle on a state and is no oscillation."""
+    from . import phase_locking as pl
+    try:
+        cyc = pl.find_cycle(real, {}, rng)
+    except Exception:  # an irregular motion: no cycle is read
+        cyc = None
+    if cyc is not None:
+        return "no stable state (the realization oscillates): there is no state to leave"
+    return "no stable state (the trajectories do not settle on a state): there is no state to leave"
 
 
 def _field(real: Realization) -> str:
@@ -748,7 +762,7 @@ def derive_threshold_write(real: Realization, rng, check_law: bool = True, n_tra
     if fold is None:
         states = an.stored_states(real, rng, n_starts=48 if real.carrier.dim <= 8 else 24)[0]
         if len(states) < 2:
-            reason = ("no stable state (the realization oscillates): there is no state to leave" if not states else
+            reason = (_no_state_reason(real, rng) if not states else
                       "a single stable state: there is no second state to switch to")
             out.update(obstruction=reason, obstruction_short=_short(reason))
             return {**out, "word": "".join(word), "route": route_string(steps),

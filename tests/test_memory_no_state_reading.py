@@ -56,3 +56,35 @@ def test_a_limit_cycle_that_the_search_finds_is_still_read():
 def test_neutral_cycles_are_still_read():
     card = _card(LOTKA_VOLTERRA)
     assert discovery.mechanism_class(card) == "neutral cycles: no isolated phase"
+
+
+# The verdict and the threshold-write obstruction of a realization without a stable state say what the trajectories do:
+# they oscillate only where the cycle search finds a periodic orbit; a runaway does not settle and is no oscillation.
+
+def _threshold_write(s):
+    from fieldbridge.memory import codiscovery
+    return codiscovery.derive_threshold_write(spec.load(s), np.random.default_rng(0), check_law=False)
+
+
+def test_the_threshold_write_of_a_runaway_says_that_it_does_not_settle():
+    row = _threshold_write(RUNAWAY)
+    assert row["obstruction_short"] == "no stable state: the trajectories do not settle"
+    assert "oscillat" not in row["obstruction"]
+
+
+def test_the_threshold_write_of_a_limit_cycle_says_that_it_oscillates():
+    assert _threshold_write(VAN_DER_POL)["obstruction_short"] == "no stable state: the realization oscillates"
+
+
+def test_the_verdict_of_a_card_without_a_stable_state_does_not_name_a_single_state():
+    verdict = discovery.verdict(_card(RUNAWAY))
+    assert verdict["constructs"] == "no stable state: no write point"
+    assert "single" not in verdict["constructs"]
+
+
+def test_a_reason_that_does_not_settle_is_not_classed_as_an_oscillation():
+    from fieldbridge.memory import changes
+    text = "no stable state (the trajectories do not settle on a state): there is no state to leave"
+    assert changes.reason_class(text) == "no settled state"
+    assert changes.reason_class("no stable state (the realization oscillates): there is no state to leave") == \
+        "oscillation"

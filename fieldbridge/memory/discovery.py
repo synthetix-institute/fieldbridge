@@ -271,7 +271,7 @@ def verdict(card: Dict) -> Dict[str, str]:
     elif st["count"] >= 2:
         constructs = "no bifurcation along the control; writing requires a field"
     else:
-        constructs = "a single stable state: no write point" + (
+        constructs = ("no stable state: no write point" if st["count"] == 0 else "a single stable state: no write point") + (
             "; the unobserved variables give the observed one a memory kernel" if card.get("kernel") else "")
     lock = "-"
     if card.get("writes"):

@@ -52,6 +52,7 @@ REASONS = (
     ("no write point along the control", "no write point"),
     ("no control parameter", "no write point"),
     ("a single stable state", "single stable state"),
+    ("do not settle", "no settled state"),
     ("no stable state", "oscillation"),
     ("no oscillation", "no oscillation"),
     ("neutral cycles", "neutral cycles"),
