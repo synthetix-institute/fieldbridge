@@ -19,6 +19,7 @@
   <script defer src="site/mechanisms.js"></script>
   <script defer src="site/expression.js"></script>
   <script defer src="site/site.js"></script>
+  <script defer src="site/constructor-tools.js"></script>
   <script defer src="site/workbench.js"></script>
 </head>
 <body>
@@ -82,6 +83,16 @@
             the derivation left out, such as a second parameter, and derives the law of the completed write. The
             construction <i>Moving a mechanism to a new field</i> goes through such a transfer, and
             <a href="#contribute">Adding a realization</a>, at the bottom of the page, gives a command for each.</li>
+          <li><b>Building in the page.</b> Under the equations of a model written as differential equations are five
+            tools. <i>Add a term</i> adds a term to one equation; the carrier decides which terms are allowed (an angle
+            only through sin and cos, an amount only through terms that cannot make it negative), and the stable states
+            with the term are shown before it is added. <i>Two parameters</i> shades a plane of two parameters by the
+            number of stable states; a click sets both. <i>Protocol</i> holds one parameter at a sequence of values and
+            shows where each stored state ends. <i>History</i> lists every step with its source, a verified change of
+            FieldBridge or a term built here, and saves the construction as a file that can be replayed.
+            <i>Examples</i> builds the cusp from the pitchfork and erases a stored state by annealing under a field.
+            A model built here is marked as such: it is not a FieldBridge specification and no mechanism is claimed for
+            it.</li>
         </ol>
         <p class="collection-note" id="guide-collection"></p>
         <p class="muted">The letters of a derivation (S, C, R, K, L and others) are its steps, such as symmetry,

@@ -20,7 +20,7 @@ ASSETS = Path(__file__).with_name("web")
 ROOT = ASSETS.parents[1]
 REPO = "https://github.com/synthetix-institute/fieldbridge"
 SCRIPTS = ("model-physics.js", "unitary.js", "dissipative.js", "fields.js", "mathml.js", "views.js",
-           "mechanisms.js", "expression.js", "site.js", "workbench.js")
+           "mechanisms.js", "expression.js", "site.js", "constructor-tools.js", "workbench.js")
 STYLES = ("site.css",)
 
 

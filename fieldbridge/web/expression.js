@@ -122,6 +122,12 @@
     $('m-canonical').innerHTML = mech.canonical ? 'canonical form: ' + mech.canonical : '';
     $('m-where').innerHTML = rec.universal ? 'Written without a field.' : `Realized in ${esc(rec.field)}: ${rec.name}.`;
     $('m-refs').innerHTML = M.reading ? M.reading(mech) : '';
+    if (rec.local) {   // built in the browser by the construction tools: no mechanism is claimed for it
+      $('m-name').textContent = 'Not classified: built in the browser'; $('m-canonical').textContent = ''; $('m-refs').textContent = '';
+      $('m-where').textContent = `From ${strip(rec.local.base.name)}, with terms added here.`;
+      $('r-class').textContent = 'built here';
+      $('m-bar').innerHTML = `<b>built here</b><span>${esc(rec.field)}</span><a class="result-jump" href="#result">Response ↓</a>`;
+    }
     $('m-bar').innerHTML = M.glyph(rec.class, 'small') + `<b>${esc(S.classes_short[rec.class] || rec.class)}</b><span>${rec.universal ? 'canonical form' : esc(rec.field)}</span><a class="result-jump" href="#result">Response ↓</a>`;
     $('slots').innerHTML = SLOTS.map(slot => `<li class="slot" data-slot="${slot}" id="slot-${slot}">
         <button class="slot-symbol" type="button" data-light="${slot}" aria-label="${S.slots[slot].name}">${S.slots[slot].symbol}</button>
@@ -346,7 +352,7 @@
         leadText = k >= 2 ? `${k} stable states` : k === 1 ? 'one stable state' : att.moving ? 'no stable state: a cycle' : S.classes[rec.class];
         live('stable states', k + (att.moving ? `; ${att.moving} of ${att.n} preparations keep moving` : ''));
       }
-      body = mechanismText(rec);
+      body = rec.local ? esc(rec.local.text) : mechanismText(rec);
       if (f.write_point != null) known('write point', `${symbol(f.write_param)} = ${fmt(Math.abs(f.write_point) < 5e-7 ? 0 : f.write_point, 4)}, ${f.write_kind}`);
       for (const [p, name] of [['sym', 'symmetric write'], ['thr', 'one-sided write'], ['lock', 'phase locking']]) {
         if (!f[p + '_status']) continue;
@@ -357,7 +363,7 @@
         known(name, v);
       }
       if (f.operating_param) known('operating point', `${symbol(f.operating_param)} = ${fmt(f.operating_value)} (letter C)`);
-      known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
+      if (f.loss) known('retention', window.FieldBridgeMechanisms.lawLinked(f.loss));
       if (state.noise > 0 && state.protocol !== 'drive') live('bath', `D = ${fmt(state.noise, 3)}`);
       if (scene && scene.driveResult) live('drive', scene.driveResult);
     } else if (rec.family === 'field') {
@@ -877,7 +883,8 @@
   function renderPath() {
     const items = state.path.map((p, i) => {
       const r = S.nodes[p.node], name = M.glyph(r.class, 'small') + `<span>${r.name}</span>`, cur = i === state.path.length - 1;
-      const step = p.edge ? `<span class="path-step" data-slot="${byId[p.edge].slot}" title="${esc(byId[p.edge].change.replace(/<[^>]+>/g, ''))}">—${S.slots[byId[p.edge].slot].symbol}${p.reverse ? '↩' : ''}→</span>` : '';
+      const step = p.edge ? `<span class="path-step" data-slot="${byId[p.edge].slot}" title="${esc(byId[p.edge].change.replace(/<[^>]+>/g, ''))}">—${S.slots[byId[p.edge].slot].symbol}${p.reverse ? '↩' : ''}→</span>`
+        : p.add ? `<span class="path-step local" data-slot="Omega" title="term added here, not verified">—${S.slots.Omega.symbol}+→</span>` : '';
       return `<li>${step}<span class="path-node${cur ? ' current' : ''}" title="${esc(S.classes[r.class] || '')}">${name}</span></li>`;
     });
     $('path-list').innerHTML = items.join('');
