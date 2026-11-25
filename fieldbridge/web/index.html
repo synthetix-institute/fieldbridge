@@ -19,11 +19,13 @@
   <script defer src="site/mechanisms.js"></script>
   <script defer src="site/expression.js"></script>
   <script defer src="site/site.js"></script>
+  <script defer src="site/workbench.js"></script>
 </head>
 <body>
   <header class="top">
     <a class="brand" href="#instrument">FieldBridge</a>
     <nav aria-label="Sections">
+      <a href="#workbench">Workbench</a>
       <a href="#expression">Map of mechanisms</a>
       <a href="#memory">Memory in materials</a>
       <a href="#codiscovery">One mechanism in many fields</a>
@@ -160,6 +162,77 @@
             <details class="card-figure" id="card-figure" hidden><summary>FieldBridge memory card of this specification</summary><img alt="" id="card-image"></details>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="workbench" aria-labelledby="workbench-title">
+      <div class="section-head"><h2 id="workbench-title">Workbench</h2></div>
+      <p class="wb-intro">Three studies on published equations. Each runs in your browser: change a setting, see the
+        result as a dashed curve, and keep it with <i>Apply</i>. Every change is listed at the bottom and can be
+        downloaded as a file.</p>
+
+      <article class="wb-study" aria-labelledby="wb1-title">
+        <h3 id="wb1-title">1. The history of the drive selects the state of an amplifier</h3>
+        <p>A Josephson bifurcation amplifier is a superconducting resonator driven by a microwave of strength F
+          (Siddiqi et al., PRL 93, 207002, 2004). Between two drive strengths it has two steady states, one with few
+          photons and one with many. Which one it is in at the end depends on how the drive got there, not on its
+          final value. The low state disappears above F = 3.69 and the high state below F = 2.22; both values follow
+          from the equations.</p>
+        <div class="wb-controls">
+          <span class="wb-label">Protocol</span>
+          <button type="button" data-wb1-preset="direct">Straight to F = 3</button>
+          <button type="button" data-wb1-preset="write">Up to 4.5, back to 3</button>
+          <button type="button" data-wb1-preset="erase">Up to 4.5, down to 1.6, back to 3</button>
+        </div>
+        <div class="wb-controls">
+          <label for="wb1-peak">First level <b id="wb1-peak-v"></b></label><input type="range" id="wb1-peak" min="0" max="6" step="0.05">
+          <label for="wb1-low">Second level <b id="wb1-low-v"></b></label><input type="range" id="wb1-low" min="0" max="6" step="0.05">
+          <span class="wb-fixed">Final level 3.00</span>
+          <button type="button" id="wb1-apply" class="primary">Apply</button>
+          <button type="button" id="wb1-undo" class="icon" aria-label="Undo the last applied protocol" title="Undo">↶</button>
+        </div>
+        <div class="wb-grid3">
+          <figure><canvas id="wb1-drive" aria-label="Drive against time"></canvas><figcaption>The drive</figcaption></figure>
+          <figure><canvas id="wb1-n" aria-label="Photon number against time"></canvas><figcaption>The response</figcaption></figure>
+          <figure><canvas id="wb1-s" aria-label="Steady states against drive, with the path of the run"></canvas><figcaption>Steady states (grey) and the path of the run</figcaption></figure>
+        </div>
+        <p class="wb-result" id="wb1-result" role="status"></p>
+      </article>
+
+      <article class="wb-study" aria-labelledby="wb2-title">
+        <h3 id="wb2-title">2. Two clouds of atoms with the same measurements reach different outcomes</h3>
+        <p>Ultracold atoms in two wells tunnel between them. An image gives the imbalance z between the wells, and two
+          images in quick succession give its rate of change. The phase between the two halves of the cloud is not in
+          the images. It sets the energy of the tunnelling, so two clouds with the same z and the same rate can differ:
+          in one the atoms flow back and forth, in the other they stay on one side. In the orange region of the disc
+          this happens. Click a point to choose the measured state; drag the slider to change the ratio Λ of
+          interaction to tunnelling (about 15 in Albiez et al., PRL 95, 010402, 2005).</p>
+        <div class="wb-grid2">
+          <figure><canvas id="wb2-disc" class="wb-disc" aria-label="Measured states; orange where the outcome depends on the phase"></canvas>
+            <figcaption>Orange: outcome depends on the phase, <b id="wb2-share"></b> of all measured states. Chosen: <span id="wb2-state"></span></figcaption></figure>
+          <figure><canvas id="wb2-runs" aria-label="Imbalance against time for the two preparations"></canvas>
+            <figcaption>The two preparations: phase in step (solid) and out of step (dashed)</figcaption></figure>
+        </div>
+        <div class="wb-controls"><label for="wb2-L">Interaction Λ <b id="wb2-L-v"></b></label><input type="range" id="wb2-L" min="0" max="30" step="0.5" value="15"></div>
+        <p class="wb-result" id="wb2-result" role="status"></p>
+      </article>
+
+      <article class="wb-study" aria-labelledby="wb3-title">
+        <h3 id="wb3-title">3. The difference needs tunnelling and interaction together</h3>
+        <p>Switch the two effects off one at a time. Without interaction the two preparations follow the same curve:
+          the phase changes how they move but not what is measured. Without tunnelling no atoms cross. Only with both
+          does the unmeasured phase decide the outcome.</p>
+        <div class="wb-controls">
+          <label><input type="checkbox" id="wb3-J" checked> Tunnelling</label>
+          <label><input type="checkbox" id="wb3-I" checked> Interaction</label>
+        </div>
+        <figure><canvas id="wb3-runs" class="wb-wide" aria-label="Imbalance against time with the chosen effects"></canvas></figure>
+        <p class="wb-result" id="wb3-result" role="status"></p>
+      </article>
+
+      <div class="wb-logbox">
+        <div class="section-head"><h3>Your changes</h3><button type="button" id="wb-export" disabled>Download as JSON</button></div>
+        <ol id="wb-log" reversed></ol>
       </div>
     </section>
 
