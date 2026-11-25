@@ -613,3 +613,8 @@ canvas.wb-wide { height: 240px; }
 
 .cid-now { flex-wrap: wrap; }
 .cid-now .card-label { flex-basis: 100%; }
+/* beside the response the mechanism card names the result; the box keeps the construction and, while a part is
+   held, the mechanism it would give */
+#result .cid-now { display: none; }
+#result .cid:has(.cid-next[hidden]) { display: none; }
+#result .composer-side { padding: 8px 14px; }
