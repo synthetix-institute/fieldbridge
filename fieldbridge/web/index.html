@@ -20,6 +20,7 @@
   <script defer src="site/expression.js"></script>
   <script defer src="site/site.js"></script>
   <script defer src="site/constructor-tools.js"></script>
+  <script defer src="site/composer.js"></script>
   <script defer src="site/workbench.js"></script>
 </head>
 <body>
@@ -49,7 +50,7 @@
         <button type="button" id="sequence-start" class="primary" aria-expanded="false" aria-controls="sequence-menu">Follow a construction</button>
         <button type="button" id="constructor-undo" class="icon" aria-label="Undo the last change" title="Undo the last change">↶</button>
         <button type="button" id="constructor-reset" class="icon" aria-label="Reset the constructor" title="Reset the constructor">↺</button>
-        <button type="button" id="material-choose" class="plain" aria-expanded="false" aria-controls="material-chooser">Choose a material</button>
+        <button type="button" id="material-choose" class="plain" aria-expanded="false" aria-controls="material-chooser">Start from a material</button>
         <button type="button" id="guide-toggle" class="plain" aria-expanded="false" aria-controls="guide">How to use this page</button>
         <button type="button" id="back-to" class="back-to" hidden></button>
       </div>
@@ -59,15 +60,19 @@
           <button type="button" id="guide-close" class="icon" aria-label="Close the guide" title="Close the guide">&#215;</button>
         </div>
         <ol>
-          <li><b>One model at a time.</b> The left panel shows the equations of one model, called a realization, split
-            into six components: the operation Ω (what acts), the carrier Ξ (the states it acts on), the closure C (the
-            environment, such as a thermal bath), the observable R (what is measured), the protocol P (what is done to
-            the system) and the parameters A.</li>
-          <li><b>Its mechanism.</b> The right panel names the mechanism that the model carries, such as a symmetric
-            write or phase locking, runs the model in your browser and lists what FieldBridge calculated for it.</li>
-          <li><b>Change one component.</b> Under each component, every card is one change: its left part shows the
-            change, its right part names the mechanism it leads to. Click a card to make the change and see the new
-            mechanism. ↶ undoes the last change, ↺ starts again from the beginning.</li>
+          <li><b>The formula is the constructor.</b> A model, called a realization, is written as
+            I<sub>real</sub> = ((Ω, Ξ); C, R, P; A): the operation Ω (what acts) on the carrier Ξ (the states it acts
+            on), the closure C (the environment, such as a thermal bath), the observable R (what is measured), the
+            protocol P (what is done to the system) and the parameters A. Each component is a box in the formula at the
+            top that shows what it holds; beside it is the mechanism the realization carries.</li>
+          <li><b>Open a component to change it.</b> Clicking a box opens that component underneath: its full content, and
+            the parts that can be attached to it. A part either keeps the mechanism and moves it to another carrier or
+            form (detach and attach), or changes the mechanism. Drag a part onto its box in the formula, or click it;
+            while it is held, the mechanism it would give is shown beside the formula, and a part fits only its own
+            box. The response on the right is computed in your browser for the result, with the realization before the
+            change drawn dashed.</li>
+          <li><b>The construction.</b> The row under the formula lists every step; a click on an earlier step returns to
+            it, <i>Save</i> writes the construction to a file and <i>Replay…</i> rebuilds it from one.</li>
           <li><b>Be guided, or start from your field.</b> <i>Follow a construction</i> goes through a sequence of
             changes with an explanation at each step. <i>Choose a material</i> starts from a model of a particular
             material or field.</li>
@@ -83,14 +88,13 @@
             the derivation left out, such as a second parameter, and derives the law of the completed write. The
             construction <i>Moving a mechanism to a new field</i> goes through such a transfer, and
             <a href="#contribute">Adding a realization</a>, at the bottom of the page, gives a command for each.</li>
-          <li><b>Building in the page.</b> Under the equations of a model written as differential equations are five
-            tools. <i>Add a term</i> adds a term to one equation; the carrier decides which terms are allowed (an angle
+          <li><b>Building in the page.</b> For a model written as differential equations, three components have a tool
+            underneath. In Ω, <i>Add a term</i> adds a term to one equation; the carrier decides which terms are allowed (an angle
             only through sin and cos, an amount only through terms that cannot make it negative), and the stable states
-            with the term are shown before it is added. <i>Two parameters</i> shades a plane of two parameters by the
-            number of stable states; a click sets both. <i>Protocol</i> holds one parameter at a sequence of values and
-            shows where each stored state ends. <i>History</i> lists every step with its source, a verified change of
-            FieldBridge or a term built here, and saves the construction as a file that can be replayed.
-            <i>Examples</i> builds the cusp from the pitchfork and erases a stored state by annealing under a field.
+            with the term are shown before it is added. In A, <i>Two parameters</i> shades a plane of two parameters by the
+            number of stable states; a click sets both. In P, a <i>Protocol</i> holds one parameter at a sequence of values and
+            shows where each stored state ends. Each step of the construction keeps its source, a verified change of
+            FieldBridge or a term built here. <i>Worked examples</i> builds the cusp from the pitchfork and erases a stored state by annealing under a field.
             A model built here is marked as such: it is not a FieldBridge specification and no mechanism is claimed for
             it.</li>
         </ol>
@@ -106,9 +110,9 @@
           <button type="button" id="material-close" class="icon" aria-label="Close material choices" title="Close material choices">&#215;</button>
         </div>
         <div class="material-filters">
-          <div><label for="material-mechanism">Mechanism</label><select id="material-mechanism"></select></div>
-          <div><label for="material-field">Field</label><select id="material-field"></select></div>
-          <div><label for="material-search">Material or model</label><input type="search" id="material-search" placeholder="Name or source"></div>
+          <div><span class="chip-label">Mechanism</span><div class="chip-row" id="material-mechanism" role="group" aria-label="Mechanism"></div></div>
+          <div><span class="chip-label">Field</span><div class="chip-row" id="material-field" role="group" aria-label="Field"></div></div>
+          <div><label for="material-search" class="chip-label">Material or model</label><input type="search" id="material-search" placeholder="Name or source"></div>
         </div>
         <p id="material-count" class="muted" role="status"></p>
         <ul id="material-options" class="material-options" aria-label="Available material realizations"></ul>

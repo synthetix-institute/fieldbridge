@@ -69,7 +69,7 @@ const snapshot = () => ({node: I.state.node, path: I.state.path.map(p => p.node)
                          planned: text('planned-grid'),
                          chooser: {hidden: element('material-chooser').hidden, expanded: element('material-choose').attributes['aria-expanded'],
                            options: element('material-options').innerHTML, count: element('material-count').textContent,
-                           mechanism: element('material-mechanism').value},
+                           mechanism: ((element('material-mechanism').innerHTML.match(/data-chip-mechanism="([^"]*)" aria-pressed="true"/) || [])[1] || '')},
                          selected: element('now-name').textContent + ' | ' + text('now-where'),
                          params: {...I.state.params},
                          sequences: {expanded: element('sequence-start').attributes['aria-expanded'],
@@ -87,7 +87,10 @@ for (const step of JSON.parse(fs.readFileSync(scenarioFile, 'utf8'))) {
   if (step.do === 'toolbar-undo') element('constructor-undo').click();
   if (step.do === 'reset') element('constructor-reset').click();
   if (step.do === 'choose-material') element('material-choose').click();
-  if (step.do === 'material-filter') element('material-' + step.key).dispatch(step.key === 'search' ? 'input' : 'change', {target: {value: step.value}});
+  if (step.do === 'material-filter') {   // the mechanism and the field are rows of chips; the search is a text field
+    const chip = {dataset: {['chip' + step.key[0].toUpperCase() + step.key.slice(1)]: step.value}};
+    element('material-' + step.key).dispatch(step.key === 'search' ? 'input' : 'click', step.key === 'search' ? {target: {value: step.value}} : {target: {closest: () => chip}});
+  }
   if (step.do === 'material-select') element('material-options').dispatch('click', {target: {closest: () => ({dataset: {materialId: step.node}})}});
   if (step.do === 'material-escape') element('material-chooser').dispatch('keydown', {key: 'Escape'});
   if (step.do === 'material-close') element('material-close').click();

@@ -225,10 +225,15 @@
   function materialChooser() {
     const rows = Object.values(S.nodes).filter(r => !r.universal);
     const fields = [...new Set(rows.map(r => r.field))].sort((a, b) => a.localeCompare(b));
-    $('material-mechanism').innerHTML = '<option value="">All mechanisms</option>'
-      + Object.entries(S.classes).map(([id, name]) => `<option value="${esc(id)}">${esc(name)}</option>`).join('');
-    $('material-field').innerHTML = '<option value="">All fields</option>'
-      + fields.map(f => `<option value="${esc(f)}">${esc(f)}</option>`).join('');
+    // filters as rows of chips: a mechanism by its drawing, a field by its name, each with the number of models
+    const chips = () => {
+      const byClass = {}, byField = {};
+      rows.forEach(r => { byClass[r.class] = (byClass[r.class] || 0) + 1; if (!material.mechanism || r.class === material.mechanism) byField[r.field] = (byField[r.field] || 0) + 1; });
+      $('material-mechanism').innerHTML = `<button type="button" class="chip" data-chip-mechanism="" aria-pressed="${!material.mechanism}">all</button>`
+        + Object.keys(S.classes).filter(id => byClass[id]).map(id => `<button type="button" class="chip" data-chip-mechanism="${esc(id)}" aria-pressed="${material.mechanism === id}" title="${esc(S.classes[id])}">${window.FieldBridgeMechanisms.glyph(id, 'small')}<span>${esc(S.classes_short[id] || S.classes[id])}</span><small>${byClass[id]}</small></button>`).join('');
+      $('material-field').innerHTML = `<button type="button" class="chip" data-chip-field="" aria-pressed="${!material.field}">all</button>`
+        + fields.filter(f => byField[f]).map(f => `<button type="button" class="chip" data-chip-field="${esc(f)}" aria-pressed="${material.field === f}"><span>${esc(f)}</span><small>${byField[f]}</small></button>`).join('');
+    };
     const close = () => {
       $('material-chooser').hidden = true;
       $('material-choose').setAttribute('aria-expanded', 'false');
@@ -237,10 +242,11 @@
       const visible = rows.filter(r => (!material.mechanism || r.class === material.mechanism)
         && (!material.field || r.field === material.field) && (!material.query || searchable(r).includes(material.query)))
         .sort((a, b) => strip(a.name).localeCompare(strip(b.name)));
+      chips();
       $('material-count').textContent = `${visible.length} model realization${visible.length === 1 ? '' : 's'}`;
       $('material-options').innerHTML = visible.length ? visible.map(r => {
         const source = r.spec || r.base_spec;
-        return `<li><button type="button" class="realization-pick" data-material-id="${esc(r.id)}">
+        return `<li><button type="button" class="realization-pick" data-material-id="${esc(r.id)}">${window.FieldBridgeMechanisms.glyph(r.class, 'small')}
           <b>${esc(strip(r.name))}</b><span>${esc(r.field)} · ${esc(S.classes[r.class] || r.class)}</span></button>
           <span class="realization-links">${source ? `<a href="${repo(source)}" target="_blank" rel="noopener">Source equations ↗</a>` : ''}${r.tutorial ? `<a href="${repo(r.tutorial)}" target="_blank" rel="noopener">Derivation ↗</a>` : ''}</span></li>`;
       }).join('') : '<li class="material-empty">No stored realization matches these filters.</li>';
@@ -249,8 +255,7 @@
       if (!$('material-chooser').hidden) { close(); return; }
       material.mechanism = S.nodes[I().state.node].class;
       material.field = ''; material.query = '';
-      $('material-mechanism').value = material.mechanism;
-      $('material-field').value = ''; $('material-search').value = '';
+      $('material-search').value = '';
       render();
       $('material-chooser').hidden = false;
       $('material-choose').setAttribute('aria-expanded', 'true');
@@ -259,8 +264,11 @@
     $('material-chooser').addEventListener('keydown', event => {
       if (event.key === 'Escape') { close(); $('material-choose').focus(); }
     });
-    for (const key of ['mechanism', 'field']) $('material-' + key).addEventListener('change', event => {
-      material[key] = event.target.value; render();
+    for (const key of ['mechanism', 'field']) $('material-' + key).addEventListener('click', event => {
+      const chip = event.target.closest('[data-chip-' + key + ']'); if (!chip) return;
+      material[key] = chip.dataset['chip' + key[0].toUpperCase() + key.slice(1)];
+      if (key === 'mechanism') material.field = '';
+      render();
     });
     $('material-search').addEventListener('input', event => { material.query = event.target.value.trim().toLowerCase(); render(); });
     $('material-options').addEventListener('click', event => {
