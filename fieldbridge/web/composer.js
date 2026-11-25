@@ -56,8 +56,14 @@
         <div class="cf-row cf-row2">${sock('C')}<span class="cf-p">,</span>${sock('R')}<span class="cf-p">,</span>${sock('P')}<span class="cf-p">;</span>${sock('A')}<span class="cf-p">)</span></div>
         <p class="cf-note">The core is the operation Ω on the carrier Ξ; C closes the equations, R is measured, P prepares and drives, A are the parameters. Open a component to see it, change it, or attach a part to it.</p>
       </div>
-      <div class="cid" aria-live="polite">
-        <div class="cid-now"><span class="card-label">Mechanism</span><span id="cid-glyph"></span><b id="cid-name"></b><span id="cid-where" class="muted"></span></div>
+      <p class="drawer-head" id="drawer-head"></p>`;
+    card.querySelector('.realization-head').insertAdjacentElement('afterend', el);
+    // the resulting mechanism and the construction: at the top of the response beside the formula, or under the
+    // formula when the page has one column
+    const side = document.createElement('div');
+    side.className = 'composer-side'; side.id = 'composer-side';
+    side.innerHTML = `      <div class="cid" aria-live="polite">
+        <div class="cid-now"><span class="card-label">Resulting mechanism</span><span id="cid-glyph"></span><b id="cid-name"></b><span id="cid-where" class="muted"></span></div>
         <div class="cid-next" id="cid-next" hidden><span class="cid-arrow">→</span><span id="cid-next-glyph"></span><span><b id="cid-next-name"></b><span id="cid-next-where" class="muted"></span></span></div>
       </div>
       <div class="cchain">
@@ -68,9 +74,13 @@
           <button type="button" id="cc-load" title="Replay a saved construction">Replay…</button>
           <button type="button" id="cc-examples" aria-pressed="false">Worked examples</button>
         </span>
-      </div>
-      <p class="drawer-head" id="drawer-head"></p>`;
-    card.insertAdjacentElement('beforebegin', el);   // a band across the constructor, above the open component and the response
+      </div>`;
+    const place = () => {
+      const narrow = window.matchMedia('(max-width: 1080px)').matches, res = $('result');
+      if (narrow) el.querySelector('.cf').insertAdjacentElement('afterend', side); else if (res) res.insertAdjacentElement('afterbegin', side);
+    };
+    place();
+    window.matchMedia('(max-width: 1080px)').addEventListener('change', place);
     card.classList.add('composing');
     el.querySelectorAll('[data-socket]').forEach(b => {
       b.addEventListener('click', () => select(b.dataset.socket));

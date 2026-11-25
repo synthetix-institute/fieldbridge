@@ -229,8 +229,7 @@ section { padding: 44px 0 20px; }
 .sequence-controls button:not(.primary):not(.plain) { border: 1px solid var(--rule-strong); background: var(--panel); border-radius: 8px; padding: 6px 12px; }
 
 /* instrument */
-.instrument { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "comp comp" "expr result"; align-items: start; }
-.instrument > .composer { grid-area: comp; }
+.instrument { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); grid-template-areas: "expr result"; align-items: start; }
 .expression-card { grid-area: expr; }
 .result { grid-area: result; display: grid; gap: 12px; position: sticky; top: 60px; max-height: calc(100vh - 70px); overflow-y: auto; min-width: 0; scrollbar-width: thin; }
 .result .views canvas { aspect-ratio: 6 / 5; }
@@ -417,7 +416,7 @@ details.sources summary { cursor: pointer; color: var(--accent); font-size: 14.5
 .noscript { max-width: 60ch; margin: 40px auto; padding: 0 16px; }
 
 @media (max-width: 1080px) {
-  .instrument { grid-template-columns: minmax(0, 1fr); grid-template-areas: "bar" "comp" "expr" "result"; }
+  .instrument { grid-template-columns: minmax(0, 1fr); grid-template-areas: "bar" "expr" "result"; }
   .result { position: static; max-height: none; overflow: visible; }
   .result .views canvas { aspect-ratio: 1; }
   .m-bar { grid-area: bar; display: flex; align-items: center; gap: 8px; position: sticky; top: 52px; z-index: 6; background: color-mix(in srgb, var(--panel) 94%, transparent); backdrop-filter: blur(6px); border: 1px solid var(--rule); border-radius: 10px; padding: 6px 12px; box-shadow: var(--shadow); }
@@ -542,7 +541,9 @@ canvas.wb-wide { height: 240px; }
 @media (max-width: 820px) { .ct { padding: 12px; } .ct-canvas { height: 240px; } }
 
 /* the constructor around the identity formula */
-.composer { padding: 6px 18px 12px; background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow); }
+.composer { padding: 2px 16px 10px; border-top: 1px solid var(--rule); }
+.composer-side { background: var(--panel); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow); padding: 10px 14px; display: grid; gap: 6px; }
+.composer .composer-side { box-shadow: none; margin: 4px 0; }
 .cf { display: grid; gap: 8px; padding: 12px 0 8px; }
 .cf-row { display: flex; align-items: stretch; gap: 4px; min-width: 0; }
 .cf-row2 { padding-left: 88px; }
@@ -610,4 +611,5 @@ canvas.wb-wide { height: 240px; }
 .realization-pick:has(.glyph) { grid-template-columns: auto minmax(0, 1fr); column-gap: 10px; align-items: center; }
 .realization-pick .glyph { grid-row: span 2; }
 
-@media (min-width: 1081px) { .cf-row, .cf-row2 { display: contents; } .cf { display: flex; align-items: stretch; gap: 4px; } .cf-note { display: none; } .socket-val { font-size: 13px; } }
+.cid-now { flex-wrap: wrap; }
+.cid-now .card-label { flex-basis: 100%; }
